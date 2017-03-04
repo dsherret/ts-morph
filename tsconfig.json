@@ -13,7 +13,7 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "typeRoots": [ "node_modules/@types/" ],
-        "types": [ "node" ]
+        "types": [ "node", "mocha" ]
     },
     "compileOnSave": false
 }

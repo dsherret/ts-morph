@@ -2,4 +2,4 @@
 export * from "./compiler/TsEnumDeclaration";
 export * from "./compiler/TsIdentifier";
 export * from "./compiler/TsSourceFile";
-export * from "./compiler/RefreshInfo";
+export * from "./compiler/TsLanguageService";

@@ -7,7 +7,7 @@ export abstract class BaseNodedDefinition<T extends ts.Node, U extends TsNode<T>
         super();
     }
 
-    getCompilerNode() {
-        return this.tsNode.getCompilerNode();
+    getUnderlyingNode() {
+        return this.tsNode;
     }
 }

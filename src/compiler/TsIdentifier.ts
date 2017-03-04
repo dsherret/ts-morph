@@ -2,8 +2,18 @@
 import {TsNode} from "./TsNode";
 
 export class TsIdentifier extends TsNode<ts.Identifier> {
+    getText() {
+        return this.node.text;
+    }
+
+    rename(text: string) {
+        // this.factory.getLanguageService()
+    }
+
     setText(text: string) {
-        this.factory.replaceIdentifier(this, ts.createIdentifier(text));
-        this.parent!.refresh(this.parentRefreshInfo!);
+        // todo: typescript compiler should have ts.updateIdentifier function
+        const identifierCopy = ts.createIdentifier(text);
+        this.node.text = identifierCopy.text;
+        this.node.flags |= ts.NodeFlags.Synthesized;
     }
 }
