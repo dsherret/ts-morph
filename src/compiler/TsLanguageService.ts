@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {TsSourceFile} from "./TsSourceFile";
+import {TsNode} from "./TsNode";
 
 export class TsLanguageService {
     private readonly languageService: ts.LanguageService;
@@ -20,6 +21,14 @@ export class TsLanguageService {
         };
 
         this.languageService = ts.createLanguageService(host);
+    }
+
+    findRenameLocations(node: TsNode<ts.Node>) {
+        const sourceFile = node.getSourceFile();
+        if (sourceFile == null)
+            throw new Error("Node has no sourcefile");
+
+        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), sourceFile.getPosition(), false, false);
     }
 
     getCompilerLanguageService() {

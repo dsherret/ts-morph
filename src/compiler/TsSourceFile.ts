@@ -6,4 +6,8 @@ export class TsSourceFile extends TsNode<ts.SourceFile> {
     constructor(factory: CompilerFactory, sourceFile: ts.SourceFile) {
         super(factory, sourceFile, null);
     }
+
+    getFileName() {
+        return this.node.fileName;
+    }
 }
