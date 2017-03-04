@@ -6,12 +6,12 @@
 export class KeyValueCache<T, U> {
     private readonly cacheItems: KeyValueCacheItem<T, U>[] = [];
 
-    getOrCreate(key: T, createFunc: () => U) {
-        let item = this.get(key);
+    getOrCreate<TCreate extends U>(key: T, createFunc: () => TCreate) {
+        let item = this.get(key) as TCreate;
 
         if (item == null) {
             item = createFunc();
-            this.add(key, item);
+            this.set(key, item);
         }
 
         return item;
@@ -28,7 +28,14 @@ export class KeyValueCache<T, U> {
         return null;
     }
 
-    add(key: T, value: U) {
+    set(key: T, value: U) {
+        for (let cacheItem of this.cacheItems) {
+            if (cacheItem.key === key) {
+                cacheItem.value = value;
+                return;
+            }
+        }
+
         this.cacheItems.push({ key, value });
     }
 

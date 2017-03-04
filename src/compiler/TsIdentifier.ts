@@ -7,7 +7,8 @@ export class TsIdentifier extends TsNode<ts.Identifier> {
     }
 
     rename(text: string) {
-        // this.factory.getLanguageService()
+        const renameLocations = this.factory.getLanguageService().findRenameLocations(this);
+        console.log(renameLocations);
     }
 
     setText(text: string) {

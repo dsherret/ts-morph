@@ -15,6 +15,12 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node;
     }
 
+    getChildren() {
+        const childNodes: TsNode<ts.Node>[] = [];
+        ts.forEachChild(this.node, childNode => childNodes.push(this.factory.getTsNodeFromNode(childNode, this)));
+        return childNodes;
+    }
+
     getPosition() {
         return this.node.pos;
     }
@@ -32,7 +38,7 @@ export class TsNode<NodeType extends ts.Node> {
         while (parent != null && !parent.isSourceFile())
             parent = parent.getParent();
 
-        return parent != null && parent.isSourceFile() ? parent : null;
+        return (parent != null && parent.isSourceFile() ? parent : null) as TsSourceFile | null;
     }
 
     getParent() {
@@ -40,7 +46,7 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     isSourceFile() {
-        return true;
+        return false;
     }
 
     private closest(search: (node: TsNode<ts.Node>) => boolean) {
