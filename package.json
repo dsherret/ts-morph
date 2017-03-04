@@ -1,0 +1,52 @@
+{
+  "name": "ts-simple-ast",
+  "version": "0.1.0",
+  "description": "Base project for typescript libraries",
+  "main": "dist/main.js",
+  "typings": "ts-simple-ast.d.ts",
+  "scripts": {
+    "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "build": "gulp typescript",
+    "pre-publish": "gulp tslint && gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsherret/ts-simple-ast.git"
+  },
+  "keywords": [
+    "typescript",
+    "code"
+  ],
+  "author": "David Sherret",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dsherret/ts-simple-ast/issues"
+  },
+  "homepage": "https://github.com/dsherret/ts-simple-ast#readme",
+  "typescript": {
+    "definition": "ts-simple-ast.d.ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/mocha": "^2.2.33",
+    "@types/node": "^6.0.48",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.6",
+    "del": "^2.0.2",
+    "gulp": "^3.9.1",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-tslint": "^5.0.0",
+    "gulp-typescript": "^2.13.3",
+    "mocha": "^2.3.3",
+    "tslint": "^3.13.0",
+    "typescript": "^2.1.4",
+    "ts-nameof": "^0.8.0"
+  },
+  "dependencies": {
+    "code-block-writer": "^4.1.0",
+    "typescript": "^2.3.0-dev.20170303"
+  }
+}

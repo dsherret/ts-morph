@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": false,
+        "sourceMap": false,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "removeComments": false,
+        "experimentalDecorators": true,
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "typeRoots": [ "node_modules/@types/" ],
+        "types": [ "node" ]
+    },
+    "compileOnSave": false
+}

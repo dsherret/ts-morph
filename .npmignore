@@ -1,0 +1,13 @@
+/.vs
+/node_modules
+/coverage
+/.vscode
+/src
+*.js.map
+/obj
+/temp
+/bin
+*.suo
+*.csproj
+*.csproj.user
+*.sln
