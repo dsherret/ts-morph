@@ -64,8 +64,7 @@ export class TsLanguageService {
         if (sourceFile == null)
             throw new Error("Node has no sourcefile");
 
-        console.log(node);
-        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getPosition() + 1, false, false) || [];
+        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getEndPosition(), false, false) || [];
         return renameLocations.map(l => ({
             tsSourceFile: this.compilerFactory.getSourceFileFromFilePath(l.fileName)!,
             textSpan: {

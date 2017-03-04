@@ -21,8 +21,8 @@ export class TsNode<NodeType extends ts.Node> {
         return childNodes;
     }
 
-    getPosition() {
-        return this.node.pos;
+    getEndPosition() {
+        return this.node.end;
     }
 
     getText() {

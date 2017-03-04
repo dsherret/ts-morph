@@ -29,7 +29,6 @@ export class CompilerFactory {
         if (sourceFile == null) {
             Logger.log(`Loading file: ${filePath}`);
             sourceFile = this.createSourceFileFromText(filePath, fs.readFileSync(filePath, "utf-8"));
-            Logger.log(`Loaded file: ${filePath}`);
 
             if (sourceFile != null)
                 sourceFile.getReferencedFiles(); // fill
