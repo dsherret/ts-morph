@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as fs from "fs";
 import * as compiler from "./../compiler";
-import {KeyValueCache} from "./../utils";
+import {KeyValueCache, Logger} from "./../utils";
 
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.TsSourceFile>();
@@ -27,11 +27,14 @@ export class CompilerFactory {
     getSourceFileFromFilePath(filePath: string) {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
+            Logger.log(`Loading file: ${filePath}`);
             sourceFile = this.createSourceFileFromText(filePath, fs.readFileSync(filePath, "utf-8"));
+            Logger.log(`Loaded file: ${filePath}`);
 
             if (sourceFile != null)
                 sourceFile.getReferencedFiles(); // fill
         }
+
         return sourceFile;
     }
 

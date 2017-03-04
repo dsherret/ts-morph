@@ -29,11 +29,7 @@ export class TsLanguageService {
                 return (version++).toString();
             },
             getScriptSnapshot: fileName => {
-                console.log(`Getting snapshot: ${fileName}`);
-                console.log(this.compilerFactory.getSourceFileFromFilePath(fileName));
-                const snapshot = ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getText());
-                console.log(snapshot);
-                return snapshot;
+                return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getText());
             },
             getCurrentDirectory: () => "",
             getDefaultLibFileName: options => ts.getDefaultLibFilePath(compilerOptions),
@@ -68,7 +64,8 @@ export class TsLanguageService {
         if (sourceFile == null)
             throw new Error("Node has no sourcefile");
 
-        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), sourceFile.getPosition(), false, false) || [];
+        console.log(node);
+        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getPosition() + 1, false, false) || [];
         return renameLocations.map(l => ({
             tsSourceFile: this.compilerFactory.getSourceFileFromFilePath(l.fileName)!,
             textSpan: {
