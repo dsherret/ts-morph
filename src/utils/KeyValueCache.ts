@@ -31,4 +31,15 @@ export class KeyValueCache<T, U> {
     add(key: T, value: U) {
         this.cacheItems.push({ key, value });
     }
+
+    replaceKey(key: T, newKey: T) {
+        for (let cacheItem of this.cacheItems) {
+            if (cacheItem.key === key) {
+                cacheItem.key = newKey;
+                return;
+            }
+        }
+
+        throw new Error("Key not found.");
+    }
 }

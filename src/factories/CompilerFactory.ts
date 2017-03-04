@@ -10,7 +10,12 @@ export class CompilerFactory {
         return this.sourceFileCache.getOrCreate(sourceFile, () => new compiler.TsSourceFile(this, sourceFile));
     }
 
-    getIdentifier(identifier: ts.Identifier, parent: compiler.TsNode<ts.Node>) {
-        return this.identifierCache.getOrCreate(identifier, () => new compiler.TsIdentifier(this, identifier, parent));
+    getIdentifier(identifier: ts.Identifier, parent: compiler.TsNode<ts.Node>, parentRefreshInfo: compiler.RefreshInfo<any>) {
+        return this.identifierCache.getOrCreate(identifier, () => new compiler.TsIdentifier(this, identifier, parent, parentRefreshInfo));
+    }
+
+    replaceIdentifier(wrapper: compiler.TsIdentifier, newIdentifier: ts.Identifier) {
+        this.identifierCache.replaceKey(wrapper.getCompilerNode(), newIdentifier);
+        wrapper.replaceCompilerNode(newIdentifier);
     }
 }

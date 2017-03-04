@@ -4,6 +4,6 @@ import {TsNode} from "./TsNode";
 
 export class TsSourceFile extends TsNode<ts.SourceFile> {
     constructor(factory: CompilerFactory, sourceFile: ts.SourceFile) {
-        super(factory, sourceFile, null);
+        super(factory, sourceFile, null, null);
     }
 }

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {applyMixins} from "./../../utils";
-import {TsEnumNode} from "./../../compiler-new";
+import {TsEnumNode} from "./../../compiler";
 import {BaseDefinition, BaseNodedDefinition} from "./../base";
 
 export class EnumDefinition extends BaseNodedDefinition<ts.EnumDeclaration, TsEnumNode> {
@@ -9,7 +9,7 @@ export class EnumDefinition extends BaseNodedDefinition<ts.EnumDeclaration, TsEn
     }
 
     setName(text: string) {
-        this.tsNode.getNameNode().setText()
+        this.tsNode.setNameText
         return this;
     }
 }
