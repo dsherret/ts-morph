@@ -13,6 +13,14 @@ export class CompilerFactory {
         return this.languageService;
     }
 
+    createSourceFileFromText(filePath: string, sourceText: string) {
+        const sourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget());
+        const tsSourceFile = new compiler.TsSourceFile(this, sourceFile);
+        this.sourceFileCache.add(sourceFile, tsSourceFile);
+        this.languageService.addSourceFile(tsSourceFile);
+        return tsSourceFile;
+    }
+
     getSourceFile(sourceFile: ts.SourceFile) {
         return this.sourceFileCache.getOrCreate(sourceFile, () => new compiler.TsSourceFile(this, sourceFile));
     }

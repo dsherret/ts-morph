@@ -15,6 +15,10 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node;
     }
 
+    getText() {
+        return this.node.getText();
+    }
+
     replaceCompilerNode(node: NodeType) {
         this.node = node;
     }

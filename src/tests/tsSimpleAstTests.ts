@@ -2,12 +2,11 @@
 import {expect} from "chai";
 
 describe(nameof(TsSimpleAst), () => {
-    describe(`#${nameof<TsSimpleAst>(ast => ast.addSourceFileFromText)}`, () => {
+    describe(`#${nameof<TsSimpleAst>(ast => ast.createSourceFileFromText)}`, () => {
         it("", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("MyFile.txt", "enum MyEnum {}");
-            const sourceFile = ast.getSourceFiles()[0];
-            expect(sourceFile.text).to.equal("enum MyEnum {}");
+            const sourceFile = ast.createSourceFileFromText("MyFile.txt", "enum MyEnum {}");
+            expect(sourceFile.getText()).to.equal("enum MyEnum {}");
         });
     });
 });

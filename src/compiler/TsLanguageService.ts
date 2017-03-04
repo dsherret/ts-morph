@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
+import {TsSourceFile} from "./TsSourceFile";
 
 export class TsLanguageService {
     private readonly languageService: ts.LanguageService;
-    private readonly sourceFiles: ts.SourceFile[] = [];
+    private readonly tsSourceFiles: TsSourceFile[] = [];
 
     constructor(private readonly compilerOptions: ts.CompilerOptions) {
         const host: ts.LanguageServiceHost = {
@@ -25,19 +26,19 @@ export class TsLanguageService {
         return this.languageService;
     }
 
-    addSourceFileFromText(filePath: string, sourceText: string) {
-        this.sourceFiles.push(ts.createSourceFile(filePath, sourceText, this.getScriptTarget()));
+    addSourceFile(tsSourceFile: TsSourceFile) {
+        this.tsSourceFiles.push(tsSourceFile);
+    }
+
+    getScriptTarget() {
+        return this.compilerOptions.target!;
     }
 
     getSourceFiles() {
-        return this.sourceFiles;
+        return this.tsSourceFiles;
     }
 
     private getSourceFileFromPath(path: string) {
-        return this.sourceFiles.filter(f => f.fileName === path)[0] as ts.SourceFile | undefined;
-    }
-
-    private getScriptTarget() {
-        return this.compilerOptions.target!;
+        return this.tsSourceFiles.filter(f => f.fileName === path)[0] as ts.SourceFile | undefined;
     }
 }
