@@ -15,10 +15,27 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node;
     }
 
+    containsRange(startPosition: number, endPosition: number) {
+        return this.getStartPosition() <= startPosition && this.getStartPosition() < endPosition &&
+            this.getEndPosition() > startPosition && this.getEndPosition() <= endPosition;
+    }
+
     getChildren() {
         const childNodes: TsNode<ts.Node>[] = [];
-        ts.forEachChild(this.node, childNode => childNodes.push(this.factory.getTsNodeFromNode(childNode, this)));
+        ts.forEachChild(this.node, childNode => {
+            childNodes.push(this.factory.getTsNodeFromNode(childNode, this));
+        });
         return childNodes;
+    }
+
+    getAllChildren() {
+        const children = [...this.getChildren()];
+        children.map(c => c.getAllChildren()).forEach(c => children.push(...c));
+        return children;
+    }
+
+    getStartPosition() {
+        return this.node.pos;
     }
 
     getEndPosition() {

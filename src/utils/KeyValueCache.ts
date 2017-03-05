@@ -6,6 +6,10 @@
 export class KeyValueCache<T, U> {
     private readonly cacheItems: KeyValueCacheItem<T, U>[] = [];
 
+    getAll() {
+        return this.cacheItems;
+    }
+
     getOrCreate<TCreate extends U>(key: T, createFunc: () => TCreate) {
         let item = this.get(key) as TCreate;
 

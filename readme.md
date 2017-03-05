@@ -7,17 +7,14 @@
 
 TypeScript compiler wrapper.
 
-## Layers
+## Simple Layer
 
-*ts-simple-ast* add two additional layers of abstraction over the compiler layer:
+*ts-simple-ast* add an abstraction layer over the compiler layer:
 
 1. Simple Layer - Provides a simple way for navigating and manipulating the AST.
-2. Wrapper Layer - Wrapped typescript compiler objects.
-3. Compiler Layer - TypeScript compiler objects.
+2. Compiler Layer - TypeScript compiler objects.
 
-As you go down the layers, it gets more complex and the api's likelyhood of changing increases. For that reason, it's best to stay in the simple layer as much as possible.
-
-Changes made in any of the layers will be made to the underlying compiler layer.
+Changes made in the simple layer will be made to the underlying compiler layer.
 
 ## Project Goal
 

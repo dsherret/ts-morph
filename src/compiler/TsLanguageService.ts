@@ -2,11 +2,13 @@
 import * as fs from "fs";
 import {TsSourceFile} from "./TsSourceFile";
 import {TsNode} from "./TsNode";
+import {TsIdentifier} from "./TsIdentifier";
 import {CompilerFactory} from "./../factories";
+import {KeyValueCache} from "./../utils";
 
-export interface RenameLocation {
+export interface SourceFileReplace {
     tsSourceFile: TsSourceFile;
-    textSpan: TextSpan;
+    textSpans: TextSpan[];
 }
 
 export interface TextSpan {
@@ -59,18 +61,36 @@ export class TsLanguageService {
         this.compilerFactory = compilerFactory;
     }
 
-    findRenameLocations(node: TsNode<ts.Node>): RenameLocation[] {
+    renameNode(node: TsNode<ts.Node>, newName: string) {
+        const renameReplaces = this.findRenameReplaces(node);
+        for (let renameReplace of renameReplaces) {
+            let difference = 0;
+            for (let textSpan of renameReplace.textSpans) {
+                textSpan.start -= difference;
+                renameReplace.tsSourceFile.replaceText(textSpan.start, textSpan.start + textSpan.length, newName);
+                difference += textSpan.length - newName.length;
+            }
+        }
+    }
+
+    findRenameReplaces(node: TsNode<ts.Node>): SourceFileReplace[] {
         const sourceFile = node.getSourceFile();
         if (sourceFile == null)
             throw new Error("Node has no sourcefile");
 
+        const textSpansBySourceFile = new KeyValueCache<TsSourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getEndPosition(), false, false) || [];
-        return renameLocations.map(l => ({
-            tsSourceFile: this.compilerFactory.getSourceFileFromFilePath(l.fileName)!,
-            textSpan: {
+        renameLocations.forEach(l => {
+            const tsSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
+            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(tsSourceFile, () => []);
+            textSpans.push({
                 start: l.textSpan.start,
                 length: l.textSpan.length
-            }
+            });
+        });
+        return textSpansBySourceFile.getAll().map(i => ({
+            tsSourceFile: i.key,
+            textSpans: i.value
         }));
     }
 

@@ -7,14 +7,6 @@ export class TsIdentifier extends TsNode<ts.Identifier> {
     }
 
     rename(text: string) {
-        const renameLocations = this.factory.getLanguageService().findRenameLocations(this);
-        console.log(renameLocations);
-    }
-
-    setText(text: string) {
-        // todo: typescript compiler should have ts.updateIdentifier function
-        const identifierCopy = ts.createIdentifier(text);
-        this.node.text = identifierCopy.text;
-        this.node.flags |= ts.NodeFlags.Synthesized;
+        this.factory.getLanguageService().renameNode(this, text);
     }
 }

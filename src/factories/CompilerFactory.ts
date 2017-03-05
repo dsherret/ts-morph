@@ -38,9 +38,9 @@ export class CompilerFactory {
     }
 
     getTsNodeFromNode(node: ts.Node, parent: compiler.TsNode<ts.Node>) {
-        if (node.kind & ts.SyntaxKind.EnumDeclaration)
+        if (node.kind === ts.SyntaxKind.EnumDeclaration)
             return this.getEnumDeclaration(node as ts.EnumDeclaration, parent);
-        if (node.kind & ts.SyntaxKind.Identifier)
+        if (node.kind === ts.SyntaxKind.Identifier)
             return this.getIdentifier(node as ts.Identifier, parent);
 
         return this.nodeCache.getOrCreate(node, () => new compiler.TsNode(this, node, parent));

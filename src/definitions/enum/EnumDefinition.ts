@@ -9,7 +9,7 @@ export class EnumDefinition extends BaseNodedDefinition<ts.EnumDeclaration, TsEn
     }
 
     setName(text: string) {
-        this.tsNode.getNameNode().setText(text);
+        this.tsNode.getNameNode().rename(text);
         return this;
     }
 }

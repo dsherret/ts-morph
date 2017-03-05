@@ -8,20 +8,21 @@ var Lint = require("tslint/lib/lint");
 var Rule = (function (_super) {
     __extends(Rule, _super);
     function Rule() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }
     Rule.prototype.apply = function (sourceFile) {
         return this.applyWithWalker(new NoDuplicateImportsFromSameFileWalker(sourceFile, this.getOptions()));
     };
-    Rule.FAILURE_STRING = "duplicate imports from same file forbidden";
     return Rule;
 }(Lint.Rules.AbstractRule));
+Rule.FAILURE_STRING = "duplicate imports from same file forbidden";
 exports.Rule = Rule;
 var NoDuplicateImportsFromSameFileWalker = (function (_super) {
     __extends(NoDuplicateImportsFromSameFileWalker, _super);
     function NoDuplicateImportsFromSameFileWalker() {
-        _super.apply(this, arguments);
-        this.fileImportsByFileName = {};
+        var _this = _super.apply(this, arguments) || this;
+        _this.fileImportsByFileName = {};
+        return _this;
     }
     NoDuplicateImportsFromSameFileWalker.prototype.visitImportDeclaration = function (node) {
         var sourceFile = node.parent;
