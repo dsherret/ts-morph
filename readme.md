@@ -7,7 +7,7 @@
 
 TypeScript compiler wrapper. Provides a simple way to navigate and manipulate the TypeScript AST.
 
-This is a prototype and there's still a lot more work that needs to go into this. So far I barely have anything, but I will be working on this a lot over the next few months.
+DON'T USE THIS YET! This is a prototype and there's still a lot more work that needs to go into this. So far I barely have anything, but I will be working on this a lot over the next few months.
 I believe it will replace [ts-type-info](https://github.com/dsherret/ts-type-info) eventually as this is much more powerful.
 
 ## Simple Layer
