@@ -5,17 +5,28 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-TypeScript compiler wrapper.
+TypeScript compiler wrapper. Provides a simple way to navigate and manipulate the TypeScript AST.
+
+This is a prototype and there's still a lot more work that needs to go into this. So far I barely have anything, but I will be working on this a lot over the next few months.
+I believe it will replace [ts-type-info](https://github.com/dsherret/ts-type-info) eventually as this is much more powerful.
 
 ## Simple Layer
 
-*ts-simple-ast* add an abstraction layer over the compiler layer:
+*ts-simple-ast* adds an abstraction layer over the compiler while still providing access to the underlying TypeScript compiler AST.
 
 1. Simple Layer - Provides a simple way for navigating and manipulating the AST.
 2. Compiler Layer - TypeScript compiler objects.
 
 Changes made in the simple layer will be made to the underlying compiler layer.
 
-## Project Goal
 
-Provide a simple way to navigate and manipulate the TypeScript AST.
+## Example
+
+```typescript
+const ast = new TsSimpleAst();
+const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;");
+const enumDef = sourceFile.getEnums()[0];
+enumDef.getName(); // "MyEnum"
+enumDef.setName("NewName");
+sourceFile.getText(); // "enum NewName {}\nlet myEnum: NewName;"
+```

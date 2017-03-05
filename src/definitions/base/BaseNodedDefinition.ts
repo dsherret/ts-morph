@@ -1,13 +1,14 @@
 ﻿import * as ts from "typescript";
 import {TsNode} from "./../../compiler";
+import {DefinitionFactory} from "./../../factories";
 import {BaseDefinition} from "./BaseDefinition";
 
 export abstract class BaseNodedDefinition<T extends ts.Node, U extends TsNode<T>> extends BaseDefinition {
-    protected constructor(protected readonly tsNode: U) {
+    constructor(protected readonly factory: DefinitionFactory, protected readonly tsNode: U) {
         super();
     }
 
-    getUnderlyingNode() {
-        return this.tsNode;
+    getCompilerNode() {
+        return this.tsNode.getCompilerNode();
     }
 }

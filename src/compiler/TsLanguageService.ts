@@ -83,6 +83,7 @@ export class TsLanguageService {
         renameLocations.forEach(l => {
             const tsSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
             const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(tsSourceFile, () => []);
+            // todo: ensure this is sorted
             textSpans.push({
                 start: l.textSpan.start,
                 length: l.textSpan.length
