@@ -89,10 +89,17 @@ export class TsLanguageService {
                 length: l.textSpan.length
             });
         });
-        return textSpansBySourceFile.getAll().map(i => ({
-            tsSourceFile: i.key,
-            textSpans: i.value
-        }));
+
+        const replaces: SourceFileReplace[] = [];
+
+        for (let entry of textSpansBySourceFile.getEntries()) {
+            replaces.push({
+                tsSourceFile: entry[0],
+                textSpans: entry[1]
+            });
+        }
+
+        return replaces;
     }
 
     getCompilerLanguageService() {

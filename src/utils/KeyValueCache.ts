@@ -4,10 +4,10 @@
 }
 
 export class KeyValueCache<T, U> {
-    private readonly cacheItems: KeyValueCacheItem<T, U>[] = [];
+    private readonly cacheItems = new Map<T, U>();
 
-    getAll() {
-        return this.cacheItems;
+    getEntries() {
+        return this.cacheItems.entries();
     }
 
     getOrCreate<TCreate extends U>(key: T, createFunc: () => TCreate) {
@@ -22,35 +22,18 @@ export class KeyValueCache<T, U> {
     }
 
     get(key: T) {
-        // todo: make this O(1) somehow
-        for (let cacheItem of this.cacheItems) {
-            if (cacheItem.key === key) {
-                return cacheItem.value;
-            }
-        }
-
-        return null;
+        return this.cacheItems.get(key) || null;
     }
 
     set(key: T, value: U) {
-        for (let cacheItem of this.cacheItems) {
-            if (cacheItem.key === key) {
-                cacheItem.value = value;
-                return;
-            }
-        }
-
-        this.cacheItems.push({ key, value });
+        this.cacheItems.set(key, value);
     }
 
     replaceKey(key: T, newKey: T) {
-        for (let cacheItem of this.cacheItems) {
-            if (cacheItem.key === key) {
-                cacheItem.key = newKey;
-                return;
-            }
-        }
-
-        throw new Error("Key not found.");
+        if (!this.cacheItems.has(key))
+            throw new Error("Key not found.");
+        const value = this.cacheItems.get(key)!;
+        this.cacheItems.delete(key);
+        this.cacheItems.set(newKey, value);
     }
 }

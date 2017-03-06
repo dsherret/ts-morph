@@ -19,7 +19,7 @@ export class TsSimpleAst {
         this.compilerOptions.target = this.compilerOptions.target || ts.ScriptTarget.Latest;
         this.languageService = new TsLanguageService(this.compilerOptions);
         this.compilerFactory = new CompilerFactory(this.languageService);
-        this.definitionFactory = new DefinitionFactory();
+        this.definitionFactory = new DefinitionFactory(this.compilerFactory);
     }
 
     createSourceFileFromText(filePath: string, sourceText: string) {

@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
-import {applyMixins} from "./../../utils";
 import {TsSourceFile, TsEnumDeclaration} from "./../../compiler";
+import {EnumStructure} from "./../../structures";
+import {applyMixins} from "./../../utils";
 import {BaseDefinition, BaseNodedDefinition} from "./../base";
 
 export class SourceFileDefinition extends BaseNodedDefinition<ts.SourceFile, TsSourceFile> {
@@ -9,10 +10,15 @@ export class SourceFileDefinition extends BaseNodedDefinition<ts.SourceFile, TsS
     }
 
     getEnums() {
-        return this.tsNode.getChildren().filter(c => c instanceof TsEnumDeclaration).map(c => this.factory.getEnum(c as any as TsEnumDeclaration));
+        return this.tsNode.getMainChildren().filter(c => c instanceof TsEnumDeclaration).map(c => this.factory.getEnum(c as any as TsEnumDeclaration));
     }
 
     getText() {
         return this.tsNode.getText();
+    }
+
+    addEnum(structure: EnumStructure) {
+        const tsEnumDeclaration = this.factory.getCompilerFactory().createEnumDeclaration(structure);
+        this.tsNode.addChild(tsEnumDeclaration);
     }
 }

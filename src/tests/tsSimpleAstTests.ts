@@ -9,6 +9,9 @@ describe(nameof(TsSimpleAst), () => {
             const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;");
             const enumDef = sourceFile.getEnums()[0];
             enumDef.setName("NewName");
+            /*sourceFile.addEnum({
+                name: "MyNewEnum"
+            });*/
             expect(sourceFile.getText()).to.equal("enum NewName {}\nlet myEnum: NewName;");
         });
     });
