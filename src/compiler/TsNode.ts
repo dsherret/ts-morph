@@ -23,24 +23,25 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     addChild(child: TsNode<ts.Node>) {
-        if (child.node.parent != null)
-            child.detatchParent();
-
+        this.ensureLastChildTextNewLine();
+        const sourceFile = this.getRequiredSourceFile();
+        const text = child.getText();
+        child.detatchParent();
+        child.offsetPositions(this.node.end);
         child.node.parent = this.node;
+        /*child.node.pos = this.node.end;
+        child.node.end = child.node.pos + text.length;*/
+        sourceFile.replaceText(this.node.end, this.node.end, text);
+
         const children = (this.node as any)._children as ts.Node[];
         if (children != null)
             children.push(child.node);
-        const statements = (this.node as any).statements as ts.Node[];
+        const statements = (this.node as any).statements as ts.Node[] | null;
         if (statements != null)
             statements.push(child.node);
-        const offset = child.node.end - child.node.pos;
-        this.node.end += offset;
 
-        const parent = this.getParent();
-        if (parent == null)
-            return;
-
-        parent.getChildrenAfter(this).forEach(nextParentChild => nextParentChild.offsetPositions(offset));
+        if (this.isSourceFile())
+            this.ensureLastChildTextNewLine();
     }
 
     detatchParent() {
@@ -48,6 +49,7 @@ export class TsNode<NodeType extends ts.Node> {
         if (parent == null)
             return;
 
+        const length = this.node.end - this.node.pos;
         parent.removeChild(this);
         this.node.pos = 0;
         this.node.end = length;
@@ -55,23 +57,29 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     removeChild(childToRemove: TsNode<ts.Node>) {
-        const topParent = this.getTopParent()!;
-        const pos = this.node.pos;
-        const end = this.node.end;
-        for (let child of this.getChildren()) {
-            if (childToRemove === child) {
-                const children = (this.node as any)._children as ts.Node[];
-                ArrayUtils.removeFirst(children, childToRemove.node);
-                const statements = (this.node as any).statements as ts.Node[];
-                ArrayUtils.removeFirst(statements, childToRemove.node);
-                return;
-            }
+        const tsSourceFile = this.getRequiredSourceFile();
+        function removeChildFrom(node: TsNode<ts.Node>) {
+            for (let child of node.getChildren()) {
+                if (childToRemove === child) {
+                    const children = (node.node as any)._children as ts.Node[];
+                    if (children != null)
+                        ArrayUtils.removeFirst(children, childToRemove.node);
+                    const statements = (node.node as any).statements as ts.Node[];
+                    if (statements != null)
+                        ArrayUtils.removeFirst(statements, childToRemove.node);
+                    return;
+                }
 
-            if (child.containsChildBasedOnPosition(childToRemove))
-                this.removeChild(childToRemove);
+                if (child.containsChildBasedOnPosition(childToRemove))
+                    removeChildFrom(child);
+            }
         }
 
-        topParent.replaceText(pos, end, "");
+        removeChildFrom(this);
+
+        const pos = childToRemove.node.pos;
+        const end = childToRemove.node.end;
+        tsSourceFile.replaceText(pos, end, "");
     }
 
     replaceText(replaceStart: number, replaceEnd: number, newText: string) {
@@ -93,7 +101,9 @@ export class TsNode<NodeType extends ts.Node> {
             this.node.end += difference;
         }
 
-        this.getChildren().forEach(child => child.replaceText(replaceStart, replaceEnd, newText));
+        for (let child of this.getChildren()) {
+            child.replaceText(replaceStart, replaceEnd, newText);
+        }
     }
 
     offsetPositions(offset: number) {
@@ -105,9 +115,8 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
-    getChildrenAfter(tsNode: TsNode<ts.Node>) {
+    *getChildrenAfter(tsNode: TsNode<ts.Node>) {
         // todo: optimize
-        const nextChildren: TsNode<ts.Node>[] = [];
         let foundChild = false;
 
         for (let child of this.getChildren()) {
@@ -116,14 +125,14 @@ export class TsNode<NodeType extends ts.Node> {
                 continue;
             }
 
-            nextChildren.push(child);
+            yield child;
         }
-
-        return nextChildren;
     }
 
-    getChildren() {
-        return this.node.getChildren().map(c => this.factory.getTsNodeFromNode(c));
+    *getChildren() {
+        for (let child of this.node.getChildren()) {
+            yield this.factory.getTsNodeFromNode(child);
+        }
     }
 
     getMainChildren() {
@@ -134,10 +143,12 @@ export class TsNode<NodeType extends ts.Node> {
         return childNodes;
     }
 
-    getAllChildren() {
-        const children = [...this.getChildren()];
-        children.map(c => c.getAllChildren()).forEach(c => children.push(...c));
-        return children;
+    *getAllChildren(): IterableIterator<TsNode<ts.Node>> {
+        for (let child of this.getChildren()) {
+            for (let childChild of child.getAllChildren()) {
+                yield childChild;
+            }
+        }
     }
 
     getStartPosition() {
@@ -148,43 +159,83 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node.end;
     }
 
-    getText() {
-        return this.node.getText();
+    getText(tsSourceFile?: TsSourceFile) {
+        if (tsSourceFile != null)
+            return this.node.getText(tsSourceFile.node);
+        else
+            return this.node.getText();
     }
 
     replaceCompilerNode(node: NodeType) {
         this.node = node;
     }
 
-    getSourceFile() {
+    getRequiredSourceFile() {
+        const sourceFile = this.getSourceFile();
+        if (sourceFile == null)
+            throw new Error("A source file or source file parent is required to do this operation.");
+        return sourceFile;
+    }
+
+    getSourceFile(): TsSourceFile | null {
         const topParent = this.getTopParent();
         return (topParent != null && topParent.isSourceFile() ? topParent : null) as TsSourceFile | null;
     }
 
+    *getAllParents() {
+        let parent = this.getParent();
+        while (parent != null) {
+            yield parent;
+            parent = parent.getParent();
+        }
+    }
+
     getTopParent() {
-        let parent = this as TsNode<ts.Node> | null;
+        let parent = this as TsNode<ts.Node>;
         let nextParent = parent!.getParent();
         while (nextParent != null) {
             parent = nextParent;
             nextParent = parent!.getParent();
         }
 
-        return (parent === this) ? null : parent;
+        return parent;
     }
 
     getParent() {
         return (this.node.parent == null) ? null : this.factory.getTsNodeFromNode(this.node.parent);
     }
 
-    ensureChildrenParentSet() {
-        const children = this.getChildren();
-        for (let child of children) {
-            child.getCompilerNode().parent = this.node;
-            child.ensureChildrenParentSet();
+    ensureLastChildTextNewLine() {
+        if (!this.isLastChildTextNewLine())
+            this.appendChildNewLine();
+    }
+
+    isLastChildTextNewLine() {
+        const sourceFile = this.getRequiredSourceFile();
+        const text = this.getText(sourceFile);
+        const newLineChar = this.factory.getLanguageService().getNewLine();
+        if (this.isSourceFile())
+            return text.endsWith(newLineChar);
+        else
+            throw new Error("Not implemented");
+    }
+
+    appendChildNewLine() {
+        this.appendChildText(this.factory.getLanguageService().getNewLine());
+    }
+
+    appendChildText(text: string) {
+        if (this.isSourceFile()) {
+            const sourceFile = this as TsSourceFile;
+            sourceFile.node.text += text;
+            sourceFile.node.end += text.length;
+        }
+        else {
+            throw new Error("Not implemented");
         }
     }
 
-    isSourceFile() {
+    isSourceFile() : this is TsSourceFile {
         return false;
     }
 

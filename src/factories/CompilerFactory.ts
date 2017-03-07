@@ -17,9 +17,9 @@ export class CompilerFactory {
     }
 
     createSourceFileFromText(filePath: string, sourceText: string) {
-        const sourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget());
+        const sourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
         const tsSourceFile = new compiler.TsSourceFile(this, sourceFile);
-        tsSourceFile.ensureChildrenParentSet();
+        //tsSourceFile.ensureChildrenParentSet();
         this.nodeCache.set(sourceFile, tsSourceFile);
         this.sourceFileCacheByFilePath.set(filePath, tsSourceFile);
         this.languageService.addSourceFile(tsSourceFile);
@@ -55,10 +55,16 @@ export class CompilerFactory {
     }
 
     createEnumDeclaration(structure: structures.EnumStructure) {
-        const decorators = [] as any[]; // todo
-        const modifiers = [] as any[]; // todo
-        const members = [] as any[]; // todo
-        const declaration = ts.createEnumDeclaration(decorators, modifiers, structure.name, members);
+        // todo: should not cache this source file in the factory
+        // todo: should make this easy to do with any object
+        const sourceFile = ts.createSourceFile("dummy.ts", `enum ${structure.name} {\n}\n`, this.getLanguageService().getScriptTarget(), true);
+        const declaration = ts.forEachChild(sourceFile, c => c) as ts.EnumDeclaration;
+        // fill the _children array of all the child nodes
+        function fillChildren(declaration: ts.Node) {
+            for (let child of declaration.getChildren())
+                fillChildren(child);
+        }
+        fillChildren(declaration);
         const tsEnumDeclaration = new compiler.TsEnumDeclaration(this, declaration);
         this.nodeCache.set(declaration, tsEnumDeclaration);
         return tsEnumDeclaration;

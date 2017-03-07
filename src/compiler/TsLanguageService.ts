@@ -25,7 +25,7 @@ export class TsLanguageService {
         let version = 0;
         const host: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,
-            getNewLine: () => "\n",
+            getNewLine: () => this.getNewLine(),
             getScriptFileNames: () => this.tsSourceFiles.map(s => s.getFileName()),
             getScriptVersion: fileName => {
                 return (version++).toString();
@@ -112,6 +112,18 @@ export class TsLanguageService {
 
     getScriptTarget() {
         return this.compilerOptions.target!;
+    }
+
+    getNewLine() {
+        switch (this.compilerOptions.newLine) {
+            case undefined:
+            case ts.NewLineKind.LineFeed:
+                return "\n";
+            case ts.NewLineKind.CarriageReturnLineFeed:
+                return "\r\n";
+            default:
+                throw new Error("Not implemented new line kind.");
+        }
     }
 
     getSourceFiles() {
