@@ -235,6 +235,33 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
+    /**
+     * On ts.Node objects there is a _children array that's used in various methods on the node.
+     * It's useful to fill this in certain circumstances.
+     */
+    fillUnderlyingChildrenArrays() {
+        function fillChildren(declaration: ts.Node) {
+            // calling getChildren() will fill the underlying _children array
+            for (let child of declaration.getChildren())
+                fillChildren(child);
+        }
+        fillChildren(this.node);
+    }
+
+    /**
+     * On ts.Node objects there is a _children array. It's useful to clear this for when it needs to be repopulated.
+     */
+    resetUnderlyingChildrenArrays() {
+        function clearChildren(declaration: ts.Node) {
+            for (let child of declaration.getChildren())
+                clearChildren(child);
+
+            (declaration as any)._children = undefined;
+        }
+
+        clearChildren(this.node);
+    }
+
     isSourceFile() : this is TsSourceFile {
         return false;
     }
