@@ -1,10 +1,14 @@
 ﻿import * as ts from "typescript";
-import {TsNode} from "./../common/TsNode";
+import {TsNode, TsIdentifier} from "./../common";
 
 type ExtensionType = TsNode<ts.Node & { name: ts.Identifier; }>;
 
+export interface TsNamedNode extends ExtensionType {
+    getNameNode(): TsIdentifier;
+}
+
 export function TsNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
-    return class extends Base {
+    return class extends Base implements TsNamedNode {
         getNameNode() {
             return this.factory.getIdentifier(this.node.name);
         }

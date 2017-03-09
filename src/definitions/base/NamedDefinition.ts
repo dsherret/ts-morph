@@ -1,9 +1,16 @@
 ﻿import * as ts from "typescript";
-import {TsNode} from "./../../compiler";
+import {TsNode, TsNamedNode} from "./../../compiler";
 import {BaseNodedDefinition} from "./BaseNodedDefinition";
 
-/*export function NamedDefinition<BC extends new(...args: any[]) => BaseNodedDefinition<ts.Node, TsNode<ts.Node>>>(Base: BC) {
-    return class extends Base {
+type ExtensionType = BaseNodedDefinition<ts.Node, TsNamedNode>;
+
+export interface NamedDefinition {
+    getName(): string;
+    setName(text: string): this;
+}
+
+export function NamedDefinition<T extends Constructor<ExtensionType>>(Base: T) {
+    return class extends Base implements NamedDefinition {
         getName() {
             return this.tsNode.getNameNode().getText();
         }
@@ -13,4 +20,4 @@ import {BaseNodedDefinition} from "./BaseNodedDefinition";
             return this;
         }
     }
-}*/
+}
