@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {Memoize, ArrayUtils} from "./../utils";
-import {CompilerFactory} from "./../factories";
-import {TsSourceFile} from "./TsSourceFile";
+import {Memoize, ArrayUtils} from "./../../utils";
+import {CompilerFactory} from "./../../factories";
+import {TsSourceFile} from "./../file";
 
 export class TsNode<NodeType extends ts.Node> {
     constructor(
@@ -264,9 +264,5 @@ export class TsNode<NodeType extends ts.Node> {
 
     isSourceFile() : this is TsSourceFile {
         return false;
-    }
-
-    private closest(search: (node: TsNode<ts.Node>) => boolean) {
-        // todo
     }
 }

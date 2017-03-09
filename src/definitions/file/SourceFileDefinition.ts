@@ -10,7 +10,9 @@ export class SourceFileDefinition extends BaseNodedDefinition<ts.SourceFile, TsS
     }
 
     getEnums() {
-        return this.tsNode.getMainChildren().filter(c => c instanceof TsEnumDeclaration).map(c => this.factory.getEnum(c as any as TsEnumDeclaration));
+        return this.tsNode.getMainChildren()
+            .filter(c => c instanceof TsEnumDeclaration)
+            .map(c => this.factory.getEnum(c as any as TsEnumDeclaration));
     }
 
     getText() {

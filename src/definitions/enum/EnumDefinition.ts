@@ -12,4 +12,7 @@ export class EnumDefinition extends BaseNodedDefinition<ts.EnumDeclaration, TsEn
         this.tsNode.getNameNode().rename(text);
         return this;
     }
+
+    addMember() {
+    }
 }

@@ -1,10 +1,9 @@
 ﻿import * as ts from "typescript";
 import * as fs from "fs";
-import {TsSourceFile} from "./TsSourceFile";
-import {TsNode} from "./TsNode";
-import {TsIdentifier} from "./TsIdentifier";
-import {CompilerFactory} from "./../factories";
-import {KeyValueCache} from "./../utils";
+import {CompilerFactory} from "./../../factories";
+import {KeyValueCache} from "./../../utils";
+import {TsSourceFile} from "./../file";
+import {TsNode, TsIdentifier} from "./../common";
 
 export interface SourceFileReplace {
     tsSourceFile: TsSourceFile;

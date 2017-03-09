@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../factories";
-import {TsNode} from "./TsNode";
 import * as path from "path";
+import {CompilerFactory} from "./../../factories";
+import {TsNode} from "./../common";
 
 export class TsSourceFile extends TsNode<ts.SourceFile> {
     getFileName() {

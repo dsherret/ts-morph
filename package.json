@@ -43,10 +43,9 @@
     "mocha": "^2.3.3",
     "ts-nameof": "^0.8.0",
     "tslint": "^3.13.0",
-    "typescript": "^2.1.4"
+    "typescript": "^2.3.0-dev.20170303"
   },
   "dependencies": {
-    "code-block-writer": "^4.1.0",
-    "typescript": "^2.3.0-dev.20170303"
+    "code-block-writer": "^4.1.0"
   }
 }
