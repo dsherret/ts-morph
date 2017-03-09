@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {TsSourceFile, TsEnumDeclaration} from "./../../compiler";
 import {EnumStructure} from "./../../structures";
-import {applyMixins} from "./../../utils";
 import {BaseDefinition, BaseNodedDefinition} from "./../base";
 
 export class SourceFileDefinition extends BaseNodedDefinition<ts.SourceFile, TsSourceFile> {
