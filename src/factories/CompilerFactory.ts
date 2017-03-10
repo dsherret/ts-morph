@@ -79,6 +79,8 @@ export class CompilerFactory {
     getTsNodeFromNode(node: ts.Node): compiler.TsNode<ts.Node> {
         if (node.kind === ts.SyntaxKind.EnumDeclaration)
             return this.getEnumDeclaration(node as ts.EnumDeclaration);
+        if (node.kind === ts.SyntaxKind.EnumMember)
+            return this.getEnumMemberDeclaration(node as ts.EnumMember);
         if (node.kind === ts.SyntaxKind.Identifier)
             return this.getIdentifier(node as ts.Identifier);
         if (node.kind === ts.SyntaxKind.SourceFile)
@@ -94,6 +96,15 @@ export class CompilerFactory {
      */
     getEnumDeclaration(enumDeclaration: ts.EnumDeclaration): compiler.TsEnumDeclaration {
         return this.nodeCache.getOrCreate<compiler.TsEnumDeclaration>(enumDeclaration, () => new compiler.TsEnumDeclaration(this, enumDeclaration));
+    }
+
+    /**
+     * Gets a wrapped enum member declaration from a compiler object.
+     * @param enumMemberDeclaration - Enum member declaration compiler object.
+     * @returns Wrapped enum member declaration.
+     */
+    getEnumMemberDeclaration(enumMemberDeclaration: ts.EnumMember): compiler.TsEnumMemberDeclaration {
+        return this.nodeCache.getOrCreate<compiler.TsEnumMemberDeclaration>(enumMemberDeclaration, () => new compiler.TsEnumMemberDeclaration(this, enumMemberDeclaration));
     }
 
     /**

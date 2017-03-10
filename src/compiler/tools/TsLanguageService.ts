@@ -4,6 +4,7 @@ import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
 import {TsSourceFile} from "./../file";
 import {TsNode, TsIdentifier} from "./../common";
+import {TsTypeChecker} from "./TsTypeChecker";
 
 export interface SourceFileReplace {
     tsSourceFile: TsSourceFile;
@@ -50,6 +51,19 @@ export class TsLanguageService {
         };
 
         this.languageService = ts.createLanguageService(host);
+    }
+
+    getCompilerLanguageService() {
+        return this.languageService;
+    }
+
+    /**
+     * Gets the language service's program's type checker.
+     */
+    getTypeChecker() {
+        // todo: create a TsProgram that this is found on instead.
+        const typeChecker = this.languageService.getProgram().getTypeChecker();
+        return new TsTypeChecker(typeChecker);
     }
 
     // todo: mark internal
@@ -99,10 +113,6 @@ export class TsLanguageService {
         }
 
         return replaces;
-    }
-
-    getCompilerLanguageService() {
-        return this.languageService;
     }
 
     addSourceFile(tsSourceFile: TsSourceFile) {

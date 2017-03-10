@@ -21,4 +21,8 @@ export class DefinitionFactory {
     getEnum(tsEnumDeclaration: compiler.TsEnumDeclaration) {
         return this.nodeCache.getOrCreate<definitions.EnumDefinition>(tsEnumDeclaration, () => new definitions.EnumDefinition(this, tsEnumDeclaration));
     }
+
+    getEnumMember(tsEnumMemberDeclaration: compiler.TsEnumMemberDeclaration) {
+        return this.nodeCache.getOrCreate<definitions.EnumMemberDefinition>(tsEnumMemberDeclaration, () => new definitions.EnumMemberDefinition(this, tsEnumMemberDeclaration));
+    }
 }
