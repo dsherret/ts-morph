@@ -1,10 +1,11 @@
 ﻿import * as ts from "typescript";
 import * as fs from "fs";
+import * as path from "path";
 import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
 import {TsSourceFile} from "./../file";
 import {TsNode, TsIdentifier} from "./../common";
-import {TsTypeChecker} from "./TsTypeChecker";
+import {TsProgram} from "./TsProgram";
 
 export interface SourceFileReplace {
     tsSourceFile: TsSourceFile;
@@ -19,11 +20,12 @@ export interface TextSpan {
 export class TsLanguageService {
     private readonly languageService: ts.LanguageService;
     private readonly tsSourceFiles: TsSourceFile[] = [];
+    private readonly compilerHost: ts.CompilerHost;
     private compilerFactory: CompilerFactory;
 
     constructor(private readonly compilerOptions: ts.CompilerOptions) {
         let version = 0;
-        const host: ts.LanguageServiceHost = {
+        const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,
             getNewLine: () => this.getNewLine(),
             getScriptFileNames: () => this.tsSourceFiles.map(s => s.getFileName()),
@@ -40,17 +42,37 @@ export class TsLanguageService {
                 console.log("READING");
                 return this.compilerFactory.getSourceFileFromFilePath(path)!.getText();
             },
-            fileExists: path => {
-                console.log("CHECKING FILE EXISTS");
-                return this.compilerFactory.getSourceFileFromFilePath(path) != null;
-            },
+            fileExists: path => this.compilerFactory.getSourceFileFromFilePath(path) != null,
             directoryExists: dirName => {
                 console.log(`Checking dir exists: ${dirName}`);
                 return true;
             }
         };
 
-        this.languageService = ts.createLanguageService(host);
+        this.compilerHost = {
+            getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
+                return this.compilerFactory.getSourceFileFromFilePath(fileName).getCompilerNode();
+            },
+            // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
+            // getDefaultLibLocation: (...) => {},
+            getDefaultLibFileName: (options: ts.CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
+            writeFile: () => {
+                console.log("ATTEMPT TO WRITE FILE");
+            },
+            getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
+            getDirectories: (path: string) => {
+                console.log("ATTEMPT TO GET DIRECTORIES");
+                return [];
+            },
+            fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
+            readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
+            getCanonicalFileName: (fileName: string) => path.normalize(fileName),
+            useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
+            getNewLine: () => languageServiceHost.getNewLine!(),
+            getEnvironmentVariable: (name: string) => process.env[name]
+        };
+
+        this.languageService = ts.createLanguageService(languageServiceHost);
     }
 
     getCompilerLanguageService() {
@@ -58,12 +80,10 @@ export class TsLanguageService {
     }
 
     /**
-     * Gets the language service's program's type checker.
+     * Gets the language service's program.
      */
-    getTypeChecker() {
-        // todo: create a TsProgram that this is found on instead.
-        const typeChecker = this.languageService.getProgram().getTypeChecker();
-        return new TsTypeChecker(typeChecker);
+    getProgram() {
+        return new TsProgram(this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
     }
 
     // todo: mark internal

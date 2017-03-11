@@ -15,6 +15,7 @@ describe(nameof(TsSimpleAst), () => {
             addedEnum.setName("MyOtherNewName");
             const enumMember = enumDef.getMembers()[0];
             enumMember.setName("myNewMemberName");
+            expect(enumMember.getValue()).to.equal(0);
             expect(sourceFile.getText()).to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\nenum MyOtherNewName {\n}\n");
         });
     });
