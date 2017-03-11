@@ -28,6 +28,6 @@ const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {}\nle
 const enumDef = sourceFile.getEnums()[0];
 enumDef.getName(); // "MyEnum"
 enumDef.setName("NewName");
-sourceFile.getText(); // "enum NewName {}\nlet myEnum: NewName;"
+sourceFile.getFullText(); // "enum NewName {}\nlet myEnum: NewName;"
 const sourceFileNode = sourceFile.getCompilerNode(); // underlying compiler node from the typescript AST
 ```

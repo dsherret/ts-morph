@@ -137,6 +137,9 @@ export class CompilerFactory {
         // todo: should make this easy to do with any object
         const sourceFile = this.createTempSourceFileFromText(`enum ${structure.name} {\n}\n`);
         const tsDeclaration = sourceFile.getMainChildren()[0] as compiler.TsEnumDeclaration;
+        for (let member of structure.members || []) {
+            tsDeclaration.addMember(member);
+        }
         tsDeclaration.fillUnderlyingChildrenArrays();
         this.addTsNodeToNodeCache(tsDeclaration);
         return tsDeclaration;

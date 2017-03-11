@@ -26,7 +26,7 @@ export class TsNode<NodeType extends ts.Node> {
     addChild(child: TsNode<ts.Node>) {
         this.ensureLastChildTextNewLine();
         const sourceFile = this.getRequiredSourceFile();
-        const text = child.getText();
+        const text = child.getFullText();
         child.detatchParent();
         child.offsetPositions(this.node.end);
         child.node.parent = this.node;
@@ -160,11 +160,11 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node.end;
     }
 
-    getText(tsSourceFile?: TsSourceFile) {
+    getFullText(tsSourceFile?: TsSourceFile) {
         if (tsSourceFile != null)
-            return this.node.getText(tsSourceFile.node);
+            return this.node.getFullText(tsSourceFile.node);
         else
-            return this.node.getText();
+            return this.node.getFullText();
     }
 
     replaceCompilerNode(node: NodeType) {
@@ -213,7 +213,7 @@ export class TsNode<NodeType extends ts.Node> {
 
     isLastChildTextNewLine() {
         const sourceFile = this.getRequiredSourceFile();
-        const text = this.getText(sourceFile);
+        const text = this.getFullText(sourceFile);
         const newLineChar = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile())
             return text.endsWith(newLineChar);
@@ -277,5 +277,58 @@ export class TsNode<NodeType extends ts.Node> {
 
     getSyntaxKindName() {
         return syntaxKindToName(this.node.kind);
+    }
+
+    /**
+     * Gets the indentation text.
+     * @param tsSourceFile - Optional source file.
+     */
+    getIndentationText(tsSourceFile = this.getRequiredSourceFile()) {
+        const sourceFileText = tsSourceFile.getFullText();
+        const startLinePos = this.getStartLinePos(tsSourceFile);
+        const startPosWithoutTrivia = this.getPosWithoutTrivia(tsSourceFile);
+        let text = "";
+
+        for (let i = startPosWithoutTrivia - 1; i >= startLinePos; i--) {
+            const currentChar = sourceFileText[i];
+            switch (currentChar) {
+                case " ":
+                case "\t":
+                    text = currentChar + text;
+                    break;
+                case "\n":
+                    return text;
+                default:
+                    text = "";
+            }
+        }
+
+        return text;
+    }
+
+    /**
+     * Gets the position of the start of the line that this node is on.
+     * @param tsSourceFile - Optional source file.
+     */
+    getStartLinePos(tsSourceFile = this.getRequiredSourceFile()) {
+        const sourceFileText = tsSourceFile.getFullText();
+        const startPos = this.getPosWithoutTrivia();
+
+        for (let i = startPos - 1; i >= 0; i--) {
+            const currentChar = sourceFileText.substr(i, 1);
+            if (currentChar === "\n")
+                return i + 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Gets the node.pos + leading trivia width.
+     * @param tsSourceFile - Optional source file.
+     */
+    getPosWithoutTrivia(tsSourceFile = this.getRequiredSourceFile()) {
+        const leadingTriviaWidth = this.node.getLeadingTriviaWidth(tsSourceFile.getCompilerNode());
+        return this.node.pos + leadingTriviaWidth;
     }
 }

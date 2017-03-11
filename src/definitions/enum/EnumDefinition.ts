@@ -4,8 +4,6 @@ import {BaseNodedDefinition, NamedDefinition} from "./../base";
 
 export class EnumDefinition extends NamedDefinition(BaseNodedDefinition)<ts.EnumDeclaration, TsEnumDeclaration> {
     getMembers() {
-        return this.tsNode.getMainChildren()
-            .filter(c => c instanceof TsEnumMemberDeclaration)
-            .map(m => this.factory.getEnumMember(m as TsEnumMemberDeclaration));
+        return this.tsNode.getMembers().map(m => this.factory.getEnumMember(m));
     }
 }

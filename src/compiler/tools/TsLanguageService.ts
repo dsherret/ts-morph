@@ -33,14 +33,14 @@ export class TsLanguageService {
                 return (version++).toString();
             },
             getScriptSnapshot: fileName => {
-                return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getText());
+                return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => "",
             getDefaultLibFileName: options => ts.getDefaultLibFilePath(compilerOptions),
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
                 console.log("READING");
-                return this.compilerFactory.getSourceFileFromFilePath(path)!.getText();
+                return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
             },
             fileExists: path => this.compilerFactory.getSourceFileFromFilePath(path) != null,
             directoryExists: dirName => {

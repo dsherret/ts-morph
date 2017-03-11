@@ -11,4 +11,12 @@ export class BaseNodedDefinition<T extends ts.Node, U extends TsNode<T>> extends
     getCompilerNode() {
         return this.tsNode.getCompilerNode();
     }
+
+    /**
+     * Gets the internal typescript wrapper of the node.
+     * @internal
+     */
+    getTsNode() {
+        return this.tsNode;
+    }
 }
