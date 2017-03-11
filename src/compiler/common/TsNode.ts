@@ -2,6 +2,7 @@
 import {Memoize, ArrayUtils} from "./../../utils";
 import {CompilerFactory} from "./../../factories";
 import {TsSourceFile} from "./../file";
+import {syntaxKindToName} from "./../utils";
 
 export class TsNode<NodeType extends ts.Node> {
     constructor(
@@ -217,7 +218,7 @@ export class TsNode<NodeType extends ts.Node> {
         if (this.isSourceFile())
             return text.endsWith(newLineChar);
         else
-            throw new Error("Not implemented");
+            throw this.getNotImplementedError();
     }
 
     appendChildNewLine() {
@@ -231,7 +232,7 @@ export class TsNode<NodeType extends ts.Node> {
             sourceFile.node.end += text.length;
         }
         else {
-            throw new Error("Not implemented");
+            throw this.getNotImplementedError();
         }
     }
 
@@ -264,5 +265,17 @@ export class TsNode<NodeType extends ts.Node> {
 
     isSourceFile() : this is TsSourceFile {
         return false;
+    }
+
+    getNotImplementedError() {
+        return new Error(this.getNotImplementedMessage());
+    }
+
+    getNotImplementedMessage() {
+        return `Not implemented feature for syntax kind '${this.getSyntaxKindName()}'.`;
+    }
+
+    getSyntaxKindName() {
+        return syntaxKindToName(this.node.kind);
     }
 }
