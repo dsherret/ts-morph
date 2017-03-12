@@ -5,7 +5,7 @@ import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node, Identifier} from "./../common";
-import {TsProgram} from "./TsProgram";
+import {Program} from "./Program";
 
 export interface SourceFileReplace {
     sourceFile: SourceFile;
@@ -17,7 +17,7 @@ export interface TextSpan {
     length: number;
 }
 
-export class TsLanguageService {
+export class LanguageService {
     private readonly languageService: ts.LanguageService;
     private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
@@ -83,7 +83,7 @@ export class TsLanguageService {
      * Gets the language service's program.
      */
     getProgram() {
-        return new TsProgram(this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
+        return new Program(this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
     }
 
     // todo: mark internal

@@ -1,23 +1,75 @@
-﻿import {expect} from "chai";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
 import {Node, EnumDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
-    describe(nameof<Node<any>>(n => n.insertText), () => {
-        describe("adding a source file child", () => {
-            const {sourceFile, firstChild} = getInfoFromText("    ");
-            sourceFile.insertText(2, "  enum MyEnum {}  ");
-            it("should update the source file text", () => {
-                expect(sourceFile.getFullText()).to.equal("    enum MyEnum {}    ");
-            });
+    describe(nameof<Node<any>>(n => n.getCompilerNode), () => {
+        it("should get the underlying compiler node", () => {
+            const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
+            // just compare that the texts are the same
+            expect(sourceFile.getFullText()).to.equal(sourceFile.getCompilerNode().getFullText());
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.getKind), () => {
+        it("should return the syntax kind", () => {
+            const {firstChild} = getInfoFromText("enum MyEnum {}");
+            expect(firstChild.getKind()).to.equal(ts.SyntaxKind.EnumDeclaration);
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.getKindName), () => {
+        it("should return the syntax kind name", () => {
+            const {firstChild} = getInfoFromText("enum MyEnum {}");
+            expect(firstChild.getKindName()).to.equal("EnumDeclaration");
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.containsRange), () => {
+        const {firstChild} = getInfoFromText("enum MyEnum {}");
+        it("should contain the range when equal to the pos and end", () => {
+            expect(firstChild.containsRange(firstChild.getPos(), firstChild.getEnd())).to.be.true;
         });
 
-        describe("adding a child", () => {
-            const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
-            sourceFile.insertText(13, "\n    myNewMember\n");
-            it("should update the source file text", () => {
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myNewMember\n}");
-            });
+        it("should contain the range when inside", () => {
+            expect(firstChild.containsRange(firstChild.getPos() + 1, firstChild.getEnd() - 1)).to.be.true;
+        });
+
+        it("should not contain the range when the position is outside", () => {
+            expect(firstChild.containsRange(firstChild.getPos() - 1, firstChild.getEnd())).to.be.false;
+        });
+
+        it("should not contain the range when the end is outside", () => {
+            expect(firstChild.containsRange(firstChild.getPos(), firstChild.getEnd() + 1)).to.be.false;
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.offsetPositions), () => {
+        const {sourceFile} = getInfoFromText("enum MyEnum {}");
+        const allNodes = [sourceFile, ...Array.from(sourceFile.getAllChildren())];
+
+        // easiest to just compare the sum of the positions
+        const originalStartPosSum = allNodes.map(n => n.getPos()).reduce((a, b) => a + b, 0);
+        const originalEndPosSum = allNodes.map(n => n.getEnd()).reduce((a, b) => a + b, 0);
+        it("should offset all the positions", () => {
+            sourceFile.offsetPositions(5);
+            const adjustedStartPosSum = allNodes.map(n => n.getPos() - 5).reduce((a, b) => a + b, 0);
+            const adjustedEndPosSum = allNodes.map(n => n.getEnd() - 5).reduce((a, b) => a + b, 0);
+            expect(adjustedStartPosSum).to.equal(originalStartPosSum);
+            expect(adjustedEndPosSum).to.equal(originalEndPosSum);
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.getFirstChildByKind), () => {
+        const {firstChild} = getInfoFromText("enum MyEnum {}");
+
+        it("should return the first node of the specified syntax kind", () => {
+            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getText()).to.equal("{");
+        });
+
+        it("should return null when the specified syntax kind doesn't exist", () => {
+            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.null;
         });
     });
 
@@ -44,13 +96,6 @@ describe(nameof(Node), () => {
         it("should return the not implemented message", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {}");
             expect(firstChild.getNotImplementedMessage()).to.equal("Not implemented feature for syntax kind 'EnumDeclaration'.");
-        });
-    });
-
-    describe(nameof<Node<any>>(n => n.getKindName), () => {
-        it("should return the syntax kind name", () => {
-            const {firstChild} = getInfoFromText("enum MyEnum {}");
-            expect(firstChild.getKindName()).to.equal("EnumDeclaration");
         });
     });
 

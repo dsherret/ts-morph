@@ -11,6 +11,9 @@ export class Node<NodeType extends ts.Node> {
     ) {
     }
 
+    /**
+     * Gets the underlying compiler node.
+     */
     getCompilerNode() {
         return this.node;
     }
@@ -22,75 +25,39 @@ export class Node<NodeType extends ts.Node> {
         return this.node.kind;
     }
 
-    containsChildBasedOnPosition(child: Node<ts.Node>) {
-        return this.containsRange(child.getPos(), child.getEnd());
+    /**
+     * Gets the syntax kind name.
+     */
+    getKindName() {
+        return syntaxKindToName(this.node.kind);
     }
 
-    containsRange(startPosition: number, endPosition: number) {
-        return this.getPos() <= startPosition && endPosition <= this.getEnd();
+    /**
+     * If the node contains the provided range (inclusive).
+     * @param pos - Start position.
+     * @param end - End position.
+     */
+    containsRange(pos: number, end: number) {
+        return this.getPos() <= pos && end <= this.getEnd();
     }
 
-    getOpenBraceToken() {
-        // todo: have kind passed in
+    /**
+     * Gets the first child by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildByKind(kind: ts.SyntaxKind) {
         for (let child of this.getChildren()) {
-            if (child.getKind() === ts.SyntaxKind.OpenBraceToken)
+            if (child.getKind() === kind)
                 return child;
         }
         return null;
     }
 
-    insertText(insertPos: number, newText: string) {
-        const sourceFile = this.getRequiredSourceFile();
-        const currentText = sourceFile.getFullText();
-        const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
-        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, sourceFile.getFileName());
-
-        // temp solution
-        function* wrapper() {
-            for (let value of Array.from(sourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
-                yield value;
-            }
-        }
-
-        // console.log(Array.from(sourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
-        // console.log(Array.from(tempSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
-        const currentFileChildIterator = wrapper();
-        const tempFileChildIterator = tempSourceFile.getAllChildren(tempSourceFile);
-        let currentChild = currentFileChildIterator.next().value;
-        let hasPassed = false;
-
-        for (let newChild of tempFileChildIterator) {
-            const newChildPos = newChild.getPos();
-            const newChildStart = newChild.getStart();
-
-            if (newChildPos <= insertPos && !hasPassed) {
-                if (newChild.getKind() !== currentChild.kind) {
-                    hasPassed = true;
-                    continue;
-                }
-
-                if (currentChild.pos !== newChild.getPos()) {
-                    throw new Error("Unexpected! Perhaps a syntax error was inserted.");
-                }
-
-                this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
-                currentChild = currentFileChildIterator.next().value;
-            }
-            else if (newChildStart >= insertPos + newText.length) {
-                const adjustedPos = newChildStart - newText.length;
-
-                if (currentChild.getStart() !== adjustedPos || currentChild.kind !== newChild.getKind()) {
-                    throw new Error("Unexpected! Perhaps a syntax error was inserted.");
-                }
-
-                this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
-                currentChild = currentFileChildIterator.next().value;
-            }
-        }
-
-        this.factory.replaceCompilerNode(sourceFile, tempSourceFile.getCompilerNode());
-    }
-
+    /**
+     * Offset this node's positions (pos and end) and all of its children by the given offset.
+     * @internal
+     * @param offset - Offset.
+     */
     offsetPositions(offset: number) {
         this.node.pos += offset;
         this.node.end += offset;
@@ -172,11 +139,20 @@ export class Node<NodeType extends ts.Node> {
         return this.node.end;
     }
 
+    /**
+     * Gets the text without leading trivia.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    getText(sourceFile?: SourceFile) {
+        return this.node.getText(Node.getCompilerSourceFile(sourceFile));
+    }
+
+    /**
+     * Gets the full text with leading trivia.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     getFullText(sourceFile?: SourceFile) {
-        if (sourceFile != null)
-            return this.node.getFullText(sourceFile.node);
-        else
-            return this.node.getFullText();
+        return this.node.getFullText(Node.getCompilerSourceFile(sourceFile));
     }
 
     replaceCompilerNode(compilerNode: NodeType) {
@@ -251,7 +227,7 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets the last token of this node. Usually this is a close brace.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to help improve performance.
      */
     getLastToken(sourceFile = this.getRequiredSourceFile()) {
         return this.factory.getNodeFromCompilerNode(this.node.getLastToken(sourceFile.getCompilerNode()));
@@ -306,15 +282,8 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
-     * Gets the syntax kind name.
-     */
-    getKindName() {
-        return syntaxKindToName(this.node.kind);
-    }
-
-    /**
      * Gets the indentation text.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to help improve performance.
      */
     getIndentationText(sourceFile = this.getRequiredSourceFile()) {
         const sourceFileText = sourceFile.getFullText();
@@ -341,7 +310,7 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets the position of the start of the line that this node is on.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to help improve performance.
      */
     getStartLinePos(sourceFile = this.getRequiredSourceFile()) {
         const sourceFileText = sourceFile.getFullText();
@@ -358,9 +327,13 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets the start without trivia.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to help improve performance.
      */
     getStart(sourceFile = this.getRequiredSourceFile()) {
         return this.node.getStart(sourceFile.getCompilerNode());
+    }
+
+    private static getCompilerSourceFile(sourceFile: SourceFile | undefined) {
+        return sourceFile != null ? sourceFile.getCompilerNode() : undefined;
     }
 }

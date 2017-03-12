@@ -1,1 +1,1 @@
-﻿export * from "./tools/TsLanguageService";
+﻿export * from "./tools/LanguageService";

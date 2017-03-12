@@ -17,7 +17,7 @@ export class EnumDeclaration extends NamedNode(Node)<ts.EnumDeclaration> {
         if (structure.value != null) memberText += ` = ${structure.value}`;
 
         // todo: have a getStandaloneParent method that gets a parent that can stand on its own for being thrown in a source file
-        this.getRequiredSourceFile().insertText(lastMember == null ? this.getOpenBraceToken()!.getEnd() : lastMember.getEnd(), memberText);
+        this.getRequiredSourceFile().insertText(lastMember == null ? this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getEnd() : lastMember.getEnd(), memberText);
     }
 
     getMembers() {

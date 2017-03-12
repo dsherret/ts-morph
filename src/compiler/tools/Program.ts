@@ -1,10 +1,10 @@
 ﻿import * as ts from "typescript";
-import {TsTypeChecker} from "./TsTypeChecker";
+import {TypeChecker} from "./TypeChecker";
 
 /**
  * Wrapper around Program.
  */
-export class TsProgram {
+export class Program {
     private readonly program: ts.Program;
 
     constructor(rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
@@ -15,6 +15,6 @@ export class TsProgram {
      * Get the program's type checker.
      */
     getTypeChecker() {
-        return new TsTypeChecker(this.program.getTypeChecker());
+        return new TypeChecker(this.program.getTypeChecker());
     }
 }

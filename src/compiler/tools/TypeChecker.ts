@@ -4,7 +4,7 @@ import {EnumMemberDeclaration} from "./../enum";
 /**
  * Wrapper around the TypeChecker.
  */
-export class TsTypeChecker {
+export class TypeChecker {
     constructor(private readonly typeChecker: ts.TypeChecker) {
     }
 

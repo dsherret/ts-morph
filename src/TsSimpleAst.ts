@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as path from "path";
-import {TsLanguageService} from "./compiler";
+import {LanguageService} from "./compiler";
 import {CompilerFactory} from "./factories";
 
 export interface Options {
@@ -10,13 +10,13 @@ export interface Options {
 
 export class TsSimpleAst {
     private readonly compilerOptions: ts.CompilerOptions;
-    private readonly languageService: TsLanguageService;
+    private readonly languageService: LanguageService;
     private readonly compilerFactory: CompilerFactory;
 
     constructor(options: Options = {}) {
         this.compilerOptions = options.compilerOptions || {};
         this.compilerOptions.target = this.compilerOptions.target || ts.ScriptTarget.Latest;
-        this.languageService = new TsLanguageService(this.compilerOptions);
+        this.languageService = new LanguageService(this.compilerOptions);
         this.compilerFactory = new CompilerFactory(this.languageService);
     }
 

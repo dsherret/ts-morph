@@ -16,7 +16,7 @@ export class CompilerFactory {
      * Initializes a new instance of CompilerFactory.
      * @param languageService - Language service.
      */
-    constructor(private readonly languageService: compiler.TsLanguageService) {
+    constructor(private readonly languageService: compiler.LanguageService) {
         languageService.setCompilerFactory(this);
     }
 
