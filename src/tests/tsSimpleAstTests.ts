@@ -1,5 +1,4 @@
 ﻿import {TsSimpleAst} from "./../TsSimpleAst";
-import {EnumDefinition} from "./../definitions";
 import {expect} from "chai";
 
 describe(nameof(TsSimpleAst), () => {
@@ -7,9 +6,9 @@ describe(nameof(TsSimpleAst), () => {
         it("", () => {
             const ast = new TsSimpleAst();
             const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
-            const enumDef = sourceFile.getEnums()[0];
+            const enumDef = sourceFile.getEnumDeclarations()[0];
             enumDef.setName("NewName");
-            const addedEnum = sourceFile.addEnum({
+            const addedEnum = sourceFile.addEnumDeclaration({
                 name: "MyNewEnum"
             });
             addedEnum.setName("MyOtherNewName");

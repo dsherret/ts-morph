@@ -18,6 +18,10 @@ export class TsSourceFile extends TsNode<ts.SourceFile> {
         return tsDeclaration;
     }
 
+    getEnumDeclarations() {
+        return this.getMainChildren().filter(c => c instanceof TsEnumDeclaration) as TsEnumDeclaration[];
+    }
+
     getFileName() {
         return this.node.fileName;
     }

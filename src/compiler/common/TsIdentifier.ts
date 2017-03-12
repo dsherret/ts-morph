@@ -6,7 +6,11 @@ export class TsIdentifier extends TsNode<ts.Identifier> {
         return this.node.text;
     }
 
-    rename(text: string) {
-        this.factory.getLanguageService().renameNode(this, text);
+    /**
+     * Renames an identifier.
+     * @param newName - New name of the identifier.
+     */
+    rename(newName: string) {
+        this.factory.getLanguageService().renameNode(this, newName);
     }
 }

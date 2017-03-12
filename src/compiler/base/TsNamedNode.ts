@@ -12,5 +12,14 @@ export function TsNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
         getNameNode() {
             return this.factory.getIdentifier(this.node.name);
         }
+
+        getName() {
+            return this.getNameNode().getText();
+        }
+
+        setName(newName: string) {
+            this.getNameNode().rename(newName);
+            return this;
+        }
     }
 }

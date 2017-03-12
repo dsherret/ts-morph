@@ -20,5 +20,14 @@ export function TsPropertyNamedNode<T extends Constructor<ExtensionType>>(Base: 
                     throw new Error(`Not implemented node kind '${syntaxKindToName(nameNode.kind)}'.`);
             }
         }
+
+        getName() {
+            return this.getNameNode().getText();
+        }
+
+        setName(text: string) {
+            this.getNameNode().rename(text);
+            return this;
+        }
     }
 }
