@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
-import {TsNode} from "./../common";
-import {TsPropertyNamedNode} from "./../base";
+import {Node} from "./../common";
+import {PropertyNamedNode} from "./../base";
 
-export class TsEnumMemberDeclaration extends TsPropertyNamedNode(TsNode)<ts.EnumMember> {
+export class EnumMemberDeclaration extends PropertyNamedNode(Node)<ts.EnumMember> {
     getValue() {
         return this.factory.getLanguageService().getProgram().getTypeChecker().getConstantValue(this);
     }

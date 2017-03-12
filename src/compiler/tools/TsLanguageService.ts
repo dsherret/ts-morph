@@ -3,12 +3,12 @@ import * as fs from "fs";
 import * as path from "path";
 import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
-import {TsSourceFile} from "./../file";
-import {TsNode, TsIdentifier} from "./../common";
+import {SourceFile} from "./../file";
+import {Node, Identifier} from "./../common";
 import {TsProgram} from "./TsProgram";
 
 export interface SourceFileReplace {
-    tsSourceFile: TsSourceFile;
+    sourceFile: SourceFile;
     textSpans: TextSpan[];
 }
 
@@ -19,7 +19,7 @@ export interface TextSpan {
 
 export class TsLanguageService {
     private readonly languageService: ts.LanguageService;
-    private readonly tsSourceFiles: TsSourceFile[] = [];
+    private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
     private compilerFactory: CompilerFactory;
 
@@ -28,7 +28,7 @@ export class TsLanguageService {
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,
             getNewLine: () => this.getNewLine(),
-            getScriptFileNames: () => this.tsSourceFiles.map(s => s.getFileName()),
+            getScriptFileNames: () => this.sourceFiles.map(s => s.getFileName()),
             getScriptVersion: fileName => {
                 return (version++).toString();
             },
@@ -94,28 +94,28 @@ export class TsLanguageService {
         this.compilerFactory = compilerFactory;
     }
 
-    renameNode(node: TsNode<ts.Node>, newName: string) {
+    renameNode(node: Node<ts.Node>, newName: string) {
         const renameReplaces = this.findRenameReplaces(node);
         for (let renameReplace of renameReplaces) {
             let difference = 0;
             for (let textSpan of renameReplace.textSpans) {
                 textSpan.start -= difference;
-                renameReplace.tsSourceFile.replaceText(textSpan.start, textSpan.start + textSpan.length, newName);
+                renameReplace.sourceFile.replaceText(textSpan.start, textSpan.start + textSpan.length, newName);
                 difference += textSpan.length - newName.length;
             }
         }
     }
 
-    findRenameReplaces(node: TsNode<ts.Node>): SourceFileReplace[] {
+    findRenameReplaces(node: Node<ts.Node>): SourceFileReplace[] {
         const sourceFile = node.getSourceFile();
         if (sourceFile == null)
             throw new Error("Node has no sourcefile");
 
-        const textSpansBySourceFile = new KeyValueCache<TsSourceFile, TextSpan[]>();
+        const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getStart(), false, false) || [];
         renameLocations.forEach(l => {
-            const tsSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
-            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(tsSourceFile, () => []);
+            const sourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
+            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(sourceFile, () => []);
             // todo: ensure this is sorted
             textSpans.push({
                 start: l.textSpan.start,
@@ -127,7 +127,7 @@ export class TsLanguageService {
 
         for (let entry of textSpansBySourceFile.getEntries()) {
             replaces.push({
-                tsSourceFile: entry[0],
+                sourceFile: entry[0],
                 textSpans: entry[1]
             });
         }
@@ -135,8 +135,8 @@ export class TsLanguageService {
         return replaces;
     }
 
-    addSourceFile(tsSourceFile: TsSourceFile) {
-        this.tsSourceFiles.push(tsSourceFile);
+    addSourceFile(sourceFile: SourceFile) {
+        this.sourceFiles.push(sourceFile);
     }
 
     getScriptTarget() {
@@ -156,6 +156,6 @@ export class TsLanguageService {
     }
 
     getSourceFiles() {
-        return this.tsSourceFiles;
+        return this.sourceFiles;
     }
 }

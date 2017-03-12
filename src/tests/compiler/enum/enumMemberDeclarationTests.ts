@@ -1,18 +1,18 @@
 ﻿import {expect} from "chai";
-import {TsEnumDeclaration, TsEnumMemberDeclaration} from "./../../../compiler";
+import {EnumDeclaration, EnumMemberDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
-    const obj = getInfoFromText<TsEnumDeclaration>(text);
-    const tsFirstEnumMember = obj.tsFirstChild.getMembers()[0];
-    return { ...obj, tsFirstEnumMember };
+    const obj = getInfoFromText<EnumDeclaration>(text);
+    const firstEnumMember = obj.firstChild.getMembers()[0];
+    return { ...obj, firstEnumMember };
 }
 
-describe(nameof(TsEnumMemberDeclaration), () => {
-    describe(nameof<TsEnumMemberDeclaration>(d => d.endsWithComma), () => {
+describe(nameof(EnumMemberDeclaration), () => {
+    describe(nameof<EnumMemberDeclaration>(d => d.endsWithComma), () => {
         function endsWithCommaTest(text: string, expected: boolean) {
-            const {tsFirstEnumMember} = getInfoFromTextWithFirstMember(text);
-            expect(tsFirstEnumMember.endsWithComma()).to.equal(expected);
+            const {firstEnumMember} = getInfoFromTextWithFirstMember(text);
+            expect(firstEnumMember.endsWithComma()).to.equal(expected);
         }
 
         it("should not end with a comma when not ends with one", () => {

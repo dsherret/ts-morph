@@ -1,2 +1,2 @@
-﻿export * from "./common/TsIdentifier";
-export * from "./common/TsNode";
+﻿export * from "./common/Identifier";
+export * from "./common/Node";

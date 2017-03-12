@@ -1,10 +1,10 @@
 ﻿import * as ts from "typescript";
 import {Memoize, ArrayUtils} from "./../../utils";
 import {CompilerFactory} from "./../../factories";
-import {TsSourceFile} from "./../file";
+import {SourceFile} from "./../file";
 import {syntaxKindToName} from "./../utils";
 
-export class TsNode<NodeType extends ts.Node> {
+export class Node<NodeType extends ts.Node> {
     constructor(
         protected readonly factory: CompilerFactory,
         protected node: NodeType
@@ -22,7 +22,7 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node.kind;
     }
 
-    containsChildBasedOnPosition(child: TsNode<ts.Node>) {
+    containsChildBasedOnPosition(child: Node<ts.Node>) {
         return this.containsRange(child.getPos(), child.getEnd());
     }
 
@@ -40,22 +40,22 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     insertText(insertPos: number, newText: string) {
-        const tsSourceFile = this.getRequiredSourceFile();
-        const currentText = tsSourceFile.getFullText();
+        const sourceFile = this.getRequiredSourceFile();
+        const currentText = sourceFile.getFullText();
         const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
-        const tsTempSourceFile = this.factory.createTempSourceFileFromText(newFileText, tsSourceFile.getFileName());
+        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, sourceFile.getFileName());
 
         // temp solution
         function* wrapper() {
-            for (let value of Array.from(tsSourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
+            for (let value of Array.from(sourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
                 yield value;
             }
         }
 
-        // console.log(Array.from(tsSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
-        // console.log(Array.from(tsTempSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        // console.log(Array.from(sourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        // console.log(Array.from(tempSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
         const currentFileChildIterator = wrapper();
-        const tempFileChildIterator = tsTempSourceFile.getAllChildren(tsTempSourceFile);
+        const tempFileChildIterator = tempSourceFile.getAllChildren(tempSourceFile);
         let currentChild = currentFileChildIterator.next().value;
         let hasPassed = false;
 
@@ -88,7 +88,7 @@ export class TsNode<NodeType extends ts.Node> {
             }
         }
 
-        this.factory.replaceCompilerNode(tsSourceFile, tsTempSourceFile.getCompilerNode());
+        this.factory.replaceCompilerNode(sourceFile, tempSourceFile.getCompilerNode());
     }
 
     offsetPositions(offset: number) {
@@ -123,45 +123,44 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
-    *getChildren(tsSourceFile = this.getRequiredSourceFile()): IterableIterator<TsNode<ts.Node>> {
-        for (let child of this.node.getChildren(tsSourceFile.getCompilerNode())) {
-            let tsChild = this.factory.getTsNodeFromNode(child);
-            yield tsChild;
+    *getChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node<ts.Node>> {
+        for (let compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
+            yield this.factory.getNodeFromCompilerNode(compilerChild);
         }
     }
 
     // todo: make this a flags enum option for getChildren
-    *getChildrenWithFlattenedSyntaxList(): IterableIterator<TsNode<ts.Node>> {
-        for (let child of this.node.getChildren()) {
-            let tsChild = this.factory.getTsNodeFromNode(child);
+    *getChildrenWithFlattenedSyntaxList(): IterableIterator<Node<ts.Node>> {
+        for (let compilerChild of this.node.getChildren()) {
+            let child = this.factory.getNodeFromCompilerNode(compilerChild);
 
             // flatten out syntax list
-            if (tsChild.getKind() === ts.SyntaxKind.SyntaxList) {
-                for (let syntaxChild of tsChild.getChildrenWithFlattenedSyntaxList()) {
+            if (child.getKind() === ts.SyntaxKind.SyntaxList) {
+                for (let syntaxChild of child.getChildrenWithFlattenedSyntaxList()) {
                     yield syntaxChild;
                 }
             }
             else {
-                yield tsChild;
+                yield child;
             }
         }
     }
 
     getMainChildren() {
-        const childNodes: TsNode<ts.Node>[] = [];
+        const childNodes: Node<ts.Node>[] = [];
         ts.forEachChild(this.node, childNode => {
-            childNodes.push(this.factory.getTsNodeFromNode(childNode));
+            childNodes.push(this.factory.getNodeFromCompilerNode(childNode));
         });
         return childNodes;
     }
 
-    *getAllChildren(tsSourceFile = this.getRequiredSourceFile()): IterableIterator<TsNode<ts.Node>> {
-        for (let child of this.node.getChildren(tsSourceFile.getCompilerNode())) {
-            let tsChild = this.factory.getTsNodeFromNode(child);
-            yield tsChild;
+    *getAllChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node<ts.Node>> {
+        for (let compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
+            let child = this.factory.getNodeFromCompilerNode(compilerChild);
+            yield child;
 
-            for (let tsChildChild of tsChild.getAllChildren(tsSourceFile))
-                yield tsChildChild;
+            for (let childChild of child.getAllChildren(sourceFile))
+                yield childChild;
         }
     }
 
@@ -173,15 +172,15 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node.end;
     }
 
-    getFullText(tsSourceFile?: TsSourceFile) {
-        if (tsSourceFile != null)
-            return this.node.getFullText(tsSourceFile.node);
+    getFullText(sourceFile?: SourceFile) {
+        if (sourceFile != null)
+            return this.node.getFullText(sourceFile.node);
         else
             return this.node.getFullText();
     }
 
-    replaceCompilerNode(node: NodeType) {
-        this.node = node;
+    replaceCompilerNode(compilerNode: NodeType) {
+        this.node = compilerNode;
     }
 
     getRequiredSourceFile() {
@@ -191,9 +190,9 @@ export class TsNode<NodeType extends ts.Node> {
         return sourceFile;
     }
 
-    getSourceFile(): TsSourceFile | null {
+    getSourceFile(): SourceFile | null {
         const topParent = this.getTopParent();
-        return (topParent != null && topParent.isSourceFile() ? topParent : null) as TsSourceFile | null;
+        return (topParent != null && topParent.isSourceFile() ? topParent : null) as SourceFile | null;
     }
 
     *getAllParents() {
@@ -205,7 +204,7 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     getTopParent() {
-        let parent = this as TsNode<ts.Node>;
+        let parent = this as Node<ts.Node>;
         let nextParent = parent!.getParent();
         while (nextParent != null) {
             parent = nextParent;
@@ -216,7 +215,7 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     getParent() {
-        return (this.node.parent == null) ? null : this.factory.getTsNodeFromNode(this.node.parent);
+        return (this.node.parent == null) ? null : this.factory.getNodeFromCompilerNode(this.node.parent);
     }
 
     ensureLastChildTextNewLine() {
@@ -237,25 +236,25 @@ export class TsNode<NodeType extends ts.Node> {
     appendChildNewLine() {
         const newLineText = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile()) {
-            const sourceFile = this as TsSourceFile;
+            const sourceFile = this as SourceFile;
             sourceFile.node.text += newLineText;
             sourceFile.node.end += newLineText.length;
         }
         else {
-            const tsSourceFile = this.getRequiredSourceFile();
-            const indentationText = this.getIndentationText(tsSourceFile);
-            const lastToken = this.getLastToken(tsSourceFile);
+            const sourceFile = this.getRequiredSourceFile();
+            const indentationText = this.getIndentationText(sourceFile);
+            const lastToken = this.getLastToken(sourceFile);
             const lastTokenPos = lastToken.getStart();
-            tsSourceFile.replaceText(lastTokenPos, lastTokenPos, newLineText + indentationText);
+            sourceFile.replaceText(lastTokenPos, lastTokenPos, newLineText + indentationText);
         }
     }
 
     /**
      * Gets the last token of this node. Usually this is a close brace.
-     * @param tsSourceFile - Optional source file.
+     * @param sourceFile - Optional source file.
      */
-    getLastToken(tsSourceFile = this.getRequiredSourceFile()) {
-        return this.factory.getTsNodeFromNode(this.node.getLastToken(tsSourceFile.getCompilerNode()));
+    getLastToken(sourceFile = this.getRequiredSourceFile()) {
+        return this.factory.getNodeFromCompilerNode(this.node.getLastToken(sourceFile.getCompilerNode()));
     }
 
     /**
@@ -288,7 +287,7 @@ export class TsNode<NodeType extends ts.Node> {
     /**
      * Gets if the current node is a source file.
      */
-    isSourceFile() : this is TsSourceFile {
+    isSourceFile() : this is SourceFile {
         return false;
     }
 
@@ -315,12 +314,12 @@ export class TsNode<NodeType extends ts.Node> {
 
     /**
      * Gets the indentation text.
-     * @param tsSourceFile - Optional source file.
+     * @param sourceFile - Optional source file.
      */
-    getIndentationText(tsSourceFile = this.getRequiredSourceFile()) {
-        const sourceFileText = tsSourceFile.getFullText();
-        const startLinePos = this.getStartLinePos(tsSourceFile);
-        const startPos = this.getStart(tsSourceFile);
+    getIndentationText(sourceFile = this.getRequiredSourceFile()) {
+        const sourceFileText = sourceFile.getFullText();
+        const startLinePos = this.getStartLinePos(sourceFile);
+        const startPos = this.getStart(sourceFile);
         let text = "";
 
         for (let i = startPos - 1; i >= startLinePos; i--) {
@@ -342,10 +341,10 @@ export class TsNode<NodeType extends ts.Node> {
 
     /**
      * Gets the position of the start of the line that this node is on.
-     * @param tsSourceFile - Optional source file.
+     * @param sourceFile - Optional source file.
      */
-    getStartLinePos(tsSourceFile = this.getRequiredSourceFile()) {
-        const sourceFileText = tsSourceFile.getFullText();
+    getStartLinePos(sourceFile = this.getRequiredSourceFile()) {
+        const sourceFileText = sourceFile.getFullText();
         const startPos = this.getStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
@@ -359,9 +358,9 @@ export class TsNode<NodeType extends ts.Node> {
 
     /**
      * Gets the start without trivia.
-     * @param tsSourceFile - Optional source file.
+     * @param sourceFile - Optional source file.
      */
-    getStart(tsSourceFile = this.getRequiredSourceFile()) {
-        return this.node.getStart(tsSourceFile.getCompilerNode());
+    getStart(sourceFile = this.getRequiredSourceFile()) {
+        return this.node.getStart(sourceFile.getCompilerNode());
     }
 }

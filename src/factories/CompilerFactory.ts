@@ -8,8 +8,8 @@ import {KeyValueCache, Logger} from "./../utils";
  * Factory for creating compiler wrappers.
  */
 export class CompilerFactory {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.TsSourceFile>();
-    private readonly nodeCache = new KeyValueCache<ts.Node, compiler.TsNode<ts.Node>>();
+    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
+    private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node<ts.Node>>();
     private readonly fileNameUsedForTempSourceFile = "tsSimpleAstTemporaryFile.ts";
 
     /**
@@ -34,12 +34,12 @@ export class CompilerFactory {
      * @param sourceText - Text to create the source file with.
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
-        const sourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
-        const tsSourceFile = new compiler.TsSourceFile(this, sourceFile);
-        this.nodeCache.set(sourceFile, tsSourceFile);
-        this.sourceFileCacheByFilePath.set(filePath, tsSourceFile);
-        this.languageService.addSourceFile(tsSourceFile);
-        return tsSourceFile;
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
+        const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
+        this.nodeCache.set(compilerSourceFile, sourceFile);
+        this.sourceFileCacheByFilePath.set(filePath, sourceFile);
+        this.languageService.addSourceFile(sourceFile);
+        return sourceFile;
     }
 
     /**
@@ -50,7 +50,7 @@ export class CompilerFactory {
      */
     createTempSourceFileFromText(sourceText: string, filePath = this.fileNameUsedForTempSourceFile) {
         const sourceFile = ts.createSourceFile(filePath, sourceText, this.getLanguageService().getScriptTarget(), true);
-        return new compiler.TsSourceFile(this, sourceFile);
+        return new compiler.SourceFile(this, sourceFile);
     }
 
     /**
@@ -77,17 +77,19 @@ export class CompilerFactory {
      * @param node - Node to get the wrapped object from.
      * @returns Wrapped source file.
      */
-    getTsNodeFromNode(node: ts.Node): compiler.TsNode<ts.Node> {
-        if (node.kind === ts.SyntaxKind.EnumDeclaration)
-            return this.getEnumDeclaration(node as ts.EnumDeclaration);
-        if (node.kind === ts.SyntaxKind.EnumMember)
-            return this.getEnumMemberDeclaration(node as ts.EnumMember);
-        if (node.kind === ts.SyntaxKind.Identifier)
-            return this.getIdentifier(node as ts.Identifier);
-        if (node.kind === ts.SyntaxKind.SourceFile)
-            return this.getSourceFile(node as ts.SourceFile);
-
-        return this.nodeCache.getOrCreate<compiler.TsNode<ts.Node>>(node, () => new compiler.TsNode(this, node));
+    getNodeFromCompilerNode(compilerNode: ts.Node): compiler.Node<ts.Node> {
+        switch (compilerNode.kind) {
+            case ts.SyntaxKind.EnumDeclaration:
+                return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
+            case ts.SyntaxKind.EnumMember:
+                return this.getEnumMemberDeclaration(compilerNode as ts.EnumMember);
+            case ts.SyntaxKind.Identifier:
+                return this.getIdentifier(compilerNode as ts.Identifier);
+            case ts.SyntaxKind.SourceFile:
+                return this.getSourceFile(compilerNode as ts.SourceFile);
+            default:
+                return this.nodeCache.getOrCreate<compiler.Node<ts.Node>>(compilerNode, () => new compiler.Node(this, compilerNode));
+        }
     }
 
     /**
@@ -95,8 +97,8 @@ export class CompilerFactory {
      * @param enumDeclaration - Enum declaration compiler object.
      * @returns Wrapped enum declaration.
      */
-    getEnumDeclaration(enumDeclaration: ts.EnumDeclaration): compiler.TsEnumDeclaration {
-        return this.nodeCache.getOrCreate<compiler.TsEnumDeclaration>(enumDeclaration, () => new compiler.TsEnumDeclaration(this, enumDeclaration));
+    getEnumDeclaration(enumDeclaration: ts.EnumDeclaration): compiler.EnumDeclaration {
+        return this.nodeCache.getOrCreate<compiler.EnumDeclaration>(enumDeclaration, () => new compiler.EnumDeclaration(this, enumDeclaration));
     }
 
     /**
@@ -104,8 +106,8 @@ export class CompilerFactory {
      * @param enumMemberDeclaration - Enum member declaration compiler object.
      * @returns Wrapped enum member declaration.
      */
-    getEnumMemberDeclaration(enumMemberDeclaration: ts.EnumMember): compiler.TsEnumMemberDeclaration {
-        return this.nodeCache.getOrCreate<compiler.TsEnumMemberDeclaration>(enumMemberDeclaration, () => new compiler.TsEnumMemberDeclaration(this, enumMemberDeclaration));
+    getEnumMemberDeclaration(enumMemberDeclaration: ts.EnumMember): compiler.EnumMemberDeclaration {
+        return this.nodeCache.getOrCreate<compiler.EnumMemberDeclaration>(enumMemberDeclaration, () => new compiler.EnumMemberDeclaration(this, enumMemberDeclaration));
     }
 
     /**
@@ -113,15 +115,15 @@ export class CompilerFactory {
      * @param sourceFile - Compiler source file.
      * @returns Wrapped source file.
      */
-    getSourceFile(sourceFile: ts.SourceFile): compiler.TsSourceFile {
+    getSourceFile(compilerSourceFile: ts.SourceFile): compiler.SourceFile {
         // don't use the cache for temporary source files
-        if (sourceFile.fileName === this.fileNameUsedForTempSourceFile)
-            return new compiler.TsSourceFile(this, sourceFile);
+        if (compilerSourceFile.fileName === this.fileNameUsedForTempSourceFile)
+            return new compiler.SourceFile(this, compilerSourceFile);
 
-        return this.nodeCache.getOrCreate<compiler.TsSourceFile>(sourceFile, () => {
-            const tsSourceFile = new compiler.TsSourceFile(this, sourceFile);
-            this.sourceFileCacheByFilePath.set(tsSourceFile.getFileName(), tsSourceFile);
-            return tsSourceFile;
+        return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
+            const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
+            this.sourceFileCacheByFilePath.set(sourceFile.getFileName(), sourceFile);
+            return sourceFile;
         });
     }
 
@@ -130,21 +132,17 @@ export class CompilerFactory {
      * @param identifier - Compiler identifier.
      * @returns Wrapped identifier.
      */
-    getIdentifier(identifier: ts.Identifier): compiler.TsIdentifier {
-        return this.nodeCache.getOrCreate<compiler.TsIdentifier>(identifier, () => new compiler.TsIdentifier(this, identifier));
+    getIdentifier(identifier: ts.Identifier): compiler.Identifier {
+        return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this, identifier));
     }
 
-    replaceCompilerNode(oldNode: ts.Node | compiler.TsNode<ts.Node>, newNode: ts.Node) {
-        const nodeToReplace = oldNode instanceof compiler.TsNode ? oldNode.getCompilerNode() : oldNode;
-        const tsNode = oldNode instanceof compiler.TsNode ? oldNode : this.nodeCache.get(oldNode);
+    replaceCompilerNode(oldNode: ts.Node | compiler.Node<ts.Node>, newNode: ts.Node) {
+        const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.getCompilerNode() : oldNode;
+        const node = oldNode instanceof compiler.Node ? oldNode : this.nodeCache.get(oldNode);
 
         this.nodeCache.replaceKey(nodeToReplace, newNode);
 
-        if (tsNode != null)
-            tsNode.replaceCompilerNode(newNode);
-    }
-
-    private addTsNodeToNodeCache(tsNode: compiler.TsNode<ts.Node>) {
-        this.nodeCache.set(tsNode.getCompilerNode(), tsNode);
+        if (node != null)
+            node.replaceCompilerNode(newNode);
     }
 }

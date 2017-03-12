@@ -1,2 +1,2 @@
-﻿export * from "./base/TsNamedNode";
-export * from "./base/TsPropertyNamedNode";
+﻿export * from "./base/NamedNode";
+export * from "./base/PropertyNamedNode";

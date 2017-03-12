@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {TsNode} from "./TsNode";
+import {Node} from "./Node";
 
-export class TsIdentifier extends TsNode<ts.Identifier> {
+export class Identifier extends Node<ts.Identifier> {
     getText() {
         return this.node.text;
     }

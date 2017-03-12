@@ -1,10 +1,10 @@
 ﻿import * as ts from "typescript";
 import * as structures from "./../../structures";
-import {TsNode} from "./../common";
-import {TsNamedNode} from "./../base";
-import {TsEnumMemberDeclaration} from "./TsEnumMemberDeclaration";
+import {Node} from "./../common";
+import {NamedNode} from "./../base";
+import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
 
-export class TsEnumDeclaration extends TsNamedNode(TsNode)<ts.EnumDeclaration> {
+export class EnumDeclaration extends NamedNode(Node)<ts.EnumDeclaration> {
     addMember(structure: structures.EnumMemberStructure) {
         const members = this.getMembers();
         const lastMember = members.length === 0 ? null : members[members.length - 1];
@@ -21,6 +21,6 @@ export class TsEnumDeclaration extends TsNamedNode(TsNode)<ts.EnumDeclaration> {
     }
 
     getMembers() {
-        return this.getMainChildren().filter(c => c instanceof TsEnumMemberDeclaration) as TsEnumMemberDeclaration[];
+        return this.getMainChildren().filter(c => c instanceof EnumMemberDeclaration) as EnumMemberDeclaration[];
     }
 }

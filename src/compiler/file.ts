@@ -1,1 +1,1 @@
-﻿export * from "./file/TsSourceFile";
+﻿export * from "./file/SourceFile";
