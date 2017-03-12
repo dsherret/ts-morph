@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as fs from "fs";
 import * as compiler from "./../compiler";
-import * as structures from "./../structures";
 import {KeyValueCache, Logger} from "./../utils";
 
 /**
@@ -79,14 +78,16 @@ export class CompilerFactory {
      */
     getNodeFromCompilerNode(compilerNode: ts.Node): compiler.Node<ts.Node> {
         switch (compilerNode.kind) {
+            case ts.SyntaxKind.SourceFile:
+                return this.getSourceFile(compilerNode as ts.SourceFile);
             case ts.SyntaxKind.EnumDeclaration:
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
             case ts.SyntaxKind.EnumMember:
                 return this.getEnumMemberDeclaration(compilerNode as ts.EnumMember);
             case ts.SyntaxKind.Identifier:
                 return this.getIdentifier(compilerNode as ts.Identifier);
-            case ts.SyntaxKind.SourceFile:
-                return this.getSourceFile(compilerNode as ts.SourceFile);
+            case ts.SyntaxKind.NumericLiteral:
+                return this.getExpression(compilerNode as ts.Expression);
             default:
                 return this.nodeCache.getOrCreate<compiler.Node<ts.Node>>(compilerNode, () => new compiler.Node(this, compilerNode));
         }
@@ -136,6 +137,20 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this, identifier));
     }
 
+    /**
+     * Gets a wrapped expression from a compiler expression.
+     * @param expression - Compiler expression.
+     * @returns Wrapped expression.
+     */
+    getExpression(expression: ts.Expression): compiler.Expression {
+        return this.nodeCache.getOrCreate<compiler.Expression>(expression, () => new compiler.Expression(this, expression));
+    }
+
+    /**
+     * Replaces a compiler node in the cache.
+     * @param oldNode - Old node to remove.
+     * @param newNode - New node to use.
+     */
     replaceCompilerNode(oldNode: ts.Node | compiler.Node<ts.Node>, newNode: ts.Node) {
         const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.getCompilerNode() : oldNode;
         const node = oldNode instanceof compiler.Node ? oldNode : this.nodeCache.get(oldNode);
@@ -144,5 +159,13 @@ export class CompilerFactory {
 
         if (node != null)
             node.replaceCompilerNode(newNode);
+    }
+
+    /**
+     * Removes a node from the cache.
+     * @param node - Node to remove.
+     */
+    removeNodeFromCache(node: compiler.Node<ts.Node>) {
+        this.nodeCache.removeByKey(node.getCompilerNode());
     }
 }

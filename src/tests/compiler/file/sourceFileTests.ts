@@ -1,12 +1,11 @@
-﻿import * as ts from "typescript";
-import {expect} from "chai";
-import {SourceFile, EnumDeclaration} from "./../../../compiler";
+﻿import {expect} from "chai";
+import {SourceFile} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.insertText), () => {
         describe("adding a source file child", () => {
-            const {sourceFile, firstChild} = getInfoFromText("    ");
+            const {sourceFile} = getInfoFromText("    ");
             sourceFile.insertText(2, "  enum MyEnum {}  ");
             it("should update the source file text", () => {
                 expect(sourceFile.getFullText()).to.equal("    enum MyEnum {}    ");
@@ -14,7 +13,7 @@ describe(nameof(SourceFile), () => {
         });
 
         describe("adding a child", () => {
-            const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
+            const {sourceFile} = getInfoFromText("enum MyEnum {}");
             sourceFile.insertText(13, "\n    myNewMember\n");
             it("should update the source file text", () => {
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myNewMember\n}");

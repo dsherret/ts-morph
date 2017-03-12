@@ -36,4 +36,8 @@ export class KeyValueCache<T, U> {
         this.cacheItems.delete(key);
         this.cacheItems.set(newKey, value);
     }
+
+    removeByKey(key: T) {
+        this.cacheItems.delete(key);
+    }
 }

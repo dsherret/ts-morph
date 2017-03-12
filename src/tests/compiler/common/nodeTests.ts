@@ -69,7 +69,7 @@ describe(nameof(Node), () => {
         });
 
         it("should return null when the specified syntax kind doesn't exist", () => {
-            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.null;
+            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.undefined;
         });
     });
 

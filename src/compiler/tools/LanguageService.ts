@@ -1,10 +1,9 @@
 ﻿import * as ts from "typescript";
-import * as fs from "fs";
 import * as path from "path";
 import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
 import {SourceFile} from "./../file";
-import {Node, Identifier} from "./../common";
+import {Node} from "./../common";
 import {Program} from "./Program";
 
 export interface SourceFileReplace {
@@ -107,15 +106,13 @@ export class LanguageService {
     }
 
     findRenameReplaces(node: Node<ts.Node>): SourceFileReplace[] {
-        const sourceFile = node.getSourceFile();
-        if (sourceFile == null)
-            throw new Error("Node has no sourcefile");
-
+        const sourceFile = node.getRequiredSourceFile();
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getStart(), false, false) || [];
+
         renameLocations.forEach(l => {
-            const sourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
-            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(sourceFile, () => []);
+            const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
+            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(replaceSourceFile, () => []);
             // todo: ensure this is sorted
             textSpans.push({
                 start: l.textSpan.start,

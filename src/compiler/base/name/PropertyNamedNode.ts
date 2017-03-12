@@ -1,11 +1,13 @@
 ﻿import * as ts from "typescript";
-import {Node, Identifier} from "./../common";
-import {syntaxKindToName} from "./../utils";
+import {Node, Identifier} from "./../../common";
+import {syntaxKindToName} from "./../../utils";
 
 type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
 
 export interface PropertyNamedNode extends ExtensionType {
     getNameNode(): Identifier;
+    getName(): string;
+    setName(text: string): this;
 }
 
 export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
@@ -29,5 +31,5 @@ export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T)
             this.getNameNode().rename(text);
             return this;
         }
-    }
+    };
 }

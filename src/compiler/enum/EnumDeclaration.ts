@@ -14,10 +14,15 @@ export class EnumDeclaration extends NamedNode(Node)<ts.EnumDeclaration> {
 
         if (shouldAddComma) memberText += ",";
         memberText += `\n${indentationText}    ${structure.name}`; // todo: Indentation should be retreived from somewhere
-        if (structure.value != null) memberText += ` = ${structure.value}`;
 
         // todo: have a getStandaloneParent method that gets a parent that can stand on its own for being thrown in a source file
         this.getRequiredSourceFile().insertText(lastMember == null ? this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getEnd() : lastMember.getEnd(), memberText);
+
+        const newMembers = this.getMembers();
+        const declaration = newMembers[newMembers.length - 1] as EnumMemberDeclaration;
+        if (structure.value != null)
+            declaration.setInitializer(structure.value.toString());
+        return declaration;
     }
 
     getMembers() {

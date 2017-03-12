@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import {Memoize, ArrayUtils} from "./../../utils";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {syntaxKindToName} from "./../utils";
@@ -50,7 +49,7 @@ export class Node<NodeType extends ts.Node> {
             if (child.getKind() === kind)
                 return child;
         }
-        return null;
+        return undefined;
     }
 
     /**
@@ -67,9 +66,33 @@ export class Node<NodeType extends ts.Node> {
         }
     }
 
+    getPreviousSibling() {
+        let previousSibling: Node<ts.Node> | undefined;
+
+        for (let sibling of this.getSiblingsBefore()) {
+            previousSibling = sibling;
+        }
+
+        return previousSibling;
+    }
+
     getNextSibling() {
         const nextResult = this.getSiblingsAfter().next();
         return nextResult.done ? null : nextResult.value;
+    }
+
+    *getSiblingsBefore() {
+        const parent = this.getParent();
+
+        if (parent == null)
+            return;
+
+        for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
+            if (child === this)
+                return;
+
+            yield child;
+        }
     }
 
     *getSiblingsAfter() {
@@ -263,7 +286,7 @@ export class Node<NodeType extends ts.Node> {
     /**
      * Gets if the current node is a source file.
      */
-    isSourceFile() : this is SourceFile {
+    isSourceFile(): this is SourceFile {
         return false;
     }
 

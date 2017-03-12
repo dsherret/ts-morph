@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as path from "path";
 import {LanguageService} from "./compiler";
 import {CompilerFactory} from "./factories";
 

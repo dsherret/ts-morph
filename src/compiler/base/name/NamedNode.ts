@@ -1,10 +1,12 @@
 ﻿import * as ts from "typescript";
-import {Node, Identifier} from "./../common";
+import {Node, Identifier} from "./../../common";
 
 type ExtensionType = Node<ts.Node & { name: ts.Identifier; }>;
 
 export interface NamedNode extends ExtensionType {
     getNameNode(): Identifier;
+    getName(): string;
+    setName(newName: string): this;
 }
 
 export function NamedNode<T extends Constructor<ExtensionType>>(Base: T) {
@@ -21,5 +23,5 @@ export function NamedNode<T extends Constructor<ExtensionType>>(Base: T) {
             this.getNameNode().rename(newName);
             return this;
         }
-    }
+    };
 }
