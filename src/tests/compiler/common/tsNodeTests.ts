@@ -47,10 +47,10 @@ describe(nameof(TsNode), () => {
         });
     });
 
-    describe(nameof<TsNode<any>>(n => n.getSyntaxKindName), () => {
+    describe(nameof<TsNode<any>>(n => n.getKindName), () => {
         it("should return the syntax kind name", () => {
             const {tsFirstChild} = getInfoFromText("enum MyEnum {}");
-            expect(tsFirstChild.getSyntaxKindName()).to.equal("EnumDeclaration");
+            expect(tsFirstChild.getKindName()).to.equal("EnumDeclaration");
         });
     });
 

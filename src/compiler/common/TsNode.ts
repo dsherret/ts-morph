@@ -39,30 +39,6 @@ export class TsNode<NodeType extends ts.Node> {
         return null;
     }
 
-    replaceText(replaceStart: number, replaceEnd: number, newText: string) {
-        // todo: optimize
-        const currentStart = this.node.pos;
-        const difference = newText.length - (replaceEnd - replaceStart);
-
-        if (this.containsRange(replaceStart, replaceEnd)) {
-            const text = (this.node as any).text as string | undefined;
-            if (text != null) {
-                const relativeStart = replaceStart - currentStart;
-                const relativeEnd = replaceEnd - currentStart;
-                (this.node as any).text = text.substring(0, relativeStart) + newText + text.substring(relativeEnd);
-            }
-            this.node.end += difference;
-        }
-        else if (currentStart > replaceStart) {
-            this.node.pos += difference;
-            this.node.end += difference;
-        }
-
-        for (let child of this.getChildren()) {
-            child.replaceText(replaceStart, replaceEnd, newText);
-        }
-    }
-
     insertText(insertPos: number, newText: string) {
         const tsSourceFile = this.getRequiredSourceFile();
         const currentText = tsSourceFile.getFullText();
@@ -76,8 +52,8 @@ export class TsNode<NodeType extends ts.Node> {
             }
         }
 
-        // console.log(Array.from(tsSourceFile.getAllChildren()).map(t => t.getSyntaxKindName() + ":" + t.getPos() + ":" + t.getStart()));
-        // console.log(Array.from(tsTempSourceFile.getAllChildren()).map(t => t.getSyntaxKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        // console.log(Array.from(tsSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        // console.log(Array.from(tsTempSourceFile.getAllChildren()).map(t => t.getKindName() + ":" + t.getPos() + ":" + t.getStart()));
         const currentFileChildIterator = wrapper();
         const tempFileChildIterator = tsTempSourceFile.getAllChildren(tsTempSourceFile);
         let currentChild = currentFileChildIterator.next().value;
@@ -137,7 +113,7 @@ export class TsNode<NodeType extends ts.Node> {
         if (parent == null)
             return;
 
-        for (let child of parent.getChildren()) {
+        for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (!foundChild) {
                 foundChild = child === this;
                 continue;
@@ -147,13 +123,21 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
-    *getChildren(): IterableIterator<TsNode<ts.Node>> {
+    *getChildren(tsSourceFile = this.getRequiredSourceFile()): IterableIterator<TsNode<ts.Node>> {
+        for (let child of this.node.getChildren(tsSourceFile.getCompilerNode())) {
+            let tsChild = this.factory.getTsNodeFromNode(child);
+            yield tsChild;
+        }
+    }
+
+    // todo: make this a flags enum option for getChildren
+    *getChildrenWithFlattenedSyntaxList(): IterableIterator<TsNode<ts.Node>> {
         for (let child of this.node.getChildren()) {
             let tsChild = this.factory.getTsNodeFromNode(child);
 
             // flatten out syntax list
             if (tsChild.getKind() === ts.SyntaxKind.SyntaxList) {
-                for (let syntaxChild of tsChild.getChildren()) {
+                for (let syntaxChild of tsChild.getChildrenWithFlattenedSyntaxList()) {
                     yield syntaxChild;
                 }
             }
@@ -319,13 +303,13 @@ export class TsNode<NodeType extends ts.Node> {
      * Gets a message to say when a feature is not implemented for this node.
      */
     getNotImplementedMessage() {
-        return `Not implemented feature for syntax kind '${this.getSyntaxKindName()}'.`;
+        return `Not implemented feature for syntax kind '${this.getKindName()}'.`;
     }
 
     /**
      * Gets the syntax kind name.
      */
-    getSyntaxKindName() {
+    getKindName() {
         return syntaxKindToName(this.node.kind);
     }
 

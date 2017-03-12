@@ -8,10 +8,10 @@ describe(nameof(TsSimpleAst), () => {
             const ast = new TsSimpleAst();
             const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
+            enumDef.setName("NewName");
             const addedEnum = sourceFile.addEnum({
                 name: "MyNewEnum"
             });
-            enumDef.setName("NewName"); // todo: why doesn't this work when it's before addEnum? (probably some positions are wrong)
             addedEnum.setName("MyOtherNewName");
             const enumMember = enumDef.getMembers()[0];
             enumMember.setName("myNewMemberName");
