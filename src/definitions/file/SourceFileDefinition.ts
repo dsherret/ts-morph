@@ -19,8 +19,6 @@ export class SourceFileDefinition extends BaseNodedDefinition<ts.SourceFile, TsS
     }
 
     addEnum(structure: EnumStructure) {
-        const tsEnumDeclaration = this.factory.getCompilerFactory().createEnumDeclaration(structure);
-        this.tsNode.addChild(tsEnumDeclaration);
-        return this.factory.getEnum(tsEnumDeclaration);
+        return this.factory.getEnum(this.tsNode.addEnumDeclaration(structure));
     }
 }

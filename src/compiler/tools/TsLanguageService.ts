@@ -112,7 +112,7 @@ export class TsLanguageService {
             throw new Error("Node has no sourcefile");
 
         const textSpansBySourceFile = new KeyValueCache<TsSourceFile, TextSpan[]>();
-        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getEndPosition(), false, false) || [];
+        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getStart(), false, false) || [];
         renameLocations.forEach(l => {
             const tsSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
             const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(tsSourceFile, () => []);

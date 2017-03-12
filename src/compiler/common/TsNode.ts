@@ -15,72 +15,28 @@ export class TsNode<NodeType extends ts.Node> {
         return this.node;
     }
 
+    /**
+     * Gets the syntax kind.
+     */
+    getKind() {
+        return this.node.kind;
+    }
+
     containsChildBasedOnPosition(child: TsNode<ts.Node>) {
-        return this.containsRange(child.getStartPosition(), child.getEndPosition());
+        return this.containsRange(child.getPos(), child.getEnd());
     }
 
     containsRange(startPosition: number, endPosition: number) {
-        return this.getStartPosition() <= startPosition && endPosition <= this.getEndPosition();
+        return this.getPos() <= startPosition && endPosition <= this.getEnd();
     }
 
-    addChild(child: TsNode<ts.Node>) {
-        this.ensureLastChildTextNewLine();
-        const sourceFile = this.getRequiredSourceFile();
-        const text = child.getFullText();
-        child.detatchParent();
-        child.offsetPositions(this.node.end);
-        child.node.parent = this.node;
-        /*child.node.pos = this.node.end;
-        child.node.end = child.node.pos + text.length;*/
-        sourceFile.replaceText(this.node.end, this.node.end, text);
-
-        const children = (this.node as any)._children as ts.Node[];
-        if (children != null)
-            children.push(child.node);
-        const statements = (this.node as any).statements as ts.Node[] | null;
-        if (statements != null)
-            statements.push(child.node);
-
-        if (this.isSourceFile())
-            this.ensureLastChildTextNewLine();
-    }
-
-    detatchParent() {
-        const parent = this.getParent();
-        if (parent == null)
-            return;
-
-        const length = this.node.end - this.node.pos;
-        parent.removeChild(this);
-        this.node.pos = 0;
-        this.node.end = length;
-        this.node.parent = undefined;
-    }
-
-    removeChild(childToRemove: TsNode<ts.Node>) {
-        const tsSourceFile = this.getRequiredSourceFile();
-        function removeChildFrom(node: TsNode<ts.Node>) {
-            for (let child of node.getChildren()) {
-                if (childToRemove === child) {
-                    const children = (node.node as any)._children as ts.Node[];
-                    if (children != null)
-                        ArrayUtils.removeFirst(children, childToRemove.node);
-                    const statements = (node.node as any).statements as ts.Node[];
-                    if (statements != null)
-                        ArrayUtils.removeFirst(statements, childToRemove.node);
-                    return;
-                }
-
-                if (child.containsChildBasedOnPosition(childToRemove))
-                    removeChildFrom(child);
-            }
+    getOpenBraceToken() {
+        // todo: have kind passed in
+        for (let child of this.getChildren()) {
+            if (child.getKind() === ts.SyntaxKind.OpenBraceToken)
+                return child;
         }
-
-        removeChildFrom(this);
-
-        const pos = childToRemove.node.pos;
-        const end = childToRemove.node.end;
-        tsSourceFile.replaceText(pos, end, "");
+        return null;
     }
 
     replaceText(replaceStart: number, replaceEnd: number, newText: string) {
@@ -107,6 +63,58 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
+    insertText(insertPos: number, newText: string) {
+        const tsSourceFile = this.getRequiredSourceFile();
+        const currentText = tsSourceFile.getFullText();
+        const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
+        const tsTempSourceFile = this.factory.createTempSourceFileFromText(newFileText, tsSourceFile.getFileName());
+
+        // temp solution
+        function* wrapper() {
+            for (let value of Array.from(tsSourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
+                yield value;
+            }
+        }
+
+        // console.log(Array.from(tsSourceFile.getAllChildren()).map(t => t.getSyntaxKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        // console.log(Array.from(tsTempSourceFile.getAllChildren()).map(t => t.getSyntaxKindName() + ":" + t.getPos() + ":" + t.getStart()));
+        const currentFileChildIterator = wrapper();
+        const tempFileChildIterator = tsTempSourceFile.getAllChildren(tsTempSourceFile);
+        let currentChild = currentFileChildIterator.next().value;
+        let hasPassed = false;
+
+        for (let newChild of tempFileChildIterator) {
+            const newChildPos = newChild.getPos();
+            const newChildStart = newChild.getStart();
+
+            if (newChildPos <= insertPos && !hasPassed) {
+                if (newChild.getKind() !== currentChild.kind) {
+                    hasPassed = true;
+                    continue;
+                }
+
+                if (currentChild.pos !== newChild.getPos()) {
+                    throw new Error("Unexpected! Perhaps a syntax error was inserted.");
+                }
+
+                this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
+                currentChild = currentFileChildIterator.next().value;
+            }
+            else if (newChildStart >= insertPos + newText.length) {
+                const adjustedPos = newChildStart - newText.length;
+
+                if (currentChild.getStart() !== adjustedPos || currentChild.kind !== newChild.getKind()) {
+                    throw new Error("Unexpected! Perhaps a syntax error was inserted.");
+                }
+
+                this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
+                currentChild = currentFileChildIterator.next().value;
+            }
+        }
+
+        this.factory.replaceCompilerNode(tsSourceFile, tsTempSourceFile.getCompilerNode());
+    }
+
     offsetPositions(offset: number) {
         this.node.pos += offset;
         this.node.end += offset;
@@ -116,13 +124,22 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
-    *getChildrenAfter(tsNode: TsNode<ts.Node>) {
+    getNextSibling() {
+        const nextResult = this.getSiblingsAfter().next();
+        return nextResult.done ? null : nextResult.value;
+    }
+
+    *getSiblingsAfter() {
         // todo: optimize
         let foundChild = false;
+        const parent = this.getParent();
 
-        for (let child of this.getChildren()) {
+        if (parent == null)
+            return;
+
+        for (let child of parent.getChildren()) {
             if (!foundChild) {
-                foundChild = child === tsNode;
+                foundChild = child === this;
                 continue;
             }
 
@@ -130,9 +147,19 @@ export class TsNode<NodeType extends ts.Node> {
         }
     }
 
-    *getChildren() {
+    *getChildren(): IterableIterator<TsNode<ts.Node>> {
         for (let child of this.node.getChildren()) {
-            yield this.factory.getTsNodeFromNode(child);
+            let tsChild = this.factory.getTsNodeFromNode(child);
+
+            // flatten out syntax list
+            if (tsChild.getKind() === ts.SyntaxKind.SyntaxList) {
+                for (let syntaxChild of tsChild.getChildren()) {
+                    yield syntaxChild;
+                }
+            }
+            else {
+                yield tsChild;
+            }
         }
     }
 
@@ -144,19 +171,21 @@ export class TsNode<NodeType extends ts.Node> {
         return childNodes;
     }
 
-    *getAllChildren(): IterableIterator<TsNode<ts.Node>> {
-        for (let child of this.getChildren()) {
-            for (let childChild of child.getAllChildren()) {
-                yield childChild;
-            }
+    *getAllChildren(tsSourceFile = this.getRequiredSourceFile()): IterableIterator<TsNode<ts.Node>> {
+        for (let child of this.node.getChildren(tsSourceFile.getCompilerNode())) {
+            let tsChild = this.factory.getTsNodeFromNode(child);
+            yield tsChild;
+
+            for (let tsChildChild of tsChild.getAllChildren(tsSourceFile))
+                yield tsChildChild;
         }
     }
 
-    getStartPosition() {
+    getPos() {
         return this.node.pos;
     }
 
-    getEndPosition() {
+    getEnd() {
         return this.node.end;
     }
 
@@ -222,18 +251,27 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     appendChildNewLine() {
-        this.appendChildText(this.factory.getLanguageService().getNewLine());
-    }
-
-    appendChildText(text: string) {
+        const newLineText = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile()) {
             const sourceFile = this as TsSourceFile;
-            sourceFile.node.text += text;
-            sourceFile.node.end += text.length;
+            sourceFile.node.text += newLineText;
+            sourceFile.node.end += newLineText.length;
         }
         else {
-            throw this.getNotImplementedError();
+            const tsSourceFile = this.getRequiredSourceFile();
+            const indentationText = this.getIndentationText(tsSourceFile);
+            const lastToken = this.getLastToken(tsSourceFile);
+            const lastTokenPos = lastToken.getStart();
+            tsSourceFile.replaceText(lastTokenPos, lastTokenPos, newLineText + indentationText);
         }
+    }
+
+    /**
+     * Gets the last token of this node. Usually this is a close brace.
+     * @param tsSourceFile - Optional source file.
+     */
+    getLastToken(tsSourceFile = this.getRequiredSourceFile()) {
+        return this.factory.getTsNodeFromNode(this.node.getLastToken(tsSourceFile.getCompilerNode()));
     }
 
     /**
@@ -263,18 +301,30 @@ export class TsNode<NodeType extends ts.Node> {
         clearChildren(this.node);
     }
 
+    /**
+     * Gets if the current node is a source file.
+     */
     isSourceFile() : this is TsSourceFile {
         return false;
     }
 
+    /**
+     * Gets an error to throw when a feature is not implemented for this node.
+     */
     getNotImplementedError() {
         return new Error(this.getNotImplementedMessage());
     }
 
+    /**
+     * Gets a message to say when a feature is not implemented for this node.
+     */
     getNotImplementedMessage() {
         return `Not implemented feature for syntax kind '${this.getSyntaxKindName()}'.`;
     }
 
+    /**
+     * Gets the syntax kind name.
+     */
     getSyntaxKindName() {
         return syntaxKindToName(this.node.kind);
     }
@@ -286,10 +336,10 @@ export class TsNode<NodeType extends ts.Node> {
     getIndentationText(tsSourceFile = this.getRequiredSourceFile()) {
         const sourceFileText = tsSourceFile.getFullText();
         const startLinePos = this.getStartLinePos(tsSourceFile);
-        const startPosWithoutTrivia = this.getPosWithoutTrivia(tsSourceFile);
+        const startPos = this.getStart(tsSourceFile);
         let text = "";
 
-        for (let i = startPosWithoutTrivia - 1; i >= startLinePos; i--) {
+        for (let i = startPos - 1; i >= startLinePos; i--) {
             const currentChar = sourceFileText[i];
             switch (currentChar) {
                 case " ":
@@ -312,7 +362,7 @@ export class TsNode<NodeType extends ts.Node> {
      */
     getStartLinePos(tsSourceFile = this.getRequiredSourceFile()) {
         const sourceFileText = tsSourceFile.getFullText();
-        const startPos = this.getPosWithoutTrivia();
+        const startPos = this.getStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
             const currentChar = sourceFileText.substr(i, 1);
@@ -324,11 +374,10 @@ export class TsNode<NodeType extends ts.Node> {
     }
 
     /**
-     * Gets the node.pos + leading trivia width.
+     * Gets the start without trivia.
      * @param tsSourceFile - Optional source file.
      */
-    getPosWithoutTrivia(tsSourceFile = this.getRequiredSourceFile()) {
-        const leadingTriviaWidth = this.node.getLeadingTriviaWidth(tsSourceFile.getCompilerNode());
-        return this.node.pos + leadingTriviaWidth;
+    getStart(tsSourceFile = this.getRequiredSourceFile()) {
+        return this.node.getStart(tsSourceFile.getCompilerNode());
     }
 }

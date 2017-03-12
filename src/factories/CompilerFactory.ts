@@ -45,10 +45,11 @@ export class CompilerFactory {
     /**
      * Creates a temporary source file that won't be cached or added to the language service.
      * @param sourceText - Text to create the source file with.
+     * @param filePath - File path to use.
      * @returns Wrapped source file.
      */
-    createTempSourceFileFromText(sourceText: string) {
-        const sourceFile = ts.createSourceFile(this.fileNameUsedForTempSourceFile, sourceText, this.getLanguageService().getScriptTarget(), true);
+    createTempSourceFileFromText(sourceText: string, filePath = this.fileNameUsedForTempSourceFile) {
+        const sourceFile = ts.createSourceFile(filePath, sourceText, this.getLanguageService().getScriptTarget(), true);
         return new compiler.TsSourceFile(this, sourceFile);
     }
 
@@ -133,21 +134,14 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<compiler.TsIdentifier>(identifier, () => new compiler.TsIdentifier(this, identifier));
     }
 
-    createEnumDeclaration(structure: structures.EnumStructure) {
-        // todo: should make this easy to do with any object
-        const sourceFile = this.createTempSourceFileFromText(`enum ${structure.name} {\n}\n`);
-        const tsDeclaration = sourceFile.getMainChildren()[0] as compiler.TsEnumDeclaration;
-        for (let member of structure.members || []) {
-            tsDeclaration.addMember(member);
-        }
-        tsDeclaration.fillUnderlyingChildrenArrays();
-        this.addTsNodeToNodeCache(tsDeclaration);
-        return tsDeclaration;
-    }
+    replaceCompilerNode(oldNode: ts.Node | compiler.TsNode<ts.Node>, newNode: ts.Node) {
+        const nodeToReplace = oldNode instanceof compiler.TsNode ? oldNode.getCompilerNode() : oldNode;
+        const tsNode = oldNode instanceof compiler.TsNode ? oldNode : this.nodeCache.get(oldNode);
 
-    replaceIdentifier(wrapper: compiler.TsIdentifier, newIdentifier: ts.Identifier) {
-        this.nodeCache.replaceKey(wrapper.getCompilerNode(), newIdentifier);
-        wrapper.replaceCompilerNode(newIdentifier);
+        this.nodeCache.replaceKey(nodeToReplace, newNode);
+
+        if (tsNode != null)
+            tsNode.replaceCompilerNode(newNode);
     }
 
     private addTsNodeToNodeCache(tsNode: compiler.TsNode<ts.Node>) {
