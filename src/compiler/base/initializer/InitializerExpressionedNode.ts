@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../../errors";
 import {Node, Expression} from "./../../common";
 
 type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
@@ -35,6 +36,7 @@ export function InitializerExpressionedNode<T extends Constructor<ExtensionType>
                 return this;
             const previousSibling = initializer.getPreviousSibling();
 
+            /* istanbul ignore if */
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
                 throw this.getNotImplementedError();
 
@@ -47,6 +49,8 @@ export function InitializerExpressionedNode<T extends Constructor<ExtensionType>
          * @param text - New text to set for the initializer.
          */
         setInitializer(text: string) {
+            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+
             if (this.hasInitializer())
                 this.removeInitializer();
 

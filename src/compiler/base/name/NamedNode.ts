@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
 type ExtensionType = Node<ts.Node & { name: ts.Identifier; }>;
@@ -20,6 +21,7 @@ export function NamedNode<T extends Constructor<ExtensionType>>(Base: T) {
         }
 
         setName(newName: string) {
+            errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
             this.getNameNode().rename(newName);
             return this;
         }

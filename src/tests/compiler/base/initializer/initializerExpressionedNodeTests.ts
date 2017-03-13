@@ -85,6 +85,38 @@ describe(nameof(InitializerExpressionedNode), () => {
             });
         });
 
+        describe("having initializer and setting to empty string", () => {
+            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+            const sourceFile = member.getRequiredSourceFile();
+            it("should remove the initializer", () => {
+                expect(() => member.setInitializer("")).to.throw;
+            });
+        });
+
+        describe("having initializer and setting to whitespace string", () => {
+            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+            const sourceFile = member.getRequiredSourceFile();
+            it("should remove the initializer", () => {
+                expect(() => member.setInitializer("    ")).to.throw;
+            });
+        });
+
+        describe("having initializer and setting to null", () => {
+            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+            const sourceFile = member.getRequiredSourceFile();
+            it("should throw", () => {
+                expect(() => member.setInitializer(null as any)).to.throw;
+            });
+        });
+
+        describe("having initializer and setting to a different type", () => {
+            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+            const sourceFile = member.getRequiredSourceFile();
+            it("should throw", () => {
+                expect(() => member.setInitializer(1 as any)).to.throw;
+            });
+        });
+
         describe("not having initializer", () => {
             const member = getMemberWithoutInitializer();
             const sourceFile = member.getRequiredSourceFile();

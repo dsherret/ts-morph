@@ -46,6 +46,7 @@ export class SourceFile extends Node<ts.SourceFile> {
         const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFileName());
 
         this.replaceNodesFromNewSourceFile(insertPos, insertPos + newText.length, newText.length, tempSourceFile, []);
+        return this;
     }
 
     /**
@@ -53,15 +54,20 @@ export class SourceFile extends Node<ts.SourceFile> {
      * @internal
      * @param nodes - Nodes to remove.
      */
-    removeNodes(...nodes: Node<ts.Node>[]) {
-        this.ensureNodePositionsContiguous(nodes);
-        const removeRangeStart = nodes[0].getPos();
-        const removeRangeEnd = nodes[nodes.length - 1].getEnd();
+    removeNodes(...nodes: (Node<ts.Node> | undefined)[]) {
+        const nonNullNodes = nodes.filter(n => n != null) as Node<ts.Node>[];
+        if (nonNullNodes.length === 0)
+            return this;
+
+        this.ensureNodePositionsContiguous(nonNullNodes);
+        const removeRangeStart = nonNullNodes[0].getPos();
+        const removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
         const currentText = this.getFullText();
         const newFileText = currentText.substring(0, removeRangeStart) + currentText.substring(removeRangeEnd);
         const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFileName());
 
-        this.replaceNodesFromNewSourceFile(removeRangeStart, removeRangeStart, removeRangeStart - removeRangeEnd, tempSourceFile, nodes);
+        this.replaceNodesFromNewSourceFile(removeRangeStart, removeRangeStart, removeRangeStart - removeRangeEnd, tempSourceFile, nonNullNodes);
+        return this;
     }
 
     /**
@@ -82,7 +88,12 @@ export class SourceFile extends Node<ts.SourceFile> {
             }
         }
 
-        const compilerNodesBeingRemoved = nodesBeingRemoved.map(n => n.getCompilerNode());
+        const allNodesBeingRemoved = [...nodesBeingRemoved];
+        nodesBeingRemoved.forEach(n => {
+            allNodesBeingRemoved.push(...Array.from(n.getAllChildren()));
+        });
+        const compilerNodesBeingRemoved = allNodesBeingRemoved.map(n => n.getCompilerNode());
+
         const currentFileChildIterator = wrapper();
         const tempFileChildIterator = tempSourceFile.getAllChildren(tempSourceFile);
         let currentChild = currentFileChildIterator.next().value;
@@ -104,7 +115,7 @@ export class SourceFile extends Node<ts.SourceFile> {
                 }
 
                 if (currentChild.pos !== newChild.getPos()) {
-                    throw new Error(`Unexpected! Perhaps a syntax error was inserted.`);
+                    throw new Error(`Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).`);
                 }
 
                 this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
@@ -114,7 +125,7 @@ export class SourceFile extends Node<ts.SourceFile> {
                 const adjustedPos = newChildStart - differenceLength;
 
                 if (currentChild.getStart() !== adjustedPos || currentChild.kind !== newChild.getKind()) {
-                    throw new Error(`Unexpected! Perhaps a syntax error was inserted.`);
+                    throw new Error(`Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).`);
                 }
 
                 this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
@@ -124,7 +135,7 @@ export class SourceFile extends Node<ts.SourceFile> {
 
         this.factory.replaceCompilerNode(sourceFile, tempSourceFile.getCompilerNode());
 
-        for (let nodeBeingRemoved of nodesBeingRemoved) {
+        for (let nodeBeingRemoved of allNodesBeingRemoved) {
             this.factory.removeNodeFromCache(nodeBeingRemoved);
         }
     }

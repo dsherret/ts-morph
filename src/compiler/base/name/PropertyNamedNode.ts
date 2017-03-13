@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
-import {syntaxKindToName} from "./../../utils";
 
 type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
 
@@ -18,8 +18,9 @@ export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T)
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:
                     return this.factory.getIdentifier(compilerNameNode);
+                /* istanbul ignore next */
                 default:
-                    throw new Error(`Not implemented node kind '${syntaxKindToName(compilerNameNode.kind)}'.`);
+                    throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);
             }
         }
 

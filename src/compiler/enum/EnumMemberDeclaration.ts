@@ -3,6 +3,9 @@ import {Node} from "./../common";
 import {PropertyNamedNode, InitializerExpressionedNode} from "./../base";
 
 export class EnumMemberDeclaration extends InitializerExpressionedNode(PropertyNamedNode(Node))<ts.EnumMember> {
+    /**
+     * Gets the constant value of the enum.
+     */
     getValue() {
         return this.factory.getLanguageService().getProgram().getTypeChecker().getConstantValue(this);
     }
@@ -11,10 +14,26 @@ export class EnumMemberDeclaration extends InitializerExpressionedNode(PropertyN
      * Gets if this enum member ends with a comma.
      */
     endsWithComma() {
-        const nextSibling = this.getNextSibling();
-        if (nextSibling == null)
-            return false;
+        return this.getFollowingComma() != null;
+    }
 
-        return nextSibling.getKind() === ts.SyntaxKind.CommaToken;
+    /**
+     * Removes this enum member and returns the parent.
+     */
+    remove() {
+        const parent = this.getParent();
+        this.getRequiredSourceFile().removeNodes(this, this.getFollowingComma());
+        return parent;
+    }
+
+    /**
+     * Gets the following comma node if it exists.
+     */
+    getFollowingComma() {
+        const nextSibling = this.getNextSibling();
+        if (nextSibling == null || nextSibling.getKind() !== ts.SyntaxKind.CommaToken)
+            return undefined;
+
+        return nextSibling;
     }
 }

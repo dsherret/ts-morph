@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
-import {syntaxKindToName} from "./../utils";
 
 export class Node<NodeType extends ts.Node> {
     constructor(
@@ -28,7 +28,7 @@ export class Node<NodeType extends ts.Node> {
      * Gets the syntax kind name.
      */
     getKindName() {
-        return syntaxKindToName(this.node.kind);
+        return ts.SyntaxKind[this.node.kind];
     }
 
     /**
@@ -78,7 +78,7 @@ export class Node<NodeType extends ts.Node> {
 
     getNextSibling() {
         const nextResult = this.getSiblingsAfter().next();
-        return nextResult.done ? null : nextResult.value;
+        return nextResult.done ? undefined : nextResult.value;
     }
 
     *getSiblingsBefore() {
@@ -294,7 +294,7 @@ export class Node<NodeType extends ts.Node> {
      * Gets an error to throw when a feature is not implemented for this node.
      */
     getNotImplementedError() {
-        return new Error(this.getNotImplementedMessage());
+        return errors.getNotImplementedForSyntaxKindError(this.getKind());
     }
 
     /**
@@ -329,6 +329,14 @@ export class Node<NodeType extends ts.Node> {
         }
 
         return text;
+    }
+
+    /**
+     * Gets the next indentation level text.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    getChildIndentationText(sourceFile = this.getRequiredSourceFile()) {
+        return this.getIndentationText(sourceFile) + "    "; // todo: should get number of spaces/tabs from somewhere
     }
 
     /**

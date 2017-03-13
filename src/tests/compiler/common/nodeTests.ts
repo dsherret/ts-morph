@@ -92,13 +92,6 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getNotImplementedMessage), () => {
-        it("should return the not implemented message", () => {
-            const {firstChild} = getInfoFromText("enum MyEnum {}");
-            expect(firstChild.getNotImplementedMessage()).to.equal("Not implemented feature for syntax kind 'EnumDeclaration'.");
-        });
-    });
-
     describe(nameof<Node<any>>(n => n.getIndentationText), () => {
         it("should return a blank string when it's at the start of the file", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {\n}\n");

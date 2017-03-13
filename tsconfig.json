@@ -12,6 +12,7 @@
         "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
+        "stripInternal": true,
         "typeRoots": [ "node_modules/@types/" ],
         "types": [ "node", "mocha" ]
     },
