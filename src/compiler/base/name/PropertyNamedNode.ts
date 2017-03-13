@@ -29,6 +29,7 @@ export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T)
         }
 
         setName(text: string) {
+            errors.throwIfNotStringOrWhitespace(text);
             this.getNameNode().rename(text);
             return this;
         }

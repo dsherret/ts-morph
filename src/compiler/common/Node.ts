@@ -194,14 +194,6 @@ export class Node<NodeType extends ts.Node> {
         return (topParent != null && topParent.isSourceFile() ? topParent : null) as SourceFile | null;
     }
 
-    *getAllParents() {
-        let parent = this.getParent();
-        while (parent != null) {
-            yield parent;
-            parent = parent.getParent();
-        }
-    }
-
     getTopParent() {
         let parent = this as Node<ts.Node>;
         let nextParent = parent!.getParent();
@@ -226,6 +218,7 @@ export class Node<NodeType extends ts.Node> {
         const sourceFile = this.getRequiredSourceFile();
         const text = this.getFullText(sourceFile);
         const newLineChar = this.factory.getLanguageService().getNewLine();
+        /* istanbul ignore else */
         if (this.isSourceFile())
             return text.endsWith(newLineChar);
         else
@@ -295,13 +288,6 @@ export class Node<NodeType extends ts.Node> {
      */
     getNotImplementedError() {
         return errors.getNotImplementedForSyntaxKindError(this.getKind());
-    }
-
-    /**
-     * Gets a message to say when a feature is not implemented for this node.
-     */
-    getNotImplementedMessage() {
-        return `Not implemented feature for syntax kind '${this.getKindName()}'.`;
     }
 
     /**

@@ -5,8 +5,8 @@ import {getInfoFromText} from "./../../testHelpers";
 describe(nameof(NamedNode), () => {
     describe(nameof<NamedNode>(n => n.setName), () => {
         function throwTest(text: any) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
-            expect(() => firstChild.setName(text)).to.throw;
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            expect(() => firstChild.setName(text)).to.throw();
         }
 
         it("should set the name and rename any referenced nodes", () => {
