@@ -21,6 +21,13 @@ export class SourceFile extends StatementedNode(Node)<ts.SourceFile> {
     }
 
     /**
+     * Gets if this is a declaration file.
+     */
+    isDeclarationFile() {
+        return this.node.isDeclarationFile;
+    }
+
+    /**
      * Inserts text at a given position. Will reconstruct the underlying source file.
      * @internal
      * @param insertPos - Insert position.
