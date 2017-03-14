@@ -2,7 +2,7 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-type ExtensionType = Node<ts.Node & { name: ts.Identifier; }>;
+type ExtensionType = Node<ts.Node & { name: ts.Identifier; }>; // todo: make name optional
 
 export interface NamedNode extends ExtensionType {
     getNameNode(): Identifier;

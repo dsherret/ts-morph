@@ -2,16 +2,18 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
+// todo: consolidate these named classes somehow
 
-export interface PropertyNamedNode extends ExtensionType {
+type ExtensionType = Node<ts.VariableDeclaration>;
+
+export interface BindingNamedNode extends ExtensionType {
     getNameNode(): Identifier;
     getName(): string;
     setName(text: string): this;
 }
 
-export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
-    return class extends Base implements PropertyNamedNode {
+export function BindingNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
+    return class extends Base implements BindingNamedNode {
         getNameNode() {
             const compilerNameNode = this.node.name;
 

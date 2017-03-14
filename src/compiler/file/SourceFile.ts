@@ -3,24 +3,10 @@ import * as path from "path";
 import * as structures from "./../../structures";
 import {Node} from "./../common";
 import {EnumDeclaration} from "./../enum";
+import {VariableDeclarationList} from "./../variable";
+import {StatementedNode} from "./../statement";
 
-export class SourceFile extends Node<ts.SourceFile> {
-    addEnumDeclaration(structure: structures.EnumStructure) {
-        this.ensureLastChildTextNewLine();
-        const text = `enum ${structure.name} {\n}\n`;
-        this.insertText(this.getEnd(), text);
-        const mainChildren = this.getMainChildren();
-        const declaration = mainChildren[mainChildren.length - 2] as EnumDeclaration;
-        for (let member of structure.members || []) {
-            declaration.addMember(member);
-        }
-        return declaration;
-    }
-
-    getEnumDeclarations() {
-        return this.getMainChildren().filter(c => c instanceof EnumDeclaration) as EnumDeclaration[];
-    }
-
+export class SourceFile extends StatementedNode(Node)<ts.SourceFile> {
     getFileName() {
         return this.node.fileName;
     }
