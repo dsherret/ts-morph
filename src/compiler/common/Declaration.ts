@@ -2,5 +2,6 @@
 import {Node} from "./Node";
 import {DeclarationNamedNode} from "./../base";
 
-export class Declaration<T extends ts.Declaration> extends DeclarationNamedNode(Node)<T> {
+export const DeclarationBase = DeclarationNamedNode(Node);
+export class Declaration<T extends ts.Declaration> extends DeclarationBase<T> {
 }

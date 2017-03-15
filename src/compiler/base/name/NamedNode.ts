@@ -2,15 +2,15 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-type ExtensionType = Node<ts.Node & { name: ts.Identifier; }>; // todo: make name optional
+export type NamedNodeExtensionType = Node<ts.Node & { name: ts.Identifier; }>; // todo: make name optional
 
-export interface NamedNode extends ExtensionType {
+export interface NamedNode extends NamedNodeExtensionType {
     getNameNode(): Identifier;
     getName(): string;
     setName(newName: string): this;
 }
 
-export function NamedNode<T extends Constructor<ExtensionType>>(Base: T) {
+export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
     return class extends Base implements NamedNode {
         getNameNode() {
             return this.factory.getIdentifier(this.node.name);

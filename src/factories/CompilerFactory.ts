@@ -5,6 +5,7 @@ import {KeyValueCache, Logger} from "./../utils";
 
 /**
  * Factory for creating compiler wrappers.
+ * @internal
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
@@ -56,7 +57,7 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    getSourceFileFromFilePath(filePath: string) {
+    getSourceFileFromFilePath(filePath: string): compiler.SourceFile {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             Logger.log(`Loading file: ${filePath}`);

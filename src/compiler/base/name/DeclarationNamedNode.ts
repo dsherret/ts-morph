@@ -5,15 +5,15 @@ import {Node, Identifier} from "./../../common";
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
 
-type ExtensionType = Node<ts.Declaration>;
+export type DeclarationNamedNodeExtensionType = Node<ts.Declaration>;
 
-export interface DeclarationNamedNode extends ExtensionType {
+export interface DeclarationNamedNode extends DeclarationNamedNodeExtensionType {
     getNameNode(): Identifier | undefined;
     getName(): string | undefined;
     setName(text: string): this;
 }
 
-export function DeclarationNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
+export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
     return class extends Base implements DeclarationNamedNode {
         getNameNode() {
             const compilerNameNode = this.node.name;

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Base project for typescript libraries",
   "main": "dist/main.js",
-  "typings": "ts-simple-ast.d.ts",
+  "typings": "dist/main.d.ts",
   "scripts": {
     "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "gulp typescript",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/dsherret/ts-simple-ast#readme",
   "typescript": {
-    "definition": "ts-simple-ast.d.ts"
+    "definition": "dist/main.d.ts"
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
@@ -40,6 +40,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^2.13.3",
+    "merge2": "^1.0.3",
     "mocha": "^2.3.3",
     "ts-nameof": "^0.8.0",
     "tslint": "^3.13.0",

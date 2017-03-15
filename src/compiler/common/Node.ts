@@ -285,6 +285,7 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets an error to throw when a feature is not implemented for this node.
+     * @internal
      */
     getNotImplementedError() {
         return errors.getNotImplementedForSyntaxKindError(this.getKind());

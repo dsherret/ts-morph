@@ -2,15 +2,15 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
+export type PropertyNamedNodeExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
 
-export interface PropertyNamedNode extends ExtensionType {
+export interface PropertyNamedNode extends PropertyNamedNodeExtensionType {
     getNameNode(): Identifier;
     getName(): string;
     setName(text: string): this;
 }
 
-export function PropertyNamedNode<T extends Constructor<ExtensionType>>(Base: T) {
+export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
     return class extends Base implements PropertyNamedNode {
         getNameNode() {
             const compilerNameNode = this.node.name;

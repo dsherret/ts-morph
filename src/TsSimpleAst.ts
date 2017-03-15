@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {LanguageService} from "./compiler";
 import {CompilerFactory} from "./factories";
+import * as compiler from "./compiler";
 
 export interface Options {
     compilerOptions?: ts.CompilerOptions;
@@ -19,11 +20,11 @@ export class TsSimpleAst {
         this.compilerFactory = new CompilerFactory(this.languageService);
     }
 
-    createSourceFileFromText(filePath: string, sourceText: string) {
+    createSourceFileFromText(filePath: string, sourceText: string): compiler.SourceFile {
         return this.compilerFactory.createSourceFileFromText(filePath, sourceText);
     }
 
-    getSourceFiles() {
+    getSourceFiles(): compiler.SourceFile[] {
         return this.languageService.getSourceFiles();
     }
 }

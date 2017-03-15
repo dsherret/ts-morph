@@ -5,9 +5,9 @@ import {Node} from "./../common";
 import * as enums from "./../enum";
 import * as variable from "./../variable";
 
-type ExtensionType = Node<ts.SourceFile>;
+export type StatementedNodeExtensionType = Node<ts.SourceFile>;
 
-export interface StatementedNode extends ExtensionType {
+export interface StatementedNode extends StatementedNodeExtensionType {
     addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration;
     getEnumDeclarations(): enums.EnumDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
@@ -15,7 +15,7 @@ export interface StatementedNode extends ExtensionType {
     getVariableDeclarations(): variable.VariableDeclaration[];
 }
 
-export function StatementedNode<T extends Constructor<ExtensionType>>(Base: T) {
+export function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T {
     return class extends Base implements StatementedNode {
         addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration {
             const sourceFile = this.getRequiredSourceFile();

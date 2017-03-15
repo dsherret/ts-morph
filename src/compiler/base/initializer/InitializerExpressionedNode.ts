@@ -2,16 +2,16 @@
 import * as errors from "./../../../errors";
 import {Node, Expression} from "./../../common";
 
-type ExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
+export type InitializerExpressionedExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
 
-export interface InitializerExpressionedNode extends ExtensionType {
+export interface InitializerExpressionedNode extends InitializerExpressionedExtensionType {
     hasInitializer(): boolean;
     getInitializer(): Expression | undefined;
     removeInitializer(): this;
     setInitializer(text: string): this;
 }
 
-export function InitializerExpressionedNode<T extends Constructor<ExtensionType>>(Base: T) {
+export function InitializerExpressionedNode<T extends Constructor<InitializerExpressionedExtensionType>>(Base: T): Constructor<InitializerExpressionedNode> & T {
     return class extends Base implements InitializerExpressionedNode {
         /**
          * Gets if node has an initializer.

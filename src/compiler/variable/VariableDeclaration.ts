@@ -2,5 +2,6 @@
 import {Node} from "./../common";
 import {InitializerExpressionedNode, BindingNamedNode} from "./../base";
 
-export class VariableDeclaration extends InitializerExpressionedNode(BindingNamedNode(Node))<ts.VariableDeclaration> {
+export const VariableDeclarationBase = InitializerExpressionedNode(BindingNamedNode(Node));
+export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
 }

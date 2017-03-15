@@ -2,6 +2,9 @@
 import {TsSimpleAst} from "./../../../TsSimpleAst";
 import {Node} from "./../../../compiler";
 
+/**
+ * @internal
+ */
 export function getInfoFromText<TFirstChild extends Node<ts.Node>>(text: string) {
     const tsSimpleAst = new TsSimpleAst();
     const sourceFile = tsSimpleAst.createSourceFileFromText("testFile.ts", text);

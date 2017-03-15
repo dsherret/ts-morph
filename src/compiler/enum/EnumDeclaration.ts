@@ -4,7 +4,8 @@ import {Node} from "./../common";
 import {NamedNode} from "./../base";
 import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
 
-export class EnumDeclaration extends NamedNode(Node)<ts.EnumDeclaration> {
+export const EnumDeclarationBase = NamedNode(Node);
+export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     addMember(structure: structures.EnumMemberStructure) {
         const members = this.getMembers();
         const lastMember = members.length === 0 ? null : members[members.length - 1];

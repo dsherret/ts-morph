@@ -6,7 +6,8 @@ import {EnumDeclaration} from "./../enum";
 import {VariableDeclarationList} from "./../variable";
 import {StatementedNode} from "./../statement";
 
-export class SourceFile extends StatementedNode(Node)<ts.SourceFile> {
+export const SourceFileBase = StatementedNode(Node);
+export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getFileName() {
         return this.node.fileName;
     }
