@@ -85,7 +85,11 @@ export class LanguageService {
         return new Program(this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
     }
 
-    // todo: mark internal
+    /**
+     * Sets the compiler factory. Needed because of a circular reference.
+     * @internal
+     * @param compilerFactory - Compiler factory.
+     */
     setCompilerFactory(compilerFactory: CompilerFactory) {
         if (this.compilerFactory != null)
             throw new Error("Cannot set compiler factory more than once.");
