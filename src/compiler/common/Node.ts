@@ -157,6 +157,10 @@ export class Node<NodeType extends ts.Node> {
         }
     }
 
+    /**
+     * Gets the main children.
+     * @internal
+     */
     getMainChildren() {
         const childNodes: Node<ts.Node>[] = [];
         ts.forEachChild(this.node, childNode => {
@@ -230,31 +234,35 @@ export class Node<NodeType extends ts.Node> {
         return (this.node.parent == null) ? null : this.factory.getNodeFromCompilerNode(this.node.parent);
     }
 
-    ensureLastChildTextNewLine() {
-        if (!this.isLastChildTextNewLine())
-            this.appendChildNewLine();
-    }
-
-    isLastChildTextNewLine() {
-        const sourceFile = this.getRequiredSourceFile();
+    appendNewLineSeparatorIfNecessary(sourceFile = this.getRequiredSourceFile()) {
         const text = this.getFullText(sourceFile);
-        const newLineChar = this.factory.getLanguageService().getNewLine();
-        /* istanbul ignore else */
-        if (this.isSourceFile())
-            return text.endsWith(newLineChar);
+        if (this.isSourceFile()) {
+            const hasText = text.length > 0;
+            if (hasText && !this.isLastChildTextNewLine(sourceFile))
+                this.appendChildNewLine(sourceFile);
+        }
         else
             throw this.getNotImplementedError();
     }
 
-    appendChildNewLine() {
+    isLastChildTextNewLine(sourceFile = this.getRequiredSourceFile()) {
+        const text = this.getFullText(sourceFile);
+        /* istanbul ignore else */
+        if (this.isSourceFile())
+            return text.endsWith("\n");
+        else
+            throw this.getNotImplementedError();
+    }
+
+    appendChildNewLine(sourceFile?: SourceFile) {
         const newLineText = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile()) {
-            const sourceFile = this as SourceFile;
+            sourceFile = this as SourceFile;
             sourceFile.node.text += newLineText;
             sourceFile.node.end += newLineText.length;
         }
         else {
-            const sourceFile = this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getRequiredSourceFile();
             const indentationText = this.getIndentationText(sourceFile);
             const lastToken = this.getLastToken(sourceFile);
             const lastTokenPos = lastToken.getStart();

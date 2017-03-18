@@ -1,34 +1,78 @@
 ﻿import {expect} from "chai";
-import {StatementedNode} from "./../../../compiler";
+import {StatementedNode, EnumDeclaration, InterfaceDeclaration, VariableStatement, VariableDeclarationList, VariableDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StatementedNode), () => {
+    const {sourceFile: enumsSourceFile} = getInfoFromText("enum Enum1 {}\nenum  Enum2 { member }");
+    const {sourceFile: interfacesSourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}");
     const {sourceFile: variablesSourceFile} = getInfoFromText("var myVar;\nvar myVar1, myVar2;");
 
+    describe(nameof<StatementedNode>(n => n.addEnumDeclaration), () => {
+        const {sourceFile} = getInfoFromText("");
+        sourceFile.addEnumDeclaration({
+            name: "MyEnum",
+            members: [{ name: "member" }]
+        });
+
+        it("should have the expected text", () => {
+            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    member\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.getEnumDeclarations), () => {
+        const enums = enumsSourceFile.getEnumDeclarations();
+
+        it("should have the expected number of enums", () => {
+            expect(enums.length).to.equal(2);
+        });
+
+        it("should have correct type", () => {
+            expect(enums[0]).to.be.instanceOf(EnumDeclaration);
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.getInterfaceDeclarations), () => {
+        const interfaces = interfacesSourceFile.getInterfaceDeclarations();
+
+        it("should have the expected number of interfaces", () => {
+            expect(interfaces.length).to.equal(2);
+        });
+
+        it("should have correct type", () => {
+            expect(interfaces[0]).to.be.instanceOf(InterfaceDeclaration);
+        });
+    });
+
     describe(nameof<StatementedNode>(n => n.getVariableStatements), () => {
-        describe("gets the variable declaration statements in a file", () => {
-            const statements = variablesSourceFile.getVariableStatements();
-            it("should have the expected number of statements", () => {
-                expect(statements.length).to.equal(2);
-            });
+        const statements = variablesSourceFile.getVariableStatements();
+        it("should have the expected number of statements", () => {
+            expect(statements.length).to.equal(2);
+        });
+
+        it("should have correct type", () => {
+            expect(statements[0]).to.be.instanceOf(VariableStatement);
         });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableDeclarationLists), () => {
-        describe("gets the variable declaration lists in a file", () => {
-            const declarationLists = variablesSourceFile.getVariableDeclarationLists();
-            it("should have the expected number of variable declaration lists", () => {
-                expect(declarationLists.length).to.equal(2);
-            });
+        const declarationLists = variablesSourceFile.getVariableDeclarationLists();
+        it("should have the expected number of variable declaration lists", () => {
+            expect(declarationLists.length).to.equal(2);
+        });
+
+        it("should have correct type", () => {
+            expect(declarationLists[0]).to.be.instanceOf(VariableDeclarationList);
         });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableDeclarations), () => {
-        describe("gets the variable declarations in a file", () => {
-            const declarations = variablesSourceFile.getVariableDeclarations();
-            it("should have the expected number of variable declarations", () => {
-                expect(declarations.length).to.equal(3);
-            });
+        const declarations = variablesSourceFile.getVariableDeclarations();
+        it("should have the expected number of variable declarations", () => {
+            expect(declarations.length).to.equal(3);
+        });
+
+        it("should have correct type", () => {
+            expect(declarations[0]).to.be.instanceOf(VariableDeclaration);
         });
     });
 });

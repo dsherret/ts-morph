@@ -15,12 +15,13 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         const lastMember = members.length === 0 ? null : members[members.length - 1];
         const lastMemberEndsWithComma = lastMember != null && lastMember.endsWithComma();
         const indentationText = this.getChildIndentationText();
+        const newLineChar = this.factory.getLanguageService().getNewLine();
 
         // create member text
         let memberText = "";
         if (lastMember != null && !lastMemberEndsWithComma)
             memberText += ",";
-        memberText += `\n${indentationText}${structure.name}`;
+        memberText += `${newLineChar}${indentationText}${structure.name}`;
 
         // get the insert position
         let insertPos: number;

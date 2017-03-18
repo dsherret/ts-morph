@@ -83,6 +83,8 @@ export class CompilerFactory {
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
             case ts.SyntaxKind.EnumMember:
                 return this.getEnumMemberDeclaration(compilerNode as ts.EnumMember);
+            case ts.SyntaxKind.InterfaceDeclaration:
+                return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration);
             case ts.SyntaxKind.Identifier:
                 return this.getIdentifier(compilerNode as ts.Identifier);
             case ts.SyntaxKind.NumericLiteral:
@@ -112,6 +114,14 @@ export class CompilerFactory {
      */
     getEnumMemberDeclaration(enumMemberDeclaration: ts.EnumMember): compiler.EnumMemberDeclaration {
         return this.nodeCache.getOrCreate<compiler.EnumMemberDeclaration>(enumMemberDeclaration, () => new compiler.EnumMemberDeclaration(this, enumMemberDeclaration));
+    }
+
+    /**
+     * Gets a wrapped interface declaration from a compiler object.
+     * @param interfaceDeclaration - Interface declaration compiler object.
+     */
+    getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration): compiler.InterfaceDeclaration {
+        return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this, interfaceDeclaration));
     }
 
     /**

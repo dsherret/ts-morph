@@ -3,12 +3,14 @@ import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as enums from "./../enum";
 import * as variable from "./../variable";
+import * as interfaces from "./../interface";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile>;
 
 export interface StatementedNode extends StatementedNodeExtensionType {
     addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration;
     getEnumDeclarations(): enums.EnumDeclaration[];
+    getInterfaceDeclarations(): interfaces.InterfaceDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
     getVariableDeclarations(): variable.VariableDeclaration[];
@@ -18,8 +20,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration {
             const sourceFile = this.getRequiredSourceFile();
-            this.ensureLastChildTextNewLine();
-            const text = `enum ${structure.name} {\n}\n`;
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            this.appendNewLineSeparatorIfNecessary(sourceFile);
+            const text = `enum ${structure.name} {${newLineChar}}${newLineChar}`;
             sourceFile.insertText(this.getEnd(), text);
 
             const mainChildren = this.getMainChildren();
@@ -32,6 +35,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getEnumDeclarations(): enums.EnumDeclaration[] {
             return this.getMainChildren().filter(c => c instanceof enums.EnumDeclaration) as enums.EnumDeclaration[];
+        }
+
+        getInterfaceDeclarations(): interfaces.InterfaceDeclaration[] {
+            return this.getMainChildren().filter(c => c instanceof interfaces.InterfaceDeclaration) as interfaces.InterfaceDeclaration[];
         }
 
         getVariableStatements(): variable.VariableStatement[] {
