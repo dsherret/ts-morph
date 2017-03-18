@@ -2,6 +2,7 @@
 import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as enums from "./../enum";
+import * as functions from "./../function";
 import * as variable from "./../variable";
 import * as interfaces from "./../interface";
 
@@ -10,6 +11,7 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile>;
 export interface StatementedNode extends StatementedNodeExtensionType {
     addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration;
     getEnumDeclarations(): enums.EnumDeclaration[];
+    getFunctionDeclarations(): functions.FunctionDeclaration[];
     getInterfaceDeclarations(): interfaces.InterfaceDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
@@ -34,15 +36,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnumDeclarations(): enums.EnumDeclaration[] {
-            return this.getMainChildren().filter(c => c instanceof enums.EnumDeclaration) as enums.EnumDeclaration[];
+            return this.getMainChildrenOfInstance(enums.EnumDeclaration);
+        }
+
+        getFunctionDeclarations(): functions.FunctionDeclaration[] {
+            return this.getMainChildrenOfInstance(functions.FunctionDeclaration);
         }
 
         getInterfaceDeclarations(): interfaces.InterfaceDeclaration[] {
-            return this.getMainChildren().filter(c => c instanceof interfaces.InterfaceDeclaration) as interfaces.InterfaceDeclaration[];
+            return this.getMainChildrenOfInstance(interfaces.InterfaceDeclaration);
         }
 
         getVariableStatements(): variable.VariableStatement[] {
-            return this.getMainChildren().filter(c => c instanceof variable.VariableStatement) as variable.VariableStatement[];
+            return this.getMainChildrenOfInstance(variable.VariableStatement);
         }
 
         getVariableDeclarationLists(): variable.VariableDeclarationList[] {

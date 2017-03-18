@@ -158,6 +158,14 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
+     * Gets the main children of a type of instance.
+     * @internal
+     */
+    getMainChildrenOfInstance<TInstance extends Node<ts.Node>>(instanceOf: { new(...args: any[]): TInstance }) {
+        return this.getMainChildren().filter(c => c instanceof instanceOf) as TInstance[];
+    }
+
+    /**
      * Gets the main children.
      * @internal
      */
