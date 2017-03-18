@@ -1,10 +1,10 @@
 ﻿import * as ts from "typescript";
 import * as structures from "./../../structures";
 import {Node} from "./../common";
-import {NamedNode} from "./../base";
+import {NamedNode, ExportedNode} from "./../base";
 import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
 
-export const EnumDeclarationBase = NamedNode(Node);
+export const EnumDeclarationBase = ExportedNode(NamedNode(Node));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Adds a member to the enum.

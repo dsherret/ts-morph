@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode} from "./../base";
+import {NamedNode, ExportedNode} from "./../base";
 import {StatementedNode} from "./../statement";
 
-export const FunctionDeclarationBase = StatementedNode(NamedNode(Node));
+export const FunctionDeclarationBase = StatementedNode(ExportedNode(NamedNode(Node)));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
 }

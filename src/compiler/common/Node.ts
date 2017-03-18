@@ -216,6 +216,26 @@ export class Node<NodeType extends ts.Node> {
         return this.node.getFullText(Node.getCompilerSourceFile(sourceFile));
     }
 
+    /**
+     * Gets the node's modifiers.
+     */
+    getModifiers() {
+        return this.node.modifiers == null ? [] : this.node.modifiers.map(m => this.factory.getNodeFromCompilerNode(m));
+    }
+
+    /**
+     * Gets the first modifier of the specified syntax kind or undefined if none found.
+     * @param kind - Syntax kind.
+     */
+    getFirstModifierByKind(kind: ts.SyntaxKind) {
+        for (let modifier of this.getModifiers()) {
+            if (modifier.getKind() === kind)
+                return modifier;
+        }
+
+        return undefined;
+    }
+
     replaceCompilerNode(compilerNode: NodeType) {
         this.node = compilerNode;
     }

@@ -1,8 +1,10 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {ExportedNode} from "./../base";
 import {VariableDeclarationList} from "./VariableDeclarationList";
 
-export class VariableStatement extends Node<ts.VariableStatement> {
+export const VariableStatementBase = ExportedNode(Node);
+export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
      * Gets the declaration list of variables.
      */
