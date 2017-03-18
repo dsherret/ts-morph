@@ -6,6 +6,10 @@ import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
 
 export const EnumDeclarationBase = NamedNode(Node);
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
+    /**
+     * Adds a member to the enum.
+     * @param structure - Structure of the enum.
+     */
     addMember(structure: structures.EnumMemberStructure) {
         const members = this.getMembers();
         const lastMember = members.length === 0 ? null : members[members.length - 1];
@@ -41,6 +45,9 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         return declaration;
     }
 
+    /**
+     * Gets the enum's members.
+     */
     getMembers() {
         return this.getMainChildren().filter(c => c instanceof EnumMemberDeclaration) as EnumMemberDeclaration[];
     }

@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
-import {SourceFile, StatementedNode} from "./../../../compiler";
+import {StatementedNode} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     const {sourceFile: variablesSourceFile} = getInfoFromText("var myVar;\nvar myVar1, myVar2;");
 
-    describe(nameof<SourceFile>(n => n.getVariableStatements), () => {
+    describe(nameof<StatementedNode>(n => n.getVariableStatements), () => {
         describe("gets the variable declaration statements in a file", () => {
             const statements = variablesSourceFile.getVariableStatements();
             it("should have the expected number of statements", () => {
@@ -14,7 +14,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getVariableDeclarationLists), () => {
+    describe(nameof<StatementedNode>(n => n.getVariableDeclarationLists), () => {
         describe("gets the variable declaration lists in a file", () => {
             const declarationLists = variablesSourceFile.getVariableDeclarationLists();
             it("should have the expected number of variable declaration lists", () => {
@@ -23,7 +23,7 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getVariableDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getVariableDeclarations), () => {
         describe("gets the variable declarations in a file", () => {
             const declarations = variablesSourceFile.getVariableDeclarations();
             it("should have the expected number of variable declarations", () => {

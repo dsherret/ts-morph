@@ -1,9 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as path from "path";
-import * as structures from "./../../structures";
 import {Node} from "./../common";
-import {EnumDeclaration} from "./../enum";
-import {VariableDeclarationList} from "./../variable";
 import {StatementedNode} from "./../statement";
 
 export const SourceFileBase = StatementedNode(Node);
@@ -15,10 +12,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getReferencedFiles() {
         const dirName = path.dirname(this.getFileName());
         return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(path.join(dirName, f.fileName)));
-    }
-
-    isSourceFile() {
-        return true;
     }
 
     /**

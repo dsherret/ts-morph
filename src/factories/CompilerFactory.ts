@@ -171,6 +171,23 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a wrapped type node from a compiler type node.
+     * @param typeNode - Compiler type node.
+     */
+    getTypeNode(typeNode: ts.TypeNode): compiler.TypeNode {
+        return this.nodeCache.getOrCreate<compiler.TypeNode>(typeNode, () => new compiler.TypeNode(this, typeNode));
+    }
+
+    /**
+     * Gets a wrapped type from a compiler type.
+     * @param type - Compiler type.
+     * @param enclosingNode - Enclosing node.
+     */
+    getType(type: ts.Type, enclosingNode: compiler.Node<ts.Node>): compiler.Type {
+        return new compiler.Type(this, type, enclosingNode);
+    }
+
+    /**
      * Replaces a compiler node in the cache.
      * @param oldNode - Old node to remove.
      * @param newNode - New node to use.

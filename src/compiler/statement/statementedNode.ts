@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
 import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as enums from "./../enum";

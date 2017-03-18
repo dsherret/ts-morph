@@ -1,11 +1,14 @@
 ﻿import * as ts from "typescript";
+import {CompilerFactory} from "./../../factories";
 import {EnumMemberDeclaration} from "./../enum";
+import {Type} from "./../type";
+import {Node} from "./../common";
 
 /**
  * Wrapper around the TypeChecker.
  */
 export class TypeChecker {
-    constructor(private readonly typeChecker: ts.TypeChecker) {
+    constructor(private readonly factory: CompilerFactory, private readonly typeChecker: ts.TypeChecker) {
     }
 
     /**
@@ -21,5 +24,36 @@ export class TypeChecker {
      */
     getConstantValue(node: EnumMemberDeclaration) {
         return this.typeChecker.getConstantValue(node.getCompilerNode());
+    }
+
+    /**
+     * Gets the type at the specified location.
+     * @param node - Node to get the type for.
+     */
+    getTypeAtLocation(node: Node<ts.Node>): Type {
+        return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()), node);
+    }
+
+    /**
+     * Gets the type text
+     * @param type - Type to get the text of.
+     * @param enclosingNode - Enclosing node.
+     * @param typeFormatFlags - Type format flags.
+     */
+    getTypeText(type: Type, enclosingNode: Node<ts.Node>, typeFormatFlags?: ts.TypeFormatFlags) {
+        if (typeFormatFlags == null)
+            typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
+
+        return this.typeChecker.typeToString(type.getCompilerType(), enclosingNode.getCompilerNode(), typeFormatFlags);
+    }
+
+    private getDefaultTypeFormatFlags(enclosingNode: Node<ts.Node>) {
+        let formatFlags = (ts.TypeFormatFlags.UseTypeOfFunction | ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType |
+            ts.TypeFormatFlags.WriteTypeArgumentsOfSignature) as ts.TypeFormatFlags;
+
+        if (enclosingNode.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
+            formatFlags |= ts.TypeFormatFlags.InTypeAlias;
+
+        return formatFlags;
     }
 }

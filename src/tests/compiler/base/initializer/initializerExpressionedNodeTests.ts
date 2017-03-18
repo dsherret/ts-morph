@@ -69,7 +69,6 @@ describe(nameof(InitializerExpressionedNode), () => {
     describe(nameof<InitializerExpressionedNode>(n => n.setInitializer), () => {
         function doThrowTest(initializerText: any) {
             const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
-            const sourceFile = member.getRequiredSourceFile();
             expect(() => member.setInitializer(initializerText)).to.throw();
         }
 

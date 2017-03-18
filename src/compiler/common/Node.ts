@@ -4,10 +4,23 @@ import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 
 export class Node<NodeType extends ts.Node> {
+    /** @internal */
+    protected readonly factory: CompilerFactory;
+    /** @internal */
+    protected node: NodeType;
+
+    /**
+     * Initializes a new instance.
+     * @internal
+     * @param factory - Compiler factory.
+     * @param node - Underlying node.
+     */
     constructor(
-        protected readonly factory: CompilerFactory,
-        protected node: NodeType
+        factory: CompilerFactory,
+        node: NodeType
     ) {
+        this.factory = factory;
+        this.node = node;
     }
 
     /**
@@ -280,7 +293,7 @@ export class Node<NodeType extends ts.Node> {
      * Gets if the current node is a source file.
      */
     isSourceFile(): this is SourceFile {
-        return false;
+        return this.node.kind === ts.SyntaxKind.SourceFile;
     }
 
     /**

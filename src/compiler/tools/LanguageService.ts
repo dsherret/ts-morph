@@ -82,7 +82,7 @@ export class LanguageService {
      * Gets the language service's program.
      */
     getProgram() {
-        return new Program(this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
+        return new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
     }
 
     /**
