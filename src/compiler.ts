@@ -5,4 +5,5 @@ export * from "./compiler/file";
 export * from "./compiler/statement";
 export * from "./compiler/variable";
 export * from "./compiler/tools";
+export * from "./compiler/symbol";
 export * from "./compiler/type";

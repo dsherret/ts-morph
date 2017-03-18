@@ -188,6 +188,14 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a wrapped symbol from a compiler symbol.
+     * @param symbol - Compiler symbol.
+     */
+    getSymbol(symbol: ts.Symbol): compiler.Symbol {
+        return new compiler.Symbol(this, symbol);
+    }
+
+    /**
      * Replaces a compiler node in the cache.
      * @param oldNode - Old node to remove.
      * @param newNode - New node to use.

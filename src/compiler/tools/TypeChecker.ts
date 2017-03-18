@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {EnumMemberDeclaration} from "./../enum";
-import {Type} from "./../type";
 import {Node} from "./../common";
+import {Type} from "./../type";
+import {Symbol} from "./../symbol";
 
 /**
  * Wrapper around the TypeChecker.
@@ -32,6 +33,15 @@ export class TypeChecker {
      */
     getTypeAtLocation(node: Node<ts.Node>): Type {
         return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()), node);
+    }
+
+    /**
+     * Gets the symbol at the specified location or undefined if none exists.
+     * @param node - Node to get the symbol for.
+     */
+    getSymbolAtLocation(node: Node<ts.Node>): Symbol | undefined {
+        const compilerSymbol = this.typeChecker.getSymbolAtLocation(node.getCompilerNode());
+        return compilerSymbol == null ? undefined : this.factory.getSymbol(compilerSymbol);
     }
 
     /**

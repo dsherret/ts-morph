@@ -30,6 +30,10 @@ export class Type {
         return this.type;
     }
 
+    /**
+     * Gets the type text.
+     * @param typeFormatFlags - Format flags for the type text.
+     */
     getText(typeFormatFlags?: ts.TypeFormatFlags) {
         return this.factory.getLanguageService().getProgram().getTypeChecker().getTypeText(this, this.enclosingNode, typeFormatFlags);
     }

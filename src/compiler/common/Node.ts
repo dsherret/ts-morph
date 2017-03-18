@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
+import {Symbol} from "./../symbol";
 
 export class Node<NodeType extends ts.Node> {
     /** @internal */
@@ -42,6 +43,13 @@ export class Node<NodeType extends ts.Node> {
      */
     getKindName() {
         return ts.SyntaxKind[this.node.kind];
+    }
+
+    /**
+     * Gets the compiler symbol.
+     */
+    getSymbol(): Symbol | undefined {
+        return this.factory.getLanguageService().getProgram().getTypeChecker().getSymbolAtLocation(this);
     }
 
     /**
