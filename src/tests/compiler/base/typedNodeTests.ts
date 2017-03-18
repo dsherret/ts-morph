@@ -23,7 +23,7 @@ describe(nameof(TypedNode), () => {
 
         describe("getting a type alias type", () => {
             it("should have the expected type", () => {
-                expect(explicitVarDeclaration.getType().getText()).to.equal("string");
+                expect(typeAliasDeclaration.getType().getText()).to.equal("string");
             });
         });
     });
@@ -43,7 +43,7 @@ describe(nameof(TypedNode), () => {
 
         describe("getting a type alias type", () => {
             it("should have the expected type", () => {
-                expect(explicitVarDeclaration.getTypeNode()!.getText()).to.equal("string");
+                expect(typeAliasDeclaration.getTypeNode()!.getText()).to.equal("string");
             });
         });
     });

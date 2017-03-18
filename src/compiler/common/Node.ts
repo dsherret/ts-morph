@@ -2,13 +2,15 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
+import {FunctionDeclaration} from "./../function";
+import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./../symbol";
 
 export class Node<NodeType extends ts.Node> {
     /** @internal */
-    protected readonly factory: CompilerFactory;
+    readonly factory: CompilerFactory;
     /** @internal */
-    protected node: NodeType;
+    node: NodeType;
 
     /**
      * Initializes a new instance.
@@ -158,11 +160,14 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
-     * Gets the main children of a type of instance.
+     * Gets the main children of a kind.
      * @internal
      */
-    getMainChildrenOfInstance<TInstance extends Node<ts.Node>>(instanceOf: { new(...args: any[]): TInstance }) {
-        return this.getMainChildren().filter(c => c instanceof instanceOf) as TInstance[];
+    getMainChildrenOfKind<TInstance extends Node<ts.Node>>(kind: ts.SyntaxKind) {
+        let node = this as Node<ts.Node>;
+        if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
+            node = this.getBody();
+        return node.getMainChildren().filter(c => c.getKind() === kind) as TInstance[];
     }
 
     /**
@@ -246,18 +251,27 @@ export class Node<NodeType extends ts.Node> {
         const text = this.getFullText(sourceFile);
         if (this.isSourceFile()) {
             const hasText = text.length > 0;
-            if (hasText && !this.isLastChildTextNewLine(sourceFile))
-                this.appendChildNewLine(sourceFile);
+            if (hasText)
+                this.ensureLastChildNewLine();
         }
         else
-            throw this.getNotImplementedError();
+            this.ensureLastChildNewLine();
     }
 
-    isLastChildTextNewLine(sourceFile = this.getRequiredSourceFile()) {
+    ensureLastChildNewLine(sourceFile = this.getRequiredSourceFile()) {
+        if (!this.isLastChildTextNewLine(sourceFile))
+            this.appendChildNewLine(sourceFile);
+    }
+
+    isLastChildTextNewLine(sourceFile = this.getRequiredSourceFile()): boolean {
         const text = this.getFullText(sourceFile);
         /* istanbul ignore else */
         if (this.isSourceFile())
             return text.endsWith("\n");
+        else if (this.isNamespaceDeclaration() || this.isFunctionDeclaration()) {
+            const bodyText = this.getBody().getFullText(sourceFile);
+            return /\n\s*\}$/.test(bodyText);
+        }
         else
             throw this.getNotImplementedError();
     }
@@ -321,6 +335,20 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
+     * Gets if the current node is a function declaration.
+     */
+    isFunctionDeclaration(): this is FunctionDeclaration {
+        return this.node.kind === ts.SyntaxKind.FunctionDeclaration;
+    }
+
+    /**
+     * Gets if the current node is a namespace declaration.
+     */
+    isNamespaceDeclaration(): this is NamespaceDeclaration {
+        return this.node.kind === ts.SyntaxKind.ModuleDeclaration;
+    }
+
+    /**
      * Gets an error to throw when a feature is not implemented for this node.
      * @internal
      */
@@ -360,7 +388,11 @@ export class Node<NodeType extends ts.Node> {
      * @param sourceFile - Optional source file to help improve performance.
      */
     getChildIndentationText(sourceFile = this.getRequiredSourceFile()) {
-        return this.getIndentationText(sourceFile) + "    "; // todo: should get number of spaces/tabs from somewhere
+        if (this.isSourceFile())
+            return "";
+
+        const oneIndentationLevelText = this.factory.getLanguageService().getOneIndentationLevelText();
+        return this.getIndentationText(sourceFile) + oneIndentationLevelText;
     }
 
     /**

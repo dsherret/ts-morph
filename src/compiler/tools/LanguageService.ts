@@ -156,6 +156,10 @@ export class LanguageService {
         }
     }
 
+    getOneIndentationLevelText() {
+        return "    ";
+    }
+
     getSourceFiles() {
         return this.sourceFiles;
     }
