@@ -5,6 +5,7 @@ export * from "./compiler/enum";
 export * from "./compiler/file";
 export * from "./compiler/function";
 export * from "./compiler/interface";
+export * from "./compiler/namespace";
 export * from "./compiler/statement";
 export * from "./compiler/variable";
 export * from "./compiler/tools";

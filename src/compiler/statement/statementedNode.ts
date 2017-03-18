@@ -3,6 +3,7 @@ import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as classes from "./../class";
 import * as enums from "./../enum";
+import * as namespaces from "./../namespace";
 import * as functions from "./../function";
 import * as variable from "./../variable";
 import * as interfaces from "./../interface";
@@ -15,6 +16,7 @@ export interface StatementedNode extends StatementedNodeExtensionType {
     getEnumDeclarations(): enums.EnumDeclaration[];
     getFunctionDeclarations(): functions.FunctionDeclaration[];
     getInterfaceDeclarations(): interfaces.InterfaceDeclaration[];
+    getNamespaceDeclarations(): namespaces.NamespaceDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
     getVariableDeclarations(): variable.VariableDeclaration[];
@@ -67,6 +69,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
          */
         getInterfaceDeclarations(): interfaces.InterfaceDeclaration[] {
             return this.getMainChildrenOfInstance(interfaces.InterfaceDeclaration);
+        }
+
+        /**
+         * Gets the direct namespace declaration children.
+         */
+        getNamespaceDeclarations(): namespaces.NamespaceDeclaration[] {
+            return this.getMainChildrenOfInstance(namespaces.NamespaceDeclaration);
         }
 
         /**

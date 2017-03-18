@@ -91,6 +91,8 @@ export class CompilerFactory {
                 return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration);
             case ts.SyntaxKind.Identifier:
                 return this.getIdentifier(compilerNode as ts.Identifier);
+            case ts.SyntaxKind.ModuleDeclaration:
+                return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration);
             case ts.SyntaxKind.NumericLiteral:
                 return this.getExpression(compilerNode as ts.Expression);
             case ts.SyntaxKind.VariableDeclaration:
@@ -142,6 +144,14 @@ export class CompilerFactory {
      */
     getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration): compiler.InterfaceDeclaration {
         return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this, interfaceDeclaration));
+    }
+
+    /**
+     * Gets a wrapped namespace declaration from a compiler object.
+     * @param namespaceDeclaration - Namespace declaration compiler object.
+     */
+    getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration): compiler.NamespaceDeclaration {
+        return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this, namespaceDeclaration));
     }
 
     /**

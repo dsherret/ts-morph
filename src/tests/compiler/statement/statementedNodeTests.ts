@@ -1,12 +1,13 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, ClassDeclaration, EnumDeclaration, FunctionDeclaration, InterfaceDeclaration, VariableStatement, VariableDeclarationList,
-    VariableDeclaration} from "./../../../compiler";
+import {StatementedNode, ClassDeclaration, EnumDeclaration, FunctionDeclaration, InterfaceDeclaration, NamespaceDeclaration, VariableStatement,
+    VariableDeclarationList, VariableDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     const {sourceFile: classesSourceFile} = getInfoFromText("class Class1 {}\nclass Class2 { prop: string; }");
     const {sourceFile: enumsSourceFile} = getInfoFromText("enum Enum1 {}\nenum Enum2 { member }");
     const {sourceFile: functionsSourceFile} = getInfoFromText("function function1() {}\nfunction function2() {}");
+    const {sourceFile: namespacesSourceFile} = getInfoFromText("namespace Namespace1 {}\nnamespace Namespace2 {}");
     const {sourceFile: interfacesSourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}");
     const {sourceFile: variablesSourceFile} = getInfoFromText("var myVar;\nvar myVar1, myVar2;");
 
@@ -67,6 +68,18 @@ describe(nameof(StatementedNode), () => {
 
         it("should have correct type", () => {
             expect(interfaces[0]).to.be.instanceOf(InterfaceDeclaration);
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.getNamespaceDeclarations), () => {
+        const namespaces = namespacesSourceFile.getNamespaceDeclarations();
+
+        it("should have the expected number of namespaces", () => {
+            expect(namespaces.length).to.equal(2);
+        });
+
+        it("should have correct type", () => {
+            expect(namespaces[0]).to.be.instanceOf(NamespaceDeclaration);
         });
     });
 
