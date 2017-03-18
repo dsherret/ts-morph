@@ -3,9 +3,10 @@ import {TypedNode} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypedNode), () => {
-    const {sourceFile: variablesSourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string;");
-    const implicitVarDeclaration = variablesSourceFile.getVariableStatements()[0].getDeclarationList().getDeclarations()[0];
-    const explicitVarDeclaration = variablesSourceFile.getVariableStatements()[1].getDeclarationList().getDeclarations()[0];
+    const {sourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
+    const implicitVarDeclaration = sourceFile.getVariableStatements()[0].getDeclarationList().getDeclarations()[0];
+    const explicitVarDeclaration = sourceFile.getVariableStatements()[1].getDeclarationList().getDeclarations()[0];
+    const typeAliasDeclaration = sourceFile.getTypeAliasDeclarations()[0];
 
     describe(nameof<TypedNode>(n => n.getType), () => {
         describe("getting an implicit type", () => {
@@ -16,6 +17,12 @@ describe(nameof(TypedNode), () => {
 
         describe("getting an explicit type", () => {
             it("should have the expected explicit type", () => {
+                expect(explicitVarDeclaration.getType().getText()).to.equal("string");
+            });
+        });
+
+        describe("getting a type alias type", () => {
+            it("should have the expected type", () => {
                 expect(explicitVarDeclaration.getType().getText()).to.equal("string");
             });
         });
@@ -30,6 +37,12 @@ describe(nameof(TypedNode), () => {
 
         describe("getting an explicit type", () => {
             it("should get the expected explicit type", () => {
+                expect(explicitVarDeclaration.getTypeNode()!.getText()).to.equal("string");
+            });
+        });
+
+        describe("getting a type alias type", () => {
+            it("should have the expected type", () => {
                 expect(explicitVarDeclaration.getTypeNode()!.getText()).to.equal("string");
             });
         });

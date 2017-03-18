@@ -95,6 +95,8 @@ export class CompilerFactory {
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration);
             case ts.SyntaxKind.NumericLiteral:
                 return this.getExpression(compilerNode as ts.Expression);
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return this.getTypeAliasDeclaration(compilerNode as ts.TypeAliasDeclaration);
             case ts.SyntaxKind.VariableDeclaration:
                 return this.getVariableDeclaration(compilerNode as ts.VariableDeclaration);
             case ts.SyntaxKind.VariableDeclarationList:
@@ -152,6 +154,14 @@ export class CompilerFactory {
      */
     getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration): compiler.NamespaceDeclaration {
         return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this, namespaceDeclaration));
+    }
+
+    /**
+     * Gets a wrapped type alias declaration from a compiler object.
+     * @param typeAliasDeclaration - TypeAlias declaration compiler object.
+     */
+    getTypeAliasDeclaration(typeAliasDeclaration: ts.TypeAliasDeclaration): compiler.TypeAliasDeclaration {
+        return this.nodeCache.getOrCreate<compiler.TypeAliasDeclaration>(typeAliasDeclaration, () => new compiler.TypeAliasDeclaration(this, typeAliasDeclaration));
     }
 
     /**

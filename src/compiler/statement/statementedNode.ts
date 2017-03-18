@@ -3,10 +3,11 @@ import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as classes from "./../class";
 import * as enums from "./../enum";
-import * as namespaces from "./../namespace";
 import * as functions from "./../function";
-import * as variable from "./../variable";
 import * as interfaces from "./../interface";
+import * as namespaces from "./../namespace";
+import * as types from "./../type";
+import * as variable from "./../variable";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile>;
 
@@ -17,6 +18,7 @@ export interface StatementedNode extends StatementedNodeExtensionType {
     getFunctionDeclarations(): functions.FunctionDeclaration[];
     getInterfaceDeclarations(): interfaces.InterfaceDeclaration[];
     getNamespaceDeclarations(): namespaces.NamespaceDeclaration[];
+    getTypeAliasDeclarations(): types.TypeAliasDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
     getVariableDeclarations(): variable.VariableDeclaration[];
@@ -76,6 +78,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
          */
         getNamespaceDeclarations(): namespaces.NamespaceDeclaration[] {
             return this.getMainChildrenOfInstance(namespaces.NamespaceDeclaration);
+        }
+
+        /**
+         * Gets the direct type alias declaration children.
+         */
+        getTypeAliasDeclarations(): types.TypeAliasDeclaration[] {
+            return this.getMainChildrenOfInstance(types.TypeAliasDeclaration);
         }
 
         /**
