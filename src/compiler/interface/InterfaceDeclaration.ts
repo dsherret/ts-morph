@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode, ExportedNode} from "./../base";
+import {NamedNode, ExportableNode, AmbientableNode} from "./../base";
 
-export const InterfaceDeclarationBase = NamedNode(ExportedNode(Node));
+export const InterfaceDeclarationBase = AmbientableNode(ExportableNode(NamedNode(Node)));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
 }

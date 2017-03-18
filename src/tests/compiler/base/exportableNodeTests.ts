@@ -1,14 +1,14 @@
 ﻿import {expect} from "chai";
-import {ExportedNode} from "./../../../compiler";
+import {ExportableNode} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
-describe(nameof(ExportedNode), () => {
+describe(nameof(ExportableNode), () => {
     const {sourceFile} = getInfoFromText("export var exportedVar = 1; var myExplicitVar: string;");
     const statements = sourceFile.getVariableStatements();
     const exportedStatement = statements[0];
     const notExportedStatement = statements[1];
 
-    describe(nameof<ExportedNode>(n => n.hasExportKeyword), () => {
+    describe(nameof<ExportableNode>(n => n.hasExportKeyword), () => {
         describe("exported node", () => {
             it("should have an export keyword", () => {
                 expect(exportedStatement.hasExportKeyword()).to.be.true;
@@ -22,7 +22,7 @@ describe(nameof(ExportedNode), () => {
         });
     });
 
-    describe(nameof<ExportedNode>(n => n.getExportKeyword), () => {
+    describe(nameof<ExportableNode>(n => n.getExportKeyword), () => {
         describe("exported node", () => {
             it("should have an export keyword", () => {
                 expect(exportedStatement.getExportKeyword()!.getText()).to.equal("export");
