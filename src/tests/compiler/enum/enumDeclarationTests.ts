@@ -37,4 +37,28 @@ describe(nameof(EnumDeclaration), () => {
             expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    member1,\n    member2\n}\n");
         });
     });
+
+    describe(nameof<EnumDeclaration>(d => d.hasConstKeyword), () => {
+        it("should have a const keyword when it has one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            expect(firstChild.hasConstKeyword()).is.true;
+        });
+
+        it("should not have a const keyword when it doesn't have one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            expect(firstChild.hasConstKeyword()).is.false;
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(d => d.getConstKeyword), () => {
+        it("should get a const keyword when it has one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            expect(firstChild.getConstKeyword()!.getText()).to.equal("const");
+        });
+
+        it("should not get a const keyword when it doesn't have one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            expect(firstChild.getConstKeyword()).is.undefined;
+        });
+    });
 });

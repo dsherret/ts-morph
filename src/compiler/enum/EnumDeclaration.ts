@@ -52,4 +52,18 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     getMembers() {
         return this.getMainChildren().filter(c => c instanceof EnumMemberDeclaration) as EnumMemberDeclaration[];
     }
+
+    /**
+     * Gets if it's a const enum.
+     */
+    hasConstKeyword() {
+        return this.getConstKeyword() != null;
+    }
+
+    /**
+     * Gets the const enum keyword or undefined if not exists.
+     */
+    getConstKeyword() {
+        return this.getFirstModifierByKind(ts.SyntaxKind.ConstKeyword);
+    }
 }
