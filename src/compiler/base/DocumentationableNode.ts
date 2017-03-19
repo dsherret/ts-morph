@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {JSDoc} from "./../doc/JSDoc";
 
 export type DocumentationableNodeExtensionType = Node<any>;
 
@@ -12,6 +13,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
     return class extends Base implements DocumentationableNode {
         /**
          * Gets the documentation comment text or undefined if none exists.
+         * This will return multiple documentation comments separated by newlines.
          */
         getDocumentationComment() {
             const docCommentNodes = this.getDocumentationCommentNodes();
@@ -25,9 +27,9 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
         /**
          * Gets the documentation comment nodes or undefined if none exists.
          */
-        getDocumentationCommentNodes() {
+        getDocumentationCommentNodes(): JSDoc[] {
             const nodes = (this.node as any).jsDoc as ts.JSDoc[] || [];
-            return nodes.map(n => this.factory.getNodeFromCompilerNode(n) as Node<ts.JSDoc>);
+            return nodes.map(n => this.factory.getJSDoc(n));
         }
     };
 }

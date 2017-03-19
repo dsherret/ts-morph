@@ -103,6 +103,8 @@ export class CompilerFactory {
                 return this.getVariableDeclarationList(compilerNode as ts.VariableDeclarationList);
             case ts.SyntaxKind.VariableStatement:
                 return this.getVariableStatement(compilerNode as ts.VariableStatement);
+            case ts.SyntaxKind.JSDocComment:
+                return this.getJSDoc(compilerNode as ts.JSDoc);
             default:
                 return this.nodeCache.getOrCreate<compiler.Node<ts.Node>>(compilerNode, () => new compiler.Node(this, compilerNode));
         }
@@ -186,6 +188,14 @@ export class CompilerFactory {
      */
     getVariableDeclaration(declaration: ts.VariableDeclaration): compiler.VariableDeclaration {
         return this.nodeCache.getOrCreate<compiler.VariableDeclaration>(declaration, () => new compiler.VariableDeclaration(this, declaration));
+    }
+
+    /**
+     * Gets a wrapped JS doc declaration from a compiler object.
+     * @param declaration - Compiler JS doc declaration.
+     */
+    getJSDoc(declaration: ts.JSDoc): compiler.JSDoc {
+        return this.nodeCache.getOrCreate<compiler.JSDoc>(declaration, () => new compiler.JSDoc(this, declaration));
     }
 
     /**
