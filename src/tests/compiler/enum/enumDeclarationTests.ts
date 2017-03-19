@@ -57,7 +57,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should not get a const keyword when it doesn't have one", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(firstChild.getConstKeyword()).is.undefined;
         });
     });

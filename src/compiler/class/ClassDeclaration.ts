@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, AmbientableNode} from "./../base";
+import {NamedNode, ExportableNode, AmbientableNode, DocumentationableNode} from "./../base";
 
-export const ClassDeclarationBase = AmbientableNode(ExportableNode(NamedNode(Node)));
+export const ClassDeclarationBase = DocumentationableNode(AmbientableNode(ExportableNode(NamedNode(Node))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
 }
