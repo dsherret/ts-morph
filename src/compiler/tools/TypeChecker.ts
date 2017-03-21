@@ -1,9 +1,8 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {EnumMemberDeclaration} from "./../enum";
-import {Node} from "./../common";
+import {Node, Symbol, Signature} from "./../common";
 import {Type} from "./../type";
-import {Symbol} from "./../symbol";
 
 /**
  * Wrapper around the TypeChecker.
@@ -55,6 +54,22 @@ export class TypeChecker {
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
         return this.typeChecker.typeToString(type.getCompilerType(), enclosingNode.getCompilerNode(), typeFormatFlags);
+    }
+
+    /**
+     * Gets the return type of a signature.
+     * @param signature - Signature to get the return type of.
+     */
+    getReturnTypeOfSignature(signature: Signature): Type {
+        return this.factory.getType(this.typeChecker.getReturnTypeOfSignature(signature.getCompilerSignature()), signature.getEnclosingNode());
+    }
+
+    /**
+     * Gets a signature from a node.
+     * @param node - Node to get the signature from.
+     */
+    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature {
+        return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()), node);
     }
 
     private getDefaultTypeFormatFlags(enclosingNode: Node<ts.Node>) {

@@ -7,7 +7,7 @@ import {Node, Identifier} from "./../../common";
 
 export type DeclarationNamedNodeExtensionType = Node<ts.Declaration>;
 
-export interface DeclarationNamedNode extends DeclarationNamedNodeExtensionType {
+export interface DeclarationNamedNode {
     getNameNode(): Identifier | undefined;
     getName(): string | undefined;
     setName(text: string): this;

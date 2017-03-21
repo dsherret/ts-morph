@@ -4,7 +4,7 @@ import {JSDoc} from "./../doc/JSDoc";
 
 export type DocumentationableNodeExtensionType = Node<any>;
 
-export interface DocumentationableNode extends DocumentationableNodeExtensionType {
+export interface DocumentationableNode {
     getDocumentationComment(): string | undefined;
     getDocumentationCommentNodes(): Node<ts.JSDoc>[];
 }

@@ -9,9 +9,9 @@ import * as namespaces from "./../namespace";
 import * as types from "./../type";
 import * as variable from "./../variable";
 
-export type StatementedNodeExtensionType = Node<ts.SourceFile>;
+export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration>;
 
-export interface StatementedNode extends StatementedNodeExtensionType {
+export interface StatementedNode {
     getBody(): Node<ts.Node>;
     addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration;
     getClassDeclarations(): classes.ClassDeclaration[];

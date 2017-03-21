@@ -4,9 +4,9 @@ import {Node, Identifier} from "./../../common";
 
 // todo: consolidate these named classes somehow
 
-export type BindingNamedNodeExtensionType = Node<ts.VariableDeclaration>;
+export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.BindingName; }>;
 
-export interface BindingNamedNode extends BindingNamedNodeExtensionType {
+export interface BindingNamedNode {
     getNameNode(): Identifier;
     getName(): string;
     setName(text: string): this;
@@ -19,7 +19,7 @@ export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtension
 
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:
-                    return this.factory.getIdentifier(compilerNameNode);
+                    return this.factory.getIdentifier(compilerNameNode as ts.Identifier);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);

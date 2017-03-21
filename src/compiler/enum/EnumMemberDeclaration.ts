@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {PropertyNamedNode, InitializerExpressionedNode, DocumentationableNode} from "./../base";
+import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode} from "./../base";
 
-export const EnumMemberDeclarationBase = DocumentationableNode(InitializerExpressionedNode(PropertyNamedNode(Node)));
+export const EnumMemberDeclarationBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMemberDeclaration extends EnumMemberDeclarationBase<ts.EnumMember> {
     /**
      * Gets the constant value of the enum.

@@ -9,7 +9,7 @@ export class Symbol {
     private readonly symbol: ts.Symbol;
 
     /**
-     * Initializes a new instance of Type.
+     * Initializes a new instance of Symbol.
      * @internal
      * @param factory - Compiler factory.
      * @param symbol - Compiler symbol.

@@ -3,9 +3,9 @@ import {Node} from "./../common";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
 
-export type TypedNodeExtensionType = Node<ts.Node & { type: ts.TypeNode; }>;
+export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
-export interface TypedNode extends TypedNodeExtensionType {
+export interface TypedNode {
     getType(): Type;
     getTypeNode(): TypeNode | undefined;
 }

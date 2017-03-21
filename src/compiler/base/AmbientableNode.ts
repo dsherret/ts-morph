@@ -3,7 +3,7 @@ import {Node} from "./../common";
 
 export type AmbientableNodeExtensionType = Node<ts.Node>;
 
-export interface AmbientableNode extends AmbientableNodeExtensionType {
+export interface AmbientableNode {
     hasDeclareKeyword(): boolean;
     getDeclareKeyword(): Node<ts.Node> | undefined;
 }

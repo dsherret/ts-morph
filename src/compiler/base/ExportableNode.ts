@@ -3,7 +3,7 @@ import {Node} from "./../common";
 
 export type ExportableNodeExtensionType = Node<ts.Node>;
 
-export interface ExportableNode extends ExportableNodeExtensionType {
+export interface ExportableNode {
     hasExportKeyword(): boolean;
     getExportKeyword(): Node<ts.Node> | undefined;
 }

@@ -4,7 +4,7 @@ import {Node, Identifier} from "./../../common";
 
 export type NamedNodeExtensionType = Node<ts.Node & { name: ts.Identifier; }>; // todo: make name optional
 
-export interface NamedNode extends NamedNodeExtensionType {
+export interface NamedNode {
     getNameNode(): Identifier;
     getName(): string;
     setName(newName: string): this;

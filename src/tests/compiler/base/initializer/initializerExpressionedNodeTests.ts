@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {EnumDeclaration, InitializerExpressionedNode, Expression} from "./../../../../compiler";
+import {EnumDeclaration, InitializerExpressionableNode, Expression} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
-describe(nameof(InitializerExpressionedNode), () => {
+describe(nameof(InitializerExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {
         const {firstChild} = getInfoFromText<EnumDeclaration>(text);
         return firstChild.getMembers()[0];
@@ -16,7 +16,7 @@ describe(nameof(InitializerExpressionedNode), () => {
         return getEnumMemberFromText("enum MyEnum {\n    myMember\n}\n");
     }
 
-    describe(nameof<InitializerExpressionedNode>(n => n.hasInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.hasInitializer), () => {
         it("should have an initializer when it does", () => {
             expect(getMemberWithInitializer().hasInitializer()).to.be.true;
         });
@@ -26,7 +26,7 @@ describe(nameof(InitializerExpressionedNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionedNode>(n => n.getInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.getInitializer), () => {
         describe("having initializer", () => {
             const initializer = getMemberWithInitializer().getInitializer()!;
 
@@ -46,7 +46,7 @@ describe(nameof(InitializerExpressionedNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionedNode>(n => n.removeInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
         describe("having initializer", () => {
             const member = getMemberWithInitializer();
             const sourceFile = member.getRequiredSourceFile();
@@ -66,7 +66,7 @@ describe(nameof(InitializerExpressionedNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionedNode>(n => n.setInitializer), () => {
+    describe(nameof<InitializerExpressionableNode>(n => n.setInitializer), () => {
         function doThrowTest(initializerText: any) {
             const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
             expect(() => member.setInitializer(initializerText)).to.throw();

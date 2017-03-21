@@ -2,9 +2,9 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-export type PropertyNamedNodeExtensionType = Node<ts.EnumMember>; // todo: why do I have to specify EnumMember here?
+export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
-export interface PropertyNamedNode extends PropertyNamedNodeExtensionType {
+export interface PropertyNamedNode {
     getNameNode(): Identifier;
     getName(): string;
     setName(text: string): this;

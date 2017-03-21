@@ -4,7 +4,7 @@ import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {FunctionDeclaration} from "./../function";
 import {NamespaceDeclaration} from "./../namespace";
-import {Symbol} from "./../symbol";
+import {Symbol} from "./Symbol";
 
 export class Node<NodeType extends ts.Node> {
     /** @internal */

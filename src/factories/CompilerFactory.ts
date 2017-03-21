@@ -95,6 +95,8 @@ export class CompilerFactory {
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration);
             case ts.SyntaxKind.NumericLiteral:
                 return this.getExpression(compilerNode as ts.Expression);
+            case ts.SyntaxKind.Parameter:
+                return this.getParameterDeclaration(compilerNode as ts.ParameterDeclaration);
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return this.getTypeAliasDeclaration(compilerNode as ts.TypeAliasDeclaration);
             case ts.SyntaxKind.VariableDeclaration:
@@ -156,6 +158,14 @@ export class CompilerFactory {
      */
     getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration): compiler.NamespaceDeclaration {
         return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this, namespaceDeclaration));
+    }
+
+    /**
+     * Gets a wrapped parameter declaration from a compiler object.
+     * @param parameterDeclaration - Parameter declaration compiler object.
+     */
+    getParameterDeclaration(parameterDeclaration: ts.ParameterDeclaration): compiler.ParameterDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this, parameterDeclaration));
     }
 
     /**
@@ -245,6 +255,14 @@ export class CompilerFactory {
      */
     getType(type: ts.Type, enclosingNode: compiler.Node<ts.Node>): compiler.Type {
         return new compiler.Type(this, type, enclosingNode);
+    }
+
+    /**
+     * Gets a wrapped signature from a compiler signature.
+     * @param signature - Compiler signature.
+     */
+    getSignature(signature: ts.Signature, enclosingNode: compiler.Node<ts.SignatureDeclaration>): compiler.Signature {
+        return new compiler.Signature(this, signature, enclosingNode);
     }
 
     /**
