@@ -249,6 +249,14 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a wrapped type parameter declaration from a compiler type parameter declaration.
+     * @param typeParameterDeclaration - Compiler type parameter declaration.
+     */
+    getTypeParameterDeclaration(typeParameterDeclaration: ts.TypeParameterDeclaration): compiler.TypeParameterDeclaration {
+        return this.nodeCache.getOrCreate<compiler.TypeParameterDeclaration>(typeParameterDeclaration, () => new compiler.TypeParameterDeclaration(this, typeParameterDeclaration));
+    }
+
+    /**
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
      * @param enclosingNode - Enclosing node.

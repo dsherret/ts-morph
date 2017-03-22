@@ -1,12 +1,12 @@
 ﻿import * as ts from "typescript";
-import {ReturnTypedNode} from "./../base";
+import {ReturnTypedNode, TypeParameteredNode} from "./../base";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./ParameterDeclaration";
 
 export type SignaturedDeclarationExtensionType = Node<ts.SignatureDeclaration>;
 
 export interface SignaturedDeclarationBase {
-    getParameters(): ParameterDeclaration[];
+    getParameters(): ParameterDeclaration[]; // todo: ParameteredNode?
 }
 
 export function SignaturedDeclarationBase<T extends Constructor<SignaturedDeclarationExtensionType>>(Base: T): Constructor<SignaturedDeclarationBase> & T {
@@ -17,9 +17,9 @@ export function SignaturedDeclarationBase<T extends Constructor<SignaturedDeclar
     };
 }
 
-export interface SignaturedDeclaration extends SignaturedDeclarationBase, ReturnTypedNode {
+export interface SignaturedDeclaration extends SignaturedDeclarationBase, ReturnTypedNode, TypeParameteredNode {
 }
 
 export function SignaturedDeclaration<T extends Constructor<SignaturedDeclarationExtensionType>>(Base: T): Constructor<SignaturedDeclaration> & T {
-    return ReturnTypedNode(SignaturedDeclarationBase(Base));
+    return TypeParameteredNode(ReturnTypedNode(SignaturedDeclarationBase(Base)));
 }

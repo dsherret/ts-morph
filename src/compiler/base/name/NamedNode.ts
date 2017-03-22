@@ -2,7 +2,9 @@
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
 
-export type NamedNodeExtensionType = Node<ts.Node & { name: ts.Identifier; }>; // todo: make name optional
+// todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
+// (maybe NameableNode and rename some of the other "-ed" classes)
+export type NamedNodeExtensionType = Node<ts.Node & { name: ts.Identifier; }>;
 
 export interface NamedNode {
     getNameNode(): Identifier;
