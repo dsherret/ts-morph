@@ -4,7 +4,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
     function getTypeParameterFromText(text: string) {
-        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
+        const {firstChild} = getInfoFromText<FunctionDeclaration>(text);
         return firstChild.getTypeParameterDeclarations()[0];
     }
 

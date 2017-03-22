@@ -91,6 +91,8 @@ export class CompilerFactory {
                 return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration);
             case ts.SyntaxKind.Identifier:
                 return this.getIdentifier(compilerNode as ts.Identifier);
+            case ts.SyntaxKind.MethodDeclaration:
+                return this.getMethodDeclaration(compilerNode as ts.MethodDeclaration);
             case ts.SyntaxKind.ModuleDeclaration:
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration);
             case ts.SyntaxKind.NumericLiteral:
@@ -150,6 +152,14 @@ export class CompilerFactory {
      */
     getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration): compiler.InterfaceDeclaration {
         return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this, interfaceDeclaration));
+    }
+
+    /**
+     * Gets a wrapped class method declaration from a compiler object.
+     * @param methodDeclaration - Method declaration compiler object.
+     */
+    getMethodDeclaration(methodDeclaration: ts.MethodDeclaration): compiler.MethodDeclaration {
+        return this.nodeCache.getOrCreate<compiler.MethodDeclaration>(methodDeclaration, () => new compiler.MethodDeclaration(this, methodDeclaration));
     }
 
     /**

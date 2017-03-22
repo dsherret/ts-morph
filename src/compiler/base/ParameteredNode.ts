@@ -1,6 +1,4 @@
 ﻿import * as ts from "typescript";
-import {ReturnTypedNode} from "./ReturnTypedNode";
-import {TypeParameteredNode} from "./TypeParameteredNode";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
 

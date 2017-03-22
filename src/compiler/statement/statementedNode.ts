@@ -9,7 +9,7 @@ import * as namespaces from "./../namespace";
 import * as types from "./../type";
 import * as variable from "./../variable";
 
-export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration>;
+export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
 
 export interface StatementedNode {
     getBody(): Node<ts.Node>;
