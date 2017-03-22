@@ -5,4 +5,5 @@ export * from "./base/ExportableNode";
 export * from "./base/DocumentationableNode";
 export * from "./base/TypedNode";
 export * from "./base/ReturnTypedNode";
+export * from "./base/ParameteredNode";
 export * from "./base/TypeParameteredNode";

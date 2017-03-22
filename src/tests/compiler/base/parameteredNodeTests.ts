@@ -1,9 +1,9 @@
 ﻿import {expect} from "chai";
-import {SignaturedDeclaration, FunctionDeclaration, ParameterDeclaration} from "./../../../compiler";
+import {ParameteredNode, FunctionDeclaration, ParameterDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
-describe(nameof(SignaturedDeclaration), () => {
-    describe(nameof<SignaturedDeclaration>(d => d.getParameters), () => {
+describe(nameof(ParameteredNode), () => {
+    describe(nameof<ParameteredNode>(d => d.getParameters), () => {
         const {firstChild} = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
         const parameters = firstChild.getParameters();
 
