@@ -12,7 +12,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     }
 
     /**
-     * Gets if it's an optional parameter.
+     * Gets if it's optional.
      */
     isOptional() {
         return this.node.questionToken != null || this.isRestParameter() || this.hasInitializer();

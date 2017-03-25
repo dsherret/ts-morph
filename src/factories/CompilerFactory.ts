@@ -93,6 +93,8 @@ export class CompilerFactory {
                 return this.getIdentifier(compilerNode as ts.Identifier);
             case ts.SyntaxKind.MethodDeclaration:
                 return this.getMethodDeclaration(compilerNode as ts.MethodDeclaration);
+            case ts.SyntaxKind.PropertyDeclaration:
+                return this.getPropertyDeclaration(compilerNode as ts.PropertyDeclaration);
             case ts.SyntaxKind.ModuleDeclaration:
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration);
             case ts.SyntaxKind.NumericLiteral:
@@ -176,6 +178,14 @@ export class CompilerFactory {
      */
     getParameterDeclaration(parameterDeclaration: ts.ParameterDeclaration): compiler.ParameterDeclaration {
         return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this, parameterDeclaration));
+    }
+
+    /**
+     * Gets a wrapped class property declaration from a compiler object.
+     * @param propertyDeclaration - Property declaration compiler object.
+     */
+    getPropertyDeclaration(propertyDeclaration: ts.PropertyDeclaration): compiler.PropertyDeclaration {
+        return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this, propertyDeclaration));
     }
 
     /**
