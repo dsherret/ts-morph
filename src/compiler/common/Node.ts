@@ -224,6 +224,13 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
+     * Gets the combined modifier flags.
+     */
+    getCombinedModifierFlags() {
+        return ts.getCombinedModifierFlags(this.node);
+    }
+
+    /**
      * Gets the first modifier of the specified syntax kind or undefined if none found.
      * @param kind - Syntax kind.
      */
