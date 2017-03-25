@@ -5,7 +5,7 @@ import {getInfoFromText} from "./../testHelpers";
 describe(nameof(QuestionTokenableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstProperty: result.firstChild.getPropertyDeclarations()[0] };
+        return {...result, firstProperty: result.firstChild.getInstancePropertyDeclarations()[0] };
     }
 
     describe(nameof<QuestionTokenableNode>(d => d.isOptional), () => {

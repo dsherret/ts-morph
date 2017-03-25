@@ -7,15 +7,52 @@ import {PropertyDeclaration} from "./PropertyDeclaration";
 export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(ExportableNode(NamedNode(Node)))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
-     * Gets the class method declarations.
+     * Gets the class instance method declarations.
      */
-    getMethodDeclarations(): MethodDeclaration[] {
-        return this.node.members.filter(m => m.kind === ts.SyntaxKind.MethodDeclaration)
-            .map(m => this.factory.getMethodDeclaration(m as ts.MethodDeclaration));
+    getInstanceMethodDeclarations(): MethodDeclaration[] {
+        return this.getInstanceMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
     }
 
-    getPropertyDeclarations(): PropertyDeclaration[] {
-        return this.node.members.filter(m => m.kind === ts.SyntaxKind.PropertyDeclaration)
-            .map(m => this.factory.getPropertyDeclaration(m as ts.PropertyDeclaration));
+    /**
+     * Gets the class instance property declarations.
+     */
+    getInstancePropertyDeclarations(): PropertyDeclaration[] {
+        return this.getInstanceMembers().filter(m => m instanceof PropertyDeclaration) as PropertyDeclaration[];
+    }
+
+    /**
+     * Gets the instance members.
+     */
+    getInstanceMembers() {
+        return this.getAllMembers().filter(m => !m.isStatic());
+    }
+
+    /**
+     * Gets the class instance method declarations.
+     */
+    getStaticMethodDeclarations(): MethodDeclaration[] {
+        return this.getStaticMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
+    }
+
+    /**
+     * Gets the class instance property declarations.
+     */
+    getStaticPropertyDeclarations(): PropertyDeclaration[] {
+        return this.getStaticMembers().filter(m => m instanceof PropertyDeclaration) as PropertyDeclaration[];
+    }
+
+    /**
+     * Gets the static members.
+     */
+    getStaticMembers() {
+        return this.getAllMembers().filter(m => m.isStatic());
+    }
+
+    /**
+     * Gets the instance and static members.
+     */
+    getAllMembers() {
+        return this.node.members
+            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration)[];
     }
 }
