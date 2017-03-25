@@ -165,6 +165,14 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a wrapped method signature from a compiler object.
+     * @param methodSignature - Method signature compiler object.
+     */
+    getMethodSignature(methodSignature: ts.MethodSignature): compiler.MethodSignature {
+        return this.nodeCache.getOrCreate<compiler.MethodSignature>(methodSignature, () => new compiler.MethodSignature(this, methodSignature));
+    }
+
+    /**
      * Gets a wrapped namespace declaration from a compiler object.
      * @param namespaceDeclaration - Namespace declaration compiler object.
      */
@@ -186,6 +194,14 @@ export class CompilerFactory {
      */
     getPropertyDeclaration(propertyDeclaration: ts.PropertyDeclaration): compiler.PropertyDeclaration {
         return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this, propertyDeclaration));
+    }
+
+    /**
+     * Gets a wrapped property signature from a compiler object.
+     * @param propertySignature - Property signature compiler object.
+     */
+    getPropertySignature(propertySignature: ts.PropertySignature): compiler.PropertySignature {
+        return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this, propertySignature));
     }
 
     /**

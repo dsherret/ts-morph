@@ -6,13 +6,13 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getMethodDeclarations), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {\n}\n");
+                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getMethodDeclarations().length).to.equal(0);
             });
         });
 
         describe("has methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {\n    prop: string;\n    method1() {}\n    method2() {}\n}\n");
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n    prop: string;\n    method1() {}\n    method2() {}\n}\n");
 
             it("should get the right number of methods", () => {
                 expect(firstChild.getMethodDeclarations().length).to.equal(2);
@@ -27,13 +27,13 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getPropertyDeclarations), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {\n}\n");
+                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getPropertyDeclarations().length).to.equal(0);
             });
         });
 
         describe("has properties", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {\nprop: string;\nprop2: number;method1() {}\n}\n");
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nprop: string;\nprop2: number;method1() {}\n}\n");
 
             it("should get the right number of properties", () => {
                 expect(firstChild.getPropertyDeclarations().length).to.equal(2);

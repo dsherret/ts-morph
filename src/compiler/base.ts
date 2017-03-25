@@ -7,3 +7,5 @@ export * from "./base/TypedNode";
 export * from "./base/ReturnTypedNode";
 export * from "./base/ParameteredNode";
 export * from "./base/TypeParameteredNode";
+export * from "./base/QuestionTokenableNode";
+export * from "./base/ReadonlyableNode";
