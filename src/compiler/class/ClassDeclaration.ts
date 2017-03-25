@@ -3,6 +3,10 @@ import {Node} from "./../common";
 import {NamedNode, ExportableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
+import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
+import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
+
+export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 
 export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(ExportableNode(NamedNode(Node)))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
@@ -16,8 +20,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the class instance property declarations.
      */
-    getInstancePropertyDeclarations(): PropertyDeclaration[] {
-        return this.getInstanceMembers().filter(m => m instanceof PropertyDeclaration) as PropertyDeclaration[];
+    getInstanceProperties(): ClassPropertyTypes[] {
+        return this.getInstanceMembers()
+            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
     }
 
     /**
@@ -37,8 +42,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the class instance property declarations.
      */
-    getStaticPropertyDeclarations(): PropertyDeclaration[] {
-        return this.getStaticMembers().filter(m => m instanceof PropertyDeclaration) as PropertyDeclaration[];
+    getStaticProperties(): ClassPropertyTypes[] {
+        return this.getStaticMembers()
+            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
     }
 
     /**
@@ -53,6 +59,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getAllMembers() {
         return this.node.members
-            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration)[];
+            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration)[];
     }
+}
+
+function isClassPropertyType(m: Node<ts.Node>): m is ClassPropertyTypes {
+    return m instanceof PropertyDeclaration || m instanceof SetAccessorDeclaration || m instanceof GetAccessorDeclaration;
 }

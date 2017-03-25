@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, MethodDeclaration, PropertyDeclaration} from "./../../../compiler";
+import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -24,23 +24,33 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getInstancePropertyDeclarations), () => {
+    describe(nameof<ClassDeclaration>(d => d.getInstanceProperties), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getInstancePropertyDeclarations().length).to.equal(0);
+                expect(firstChild.getInstanceProperties().length).to.equal(0);
             });
         });
 
         describe("has properties", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n");
+            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
+                "get prop(): string {}\nset prop(val: string) {}\n}\n";
+            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
-                expect(firstChild.getInstancePropertyDeclarations().length).to.equal(2);
+                expect(firstChild.getInstanceProperties().length).to.equal(4);
             });
 
             it("should get a property of the right instance of", () => {
-                expect(firstChild.getInstancePropertyDeclarations()[0]).to.be.instanceOf(PropertyDeclaration);
+                expect(firstChild.getInstanceProperties()[0]).to.be.instanceOf(PropertyDeclaration);
+            });
+
+            it("should get a property of the right instance of for the get accessor", () => {
+                expect(firstChild.getInstanceProperties()[2]).to.be.instanceOf(GetAccessorDeclaration);
+            });
+
+            it("should get a property of the right instance of for the set accessor", () => {
+                expect(firstChild.getInstanceProperties()[3]).to.be.instanceOf(SetAccessorDeclaration);
             });
         });
     });
@@ -66,23 +76,33 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getStaticPropertyDeclarations), () => {
+    describe(nameof<ClassDeclaration>(d => d.getStaticProperties), () => {
         describe("no static properties", () => {
             it("should not have any properties", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getStaticPropertyDeclarations().length).to.equal(0);
+                expect(firstChild.getStaticProperties().length).to.equal(0);
             });
         });
 
         describe("has static properties", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n");
+            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
+                "\nstatic get prop(): string {}\nstatic set prop(val: string) {}\n}";
+            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of static properties", () => {
-                expect(firstChild.getStaticPropertyDeclarations().length).to.equal(1);
+                expect(firstChild.getStaticProperties().length).to.equal(3);
             });
 
             it("should get a property of the right instance of", () => {
-                expect(firstChild.getStaticPropertyDeclarations()[0]).to.be.instanceOf(PropertyDeclaration);
+                expect(firstChild.getStaticProperties()[0]).to.be.instanceOf(PropertyDeclaration);
+            });
+
+            it("should get a property of the right instance of for the get accessor", () => {
+                expect(firstChild.getStaticProperties()[1]).to.be.instanceOf(GetAccessorDeclaration);
+            });
+
+            it("should get a property of the right instance of for the set accessor", () => {
+                expect(firstChild.getStaticProperties()[2]).to.be.instanceOf(SetAccessorDeclaration);
             });
         });
     });

@@ -87,6 +87,8 @@ export class CompilerFactory {
                 return this.getEnumMemberDeclaration(compilerNode as ts.EnumMember);
             case ts.SyntaxKind.FunctionDeclaration:
                 return this.getFunctionDeclaration(compilerNode as ts.FunctionDeclaration);
+            case ts.SyntaxKind.GetAccessor:
+                return this.getGetAccessorDeclaration(compilerNode as ts.GetAccessorDeclaration);
             case ts.SyntaxKind.InterfaceDeclaration:
                 return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration);
             case ts.SyntaxKind.Identifier:
@@ -101,6 +103,8 @@ export class CompilerFactory {
                 return this.getExpression(compilerNode as ts.Expression);
             case ts.SyntaxKind.Parameter:
                 return this.getParameterDeclaration(compilerNode as ts.ParameterDeclaration);
+            case ts.SyntaxKind.SetAccessor:
+                return this.getSetAccessorDeclaration(compilerNode as ts.SetAccessorDeclaration);
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return this.getTypeAliasDeclaration(compilerNode as ts.TypeAliasDeclaration);
             case ts.SyntaxKind.VariableDeclaration:
@@ -146,6 +150,14 @@ export class CompilerFactory {
      */
     getFunctionDeclaration(functionDeclaration: ts.FunctionDeclaration): compiler.FunctionDeclaration {
         return this.nodeCache.getOrCreate<compiler.FunctionDeclaration>(functionDeclaration, () => new compiler.FunctionDeclaration(this, functionDeclaration));
+    }
+
+    /**
+     * Gets a wrapped get accessor declaration from a compiler object.
+     * @param propertySignature - Get accessor declaration compiler object.
+     */
+    getGetAccessorDeclaration(getAccessor: ts.GetAccessorDeclaration): compiler.GetAccessorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this, getAccessor));
     }
 
     /**
@@ -202,6 +214,14 @@ export class CompilerFactory {
      */
     getPropertySignature(propertySignature: ts.PropertySignature): compiler.PropertySignature {
         return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this, propertySignature));
+    }
+
+    /**
+     * Gets a wrapped set accessor declaration from a compiler object.
+     * @param propertySignature - Get accessor declaration compiler object.
+     */
+    getSetAccessorDeclaration(setAccessor: ts.SetAccessorDeclaration): compiler.SetAccessorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.SetAccessorDeclaration>(setAccessor, () => new compiler.SetAccessorDeclaration(this, setAccessor));
     }
 
     /**
