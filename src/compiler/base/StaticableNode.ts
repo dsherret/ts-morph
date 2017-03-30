@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {ModifierableNode} from "./ModifierableNode";
 
-export type StaticableNodeExtensionType = Node<ts.Node>;
+export type StaticableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface StaticableNode {
     isStatic(): boolean;

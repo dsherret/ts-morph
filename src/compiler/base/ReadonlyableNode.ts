@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {ModifierableNode} from "./ModifierableNode";
 
-export type ReadonlyableNodeExtensionType = Node<ts.Node>;
+export type ReadonlyableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface ReadonlyableNode {
     isReadonly(): boolean;

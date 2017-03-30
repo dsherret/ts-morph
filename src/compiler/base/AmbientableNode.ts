@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {ModifierableNode} from "./ModifierableNode";
 
-export type AmbientableNodeExtensionType = Node<ts.Node>;
+export type AmbientableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface AmbientableNode {
     hasDeclareKeyword(): boolean;

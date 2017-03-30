@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {ModifierableNode} from "./ModifierableNode";
 
-export type ExportableNodeExtensionType = Node<ts.Node>;
+export type ExportableNodeExtensionType = Node<ts.Node> & ModifierableNode;
 
 export interface ExportableNode {
     hasExportKeyword(): boolean;
