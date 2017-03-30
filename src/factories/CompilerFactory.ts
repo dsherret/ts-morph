@@ -28,6 +28,13 @@ export class CompilerFactory {
     }
 
     /**
+     * Convenience method to get the type checker.
+     */
+    getTypeChecker() {
+        return this.languageService.getProgram().getTypeChecker();
+    }
+
+    /**
      * Creates a source file from a file path and text.
      * Adds it to the cache.
      * @param filePath - File path for the source file.

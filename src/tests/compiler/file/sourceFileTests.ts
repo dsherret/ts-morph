@@ -46,4 +46,43 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
     });
+
+    describe(nameof<SourceFile>(n => n.getDefaultExportSymbol), () => {
+        it("should return undefined when there's no default export", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(sourceFile.getDefaultExportSymbol()).to.be.undefined;
+        });
+
+        it("should return the default export symbol when one exists", () => {
+            const {sourceFile} = getInfoFromText("export default class Identifier {}");
+            const defaultExportSymbol = sourceFile.getDefaultExportSymbol()!;
+            expect(defaultExportSymbol.getName()).to.equal("default");
+        });
+
+        it("should return the default export symbol when default exported on a separate statement", () => {
+            const {sourceFile} = getInfoFromText("class Identifier {}\nexport default Identifier;");
+            const defaultExportSymbol = sourceFile.getDefaultExportSymbol()!;
+            expect(defaultExportSymbol.getName()).to.equal("default");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.removeDefaultExport), () => {
+        it("should do nothing when there's no default export", () => {
+            const {sourceFile} = getInfoFromText("");
+            sourceFile.removeDefaultExport();
+            expect(sourceFile.getFullText()).to.equal("");
+        });
+
+        it("should return the default export symbol when one exists", () => {
+            const {sourceFile} = getInfoFromText("export default class Identifier {}");
+            sourceFile.removeDefaultExport();
+            expect(sourceFile.getFullText()).to.equal("class Identifier {}");
+        });
+
+        it("should return the default export symbol when default exported on a separate statement", () => {
+            const {sourceFile} = getInfoFromText("namespace Identifier {}\nclass Identifier {}\nexport default Identifier;\n");
+            sourceFile.removeDefaultExport();
+            expect(sourceFile.getFullText()).to.equal("namespace Identifier {}\nclass Identifier {}\n");
+        });
+    });
 });

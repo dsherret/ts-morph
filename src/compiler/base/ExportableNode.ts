@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {TypeChecker} from "./../tools";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node<ts.Node> & ModifierableNode;
@@ -10,6 +11,7 @@ export interface ExportableNode {
     hasDefaultKeyword(): boolean;
     getDefaultKeyword(): Node<ts.Node> | undefined;
     isDefaultExport(): boolean;
+    setIsDefaultExport(isDefaultExport: boolean): this;
 }
 
 export function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T {
@@ -45,19 +47,13 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         /**
          * Gets if this node is a default export.
          */
-        isDefaultExport() {
+        isDefaultExport(typeChecker?: TypeChecker) {
             if (this.hasDefaultKeyword())
                 return true;
 
-            const typeChecker = this.factory.getLanguageService().getProgram().getTypeChecker();
+            typeChecker = typeChecker || this.factory.getLanguageService().getProgram().getTypeChecker();
             const thisSymbol = this.getSymbol(typeChecker);
-            const sourceFileSymbol = typeChecker.getSymbolAtLocation(this.getRequiredSourceFile());
-
-            // will be undefined when the source file doesn't have an export
-            if (sourceFileSymbol == null)
-                return false;
-
-            const defaultExportSymbol = sourceFileSymbol.getExportByName("default");
+            const defaultExportSymbol = this.getRequiredSourceFile().getDefaultExportSymbol(typeChecker);
 
             if (defaultExportSymbol == null || thisSymbol == null)
                 return false;
@@ -67,6 +63,31 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             const aliasedSymbol = typeChecker.getAliasedSymbol(defaultExportSymbol);
             return thisSymbol.equals(aliasedSymbol);
+        }
+
+        /**
+         * Sets if this node is a default export.
+         * @param isDefaultExport - If it should be a default export or not.
+         */
+        setIsDefaultExport(isDefaultExport: boolean) {
+            const typeChecker = this.factory.getLanguageService().getProgram().getTypeChecker();
+            if (isDefaultExport === this.isDefaultExport(typeChecker))
+                return this;
+
+            // remove any existing default export
+            const sourceFile = this.getRequiredSourceFile();
+            const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol(typeChecker);
+
+            if (fileDefaultExportSymbol != null)
+                sourceFile.removeDefaultExport(typeChecker, fileDefaultExportSymbol);
+
+            // set this node as the one to default export
+            if (isDefaultExport) {
+                this.addModifier("export");
+                this.addModifier("default");
+            }
+
+            return this;
         }
     };
 }

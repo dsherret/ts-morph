@@ -37,19 +37,26 @@ describe(nameof(ModifierableNode), () => {
     });
 
     describe(nameof<ModifierableNode>(n => n.addModifier), () => {
-        it("should add a modifier at the start when not specifying any order", () => {
+        it("should add a modifier in the correct order in a simple scenario", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("abstract");
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("export abstract class Identifier {}");
         });
 
-        it("should add a modifier after a text when specifying it", () => {
+        it("should add a modifier in the correct order in an advanced scenario", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
             firstChild.addModifier("export");
             firstChild.addModifier("abstract");
             firstChild.addModifier("declare");
             expect(firstChild.getText()).to.equal("export declare abstract class Identifier {}");
+        });
+
+        it("should not add the same modifier twice", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.addModifier("export");
+            firstChild.addModifier("export");
+            expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
     });
 });

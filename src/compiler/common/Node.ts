@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
+import {ModifierableNode} from "./../base/ModifierableNode";
 import {FunctionDeclaration} from "./../function";
 import {NamespaceDeclaration} from "./../namespace";
 import {TypeChecker} from "./../tools";
@@ -343,6 +344,7 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets if the current node is a source file.
+     * @internal
      */
     isSourceFile(): this is SourceFile {
         return this.node.kind === ts.SyntaxKind.SourceFile;
@@ -350,6 +352,7 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets if the current node is a function declaration.
+     * @internal
      */
     isFunctionDeclaration(): this is FunctionDeclaration {
         return this.node.kind === ts.SyntaxKind.FunctionDeclaration;
@@ -357,9 +360,18 @@ export class Node<NodeType extends ts.Node> {
 
     /**
      * Gets if the current node is a namespace declaration.
+     * @internal
      */
     isNamespaceDeclaration(): this is NamespaceDeclaration {
         return this.node.kind === ts.SyntaxKind.ModuleDeclaration;
+    }
+
+    /**
+     * Gets if the current node is a modifierable node.
+     * @internal
+     */
+    isModifierableNode(): this is ModifierableNode {
+        return (this as any)[nameof<ModifierableNode>(n => n.getCombinedModifierFlags)] != null;
     }
 
     /**

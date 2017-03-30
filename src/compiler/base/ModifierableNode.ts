@@ -3,12 +3,13 @@ import * as errors from "./../../errors";
 import {Node} from "./../common";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
+export type ModifierTexts = "export" | "default" | "declare" | "abstract";
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
     getCombinedModifierFlags(): ts.ModifierFlags;
     getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Node> | undefined;
-    addModifier(text: string): Node<ts.Node>;
+    addModifier(text: ModifierTexts): Node<ts.Modifier>;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
@@ -46,9 +47,13 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
          * @returns The added modifier.
          * @internal
          */
-        addModifier(text: string): Node<ts.Node> {
-            // get insert position
+        addModifier(text: ModifierTexts): Node<ts.Modifier> {
             const modifiers = (this.node.modifiers || []) as ts.NodeArray<ts.Modifier>;
+            const hasModifier = modifiers.some(m => m.getText() === text);
+            if (hasModifier)
+                return this.getModifiers().filter(m => m.getText() === text)[0] as Node<ts.Modifier>;
+
+            // get insert position
             let insertPos = this.node.pos;
             getAddAfterModifierTexts(text).forEach(addAfterText => {
                 for (let modifier of modifiers) {
@@ -62,21 +67,22 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
             // insert setup
             let startPos: number;
+            let insertText: string;
             const isFirstModifier = insertPos === this.node.pos;
             if (isFirstModifier) {
-                text = text + " ";
+                insertText = text + " ";
                 startPos = insertPos;
             }
             else {
-                text = " " + text;
+                insertText = " " + text;
                 startPos = insertPos + 1;
             }
 
             // insert
             const sourceFile = this.getRequiredSourceFile();
-            sourceFile.insertText(insertPos, text);
+            sourceFile.insertText(insertPos, insertText);
 
-            return this.getModifiers().filter(m => m.getStart() === startPos)[0];
+            return this.getModifiers().filter(m => m.getStart() === startPos)[0] as Node<ts.Modifier>;
         }
     };
 }
@@ -85,10 +91,12 @@ function getAddAfterModifierTexts(text: string): string[] {
     switch (text) {
         case "export":
             return [];
-        case "declare":
+        case "default":
             return ["export"];
+        case "declare":
+            return ["export", "default"];
         case "abstract":
-            return ["export", "declare"];
+            return ["export", "default", "declare"];
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
     }

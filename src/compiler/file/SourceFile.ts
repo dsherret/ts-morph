@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as path from "path";
-import {Node} from "./../common";
+import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
+import {TypeChecker} from "./../tools";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -47,9 +48,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
 
         this.ensureNodePositionsContiguous(nonNullNodes);
-        const removeRangeStart = nonNullNodes[0].getPos();
-        const removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
+
+        // get the start and end position
         const currentText = this.getFullText();
+        const removeRangeStart = nonNullNodes[0].getPos();
+        let removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
+        const whitespaceRegex = /[^\S\r\n]/;
+        while (whitespaceRegex.test(currentText[removeRangeEnd]))
+            removeRangeEnd++;
+
+        // remove the nodes
         const newFileText = currentText.substring(0, removeRangeStart) + currentText.substring(removeRangeEnd);
         const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFileName());
 
@@ -89,8 +97,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         for (let newChild of tempFileChildIterator) {
             const newChildPos = newChild.getPos();
             const newChildStart = newChild.getStart();
+            const isSyntaxListDisappearing = () => currentChild.kind === ts.SyntaxKind.SyntaxList && currentChild.kind !== newChild.getKind();
 
-            while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0) {
+            while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0 || isSyntaxListDisappearing()) {
                 currentChild = currentFileChildIterator.next().value;
                 hasPassed = true;
             }
@@ -177,5 +186,41 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 compilerNode.end += difference;
             }
         }
+    }
+
+    /**
+     * Gets the default export symbol of the file.
+     * @param typeChecker - Type checker.
+     */
+    getDefaultExportSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
+        const sourceFileSymbol = typeChecker.getSymbolAtLocation(this.getRequiredSourceFile());
+
+        // will be undefined when the source file doesn't have an export
+        if (sourceFileSymbol == null)
+            return undefined;
+
+        return sourceFileSymbol.getExportByName("default");
+    }
+
+    /**
+     * Removes any "export default";
+     */
+    removeDefaultExport(typeChecker?: TypeChecker, defaultExportSymbol?: Symbol | undefined): this {
+        typeChecker = typeChecker || this.factory.getTypeChecker();
+        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol(typeChecker);
+
+        if (defaultExportSymbol == null)
+            return this;
+
+        const declaration = defaultExportSymbol.getDeclarations()[0];
+        if (declaration.node.kind === ts.SyntaxKind.ExportAssignment)
+            this.removeNodes(declaration);
+        else if (declaration.isModifierableNode()) {
+            const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
+            const defaultKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
+            this.removeNodes(exportKeyword, defaultKeyword);
+        }
+
+        return this;
     }
 }
