@@ -44,6 +44,18 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the aliased symbol of a symbol.
+     * @param symbol - Symbol to get the alias symbol of.
+     */
+    getAliasedSymbol(symbol: Symbol): Symbol | undefined {
+        if (!symbol.hasFlags(ts.SymbolFlags.Alias))
+            return undefined;
+
+        const tsAliasSymbol = this.typeChecker.getAliasedSymbol(symbol.getCompilerSymbol());
+        return tsAliasSymbol == null ? undefined : this.factory.getSymbol(tsAliasSymbol);
+    }
+
+    /**
      * Gets the type text
      * @param type - Type to get the text of.
      * @param enclosingNode - Enclosing node.

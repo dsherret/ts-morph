@@ -23,6 +23,7 @@ export class LanguageService {
     private compilerFactory: CompilerFactory;
 
     constructor(private readonly compilerOptions: ts.CompilerOptions) {
+        // I don't know what I'm doing for some of this...
         let version = 0;
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,

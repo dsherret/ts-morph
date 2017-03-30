@@ -13,6 +13,13 @@ export class Program {
     }
 
     /**
+     * Gets the underlying compiler program.
+     */
+    getCompilerProgram() {
+        return this.program;
+    }
+
+    /**
      * Get the program's type checker.
      */
     getTypeChecker() {
