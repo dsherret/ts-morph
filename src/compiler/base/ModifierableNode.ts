@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {Node} from "./../common";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
@@ -7,7 +8,7 @@ export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
     getCombinedModifierFlags(): ts.ModifierFlags;
     getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Node> | undefined;
-    addModifier(text: string, addAfterModifierTexts: string[]): Node<ts.Node>;
+    addModifier(text: string): Node<ts.Node>;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
@@ -42,15 +43,14 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         /**
          * Add a modifier with the specified text.
          * @param text - Modifier text to add.
-         * @param addAfterModifierTexts - Add after these modifier texts.
          * @returns The added modifier.
          * @internal
          */
-        addModifier(text: string, addAfterModifierTexts: string[]): Node<ts.Node> {
+        addModifier(text: string): Node<ts.Node> {
             // get insert position
             const modifiers = (this.node.modifiers || []) as ts.NodeArray<ts.Modifier>;
             let insertPos = this.node.pos;
-            addAfterModifierTexts.forEach(addAfterText => {
+            getAddAfterModifierTexts(text).forEach(addAfterText => {
                 for (let modifier of modifiers) {
                     if (modifier.getText() === addAfterText) {
                         if (insertPos < modifier.end)
@@ -79,4 +79,17 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return this.getModifiers().filter(m => m.getStart() === startPos)[0];
         }
     };
+}
+
+function getAddAfterModifierTexts(text: string): string[] {
+    switch (text) {
+        case "export":
+            return [];
+        case "declare":
+            return ["export"];
+        case "abstract":
+            return ["export", "declare"];
+        default:
+            throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
+    }
 }
