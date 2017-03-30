@@ -35,4 +35,21 @@ describe(nameof(ModifierableNode), () => {
             expect(modifiers[1].getKind()).to.equal(ts.SyntaxKind.AbstractKeyword);
         });
     });
+
+    describe(nameof<ModifierableNode>(n => n.addModifier), () => {
+        it("should add a modifier at the start when not specifying any order", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.addModifier("abstract", []);
+            firstChild.addModifier("export", []);
+            expect(firstChild.getText()).to.equal("export abstract class Identifier {}");
+        });
+
+        it("should add a modifier after a text when specifying it", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.addModifier("export", []);
+            firstChild.addModifier("abstract", ["export", "declare"]);
+            firstChild.addModifier("declare", ["export"]);
+            expect(firstChild.getText()).to.equal("export declare abstract class Identifier {}");
+        });
+    });
 });
