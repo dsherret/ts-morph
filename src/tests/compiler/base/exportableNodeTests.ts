@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ExportableNode, ClassDeclaration, NamespaceDeclaration} from "./../../../compiler";
+import * as errors from "./../../../errors";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportableNode), () => {
@@ -121,6 +122,12 @@ describe(nameof(ExportableNode), () => {
                 firstChild.setIsDefaultExport(true);
                 expect(sourceFile.getText()).to.equal("export default class Identifier {}");
             });
+
+            it("should throw an error if setting as a default export within a namespace", () => {
+                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
+                const innerChild = firstChild.getClassDeclarations()[0];
+                expect(() => innerChild.setIsDefaultExport(true)).to.throw(errors.InvalidOperationError);
+            });
         });
 
         describe("unsetting as the default export", () => {
@@ -134,6 +141,88 @@ describe(nameof(ExportableNode), () => {
                 const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}\nexport default class Identifier2 {}");
                 firstChild.setIsDefaultExport(false);
                 expect(sourceFile.getText()).to.equal("export class Identifier {}\nexport default class Identifier2 {}");
+            });
+        });
+    });
+
+    describe(nameof<ExportableNode>(n => n.setIsExported), () => {
+        describe("setting as exported", () => {
+            it("should do nothing if already exported", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+                firstChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("export class Identifier {}");
+            });
+
+            it("should add the export keyword if not exported", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+                firstChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("export class Identifier {}");
+            });
+
+            it("should do nothing if already exported from a namespace", () => {
+                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { export class Identifier {} }");
+                const innerChild = firstChild.getClassDeclarations()[0];
+                innerChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("namespace Identifier { export class Identifier {} }");
+            });
+
+            it("should add the export keyword if not exported from a namespace", () => {
+                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
+                const innerChild = firstChild.getClassDeclarations()[0];
+                innerChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("namespace Identifier { export class Identifier {} }");
+            });
+
+            it("should remove it as a default export if one", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("export default class Identifier {}");
+                firstChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("export class Identifier {}");
+            });
+
+            it("should remove it as a default export if one and exported in a separate statement", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}\nexport default Identifier;");
+                firstChild.setIsExported(true);
+                expect(sourceFile.getText()).to.equal("export class Identifier {}");
+            });
+        });
+
+        describe("setting as not exported", () => {
+            it("should do nothing if already not exported", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+                firstChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("class Identifier {}");
+            });
+
+            it("should remove the export keyword if exported", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+                firstChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("class Identifier {}");
+            });
+
+            it("should do nothing if already not exported from a namespace", () => {
+                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
+                const innerChild = firstChild.getClassDeclarations()[0];
+                innerChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("namespace Identifier { class Identifier {} }");
+            });
+
+            it("should remove the export keyword if exported from a namespace", () => {
+                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { export class Identifier {} }");
+                const innerChild = firstChild.getClassDeclarations()[0];
+                innerChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("namespace Identifier { class Identifier {} }");
+            });
+
+            it("should remove it as a default export if one", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("export default class Identifier {}");
+                firstChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("class Identifier {}");
+            });
+
+            it("should remove it as a default export if one and exported in a separate statement", () => {
+                const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}\nexport default Identifier;");
+                firstChild.setIsExported(false);
+                expect(sourceFile.getText()).to.equal("class Identifier {}");
             });
         });
     });

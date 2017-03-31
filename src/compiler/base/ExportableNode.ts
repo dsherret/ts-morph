@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {TypeChecker} from "./../tools";
 import {ModifierableNode} from "./ModifierableNode";
@@ -12,7 +13,8 @@ export interface ExportableNode {
     getDefaultKeyword(): Node<ts.Node> | undefined;
     isDefaultExport(): boolean;
     isNamedExport(): boolean;
-    setIsDefaultExport(isDefaultExport: boolean): this;
+    setIsDefaultExport(value: boolean, typeChecker?: TypeChecker): this;
+    setIsExported(value: boolean, typeChecker?: TypeChecker): this;
 }
 
 export function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T {
@@ -77,12 +79,15 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         /**
          * Sets if this node is a default export.
-         * @param isDefaultExport - If it should be a default export or not.
+         * @param value - If it should be a default export or not.
+         * @param typeChecker - Optional type checker.
          */
-        setIsDefaultExport(isDefaultExport: boolean) {
-            const typeChecker = this.factory.getLanguageService().getProgram().getTypeChecker();
-            if (isDefaultExport === this.isDefaultExport(typeChecker))
+        setIsDefaultExport(value: boolean, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+            if (value === this.isDefaultExport(typeChecker))
                 return this;
+
+            if (value && !this.getRequiredParent().isSourceFile())
+                throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
             const sourceFile = this.getRequiredSourceFile();
@@ -92,9 +97,35 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 sourceFile.removeDefaultExport(typeChecker, fileDefaultExportSymbol);
 
             // set this node as the one to default export
-            if (isDefaultExport) {
+            if (value) {
                 this.addModifier("export");
                 this.addModifier("default");
+            }
+
+            return this;
+        }
+
+        /**
+         * Sets if the node is exported.
+         * Note: Will always remove the default export if set.
+         * @param value - If it should be exported or not.
+         * @param typeChecker - Optional type checker.
+         */
+        setIsExported(value: boolean, typeChecker?: TypeChecker) {
+            // remove the default export if it is one no matter what
+            if (this.getRequiredParent().isSourceFile()) {
+                typeChecker = typeChecker || this.factory.getTypeChecker();
+                this.setIsDefaultExport(false, typeChecker);
+            }
+
+            if (value) {
+                if (!this.hasExportKeyword())
+                    this.addModifier("export");
+            }
+            else {
+                const exportKeyword = this.getExportKeyword();
+                if (exportKeyword != null)
+                    this.getRequiredSourceFile().removeNodes(exportKeyword);
             }
 
             return this;
