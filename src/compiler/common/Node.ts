@@ -4,6 +4,8 @@ import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./../base/ModifierableNode";
 import {FunctionDeclaration} from "./../function";
+import {TypeAliasDeclaration} from "./../type";
+import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {TypeChecker} from "./../tools";
 import {Symbol} from "./Symbol";
@@ -239,6 +241,13 @@ export class Node<NodeType extends ts.Node> {
         return this.node.getFullText(Node.getCompilerSourceFile(sourceFile));
     }
 
+    /**
+     * Gets the combined modifier flags.
+     */
+    getCombinedModifierFlags() {
+        return ts.getCombinedModifierFlags(this.node);
+    }
+
     replaceCompilerNode(compilerNode: NodeType) {
         this.node = compilerNode;
     }
@@ -255,15 +264,23 @@ export class Node<NodeType extends ts.Node> {
         return (topParent != null && topParent.isSourceFile() ? topParent : undefined) as SourceFile | undefined;
     }
 
-    getTopParent() {
-        let parent = this as Node<ts.Node>;
-        let nextParent = parent!.getParent();
-        while (nextParent != null) {
-            parent = nextParent;
-            nextParent = parent!.getParent();
+    /**
+     * Goes up the tree yielding all the parents in order.
+     */
+    *getParents() {
+        let parent = (this as Node<ts.Node>).getParent();
+        while (parent != null) {
+            yield parent;
+            parent = parent!.getParent();
         }
+    }
 
-        return parent;
+    getTopParent() {
+        let currentParent = this as Node<ts.Node>;
+        for (let parent of this.getParents()) {
+            currentParent = parent;
+        }
+        return currentParent;
     }
 
     getParent() {
@@ -377,11 +394,27 @@ export class Node<NodeType extends ts.Node> {
     }
 
     /**
+     * Gets if the current node is an interface declaration.
+     * @internal
+     */
+    isInterfaceDeclaration(): this is InterfaceDeclaration {
+        return this.node.kind === ts.SyntaxKind.InterfaceDeclaration;
+    }
+
+    /**
      * Gets if the current node is a namespace declaration.
      * @internal
      */
     isNamespaceDeclaration(): this is NamespaceDeclaration {
         return this.node.kind === ts.SyntaxKind.ModuleDeclaration;
+    }
+
+    /**
+     * Gets if the current node is a type alias declaration.
+     * @internal
+     */
+    isTypeAliasDeclaration(): this is TypeAliasDeclaration {
+        return this.node.kind === ts.SyntaxKind.TypeAliasDeclaration;
     }
 
     /**

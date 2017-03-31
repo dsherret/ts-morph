@@ -8,7 +8,6 @@ export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "pub
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
-    getCombinedModifierFlags(): ts.ModifierFlags;
     getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Node> | undefined;
     hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
     toggleModifier(text: ModifierTexts, value?: boolean, sourceFile?: SourceFile): this;
@@ -22,13 +21,6 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
          */
         getModifiers() {
             return this.node.modifiers == null ? [] : this.node.modifiers.map(m => this.factory.getNodeFromCompilerNode(m));
-        }
-
-        /**
-         * Gets the combined modifier flags.
-         */
-        getCombinedModifierFlags() {
-            return ts.getCombinedModifierFlags(this.node);
         }
 
         /**
