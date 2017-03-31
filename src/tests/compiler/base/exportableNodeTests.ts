@@ -124,7 +124,7 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should throw an error if setting as a default export within a namespace", () => {
-                const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
+                const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
                 const innerChild = firstChild.getClassDeclarations()[0];
                 expect(() => innerChild.setIsDefaultExport(true)).to.throw(errors.InvalidOperationError);
             });

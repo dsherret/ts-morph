@@ -31,4 +31,18 @@ describe(nameof(ReadonlyableNode), () => {
             expect(firstProperty.getReadonlyKeyword()).to.be.undefined;
         });
     });
+
+    describe(nameof<ReadonlyableNode>(n => n.setIsReadonly), () => {
+        it("should set as readonly when not readonly", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
+            (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(true);
+            expect(sourceFile.getText()).to.equal("class MyClass { readonly prop: string; }");
+        });
+
+        it("should set as not readonly when readonly", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { readonly prop: string; }");
+            (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(false);
+            expect(sourceFile.getText()).to.equal("class MyClass { prop: string; }");
+        });
+    });
 });
