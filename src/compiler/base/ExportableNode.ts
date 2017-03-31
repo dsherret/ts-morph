@@ -11,6 +11,7 @@ export interface ExportableNode {
     hasDefaultKeyword(): boolean;
     getDefaultKeyword(): Node<ts.Node> | undefined;
     isDefaultExport(): boolean;
+    isNamedExport(): boolean;
     setIsDefaultExport(isDefaultExport: boolean): this;
 }
 
@@ -46,6 +47,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         /**
          * Gets if this node is a default export.
+         * @param typeChecker - Optional type checker.
          */
         isDefaultExport(typeChecker?: TypeChecker) {
             if (this.hasDefaultKeyword())
@@ -63,6 +65,14 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             const aliasedSymbol = typeChecker.getAliasedSymbol(defaultExportSymbol);
             return thisSymbol.equals(aliasedSymbol);
+        }
+
+        /**
+         * Gets if this node is a named export.
+         */
+        isNamedExport() {
+            const parentNode = this.getRequiredParent();
+            return parentNode.isSourceFile() && this.hasExportKeyword() && !this.hasDefaultKeyword();
         }
 
         /**

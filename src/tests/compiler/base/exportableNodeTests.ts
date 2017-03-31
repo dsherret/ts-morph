@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, ClassDeclaration} from "./../../../compiler";
+import {ExportableNode, ClassDeclaration, NamespaceDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportableNode), () => {
@@ -70,6 +70,29 @@ describe(nameof(ExportableNode), () => {
         it("should not be a default export when not and there exists another default export", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}\nexport default class Identifier2 {}");
             expect(firstChild.isDefaultExport()).to.be.false;
+        });
+    });
+
+    describe(nameof<ExportableNode>(n => n.isNamedExport), () => {
+        it("should be a named export when one", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            expect(firstChild.isNamedExport()).to.be.true;
+        });
+
+        it("should not be a named export when it's a default export", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("export default class Identifier {}");
+            expect(firstChild.isNamedExport()).to.be.false;
+        });
+
+        it("should not be a named export when contained in a namespace", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Namespace { export class Identifier {} }");
+            const innerClass = firstChild.getClassDeclarations()[0];
+            expect(innerClass.isNamedExport()).to.be.false;
+        });
+
+        it("should not be a named export when neither a default or named export", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            expect(firstChild.isNamedExport()).to.be.false;
         });
     });
 
