@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration} from "./../../../compiler";
+import {AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration, PropertyDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(AmbientableNode), () => {

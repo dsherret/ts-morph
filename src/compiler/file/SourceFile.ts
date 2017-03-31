@@ -44,7 +44,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     removeNodes(...nodes: (Node<ts.Node> | undefined)[]) {
         const nonNullNodes = nodes.filter(n => n != null) as Node<ts.Node>[];
-        if (nonNullNodes.length === 0)
+        if (nonNullNodes.length === 0 || nonNullNodes[0].getPos() === nonNullNodes[nonNullNodes.length - 1].getEnd())
             return this;
 
         this.ensureNodePositionsContiguous(nonNullNodes);
@@ -88,6 +88,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 yield value;
             }
         }
+        function getErrorMessageText(currentChild: ts.Node, newChild: Node<ts.Node>) {
+            let text = `Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).\n\nCode:\n`;
+            const sourceFileText = tempSourceFile.getFullText();
+            const startPos = sourceFileText.lastIndexOf("\n", newChild.getPos()) + 1;
+            let endPos = sourceFileText.indexOf("\n", newChild.getEnd());
+            if (endPos === -1)
+                endPos = sourceFileText.length;
+            text += sourceFileText.substring(startPos, endPos);
+            return text;
+        }
 
         const allNodesBeingRemoved = [...nodesBeingRemoved];
         nodesBeingRemoved.forEach(n => {
@@ -104,9 +114,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             const newChildPos = newChild.getPos();
             const newChildStart = newChild.getStart();
             const isSyntaxListDisappearing = () => currentChild.kind === ts.SyntaxKind.SyntaxList && currentChild.kind !== newChild.getKind();
+            const isTypeReferenceDisappearing = () => currentChild.kind === ts.SyntaxKind.TypeReference && newChild.getKind() === ts.SyntaxKind.FirstAssignment;
 
-            while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0 || isSyntaxListDisappearing()) {
-                currentChild = currentFileChildIterator.next().value;
+            while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0 || isSyntaxListDisappearing() || isTypeReferenceDisappearing()) {
+                if (isTypeReferenceDisappearing()) {
+                    // skip all the children of this node
+                    let parentEnd = currentChild.getEnd();
+                    do {
+                        currentChild = currentFileChildIterator.next().value;
+                    } while (currentChild != null && currentChild.getEnd() <= parentEnd);
+                }
+                else
+                    currentChild = currentFileChildIterator.next().value;
+
                 hasPassed = true;
             }
 
@@ -117,7 +137,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 }
 
                 if (currentChild.pos !== newChild.getPos()) {
-                    throw new Error(`Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).`);
+                    if (newChildPos === newChild.getEnd())
+                        continue;
+                    throw new Error(getErrorMessageText(currentChild, newChild));
                 }
 
                 this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());
@@ -127,7 +149,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 const adjustedPos = newChildStart - differenceLength;
 
                 if (currentChild.getStart() !== adjustedPos || currentChild.kind !== newChild.getKind()) {
-                    throw new Error(`Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).`);
+                    if (newChildPos === newChild.getEnd())
+                        continue;
+                    throw new Error(getErrorMessageText(currentChild, newChild));
                 }
 
                 this.factory.replaceCompilerNode(currentChild, newChild.getCompilerNode());

@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
-import {ModifierableNode} from "./../base/ModifierableNode";
+import {InitializerExpressionableNode, ModifierableNode} from "./../base";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
@@ -347,7 +347,11 @@ export class Node<NodeType extends ts.Node> {
      * @param sourceFile - Optional source file to help improve performance.
      */
     getLastToken(sourceFile = this.getRequiredSourceFile()) {
-        return this.factory.getNodeFromCompilerNode(this.node.getLastToken(sourceFile.getCompilerNode()));
+        const lastToken = this.node.getLastToken(sourceFile.getCompilerNode());
+        if (lastToken == null)
+            throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
+
+        return this.factory.getNodeFromCompilerNode(lastToken);
     }
 
     /**
@@ -422,7 +426,15 @@ export class Node<NodeType extends ts.Node> {
      * @internal
      */
     isModifierableNode(): this is ModifierableNode {
-        return (this as any)[nameof<ModifierableNode>(n => n.getCombinedModifierFlags)] != null;
+        return (this as any)[nameof<ModifierableNode>(n => n.addModifier)] != null;
+    }
+
+    /**
+     * Gets if the current node is an initializer expressionable node.
+     * @internal
+     */
+    isInitializerExpressionableNode(): this is InitializerExpressionableNode {
+        return (this as any)[nameof<InitializerExpressionableNode >(n => n.hasInitializer)] != null;
     }
 
     /**
