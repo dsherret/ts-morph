@@ -50,12 +50,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.ensureNodePositionsContiguous(nonNullNodes);
 
         // get the start and end position
+        const parentStart = nonNullNodes[0].getRequiredParent().getStart();
+        const nodeStart = nonNullNodes[0].getStart();
         const currentText = this.getFullText();
-        const removeRangeStart = nonNullNodes[0].getPos();
+        const removeRangeStart = Math.max(parentStart, nonNullNodes[0].getPos());
         let removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
-        const whitespaceRegex = /[^\S\r\n]/;
-        while (whitespaceRegex.test(currentText[removeRangeEnd]))
-            removeRangeEnd++;
+
+        // trim any end spaces when the current node is the first node of the parent
+        if (nodeStart === parentStart) {
+            const whitespaceRegex = /[^\S\r\n]/;
+            while (whitespaceRegex.test(currentText[removeRangeEnd]))
+                removeRangeEnd++;
+        }
 
         // remove the nodes
         const newFileText = currentText.substring(0, removeRangeStart) + currentText.substring(removeRangeEnd);

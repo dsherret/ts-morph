@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../common";
-import {Scope} from "./../Scope";
 import {ModifierableNode} from "./../../base";
 
 export type AbstractableNodeExtensionType = Node<ts.Node> & ModifierableNode;

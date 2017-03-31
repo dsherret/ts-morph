@@ -29,4 +29,36 @@ describe(nameof(ScopedNode), () => {
             expect(firstProperty.getScope()).to.be.equal(Scope.Private);
         });
     });
+
+    describe(nameof<ScopedNode>(d => d.setScope), () => {
+        it("should clear the scope keyword if set to public", () => {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { private prop: string; }");
+            firstProperty.setScope(Scope.Public);
+            expect(firstChild.getText()).to.be.equal("class Identifier { prop: string; }");
+        });
+
+        it("should clear the scope keyword if set to public even when public", () => {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { public prop: string; }");
+            firstProperty.setScope(Scope.Public);
+            expect(firstChild.getText()).to.be.equal("class Identifier { prop: string; }");
+        });
+
+        it("should set the scope keyword to protected when specified", () => {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { private prop: string; }");
+            firstProperty.setScope(Scope.Protected);
+            expect(firstChild.getText()).to.be.equal("class Identifier { protected prop: string; }");
+        });
+
+        it("should set the scope keyword to private when specified", () => {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { protected prop: string; }");
+            firstProperty.setScope(Scope.Private);
+            expect(firstChild.getText()).to.be.equal("class Identifier { private prop: string; }");
+        });
+
+        it("should set the scope keyword when none exists and setting to not public", () => {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { prop: string; }");
+            firstProperty.setScope(Scope.Private);
+            expect(firstChild.getText()).to.be.equal("class Identifier { private prop: string; }");
+        });
+    });
 });

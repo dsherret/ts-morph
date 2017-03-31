@@ -78,7 +78,7 @@ describe(nameof(ExportableNode), () => {
             it("should remove any existing default export and make the specified class the default export", () => {
                 const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}\nexport default class Identifier2 {}");
                 firstChild.setIsDefaultExport(true);
-                expect(sourceFile.getText()).to.equal("export default class Identifier {}\class Identifier2 {}");
+                expect(sourceFile.getText()).to.equal("export default class Identifier {}\nclass Identifier2 {}");
             });
 
             it("should do nothing if already the default export", () => {

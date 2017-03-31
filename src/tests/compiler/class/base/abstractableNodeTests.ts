@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {AbstractableNode, ClassDeclaration, PropertyDeclaration} from "./../../../../compiler";
+import {AbstractableNode, ClassDeclaration} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(AbstractableNode), () => {

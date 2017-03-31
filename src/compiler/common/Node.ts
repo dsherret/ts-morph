@@ -242,9 +242,9 @@ export class Node<NodeType extends ts.Node> {
         return sourceFile;
     }
 
-    getSourceFile(): SourceFile | null {
+    getSourceFile(): SourceFile | undefined {
         const topParent = this.getTopParent();
-        return (topParent != null && topParent.isSourceFile() ? topParent : null) as SourceFile | null;
+        return (topParent != null && topParent.isSourceFile() ? topParent : undefined) as SourceFile | undefined;
     }
 
     getTopParent() {
@@ -259,7 +259,17 @@ export class Node<NodeType extends ts.Node> {
     }
 
     getParent() {
-        return (this.node.parent == null) ? null : this.factory.getNodeFromCompilerNode(this.node.parent);
+        return (this.node.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.node.parent);
+    }
+
+    /**
+     * Gets the parent and throws an exception if it doesn't exist.
+     */
+    getRequiredParent() {
+        const parentNode = this.getParent();
+        if (parentNode == null)
+            throw new Error("A parent is required to do this operation.");
+        return parentNode;
     }
 
     appendNewLineSeparatorIfNecessary(sourceFile = this.getRequiredSourceFile()) {

@@ -4,7 +4,7 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
-export type ModifierTexts = "export" | "default" | "declare" | "abstract";
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly";
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
@@ -93,7 +93,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 return this.getModifiers().filter(m => m.getText(sourceFile) === text)[0] as Node<ts.Modifier>;
 
             // get insert position
-            let insertPos = this.node.pos;
+            let insertPos = this.getStart();
             getAddAfterModifierTexts(text).forEach(addAfterText => {
                 for (let modifier of modifiers) {
                     if (modifier.getText(sourceFile) === addAfterText) {
@@ -107,7 +107,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             // insert setup
             let startPos: number;
             let insertText: string;
-            const isFirstModifier = insertPos === this.node.pos;
+            const isFirstModifier = insertPos === this.getStart();
             if (isFirstModifier) {
                 insertText = text + " ";
                 startPos = insertPos;
@@ -125,7 +125,10 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
     };
 }
 
-function getAddAfterModifierTexts(text: string): string[] {
+/**
+ * @returns The texts the specified text should appear after.
+ */
+function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
     switch (text) {
         case "export":
             return [];
@@ -134,7 +137,13 @@ function getAddAfterModifierTexts(text: string): string[] {
         case "declare":
             return ["export", "default"];
         case "abstract":
-            return ["export", "default", "declare"];
+            return ["export", "default", "declare", "public", "private", "protected"];
+        case "readonly":
+            return ["export", "default", "declare", "public", "private", "protected", "readonly"];
+        case "public":
+        case "protected":
+        case "private":
+            return [];
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
     }
