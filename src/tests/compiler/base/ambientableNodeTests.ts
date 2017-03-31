@@ -60,4 +60,30 @@ describe(nameof(AmbientableNode), () => {
             expect(firstChild.isAmbient()).to.be.true;
         });
     });
+
+    describe(nameof<AmbientableNode>(n => n.toggleDeclareKeyword), () => {
+        it("should add declare keyword when doesn't have one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { }");
+            firstChild.toggleDeclareKeyword();
+            expect(sourceFile.getText()).to.equal("declare class MyClass { }");
+        });
+
+        it("should remove declare keyword when it has one", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("declare class MyClass { }");
+            firstChild.toggleDeclareKeyword();
+            expect(sourceFile.getText()).to.equal("class MyClass { }");
+        });
+
+        it("should add declare keyword when explicitly toggling it", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { }");
+            firstChild.toggleDeclareKeyword(true);
+            expect(sourceFile.getText()).to.equal("declare class MyClass { }");
+        });
+
+        it("should set as not readonly when readonly", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { readonly prop: string; }");
+            (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(false);
+            expect(sourceFile.getText()).to.equal("class MyClass { prop: string; }");
+        });
+    });
 });

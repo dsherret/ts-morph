@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
+import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type AmbientableNodeExtensionType = Node<ts.Node> & ModifierableNode;
@@ -8,6 +9,7 @@ export interface AmbientableNode {
     hasDeclareKeyword(): boolean;
     getDeclareKeyword(): Node<ts.Node> | undefined;
     isAmbient(): boolean;
+    toggleDeclareKeyword(value?: boolean, sourceFile?: SourceFile): this;
 }
 
 export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T {
@@ -44,6 +46,16 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             }
 
             return topParent.isSourceFile() && topParent.isDeclarationFile();
+        }
+
+        /**
+         * Sets if this node has a declare keyword.
+         * @param value - If to add the declare keyword or not.
+         * @param sourceFile - Optional source file to help with performance.
+         */
+        toggleDeclareKeyword(value?: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+            this.toggleModifier("declare", value, sourceFile);
+            return this;
         }
     };
 }
