@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
+import {AbstractableNode} from "./base";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
@@ -8,7 +9,7 @@ import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 
-export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))));
+export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Gets the class instance method declarations.

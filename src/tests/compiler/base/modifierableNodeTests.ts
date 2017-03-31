@@ -22,6 +22,17 @@ describe(nameof(ModifierableNode), () => {
         });
     });
 
+    describe(nameof<ModifierableNode>(n => n.hasModifier), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        it("should be true when it does", () => {
+            expect(firstChild.hasModifier("export")).to.be.true;
+        });
+
+        it("should be false when it doesn't", () => {
+            expect(firstChild.hasModifier("abstract")).to.be.false;
+        });
+    });
+
     describe(nameof<ModifierableNode>(n => n.getModifiers), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export abstract class Identifier {}");
         const modifiers = firstChild.getModifiers();
@@ -57,6 +68,44 @@ describe(nameof(ModifierableNode), () => {
             firstChild.addModifier("export");
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("export class Identifier {}");
+        });
+    });
+
+    describe(nameof<ModifierableNode>(n => n.toggleModifier), () => {
+        it("should add a modifier when toggling on", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.toggleModifier("export");
+            expect(firstChild.getText()).to.equal("export class Identifier {}");
+        });
+
+        it("should remove the modifier when toggling off", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            firstChild.toggleModifier("export");
+            expect(firstChild.getText()).to.equal("class Identifier {}");
+        });
+
+        it("should use the value for toggling that's provided when toggling on and on", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            firstChild.toggleModifier("export", true);
+            expect(firstChild.getText()).to.equal("export class Identifier {}");
+        });
+
+        it("should use the value for toggling that's provided when toggling on and off", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.toggleModifier("export", true);
+            expect(firstChild.getText()).to.equal("export class Identifier {}");
+        });
+
+        it("should use the value for toggling that's provided when toggling off and on", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+            firstChild.toggleModifier("export", false);
+            expect(firstChild.getText()).to.equal("class Identifier {}");
+        });
+
+        it("should use the value for toggling that's provided when toggling off and off", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            firstChild.toggleModifier("export", false);
+            expect(firstChild.getText()).to.equal("class Identifier {}");
         });
     });
 });

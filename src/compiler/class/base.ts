@@ -1,1 +1,2 @@
-﻿export * from "./base/ScopedNode";
+﻿export * from "./base/AbstractableNode";
+export * from "./base/ScopedNode";
