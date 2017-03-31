@@ -4,7 +4,7 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
-export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly";
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static";
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
@@ -139,11 +139,13 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
         case "abstract":
             return ["export", "default", "declare", "public", "private", "protected"];
         case "readonly":
-            return ["export", "default", "declare", "public", "private", "protected", "readonly"];
+            return ["export", "default", "declare", "public", "private", "protected", "abstract", "static"];
         case "public":
         case "protected":
         case "private":
             return [];
+        case "static":
+            return ["public", "protected", "private"];
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
     }
