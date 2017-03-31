@@ -31,4 +31,24 @@ describe(nameof(QuestionTokenableNode), () => {
             expect(firstProperty.getQuestionTokenNode()).to.be.undefined;
         });
     });
+
+    describe(nameof<QuestionTokenableNode>(d => d.setIsOptional), () => {
+        it("should be set as optional when not optional", () => {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
+            firstProperty.setIsOptional(true);
+            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop?: string; }");
+        });
+
+        it("should be set as not optional when optional", () => {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop?: string; }");
+            firstProperty.setIsOptional(false);
+            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
+        });
+
+        it("should do nothing when setting to same value", () => {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
+            firstProperty.setIsOptional(false);
+            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
+        });
+    });
 });

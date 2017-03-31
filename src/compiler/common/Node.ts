@@ -83,8 +83,16 @@ export class Node<NodeType extends ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildByKind(kind: ts.SyntaxKind) {
+        return this.getFirstChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the first child by a condition.
+     * @param condition - Condition.
+     */
+    getFirstChild(condition: (node: Node<ts.Node>) => boolean) {
         for (let child of this.getChildren()) {
-            if (child.getKind() === kind)
+            if (condition(child))
                 return child;
         }
         return undefined;
