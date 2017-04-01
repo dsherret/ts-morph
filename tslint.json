@@ -34,7 +34,8 @@
         ],
         "variable-name": false,
         "no-reference": false,
-        "curly":  false
+        "curly": false,
+        "no-console": [false]
     },
     "rulesDirectory": [
         "tslint-rules"

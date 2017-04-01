@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import * as structures from "./../../structures";
 import {Node} from "./../common";
 import * as classes from "./../class";
@@ -31,15 +32,17 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
          * Gets the body node or returns the source file if a source file.
          */
         getBody(): Node<ts.Node> {
+            /* istanbul ignore else */
             if (this.isSourceFile())
                 return this;
             else if (this.isNamespaceDeclaration())
                 return this.factory.getNodeFromCompilerNode(this.node.body);
             else if (this.isFunctionDeclaration()) {
+                /* istanbul ignore if */
                 if (this.node.body == null)
-                    throw new Error("Function declaration has no body.");
-                else
-                    return this.factory.getNodeFromCompilerNode(this.node.body);
+                    throw new errors.NotImplementedError("Function declaration has no body.");
+
+                return this.factory.getNodeFromCompilerNode(this.node.body);
             }
             else
                 throw this.getNotImplementedError();

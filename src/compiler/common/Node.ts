@@ -130,10 +130,7 @@ export class Node<NodeType extends ts.Node> {
     }
 
     *getSiblingsBefore() {
-        const parent = this.getParent();
-
-        if (parent == null)
-            return;
+        const parent = this.getRequiredParent();
 
         for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (child === this)
@@ -146,10 +143,7 @@ export class Node<NodeType extends ts.Node> {
     *getSiblingsAfter() {
         // todo: optimize
         let foundChild = false;
-        const parent = this.getParent();
-
-        if (parent == null)
-            return;
+        const parent = this.getRequiredParent();
 
         for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (!foundChild) {
@@ -348,37 +342,11 @@ export class Node<NodeType extends ts.Node> {
      */
     getLastToken(sourceFile = this.getRequiredSourceFile()) {
         const lastToken = this.node.getLastToken(sourceFile.getCompilerNode());
+        /* istanbul ignore if */
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
 
         return this.factory.getNodeFromCompilerNode(lastToken);
-    }
-
-    /**
-     * On ts.Node objects there is a _children array that's used in various methods on the node.
-     * It's useful to fill this in certain circumstances.
-     */
-    fillUnderlyingChildrenArrays() {
-        function fillChildren(declaration: ts.Node) {
-            // calling getChildren() will fill the underlying _children array
-            for (let child of declaration.getChildren())
-                fillChildren(child);
-        }
-        fillChildren(this.node);
-    }
-
-    /**
-     * On ts.Node objects there is a _children array. It's useful to clear this for when it needs to be repopulated.
-     */
-    resetUnderlyingChildrenArrays() {
-        function clearChildren(declaration: ts.Node) {
-            for (let child of declaration.getChildren())
-                clearChildren(child);
-
-            (declaration as any)._children = undefined;
-        }
-
-        clearChildren(this.node);
     }
 
     /**

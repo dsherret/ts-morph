@@ -54,12 +54,14 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 function getAsteriskInsertPosition(node: Node<ts.Node>, sourceFile: SourceFile) {
     if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
         const funcKeyword = node.getFirstChildByKind(ts.SyntaxKind.FunctionKeyword);
+        /* istanbul ignore if */
         if (funcKeyword == null)
             throw new errors.NotImplementedError("Expected a function keyword within the function declaration.");
         return funcKeyword.getEnd();
     }
 
     const nameNode = (node.node as any).name as ts.Node | undefined;
+    /* istanbul ignore if */
     if (nameNode == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 

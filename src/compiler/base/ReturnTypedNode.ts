@@ -40,12 +40,14 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             // remove previous return type
             const returnTypeNode = this.getReturnTypeNode();
             const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSibling();
+            /* istanbul ignore if */
             if (colonToken != null && colonToken.getKind() !== ts.SyntaxKind.ColonToken)
                 throw new errors.NotImplementedError("Expected a colon token to be the previous sibling of a return type.");
             sourceFile.removeNodes(colonToken, returnTypeNode);
 
             // insert new type
             const closeParenToken = this.getFirstChildByKind(ts.SyntaxKind.CloseParenToken);
+            /* istanbul ignore if */
             if (closeParenToken == null)
                 throw new errors.NotImplementedError("Expected a close parenthesis to be a child of the return typed node.");
             const insertPosition = closeParenToken.getEnd();

@@ -156,4 +156,18 @@ describe(nameof(StatementedNode), () => {
             expect(declarations[0]).to.be.instanceOf(VariableDeclaration);
         });
     });
+
+    it("should get items inside a namespace", () => {
+        // only need to check for one kind in here
+        const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
+        const functions = firstChild.getFunctionDeclarations();
+        expect(functions.length).to.equal(2);
+    });
+
+    it("should get items inside a function", () => {
+        // only need to check for one kind in here
+        const {firstChild} = getInfoFromText<FunctionDeclaration>("function Identifier() { function function1() {}\nfunction function2() {} }");
+        const functions = firstChild.getFunctionDeclarations();
+        expect(functions.length).to.equal(2);
+    });
 });

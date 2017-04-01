@@ -143,6 +143,7 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
             return ["public", "protected", "private"];
         case "async":
             return ["export", "public", "protected", "private", "static", "abstract"];
+        /* istanbul ignore next */
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
     }

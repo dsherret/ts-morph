@@ -56,6 +56,7 @@ function getTypeInsertPositionForNode(node: Node<ts.Node>, sourceFile: SourceFil
         const initializer = node.getInitializer();
         if (initializer != null) {
             const equalsToken = initializer.getPreviousSibling();
+            /* istanbul ignore if */
             if (equalsToken == null || equalsToken.getKind() !== ts.SyntaxKind.EqualsToken)
                 throw new errors.NotImplementedError("Not implemented scenario where the initializer doesn't have an equals token preceeding it.");
             return equalsToken.getPos();
