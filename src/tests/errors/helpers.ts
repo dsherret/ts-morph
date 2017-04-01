@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {getInfoFromText} from "./../compiler/testHelpers";
 
 describe("helpers", () => {
     describe(nameof(errors.throwIfNotType), () => {
@@ -28,6 +29,25 @@ describe("helpers", () => {
 
         it("should throw when string that's not a whitespace string", () => {
             expect(() => errors.throwIfNotStringOrWhitespace("str", "argName")).to.not.throw();
+        });
+    });
+
+    describe(nameof(errors.throwIfNotSyntaxKind), () => {
+        const {firstChild} = getInfoFromText("class Identifier {}");
+
+        it("should throw when not the expected syntax kind and no message is specified", () => {
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.AbstractKeyword))
+                .to.throw(errors.NotImplementedError, "Expected node to be syntax kind AbstractKeyword, but was ClassDeclaration");
+        });
+
+        it("should throw when not the expected syntax kind and a message is specified", () => {
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.AbstractKeyword, "message"))
+                .to.throw(errors.NotImplementedError, "message");
+        });
+
+        it("should not throw when is the expected syntax kind", () => {
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.ClassDeclaration))
+                .to.not.throw();
         });
     });
 

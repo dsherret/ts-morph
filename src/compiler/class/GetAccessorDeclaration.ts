@@ -14,8 +14,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     getSetAccessor(): SetAccessorDeclaration | undefined {
         const parent = this.getRequiredParent() as ClassDeclaration;
-        if (parent.getKind() !== ts.SyntaxKind.ClassDeclaration)
-            throw new errors.NotImplementedError("Expected the parent to be a class declaration");
+        errors.throwIfNotSyntaxKind(parent, ts.SyntaxKind.ClassDeclaration, "Expected the parent to be a class declaration");
 
         const thisName = this.getName();
         for (let prop of parent.getInstanceProperties()) {
