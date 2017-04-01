@@ -1,37 +1,55 @@
 ﻿import {expect} from "chai";
-import {ReturnTypedNode} from "./../../../compiler";
+import {ReturnTypedNode, FunctionDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {
-    const {sourceFile} = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
-    const implicitDeclaration = sourceFile.getFunctionDeclarations()[0];
-    const explicitDeclaration = sourceFile.getFunctionDeclarations()[1];
+    const {sourceFile: mainSourceFile} = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
+    const implicitDeclaration = mainSourceFile.getFunctionDeclarations()[0];
+    const explicitDeclaration = mainSourceFile.getFunctionDeclarations()[1];
 
     describe(nameof<ReturnTypedNode>(n => n.getReturnType), () => {
-        describe("getting an implicit type", () => {
-            it("should have the expected implicit type", () => {
-                expect(implicitDeclaration.getReturnType().getText()).to.equal("number");
-            });
+        it("should get the expected implicit type", () => {
+            expect(implicitDeclaration.getReturnType().getText()).to.equal("number");
         });
 
-        describe("getting an explicit type", () => {
-            it("should have the expected explicit type", () => {
-                expect(explicitDeclaration.getReturnType().getText()).to.equal("string");
-            });
+        it("should get the expected explicit type", () => {
+            expect(explicitDeclaration.getReturnType().getText()).to.equal("string");
         });
     });
 
     describe(nameof<ReturnTypedNode>(n => n.getReturnTypeNode), () => {
-        describe("getting an implicit type", () => {
-            it("should return undefined", () => {
-                expect(implicitDeclaration.getReturnTypeNode()).to.be.undefined;
-            });
+        it("should return undefined for an implicit type", () => {
+            expect(implicitDeclaration.getReturnTypeNode()).to.be.undefined;
         });
 
-        describe("getting an explicit type", () => {
-            it("should get the expected explicit type", () => {
-                expect(explicitDeclaration.getReturnTypeNode()!.getText()).to.equal("string");
-            });
+        it("should get the expected explicit type for an explicit type", () => {
+            expect(explicitDeclaration.getReturnTypeNode()!.getText()).to.equal("string");
+        });
+    });
+
+    describe(nameof<ReturnTypedNode>(n => n.setReturnType), () => {
+        it("should set the return type when none exists", () => {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>("function identifier() {}");
+            firstChild.setReturnType("string");
+            expect(firstChild.getText()).to.equal("function identifier(): string {}");
+        });
+
+        it("should set the return type when one already exists", () => {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>("function identifier(): number {}");
+            firstChild.setReturnType("string");
+            expect(firstChild.getText()).to.equal("function identifier(): string {}");
+        });
+
+        it("should set the return type for an ambient declaration with no return type", () => {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>("declare function identifier();");
+            firstChild.setReturnType("string");
+            expect(firstChild.getText()).to.equal("declare function identifier(): string;");
+        });
+
+        it("should set the return type for an ambient declaration", () => {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>("declare function identifier(): number;");
+            firstChild.setReturnType("string");
+            expect(firstChild.getText()).to.equal("declare function identifier(): string;");
         });
     });
 });

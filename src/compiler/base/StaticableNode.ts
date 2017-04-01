@@ -30,7 +30,7 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
         /**
          * Sets if the node is static.
          * @param value - If it should be static or not.
-         * @param sourceFile - Optional source file to help with performance.
+         * @param sourceFile - Optional source file to help improve performance.
          */
         setIsStatic(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             this.toggleModifier("static", value, sourceFile);

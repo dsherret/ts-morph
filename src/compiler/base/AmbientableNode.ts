@@ -51,7 +51,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
         /**
          * Sets if this node has a declare keyword.
          * @param value - If to add the declare keyword or not.
-         * @param sourceFile - Optional source file to help with performance.
+         * @param sourceFile - Optional source file to help improve performance.
          */
         toggleDeclareKeyword(value?: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             this.toggleModifier("declare", value, sourceFile);

@@ -30,7 +30,7 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
         /**
          * Sets if this node is readonly.
          * @param value - If readonly or not.
-         * @param sourceFile - Optional source file to help with performance.
+         * @param sourceFile - Optional source file to help improve performance.
          */
         setIsReadonly(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             this.toggleModifier("readonly", value, sourceFile);
