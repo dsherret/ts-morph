@@ -88,6 +88,8 @@ export class CompilerFactory {
                 return this.getSourceFile(compilerNode as ts.SourceFile);
             case ts.SyntaxKind.ClassDeclaration:
                 return this.getClassDeclaration(compilerNode as ts.ClassDeclaration);
+            case ts.SyntaxKind.Constructor:
+                return this.getConstructorDeclaration(compilerNode as ts.ConstructorDeclaration);
             case ts.SyntaxKind.EnumDeclaration:
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
             case ts.SyntaxKind.EnumMember:
@@ -133,6 +135,14 @@ export class CompilerFactory {
      */
     getClassDeclaration(classDeclaration: ts.ClassDeclaration): compiler.ClassDeclaration {
         return this.nodeCache.getOrCreate<compiler.ClassDeclaration>(classDeclaration, () => new compiler.ClassDeclaration(this, classDeclaration));
+    }
+
+    /**
+     * Gets a wrapped class constructor declaration from a compiler object.
+     * @param constructorDeclaration - Constructor declaration compiler object.
+     */
+    getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration): compiler.ConstructorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration, () => new compiler.ConstructorDeclaration(this, constructorDeclaration));
     }
 
     /**

@@ -3,6 +3,17 @@ import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDec
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getConstructorDeclaration), () => {
+        it("should return undefined when no constructor exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            expect(firstChild.getConstructorDeclaration()).to.be.undefined;
+        });
+
+        it("should return the constructor when it exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor() { } }");
+            expect(firstChild.getConstructorDeclaration()!.getText()).to.equal("constructor() { }");
+        });
+    });
     describe(nameof<ClassDeclaration>(d => d.getInstanceMethodDeclarations), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
@@ -122,9 +133,10 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getAllMembers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n");
-        it("should get the right number of instance and static members", () => {
-            expect(firstChild.getAllMembers().length).to.equal(5);
+        const code = "class Identifier {\nconstructor() {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        it("should get the right number of instance, static, and constructor members", () => {
+            expect(firstChild.getAllMembers().length).to.equal(6);
         });
     });
 });

@@ -3,6 +3,7 @@ import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {InitializerExpressionableNode, ModifierableNode} from "./../base";
+import {ConstructorDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
@@ -355,6 +356,14 @@ export class Node<NodeType extends ts.Node> {
      */
     isSourceFile(): this is SourceFile {
         return this.node.kind === ts.SyntaxKind.SourceFile;
+    }
+
+    /**
+     * Gets if the current node is a constructor declaration.
+     * @internal
+     */
+    isConstructorDeclaration(): this is ConstructorDeclaration {
+        return this.node.kind === ts.SyntaxKind.Constructor;
     }
 
     /**

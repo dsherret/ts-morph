@@ -2,6 +2,7 @@
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
 import {AbstractableNode} from "./base";
+import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
@@ -11,6 +12,14 @@ export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | 
 
 export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
+    /**
+     * Gets the constructor declaration or undefined if none exists.
+     */
+    getConstructorDeclaration() {
+        const constructorMember = this.node.members.filter(m => m.kind === ts.SyntaxKind.Constructor)[0] as ts.ConstructorDeclaration | undefined;
+        return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember);
+    }
+
     /**
      * Gets the class instance method declarations.
      */
@@ -30,7 +39,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getAllMembers().filter(m => !m.isStatic());
+        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !m.isStatic());
     }
 
     /**
@@ -52,7 +61,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the static members.
      */
     getStaticMembers() {
-        return this.getAllMembers().filter(m => m.isStatic());
+        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && m.isStatic());
     }
 
     /**
@@ -60,7 +69,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getAllMembers() {
         return this.node.members
-            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration)[];
+            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration)[];
     }
 }
 
