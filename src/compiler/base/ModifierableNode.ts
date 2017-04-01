@@ -4,11 +4,12 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
-export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static";
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async";
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
-    getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Node> | undefined;
+    getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Modifier> | undefined;
+    hasModifier(kind: ts.SyntaxKind): boolean;
     hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
     toggleModifier(text: ModifierTexts, value?: boolean, sourceFile?: SourceFile): this;
     addModifier(text: ModifierTexts, sourceFile?: SourceFile): Node<ts.Modifier>;
@@ -30,7 +31,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         getFirstModifierByKind(kind: ts.SyntaxKind) {
             for (let modifier of this.getModifiers()) {
                 if (modifier.getKind() === kind)
-                    return modifier;
+                    return modifier as Node<ts.Modifier>;
             }
 
             return undefined;
@@ -38,16 +39,18 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
         /**
          * Gets if it has the specified modifier.
-         * @param text - Text to check for.
+         * @param textOrKind - Text or syntax kind to check for.
          * @param sourceFile - Optional source file to help improve performance.
          */
-        hasModifier(text: ModifierTexts, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            for (let modifier of this.getModifiers()) {
-                if (modifier.getText(sourceFile) === text)
-                    return true;
+        hasModifier(kind: ts.SyntaxKind): boolean;
+        hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
+        hasModifier(textOrKind: ModifierTexts | ts.SyntaxKind, sourceFile?: SourceFile) {
+            if (typeof textOrKind === "string") {
+                sourceFile = sourceFile || this.getRequiredSourceFile();
+                return this.getModifiers().some(m => m.getText(sourceFile) === textOrKind);
             }
-
-            return false;
+            else
+                return this.getModifiers().some(m => m.getKind() === textOrKind);
         }
 
         /**
@@ -138,6 +141,8 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
             return [];
         case "static":
             return ["public", "protected", "private"];
+        case "async":
+            return ["export", "public", "protected", "private", "static", "abstract"];
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
     }

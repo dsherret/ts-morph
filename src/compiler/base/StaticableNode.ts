@@ -17,7 +17,7 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
          * Gets if it's static.
          */
         isStatic() {
-            return this.getStaticKeyword() != null;
+            return this.hasModifier(ts.SyntaxKind.StaticKeyword);
         }
 
         /**

@@ -4,13 +4,6 @@ import {ModifierableNode, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ModifierableNode), () => {
-    describe(nameof<ModifierableNode>(n => n.getCombinedModifierFlags), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
-        it("should get the combined modifier flags", () => {
-            expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);
-        });
-    });
-
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKind), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
@@ -24,12 +17,24 @@ describe(nameof(ModifierableNode), () => {
 
     describe(nameof<ModifierableNode>(n => n.hasModifier), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
-        it("should be true when it does", () => {
-            expect(firstChild.hasModifier("export")).to.be.true;
+        describe("providing string", () => {
+            it("should be true when it does", () => {
+                expect(firstChild.hasModifier("export")).to.be.true;
+            });
+
+            it("should be false when it doesn't", () => {
+                expect(firstChild.hasModifier("abstract")).to.be.false;
+            });
         });
 
-        it("should be false when it doesn't", () => {
-            expect(firstChild.hasModifier("abstract")).to.be.false;
+        describe("providing syntax kind", () => {
+            it("should be true when it does", () => {
+                expect(firstChild.hasModifier(ts.SyntaxKind.ExportKeyword)).to.be.true;
+            });
+
+            it("should be false when it doesn't", () => {
+                expect(firstChild.hasModifier(ts.SyntaxKind.AbstractKeyword)).to.be.false;
+            });
         });
     });
 

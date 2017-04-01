@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {Node, EnumDeclaration} from "./../../../compiler";
+import {Node, EnumDeclaration, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -146,6 +146,13 @@ describe(nameof(Node), () => {
         it("should return the pos without trivia", () => {
             const {firstChild} = getInfoFromText("\n  \t  /* comment */ //comment  \r\n  \t enum MyEnum {\n}\n");
             expect(firstChild.getStart()).to.equal(37);
+        });
+    });
+
+    describe(nameof<Node<any>>(n => n.getCombinedModifierFlags), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        it("should get the combined modifier flags", () => {
+            expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);
         });
     });
 });
