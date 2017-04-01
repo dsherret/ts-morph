@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
@@ -15,7 +14,7 @@ export interface AsyncableNode {
 export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>(Base: T): Constructor<AsyncableNode> & T {
     return class extends Base implements AsyncableNode {
         /**
-         * If it's optional.
+         * If it's async.
          */
         isAsync() {
             return this.hasModifier(ts.SyntaxKind.AsyncKeyword);

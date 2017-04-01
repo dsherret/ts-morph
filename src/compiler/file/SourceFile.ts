@@ -43,6 +43,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param nodes - Nodes to remove.
      */
     removeNodes(...nodes: (Node<ts.Node> | undefined)[]) {
+        return this.removeNodesWithOptions(nodes, {});
+    }
+
+    /**
+     * Nodes to remove (they must be contiguous in their positions).
+     * @internal
+     * @param nodes - Nodes to remove.
+     * @param Opts - Options for removal.
+     */
+    removeNodesWithOptions(nodes: (Node<ts.Node> | undefined)[], opts: { removePrecedingSpaces?: boolean; }) {
         const nonNullNodes = nodes.filter(n => n != null) as Node<ts.Node>[];
         if (nonNullNodes.length === 0 || nonNullNodes[0].getPos() === nonNullNodes[nonNullNodes.length - 1].getEnd())
             return this;
@@ -50,14 +60,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.ensureNodePositionsContiguous(nonNullNodes);
 
         // get the start and end position
+        const {removePrecedingSpaces = true} = opts;
         const parentStart = nonNullNodes[0].getRequiredParent().getStart();
         const nodeStart = nonNullNodes[0].getStart();
         const currentText = this.getFullText();
-        const removeRangeStart = Math.max(parentStart, nonNullNodes[0].getPos());
+        const removeRangeStart = removePrecedingSpaces ? Math.max(parentStart, nonNullNodes[0].getPos()) : nonNullNodes[0].getStart();
         let removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
 
         // trim any end spaces when the current node is the first node of the parent
-        if (nodeStart === parentStart) {
+        const isFirstNodeOfParent = nodeStart === parentStart;
+        if (isFirstNodeOfParent) {
             const whitespaceRegex = /[^\S\r\n]/;
             while (whitespaceRegex.test(currentText[removeRangeEnd]))
                 removeRangeEnd++;
