@@ -10,6 +10,8 @@ export * from "./base/ParameteredNode";
 export * from "./base/QuestionTokenableNode";
 export * from "./base/ReadonlyableNode";
 export * from "./base/ReturnTypedNode";
+export * from "./base/ScopeableNode";
+export * from "./base/ScopedNode";
 export * from "./base/StaticableNode";
 export * from "./base/TypedNode";
 export * from "./base/TypeParameteredNode";

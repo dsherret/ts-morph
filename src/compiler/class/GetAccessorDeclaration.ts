@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {PropertyNamedNode, StaticableNode} from "./../base";
+import {PropertyNamedNode, StaticableNode, ScopedNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
-import {AbstractableNode, ScopedNode} from "./base";
+import {AbstractableNode} from "./base";
 import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 import {ClassDeclaration} from "./ClassDeclaration";
 
