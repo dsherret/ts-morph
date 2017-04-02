@@ -5,13 +5,20 @@ import * as testHelpers from "./../testHelpers";
 
 describe(nameof(CompilerOptionsResolver), () => {
     describe(nameof<CompilerOptionsResolver>(r => r.getCompilerOptions), () => {
-        describe("nothing", () => {
-            it(`should get the default compiler options when not providing anything`, () => {
+        describe("no constructor", () => {
+            it(`should get the default compiler options when not providing anything and no tsconfig exists`, () => {
                 const host = testHelpers.getFileSystemHostWithFiles([]);
                 const resolver = new CompilerOptionsResolver(host);
                 const compilerOptions = resolver.getCompilerOptions({});
 
                 expect(compilerOptions).to.deep.equal(getDefaultCompilerOptions());
+            });
+
+            it(`should get the default compiler options when not providing anything and a tsconfig exists`, () => {
+                const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "/tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+                const resolver = new CompilerOptionsResolver(host);
+                const compilerOptions = resolver.getCompilerOptions({});
+                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: "/test", target: 1 }));
             });
         });
 

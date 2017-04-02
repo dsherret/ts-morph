@@ -8,6 +8,7 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         getAbsolutePath: filePath => filePath,
         normalize: filePath => path.normalize(filePath),
         getDirectoryName: filePath => path.dirname(filePath),
-        pathJoin: (...paths) => path.join(...paths)
+        pathJoin: (...paths) => path.join(...paths),
+        getCurrentDirectory: () => "/"
     };
 }

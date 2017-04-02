@@ -33,4 +33,8 @@ export class DefaultFileSystemHost implements FileSystemHost {
     pathJoin(...paths: string[]) {
         return path.join(...paths);
     }
+
+    getCurrentDirectory() {
+        return path.resolve();
+    }
 }

@@ -24,8 +24,13 @@ export class CompilerOptionsResolver {
             compilerOptions = Object.assign({}, options.compilerOptions) as ts.CompilerOptions;
         else if (options.tsConfigFilePath != null)
             compilerOptions = this.getCompilerOptionsFromTsConfig(options.tsConfigFilePath);
-        else
-            compilerOptions = {};
+        else {
+            const foundTsConfigFilePath = ts.findConfigFile(this.fileSystem.getCurrentDirectory(), fileName => this.fileSystem.fileExists(fileName));
+            if (foundTsConfigFilePath != null && foundTsConfigFilePath.length > 0)
+                compilerOptions = this.getCompilerOptionsFromTsConfig(foundTsConfigFilePath);
+            else
+                compilerOptions = {};
+        }
 
         return this.getTsCompilerOptionsWithDefaults(compilerOptions);
     }

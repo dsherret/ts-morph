@@ -5,4 +5,5 @@
     normalize(filePath: string): string;
     getDirectoryName(filePath: string): string;
     pathJoin(...paths: string[]): string;
+    getCurrentDirectory(): string;
 }
