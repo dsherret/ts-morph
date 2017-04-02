@@ -9,6 +9,7 @@ import {KeyValueCache, Logger} from "./../utils";
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
+    private readonly caseInsensitiveNormalizedDirectories = new Set<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node<ts.Node>>();
     private readonly fileNameUsedForTempSourceFile = "tsSimpleAstTemporaryFile.ts";
 
@@ -50,11 +51,7 @@ export class CompilerFactory {
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
         const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
-        const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
-        this.nodeCache.set(compilerSourceFile, sourceFile);
-        this.sourceFileCacheByFilePath.set(filePath, sourceFile);
-        this.languageService.addSourceFile(sourceFile);
-        return sourceFile;
+        return this.getSourceFile(compilerSourceFile);
     }
 
     /**
@@ -91,6 +88,15 @@ export class CompilerFactory {
      */
     containsSourceFileAtPath(filePath: string) {
         return this.sourceFileCacheByFilePath.get(filePath) != null;
+    }
+
+    /**
+     * Gets if the internal cache contains a source file with the specified directory path.
+     * @param dirPath - Directory path to check.
+     */
+    containsFileInDirectory(dirPath: string) {
+        const normalizedDirPath = this.fileSystem.normalize(dirPath);
+        return this.caseInsensitiveNormalizedDirectories.has(normalizedDirPath);
     }
 
     /**
@@ -309,6 +315,13 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
             const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFileName(), sourceFile);
+            this.languageService.addSourceFile(sourceFile);
+
+            // add to list of directories
+            const normalizedDir = this.fileSystem.normalize(this.fileSystem.getDirectoryName(sourceFile.getFileName()));
+            if (!this.caseInsensitiveNormalizedDirectories.has(normalizedDir))
+                this.caseInsensitiveNormalizedDirectories.add(normalizedDir);
+
             return sourceFile;
         });
     }

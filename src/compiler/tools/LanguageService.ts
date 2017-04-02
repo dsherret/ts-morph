@@ -35,18 +35,16 @@ export class LanguageService {
             getScriptSnapshot: fileName => {
                 return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
-            getCurrentDirectory: () => "",
+            getCurrentDirectory: () => fileSystem.getCurrentDirectory(),
             getDefaultLibFileName: options => ts.getDefaultLibFilePath(compilerOptions),
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
-                console.log("READING");
-                return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
+                if (this.compilerFactory.containsSourceFileAtPath(path))
+                    return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
+                return this.fileSystem.readFile(path, encoding);
             },
             fileExists: path => this.compilerFactory.containsSourceFileAtPath(path) != null || fileSystem.fileExists(path),
-            directoryExists: dirName => {
-                console.log(`Checking dir exists: ${dirName}`);
-                return true;
-            }
+            directoryExists: dirName => this.compilerFactory.containsFileInDirectory(dirName) || this.fileSystem.directoryExists(dirName)
         };
 
         this.compilerHost = {
