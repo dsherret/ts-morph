@@ -8,7 +8,12 @@ import {Type} from "./../type";
  * Wrapper around the TypeChecker.
  */
 export class TypeChecker {
-    constructor(private readonly factory: CompilerFactory, private readonly typeChecker: ts.TypeChecker) {
+    /** @internal */
+    private readonly factory: CompilerFactory;
+
+    /** @internal */
+    constructor(factory: CompilerFactory, private readonly typeChecker: ts.TypeChecker) {
+        this.factory = factory;
     }
 
     /**

@@ -1,5 +1,6 @@
 ﻿import {TsSimpleAst} from "./../TsSimpleAst";
 import * as errors from "./../errors";
+import * as testHelpers from "./testHelpers";
 import {expect} from "chai";
 
 describe(nameof(TsSimpleAst), () => {
@@ -12,6 +13,16 @@ describe(nameof(TsSimpleAst), () => {
                     compilerOptions: {}
                 });
             }).to.throw(errors.InvalidOperationError, "Cannot set both tsConfigFilePath and compilerOptions.");
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.getOrCreateSourceFileFromFilePath), () => {
+        it("should throw an exception if creating a source file at an existing path", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            expect(() => {
+                ast.getOrCreateSourceFileFromFilePath("non-existent-file.ts");
+            }).to.throw(errors.FileNotFoundError, "File not found: non-existent-file.ts");
         });
     });
 

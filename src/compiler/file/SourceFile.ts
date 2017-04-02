@@ -5,10 +5,16 @@ import {TypeChecker} from "./../tools";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
+    /**
+     * Gets the file name.
+     */
     getFileName() {
         return this.node.fileName;
     }
 
+    /**
+     * Gets any referenced files.
+     */
     getReferencedFiles() {
         const fileSystemHost = this.factory.getFileSystemHost();
         const dirName = fileSystemHost.getDirectoryName(this.getFileName());

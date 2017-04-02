@@ -3,6 +3,7 @@ var del = require("del");
 var mocha = require("gulp-mocha");
 var istanbul = require("gulp-istanbul");
 var ts = require("gulp-typescript");
+var filter = require("gulp-filter");
 var tslint = require("gulp-tslint");
 var replace = require("gulp-replace");
 var sourcemaps = require("gulp-sourcemaps");
@@ -14,6 +15,7 @@ gulp.task("typescript", ["clean-scripts"], function() {
     var tsProject = ts.createProject("tsconfig.json", {
         typescript: require("typescript")
     });
+    var unusedDefinitionsFilter = filter(["**", "!*/factories/CompilerFactory.d.ts", "!*/factories.d.ts", "!*/tests/**/*.d.ts"])
 
     var tsResult = gulp.src(["./src/**/*.ts"])
         .pipe(sourcemaps.init())
@@ -21,7 +23,7 @@ gulp.task("typescript", ["clean-scripts"], function() {
         .pipe(ts(tsProject));
 
     return merge([
-            tsResult.dts.pipe(gulp.dest('./dist')),
+            tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist')),
             tsResult.js.pipe(replace(/(}\)\()(.*\|\|.*;)/g, '$1/* istanbul ignore next */$2'))
                 .pipe(replace(/(var __extends = \(this && this.__extends\))/g, '$1/* istanbul ignore next */'))
                 .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))

@@ -6,9 +6,13 @@ import {TypeChecker} from "./TypeChecker";
  * Wrapper around Program.
  */
 export class Program {
+    /** @internal */
+    private readonly factory: CompilerFactory;
     private readonly program: ts.Program;
 
-    constructor(private readonly factory: CompilerFactory, rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
+    /** @internal */
+    constructor(factory: CompilerFactory, rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
+        this.factory = factory;
         this.program = ts.createProgram(rootNames, compilerOptions, host);
     }
 

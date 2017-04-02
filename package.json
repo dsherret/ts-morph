@@ -34,6 +34,7 @@
     "coveralls": "^2.11.6",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
+    "gulp-filter": "^5.0.0",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.2.0",
     "gulp-replace": "^0.5.4",
