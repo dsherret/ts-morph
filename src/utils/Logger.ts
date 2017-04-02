@@ -1,5 +1,12 @@
 ﻿export class Logger {
+    private static enabled = false;
+
+    static setEnabled(enabled: boolean) {
+        this.enabled = enabled;
+    }
+
     static log(text: string) {
-        console.log(text);
+        if (this.enabled)
+            console.log(text);
     }
 }

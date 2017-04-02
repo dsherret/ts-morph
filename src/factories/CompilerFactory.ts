@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
-import * as fs from "fs";
 import * as compiler from "./../compiler";
+import {FileSystemHost} from "./../FileSystemHost";
 import {KeyValueCache, Logger} from "./../utils";
 
 /**
@@ -14,9 +14,10 @@ export class CompilerFactory {
 
     /**
      * Initializes a new instance of CompilerFactory.
+     * @param fileSystem - Host for reading files.
      * @param languageService - Language service.
      */
-    constructor(private readonly languageService: compiler.LanguageService) {
+    constructor(private readonly fileSystem: FileSystemHost, private readonly languageService: compiler.LanguageService) {
         languageService.setCompilerFactory(this);
     }
 
@@ -32,6 +33,13 @@ export class CompilerFactory {
      */
     getTypeChecker() {
         return this.languageService.getProgram().getTypeChecker();
+    }
+
+    /**
+     * Convenience method to get the file system host.
+     */
+    getFileSystemHost() {
+        return this.fileSystem;
     }
 
     /**
@@ -68,13 +76,21 @@ export class CompilerFactory {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             Logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.createSourceFileFromText(filePath, fs.readFileSync(filePath, "utf-8"));
+            sourceFile = this.createSourceFileFromText(filePath, this.fileSystem.readFile(filePath));
 
             if (sourceFile != null)
                 sourceFile.getReferencedFiles(); // fill referenced files
         }
 
         return sourceFile;
+    }
+
+    /**
+     * Gets if the internal cache contains a source file at a specific file path.
+     * @param filePath - File path to check.
+     */
+    containsSourceFileAtPath(filePath: string) {
+        return this.sourceFileCacheByFilePath.get(filePath) != null;
     }
 
     /**

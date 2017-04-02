@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import * as path from "path";
+import {FileSystemHost} from "./../../FileSystemHost";
 import {CompilerFactory} from "./../../factories";
 import {KeyValueCache} from "./../../utils";
 import {SourceFile} from "./../file";
@@ -22,7 +22,7 @@ export class LanguageService {
     private readonly compilerHost: ts.CompilerHost;
     private compilerFactory: CompilerFactory;
 
-    constructor(private readonly compilerOptions: ts.CompilerOptions) {
+    constructor(private readonly fileSystem: FileSystemHost, private readonly compilerOptions: ts.CompilerOptions) {
         // I don't know what I'm doing for some of this...
         let version = 0;
         const languageServiceHost: ts.LanguageServiceHost = {
@@ -42,7 +42,7 @@ export class LanguageService {
                 console.log("READING");
                 return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
             },
-            fileExists: path => this.compilerFactory.getSourceFileFromFilePath(path) != null,
+            fileExists: path => this.compilerFactory.containsSourceFileAtPath(path) != null || fileSystem.fileExists(path),
             directoryExists: dirName => {
                 console.log(`Checking dir exists: ${dirName}`);
                 return true;
@@ -66,7 +66,7 @@ export class LanguageService {
             },
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
-            getCanonicalFileName: (fileName: string) => path.normalize(fileName),
+            getCanonicalFileName: (fileName: string) => fileSystem.normalize(fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name]

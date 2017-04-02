@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as path from "path";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {TypeChecker} from "./../tools";
@@ -11,8 +10,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     getReferencedFiles() {
-        const dirName = path.dirname(this.getFileName());
-        return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(path.join(dirName, f.fileName)));
+        const fileSystemHost = this.factory.getFileSystemHost();
+        const dirName = fileSystemHost.getDirectoryName(this.getFileName());
+        return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(fileSystemHost.pathJoin(dirName, f.fileName)));
     }
 
     /**

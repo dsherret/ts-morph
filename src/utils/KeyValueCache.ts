@@ -22,7 +22,7 @@ export class KeyValueCache<T, U> {
     }
 
     get(key: T) {
-        return this.cacheItems.get(key) || null;
+        return this.cacheItems.get(key) || undefined;
     }
 
     set(key: T, value: U) {
