@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Base project for typescript libraries",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "code-block-writer": "^4.1.0",
+    "globby": "^6.1.0",
     "typescript": "2.2.2"
   }
 }

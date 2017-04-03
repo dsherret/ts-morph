@@ -20,7 +20,7 @@ defaultHost.readFile = (filePath) => {
 export function getInfoFromText<TFirstChild extends Node<ts.Node>>(text: string, opts?: { isDefinitionFile: boolean; }) {
     const {isDefinitionFile = false} = opts || {};
     const tsSimpleAst = new TsSimpleAst(undefined, defaultHost);
-    const sourceFile = tsSimpleAst.createSourceFileFromText(isDefinitionFile ? "testFile.d.ts" : "testFile.ts", text);
+    const sourceFile = tsSimpleAst.addSourceFileFromText(isDefinitionFile ? "testFile.d.ts" : "testFile.ts", text);
     const firstChild = sourceFile.getMainChildren()[0] as TFirstChild;
     return { tsSimpleAst, sourceFile, firstChild };
 }

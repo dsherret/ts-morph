@@ -1,6 +1,7 @@
 ﻿export * from "./errors/BaseError";
 export * from "./errors/ArgumentNullOrWhitespaceError";
 export * from "./errors/ArgumentTypeError";
+export * from "./errors/DirectoryNotFoundError";
 export * from "./errors/FileNotFoundError";
 export * from "./errors/helpers";
 export * from "./errors/InvalidOperationError";

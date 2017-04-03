@@ -1,5 +1,6 @@
 ﻿import * as fs from "fs";
 import * as path from "path";
+import * as globby from "globby";
 import {FileSystemHost} from "./FileSystemHost";
 
 /**
@@ -44,5 +45,9 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     getCurrentDirectory() {
         return path.resolve();
+    }
+
+    glob(patterns: string[]) {
+        return globby.sync(patterns);
     }
 }

@@ -7,4 +7,5 @@
     getDirectoryName(filePath: string): string;
     pathJoin(...paths: string[]): string;
     getCurrentDirectory(): string;
+    glob(patterns: string[]): string[];
 }

@@ -10,6 +10,7 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         getDirectoryName: filePath => path.dirname(filePath),
         pathJoin: (...paths) => path.join(...paths),
         getCurrentDirectory: () => "/",
-        directoryExists: dirName => true
+        directoryExists: dirName => true,
+        glob: patterns => [] as string[]
     };
 }

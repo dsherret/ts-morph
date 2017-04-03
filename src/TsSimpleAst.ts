@@ -37,25 +37,44 @@ export class TsSimpleAst {
     }
 
     /**
-     * Gets or creates a source file from a file path.
+     * Add source files based on file globs.
+     * @param fileGlobs - File globs to add files based on.
+     */
+    addSourceFiles(fileGlobs: string[]) {
+        const filePaths = this.fileSystem.glob(fileGlobs).map(path => this.fileSystem.normalize(this.fileSystem.getAbsolutePath(path)));
+
+        for (let filePath of filePaths) {
+            // ignore any FileNotFoundErrors
+            try {
+                this.getOrAddSourceFileFromFilePath(filePath);
+            } catch (ex) {
+                /* istanbul ignore if */
+                if (!(ex instanceof errors.FileNotFoundError))
+                    throw ex;
+            }
+        }
+    }
+
+    /**
+     * Gets or adds a source file from a file path.
      * @param filePath - File path to create the file from.
      */
-    getOrCreateSourceFileFromFilePath(filePath: string): compiler.SourceFile {
+    getOrAddSourceFileFromFilePath(filePath: string): compiler.SourceFile {
         if (!this.fileSystem.fileExists(filePath))
             throw new errors.FileNotFoundError(filePath);
         return this.compilerFactory.getSourceFileFromFilePath(filePath);
     }
 
     /**
-     * Creates a source file from a text.
+     * Adds a source file from text.
      * @param filePath - File path for the source file.
      * @param sourceFileText - Source file text.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
+    addSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
         if (this.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
-        return this.compilerFactory.createSourceFileFromText(filePath, sourceFileText);
+        return this.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
     }
 
     /**

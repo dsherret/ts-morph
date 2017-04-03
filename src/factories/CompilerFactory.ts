@@ -49,7 +49,7 @@ export class CompilerFactory {
      * @param filePath - File path for the source file.
      * @param sourceText - Text to create the source file with.
      */
-    createSourceFileFromText(filePath: string, sourceText: string) {
+    addSourceFileFromText(filePath: string, sourceText: string) {
         const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
@@ -73,7 +73,7 @@ export class CompilerFactory {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             Logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.createSourceFileFromText(filePath, this.fileSystem.readFile(filePath));
+            sourceFile = this.addSourceFileFromText(filePath, this.fileSystem.readFile(filePath));
 
             if (sourceFile != null)
                 sourceFile.getReferencedFiles(); // fill referenced files

@@ -24,7 +24,7 @@ Changes made in the simple layer will be made to the underlying compiler layer.
 
 ```typescript
 const ast = new TsSimpleAst();
-const sourceFile = ast.createSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
+const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
 const enumDeclaration = sourceFile.getEnumDeclarations()[0];
 enumDeclaration.getName(); // "MyEnum"
 enumDeclaration.setName("NewName");
