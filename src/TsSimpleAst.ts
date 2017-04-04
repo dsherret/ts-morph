@@ -72,8 +72,6 @@ export class TsSimpleAst {
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
     addSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
-        if (this.compilerFactory.containsSourceFileAtPath(filePath))
-            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
         return this.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
     }
 
@@ -88,7 +86,7 @@ export class TsSimpleAst {
         let searchFunction = fileNameOrSearchFunction as ((file: compiler.SourceFile) => boolean);
 
         if (typeof fileNameOrSearchFunction === "string")
-            searchFunction = (def) => FileUtils.filePathMatches(def.getFileName(), fileNameOrSearchFunction);
+            searchFunction = (def) => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
 
         return this.getSourceFiles().find(searchFunction);
     }

@@ -28,7 +28,7 @@ export class LanguageService {
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,
             getNewLine: () => this.getNewLine(),
-            getScriptFileNames: () => this.sourceFiles.map(s => s.getFileName()),
+            getScriptFileNames: () => this.sourceFiles.map(s => s.getFilePath()),
             getScriptVersion: fileName => {
                 return (version++).toString();
             },
@@ -81,7 +81,7 @@ export class LanguageService {
      * Gets the language service's program.
      */
     getProgram() {
-        return new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFileName()), this.compilerOptions, this.compilerHost);
+        return new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
     }
 
     /**
@@ -111,7 +111,7 @@ export class LanguageService {
     findRenameReplaces(node: Node<ts.Node>): SourceFileReplace[] {
         const sourceFile = node.getRequiredSourceFile();
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
-        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFileName(), node.getStart(), false, false) || [];
+        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
 
         renameLocations.forEach(l => {
             const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;

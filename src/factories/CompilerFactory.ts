@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as compiler from "./../compiler";
+import * as errors from "./../errors";
 import {FileSystemHost} from "./../FileSystemHost";
 import {KeyValueCache, Logger} from "./../utils";
 
@@ -50,6 +51,8 @@ export class CompilerFactory {
      * @param sourceText - Text to create the source file with.
      */
     addSourceFileFromText(filePath: string, sourceText: string) {
+        if (this.containsSourceFileAtPath(filePath))
+            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
         const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
@@ -314,11 +317,11 @@ export class CompilerFactory {
 
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
             const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
-            this.sourceFileCacheByFilePath.set(sourceFile.getFileName(), sourceFile);
+            this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
             this.languageService.addSourceFile(sourceFile);
 
             // add to list of directories
-            const normalizedDir = this.fileSystem.normalize(this.fileSystem.getDirectoryName(sourceFile.getFileName()));
+            const normalizedDir = this.fileSystem.normalize(this.fileSystem.getDirectoryName(sourceFile.getFilePath()));
             if (!this.caseInsensitiveNormalizedDirectories.has(normalizedDir))
                 this.caseInsensitiveNormalizedDirectories.add(normalizedDir);
 

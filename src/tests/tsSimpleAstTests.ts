@@ -41,8 +41,8 @@ describe(nameof(TsSimpleAst), () => {
         it("should have 2 source files", () => {
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
-            expect(sourceFiles[0].getFileName()).to.equal("file1.ts");
-            expect(sourceFiles[1].getFileName()).to.equal("file2.ts");
+            expect(sourceFiles[0].getFilePath()).to.equal("file1.ts");
+            expect(sourceFiles[1].getFilePath()).to.equal("file2.ts");
         });
     });
 

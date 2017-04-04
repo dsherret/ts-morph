@@ -1,5 +1,27 @@
-﻿export class FileUtils {
+﻿import * as path from "path";
+
+export class FileUtils {
     private constructor() {
+    }
+
+    /**
+     * Gets the directory name.
+     * @param fileOrDirPath - Path to get the directory name from.
+     */
+    static getDirName(fileOrDirPath: string) {
+        return path.dirname(fileOrDirPath);
+    }
+
+    /**
+     * Gets the absolute path when absolute, otherwise gets the relative path from the base dir.
+     * @param filePath - File path.
+     * @param baseDir - Base dir to use when file path is relative.
+     */
+    static getAbsoluteOrRelativePathFromPath(filePath: string, baseDir: string) {
+        if (path.isAbsolute(filePath))
+            return filePath;
+
+        return path.normalize(path.join(baseDir, filePath));
     }
 
     static standardizeSlashes(fileName: string) {

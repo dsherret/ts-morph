@@ -2,14 +2,38 @@
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {TypeChecker} from "./../tools";
+import {FileUtils} from "./../../utils";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
-     * Gets the file name.
+     * Gets the file path.
      */
-    getFileName() {
+    getFilePath() {
         return this.node.fileName;
+    }
+
+    /**
+     * Copy this source file to a new file.
+     * @param filePath - A new file path. Can be relative to the original file or an absolute path.
+     */
+    copy(filePath: string): SourceFile {
+        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirName(this.getFilePath()));
+        return this.factory.addSourceFileFromText(absoluteFilePath, this.getFullText());
+    }
+
+    /**
+     * Asynchronously saves this file with any changes.
+     */
+    save(callback?: (err: NodeJS.ErrnoException) => void) {
+        this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText(), callback);
+    }
+
+    /**
+     * Synchronously saves this file with any changes.
+     */
+    saveSync() {
+        this.factory.getFileSystemHost().writeFileSync(this.getFilePath(), this.getFullText());
     }
 
     /**
@@ -17,7 +41,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencedFiles() {
         const fileSystemHost = this.factory.getFileSystemHost();
-        const dirName = fileSystemHost.getDirectoryName(this.getFileName());
+        const dirName = fileSystemHost.getDirectoryName(this.getFilePath());
         return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(fileSystemHost.pathJoin(dirName, f.fileName)));
     }
 
@@ -37,7 +61,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     insertText(insertPos: number, newText: string) {
         const currentText = this.getFullText();
         const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
-        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFileName());
+        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFilePath());
 
         this.replaceNodesFromNewSourceFile(insertPos, insertPos + newText.length, newText.length, tempSourceFile, []);
         return this;
@@ -83,7 +107,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         // remove the nodes
         const newFileText = currentText.substring(0, removeRangeStart) + currentText.substring(removeRangeEnd);
-        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFileName());
+        const tempSourceFile = this.factory.createTempSourceFileFromText(newFileText, this.getFilePath());
 
         this.replaceNodesFromNewSourceFile(removeRangeStart, removeRangeStart, removeRangeStart - removeRangeEnd, tempSourceFile, nonNullNodes);
         return this;
