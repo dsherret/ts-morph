@@ -7,9 +7,9 @@ import {TsSimpleAst} from "./../../../TsSimpleAst";
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
         const fileText = "    interface Identifier {}    ";
-        const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "C:\\Folder\File.ts" });
-        const relativeSourceFile = sourceFile.copy("..\\NewFolder\\NewFile.ts");
-        const absoluteSourceFile = sourceFile.copy("D:\\NewFile.ts");
+        const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/Folder/File.ts" });
+        const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
+        const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
 
         describe(nameof(tsSimpleAst), () => {
             it("should include the copied source files", () => {
@@ -23,7 +23,7 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(relativeSourceFile.getFilePath()).to.equal("C:/NewFolder/NewFile.ts");
+                expect(relativeSourceFile.getFilePath()).to.equal("/NewFolder/NewFile.ts");
             });
         });
 
@@ -33,7 +33,7 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(absoluteSourceFile.getFilePath()).to.equal("D:/NewFile.ts");
+                expect(absoluteSourceFile.getFilePath()).to.equal("/NewFile.ts");
             });
         });
     });
