@@ -2,7 +2,7 @@
 import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
-import {CompilerOptionsResolver} from "./utils";
+import {CompilerOptionsResolver, FileUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 
@@ -75,6 +75,22 @@ export class TsSimpleAst {
         if (this.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
         return this.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
+    }
+
+    /**
+     * Gets a source file by a file name, file path, or search function. Returns undefined if none exists.
+     * @param fileName - File name or path that the path could end with or equal.
+     * @param searchFunction - Search function.
+     */
+    getSourceFile(fileNameOrPath: string): compiler.SourceFile | undefined;
+    getSourceFile(searchFunction: (file: compiler.SourceFile) => boolean): compiler.SourceFile | undefined;
+    getSourceFile(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile | undefined {
+        let searchFunction = fileNameOrSearchFunction as ((file: compiler.SourceFile) => boolean);
+
+        if (typeof fileNameOrSearchFunction === "string")
+            searchFunction = (def) => FileUtils.filePathMatches(def.getFileName(), fileNameOrSearchFunction);
+
+        return this.getSourceFiles().find(searchFunction);
     }
 
     /**

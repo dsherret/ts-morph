@@ -69,7 +69,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (!hasModifier)
                 this.addModifier(text, sourceFile);
             else
-                sourceFile.removeNodes(this.getModifiers().filter(m => m.getText() === text)[0]);
+                sourceFile.removeNodes(this.getModifiers().find(m => m.getText() === text));
 
             return this;
         }
@@ -85,7 +85,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             const modifiers = this.getModifiers();
             const hasModifier = modifiers.some(m => m.getText(sourceFile) === text);
             if (hasModifier)
-                return this.getModifiers().filter(m => m.getText(sourceFile) === text)[0] as Node<ts.Modifier>;
+                return this.getModifiers().find(m => m.getText(sourceFile) === text) as Node<ts.Modifier>;
 
             // get insert position
             let insertPos = this.getStart();
@@ -115,7 +115,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             // insert
             sourceFile.insertText(insertPos, insertText);
 
-            return this.getModifiers().filter(m => m.getStart(sourceFile) === startPos)[0] as Node<ts.Modifier>;
+            return this.getModifiers().find(m => m.getStart(sourceFile) === startPos) as Node<ts.Modifier>;
         }
     };
 }

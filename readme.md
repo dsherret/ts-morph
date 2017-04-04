@@ -13,7 +13,7 @@ I believe it will replace [ts-type-info](https://github.com/dsherret/ts-type-inf
 
 ## Simple Layer
 
-*ts-simple-ast* adds an abstraction layer over the compiler while still providing access to the underlying TypeScript compiler AST.
+*ts-simple-ast* adds a layer over the compiler while still providing access to the underlying TypeScript compiler AST.
 
 1. Simple Layer - Provides a simple way for navigating and manipulating the AST.
 2. Compiler Layer - TypeScript compiler objects.

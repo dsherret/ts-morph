@@ -5,7 +5,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
-    const getAccessor = result.firstChild.getInstanceProperties().filter(f => f.getKind() === ts.SyntaxKind.GetAccessor)[0] as GetAccessorDeclaration;
+    const getAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === ts.SyntaxKind.GetAccessor) as GetAccessorDeclaration;
     return {...result, getAccessor};
 }
 

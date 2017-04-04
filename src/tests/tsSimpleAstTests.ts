@@ -1,7 +1,8 @@
-﻿import {TsSimpleAst} from "./../TsSimpleAst";
+﻿import * as path from "path";
+import {expect} from "chai";
+import {TsSimpleAst} from "./../TsSimpleAst";
 import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
-import {expect} from "chai";
 
 describe(nameof(TsSimpleAst), () => {
     describe(`constructor`, () => {
@@ -68,6 +69,27 @@ describe(nameof(TsSimpleAst), () => {
             enumMember.setName("myNewMemberName");
             expect(enumMember.getValue()).to.equal(0);
             expect(sourceFile.getFullText()).to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\nenum MyOtherNewName {\n}\n");
+        });
+    });
+
+    describe("mixing real files with virtual files", () => {
+        const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
+        const ast = new TsSimpleAst();
+        ast.addSourceFiles([`${testFilesDirPath}/**/*.ts`]);
+        ast.addSourceFileFromText(
+            path.join(testFilesDirPath, "variableTestFile.ts"),
+            `import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().name;\n`
+        );
+
+        it("should have 3 source files", () => {
+            expect(ast.getSourceFiles().length).to.equal(3);
+        });
+
+        it("should rename an identifier appropriately", () => {
+            const interfaceFile = ast.getSourceFile("testInterfaces.ts")!;
+            interfaceFile.getInterfaceDeclarations()[0].getPropertySignatures()[0].getNameNode().rename("newName");
+            const variableFile = ast.getSourceFile("variableTestFile.ts")!;
+            expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });
     });
 });
