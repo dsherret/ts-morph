@@ -40,9 +40,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets any referenced files.
      */
     getReferencedFiles() {
-        const fileSystemHost = this.factory.getFileSystemHost();
-        const dirName = fileSystemHost.getDirectoryName(this.getFilePath());
-        return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(fileSystemHost.pathJoin(dirName, f.fileName)));
+        const dirName = FileUtils.getDirName(this.getFilePath());
+        return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
     }
 
     /**

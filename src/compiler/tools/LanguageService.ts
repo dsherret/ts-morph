@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {FileSystemHost} from "./../../FileSystemHost";
 import {CompilerFactory} from "./../../factories";
-import {KeyValueCache} from "./../../utils";
+import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
@@ -64,7 +64,7 @@ export class LanguageService {
             },
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
-            getCanonicalFileName: (fileName: string) => fileSystem.normalize(fileName),
+            getCanonicalFileName: (fileName: string) => FileUtils.getStandardizedAbsolutePath(fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name]

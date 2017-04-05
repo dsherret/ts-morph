@@ -10,16 +10,17 @@ describe(nameof(FileUtils), () => {
         // too lazy to abstract this out because I'm pretty sure it works... my machine will get the windows tests and
         // the CI linux machine will get the other tests
         if (isWindows) {
+            // uses forward slashes in result because that's what the ts compiler does
             it("should get the absolute path when absolute on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("C:\\absolute\\path", "C:\\basedir")).to.equal("C:\\absolute\\path");
+                expect(FileUtils.getAbsoluteOrRelativePathFromPath("C:\\absolute\\path", "C:\\basedir")).to.equal("C:/absolute/path");
             });
 
             it("should get the relative path when relative on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("relative\\path", "C:\\basedir")).to.equal("C:\\basedir\\relative\\path");
+                expect(FileUtils.getAbsoluteOrRelativePathFromPath("relative\\path", "C:\\basedir")).to.equal("C:/basedir/relative/path");
             });
 
             it("should get the relative path without dots on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("..\\relative\\path", "C:\\basedir")).to.equal("C:\\relative\\path");
+                expect(FileUtils.getAbsoluteOrRelativePathFromPath("..\\relative\\path", "C:\\basedir")).to.equal("C:/relative/path");
             });
         }
         else {

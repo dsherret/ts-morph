@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {FileNotFoundError} from "./../errors";
 import {FileSystemHost} from "./../FileSystemHost";
+import {FileUtils} from "./FileUtils";
 
 /**
  * Resolves compiler options.
@@ -36,15 +37,15 @@ export class CompilerOptionsResolver {
     }
 
     private getCompilerOptionsFromTsConfig(filePath: string) {
-        this.verifyFileExists(filePath);
-        const absoluteFilePath = this.fileSystem.getAbsolutePath(filePath);
+        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
+        this.verifyFileExists(absoluteFilePath);
         const text = this.fileSystem.readFile(absoluteFilePath);
         const result = ts.parseConfigFileTextToJson(absoluteFilePath, text, true);
 
         if (result.error != null)
             throw new Error(result.error.messageText.toString());
 
-        const settings = ts.convertCompilerOptionsFromJson(result.config.compilerOptions, this.fileSystem.getDirectoryName(filePath));
+        const settings = ts.convertCompilerOptionsFromJson(result.config.compilerOptions, FileUtils.getDirName(filePath));
 
         if (!settings.options)
             throw new Error(this.getErrorMessage(settings.errors));
@@ -82,6 +83,6 @@ export class CompilerOptionsResolver {
     private verifyFileExists(filePath: string) {
         // unfortunately the ts compiler doesn't do things asynchronously so for now we won't either
         if (!this.fileSystem.fileExists(filePath))
-            throw new FileNotFoundError(this.fileSystem.getAbsolutePath(filePath));
+            throw new FileNotFoundError(filePath);
     }
 }

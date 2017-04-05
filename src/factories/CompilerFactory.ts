@@ -2,7 +2,7 @@
 import * as compiler from "./../compiler";
 import * as errors from "./../errors";
 import {FileSystemHost} from "./../FileSystemHost";
-import {KeyValueCache, Logger} from "./../utils";
+import {KeyValueCache, Logger, FileUtils} from "./../utils";
 
 /**
  * Factory for creating compiler wrappers.
@@ -10,7 +10,7 @@ import {KeyValueCache, Logger} from "./../utils";
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
-    private readonly caseInsensitiveNormalizedDirectories = new Set<string>();
+    private readonly normalizedDirectories = new Set<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node<ts.Node>>();
     private readonly fileNameUsedForTempSourceFile = "tsSimpleAstTemporaryFile.ts";
 
@@ -51,9 +51,10 @@ export class CompilerFactory {
      * @param sourceText - Text to create the source file with.
      */
     addSourceFileFromText(filePath: string, sourceText: string) {
-        if (this.containsSourceFileAtPath(filePath))
-            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.languageService.getScriptTarget(), true);
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        if (this.containsSourceFileAtPath(absoluteFilePath))
+            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${absoluteFilePath}`);
+        const compilerSourceFile = ts.createSourceFile(absoluteFilePath, sourceText, this.languageService.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
 
@@ -73,10 +74,11 @@ export class CompilerFactory {
      * @param filePath - File path to get the file from.
      */
     getSourceFileFromFilePath(filePath: string): compiler.SourceFile {
-        let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        let sourceFile = this.sourceFileCacheByFilePath.get(absoluteFilePath);
         if (sourceFile == null) {
-            Logger.log(`Loading file: ${filePath}`);
-            sourceFile = this.addSourceFileFromText(filePath, this.fileSystem.readFile(filePath));
+            Logger.log(`Loading file: ${absoluteFilePath}`);
+            sourceFile = this.addSourceFileFromText(absoluteFilePath, this.fileSystem.readFile(absoluteFilePath));
 
             if (sourceFile != null)
                 sourceFile.getReferencedFiles(); // fill referenced files
@@ -90,7 +92,8 @@ export class CompilerFactory {
      * @param filePath - File path to check.
      */
     containsSourceFileAtPath(filePath: string) {
-        return this.sourceFileCacheByFilePath.get(filePath) != null;
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        return this.sourceFileCacheByFilePath.get(absoluteFilePath) != null;
     }
 
     /**
@@ -98,8 +101,8 @@ export class CompilerFactory {
      * @param dirPath - Directory path to check.
      */
     containsFileInDirectory(dirPath: string) {
-        const normalizedDirPath = this.fileSystem.normalize(dirPath);
-        return this.caseInsensitiveNormalizedDirectories.has(normalizedDirPath);
+        const normalizedDirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        return this.normalizedDirectories.has(normalizedDirPath);
     }
 
     /**
@@ -321,9 +324,9 @@ export class CompilerFactory {
             this.languageService.addSourceFile(sourceFile);
 
             // add to list of directories
-            const normalizedDir = this.fileSystem.normalize(this.fileSystem.getDirectoryName(sourceFile.getFilePath()));
-            if (!this.caseInsensitiveNormalizedDirectories.has(normalizedDir))
-                this.caseInsensitiveNormalizedDirectories.add(normalizedDir);
+            const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirName(sourceFile.getFilePath()));
+            if (!this.normalizedDirectories.has(normalizedDir))
+                this.normalizedDirectories.add(normalizedDir);
 
             return sourceFile;
         });

@@ -5,6 +5,29 @@ export class FileUtils {
     }
 
     /**
+     * Gets the current directory.
+     */
+    static getCurrentDirectory() {
+        return this.getStandardizedAbsolutePath(path.resolve());
+    }
+
+    /**
+     * Joins the paths.
+     * @param paths - Paths to join.
+     */
+    static pathJoin(...paths: string[]) {
+        return path.join(...paths);
+    }
+
+    /**
+     * Gets the standardized absolute path.
+     * @param fileOrDirPath - Path to standardize.
+     */
+    static getStandardizedAbsolutePath(fileOrDirPath: string) {
+        return this.standardizeSlashes(path.normalize(path.resolve(fileOrDirPath)));
+    }
+
+    /**
      * Gets the directory name.
      * @param fileOrDirPath - Path to get the directory name from.
      */
@@ -19,9 +42,9 @@ export class FileUtils {
      */
     static getAbsoluteOrRelativePathFromPath(filePath: string, baseDir: string) {
         if (path.isAbsolute(filePath))
-            return filePath;
+            return FileUtils.getStandardizedAbsolutePath(filePath);
 
-        return path.normalize(path.join(baseDir, filePath));
+        return FileUtils.getStandardizedAbsolutePath(path.join(baseDir, filePath));
     }
 
     static standardizeSlashes(fileName: string) {

@@ -1,6 +1,7 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
 import {TsSimpleAst} from "./../TsSimpleAst";
+import {FileUtils} from "./../utils";
 import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
 
@@ -23,7 +24,7 @@ describe(nameof(TsSimpleAst), () => {
             const ast = new TsSimpleAst(undefined, fileSystem);
             expect(() => {
                 ast.getOrAddSourceFileFromFilePath("non-existent-file.ts");
-            }).to.throw(errors.FileNotFoundError, "File not found: non-existent-file.ts");
+            }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("non-existent-file.ts")}`);
         });
     });
 
@@ -33,7 +34,7 @@ describe(nameof(TsSimpleAst), () => {
         fileSystem.glob = patterns => {
             if (patterns.length !== 1 || patterns[0] !== "some-pattern")
                 throw new Error("Unexpected input!");
-            return ["file1.ts", "file2.ts", "file3.ts"];
+            return ["file1.ts", "file2.ts", "file3.ts"].map(p => FileUtils.getStandardizedAbsolutePath(p));
         };
         const ast = new TsSimpleAst(undefined, fileSystem);
         ast.addSourceFiles(["some-pattern"]);
@@ -41,8 +42,8 @@ describe(nameof(TsSimpleAst), () => {
         it("should have 2 source files", () => {
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
-            expect(sourceFiles[0].getFilePath()).to.equal("file1.ts");
-            expect(sourceFiles[1].getFilePath()).to.equal("file2.ts");
+            expect(sourceFiles[0].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file1.ts"));
+            expect(sourceFiles[1].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file2.ts"));
         });
     });
 
@@ -52,7 +53,7 @@ describe(nameof(TsSimpleAst), () => {
             ast.addSourceFileFromText("file.ts", "");
             expect(() => {
                 ast.addSourceFileFromText("file.ts", "");
-            }).to.throw(errors.InvalidOperationError, "A source file already exists at the provided file path: file.ts");
+            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
         });
 
         it("", () => {

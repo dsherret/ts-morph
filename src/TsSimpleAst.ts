@@ -41,7 +41,7 @@ export class TsSimpleAst {
      * @param fileGlobs - File globs to add files based on.
      */
     addSourceFiles(fileGlobs: string[]) {
-        const filePaths = this.fileSystem.glob(fileGlobs).map(path => this.fileSystem.normalize(this.fileSystem.getAbsolutePath(path)));
+        const filePaths = this.fileSystem.glob(fileGlobs);
 
         for (let filePath of filePaths) {
             // ignore any FileNotFoundErrors
@@ -60,9 +60,10 @@ export class TsSimpleAst {
      * @param filePath - File path to create the file from.
      */
     getOrAddSourceFileFromFilePath(filePath: string): compiler.SourceFile {
-        if (!this.fileSystem.fileExists(filePath))
-            throw new errors.FileNotFoundError(filePath);
-        return this.compilerFactory.getSourceFileFromFilePath(filePath);
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        if (!this.fileSystem.fileExists(absoluteFilePath))
+            throw new errors.FileNotFoundError(absoluteFilePath);
+        return this.compilerFactory.getSourceFileFromFilePath(absoluteFilePath);
     }
 
     /**

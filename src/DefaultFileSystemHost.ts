@@ -1,7 +1,7 @@
 ﻿import * as fs from "fs";
-import * as path from "path";
 import * as globby from "globby";
 import {FileSystemHost} from "./FileSystemHost";
+import {FileUtils} from "./utils";
 
 /**
  * @internal
@@ -35,24 +35,8 @@ export class DefaultFileSystemHost implements FileSystemHost {
         }
     }
 
-    getAbsolutePath(filePath: string) {
-        return path.resolve(filePath);
-    }
-
-    normalize(filePath: string) {
-        return path.normalize(filePath);
-    }
-
-    getDirectoryName(filePath: string) {
-        return path.dirname(filePath);
-    }
-
-    pathJoin(...paths: string[]) {
-        return path.join(...paths);
-    }
-
     getCurrentDirectory() {
-        return path.resolve();
+        return FileUtils.getCurrentDirectory();
     }
 
     glob(patterns: string[]) {

@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {CompilerOptionsResolver} from "./../../utils";
+import {CompilerOptionsResolver, FileUtils} from "./../../utils";
 import * as errors from "./../../errors";
 import * as testHelpers from "./../testHelpers";
 
@@ -15,10 +15,10 @@ describe(nameof(CompilerOptionsResolver), () => {
             });
 
             it(`should get the default compiler options when not providing anything and a tsconfig exists`, () => {
-                const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "/tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+                const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
                 const resolver = new CompilerOptionsResolver(host);
                 const compilerOptions = resolver.getCompilerOptions({});
-                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: "/test", target: 1 }));
+                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: FileUtils.getStandardizedAbsolutePath("test"), target: 1 }));
             });
         });
 
@@ -52,7 +52,8 @@ describe(nameof(CompilerOptionsResolver), () => {
             it("should throw an error when the path doesn't exist", () => {
                 const host = testHelpers.getFileSystemHostWithFiles([]);
                 const resolver = new CompilerOptionsResolver(host);
-                expect(() => resolver.getCompilerOptions({ tsConfigFilePath: "tsconfig.json" })).to.throw(errors.FileNotFoundError, "File not found: tsconfig.json");
+                expect(() => resolver.getCompilerOptions({ tsConfigFilePath: "tsconfig.json" }))
+                    .to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("tsconfig.json")}`);
             });
 
             it("should throw an error when the file doesn't parse", () => {

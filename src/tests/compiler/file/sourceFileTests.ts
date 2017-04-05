@@ -3,13 +3,14 @@ import {SourceFile} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {FileUtils} from "./../../../utils";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
         const fileText = "    interface Identifier {}    ";
-        const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/Folder/File.ts" });
+        const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
         const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
-        const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
+        const absoluteSourceFile = sourceFile.copy(FileUtils.getStandardizedAbsolutePath("NewFile.ts"));
 
         describe(nameof(tsSimpleAst), () => {
             it("should include the copied source files", () => {
@@ -23,7 +24,7 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(relativeSourceFile.getFilePath()).to.equal("/NewFolder/NewFile.ts");
+                expect(relativeSourceFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("NewFolder/NewFile.ts"));
             });
         });
 
@@ -33,7 +34,7 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(absoluteSourceFile.getFilePath()).to.equal("/NewFile.ts");
+                expect(absoluteSourceFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("NewFile.ts"));
             });
         });
     });
