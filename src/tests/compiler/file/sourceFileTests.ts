@@ -41,14 +41,14 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.save), () => {
         const fileText = "    interface Identifier {}    ";
-        const filePath = "C:\\Folder\\File.ts";
+        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
         it("should save the file", (done) => {
             sourceFile.save(() => {
                 const args = host.getWrittenFileArguments();
-                expect(args[0]).to.equal("C:/Folder/File.ts");
+                expect(args[0]).to.equal(filePath);
                 expect(args[1]).to.equal(fileText);
                 expect(args.length).to.equal(3); // 3rd is callback
                 done();
@@ -58,14 +58,14 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.saveSync), () => {
         const fileText = "    interface Identifier {}    ";
-        const filePath = "C:\\Folder\\File.ts";
+        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
         it("should save the file", () => {
             sourceFile.saveSync();
             const args = host.getWrittenFileArguments();
-            expect(args[0]).to.equal("C:/Folder/File.ts");
+            expect(args[0]).to.equal(filePath);
             expect(args[1]).to.equal(fileText);
             expect(args.length).to.equal(2);
         });
