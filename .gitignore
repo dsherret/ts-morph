@@ -11,3 +11,4 @@
 /coverage
 /.vs
 /dist
+/docs/Gemfile.lock

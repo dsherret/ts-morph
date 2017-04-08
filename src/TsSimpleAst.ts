@@ -40,7 +40,7 @@ export class TsSimpleAst {
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
      */
-    addSourceFiles(fileGlobs: string[]) {
+    addSourceFiles(...fileGlobs: string[]) {
         const filePaths = this.fileSystem.glob(fileGlobs);
 
         for (let filePath of filePaths) {

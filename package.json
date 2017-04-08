@@ -50,5 +50,8 @@
     "code-block-writer": "^4.1.0",
     "globby": "^6.1.0",
     "typescript": "2.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "2.2.2"
   }
 }

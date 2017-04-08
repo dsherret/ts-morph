@@ -21,7 +21,9 @@ Changes made in the simple layer will be made to the underlying compiler layer.
 ## Example
 
 ```typescript
-const ast = new TsSimpleAst();
+import Ast from "ts-simple-ast";
+
+const ast = new Ast();
 const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
 const enumDeclaration = sourceFile.getEnumDeclarations()[0];
 enumDeclaration.getName(); // "MyEnum"

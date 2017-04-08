@@ -1,1 +1,5 @@
-theme: jekyll-theme-minimal
+theme: jekyll-theme-leap-day
+repository: dsherret/ts-simple-ast
+port: 4001
+title: TsSimpleAst
+description: Simple way to navigate and manipulate the TypeScript AST.

@@ -1,2 +1,3 @@
 export * from "./compiler";
-export * from "./TsSimpleAst";
+export {TsSimpleAst as default} from "./TsSimpleAst";
+export * from "./DefaultFileSystemHost";

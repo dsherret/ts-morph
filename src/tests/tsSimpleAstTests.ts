@@ -37,7 +37,7 @@ describe(nameof(TsSimpleAst), () => {
             return ["file1.ts", "file2.ts", "file3.ts"].map(p => FileUtils.getStandardizedAbsolutePath(p));
         };
         const ast = new TsSimpleAst(undefined, fileSystem);
-        ast.addSourceFiles(["some-pattern"]);
+        ast.addSourceFiles("some-pattern");
 
         it("should have 2 source files", () => {
             const sourceFiles = ast.getSourceFiles();
@@ -76,7 +76,7 @@ describe(nameof(TsSimpleAst), () => {
     describe("mixing real files with virtual files", () => {
         const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
         const ast = new TsSimpleAst();
-        ast.addSourceFiles([`${testFilesDirPath}/**/*.ts`]);
+        ast.addSourceFiles(`${testFilesDirPath}/**/*.ts`);
         ast.addSourceFileFromText(
             path.join(testFilesDirPath, "variableTestFile.ts"),
             `import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().name;\n`
