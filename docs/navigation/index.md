@@ -1,6 +1,5 @@
-﻿---
+---
 title: Navigating the AST
-layout: page
 ---
 
 # Navigating the AST
@@ -10,7 +9,34 @@ Navigating the AST should be simple and straightforward.
 The best way to explore what's implemented is to look at the autocompletion/intellisense results.
 If you can't find something that means it's most likely not implemented and you should [open an issue](https://github.com/dsherret/ts-simple-ast/issues) on GitHub.
 
-## Example
+
+## Getting Source Files
+
+After source files are added, you will need to get them in order to navigate or make changes.
+
+### All
+
+```typescript
+const sourceFiles = ast.getAllSourceFiles();
+```
+
+### By file path
+
+Will return the first source file that matches the end of the provided file path:
+
+```typescript
+const personFile = ast.getSourceFile("Models/Person.ts");
+```
+
+### By condition
+
+Will return the first source file that matches the provided condition:
+
+```typescript
+const fileWithFiveClasses = ast.getSourceFile(f => f.getClassDeclarations().length === 5);
+```
+
+## Navigating Within Source Files - Example
 
 ### Setup
 

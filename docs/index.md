@@ -2,25 +2,23 @@
 title: TS Simple AST - Documentation
 ---
 
-# Purpose
+## Purpose
 
 Setup, navigation, and manipulation of the TypeScript AST can be a challenge. This library wraps the TypeScript compiler so it's simple.
 
-# System Requirements
+## System Requirements
 
 * Environment with support for ES6 (Node v6.10+)
 
-# Installing
+## Installing
 
-You must install the correct TypeScript compiler peer dependency version.
+You must additionally install the correct TypeScript compiler version as specified in the library's peer dependencies.
 
 ```
 npm install --save-dev typescript@2.2.2
 npm install --save-dev ts-simple-ast
 ```
 
-# Pages
+## Next Step
 
-* [Overview](overview/index)
-* [Navigating the AST](navigation/index)
-* [Manipulating the AST](manipulation/index)
+* [Setup](../setup/index)

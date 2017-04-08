@@ -13,7 +13,7 @@
     position: fixed;
     left: 50%;
     margin-left: -325px;
-    width: 645px;
+    width: 647px;
     padding-right: 5px;
     clear: both;
 }
@@ -38,4 +38,9 @@ footer {
     bottom: 0px !important;
     text-align: left !important;
     clear: both;
+}
+
+code {
+    /* Use a monospaced font! */
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace !important;
 }
