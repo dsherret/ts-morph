@@ -4,7 +4,7 @@ title: TS Simple AST - Documentation
 
 # Purpose
 
-Setup, navigating, and manipulating the TypeScript AST can be a challenge. This library wraps the TypeScript compiler so it's simple to navigate and manipulate.
+Setup, navigation, and manipulation of the TypeScript AST can be a challenge. This library wraps the TypeScript compiler so it's simple.
 
 # System Requirements
 
@@ -23,3 +23,4 @@ npm install --save-dev ts-simple-ast
 
 * [Overview](overview/index)
 * [Navigating the AST](navigation/index)
+* [Manipulating the AST](manipulation/index)

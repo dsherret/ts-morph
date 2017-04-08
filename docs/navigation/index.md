@@ -1,5 +1,6 @@
 ﻿---
 title: Navigating the AST
+layout: page
 ---
 
 # Navigating the AST

@@ -12,3 +12,4 @@
 /.vs
 /dist
 /docs/Gemfile.lock
+/docs/_site

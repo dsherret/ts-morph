@@ -1,0 +1,41 @@
+﻿/* because style.scss doesn't seem to be working on my local :( */
+
+#banner {
+    left: 0px !important;
+    width: 100%;
+}
+
+#banner #logo {
+    right: 22px !important;
+}
+
+.bannerButtons {
+    position: fixed;
+    left: 50%;
+    margin-left: -325px;
+    width: 645px;
+    padding-right: 5px;
+    clear: both;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.headerLink {
+    cursor: pointer;
+}
+
+footer {
+    width: auto !important;
+    position: static !important;
+    left: 0px !important;
+    margin-left: 0px !important;
+    bottom: 0px !important;
+    text-align: left !important;
+    clear: both;
+}
