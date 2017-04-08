@@ -21,4 +21,4 @@ npm install --save-dev ts-simple-ast
 
 ## Next Step
 
-* [Setup](../setup/index)
+* [Setup](setup/index)
