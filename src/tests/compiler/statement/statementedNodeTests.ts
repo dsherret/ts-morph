@@ -19,7 +19,7 @@ describe(nameof(StatementedNode), () => {
 
         describe("adding to non-source file", () => {
             const {sourceFile} = getInfoFromText("namespace MyNamespace {\n}\n");
-            const namespaceDec = sourceFile.getNamespaceDeclarations()[0];
+            const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.addEnumDeclaration({
                 name: "MyEnum",
                 members: [{ name: "member" }]
@@ -33,8 +33,8 @@ describe(nameof(StatementedNode), () => {
 
     describe("getting a declaration within a namespace", () => {
         const {sourceFile} = getInfoFromText("namespace Namespace1 {\n    class Class1 {}\n}\n");
-        const namespaceDeclaration = sourceFile.getNamespaceDeclarations()[0];
-        const classes = namespaceDeclaration.getClassDeclarations();
+        const namespaceDeclaration = sourceFile.getNamespaces()[0];
+        const classes = namespaceDeclaration.getClasses();
 
         it("should have the expected number of classes", () => {
             expect(classes.length).to.equal(1);
@@ -45,9 +45,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getClassDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getClasses), () => {
         const {sourceFile} = getInfoFromText("class Class1 {}\nclass Class2 { prop: string; }");
-        const classes = sourceFile.getClassDeclarations();
+        const classes = sourceFile.getClasses();
 
         it("should have the expected number of classes", () => {
             expect(classes.length).to.equal(2);
@@ -58,9 +58,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getEnumDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getEnums), () => {
         const {sourceFile} = getInfoFromText("enum Enum1 {}\nenum Enum2 { member }");
-        const enums = sourceFile.getEnumDeclarations();
+        const enums = sourceFile.getEnums();
 
         it("should have the expected number of enums", () => {
             expect(enums.length).to.equal(2);
@@ -71,9 +71,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getFunctionDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getFunctions), () => {
         const {sourceFile} = getInfoFromText("function function1() {}\nfunction function2() {}");
-        const functions = sourceFile.getFunctionDeclarations();
+        const functions = sourceFile.getFunctions();
 
         it("should have the expected number of functions", () => {
             expect(functions.length).to.equal(2);
@@ -84,9 +84,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getInterfaceDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getInterfaces), () => {
         const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}");
-        const interfaces = sourceFile.getInterfaceDeclarations();
+        const interfaces = sourceFile.getInterfaces();
 
         it("should have the expected number of interfaces", () => {
             expect(interfaces.length).to.equal(2);
@@ -97,9 +97,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getNamespaceDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getNamespaces), () => {
         const {sourceFile} = getInfoFromText("namespace Namespace1 {}\nnamespace Namespace2 {}");
-        const namespaces = sourceFile.getNamespaceDeclarations();
+        const namespaces = sourceFile.getNamespaces();
 
         it("should have the expected number of namespaces", () => {
             expect(namespaces.length).to.equal(2);
@@ -110,9 +110,9 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
-    describe(nameof<StatementedNode>(n => n.getTypeAliasDeclarations), () => {
+    describe(nameof<StatementedNode>(n => n.getTypeAliases), () => {
         const {sourceFile} = getInfoFromText("type TypeAlias1 = string;\ntype TypeAlias2 = number;");
-        const typeAliases = sourceFile.getTypeAliasDeclarations();
+        const typeAliases = sourceFile.getTypeAliases();
 
         it("should have the expected number of typeAliases", () => {
             expect(typeAliases.length).to.equal(2);
@@ -160,14 +160,14 @@ describe(nameof(StatementedNode), () => {
     it("should get items inside a namespace", () => {
         // only need to check for one kind in here
         const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { function function1() {}\nfunction function2() {} }");
-        const functions = firstChild.getFunctionDeclarations();
+        const functions = firstChild.getFunctions();
         expect(functions.length).to.equal(2);
     });
 
     it("should get items inside a function", () => {
         // only need to check for one kind in here
         const {firstChild} = getInfoFromText<FunctionDeclaration>("function Identifier() { function function1() {}\nfunction function2() {} }");
-        const functions = firstChild.getFunctionDeclarations();
+        const functions = firstChild.getFunctions();
         expect(functions.length).to.equal(2);
     });
 });

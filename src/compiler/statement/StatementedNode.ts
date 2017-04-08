@@ -15,12 +15,12 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDecla
 export interface StatementedNode {
     getBody(): Node<ts.Node>;
     addEnumDeclaration(structure: structures.EnumStructure): enums.EnumDeclaration;
-    getClassDeclarations(): classes.ClassDeclaration[];
-    getEnumDeclarations(): enums.EnumDeclaration[];
-    getFunctionDeclarations(): functions.FunctionDeclaration[];
-    getInterfaceDeclarations(): interfaces.InterfaceDeclaration[];
-    getNamespaceDeclarations(): namespaces.NamespaceDeclaration[];
-    getTypeAliasDeclarations(): types.TypeAliasDeclaration[];
+    getClasses(): classes.ClassDeclaration[];
+    getEnums(): enums.EnumDeclaration[];
+    getFunctions(): functions.FunctionDeclaration[];
+    getInterfaces(): interfaces.InterfaceDeclaration[];
+    getNamespaces(): namespaces.NamespaceDeclaration[];
+    getTypeAliases(): types.TypeAliasDeclaration[];
     getVariableStatements(): variable.VariableStatement[];
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
     getVariableDeclarations(): variable.VariableDeclaration[];
@@ -70,7 +70,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const text = `${indentationText}enum ${structure.name} {${newLineChar}${indentationText}}${newLineChar}`;
             sourceFile.insertText(this.getInsertPosition(), text);
 
-            const enumDeclarations = this.getEnumDeclarations();
+            const enumDeclarations = this.getEnums();
             const declaration = enumDeclarations[enumDeclarations.length - 1];
             for (let member of structure.members || []) {
                 declaration.addMember(member);
@@ -81,42 +81,42 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /**
          * Gets the direct class declaration children.
          */
-        getClassDeclarations(): classes.ClassDeclaration[] {
+        getClasses(): classes.ClassDeclaration[] {
             return this.getMainChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
         }
 
         /**
          * Gets the direct enum declaration children.
          */
-        getEnumDeclarations(): enums.EnumDeclaration[] {
+        getEnums(): enums.EnumDeclaration[] {
             return this.getMainChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
         }
 
         /**
          * Gets the direct function declaration children.
          */
-        getFunctionDeclarations(): functions.FunctionDeclaration[] {
+        getFunctions(): functions.FunctionDeclaration[] {
             return this.getMainChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
         }
 
         /**
          * Gets the direct interface declaration children.
          */
-        getInterfaceDeclarations(): interfaces.InterfaceDeclaration[] {
+        getInterfaces(): interfaces.InterfaceDeclaration[] {
             return this.getMainChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
         }
 
         /**
          * Gets the direct namespace declaration children.
          */
-        getNamespaceDeclarations(): namespaces.NamespaceDeclaration[] {
+        getNamespaces(): namespaces.NamespaceDeclaration[] {
             return this.getMainChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
         }
 
         /**
          * Gets the direct type alias declaration children.
          */
-        getTypeAliasDeclarations(): types.TypeAliasDeclaration[] {
+        getTypeAliases(): types.TypeAliasDeclaration[] {
             return this.getMainChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
         }
 

@@ -4,8 +4,8 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(GeneratorableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("function* Identifier {}\nfunction Identifier2 {}");
-    const generatorFunc = mainSourceFile.getFunctionDeclarations()[0];
-    const func  = mainSourceFile.getFunctionDeclarations()[1];
+    const generatorFunc = mainSourceFile.getFunctions()[0];
+    const func  = mainSourceFile.getFunctions()[1];
 
     describe(nameof<GeneratorableNode>(n => n.isGenerator), () => {
         it("should be a generator when so", () => {

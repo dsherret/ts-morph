@@ -25,7 +25,7 @@ import Ast from "ts-simple-ast";
 
 const ast = new Ast();
 const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
-const enumDeclaration = sourceFile.getEnumDeclarations()[0];
+const enumDeclaration = sourceFile.getEnums()[0];
 enumDeclaration.getName(); // "MyEnum"
 enumDeclaration.setName("NewName");
 enumDeclaration.addMember({

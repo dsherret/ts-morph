@@ -5,7 +5,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Symbol), () => {
     const {sourceFile: enumSourceFile} = getInfoFromText("enum MyEnum {}");
-    const enumDeclaration = enumSourceFile.getEnumDeclarations()[0];
+    const enumDeclaration = enumSourceFile.getEnums()[0];
     const enumNameNodeSymbol = enumDeclaration.getNameNode().getSymbol()!;
 
     describe(nameof<Symbol>(s => s.getName), () => {

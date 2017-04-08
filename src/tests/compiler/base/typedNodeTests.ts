@@ -6,7 +6,7 @@ describe(nameof(TypedNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
     const implicitVarDeclaration = mainSourceFile.getVariableStatements()[0].getDeclarationList().getDeclarations()[0];
     const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarationList().getDeclarations()[0];
-    const typeAliasDeclaration = mainSourceFile.getTypeAliasDeclarations()[0];
+    const typeAliasDeclaration = mainSourceFile.getTypeAliases()[0];
 
     describe(nameof<TypedNode>(n => n.getType), () => {
         it("should get the expected implicit type", () => {

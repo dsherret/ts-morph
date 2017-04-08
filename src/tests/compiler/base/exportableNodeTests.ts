@@ -8,7 +8,7 @@ describe(nameof(ExportableNode), () => {
     const statements = mainSourceFile.getVariableStatements();
     const exportedStatement = statements[0];
     const notExportedStatement = statements[1];
-    const exportedDefaultClass = mainSourceFile.getClassDeclarations()[0];
+    const exportedDefaultClass = mainSourceFile.getClasses()[0];
 
     describe(nameof<ExportableNode>(n => n.hasExportKeyword), () => {
         it("should have an export keyword when exported", () => {
@@ -87,7 +87,7 @@ describe(nameof(ExportableNode), () => {
 
         it("should not be a named export when contained in a namespace", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Namespace { export class Identifier {} }");
-            const innerClass = firstChild.getClassDeclarations()[0];
+            const innerClass = firstChild.getClasses()[0];
             expect(innerClass.isNamedExport()).to.be.false;
         });
 
@@ -125,7 +125,7 @@ describe(nameof(ExportableNode), () => {
 
             it("should throw an error if setting as a default export within a namespace", () => {
                 const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
-                const innerChild = firstChild.getClassDeclarations()[0];
+                const innerChild = firstChild.getClasses()[0];
                 expect(() => innerChild.setIsDefaultExport(true)).to.throw(errors.InvalidOperationError);
             });
         });
@@ -161,14 +161,14 @@ describe(nameof(ExportableNode), () => {
 
             it("should do nothing if already exported from a namespace", () => {
                 const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { export class Identifier {} }");
-                const innerChild = firstChild.getClassDeclarations()[0];
+                const innerChild = firstChild.getClasses()[0];
                 innerChild.setIsExported(true);
                 expect(sourceFile.getText()).to.equal("namespace Identifier { export class Identifier {} }");
             });
 
             it("should add the export keyword if not exported from a namespace", () => {
                 const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
-                const innerChild = firstChild.getClassDeclarations()[0];
+                const innerChild = firstChild.getClasses()[0];
                 innerChild.setIsExported(true);
                 expect(sourceFile.getText()).to.equal("namespace Identifier { export class Identifier {} }");
             });
@@ -201,14 +201,14 @@ describe(nameof(ExportableNode), () => {
 
             it("should do nothing if already not exported from a namespace", () => {
                 const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
-                const innerChild = firstChild.getClassDeclarations()[0];
+                const innerChild = firstChild.getClasses()[0];
                 innerChild.setIsExported(false);
                 expect(sourceFile.getText()).to.equal("namespace Identifier { class Identifier {} }");
             });
 
             it("should remove the export keyword if exported from a namespace", () => {
                 const {sourceFile, firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { export class Identifier {} }");
-                const innerChild = firstChild.getClassDeclarations()[0];
+                const innerChild = firstChild.getClasses()[0];
                 innerChild.setIsExported(false);
                 expect(sourceFile.getText()).to.equal("namespace Identifier { class Identifier {} }");
             });

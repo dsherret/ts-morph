@@ -4,8 +4,8 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
     const {sourceFile} = getInfoFromText("function noTypeParamsFunc() {}\n function typeParamsFunc<T, U>() {}");
-    const noTypeParamsFunc = sourceFile.getFunctionDeclarations()[0];
-    const typeParamsFunc = sourceFile.getFunctionDeclarations()[1];
+    const noTypeParamsFunc = sourceFile.getFunctions()[0];
+    const typeParamsFunc = sourceFile.getFunctions()[1];
 
     describe(nameof<TypeParameteredNode>(n => n.getTypeParameterDeclarations), () => {
         describe("having no type parameters", () => {

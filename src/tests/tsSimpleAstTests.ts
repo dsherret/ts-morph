@@ -60,7 +60,7 @@ describe(nameof(TsSimpleAst), () => {
             // todo: remove
             const ast = new TsSimpleAst();
             const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
-            const enumDef = sourceFile.getEnumDeclarations()[0];
+            const enumDef = sourceFile.getEnums()[0];
             enumDef.setName("NewName");
             const addedEnum = sourceFile.addEnumDeclaration({
                 name: "MyNewEnum"
@@ -88,7 +88,7 @@ describe(nameof(TsSimpleAst), () => {
 
         it("should rename an identifier appropriately", () => {
             const interfaceFile = ast.getSourceFile("testInterfaces.ts")!;
-            interfaceFile.getInterfaceDeclarations()[0].getPropertySignatures()[0].getNameNode().rename("newName");
+            interfaceFile.getInterfaces()[0].getProperties()[0].getNameNode().rename("newName");
             const variableFile = ast.getSourceFile("variableTestFile.ts")!;
             expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });

@@ -4,7 +4,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StaticableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("class MyClass { static prop: string; prop2: string; }");
-    const classDec = mainSourceFile.getClassDeclarations()[0];
+    const classDec = mainSourceFile.getClasses()[0];
     const staticProp = classDec.getStaticProperties()[0];
     const instanceProp = classDec.getInstanceProperties()[0];
 

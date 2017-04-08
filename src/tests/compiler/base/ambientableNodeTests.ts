@@ -46,7 +46,7 @@ describe(nameof(AmbientableNode), () => {
 
         it("should be ambient when it's parent is ambient", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("declare namespace Identifier { class Identifier {} }");
-            const innerClass = firstChild.getClassDeclarations()[0];
+            const innerClass = firstChild.getClasses()[0];
             expect(innerClass.isAmbient()).to.be.true;
         });
 

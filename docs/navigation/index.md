@@ -33,7 +33,7 @@ const personFile = ast.getSourceFile("Models/Person.ts");
 Will return the first source file that matches the provided condition:
 
 ```typescript
-const fileWithFiveClasses = ast.getSourceFile(f => f.getClassDeclarations().length === 5);
+const fileWithFiveClasses = ast.getSourceFile(f => f.getClasses().length === 5);
 ```
 
 ## Navigating Within Source Files - Example
@@ -73,14 +73,14 @@ const sourceFile = ast.getSourceFile("Person.ts");
 Now inspect what's inside... here's a few examples:
 
 ```typescript
-const hasClasses = sourceFile.getClassDeclarations().length > 0;
-const interfaces = sourceFile.getInterfaceDeclarations();
+const hasClasses = sourceFile.getClasses().length > 0;
+const interfaces = sourceFile.getInterfaces();
 
 // person interface
 const personInterface = sourceFile.getInterfaceDeclaration("Person");
 personInterface.isDefaultExport();        // returns true
 personInterface.getName();                // returns "Person"
-personInterface.getPropertySignatures();  // returns the properties
+personInterface.getProperties();  // returns the properties
 ```
 
 ## Underlying Compiler Nodes

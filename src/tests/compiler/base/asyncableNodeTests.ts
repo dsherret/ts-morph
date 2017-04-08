@@ -4,8 +4,8 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(AsyncableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("async function Identifier {}\nfunction Identifier2 {}");
-    const asyncFunc = mainSourceFile.getFunctionDeclarations()[0];
-    const nonAsyncFunc  = mainSourceFile.getFunctionDeclarations()[1];
+    const asyncFunc = mainSourceFile.getFunctions()[0];
+    const nonAsyncFunc  = mainSourceFile.getFunctions()[1];
 
     describe(nameof<AsyncableNode>(n => n.isAsync), () => {
         it("should be async when async", () => {

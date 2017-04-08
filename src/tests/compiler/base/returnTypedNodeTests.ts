@@ -4,8 +4,8 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");
-    const implicitDeclaration = mainSourceFile.getFunctionDeclarations()[0];
-    const explicitDeclaration = mainSourceFile.getFunctionDeclarations()[1];
+    const implicitDeclaration = mainSourceFile.getFunctions()[0];
+    const explicitDeclaration = mainSourceFile.getFunctions()[1];
 
     describe(nameof<ReturnTypedNode>(n => n.getReturnType), () => {
         it("should get the expected implicit type", () => {
