@@ -62,7 +62,7 @@ describe(nameof(TsSimpleAst), () => {
             const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
             enumDef.setName("NewName");
-            const addedEnum = sourceFile.addEnumDeclaration({
+            const addedEnum = sourceFile.addEnum({
                 name: "MyNewEnum"
             });
             addedEnum.setName("MyOtherNewName");

@@ -17,7 +17,7 @@ After source files are added, you will need to get them in order to navigate or 
 ### All
 
 ```typescript
-const sourceFiles = ast.getAllSourceFiles();
+const sourceFiles = ast.getSourceFiles();
 ```
 
 ### By file path
@@ -77,10 +77,10 @@ const hasClasses = sourceFile.getClasses().length > 0;
 const interfaces = sourceFile.getInterfaces();
 
 // person interface
-const personInterface = sourceFile.getInterfaceDeclaration("Person");
-personInterface.isDefaultExport();        // returns true
-personInterface.getName();                // returns "Person"
-personInterface.getProperties();  // returns the properties
+const personInterface = sourceFile.getInterface("Person")!;
+personInterface.isDefaultExport(); // returns true
+personInterface.getName();         // returns "Person"
+personInterface.getProperties();   // returns the properties
 ```
 
 ## Underlying Compiler Nodes
