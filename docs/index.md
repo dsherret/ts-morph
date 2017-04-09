@@ -19,6 +19,4 @@ npm install --save-dev typescript@2.2.2
 npm install --save-dev ts-simple-ast
 ```
 
-## Next Step
-
-* [Setup](setup/index)
+**Next step:** [Setup](setup/index)

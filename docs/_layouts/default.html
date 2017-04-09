@@ -2,68 +2,79 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{{ site.title | default: site.github.repository_name }}</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    <!--
     <link rel="stylesheet" href="{{ 'assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <link rel="stylesheet" href="{{ 'assets/css/custom-style.css?v=' | append: site.github.build_revision | relative_url }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>-->
 </head>
 <body>
-
-    <header>
-        <h1 onclick="document.location.href = '{{ "/" | prepend: site.baseurl }}'" class="headerLink">{{ site.title | default: site.github.repository_name }}</h1>
-        <p>{{ site.description | default: site.github.project_tagline }}</p>
-    </header>
-
-    <div id="banner">
-        <span id="logo"></span>
-
-        <div class="bannerButtons">
-            <div class="left">
-                <a href="{{ "/" | prepend: site.baseurl }}" class="button"><strong>Home</strong></a>
-                <a href="{{ "/setup" | prepend: site.baseurl }}" class="button"><strong>Setup</strong></a>
-                <a href="{{ "/navigation" | prepend: site.baseurl }}" class="button"><strong>Navigation</strong></a>
-                <a href="{{ "/manipulation" | prepend: site.baseurl }}" class="button"><strong>Manipulation</strong></a>
+    <div class="main">
+        <header class="container">
+            <div class="row">
+                <h1 onclick="document.location.href = '{{ "/" | prepend: site.baseurl }}'" class="headerLink">{{ site.title | default: site.github.repository_name }}</h1>
+                <!--<p class="subText">{{ site.description | default: site.github.project_tagline }}</p>-->
             </div>
-            <div class="right">
-                <a href="{{ site.github.repository_url }}" class="button"><strong>View On GitHub</strong></a>
+        </header>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <nav class="sidebar-nav" id="navbarSupportedContent">
+                        <ul class="navbar-nav navbar-default">
+                            <li class="nav-item{% if page.dir == '/' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Home</a>
+                            </li>
+                            <li class="nav-item{% if page.dir == '/setup/' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/setup" | prepend: site.baseurl }}">Setup</a>
+                                {% if page.dir == '/setup/' %}
+                                <ul>
+                                    <li class="{% if page.path == 'setup/index.md' %}active{% endif %}"><a href="{{ "/setup/index" | prepend: site.baseurl }}">Instantiating</a></li>
+                                    <li class="{% if page.path == 'setup/adding-sourcefiles.md' %}active{% endif %}"><a href="{{ "/setup/adding-sourcefiles" | prepend: site.baseurl }}">Adding SourceFiles</a></li>
+                                </ul>
+                                {% endif %}
+                            </li>
+                            <li class="nav-item{% if page.dir == '/navigation/' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/navigation" | prepend: site.baseurl }}">Navigation</a>
+                                {% if page.dir == '/navigation/' %}
+                                <ul>
+                                    <li class="{% if page.path == 'navigation/getting-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/getting-sourcefiles" | prepend: site.baseurl }}">Getting SourceFiles</a></li>
+                                    <li class="{% if page.path == 'navigation/navigating-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/navigating-sourcefiles" | prepend: site.baseurl }}">Navigating</a></li>
+                                    <li class="{% if page.path == 'navigation/compiler-nodes.md' %}active{% endif %}"><a href="{{ "/navigation/compiler-nodes" | prepend: site.baseurl }}">Compiler Nodes</a></li>
+                                </ul>
+                                {% endif %}
+                            </li>
+                            <li class="nav-item{% if page.dir == '/manipulation/' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/manipulation" | prepend: site.baseurl }}">Manipulation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ site.github.repository_url }}">View on GitHub</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <section class="container-fluid col-md-9">
+                    {{ content }}
+                </section>
             </div>
         </div>
-        {% if site.show_downloads %}
-        <div class="downloads">
-            <span>Downloads:</span>
-            <ul>
-                <li><a href="{{ site.github.zip_url }}" class="button">ZIP</a></li>
-                <li><a href="{{ site.github.tar_url }}" class="button">TAR</a></li>
-            </ul>
-        </div>
-        {% endif %}
-    </div><!-- end banner -->
 
-    <div class="wrapper">
-        <nav>
-            <ul></ul>
-        </nav>
-        <section>
-            {{ content }}
-        </section>
         <footer>
-            <div class="left">
-                {% if site.github.is_project_page %}
-                <p>Project maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
-                {% endif %}
-            </div>
-            <div class="right">
-                <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
-            </div>
         </footer>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     {% if site.google_analytics %}
     <script type="text/javascript">
