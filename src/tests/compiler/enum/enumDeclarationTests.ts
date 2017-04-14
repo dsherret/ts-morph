@@ -3,6 +3,28 @@ import {EnumDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
+    describe(nameof<EnumDeclaration>(d => d.getMember), () => {
+        it("should get a member by its name", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const member = firstChild.getMember("member2")!;
+            expect(member.getText()).to.equal("member2");
+        });
+
+        it("should get a member by a function", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const member = firstChild.getMember(m => m.getName() === "member2")!;
+            expect(member.getText()).to.equal("member2");
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(d => d.getMembers), () => {
+        it("should get all the members", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1 = 1, member2 }");
+            const members = firstChild.getMembers();
+            expect(members.length).to.equal(2);
+        });
+    });
+
     describe(nameof<EnumDeclaration>(d => d.addMember), () => {
         it("should add a member without a value", () => {
             const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {\n}\n");

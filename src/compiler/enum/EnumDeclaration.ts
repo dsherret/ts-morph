@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as structures from "./../../structures";
+import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
@@ -44,6 +45,17 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             declaration.setInitializer(structure.value.toString());
 
         return declaration;
+    }
+
+    /**
+     * Gets an enum member.
+     * @param name - Name of the member.
+     * @param findFunction - Function to use to find the member.
+     */
+    getMember(name: string): EnumMemberDeclaration | undefined;
+    getMember(findFunction: (declaration: EnumMemberDeclaration) => boolean): EnumMemberDeclaration | undefined;
+    getMember(nameOrFindFunction: string | ((declaration: EnumMemberDeclaration) => boolean)): EnumMemberDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
     }
 
     /**

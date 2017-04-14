@@ -32,7 +32,7 @@
                     <nav class="sidebar-nav" id="navbarSupportedContent">
                         <ul class="navbar-nav navbar-default">
                             <li class="nav-item{% if page.dir == '/' %} active{% endif %}">
-                                <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Home</a>
+                                <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Main</a>
                             </li>
                             <li class="nav-item{% if page.dir == '/setup/' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/setup" | prepend: site.baseurl }}">Setup</a>
@@ -55,6 +55,12 @@
                             </li>
                             <li class="nav-item{% if page.dir == '/manipulation/' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/manipulation" | prepend: site.baseurl }}">Manipulation</a>
+                                {% if page.dir == '/manipulation/' %}
+                                <ul>
+                                    <li class="{% if page.path == 'manipulation/renaming.md' %}active{% endif %}"><a href="{{ "/navigation/renaming" | prepend: site.baseurl }}">Renaming</a></li>
+                                    <li class="{% if page.path == 'manipulation/removing.md' %}active{% endif %}"><a href="{{ "/navigation/removing" | prepend: site.baseurl }}">Removing</a></li>
+                                </ul>
+                                {% endif %}
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ site.github.repository_url }}">View on GitHub</a>

@@ -1,7 +1,7 @@
 import * as ts from "typescript";
 import * as errors from "./../../errors";
 import * as structures from "./../../structures";
-import {NamedNode} from "./../base";
+import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import * as classes from "./../class";
 import * as enums from "./../enum";
@@ -110,7 +110,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getClass(name: string): classes.ClassDeclaration | undefined;
         getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
         getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined {
-            return getByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
         }
 
         /**
@@ -128,7 +128,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getEnum(name: string): enums.EnumDeclaration | undefined;
         getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
         getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined {
-            return getByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
         }
 
         /**
@@ -146,7 +146,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getFunction(name: string): functions.FunctionDeclaration | undefined;
         getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
         getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined {
-            return getByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
         }
 
         /**
@@ -164,7 +164,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
         getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
         getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined {
-            return getByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
         }
 
         /**
@@ -182,7 +182,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
         getNamespace(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration | undefined;
         getNamespace(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration | undefined {
-            return getByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
         }
 
         /**
@@ -200,7 +200,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
         getTypeAlias(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration | undefined;
         getTypeAlias(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration | undefined {
-            return getByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
         }
 
         /**
@@ -254,18 +254,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclaration(name: string): variable.VariableDeclaration | undefined;
         getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined {
-            return getByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
+            return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
     };
-}
-
-function getByNameOrFindFunction<T extends NamedNode>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
-    let findFunc: (declaration: T) => boolean;
-
-    if (typeof nameOrFindFunc === "string")
-        findFunc = (dec) => dec.getName() === nameOrFindFunc;
-    else
-        findFunc = nameOrFindFunc;
-
-    return items.find(findFunc);
 }
