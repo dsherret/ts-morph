@@ -25,3 +25,7 @@ So the file above would now contain the following code:
 enum MyEnum {
 }
 ```
+
+### Support
+
+Currently removing is implemented individually for each kind of node. If you find something is not implemented, please open an issue on github.

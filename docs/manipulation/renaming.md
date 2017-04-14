@@ -32,7 +32,3 @@ enum NewEnum {
 
 const myVar = NewEnum.myMember;
 ```
-
-### Support
-
-Currently removing is implemented individually for each kind of node. If you find something is not implemented, please open an issue on github.
