@@ -28,4 +28,4 @@ Will return the first source file that matches the provided condition:
 const fileWithFiveClasses = ast.getSourceFile(f => f.getClasses().length === 5);
 ```
 
-**Next step:** [Navigating Within SourceFiles](navigating-sourcefiles)
+**Next step:** [Example - Navigating Within SourceFiles](example)

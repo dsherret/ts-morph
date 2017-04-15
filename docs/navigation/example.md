@@ -1,14 +1,10 @@
 ---
-title: Navigating the AST
+title: Navigation example
 ---
 
-## Navigating Within Source Files
+## Example - Navigating Within Source Files
 
-The best way to explore what's implemented is to look at the autocompletion/intellisense results.
-
-### Example
-
-#### Setup
+### Setup
 
 Given the following file:
 
@@ -32,7 +28,7 @@ const ast = new Ast();
 ast.addSourceFiles("**/*.ts");
 ```
 
-#### Use
+### Use
 
 First you need to get the source file you would like to look at:
 

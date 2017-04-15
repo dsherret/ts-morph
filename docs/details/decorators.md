@@ -11,7 +11,7 @@ const decorators = classDeclaration.getDecorators();
 const decorator = decorators[0]; // first decorator, if one exists
 ```
 
-### Telling if a decorator factory
+### Decorator factory
 
 Decorators with parenthesis (ex. `@decorator(3)`) are decorator factories, while decorators without (ex. `@decorator`) are not.
 

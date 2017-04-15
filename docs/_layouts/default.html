@@ -32,7 +32,7 @@
                     <nav class="sidebar-nav" id="navbarSupportedContent">
                         <ul class="navbar-nav navbar-default">
                             <li class="nav-item{% if page.dir == '/' %} active{% endif %}">
-                                <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Main</a>
+                                <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Overview</a>
                             </li>
                             <li class="nav-item{% if page.dir == '/setup/' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/setup" | prepend: site.baseurl }}">Setup</a>
@@ -48,16 +48,8 @@
                                 {% if page.dir == '/navigation/' or page.dir == '/navigation/details/' %}
                                 <ul>
                                     <li class="{% if page.path == 'navigation/getting-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/getting-sourcefiles" | prepend: site.baseurl }}">Getting SourceFiles</a></li>
-                                    <li class="{% if page.path == 'navigation/navigating-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/navigating-sourcefiles" | prepend: site.baseurl }}">Navigating</a></li>
+                                    <li class="{% if page.path == 'navigation/example.md' %}active{% endif %}"><a href="{{ "/navigation/example" | prepend: site.baseurl }}">Example</a></li>
                                     <li class="{% if page.path == 'navigation/compiler-nodes.md' %}active{% endif %}"><a href="{{ "/navigation/compiler-nodes" | prepend: site.baseurl }}">Compiler Nodes</a></li>
-                                    <li class="{% if page.path == 'navigation/details/index.md' %}active{% endif %}">
-                                        <a href="{{ "/navigation/details/index" | prepend: site.baseurl }}">Details</a>
-                                        {% if page.dir == '/navigation/details/' %}
-                                        <ul>
-                                            <li class="{% if page.path == 'navigation/details/decorators.md' %}active{% endif %}"><a href="{{ "/navigation/details/decorators" | prepend: site.baseurl }}">Decorators</a></li>
-                                        </ul>
-                                        {% endif %}
-                                    </li>
                                 </ul>
                                 {% endif %}
                             </li>
@@ -67,6 +59,17 @@
                                 <ul>
                                     <li class="{% if page.path == 'manipulation/renaming.md' %}active{% endif %}"><a href="{{ "/manipulation/renaming" | prepend: site.baseurl }}">Renaming</a></li>
                                     <li class="{% if page.path == 'manipulation/removing.md' %}active{% endif %}"><a href="{{ "/manipulation/removing" | prepend: site.baseurl }}">Removing</a></li>
+                                </ul>
+                                {% endif %}
+                            </li>
+                            <li class="{% if page.path == 'details/index.md' %}active{% endif %}">
+                                <a class="nav-link" href="{{ "/details/index" | prepend: site.baseurl }}">Details</a>
+                                {% if page.dir == '/details/' %}
+                                <ul>
+                                    <li class="{% if page.path == 'details/ambient.md' %}active{% endif %}"><a href="{{ "/details/ambient" | prepend: site.baseurl }}">Ambient</a></li>
+                                    <li class="{% if page.path == 'details/async.md' %}active{% endif %}"><a href="{{ "/details/async" | prepend: site.baseurl }}">Async</a></li>
+                                    <li class="{% if page.path == 'details/decorators.md' %}active{% endif %}"><a href="{{ "/details/decorators" | prepend: site.baseurl }}">Decorators</a></li>
+                                    <li class="{% if page.path == 'details/documentation.md' %}active{% endif %}"><a href="{{ "/details/documentation" | prepend: site.baseurl }}">JS Docs</a></li>
                                 </ul>
                                 {% endif %}
                             </li>

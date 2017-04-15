@@ -21,7 +21,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
                 return undefined;
 
             const texts = docCommentNodes.map(n => (n.getCompilerNode().comment || "").trim());
-            return texts.join(this.factory.getLanguageService().getNewLine());
+            return texts.filter(t => t.length > 0).join(this.factory.getLanguageService().getNewLine());
         }
 
         /**
