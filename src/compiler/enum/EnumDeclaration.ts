@@ -3,7 +3,7 @@ import * as structures from "./../../structures";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
-import {EnumMemberDeclaration} from "./EnumMemberDeclaration";
+import {EnumMember} from "./EnumMember";
 
 export const EnumDeclarationBase = DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node)))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
@@ -38,7 +38,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
 
         // get the member
         const newMembers = this.getMembers();
-        const declaration = newMembers[newMembers.length - 1] as EnumMemberDeclaration;
+        const declaration = newMembers[newMembers.length - 1] as EnumMember;
 
         // add any other properties to it
         if (structure.value != null)
@@ -52,9 +52,9 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param name - Name of the member.
      * @param findFunction - Function to use to find the member.
      */
-    getMember(name: string): EnumMemberDeclaration | undefined;
-    getMember(findFunction: (declaration: EnumMemberDeclaration) => boolean): EnumMemberDeclaration | undefined;
-    getMember(nameOrFindFunction: string | ((declaration: EnumMemberDeclaration) => boolean)): EnumMemberDeclaration | undefined {
+    getMember(name: string): EnumMember | undefined;
+    getMember(findFunction: (declaration: EnumMember) => boolean): EnumMember | undefined;
+    getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined {
         return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
     }
 
@@ -62,7 +62,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers() {
-        return this.getMainChildren().filter(c => c instanceof EnumMemberDeclaration) as EnumMemberDeclaration[];
+        return this.getMainChildren().filter(c => c instanceof EnumMember) as EnumMember[];
     }
 
     /**

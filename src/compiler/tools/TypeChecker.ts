@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
-import {EnumMemberDeclaration} from "./../enum";
+import {EnumMember} from "./../enum";
 import {Node, Symbol, Signature} from "./../common";
 import {Type} from "./../type";
 
@@ -27,7 +27,7 @@ export class TypeChecker {
      * Gets the constant value of a declaration.
      * @param node - Node to get the constant value from.
      */
-    getConstantValue(node: EnumMemberDeclaration) {
+    getConstantValue(node: EnumMember) {
         return this.typeChecker.getConstantValue(node.getCompilerNode());
     }
 

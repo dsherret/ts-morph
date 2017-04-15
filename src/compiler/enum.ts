@@ -1,2 +1,2 @@
 ﻿export * from "./enum/EnumDeclaration";
-export * from "./enum/EnumMemberDeclaration";
+export * from "./enum/EnumMember";

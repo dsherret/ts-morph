@@ -2,8 +2,8 @@
 import {Node} from "./../common";
 import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode} from "./../base";
 
-export const EnumMemberDeclarationBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
-export class EnumMemberDeclaration extends EnumMemberDeclarationBase<ts.EnumMember> {
+export const EnumMemberBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
+export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Gets the constant value of the enum.
      */

@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {EnumDeclaration, EnumMemberDeclaration} from "./../../../compiler";
+import {EnumDeclaration, EnumMember} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
@@ -8,8 +8,8 @@ function getInfoFromTextWithFirstMember(text: string) {
     return { ...obj, firstEnumMember };
 }
 
-describe(nameof(EnumMemberDeclaration), () => {
-    describe(nameof<EnumMemberDeclaration>(d => d.getValue), () => {
+describe(nameof(EnumMember), () => {
+    describe(nameof<EnumMember>(d => d.getValue), () => {
         const {firstChild} = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
         const members = firstChild.getMembers();
 
@@ -22,7 +22,7 @@ describe(nameof(EnumMemberDeclaration), () => {
         });
     });
 
-    describe(nameof<EnumMemberDeclaration>(d => d.endsWithComma), () => {
+    describe(nameof<EnumMember>(d => d.endsWithComma), () => {
         function endsWithCommaTest(text: string, expected: boolean) {
             const {firstEnumMember} = getInfoFromTextWithFirstMember(text);
             expect(firstEnumMember.endsWithComma()).to.equal(expected);
@@ -45,7 +45,7 @@ describe(nameof(EnumMemberDeclaration), () => {
         });
     });
 
-    describe(nameof<EnumMemberDeclaration>(d => d.getFollowingComma), () => {
+    describe(nameof<EnumMember>(d => d.getFollowingComma), () => {
         it("should not get comma when not ends with one", () => {
             const {firstEnumMember} = getInfoFromTextWithFirstMember("enum MyEnum { member\n}\n");
             expect(firstEnumMember.getFollowingComma()).to.be.undefined;
@@ -62,7 +62,7 @@ describe(nameof(EnumMemberDeclaration), () => {
         });
     });
 
-    describe(nameof<EnumMemberDeclaration>(d => d.remove), () => {
+    describe(nameof<EnumMember>(d => d.remove), () => {
         it("should remove the member and its comma when its the only member", () => {
             const {firstEnumMember, firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member,\n}\n");
             expect(firstEnumMember.remove()).to.equal(firstChild);
