@@ -10,7 +10,7 @@ $primary-color: #292b2c;
     margin-left: auto;
     margin-right: auto;
     @media (min-width: 1200px) {
-        width: 1100px;
+        width: 1200px;
         max-width: 100%;
         padding-left: 15px;
         padding-right: 15px;
@@ -28,6 +28,9 @@ nav {
             padding-left: 20px;
             margin-top: -5px;
             padding-bottom: 5px;
+            ul {
+                margin-top: 0px;
+            }
         }
 
         li {
@@ -57,6 +60,16 @@ header {
         color: rgba(0,0,0,0.8);
         font-size: 0.9em;
     }
+}
+
+h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    padding-top: 1rem;
+    color: #559955;
 }
 
 h4 {

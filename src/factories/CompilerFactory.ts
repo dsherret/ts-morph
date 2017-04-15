@@ -118,6 +118,8 @@ export class CompilerFactory {
                 return this.getClassDeclaration(compilerNode as ts.ClassDeclaration);
             case ts.SyntaxKind.Constructor:
                 return this.getConstructorDeclaration(compilerNode as ts.ConstructorDeclaration);
+            case ts.SyntaxKind.Decorator:
+                return this.getDecorator(compilerNode as ts.Decorator);
             case ts.SyntaxKind.EnumDeclaration:
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
             case ts.SyntaxKind.EnumMember:
@@ -171,6 +173,14 @@ export class CompilerFactory {
      */
     getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration): compiler.ConstructorDeclaration {
         return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration, () => new compiler.ConstructorDeclaration(this, constructorDeclaration));
+    }
+
+    /**
+     * Gets a wrapped decorator from a compiler object.
+     * @param decorator - Decorator compiler object.
+     */
+    getDecorator(decorator: ts.Decorator): compiler.Decorator {
+        return this.nodeCache.getOrCreate<compiler.Decorator>(decorator, () => new compiler.Decorator(this, decorator));
     }
 
     /**

@@ -1,6 +1,7 @@
 ﻿export * from "./compiler/base";
 export * from "./compiler/common";
 export * from "./compiler/class";
+export * from "./compiler/decorator";
 export * from "./compiler/doc";
 export * from "./compiler/enum";
 export * from "./compiler/file";

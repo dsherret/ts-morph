@@ -45,11 +45,19 @@
                             </li>
                             <li class="nav-item{% if page.dir == '/navigation/' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/navigation" | prepend: site.baseurl }}">Navigation</a>
-                                {% if page.dir == '/navigation/' %}
+                                {% if page.dir == '/navigation/' or page.dir == '/navigation/details/' %}
                                 <ul>
                                     <li class="{% if page.path == 'navigation/getting-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/getting-sourcefiles" | prepend: site.baseurl }}">Getting SourceFiles</a></li>
                                     <li class="{% if page.path == 'navigation/navigating-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/navigating-sourcefiles" | prepend: site.baseurl }}">Navigating</a></li>
                                     <li class="{% if page.path == 'navigation/compiler-nodes.md' %}active{% endif %}"><a href="{{ "/navigation/compiler-nodes" | prepend: site.baseurl }}">Compiler Nodes</a></li>
+                                    <li class="{% if page.path == 'navigation/details/index.md' %}active{% endif %}">
+                                        <a href="{{ "/navigation/details/index" | prepend: site.baseurl }}">Details</a>
+                                        {% if page.dir == '/navigation/details/' %}
+                                        <ul>
+                                            <li class="{% if page.path == 'navigation/details/decorators.md' %}active{% endif %}"><a href="{{ "/navigation/details/decorators" | prepend: site.baseurl }}">Decorators</a></li>
+                                        </ul>
+                                        {% endif %}
+                                    </li>
                                 </ul>
                                 {% endif %}
                             </li>

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode} from "./../base";
 import {AbstractableNode} from "./base";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
@@ -10,7 +10,7 @@ import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 
-export const ClassDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))));
+export const ClassDeclarationBase = DecoratableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Gets the constructor declaration or undefined if none exists.

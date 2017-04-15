@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode} from "./../base";
+import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode} from "./../base";
 
-export const ParameterDeclarationBase = ScopeableNode(ReadonlyableNode(ModifierableNode(TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node))))));
+export const ParameterDeclarationBase = DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))))));
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
      * Gets if it's a rest parameter.

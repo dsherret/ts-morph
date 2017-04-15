@@ -1,13 +1,13 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {PropertyNamedNode, StaticableNode, ScopedNode} from "./../base";
+import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
 import {AbstractableNode} from "./base";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {ClassDeclaration} from "./ClassDeclaration";
 
-export const SetAccessorDeclarationBase = AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))));
+export const SetAccessorDeclarationBase = DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(PropertyNamedNode(Node))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
      * Gets the corresponding get accessor if one exists.
