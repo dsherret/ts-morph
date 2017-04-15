@@ -32,9 +32,41 @@ describe(nameof(Decorator), () => {
             expect(firstDecorator.getName()).to.equal("decorator");
         });
 
+        it("should get the name for a non-decorator factory decorator with a namespace", () => {
+            const {firstDecorator} = getFirstDecorator("@namespaceTest.decorator\nclass Identifier {}");
+            expect(firstDecorator.getName()).to.equal("decorator");
+        });
+
         it("should get the name for a decorator factory", () => {
             const {firstDecorator} = getFirstDecorator("@decorator()\nclass Identifier {}");
             expect(firstDecorator.getName()).to.equal("decorator");
+        });
+
+        it("should get the name for a decorator factory decorator with a namespace", () => {
+            const {firstDecorator} = getFirstDecorator("@namespaceTest.decorator()\nclass Identifier {}");
+            expect(firstDecorator.getName()).to.equal("decorator");
+        });
+    });
+
+    describe(nameof<Decorator>(d => d.getFullName), () => {
+        it("should get the name for a non-decorator factory", () => {
+            const {firstDecorator} = getFirstDecorator("@decorator\nclass Identifier {}");
+            expect(firstDecorator.getFullName()).to.equal("decorator");
+        });
+
+        it("should get the name for a non-decorator factory decorator with a namespace", () => {
+            const {firstDecorator} = getFirstDecorator("@namespaceTest.decorator\nclass Identifier {}");
+            expect(firstDecorator.getFullName()).to.equal("namespaceTest.decorator");
+        });
+
+        it("should get the name for a decorator factory", () => {
+            const {firstDecorator} = getFirstDecorator("@decorator()\nclass Identifier {}");
+            expect(firstDecorator.getFullName()).to.equal("decorator");
+        });
+
+        it("should get the name for a decorator factory decorator with a namespace", () => {
+            const {firstDecorator} = getFirstDecorator("@namespaceTest.decorator()\nclass Identifier {}");
+            expect(firstDecorator.getFullName()).to.equal("namespaceTest.decorator");
         });
     });
 
