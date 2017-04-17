@@ -19,8 +19,9 @@ $primary-color: #292b2c;
 
 nav {
     padding-top: 10px;
-    line-height: 1.4em;
+    line-height: 1.4rem;
     color: lighten($primary-color, 30%);
+
     ul {
         list-style-type: none;
 
@@ -48,11 +49,14 @@ nav {
     }
 
     .nav-link {
-        padding: 0.3em 0.5em;
+        padding: 0.3rem 0.5rem;
     }
 }
 
 header {
+    padding-top: 2rem;
+    padding-bottom: 0.5rem;
+
     h1, p {
         display: inline-block;
     }
@@ -62,7 +66,7 @@ header {
     }
     .subText {
         color: rgba(0,0,0,0.8);
-        font-size: 0.9em;
+        font-size: 0.9rem;
     }
 }
 

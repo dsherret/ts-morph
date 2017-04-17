@@ -14,9 +14,9 @@ A node can be tested if it's async using the `isAsync()` method:
 functionDeclaration.isAsync(); // returns: boolean
 ```
 
-### Async keyword
+### `async` keyword
 
-You can get the async keyword if it exists:
+You can get the `async` keyword if it exists:
 
 ```typescript
 functionDeclaration.getAsyncKeyword();

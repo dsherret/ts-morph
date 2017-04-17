@@ -16,21 +16,21 @@ classDeclaration.isAmbient(); // returns: boolean
 
 This will do several checks to see if it's an ambient declaration.
 
-### Declare keyword
+### `declare` keyword
 
-You can check for the declare keyword:
+You can check for the `declare` keyword:
 
 ```typescript
 classDeclaration.hasDeclareKeyword(); // returns: boolean
 ```
 
-Or get the declare keyword if it exists:
+Or get the `declare` keyword if it exists:
 
 ```typescript
 classDeclaration.getDeclareKeyword();
 ```
 
-Or toggle the declare keyword on and off:
+Or toggle the `declare` keyword on and off:
 
 ```typescript
 classDeclaration.toggleDeclareKeyword(true);
