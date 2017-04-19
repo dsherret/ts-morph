@@ -13,5 +13,5 @@ Find out more information about:
 * [Generators](generators)
 * [JS Docs](documentation)
 * [Modifiers](modifiers)
-* More coming soon...
+* There's a lot more than just this... more documentation coming soon...
 
