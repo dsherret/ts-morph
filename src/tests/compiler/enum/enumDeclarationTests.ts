@@ -60,15 +60,15 @@ describe(nameof(EnumDeclaration), () => {
         });
     });
 
-    describe(nameof<EnumDeclaration>(d => d.hasConstKeyword), () => {
+    describe(nameof<EnumDeclaration>(d => d.isConstEnum), () => {
         it("should have a const keyword when it has one", () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
-            expect(firstChild.hasConstKeyword()).is.true;
+            expect(firstChild.isConstEnum()).is.true;
         });
 
         it("should not have a const keyword when it doesn't have one", () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
-            expect(firstChild.hasConstKeyword()).is.false;
+            expect(firstChild.isConstEnum()).is.false;
         });
     });
 
@@ -81,6 +81,26 @@ describe(nameof(EnumDeclaration), () => {
         it("should not get a const keyword when it doesn't have one", () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(firstChild.getConstKeyword()).is.undefined;
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(d => d.setIsConstEnum), () => {
+        it("should set as const enum when not one", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            firstChild.setIsConstEnum(true);
+            expect(firstChild.getText()).to.equal("const enum MyEnum {}");
+        });
+
+        it("should set as not const enum when is one", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            firstChild.setIsConstEnum(false);
+            expect(firstChild.getText()).to.equal("enum MyEnum {}");
+        });
+
+        it("should stay the same if setting to same value", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            firstChild.setIsConstEnum(true);
+            expect(firstChild.getText()).to.equal("const enum MyEnum {}");
         });
     });
 });

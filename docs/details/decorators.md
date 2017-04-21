@@ -4,11 +4,10 @@ title: Decorators
 
 ## Decorators
 
-Decorators can be retrieved from class related nodes by calling the `.getDecorators()` property.
+Decorators can be retrieved from class related nodes by calling the `getDecorators()` method.
 
 ```typescript
 const decorators = classDeclaration.getDecorators();
-const decorator = decorators[0]; // first decorator, if one exists
 ```
 
 ### Name

@@ -66,6 +66,7 @@
                                 <a class="nav-link" href="{{ "/details/index" | prepend: site.baseurl }}">Details</a>
                                 {% if page.dir == '/details/' %}
                                 <ul>
+                                    <li class="{% if page.path == 'details/enums.md' %}active{% endif %}"><a href="{{ "/details/enums" | prepend: site.baseurl }}">Enums</a></li>
                                     <li class="{% if page.path == 'details/ambient.md' %}active{% endif %}"><a href="{{ "/details/ambient" | prepend: site.baseurl }}">Ambient</a></li>
                                     <li class="{% if page.path == 'details/async.md' %}active{% endif %}"><a href="{{ "/details/async" | prepend: site.baseurl }}">Async</a></li>
                                     <li class="{% if page.path == 'details/decorators.md' %}active{% endif %}"><a href="{{ "/details/decorators" | prepend: site.baseurl }}">Decorators</a></li>

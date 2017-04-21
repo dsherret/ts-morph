@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as structures from "./../../structures";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {EnumMember} from "./EnumMember";
@@ -66,9 +67,16 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     }
 
     /**
+     * Toggle if it's a const enum
+     */
+    setIsConstEnum(value: boolean, sourceFile?: SourceFile) {
+        return this.toggleModifier("const", value, sourceFile);
+    }
+
+    /**
      * Gets if it's a const enum.
      */
-    hasConstKeyword() {
+    isConstEnum() {
         return this.getConstKeyword() != null;
     }
 

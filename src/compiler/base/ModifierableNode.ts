@@ -4,7 +4,7 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
 export type ModiferableNodeExtensionType = Node<ts.Node>;
-export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async";
+export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
 
 export interface ModifierableNode {
     getModifiers(): Node<ts.Node>[];
@@ -143,6 +143,8 @@ function getAddAfterModifierTexts(text: ModifierTexts): ModifierTexts[] {
             return ["public", "protected", "private"];
         case "async":
             return ["export", "public", "protected", "private", "static", "abstract"];
+        case "const":
+            return [];
         /* istanbul ignore next */
         default:
             throw new errors.NotImplementedError(`Not implemented modifier: ${text}`);
