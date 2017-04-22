@@ -11,9 +11,9 @@ Find out more information about:
 * [Source Files](source-files)
 * [Classes](classes)
 * [Enums](enums)
-* Functions - todo
-* Interfaces - todo
-* Namespaces - todo
+* [Functions](functions)
+* [Interfaces](interfaces)
+* [Namespaces](namespaces)
 * Type aliases - todo
 * Variables - todo
 * [Ambient](ambient)

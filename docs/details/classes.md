@@ -9,7 +9,7 @@ Class declarations can be retrieved from source files, namespaces, or function b
 ```typescript
 const classes = sourceFile.getClasses();
 const class1 = sourceFile.getClass("Class1");
-const class2 = sourceFile.getClass(c => c.getConstructor() !== undefined);
+const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !== undefined);
 ```
 
 ### Constructor

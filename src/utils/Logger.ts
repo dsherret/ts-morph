@@ -9,4 +9,9 @@
         if (this.enabled)
             console.log(text);
     }
+
+    static warn(text: string) {
+        if (this.enabled)
+            console.warn(text);
+    }
 }
