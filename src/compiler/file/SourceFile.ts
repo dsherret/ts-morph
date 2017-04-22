@@ -53,6 +53,42 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the default export symbol of the file.
+     * @param typeChecker - Type checker.
+     */
+    getDefaultExportSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
+        const sourceFileSymbol = typeChecker.getSymbolAtLocation(this.getRequiredSourceFile());
+
+        // will be undefined when the source file doesn't have an export
+        if (sourceFileSymbol == null)
+            return undefined;
+
+        return sourceFileSymbol.getExportByName("default");
+    }
+
+    /**
+     * Removes any "export default";
+     */
+    removeDefaultExport(typeChecker?: TypeChecker, defaultExportSymbol?: Symbol | undefined): this {
+        typeChecker = typeChecker || this.factory.getTypeChecker();
+        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol(typeChecker);
+
+        if (defaultExportSymbol == null)
+            return this;
+
+        const declaration = defaultExportSymbol.getDeclarations()[0];
+        if (declaration.node.kind === ts.SyntaxKind.ExportAssignment)
+            this.removeNodes(declaration);
+        else if (declaration.isModifierableNode()) {
+            const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
+            const defaultKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
+            this.removeNodes(exportKeyword, defaultKeyword);
+        }
+
+        return this;
+    }
+
+    /**
      * Inserts text at a given position. Will reconstruct the underlying source file.
      * @internal
      * @param insertPos - Insert position.
@@ -258,41 +294,5 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 compilerNode.end += difference;
             }
         }
-    }
-
-    /**
-     * Gets the default export symbol of the file.
-     * @param typeChecker - Type checker.
-     */
-    getDefaultExportSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
-        const sourceFileSymbol = typeChecker.getSymbolAtLocation(this.getRequiredSourceFile());
-
-        // will be undefined when the source file doesn't have an export
-        if (sourceFileSymbol == null)
-            return undefined;
-
-        return sourceFileSymbol.getExportByName("default");
-    }
-
-    /**
-     * Removes any "export default";
-     */
-    removeDefaultExport(typeChecker?: TypeChecker, defaultExportSymbol?: Symbol | undefined): this {
-        typeChecker = typeChecker || this.factory.getTypeChecker();
-        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol(typeChecker);
-
-        if (defaultExportSymbol == null)
-            return this;
-
-        const declaration = defaultExportSymbol.getDeclarations()[0];
-        if (declaration.node.kind === ts.SyntaxKind.ExportAssignment)
-            this.removeNodes(declaration);
-        else if (declaration.isModifierableNode()) {
-            const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
-            const defaultKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
-            this.removeNodes(exportKeyword, defaultKeyword);
-        }
-
-        return this;
     }
 }

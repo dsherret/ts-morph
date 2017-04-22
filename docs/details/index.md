@@ -8,8 +8,14 @@ This area of the documentation is lacking... I'm adding more over time. There is
 
 Find out more information about:
 
+* [Source Files](source-files)
 * [Classes](classes)
 * [Enums](enums)
+* Functions - todo
+* Interfaces - todo
+* Namespaces - todo
+* Type aliases - todo
+* Variables - todo
 * [Ambient](ambient)
 * [Async](async)
 * [Decorators](decorators)

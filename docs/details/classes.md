@@ -67,3 +67,54 @@ Get static members:
 ```typescript
 const staticMembers = classDeclaration.getStaticMembers();
 ```
+
+## Abstract
+
+Nodes on a class may be abstract.
+
+Get if it's abstract:
+
+```typescript
+method.getIsAbstract(); // returns: boolean
+```
+
+Get the abstract keyword:
+
+```typescript
+method.getAbstractKeyword(); // returns: node | undefined
+```
+
+Set if abstract:
+
+```typescript
+method.setIsAbstract(true);  // set as abstract
+method.setIsAbstract(false); // set as not abstract
+```
+
+## Constructors
+
+Constructors implement common functions found on function like declarations, but also include a scope.
+
+## Methods
+
+Explore the functionality available via auto-complete.
+
+## Properties
+
+Explore the functionality available via auto-complete.
+
+## Get Accessors
+
+If it exists, you can get the corresponding set accessor:
+
+```typescript
+const setAccessor = getAccessor.getSetAccessor();
+```
+
+## Set Accessors
+
+If it exists, you can get the corresponding get accessor:
+
+```typescript
+const getAccessor = setAccessor.getGetAccessor();
+```
