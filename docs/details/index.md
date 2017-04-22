@@ -4,7 +4,9 @@ title: Details
 
 ## Details
 
-This area of the documentation is lacking... I'm adding more over time. There is navigation support for most parts of the language at the current moment, but not everything.
+There is navigation support for most parts of the language at the current moment, but not everything.
+
+Manipulation support is lacking.
 
 Find out more information about:
 
@@ -14,8 +16,13 @@ Find out more information about:
 * [Functions](functions)
 * [Interfaces](interfaces)
 * [Namespaces](namespaces)
-* Type aliases - todo
-* Variables - todo
+* [Type Aliases](type-aliases)
+* [Variables](variables)
+* Types - todo
+* Symbols - todo
+
+Common:
+
 * [Ambient](ambient)
 * [Async](async)
 * [Decorators](decorators)
@@ -23,5 +30,9 @@ Find out more information about:
 * [Generators](generators)
 * [JS Docs](documentation)
 * [Modifiers](modifiers)
-* There's a lot more than just this... more documentation coming soon...
-
+* Parameters - todo
+* Readonly - todo
+* Return Types - todo
+* Scope - todo
+* Static - todo
+* Type parameters - todo

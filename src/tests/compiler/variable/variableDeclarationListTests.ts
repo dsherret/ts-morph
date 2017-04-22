@@ -2,6 +2,7 @@
 import {VariableStatement, VariableDeclarationList, VariableDeclarationType} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
+// todo: need to add tests here for getMembers
 describe(nameof(VariableDeclarationList), () => {
     describe(nameof<VariableDeclarationList>(d => d.getDeclarationType), () => {
         it("should get var for a var variable", () => {
