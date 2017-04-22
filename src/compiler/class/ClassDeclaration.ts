@@ -15,7 +15,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the constructor declaration or undefined if none exists.
      */
-    getConstructorDeclaration() {
+    getConstructor() {
         const constructorMember = this.node.members.find(m => m.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration | undefined;
         return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember);
     }
@@ -23,7 +23,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the class instance method declarations.
      */
-    getInstanceMethodDeclarations(): MethodDeclaration[] {
+    getInstanceMethods(): MethodDeclaration[] {
         return this.getInstanceMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
     }
 
@@ -45,7 +45,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the class instance method declarations.
      */
-    getStaticMethodDeclarations(): MethodDeclaration[] {
+    getStaticMethods(): MethodDeclaration[] {
         return this.getStaticMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
     }
 

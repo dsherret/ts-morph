@@ -14,7 +14,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Gets if this enum member ends with a comma.
      */
-    endsWithComma() {
+    hasFollowingComma() {
         return this.getFollowingComma() != null;
     }
 

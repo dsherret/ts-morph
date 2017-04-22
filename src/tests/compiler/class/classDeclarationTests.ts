@@ -3,22 +3,22 @@ import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDec
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
-    describe(nameof<ClassDeclaration>(d => d.getConstructorDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getConstructor), () => {
         it("should return undefined when no constructor exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
-            expect(firstChild.getConstructorDeclaration()).to.be.undefined;
+            expect(firstChild.getConstructor()).to.be.undefined;
         });
 
         it("should return the constructor when it exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor() { } }");
-            expect(firstChild.getConstructorDeclaration()!.getText()).to.equal("constructor() { }");
+            expect(firstChild.getConstructor()!.getText()).to.equal("constructor() { }");
         });
     });
-    describe(nameof<ClassDeclaration>(d => d.getInstanceMethodDeclarations), () => {
+    describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getInstanceMethodDeclarations().length).to.equal(0);
+                expect(firstChild.getInstanceMethods().length).to.equal(0);
             });
         });
 
@@ -26,11 +26,11 @@ describe(nameof(ClassDeclaration), () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
 
             it("should get the right number of methods", () => {
-                expect(firstChild.getInstanceMethodDeclarations().length).to.equal(2);
+                expect(firstChild.getInstanceMethods().length).to.equal(2);
             });
 
             it("should get a method of the right instance of", () => {
-                expect(firstChild.getInstanceMethodDeclarations()[0]).to.be.instanceOf(MethodDeclaration);
+                expect(firstChild.getInstanceMethods()[0]).to.be.instanceOf(MethodDeclaration);
             });
         });
     });
@@ -66,11 +66,11 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getStaticMethodDeclarations), () => {
+    describe(nameof<ClassDeclaration>(d => d.getStaticMethods), () => {
         describe("no static methods", () => {
             it("should not have any static methods", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getStaticMethodDeclarations().length).to.equal(0);
+                expect(firstChild.getStaticMethods().length).to.equal(0);
             });
         });
 
@@ -78,11 +78,11 @@ describe(nameof(ClassDeclaration), () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
 
             it("should get the right number of static methods", () => {
-                expect(firstChild.getStaticMethodDeclarations().length).to.equal(1);
+                expect(firstChild.getStaticMethods().length).to.equal(1);
             });
 
             it("should get a method of the right instance of", () => {
-                expect(firstChild.getStaticMethodDeclarations()[0]).to.be.instanceOf(MethodDeclaration);
+                expect(firstChild.getStaticMethods()[0]).to.be.instanceOf(MethodDeclaration);
             });
         });
     });

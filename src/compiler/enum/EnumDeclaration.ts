@@ -15,7 +15,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     addMember(structure: structures.EnumMemberStructure) {
         const members = this.getMembers();
         const lastMember = members.length === 0 ? null : members[members.length - 1];
-        const lastMemberEndsWithComma = lastMember != null && lastMember.endsWithComma();
+        const lastMemberEndsWithComma = lastMember != null && lastMember.hasFollowingComma();
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
 

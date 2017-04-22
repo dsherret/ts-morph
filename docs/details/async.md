@@ -22,7 +22,7 @@ You can get the `async` keyword if it exists:
 functionDeclaration.getAsyncKeyword();
 ```
 
-### Setting async
+### Set async
 
 Set if the declaration is async using `setIsAsync`:
 

@@ -45,14 +45,14 @@ describe(nameof(GeneratorableNode), () => {
         describe("Methods", () => {
             it("should set as generator when not a generator", () => {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier { public identifier() { } }");
-                const method = firstChild.getInstanceMethodDeclarations()[0];
+                const method = firstChild.getInstanceMethods()[0];
                 method.setIsGenerator(true);
                 expect(sourceFile.getText()).to.equal("class Identifier { public *identifier() { } }");
             });
 
             it("should set as not a generator when a generator", () => {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier { public *identifier() { } }");
-                const method = firstChild.getInstanceMethodDeclarations()[0];
+                const method = firstChild.getInstanceMethods()[0];
                 method.setIsGenerator(false);
                 expect(sourceFile.getText()).to.equal("class Identifier { public identifier() { } }");
             });

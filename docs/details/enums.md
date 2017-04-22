@@ -4,10 +4,12 @@ title: Enums
 
 ## Enums
 
-Enums can be retrieved from source files, namespaces, or function bodies by calling `getEnums()`:
+Enums can be retrieved from source files, namespaces, or function bodies:
 
 ```typescript
 const enums = sourceFile.getEnums();
+const enum1 = sourceFile.getEnum("Enum1");
+const enum2 = sourceFile.getEnum(e => e.getMembers().length === 5);
 ```
 
 ### Adding
@@ -70,4 +72,40 @@ Set if it's a const enum via `setIsConstEnum(value)`:
 ```typescript
 enumDeclaration.setIsConstEnum(true);
 enumDeclaration.setIsConstEnum(false);
+```
+
+## Enum Members
+
+```typescript
+const member = enumDeclaration.getMember("member");
+```
+
+### Get the value
+
+The value can be retrieved whether it is implicitly or explicitly defined:
+
+```typescript
+member.getValue(); // returns: number
+```
+
+### Following comma
+
+Enum members may have a comma after them. You can check for that via:
+
+```typescript
+member.hasFollowingComma(); // returns: boolean
+```
+
+And get it via:
+
+```typescript
+member.getFollowingComma(); // returns: node | undefined
+```
+
+### Remove a Member
+
+Call `remove()` on it:
+
+```typescript
+member.remove();
 ```

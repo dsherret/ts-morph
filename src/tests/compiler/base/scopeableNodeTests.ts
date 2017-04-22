@@ -5,7 +5,7 @@ import {getInfoFromText} from "./../testHelpers";
 describe(nameof(ScopeableNode), () => {
     function getFirstParameter(text: string) {
         const result = getInfoFromText<ClassDeclaration>(text);
-        return {...result, firstParam: result.firstChild.getConstructorDeclaration()!.getParameters()[0]};
+        return {...result, firstParam: result.firstChild.getConstructor()!.getParameters()[0]};
     }
 
     describe(nameof<ScopeableNode>(d => d.getScope), () => {

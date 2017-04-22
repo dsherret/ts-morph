@@ -8,6 +8,7 @@ This area of the documentation is lacking... I'm adding more over time. There is
 
 Find out more information about:
 
+* [Classes](classes)
 * [Enums](enums)
 * [Ambient](ambient)
 * [Async](async)

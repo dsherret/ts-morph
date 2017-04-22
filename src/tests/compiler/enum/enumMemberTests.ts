@@ -22,26 +22,26 @@ describe(nameof(EnumMember), () => {
         });
     });
 
-    describe(nameof<EnumMember>(d => d.endsWithComma), () => {
-        function endsWithCommaTest(text: string, expected: boolean) {
+    describe(nameof<EnumMember>(d => d.hasFollowingComma), () => {
+        function hasFollowingCommaTest(text: string, expected: boolean) {
             const {firstEnumMember} = getInfoFromTextWithFirstMember(text);
-            expect(firstEnumMember.endsWithComma()).to.equal(expected);
+            expect(firstEnumMember.hasFollowingComma()).to.equal(expected);
         }
 
         it("should not end with a comma when not ends with one", () => {
-            endsWithCommaTest("enum MyEnum { member\n}\n", false);
+            hasFollowingCommaTest("enum MyEnum { member\n}\n", false);
         });
 
         it("should not end with a comma when not ends with one and has expression", () => {
-            endsWithCommaTest("enum MyEnum { member = 1\n}\n", false);
+            hasFollowingCommaTest("enum MyEnum { member = 1\n}\n", false);
         });
 
         it("should end with a comma when ends with one", () => {
-            endsWithCommaTest("enum MyEnum { member, \n}\n", true);
+            hasFollowingCommaTest("enum MyEnum { member, \n}\n", true);
         });
 
         it("should end with a comma when ends with one and has expression", () => {
-            endsWithCommaTest("enum MyEnum { member = 1, \n}\n", true);
+            hasFollowingCommaTest("enum MyEnum { member = 1, \n}\n", true);
         });
     });
 
