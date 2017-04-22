@@ -89,9 +89,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             const enumDeclarations = this.getEnums();
             const declaration = enumDeclarations[enumDeclarations.length - 1];
+
+            declaration.setIsConstEnum(structure.isConst || false);
             for (let member of structure.members || []) {
                 declaration.addMember(member);
             }
+
             return declaration;
         }
 

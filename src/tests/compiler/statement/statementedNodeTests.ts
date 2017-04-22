@@ -9,11 +9,12 @@ describe(nameof(StatementedNode), () => {
             const {sourceFile} = getInfoFromText("");
             sourceFile.addEnum({
                 name: "MyEnum",
-                members: [{ name: "member" }]
+                members: [{ name: "member" }],
+                isConst: true
             });
 
             it("should have the expected text", () => {
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    member\n}\n");
+                expect(sourceFile.getFullText()).to.equal("const enum MyEnum {\n    member\n}\n");
             });
         });
 
