@@ -124,10 +124,14 @@ export class CompilerFactory {
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration);
             case ts.SyntaxKind.EnumMember:
                 return this.getEnumMember(compilerNode as ts.EnumMember);
+            case ts.SyntaxKind.ExpressionWithTypeArguments:
+                return this.getExpressionWithTypeArguments(compilerNode as ts.ExpressionWithTypeArguments);
             case ts.SyntaxKind.FunctionDeclaration:
                 return this.getFunctionDeclaration(compilerNode as ts.FunctionDeclaration);
             case ts.SyntaxKind.GetAccessor:
                 return this.getGetAccessorDeclaration(compilerNode as ts.GetAccessorDeclaration);
+            case ts.SyntaxKind.HeritageClause:
+                return this.getHeritageClause(compilerNode as ts.HeritageClause);
             case ts.SyntaxKind.InterfaceDeclaration:
                 return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration);
             case ts.SyntaxKind.Identifier:
@@ -200,6 +204,14 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets an expression with type arguments from a compiler object.
+     * @param expressionWithTypeArguments - Expression with type arguments compiler object.
+     */
+    getExpressionWithTypeArguments(node: ts.ExpressionWithTypeArguments): compiler.ExpressionWithTypeArguments {
+        return this.nodeCache.getOrCreate<compiler.ExpressionWithTypeArguments>(node, () => new compiler.ExpressionWithTypeArguments(this, node));
+    }
+
+    /**
      * Gets a wrapped function declaration from a compiler object.
      * @param functionDeclaration - Function declaration compiler object.
      */
@@ -213,6 +225,14 @@ export class CompilerFactory {
      */
     getGetAccessorDeclaration(getAccessor: ts.GetAccessorDeclaration): compiler.GetAccessorDeclaration {
         return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this, getAccessor));
+    }
+
+    /**
+     * Gets a wrapped heritage clause from a compiler object.
+     * @param heritageClause - Heritage clause compiler object.
+     */
+    getHeritageClause(heritageClause: ts.HeritageClause): compiler.HeritageClause {
+        return this.nodeCache.getOrCreate<compiler.HeritageClause>(heritageClause, () => new compiler.HeritageClause(this, heritageClause));
     }
 
     /**

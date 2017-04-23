@@ -1,8 +1,20 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration} from "./../../../compiler";
+import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getExtendsExpression), () => {
+        it("should return undefined when no extends clause exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            expect(firstChild.getExtendsExpression()).to.be.undefined;
+        });
+
+        it("should return a heritage clause when an extends clause exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
+            expect(firstChild.getExtendsExpression()).to.be.instanceOf(ExpressionWithTypeArguments);
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getConstructor), () => {
         it("should return undefined when no constructor exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
@@ -14,6 +26,7 @@ describe(nameof(ClassDeclaration), () => {
             expect(firstChild.getConstructor()!.getText()).to.equal("constructor() { }");
         });
     });
+
     describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {

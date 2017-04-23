@@ -6,6 +6,7 @@ export * from "./compiler/doc";
 export * from "./compiler/enum";
 export * from "./compiler/file";
 export * from "./compiler/function";
+export * from "./compiler/general";
 export * from "./compiler/interface";
 export * from "./compiler/namespace";
 export * from "./compiler/statement";

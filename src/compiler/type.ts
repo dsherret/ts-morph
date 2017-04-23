@@ -2,3 +2,4 @@
 export * from "./type/TypeNode";
 export * from "./type/TypeAliasDeclaration";
 export * from "./type/TypeParameterDeclaration";
+export * from "./type/ExpressionWithTypeArguments";

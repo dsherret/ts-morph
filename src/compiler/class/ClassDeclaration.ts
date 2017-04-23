@@ -1,7 +1,9 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
+    ImplementsClauseableNode} from "./../base";
 import {AbstractableNode} from "./base";
+import {ExpressionWithTypeArguments} from "./../type";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
@@ -10,8 +12,23 @@ import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 
-export const ClassDeclarationBase = DecoratableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))));
+export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
+    DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
+))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
+    /**
+     * Gets the extends expression.
+     */
+    getExtendsExpression(): ExpressionWithTypeArguments | undefined {
+        const heritageClauses = this.getHeritageClauses();
+        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+        if (extendsClause == null)
+            return undefined;
+
+        const types = extendsClause.getTypes();
+        return types.length === 0 ? undefined : types[0];
+    }
+
     /**
      * Gets the constructor declaration or undefined if none exists.
      */

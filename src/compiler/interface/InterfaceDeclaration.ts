@@ -1,10 +1,13 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
+    ExtendsClauseableNode} from "./../base";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
 
-export const InterfaceDeclarationBase = TypeParameteredNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))));
+export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(
+    ExportableNode(ModifierableNode(NamedNode(Node)))
+)))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
      * Gets the interface method signatures.
