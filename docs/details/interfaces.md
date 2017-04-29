@@ -12,6 +12,14 @@ const interface1 = sourceFile.getInterface("Interface1");
 const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperties().length === 5);
 ```
 
+### Get extends expressions
+
+```typescript
+const extendsExpressions = interfaceDeclaration.getExtendsExpressions();
+```
+
+Will return [`ExpressionWithTypeArguments[]`](expression-with-type-arguments).
+
 ### Get method signatures
 
 Use:

@@ -18,8 +18,13 @@ Find out more information about:
 * [Namespaces](namespaces)
 * [Type Aliases](type-aliases)
 * [Variables](variables)
-* Types - todo
 * Symbols - todo
+
+Types:
+
+* Type - todo
+* Type Node - todo
+* [Expression With Type Arguments](expression-with-type-arguments)
 
 Common:
 

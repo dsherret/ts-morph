@@ -12,12 +12,28 @@ const class1 = sourceFile.getClass("Class1");
 const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !== undefined);
 ```
 
+### Extends expression
+
+```typescript
+const extendsExpression = classDeclaration.getExtendsExpression();
+```
+
+Will return [`ExpressionWithTypeArguments | undefined`](expression-with-type-arguments).
+
+### Implements expressions
+
+```typescript
+const implementsExpressions = classDeclaration.getImplementsExpressions();
+```
+
+Will return [`ExpressionWithTypeArguments[]`](expression-with-type-arguments).
+
 ### Constructor
 
 If one exists, it can be retrieved via `getConstructor`:
 
 ```typescript
-classDeclaration.getConstructor();
+const ctor = classDeclaration.getConstructor();
 ```
 
 ### Methods

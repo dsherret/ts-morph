@@ -11,7 +11,8 @@ You will need to populate the `ast` object with source files.
 Specify as many file globs or file paths as you wish:
 
 ```typescript
-ast.addSourceFiles("folder/**/*.ts", "otherFolder/file.ts");
+ast.addSourceFiles("folder/**/*.ts");
+ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
 ```
 
 ### By file path
