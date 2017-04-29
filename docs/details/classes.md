@@ -18,7 +18,7 @@ const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !=
 const extendsExpression = classDeclaration.getExtendsExpression();
 ```
 
-Will return [`ExpressionWithTypeArguments | undefined`](expression-with-type-arguments).
+Will return [`ExpressionWithTypeArguments | undefined`](expressions).
 
 ### Implements expressions
 
@@ -26,7 +26,7 @@ Will return [`ExpressionWithTypeArguments | undefined`](expression-with-type-arg
 const implementsExpressions = classDeclaration.getImplementsExpressions();
 ```
 
-Will return [`ExpressionWithTypeArguments[]`](expression-with-type-arguments).
+Will return [`ExpressionWithTypeArguments[]`](expressions).
 
 ### Constructor
 

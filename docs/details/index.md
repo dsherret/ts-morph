@@ -24,7 +24,7 @@ Types:
 
 * Type - todo
 * Type Node - todo
-* [Expression With Type Arguments](expression-with-type-arguments)
+* [Expressions](expressions)
 
 Common:
 

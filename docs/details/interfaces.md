@@ -18,7 +18,7 @@ const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperti
 const extendsExpressions = interfaceDeclaration.getExtendsExpressions();
 ```
 
-Will return [`ExpressionWithTypeArguments[]`](expression-with-type-arguments).
+Will return [`ExpressionWithTypeArguments[]`](expressions).
 
 ### Get method signatures
 
