@@ -43,7 +43,7 @@ export class TsSimpleAst {
     addSourceFiles(...fileGlobs: string[]) {
         const filePaths = this.fileSystem.glob(fileGlobs);
 
-        for (let filePath of filePaths) {
+        for (const filePath of filePaths) {
             // ignore any FileNotFoundErrors
             try {
                 this.getOrAddSourceFileFromFilePath(filePath);
@@ -87,7 +87,7 @@ export class TsSimpleAst {
         let searchFunction = fileNameOrSearchFunction as ((file: compiler.SourceFile) => boolean);
 
         if (typeof fileNameOrSearchFunction === "string")
-            searchFunction = (def) => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
+            searchFunction = def => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
 
         return this.getSourceFiles().find(searchFunction);
     }
@@ -97,5 +97,12 @@ export class TsSimpleAst {
      */
     getSourceFiles(): compiler.SourceFile[] {
         return this.languageService.getSourceFiles();
+    }
+
+    /**
+     * Gets a type checker.
+     */
+    getTypeChecker(): compiler.TypeChecker {
+        return this.compilerFactory.getTypeChecker();
     }
 }

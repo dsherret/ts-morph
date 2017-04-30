@@ -3,7 +3,7 @@ import {Node} from "./../common";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
 
-export type ImplementsClauseableNodeExtensionType = Node<ts.Node> & HeritageClauseableNode;
+export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
 export interface ImplementsClauseableNode {
     getImplementsExpressions(): ExpressionWithTypeArguments[];

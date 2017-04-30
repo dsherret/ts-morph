@@ -11,7 +11,7 @@ import {NamespaceDeclaration} from "./../namespace";
 import {TypeChecker} from "./../tools";
 import {Symbol} from "./Symbol";
 
-export class Node<NodeType extends ts.Node> {
+export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
@@ -93,8 +93,8 @@ export class Node<NodeType extends ts.Node> {
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
-    getFirstChild(condition: (node: Node<ts.Node>) => boolean) {
-        for (let child of this.getChildren()) {
+    getFirstChild(condition: (node: Node) => boolean) {
+        for (const child of this.getChildren()) {
             if (condition(child))
                 return child;
         }
@@ -110,15 +110,15 @@ export class Node<NodeType extends ts.Node> {
         this.node.pos += offset;
         this.node.end += offset;
 
-        for (let child of this.getChildren()) {
+        for (const child of this.getChildren()) {
             child.offsetPositions(offset);
         }
     }
 
     getPreviousSibling() {
-        let previousSibling: Node<ts.Node> | undefined;
+        let previousSibling: Node | undefined;
 
-        for (let sibling of this.getSiblingsBefore()) {
+        for (const sibling of this.getSiblingsBefore()) {
             previousSibling = sibling;
         }
 
@@ -133,7 +133,7 @@ export class Node<NodeType extends ts.Node> {
     *getSiblingsBefore() {
         const parent = this.getRequiredParent();
 
-        for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
+        for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (child === this)
                 return;
 
@@ -146,7 +146,7 @@ export class Node<NodeType extends ts.Node> {
         let foundChild = false;
         const parent = this.getRequiredParent();
 
-        for (let child of parent.getChildrenWithFlattenedSyntaxList()) {
+        for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (!foundChild) {
                 foundChild = child === this;
                 continue;
@@ -156,20 +156,20 @@ export class Node<NodeType extends ts.Node> {
         }
     }
 
-    *getChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node<ts.Node>> {
-        for (let compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
+    *getChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
+        for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
             yield this.factory.getNodeFromCompilerNode(compilerChild);
         }
     }
 
     // todo: make this a flags enum option for getChildren
-    *getChildrenWithFlattenedSyntaxList(): IterableIterator<Node<ts.Node>> {
-        for (let compilerChild of this.node.getChildren()) {
-            let child = this.factory.getNodeFromCompilerNode(compilerChild);
+    *getChildrenWithFlattenedSyntaxList(): IterableIterator<Node> {
+        for (const compilerChild of this.node.getChildren()) {
+            const child = this.factory.getNodeFromCompilerNode(compilerChild);
 
             // flatten out syntax list
             if (child.getKind() === ts.SyntaxKind.SyntaxList) {
-                for (let syntaxChild of child.getChildrenWithFlattenedSyntaxList()) {
+                for (const syntaxChild of child.getChildrenWithFlattenedSyntaxList()) {
                     yield syntaxChild;
                 }
             }
@@ -183,8 +183,8 @@ export class Node<NodeType extends ts.Node> {
      * Gets the main children of a kind.
      * @internal
      */
-    getMainChildrenOfKind<TInstance extends Node<ts.Node>>(kind: ts.SyntaxKind) {
-        let node = this as Node<ts.Node>;
+    getMainChildrenOfKind<TInstance extends Node>(kind: ts.SyntaxKind) {
+        let node = this as Node;
         if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
             node = this.getBody();
         return node.getMainChildren().filter(c => c.getKind() === kind) as TInstance[];
@@ -195,19 +195,19 @@ export class Node<NodeType extends ts.Node> {
      * @internal
      */
     getMainChildren() {
-        const childNodes: Node<ts.Node>[] = [];
+        const childNodes: Node[] = [];
         ts.forEachChild(this.node, childNode => {
             childNodes.push(this.factory.getNodeFromCompilerNode(childNode));
         });
         return childNodes;
     }
 
-    *getAllChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node<ts.Node>> {
-        for (let compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
-            let child = this.factory.getNodeFromCompilerNode(compilerChild);
+    *getAllChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
+        for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
+            const child = this.factory.getNodeFromCompilerNode(compilerChild);
             yield child;
 
-            for (let childChild of child.getAllChildren(sourceFile))
+            for (const childChild of child.getAllChildren(sourceFile))
                 yield childChild;
         }
     }
@@ -263,7 +263,7 @@ export class Node<NodeType extends ts.Node> {
      * Goes up the tree yielding all the parents in order.
      */
     *getParents() {
-        let parent = (this as Node<ts.Node>).getParent();
+        let parent = (this as Node).getParent();
         while (parent != null) {
             yield parent;
             parent = parent!.getParent();
@@ -271,8 +271,8 @@ export class Node<NodeType extends ts.Node> {
     }
 
     getTopParent() {
-        let currentParent = this as Node<ts.Node>;
-        for (let parent of this.getParents()) {
+        let currentParent = this as Node;
+        for (const parent of this.getParents()) {
             currentParent = parent;
         }
         return currentParent;

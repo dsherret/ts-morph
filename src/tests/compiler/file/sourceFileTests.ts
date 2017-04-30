@@ -45,7 +45,7 @@ describe(nameof(SourceFile), () => {
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
-        it("should save the file", (done) => {
+        it("should save the file", done => {
             sourceFile.save(() => {
                 const args = host.getWrittenFileArguments();
                 expect(args[0]).to.equal(filePath);

@@ -17,7 +17,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
         errors.throwIfNotSyntaxKind(parent, ts.SyntaxKind.ClassDeclaration, "Expected the parent to be a class declaration");
 
         const thisName = this.getName();
-        for (let prop of parent.getInstanceProperties()) {
+        for (const prop of parent.getInstanceProperties()) {
             if (prop.getName() === thisName && prop.getKind() === ts.SyntaxKind.GetAccessor)
                 return prop as GetAccessorDeclaration;
         }

@@ -50,7 +50,7 @@ if (!decorators.isDecoratorFactory())
     return;
 
 const callExpression = decorator.getCallExpression()!.getCompilerNode();
-for (let arg of callExpression.arguments) {
+for (const arg of callExpression.arguments) {
     // use arg here
 }
 ```

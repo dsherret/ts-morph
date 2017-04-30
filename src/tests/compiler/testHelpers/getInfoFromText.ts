@@ -7,7 +7,7 @@ import {Node} from "./../../../compiler";
 const defaultHost = new DefaultFileSystemHost();
 const pastReadFile = defaultHost.readFile;
 const fileMap = new Map<string, string>();
-defaultHost.readFile = (filePath) => {
+defaultHost.readFile = filePath => {
     // cache any file reads
     if (!fileMap.has(filePath))
         fileMap.set(filePath, pastReadFile.call(defaultHost, filePath));
@@ -18,7 +18,8 @@ defaultHost.readFile = (filePath) => {
 /**
  * @internal
  */
-export function getInfoFromText<TFirstChild extends Node<ts.Node>>(text: string, opts?: { isDefinitionFile?: boolean; filePath?: string; host?: FileSystemHost }) {
+export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: { isDefinitionFile?: boolean; filePath?: string; host?: FileSystemHost }) {
+    // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, filePath = undefined, host = defaultHost} = opts || {};
     const tsSimpleAst = new TsSimpleAst(undefined, host);
     const sourceFile = tsSimpleAst.addSourceFileFromText(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);

@@ -96,11 +96,11 @@ export class LanguageService {
         this.compilerFactory = compilerFactory;
     }
 
-    renameNode(node: Node<ts.Node>, newName: string) {
+    renameNode(node: Node, newName: string) {
         const renameReplaces = this.findRenameReplaces(node);
-        for (let renameReplace of renameReplaces) {
+        for (const renameReplace of renameReplaces) {
             let difference = 0;
-            for (let textSpan of renameReplace.textSpans) {
+            for (const textSpan of renameReplace.textSpans) {
                 textSpan.start -= difference;
                 renameReplace.sourceFile.replaceText(textSpan.start, textSpan.start + textSpan.length, newName);
                 difference += textSpan.length - newName.length;
@@ -108,7 +108,7 @@ export class LanguageService {
         }
     }
 
-    findRenameReplaces(node: Node<ts.Node>): SourceFileReplace[] {
+    findRenameReplaces(node: Node): SourceFileReplace[] {
         const sourceFile = node.getRequiredSourceFile();
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
@@ -125,7 +125,7 @@ export class LanguageService {
 
         const replaces: SourceFileReplace[] = [];
 
-        for (let entry of textSpansBySourceFile.getEntries()) {
+        for (const entry of textSpansBySourceFile.getEntries()) {
             replaces.push({
                 sourceFile: entry[0],
                 textSpans: entry[1]

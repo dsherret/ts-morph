@@ -3,7 +3,7 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type AsyncableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type AsyncableNodeExtensionType = Node & ModifierableNode;
 
 export interface AsyncableNode {
     isAsync(): boolean;

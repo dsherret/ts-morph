@@ -4,7 +4,7 @@ import {Scope} from "./../common/Scope";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type ScopeableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type ScopeableNodeExtensionType = Node & ModifierableNode;
 
 export interface ScopeableNode {
     getScope(): Scope | undefined;
@@ -37,7 +37,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
  * @internal
  * @param node - Node to check for.
  */
-export function getScopeForNode(node: Node<ts.Node>) {
+export function getScopeForNode(node: Node) {
     const modifierFlags = node.getCombinedModifierFlags();
     if ((modifierFlags & ts.ModifierFlags.Private) !== 0)
         return Scope.Private;
@@ -56,7 +56,7 @@ export function getScopeForNode(node: Node<ts.Node>) {
  * @param scope - Scope to be set to.
  * @param sourceFile - Source file.
  */
-export function setScopeForNode(node: Node<ts.Node> & ModifierableNode, scope: Scope | undefined, sourceFile: SourceFile) {
+export function setScopeForNode(node: Node & ModifierableNode, scope: Scope | undefined, sourceFile: SourceFile) {
     node.toggleModifier("public", scope === Scope.Public, sourceFile); // always be implicit with scope
     node.toggleModifier("protected", scope === Scope.Protected, sourceFile);
     node.toggleModifier("private", scope === Scope.Private, sourceFile);

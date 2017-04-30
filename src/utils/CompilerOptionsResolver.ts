@@ -58,7 +58,7 @@ export class CompilerOptionsResolver {
             return (currentValue == null) ? newValue : currentValue;
         }
 
-        let combinedOptions = (compilerOptions || {}) as any as ts.CompilerOptions;
+        const combinedOptions = (compilerOptions || {}) as any as ts.CompilerOptions;
 
         combinedOptions.allowJs = getValue(combinedOptions.allowJs, true);
         combinedOptions.noLib = getValue(combinedOptions.noLib, false);

@@ -4,11 +4,12 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
+import {TypeChecker} from "./../tools";
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
 export interface TypedNode {
-    getType(): Type;
+    getType(typeChecker?: TypeChecker): Type;
     getTypeNode(): TypeNode | undefined;
     setType(text: string, sourceFile?: SourceFile): this;
 }
@@ -17,9 +18,10 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
     return class extends Base implements TypedNode {
         /**
          * Gets the type.
+         * @typeChecker - Optional type checker.
          */
-        getType() {
-            return this.factory.getLanguageService().getProgram().getTypeChecker().getTypeAtLocation(this);
+        getType(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+            return typeChecker.getTypeAtLocation(this);
         }
 
         /**
@@ -51,7 +53,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
     };
 }
 
-function getTypeInsertPositionForNode(node: Node<ts.Node>, sourceFile: SourceFile) {
+function getTypeInsertPositionForNode(node: Node, sourceFile: SourceFile) {
     if (node.isInitializerExpressionableNode()) {
         const initializer = node.getInitializer();
         if (initializer != null) {
@@ -70,7 +72,7 @@ function getTypeInsertPositionForNode(node: Node<ts.Node>, sourceFile: SourceFil
     return node.getEnd();
 }
 
-function getSeparatorSyntaxKindForNode(node: Node<ts.Node>) {
+function getSeparatorSyntaxKindForNode(node: Node) {
     switch (node.getKind()) {
         case ts.SyntaxKind.TypeAliasDeclaration:
             return ts.SyntaxKind.EqualsToken;

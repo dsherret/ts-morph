@@ -14,10 +14,15 @@
             "variables-before-functions"
         ],
         "no-bitwise": false,
-        "no-duplicate-imports-from-same-file": true,
         "no-empty": false,
         "no-string-literal": false,
         "ordered-imports": false,
+        "arrow-parens": [true, "ban-single-arg-parens"],
+        "unified-signatures": false,
+        "array-type": [ "array-simple" ],
+        "ban-types":  false,
+        "max-classes-per-file": [false],
+        "no-unused-expression": false,
         "one-line": [
             true,
             "check-open-brace",
@@ -35,9 +40,6 @@
         "variable-name": false,
         "no-reference": false,
         "curly": false,
-        "no-console": [false]
-    },
-    "rulesDirectory": [
-        "tslint-rules"
-    ]
+        "no-console": [ false ]
+    }
 }

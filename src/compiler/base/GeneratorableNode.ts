@@ -51,7 +51,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
     };
 }
 
-function getAsteriskInsertPosition(node: Node<ts.Node>, sourceFile: SourceFile) {
+function getAsteriskInsertPosition(node: Node, sourceFile: SourceFile) {
     if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
         const funcKeyword = node.getFirstChildByKind(ts.SyntaxKind.FunctionKeyword);
         /* istanbul ignore if */

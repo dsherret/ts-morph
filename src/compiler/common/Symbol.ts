@@ -63,7 +63,7 @@ export class Symbol {
     /**
      * Gets the symbol declarations.
      */
-    getDeclarations(): Node<ts.Node>[] {
+    getDeclarations(): Node[] {
         return this.symbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d));
     }
 
@@ -85,5 +85,22 @@ export class Symbol {
      */
     getDeclaredType(typeChecker: TypeChecker = this.factory.getTypeChecker()): Type {
         return typeChecker.getDeclaredTypeOfSymbol(this);
+    }
+
+    /**
+     * Gets the type of the symbol at a location.
+     * @param node - Location to get the type at for this symbol.
+     * @param typeChecker - Optional type checker.
+     */
+    getTypeAtLocation(node: Node, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+        return typeChecker.getTypeOfSymbolAtLocation(this, node);
+    }
+
+    /**
+     * Gets the fully qualified name.
+     * @param typeChecker - Optional type checker.
+     */
+    getFullyQualifiedName(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+        return typeChecker.getFullyQualifiedName(this);
     }
 }

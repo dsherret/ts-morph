@@ -40,26 +40,40 @@ gulp.task("pre-test", ["typescript"], function () {
         .pipe(istanbul.hookRequire());
 });
 
-
 gulp.task("test", ["pre-test"], function() {
     return gulp.src("dist/tests/**/*.js")
         .pipe(mocha({ reporter: "progress", timeout: 4000 }))
         .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 85 } }));
 });
 
 gulp.task("tslint", function() {
     return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts"])
-        .pipe(tslint())
-        .pipe(tslint.report("verbose"));
+        .pipe(tslint({ formatter: "verbose" }))
+        .pipe(tslint.report());
 });
 
 gulp.task("watch", function() {
     gulp.watch("./src/**/*.ts", ["tslint", "typescript"]);
 });
 
-gulp.task("clean-scripts", function(cb) {
+gulp.task("clean-scripts", ["clean-code-generation"], function(cb) {
     return del(["./dist/**/*"], cb);
+});
+
+gulp.task("clean-code-generation", function(cb) {
+    return del(["./dist-cg/**/*"], cb);
+});
+
+gulp.task("code-generate", ["clean-code-generation"], function (cb) {
+    var tsProject = ts.createProject("tsconfig.json", {
+        typescript: require("typescript")
+    });
+
+    return gulp.src(["./{src,code-generation}/**/*.ts"])
+        //.pipe(tsNameOf())
+        .pipe(ts(tsProject))
+        .pipe(gulp.dest("./dist-cg"));
 });
 
 gulp.task("default", ["tslint", "typescript"]);

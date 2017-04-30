@@ -11,7 +11,7 @@ import {KeyValueCache, Logger, FileUtils} from "./../utils";
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
     private readonly normalizedDirectories = new Set<string>();
-    private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node<ts.Node>>();
+    private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
     private readonly fileNameUsedForTempSourceFile = "tsSimpleAstTemporaryFile.ts";
 
     /**
@@ -110,7 +110,7 @@ export class CompilerFactory {
      * For example, an enum declaration will be returned a wrapped enum declaration.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode(compilerNode: ts.Node): compiler.Node<ts.Node> {
+    getNodeFromCompilerNode(compilerNode: ts.Node): compiler.Node {
         switch (compilerNode.kind) {
             case ts.SyntaxKind.SourceFile:
                 return this.getSourceFile(compilerNode as ts.SourceFile);
@@ -159,7 +159,7 @@ export class CompilerFactory {
             case ts.SyntaxKind.JSDocComment:
                 return this.getJSDoc(compilerNode as ts.JSDoc);
             default:
-                return this.nodeCache.getOrCreate<compiler.Node<ts.Node>>(compilerNode, () => new compiler.Node(this, compilerNode));
+                return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new compiler.Node(this, compilerNode));
         }
     }
 
@@ -423,7 +423,7 @@ export class CompilerFactory {
      * @param oldNode - Old node to remove.
      * @param newNode - New node to use.
      */
-    replaceCompilerNode(oldNode: ts.Node | compiler.Node<ts.Node>, newNode: ts.Node) {
+    replaceCompilerNode(oldNode: ts.Node | compiler.Node, newNode: ts.Node) {
         const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.getCompilerNode() : oldNode;
         const node = oldNode instanceof compiler.Node ? oldNode : this.nodeCache.get(oldNode);
 
@@ -437,7 +437,7 @@ export class CompilerFactory {
      * Removes a node from the cache.
      * @param node - Node to remove.
      */
-    removeNodeFromCache(node: compiler.Node<ts.Node>) {
+    removeNodeFromCache(node: compiler.Node) {
         this.nodeCache.removeByKey(node.getCompilerNode());
     }
 }

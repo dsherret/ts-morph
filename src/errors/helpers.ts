@@ -33,7 +33,7 @@ export function throwIfNotStringOrWhitespace(value: string, argName: string) {
  * @param syntaxKind - Syntax kind that's expected.
  * @param message - Optional message to throw.
  */
-export function throwIfNotSyntaxKind(node: Node<ts.Node>, syntaxKind: ts.SyntaxKind, message?: string) {
+export function throwIfNotSyntaxKind(node: Node, syntaxKind: ts.SyntaxKind, message?: string) {
     if (node.getKind() !== syntaxKind)
         throw new NotImplementedError(message || `Expected node to be syntax kind ${ts.SyntaxKind[syntaxKind]}, but was ${node.getKindName()}.`);
 }

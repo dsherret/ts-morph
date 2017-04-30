@@ -2,11 +2,11 @@
 import {Node} from "./../../common";
 import {ModifierableNode} from "./../../base";
 
-export type AbstractableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type AbstractableNodeExtensionType = Node & ModifierableNode;
 
 export interface AbstractableNode {
     getIsAbstract(): boolean;
-    getAbstractKeyword(): Node<ts.Node> | undefined;
+    getAbstractKeyword(): Node | undefined;
     setIsAbstract(isAbstract: boolean): this;
 }
 

@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {TypeNodeBase, TypeNode} from "./TypeNode";
+import {TypeNode} from "./TypeNode";
 
-export class ExpressionWithTypeArguments extends TypeNodeBase<ts.ExpressionWithTypeArguments> {
+export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeArguments> {
     /**
      * Gets the expression node.
      */

@@ -3,11 +3,11 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type AmbientableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type AmbientableNodeExtensionType = Node & ModifierableNode;
 
 export interface AmbientableNode {
     hasDeclareKeyword(): boolean;
-    getDeclareKeyword(): Node<ts.Node> | undefined;
+    getDeclareKeyword(): Node | undefined;
     isAmbient(): boolean;
     toggleDeclareKeyword(value?: boolean, sourceFile?: SourceFile): this;
 }
@@ -36,8 +36,8 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             if (isThisAmbient || this.isInterfaceDeclaration() || this.isTypeAliasDeclaration())
                 return true;
 
-            let topParent = this as Node<ts.Node>;
-            for (let parent of this.getParents()) {
+            let topParent = this as Node;
+            for (const parent of this.getParents()) {
                 topParent = parent; // store the top parent for later
 
                 const modifierFlags = parent.getCombinedModifierFlags();

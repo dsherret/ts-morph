@@ -4,13 +4,13 @@ import {Node} from "./../common";
 import {TypeChecker} from "./../tools";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type ExportableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type ExportableNodeExtensionType = Node & ModifierableNode;
 
 export interface ExportableNode {
     hasExportKeyword(): boolean;
-    getExportKeyword(): Node<ts.Node> | undefined;
+    getExportKeyword(): Node | undefined;
     hasDefaultKeyword(): boolean;
-    getDefaultKeyword(): Node<ts.Node> | undefined;
+    getDefaultKeyword(): Node | undefined;
     isDefaultExport(): boolean;
     isNamedExport(): boolean;
     setIsDefaultExport(value: boolean, typeChecker?: TypeChecker): this;

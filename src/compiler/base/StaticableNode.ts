@@ -3,11 +3,11 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type StaticableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type StaticableNodeExtensionType = Node & ModifierableNode;
 
 export interface StaticableNode {
     isStatic(): boolean;
-    getStaticKeyword(): Node<ts.Node> | undefined;
+    getStaticKeyword(): Node | undefined;
     setIsStatic(value: boolean, sourceFile?: SourceFile): this;
 }
 

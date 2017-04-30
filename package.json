@@ -7,7 +7,8 @@
   "scripts": {
     "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "gulp typescript",
-    "pre-publish": "gulp tslint && gulp test"
+    "pre-publish": "gulp tslint && gulp test",
+    "code-generate": "gulp code-generate && node dist-cg/code-generation/main"
   },
   "repository": {
     "type": "git",
@@ -39,19 +40,19 @@
     "gulp-mocha": "^2.2.0",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-tslint": "^5.0.0",
+    "gulp-tslint": "^8.0.0",
     "gulp-typescript": "^2.13.3",
     "merge2": "^1.0.3",
     "mocha": "^2.3.3",
     "ts-nameof": "^0.8.0",
-    "tslint": "^3.13.0"
+    "tslint": "^5.1.0"
   },
   "dependencies": {
     "code-block-writer": "^4.1.0",
     "globby": "^6.1.0",
-    "typescript": "2.2.2"
+    "typescript": "2.3.2"
   },
   "peerDependencies": {
-    "typescript": "2.2.2"
+    "typescript": "2.3.2"
   }
 }

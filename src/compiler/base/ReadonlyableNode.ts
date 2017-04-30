@@ -3,11 +3,11 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
-export type ReadonlyableNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type ReadonlyableNodeExtensionType = Node & ModifierableNode;
 
 export interface ReadonlyableNode {
     isReadonly(): boolean;
-    getReadonlyKeyword(): Node<ts.Node> | undefined;
+    getReadonlyKeyword(): Node | undefined;
     setIsReadonly(value: boolean, sourceFile?: SourceFile): this;
 }
 

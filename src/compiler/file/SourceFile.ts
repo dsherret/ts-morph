@@ -108,7 +108,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @internal
      * @param nodes - Nodes to remove.
      */
-    removeNodes(...nodes: (Node<ts.Node> | undefined)[]) {
+    removeNodes(...nodes: (Node | undefined)[]) {
         return this.removeNodesWithOptions(nodes, {});
     }
 
@@ -118,8 +118,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param nodes - Nodes to remove.
      * @param Opts - Options for removal.
      */
-    removeNodesWithOptions(nodes: (Node<ts.Node> | undefined)[], opts: { removePrecedingSpaces?: boolean; }) {
-        const nonNullNodes = nodes.filter(n => n != null) as Node<ts.Node>[];
+    removeNodesWithOptions(nodes: (Node | undefined)[], opts: { removePrecedingSpaces?: boolean; }) {
+        const nonNullNodes = nodes.filter(n => n != null) as Node[];
         if (nonNullNodes.length === 0 || nonNullNodes[0].getPos() === nonNullNodes[nonNullNodes.length - 1].getEnd())
             return this;
 
@@ -157,16 +157,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param tempSourceFile
      * @param nodesBeingRemoved
      */
-    replaceNodesFromNewSourceFile(rangeStart: number, rangeEnd: number, differenceLength: number, tempSourceFile: SourceFile, nodesBeingRemoved: Node<ts.Node>[]) {
+    replaceNodesFromNewSourceFile(rangeStart: number, rangeEnd: number, differenceLength: number, tempSourceFile: SourceFile, nodesBeingRemoved: Node[]) {
         // todo: clean up this method... this is quite awful
         const sourceFile = this;
         // temp solution
         function* wrapper() {
-            for (let value of Array.from(sourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
+            for (const value of Array.from(sourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
                 yield value;
             }
         }
-        function getErrorMessageText(currentChild: ts.Node, newChild: Node<ts.Node>) {
+        function getErrorMessageText(currentChild: ts.Node, newChild: Node) {
             let text = `Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).\n\nCode:\n`;
             const sourceFileText = tempSourceFile.getFullText();
             const startPos = sourceFileText.lastIndexOf("\n", newChild.getPos()) + 1;
@@ -188,7 +188,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         let currentChild = currentFileChildIterator.next().value;
         let hasPassed = false;
 
-        for (let newChild of tempFileChildIterator) {
+        for (const newChild of tempFileChildIterator) {
             const newChildPos = newChild.getPos();
             const newChildStart = newChild.getStart();
             const isSyntaxListDisappearing = () => currentChild.kind === ts.SyntaxKind.SyntaxList && currentChild.kind !== newChild.getKind();
@@ -197,7 +197,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0 || isSyntaxListDisappearing() || isTypeReferenceDisappearing()) {
                 if (isTypeReferenceDisappearing()) {
                     // skip all the children of this node
-                    let parentEnd = currentChild.getEnd();
+                    const parentEnd = currentChild.getEnd();
                     do {
                         currentChild = currentFileChildIterator.next().value;
                     } while (currentChild != null && currentChild.getEnd() <= parentEnd);
@@ -239,9 +239,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         this.factory.replaceCompilerNode(sourceFile, tempSourceFile.getCompilerNode());
 
-        for (let nodeBeingRemoved of allNodesBeingRemoved) {
+        for (const nodeBeingRemoved of allNodesBeingRemoved)
             this.factory.removeNodeFromCache(nodeBeingRemoved);
-        }
     }
 
     /**
@@ -249,9 +248,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @internal
      * @param nodes - Nodes to check.
      */
-    ensureNodePositionsContiguous(nodes: Node<ts.Node>[]) {
+    ensureNodePositionsContiguous(nodes: Node[]) {
         let lastPosition = nodes[0].getPos();
-        for (let node of nodes) {
+        for (const node of nodes) {
             if (node.getPos() !== lastPosition)
                 throw new Error("Node to remove must be contiguous.");
             lastPosition = node.getEnd();
@@ -271,12 +270,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         replaceForNode(this);
 
-        function replaceForNode(node: Node<ts.Node>) {
+        function replaceForNode(node: Node) {
             const currentStart = node.getStart(sourceFile);
             const compilerNode = node.getCompilerNode();
 
             // do the children first so that the underlying _children array is filled in based on the source file
-            for (let child of node.getChildren(sourceFile)) {
+            for (const child of node.getChildren(sourceFile)) {
                 replaceForNode(child);
             }
 

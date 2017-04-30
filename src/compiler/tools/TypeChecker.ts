@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {EnumMember} from "./../enum";
-import {Node, Symbol, Signature} from "./../common";
+import {Node, Symbol, Signature, Expression} from "./../common";
 import {Type} from "./../type";
 
 /**
@@ -32,11 +32,37 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the fully qualified name of a symbol.
+     * @param symbol - Symbol to get the fully qualified name of.
+     */
+    getFullyQualifiedName(symbol: Symbol) {
+        return this.typeChecker.getFullyQualifiedName(symbol.getCompilerSymbol());
+    }
+
+    /**
      * Gets the type at the specified location.
      * @param node - Node to get the type for.
      */
-    getTypeAtLocation(node: Node<ts.Node>): Type {
+    getTypeAtLocation(node: Node): Type {
         return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()));
+    }
+
+    /**
+     * Gets the contextual type of an expression.
+     * @param expression - Expression.
+     */
+    getContextualType(expression: Expression): Type | undefined {
+        const contextualType = this.typeChecker.getContextualType(expression.getCompilerNode());
+        return contextualType == null ? undefined : this.factory.getType(contextualType);
+    }
+
+    /**
+     * Gets the type of a symbol at the specified location.
+     * @param symbol - Symbol to get the type for.
+     * @param node - Location to get the type for.
+     */
+    getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type {
+        return this.factory.getType(this.typeChecker.getTypeOfSymbolAtLocation(symbol.getCompilerSymbol(), node.getCompilerNode()));
     }
 
     /**
@@ -51,7 +77,7 @@ export class TypeChecker {
      * Gets the symbol at the specified location or undefined if none exists.
      * @param node - Node to get the symbol for.
      */
-    getSymbolAtLocation(node: Node<ts.Node>): Symbol | undefined {
+    getSymbolAtLocation(node: Node): Symbol | undefined {
         const compilerSymbol = this.typeChecker.getSymbolAtLocation(node.getCompilerNode());
         return compilerSymbol == null ? undefined : this.factory.getSymbol(compilerSymbol);
     }
@@ -69,12 +95,20 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the properties of a type.
+     * @param type - Type.
+     */
+    getPropertiesOfType(type: Type) {
+        return this.typeChecker.getPropertiesOfType(type.getCompilerType()).map(p => this.factory.getSymbol(p));
+    }
+
+    /**
      * Gets the type text
      * @param type - Type to get the text of.
      * @param enclosingNode - Enclosing node.
      * @param typeFormatFlags - Type format flags.
      */
-    getTypeText(type: Type, enclosingNode?: Node<ts.Node>, typeFormatFlags?: ts.TypeFormatFlags) {
+    getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags) {
         if (typeFormatFlags == null)
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
@@ -98,7 +132,7 @@ export class TypeChecker {
         return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()), node);
     }
 
-    private getDefaultTypeFormatFlags(enclosingNode?: Node<ts.Node>) {
+    private getDefaultTypeFormatFlags(enclosingNode?: Node) {
         let formatFlags = (ts.TypeFormatFlags.UseTypeOfFunction | ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType |
             ts.TypeFormatFlags.WriteTypeArgumentsOfSignature) as ts.TypeFormatFlags;
 

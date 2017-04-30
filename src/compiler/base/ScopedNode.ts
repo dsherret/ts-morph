@@ -1,11 +1,10 @@
-﻿import * as ts from "typescript";
-import {Node} from "./../common";
+﻿import {Node} from "./../common";
 import {Scope} from "./../common/Scope";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 import * as scopeableNode from "./ScopeableNode";
 
-export type ScopedNodeExtensionType = Node<ts.Node> & ModifierableNode;
+export type ScopedNodeExtensionType = Node & ModifierableNode;
 
 export interface ScopedNode {
     getScope(): Scope;

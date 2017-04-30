@@ -90,6 +90,6 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 }
 
-function isClassPropertyType(m: Node<ts.Node>): m is ClassPropertyTypes {
+function isClassPropertyType(m: Node): m is ClassPropertyTypes {
     return m instanceof PropertyDeclaration || m instanceof SetAccessorDeclaration || m instanceof GetAccessorDeclaration;
 }

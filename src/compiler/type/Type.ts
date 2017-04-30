@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {Node} from "./../common/Node";
+import {Symbol} from "./../common/Symbol";
 import {TypeChecker} from "./../tools";
 
 export class Type {
@@ -31,8 +32,17 @@ export class Type {
      * Gets the type text.
      * @param enclosingNode - The enclosing node.
      * @param typeFormatFlags - Format flags for the type text.
+     * @param typeChecker - Optional type checker.
      */
-    getText(enclosingNode?: Node<ts.Node>, typeFormatFlags?: ts.TypeFormatFlags, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
         return typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
+    }
+
+    /**
+     * Gets the properties of the type.
+     * @param typeChecker - Optional type checker.
+     */
+    getProperties(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol[] {
+        return typeChecker.getPropertiesOfType(this);
     }
 }

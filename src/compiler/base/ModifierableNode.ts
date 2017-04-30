@@ -3,11 +3,11 @@ import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
-export type ModiferableNodeExtensionType = Node<ts.Node>;
+export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
 
 export interface ModifierableNode {
-    getModifiers(): Node<ts.Node>[];
+    getModifiers(): Node[];
     getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Modifier> | undefined;
     hasModifier(kind: ts.SyntaxKind): boolean;
     hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
@@ -29,7 +29,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
          * @param kind - Syntax kind.
          */
         getFirstModifierByKind(kind: ts.SyntaxKind) {
-            for (let modifier of this.getModifiers()) {
+            for (const modifier of this.getModifiers()) {
                 if (modifier.getKind() === kind)
                     return modifier as Node<ts.Modifier>;
             }
@@ -60,7 +60,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
          * @param sourceFile - Optional source file to help improve performance.
          */
         toggleModifier(text: ModifierTexts, value?: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            let hasModifier = this.hasModifier(text);
+            const hasModifier = this.hasModifier(text);
             if (value == null)
                 value = !hasModifier;
             if (hasModifier === value)
@@ -90,7 +90,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             // get insert position
             let insertPos = this.getStart();
             getAddAfterModifierTexts(text).forEach(addAfterText => {
-                for (let modifier of modifiers) {
+                for (const modifier of modifiers) {
                     if (modifier.getText(sourceFile) === addAfterText) {
                         if (insertPos < modifier.getEnd())
                             insertPos = modifier.getEnd();

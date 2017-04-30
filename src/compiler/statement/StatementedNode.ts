@@ -14,7 +14,7 @@ import * as variable from "./../variable";
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
 
 export interface StatementedNode {
-    getBody(): Node<ts.Node>;
+    getBody(): Node;
     addEnum(structure: structures.EnumStructure): enums.EnumDeclaration;
     getClasses(): classes.ClassDeclaration[];
     getClass(name: string): classes.ClassDeclaration | undefined;
@@ -48,7 +48,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /**
          * Gets the body node or returns the source file if a source file.
          */
-        getBody(): Node<ts.Node> {
+        getBody(): Node {
             /* istanbul ignore else */
             if (this.isSourceFile())
                 return this;
@@ -91,7 +91,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const declaration = enumDeclarations[enumDeclarations.length - 1];
 
             declaration.setIsConstEnum(structure.isConst || false);
-            for (let member of structure.members || []) {
+            for (const member of structure.members || []) {
                 declaration.addMember(member);
             }
 
@@ -242,7 +242,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclarations(): variable.VariableDeclaration[] {
             const variables: variable.VariableDeclaration[] = [];
 
-            for (let list of this.getVariableDeclarationLists()) {
+            for (const list of this.getVariableDeclarationLists()) {
                 variables.push(...list.getDeclarations());
             }
 
