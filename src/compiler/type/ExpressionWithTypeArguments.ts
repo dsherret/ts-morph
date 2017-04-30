@@ -1,12 +1,13 @@
 ﻿import * as ts from "typescript";
+import {Node} from "./../common";
 import {TypeNodeBase, TypeNode} from "./TypeNode";
 
 export class ExpressionWithTypeArguments extends TypeNodeBase<ts.ExpressionWithTypeArguments> {
     /**
-     * Gets the compiler expression node.
+     * Gets the expression node.
      */
-    getCompilerExpression(): ts.LeftHandSideExpression {
-        return this.node.expression;
+    getExpression(): Node<ts.LeftHandSideExpression> {
+        return this.factory.getNodeFromCompilerNode(this.node.expression) as Node<ts.LeftHandSideExpression>;
     }
 
     /**

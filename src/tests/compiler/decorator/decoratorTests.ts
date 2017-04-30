@@ -70,15 +70,15 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getCompilerCallExpression), () => {
+    describe(nameof<Decorator>(d => d.getCallExpression), () => {
         it("should return undefined when not a decorator factory", () => {
             const {firstDecorator} = getFirstDecorator("@decorator\nclass Identifier {}");
-            expect(firstDecorator.getCompilerCallExpression()).to.be.undefined;
+            expect(firstDecorator.getCallExpression()).to.be.undefined;
         });
 
         it("should get the compiler call expression when a decorator factory", () => {
             const {firstDecorator} = getFirstDecorator("@decorator('str', 4)\nclass Identifier {}");
-            expect(firstDecorator.getCompilerCallExpression()!.arguments.length).to.equal(2);
+            expect(firstDecorator.getCallExpression()!.getCompilerNode().arguments.length).to.equal(2);
         });
     });
 });

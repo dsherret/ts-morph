@@ -47,10 +47,10 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     /**
      * Gets the compiler call expression if a decorator factory.
      */
-    getCompilerCallExpression(): ts.CallExpression | undefined {
+    getCallExpression(): Node<ts.CallExpression> | undefined {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.node.expression as ts.CallExpression;
+        return this.factory.getNodeFromCompilerNode(this.node.expression) as Node<ts.CallExpression>;
     }
 }

@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {Node} from "./../common";
+import {TypeChecker} from "./../tools";
+import {Type} from "./../type";
 
 export class Symbol {
     /** @internal */
@@ -31,6 +33,13 @@ export class Symbol {
      */
     getName() {
         return this.symbol.getName();
+    }
+
+    /**
+     * Gets the symbol flags.
+     */
+    getFlags(): ts.SymbolFlags {
+        return this.symbol.getFlags();
     }
 
     /**
@@ -71,9 +80,10 @@ export class Symbol {
     }
 
     /**
-     * Gets the symbol flags.
+     * Gets the declared type of the symbol.
+     * @param typeChecker - Optional type checker.
      */
-    getFlags(): ts.SymbolFlags {
-        return this.symbol.getFlags();
+    getDeclaredType(typeChecker: TypeChecker = this.factory.getTypeChecker()): Type {
+        return typeChecker.getDeclaredTypeOfSymbol(this);
     }
 }

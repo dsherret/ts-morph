@@ -36,7 +36,15 @@ export class TypeChecker {
      * @param node - Node to get the type for.
      */
     getTypeAtLocation(node: Node<ts.Node>): Type {
-        return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()), node);
+        return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()));
+    }
+
+    /**
+     * Gets the declared type of a symbol.
+     * @param symbol - Symbol to get the type for.
+     */
+    getDeclaredTypeOfSymbol(symbol: Symbol): Type {
+        return this.factory.getType(this.typeChecker.getDeclaredTypeOfSymbol(symbol.getCompilerSymbol()));
     }
 
     /**
@@ -66,11 +74,12 @@ export class TypeChecker {
      * @param enclosingNode - Enclosing node.
      * @param typeFormatFlags - Type format flags.
      */
-    getTypeText(type: Type, enclosingNode: Node<ts.Node>, typeFormatFlags?: ts.TypeFormatFlags) {
+    getTypeText(type: Type, enclosingNode?: Node<ts.Node>, typeFormatFlags?: ts.TypeFormatFlags) {
         if (typeFormatFlags == null)
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
-        return this.typeChecker.typeToString(type.getCompilerType(), enclosingNode.getCompilerNode(), typeFormatFlags);
+        const compilerNode = enclosingNode == null ? undefined : enclosingNode.getCompilerNode();
+        return this.typeChecker.typeToString(type.getCompilerType(), compilerNode, typeFormatFlags);
     }
 
     /**
@@ -78,7 +87,7 @@ export class TypeChecker {
      * @param signature - Signature to get the return type of.
      */
     getReturnTypeOfSignature(signature: Signature): Type {
-        return this.factory.getType(this.typeChecker.getReturnTypeOfSignature(signature.getCompilerSignature()), signature.getEnclosingNode());
+        return this.factory.getType(this.typeChecker.getReturnTypeOfSignature(signature.getCompilerSignature()));
     }
 
     /**
@@ -89,11 +98,11 @@ export class TypeChecker {
         return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()), node);
     }
 
-    private getDefaultTypeFormatFlags(enclosingNode: Node<ts.Node>) {
+    private getDefaultTypeFormatFlags(enclosingNode?: Node<ts.Node>) {
         let formatFlags = (ts.TypeFormatFlags.UseTypeOfFunction | ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType |
             ts.TypeFormatFlags.WriteTypeArgumentsOfSignature) as ts.TypeFormatFlags;
 
-        if (enclosingNode.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
+        if (enclosingNode != null && enclosingNode.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
             formatFlags |= ts.TypeFormatFlags.InTypeAlias;
 
         return formatFlags;

@@ -39,17 +39,17 @@ decorator.isDecoratorFactory(); // returns: boolean
 
 ### Arguments
 
-Decorators with parenthesis are call expressions. Call expressions are currently not implemented in this library,
-but you can still access this information through the compiler AST.
+Decorators with parenthesis are call expressions.
 
-The `.getCompilerCallExpression()` method provides this conveniently for you:
+Call expressions are currently not implemented in this library, so you will
+need to access the information about it by getting the call expression's underlying compiler node:
 
 ```typescript
-// must be a decorator factory, otherwise getCompilerCallExpression will return undefined
+// must be a decorator factory, otherwise getCallExpression will return undefined
 if (!decorators.isDecoratorFactory())
     return;
 
-const callExpression = decorator.getCompilerCallExpression()!; // ts.CallExpression | undefined
+const callExpression = decorator.getCallExpression()!.getCompilerNode();
 for (let arg of callExpression.arguments) {
     // use arg here
 }

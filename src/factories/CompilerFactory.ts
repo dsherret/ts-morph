@@ -397,10 +397,9 @@ export class CompilerFactory {
     /**
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
-     * @param enclosingNode - Enclosing node.
      */
-    getType(type: ts.Type, enclosingNode: compiler.Node<ts.Node>): compiler.Type {
-        return new compiler.Type(this, type, enclosingNode);
+    getType(type: ts.Type): compiler.Type {
+        return new compiler.Type(this, type);
     }
 
     /**

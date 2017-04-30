@@ -8,10 +8,10 @@ describe(nameof(ExpressionWithTypeArguments), () => {
         return firstChild.getExtendsExpression()!;
     }
 
-    describe(nameof<ExpressionWithTypeArguments>(d => d.getCompilerExpression), () => {
+    describe(nameof<ExpressionWithTypeArguments>(d => d.getExpression), () => {
         it("should get the compiler expression", () => {
             const expression = getFirstExpressionWithTypeArgs("class MyClass extends MyOtherClass {}");
-            expect(expression.getCompilerExpression().getText()).to.equal("MyOtherClass");
+            expect(expression.getExpression().getText()).to.equal("MyOtherClass");
         });
     });
 

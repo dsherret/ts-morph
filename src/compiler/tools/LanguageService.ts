@@ -43,7 +43,7 @@ export class LanguageService {
                     return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
                 return this.fileSystem.readFile(path, encoding);
             },
-            fileExists: path => this.compilerFactory.containsSourceFileAtPath(path) != null || fileSystem.fileExists(path),
+            fileExists: path => this.compilerFactory.containsSourceFileAtPath(path) || fileSystem.fileExists(path),
             directoryExists: dirName => this.compilerFactory.containsFileInDirectory(dirName) || this.fileSystem.directoryExists(dirName)
         };
 

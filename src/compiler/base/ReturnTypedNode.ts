@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
+import {TypeChecker} from "./../tools";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
@@ -17,9 +18,9 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
     return class extends Base implements ReturnTypedNode {
         /**
          * Gets the return type.
+         * @typeChecker - Optional type checker.
          */
-        getReturnType() {
-            const typeChecker = this.factory.getLanguageService().getProgram().getTypeChecker();
+        getReturnType(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
             const signature = typeChecker.getSignatureFromNode(this);
             return typeChecker.getReturnTypeOfSignature(signature);
         }
