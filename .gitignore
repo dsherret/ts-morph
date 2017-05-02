@@ -4,6 +4,7 @@
 /obj
 /temp
 /bin
+/dist-cg
 *.suo
 *.csproj
 *.csproj.user

@@ -11,7 +11,7 @@ You will need to populate the `ast` object with source files.
 Specify as many file globs or file paths as you wish:
 
 ```typescript
-ast.addSourceFiles("folder/**/*.ts");
+ast.addSourceFiles("folder/**/*{.d.ts,.ts}");
 ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
 ```
 
@@ -33,4 +33,4 @@ const sourceFile = ast.addSourceFileFromText("path/for/myNewFile.ts", fileText);
 sourceFile.save(); // or saveSync();
 ```
 
-**Next step:** [Navigating the AST](../navigation/index)
+**Next step:** [Diagnostics](diagnostics)

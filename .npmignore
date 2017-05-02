@@ -2,6 +2,7 @@
 /node_modules
 /coverage
 /.vscode
+/code-generation
 /src
 *.js.map
 /obj

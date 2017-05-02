@@ -30,10 +30,10 @@ export class CompilerOptionsResolver {
             if (foundTsConfigFilePath != null && foundTsConfigFilePath.length > 0)
                 compilerOptions = this.getCompilerOptionsFromTsConfig(foundTsConfigFilePath);
             else
-                compilerOptions = {};
+                compilerOptions = this.getTsCompilerOptionDefaults();
         }
 
-        return this.getTsCompilerOptionsWithDefaults(compilerOptions);
+        return compilerOptions;
     }
 
     private getCompilerOptionsFromTsConfig(filePath: string) {
@@ -53,25 +53,19 @@ export class CompilerOptionsResolver {
         return settings.options;
     }
 
-    private getTsCompilerOptionsWithDefaults(compilerOptions: ts.CompilerOptions | undefined) {
-        function getValue<T>(currentValue: T, newValue: T) {
-            return (currentValue == null) ? newValue : currentValue;
-        }
-
-        const combinedOptions = (compilerOptions || {}) as any as ts.CompilerOptions;
-
-        combinedOptions.allowJs = getValue(combinedOptions.allowJs, true);
-        combinedOptions.noLib = getValue(combinedOptions.noLib, false);
-        combinedOptions.experimentalDecorators = getValue(combinedOptions.experimentalDecorators, true);
-        combinedOptions.suppressExcessPropertyErrors = getValue(combinedOptions.suppressExcessPropertyErrors, true);
-        combinedOptions.suppressImplicitAnyIndexErrors = getValue(combinedOptions.suppressImplicitAnyIndexErrors, true);
-        combinedOptions.noImplicitAny = getValue(combinedOptions.noImplicitAny, false);
-        combinedOptions.target = getValue(combinedOptions.target, ts.ScriptTarget.Latest);
-        combinedOptions.moduleResolution = getValue(combinedOptions.moduleResolution, ts.ModuleResolutionKind.NodeJs);
-        combinedOptions.strictNullChecks = getValue(combinedOptions.strictNullChecks, false);
-        combinedOptions.types = getValue(combinedOptions.types, []);
-
-        return combinedOptions;
+    private getTsCompilerOptionDefaults() {
+        return {
+            allowJs: true,
+            experimentalDecorators: true,
+            moduleResolution: ts.ModuleResolutionKind.NodeJs,
+            noImplicitAny: false,
+            noLib: false,
+            strictNullChecks: false,
+            suppressExcessPropertyErrors: true,
+            suppressImplicitAnyIndexErrors: true,
+            target: ts.ScriptTarget.Latest,
+            types: []
+        };
     }
 
     private getErrorMessage(errors: ts.Diagnostic[]) {

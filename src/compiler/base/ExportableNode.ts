@@ -65,7 +65,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (thisSymbol.equals(defaultExportSymbol))
                 return true;
 
-            const aliasedSymbol = typeChecker.getAliasedSymbol(defaultExportSymbol);
+            const aliasedSymbol = defaultExportSymbol.getAliasedSymbol(typeChecker);
             return thisSymbol.equals(aliasedSymbol);
         }
 

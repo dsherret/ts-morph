@@ -36,6 +36,14 @@ export class Symbol {
     }
 
     /**
+     * Gets the aliased symbol.
+     * @param typeChecker - Optional type checker.
+     */
+    getAliasedSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
+        return typeChecker.getAliasedSymbol(this);
+    }
+
+    /**
      * Gets the symbol flags.
      */
     getFlags(): ts.SymbolFlags {

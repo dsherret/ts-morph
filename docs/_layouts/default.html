@@ -40,12 +40,13 @@
                                 <ul>
                                     <li class="{% if page.path == 'setup/index.md' %}active{% endif %}"><a href="{{ "/setup/index" | prepend: site.baseurl }}">Instantiating</a></li>
                                     <li class="{% if page.path == 'setup/adding-sourcefiles.md' %}active{% endif %}"><a href="{{ "/setup/adding-sourcefiles" | prepend: site.baseurl }}">Adding SourceFiles</a></li>
+                                    <li class="{% if page.path == 'setup/diagnostics.md' %}active{% endif %}"><a href="{{ "/setup/diagnostics" | prepend: site.baseurl }}">Diagnostics</a></li>
                                 </ul>
                                 {% endif %}
                             </li>
                             <li class="nav-item{% if page.dir == '/navigation/' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/navigation" | prepend: site.baseurl }}">Navigation</a>
-                                {% if page.dir == '/navigation/' or page.dir == '/navigation/details/' %}
+                                {% if page.dir == '/navigation/' %}
                                 <ul>
                                     <li class="{% if page.path == 'navigation/getting-sourcefiles.md' %}active{% endif %}"><a href="{{ "/navigation/getting-sourcefiles" | prepend: site.baseurl }}">Getting SourceFiles</a></li>
                                     <li class="{% if page.path == 'navigation/example.md' %}active{% endif %}"><a href="{{ "/navigation/example" | prepend: site.baseurl }}">Example</a></li>

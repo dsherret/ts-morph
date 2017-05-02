@@ -419,6 +419,22 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a wrapped diagnostic from a compiler diagnostic.
+     * @param diagnostic - Compiler diagnostic.
+     */
+    getDiagnostic(diagnostic: ts.Diagnostic): compiler.Diagnostic {
+        return new compiler.Diagnostic(this, diagnostic);
+    }
+
+    /**
+     * Gets a wrapped diagnostic message chain from a compiler diagnostic message chain.
+     * @param diagnostic - Compiler diagnostic message chain.
+     */
+    getDiagnosticMessageChain(diagnosticMessageChain: ts.DiagnosticMessageChain): compiler.DiagnosticMessageChain {
+        return new compiler.DiagnosticMessageChain(this, diagnosticMessageChain);
+    }
+
+    /**
      * Replaces a compiler node in the cache.
      * @param oldNode - Old node to remove.
      * @param newNode - New node to use.

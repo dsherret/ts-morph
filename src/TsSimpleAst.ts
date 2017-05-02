@@ -100,9 +100,19 @@ export class TsSimpleAst {
     }
 
     /**
-     * Gets a type checker.
+     * Gets the compiler diagnostics.
+     * @param program - Optional program.
      */
-    getTypeChecker(): compiler.TypeChecker {
-        return this.compilerFactory.getTypeChecker();
+    getDiagnostics(program: compiler.Program = this.compilerFactory.getLanguageService().getProgram()): compiler.Diagnostic[] {
+        // todo: implement cancellation token
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(program.getCompilerProgram());
+        return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets a language service.
+     */
+    getLanguageService(): compiler.LanguageService {
+        return this.compilerFactory.getLanguageService();
     }
 }

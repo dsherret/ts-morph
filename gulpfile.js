@@ -48,7 +48,7 @@ gulp.task("test", ["pre-test"], function() {
 });
 
 gulp.task("tslint", function() {
-    return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts"])
+    return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts", "./code-generation/**/*.ts"])
         .pipe(tslint({ formatter: "verbose" }))
         .pipe(tslint.report());
 });

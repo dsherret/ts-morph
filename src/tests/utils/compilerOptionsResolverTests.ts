@@ -14,23 +14,23 @@ describe(nameof(CompilerOptionsResolver), () => {
                 expect(compilerOptions).to.deep.equal(getDefaultCompilerOptions());
             });
 
-            it(`should get the default compiler options when not providing anything and a tsconfig exists`, () => {
+            it(`should get the compiler options from tsconfig when not providing anything and a tsconfig exists`, () => {
                 const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
                 const resolver = new CompilerOptionsResolver(host);
                 const compilerOptions = resolver.getCompilerOptions({});
-                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: FileUtils.getStandardizedAbsolutePath("test"), target: 1 }));
+                expect(compilerOptions).to.deep.equal({ rootDir: FileUtils.getStandardizedAbsolutePath("test"), target: 1 });
             });
         });
 
         describe("compiler options", () => {
-            it(`should get the default compiler options when providing an empty compiler options object`, () => {
+            it(`should get empty compiler options when providing an empty compiler options object`, () => {
                 const host = testHelpers.getFileSystemHostWithFiles([]);
                 const resolver = new CompilerOptionsResolver(host);
                 const compilerOptions = resolver.getCompilerOptions({
                     compilerOptions: {}
                 });
 
-                expect(compilerOptions).to.deep.equal(getDefaultCompilerOptions());
+                expect(compilerOptions).to.deep.equal({});
             });
 
             it(`should use compiler options when providing a tsconfig path`, () => {
@@ -44,7 +44,7 @@ describe(nameof(CompilerOptionsResolver), () => {
                     }
                 });
 
-                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: "test", target: 1 }));
+                expect(compilerOptions).to.deep.equal({ rootDir: "test", target: 1 });
             });
         });
 
@@ -66,7 +66,7 @@ describe(nameof(CompilerOptionsResolver), () => {
                 const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
                 const resolver = new CompilerOptionsResolver(host);
                 const compilerOptions = resolver.getCompilerOptions({ tsConfigFilePath: "tsconfig.json" });
-                expect(compilerOptions).to.deep.equal(Object.assign(getDefaultCompilerOptions(), { rootDir: "test", target: 1 }));
+                expect(compilerOptions).to.deep.equal({ rootDir: "test", target: 1 });
             });
         });
     });

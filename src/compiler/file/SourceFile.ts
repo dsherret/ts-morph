@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
-import {TypeChecker} from "./../tools";
+import {TypeChecker, Program, Diagnostic} from "./../tools";
 import {FileUtils} from "./../../utils";
 
 export const SourceFileBase = StatementedNode(Node);
@@ -64,6 +64,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return undefined;
 
         return sourceFileSymbol.getExportByName("default");
+    }
+
+    /**
+     * Gets the compiler diagnostics.
+     * @param program - Optional program.
+     */
+    getDiagnostics(program: Program = this.factory.getLanguageService().getProgram()): Diagnostic[] {
+        // todo: implement cancellation token
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(program.getCompilerProgram(), this.getCompilerNode());
+        return compilerDiagnostics.map(d => this.factory.getDiagnostic(d));
     }
 
     /**
