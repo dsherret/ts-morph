@@ -22,8 +22,8 @@ Find out more information about:
 
 Types:
 
-* Type - todo
-* Type Node - todo
+* [Types](types)
+* Type Nodes - todo
 * [Expressions](expressions)
 
 Common:

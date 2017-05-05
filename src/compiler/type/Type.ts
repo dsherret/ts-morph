@@ -4,11 +4,14 @@ import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
 import {TypeChecker} from "./../tools";
 
-export class Type {
+export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */
-    private readonly factory: CompilerFactory;
+    protected readonly factory: CompilerFactory;
+    // this only public because the typescript compiler has a bug that's demonstrated when making it protected
+    // this should never be accessed outside the class
+    // todo: see if a bug is logged in the compiler for this
     /** @internal */
-    private readonly type: ts.Type;
+    public readonly type: TType;
 
     /**
      * Initializes a new instance of Type.
@@ -16,7 +19,7 @@ export class Type {
      * @param factory - Compiler factory.
      * @param type - Compiler type.
      */
-    constructor(factory: CompilerFactory, type: ts.Type) {
+    constructor(factory: CompilerFactory, type: TType) {
         this.factory = factory;
         this.type = type;
     }
@@ -44,5 +47,91 @@ export class Type {
      */
     getProperties(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol[] {
         return typeChecker.getPropertiesOfType(this);
+    }
+
+    /**
+     * Gets the union types.
+     */
+    getUnionTypes(): Type[] {
+        if (!this.isUnionType())
+            return [];
+
+        return this.type.types.map(t => this.factory.getType(t));
+    }
+
+    /**
+     * Gets the intersection types.
+     */
+    getIntersectionTypes(): Type[] {
+        if (!this.isIntersectionType())
+            return [];
+
+        return this.type.types.map(t => this.factory.getType(t));
+    }
+
+    /**
+     * Gets if this is an anonymous type.
+     */
+    isAnonymousType() {
+        return (this.getObjectFlags() & ts.ObjectFlags.Anonymous) !== 0;
+    }
+
+    /**
+     * Gets if this is a boolean type.
+     */
+    isBooleanType() {
+        return (this.type.flags & ts.TypeFlags.Boolean) !== 0;
+    }
+
+    /**
+     * Gets if this is an enum type.
+     */
+    isEnumType(): this is Type<ts.EnumType> {
+        return (this.type.flags & ts.TypeFlags.Enum) !== 0;
+    }
+
+    /**
+     * Gets if this is an interface type.
+     */
+    isInterfaceType(): this is Type<ts.InterfaceType> {
+        return (this.getObjectFlags() & ts.ObjectFlags.Interface) !== 0;
+    }
+
+    /**
+     * Gets if this is an intersection type.
+     */
+    isIntersectionType(): this is Type<ts.UnionOrIntersectionType> {
+        return (this.type.flags & ts.TypeFlags.Intersection) !== 0;
+    }
+
+    /**
+     * Gets if this is an object type.
+     */
+    isObjectType(): this is Type<ts.ObjectType> {
+        return (this.type.flags & ts.TypeFlags.Object) !== 0;
+    }
+
+    /**
+     * Gets if this is a union type.
+     */
+    isUnionType(): this is Type<ts.UnionOrIntersectionType> {
+        return (this.type.flags & ts.TypeFlags.Union) !== 0;
+    }
+
+    /**
+     * Gets the type flags.
+     */
+    getFlags(): ts.TypeFlags {
+        return this.type.flags;
+    }
+
+    /**
+     * Gets the object flags.
+     */
+    getObjectFlags() {
+        if (!this.isObjectType())
+            return 0;
+
+        return this.type.objectFlags || 0;
     }
 }
