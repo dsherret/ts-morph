@@ -3,7 +3,7 @@ import {GeneratorableNode, FunctionDeclaration, ClassDeclaration} from "./../../
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(GeneratorableNode), () => {
-    const {sourceFile: mainSourceFile} = getInfoFromText("function* Identifier {}\nfunction Identifier2 {}");
+    const {sourceFile: mainSourceFile} = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");
     const generatorFunc = mainSourceFile.getFunctions()[0];
     const func  = mainSourceFile.getFunctions()[1];
 
@@ -30,15 +30,15 @@ describe(nameof(GeneratorableNode), () => {
     describe(nameof<GeneratorableNode>(n => n.setIsGenerator), () => {
         describe("Functions", () => {
             it("should set as generator when not a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function Identifier {}");
+                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function Identifier() {}");
                 firstChild.setIsGenerator(true);
-                expect(sourceFile.getText()).to.equal("function* Identifier {}");
+                expect(sourceFile.getText()).to.equal("function* Identifier() {}");
             });
 
             it("should set as not a generator when a generator", () => {
-                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* Identifier {}");
+                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
                 firstChild.setIsGenerator(false);
-                expect(sourceFile.getText()).to.equal("function Identifier {}");
+                expect(sourceFile.getText()).to.equal("function Identifier() {}");
             });
         });
 

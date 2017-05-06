@@ -57,8 +57,8 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         describe("has properties", () => {
-            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
-                "get prop(): string {}\nset prop(val: string) {}\n}\n";
+            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\ninstanceProp: string;\nprop2: number;method1() {}\n" +
+                "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
@@ -110,7 +110,7 @@ describe(nameof(ClassDeclaration), () => {
 
         describe("has static properties", () => {
             const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
-                "\nstatic get prop(): string {}\nstatic set prop(val: string) {}\n}";
+                "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of static properties", () => {
