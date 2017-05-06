@@ -323,4 +323,30 @@ describe(nameof(Type), () => {
             expect(nonNullableType.getText()).to.equal("string");
         });
     });
+
+    describe(nameof<Type>(t => t.getAliasSymbol), () => {
+        it("should return undefined when not exists", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.getAliasSymbol()).to.be.undefined;
+        });
+
+        it("should return the alias symbol when it exists", () => {
+            const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
+            expect(firstType.getAliasSymbol()!.getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getAliasTypeArguments), () => {
+        it("should not have any when none exist", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.getAliasTypeArguments().length).to.equal(0);
+        });
+
+        it("should return the type args when they exist", () => {
+            const {firstType} = getTypeFromText("let myType: MyAlias<string>; type MyAlias<T> = {str: T;};");
+            const typeArgs = firstType.getAliasTypeArguments();
+            expect(typeArgs.length).to.equal(1);
+            expect(typeArgs[0].getText()).to.equal("string");
+        });
+    });
 });

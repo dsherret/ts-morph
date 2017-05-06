@@ -158,6 +158,18 @@ Get the symbol of the type if it exists:
 const typeSymbol = type.getSymbol();
 ```
 
+### Alias symbol
+
+```typescript
+const aliasSymbol = type.getAliasSymbol();
+```
+
+### Alias type arguments
+
+```typescript
+const aliasTypeArgs = type.getAliasTypeArguments();
+```
+
 ### Telling type
 
 Use any of the following methods:
@@ -181,6 +193,4 @@ Not implemented. Getting...
 
 * Enum member types
 * Destructuring pattern
-* Alias Symbol
-* Alias type arguments
 * More...?

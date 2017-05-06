@@ -44,6 +44,21 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the alias symbol if it exists.
+     */
+    getAliasSymbol(): Symbol | undefined {
+        return this.type.aliasSymbol == null ? undefined : this.factory.getSymbol(this.type.aliasSymbol);
+    }
+
+    /**
+     * Gets the alias type arguments.
+     */
+    getAliasTypeArguments(): Type[] {
+        const aliasTypeArgs = this.type.aliasTypeArguments || [];
+        return aliasTypeArgs.map(t => this.factory.getType(t));
+    }
+
+    /**
      * Gets the apparent type.
      * @param typeChecker - Optional type checker.
      */
