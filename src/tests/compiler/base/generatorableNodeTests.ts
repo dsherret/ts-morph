@@ -40,6 +40,12 @@ describe(nameof(GeneratorableNode), () => {
                 firstChild.setIsGenerator(false);
                 expect(sourceFile.getText()).to.equal("function Identifier() {}");
             });
+
+            it("should not change the generator when already that value", () => {
+                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* Identifier() {}");
+                firstChild.setIsGenerator(true);
+                expect(sourceFile.getText()).to.equal("function* Identifier() {}");
+            });
         });
 
         describe("Methods", () => {

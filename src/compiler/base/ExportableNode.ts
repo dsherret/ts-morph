@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {TypeChecker} from "./../tools";
+import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;
@@ -13,8 +14,8 @@ export interface ExportableNode {
     getDefaultKeyword(): Node | undefined;
     isDefaultExport(): boolean;
     isNamedExport(): boolean;
-    setIsDefaultExport(value: boolean, typeChecker?: TypeChecker): this;
-    setIsExported(value: boolean, typeChecker?: TypeChecker): this;
+    setIsDefaultExport(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker): this;
+    setIsExported(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker): this;
 }
 
 export function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T {
@@ -80,9 +81,10 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         /**
          * Sets if this node is a default export.
          * @param value - If it should be a default export or not.
+         * @param sourceFile - Optional source file to help with performance.
          * @param typeChecker - Optional type checker.
          */
-        setIsDefaultExport(value: boolean, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+        setIsDefaultExport(value: boolean, sourceFile?: SourceFile, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
             if (value === this.isDefaultExport(typeChecker))
                 return this;
 
@@ -90,7 +92,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
-            const sourceFile = this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getRequiredSourceFile();
             const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol(typeChecker);
 
             if (fileDefaultExportSymbol != null)
@@ -98,8 +100,8 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             // set this node as the one to default export
             if (value) {
-                this.addModifier("export");
-                this.addModifier("default");
+                this.addModifier("export", sourceFile);
+                this.addModifier("default", sourceFile);
             }
 
             return this;
@@ -109,23 +111,24 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
          * Sets if the node is exported.
          * Note: Will always remove the default export if set.
          * @param value - If it should be exported or not.
+         * @param sourceFile - Optional source file to help with performance.
          * @param typeChecker - Optional type checker.
          */
-        setIsExported(value: boolean, typeChecker?: TypeChecker) {
+        setIsExported(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker) {
             // remove the default export if it is one no matter what
             if (this.getRequiredParent().isSourceFile()) {
                 typeChecker = typeChecker || this.factory.getTypeChecker();
-                this.setIsDefaultExport(false, typeChecker);
+                this.setIsDefaultExport(false, sourceFile, typeChecker);
             }
 
             if (value) {
                 if (!this.hasExportKeyword())
-                    this.addModifier("export");
+                    this.addModifier("export", sourceFile);
             }
             else {
                 const exportKeyword = this.getExportKeyword();
                 if (exportKeyword != null)
-                    this.getRequiredSourceFile().removeNodes(exportKeyword);
+                    (sourceFile || this.getRequiredSourceFile()).removeNodes(exportKeyword);
             }
 
             return this;

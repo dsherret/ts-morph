@@ -33,8 +33,14 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
          * @param value - If it should be a generator or not.
          * @param sourceFile - Optional source file to help improve performance.
          */
-        setIsGenerator(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setIsGenerator(value: boolean, sourceFile?: SourceFile) {
             const asteriskToken = this.getAsteriskToken();
+            const isSet = asteriskToken != null;
+
+            if (isSet === value)
+                return this;
+
+            sourceFile = sourceFile || this.getRequiredSourceFile();
 
             if (asteriskToken != null) {
                 sourceFile.removeNodesWithOptions([asteriskToken], {

@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../common";
+import {SourceFile} from "./../../file";
 import {ModifierableNode} from "./../../base";
 
 export type AbstractableNodeExtensionType = Node & ModifierableNode;
@@ -7,7 +8,7 @@ export type AbstractableNodeExtensionType = Node & ModifierableNode;
 export interface AbstractableNode {
     getIsAbstract(): boolean;
     getAbstractKeyword(): Node | undefined;
-    setIsAbstract(isAbstract: boolean): this;
+    setIsAbstract(isAbstract: boolean, sourceFile?: SourceFile): this;
 }
 
 export function AbstractableNode<T extends Constructor<AbstractableNodeExtensionType>>(Base: T): Constructor<AbstractableNode> & T {
@@ -29,9 +30,10 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
         /**
          * Sets if the node is abstract.
          * @param isAbstract - If it should be abstract or not.
+         * @param sourceFile - Optional source file to help with performance.
          */
-        setIsAbstract(isAbstract: boolean) {
-            this.toggleModifier("abstract", isAbstract);
+        setIsAbstract(isAbstract: boolean, sourceFile?: SourceFile) {
+            this.toggleModifier("abstract", isAbstract, sourceFile);
             return this;
         }
     };
