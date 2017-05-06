@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
+import {getSymbolByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
 import {Signature} from "./../common/Signature";
@@ -80,10 +81,32 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets a property.
+     * @param name - By a name.
+     * @param findFunction - Function for searching for a property.
+     */
+    getProperty(name: string): Symbol | undefined;
+    getProperty(findFunction: (declaration: Symbol) => boolean): Symbol | undefined;
+    getProperty(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol | undefined {
+        return getSymbolByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
+    }
+
+    /**
      * Gets the apparent properties of the type.
      */
     getApparentProperties(): Symbol[] {
         return this.type.getApparentProperties().map(s => this.factory.getSymbol(s));
+    }
+
+    /**
+     * Gets an apparent property.
+     * @param name - By a name.
+     * @param findFunction - Function for searching for an apparent property.
+     */
+    getApparentProperty(name: string): Symbol | undefined;
+    getApparentProperty(findFunction: (declaration: Symbol) => boolean): Symbol | undefined;
+    getApparentProperty(nameOrFindFunction: string | ((declaration: Symbol) => boolean)): Symbol | undefined {
+        return getSymbolByNameOrFindFunction(this.getApparentProperties(), nameOrFindFunction);
     }
 
     /**

@@ -76,16 +76,20 @@ const unionTypes = type.getUnionTypes();
 
 ### Properties
 
-Get the properties of a type:
+Get the properties or property of a type:
 
 ```typescript
 const properties = type.getProperties();
+const prop1 = type.getProperty("prop1");
+const prop2 = type.getProperty(p => p.getName() === "prop2");
 ```
 
 Or the apparent properties:
 
 ```typescript
 const apparentProperties = type.getApparentProperties();
+const prop1 = type.getApparentProperty("prop1");
+const prop2 = type.getApparentProperty(p => p.getName() === "prop2");
 ```
 
 ### Base types
@@ -175,11 +179,8 @@ If you see something that doesn't exist here and should (there's a lot missing),
 
 Not implemented. Getting...
 
-* Number index type
-* String index type
-* One property
-* Non-nullable type
 * Enum member types
 * Destructuring pattern
 * Alias Symbol
 * Alias type arguments
+* More...?

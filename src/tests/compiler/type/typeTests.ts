@@ -54,6 +54,41 @@ describe(nameof(Type), () => {
         });
     });
 
+    describe(nameof<Type>(t => t.getProperty), () => {
+        it("should get the property by name", () => {
+            const {firstType} = getTypeFromText("let myType: { str: string; other: number; };");
+            const prop = firstType.getProperty("other")!;
+            expect(prop.getName()).to.equal("other");
+        });
+
+        it("should get the property by function", () => {
+            const {firstType} = getTypeFromText("let myType: { str: string; other: number; };");
+            const prop = firstType.getProperty(p => p.getName() === "other")!;
+            expect(prop.getName()).to.equal("other");
+        });
+    });
+
+    describe(nameof<Type>(t => t.getApparentProperties), () => {
+        it("should return the apparent properties of a type", () => {
+            const {firstType} = getTypeFromText("let myType: 1;");
+            expect(firstType.getApparentProperties().length).to.equal(6);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getApparentProperty), () => {
+        it("should get the property by name", () => {
+            const {firstType} = getTypeFromText("let myType: { str: string; other: number; };");
+            const prop = firstType.getApparentProperty("other")!;
+            expect(prop.getName()).to.equal("other");
+        });
+
+        it("should get the property by function", () => {
+            const {firstType} = getTypeFromText("let myType: { str: string; other: number; };");
+            const prop = firstType.getApparentProperty(p => p.getName() === "other")!;
+            expect(prop.getName()).to.equal("other");
+        });
+    });
+
     describe(nameof<Type>(t => t.getUnionTypes), () => {
         it("should get the union types when there aren't any", () => {
             const {firstType} = getTypeFromText("let myType: string;");
@@ -211,13 +246,6 @@ describe(nameof(Type), () => {
         it("should get the apparent type", () => {
             const {firstType} = getTypeFromText(`const myType = 4;`);
             expect(firstType.getApparentType().getText()).to.equal("Number");
-        });
-    });
-
-    describe(nameof<Type>(t => t.getApparentProperties), () => {
-        it("should return the apparent properties of a type", () => {
-            const {firstType} = getTypeFromText("let myType: 1;");
-            expect(firstType.getApparentProperties().length).to.equal(6);
         });
     });
 

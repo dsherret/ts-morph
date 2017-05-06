@@ -5,3 +5,4 @@ export * from "./utils/decorators";
 export * from "./utils/Logger";
 export * from "./utils/KeyValueCache";
 export * from "./utils/getNamedNodeByNameOrFindFunction";
+export * from "./utils/getSymbolByNameOrFindFunction";
