@@ -244,4 +244,55 @@ describe(nameof(Type), () => {
             expect(firstType.getConstructSignatures().length).to.equal(1);
         });
     });
+
+    describe(nameof<Type>(t => t.getBaseTypes), () => {
+        it("should return the base types of a type", () => {
+            const {firstType} = getTypeFromText("let myType: MyInterface; interface MyInterface extends OtherInterface {}\ninterface OtherInterface");
+            const baseTypes = firstType.getBaseTypes();
+            expect(baseTypes.length).to.equal(1);
+            expect(baseTypes[0].getText()).to.equal("OtherInterface");
+        });
+    });
+
+    describe(nameof<Type>(t => t.getStringIndexType), () => {
+        it("should return undefined when no string index type", () => {
+            const {firstType} = getTypeFromText("let myType: { };");
+            const stringIndexType = firstType.getStringIndexType();
+            expect(stringIndexType).to.be.undefined;
+        });
+
+        it("should return the string index type", () => {
+            const {firstType} = getTypeFromText("let myType: { [index: string]: object; [index: number]: Date; };");
+            const stringIndexType = firstType.getStringIndexType()!;
+            expect(stringIndexType.getText()).to.equal("object");
+        });
+    });
+
+    describe(nameof<Type>(t => t.getNumberIndexType), () => {
+        it("should return undefined when no number index type", () => {
+            const {firstType} = getTypeFromText("let myType: { };");
+            const numberIndexType = firstType.getNumberIndexType();
+            expect(numberIndexType).to.be.undefined;
+        });
+
+        it("should return the number index type", () => {
+            const {firstType} = getTypeFromText("let myType: { [index: string]: object; [index: number]: Date; };");
+            const numberIndexType = firstType.getNumberIndexType()!;
+            expect(numberIndexType.getText()).to.equal("Date");
+        });
+    });
+
+    describe(nameof<Type>(t => t.getNonNullableType), () => {
+        it("should return the original type for a type that's already non-nullable", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            const nonNullableType = firstType.getNonNullableType();
+            expect(nonNullableType.getText()).to.equal("string");
+        });
+
+        it("should return the non-nullable type", () => {
+            const {firstType} = getTypeFromText("let myType: string | undefined;");
+            const nonNullableType = firstType.getNonNullableType()!;
+            expect(nonNullableType.getText()).to.equal("string");
+        });
+    });
 });

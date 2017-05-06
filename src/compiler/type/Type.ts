@@ -51,6 +51,14 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the base types.
+     */
+    getBaseTypes() {
+        const baseTypes = this.type.getBaseTypes() || [];
+        return baseTypes.map(t => this.factory.getType(t));
+    }
+
+    /**
      * Gets the call signatures.
      */
     getCallSignatures(): Signature[] {
@@ -76,6 +84,29 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getApparentProperties(): Symbol[] {
         return this.type.getApparentProperties().map(s => this.factory.getSymbol(s));
+    }
+
+    /**
+     * Gets the non-nullable type.
+     */
+    getNonNullableType(): Type {
+        return this.factory.getType(this.type.getNonNullableType());
+    }
+
+    /**
+     * Gets the number index type.
+     */
+    getNumberIndexType(): Type | undefined {
+        const numberIndexType = this.type.getNumberIndexType();
+        return numberIndexType == null ? undefined : this.factory.getType(numberIndexType);
+    }
+
+    /**
+     * Gets the string index type.
+     */
+    getStringIndexType(): Type | undefined {
+        const stringIndexType = this.type.getStringIndexType();
+        return stringIndexType == null ? undefined : this.factory.getType(stringIndexType);
     }
 
     /**

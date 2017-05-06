@@ -64,15 +64,11 @@ Look at the TypeScript compiler definition file for more available options for `
 
 ### Intersection types
 
-Get the intersection types of the type:
-
 ```typescript
 const intersectionTypes = type.getIntersectionTypes();
 ```
 
 ### Union types
-
-Get the union types of the type:
 
 ```typescript
 const unionTypes = type.getUnionTypes();
@@ -92,9 +88,13 @@ Or the apparent properties:
 const apparentProperties = type.getApparentProperties();
 ```
 
-### Call signatures
+### Base types
 
-Get the call signatures of a type:
+```typescript
+const baseTypes = type.getBaseTypes();
+```
+
+### Call signatures
 
 ```typescript
 const callSignatures = type.getCallSignatures();
@@ -107,6 +107,26 @@ Get the construct signatures (new signatures) of a type:
 ```typescript
 const constructSignatures = type.getConstructSignatures();
 ```
+
+### Index types
+
+You can get either the string index type (ex. for `{ [index: string]: Date; }` it would be `Date`)
+or the number index type (ex. for `{ [index: number]: object; }` it would be `object`):
+
+```typescript
+const stringIndexType = type.getStringIndexType();
+const numberIndexType = type.getNumberIndexType();
+```
+
+### Non-nullable type
+
+Gets the non-nullable type from a nullable type:
+
+```typescript
+const nonNullableType = type.getNonNullableType();
+```
+
+For example, `string | undefined` would return `string`.
 
 ### Type flags
 
@@ -159,7 +179,6 @@ Not implemented. Getting...
 * String index type
 * One property
 * Non-nullable type
-* Base Types
 * Enum member types
 * Destructuring pattern
 * Alias Symbol
