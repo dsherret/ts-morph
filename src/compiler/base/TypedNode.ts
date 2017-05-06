@@ -9,7 +9,7 @@ import {TypeChecker} from "./../tools";
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
 export interface TypedNode {
-    getType(typeChecker?: TypeChecker): Type;
+    getType(): Type;
     getTypeNode(): TypeNode | undefined;
     setType(text: string, sourceFile?: SourceFile): this;
 }
@@ -18,10 +18,9 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
     return class extends Base implements TypedNode {
         /**
          * Gets the type.
-         * @typeChecker - Optional type checker.
          */
-        getType(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-            return typeChecker.getTypeAtLocation(this);
+        getType() {
+            return this.factory.getTypeChecker().getTypeAtLocation(this);
         }
 
         /**

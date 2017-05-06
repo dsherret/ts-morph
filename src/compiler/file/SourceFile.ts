@@ -54,10 +54,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the default export symbol of the file.
-     * @param typeChecker - Type checker.
      */
-    getDefaultExportSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
-        const sourceFileSymbol = typeChecker.getSymbolAtLocation(this.getRequiredSourceFile());
+    getDefaultExportSymbol(): Symbol | undefined {
+        const sourceFileSymbol = this.getRequiredSourceFile().getSymbol();
 
         // will be undefined when the source file doesn't have an export
         if (sourceFileSymbol == null)
@@ -79,9 +78,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Removes any "export default";
      */
-    removeDefaultExport(typeChecker?: TypeChecker, defaultExportSymbol?: Symbol | undefined): this {
-        typeChecker = typeChecker || this.factory.getTypeChecker();
-        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol(typeChecker);
+    removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this {
+        defaultExportSymbol = defaultExportSymbol || this.getDefaultExportSymbol();
 
         if (defaultExportSymbol == null)
             return this;
@@ -251,6 +249,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         for (const nodeBeingRemoved of allNodesBeingRemoved)
             this.factory.removeNodeFromCache(nodeBeingRemoved);
+
+        this.factory.resetProgram();
     }
 
     /**

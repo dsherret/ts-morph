@@ -37,10 +37,9 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the type text.
      * @param enclosingNode - The enclosing node.
      * @param typeFormatFlags - Format flags for the type text.
-     * @param typeChecker - Optional type checker.
      */
-    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-        return typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
+    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags) {
+        return this.factory.getTypeChecker().getTypeText(this, enclosingNode, typeFormatFlags);
     }
 
     /**
@@ -60,10 +59,9 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     /**
      * Gets the apparent type.
-     * @param typeChecker - Optional type checker.
      */
-    getApparentType(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-        return typeChecker.getApparentType(this);
+    getApparentType() {
+        return this.factory.getTypeChecker().getApparentType(this);
     }
 
     /**

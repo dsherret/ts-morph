@@ -10,10 +10,19 @@ import {Type} from "./../type";
 export class TypeChecker {
     /** @internal */
     private readonly factory: CompilerFactory;
+    private typeChecker: ts.TypeChecker;
 
     /** @internal */
-    constructor(factory: CompilerFactory, private readonly typeChecker: ts.TypeChecker) {
+    constructor(factory: CompilerFactory) {
         this.factory = factory;
+    }
+
+    /**
+     * Resets the type checker.
+     * @internal
+     */
+    reset(typeChecker: ts.TypeChecker) {
+        this.typeChecker = typeChecker;
     }
 
     /**

@@ -37,10 +37,9 @@ export class Symbol {
 
     /**
      * Gets the aliased symbol.
-     * @param typeChecker - Optional type checker.
      */
-    getAliasedSymbol(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol | undefined {
-        return typeChecker.getAliasedSymbol(this);
+    getAliasedSymbol(): Symbol | undefined {
+        return this.factory.getTypeChecker().getAliasedSymbol(this);
     }
 
     /**
@@ -89,26 +88,23 @@ export class Symbol {
 
     /**
      * Gets the declared type of the symbol.
-     * @param typeChecker - Optional type checker.
      */
-    getDeclaredType(typeChecker: TypeChecker = this.factory.getTypeChecker()): Type {
-        return typeChecker.getDeclaredTypeOfSymbol(this);
+    getDeclaredType(): Type {
+        return this.factory.getTypeChecker().getDeclaredTypeOfSymbol(this);
     }
 
     /**
      * Gets the type of the symbol at a location.
      * @param node - Location to get the type at for this symbol.
-     * @param typeChecker - Optional type checker.
      */
-    getTypeAtLocation(node: Node, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-        return typeChecker.getTypeOfSymbolAtLocation(this, node);
+    getTypeAtLocation(node: Node) {
+        return this.factory.getTypeChecker().getTypeOfSymbolAtLocation(this, node);
     }
 
     /**
      * Gets the fully qualified name.
-     * @param typeChecker - Optional type checker.
      */
-    getFullyQualifiedName(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-        return typeChecker.getFullyQualifiedName(this);
+    getFullyQualifiedName() {
+        return this.factory.getTypeChecker().getFullyQualifiedName(this);
     }
 }

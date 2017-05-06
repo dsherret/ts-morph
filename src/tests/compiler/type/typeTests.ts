@@ -21,7 +21,7 @@ describe(nameof(Type), () => {
 
         it("should get the text", () => {
             const {firstType} = getTypeFromText("let myType: string[];");
-            expect(firstType.getText()).to.equal("Array<string>");
+            expect(firstType.getText()).to.equal("string[]");
         });
 
         it("should get the text when providing the enclosing node", () => {

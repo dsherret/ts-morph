@@ -21,6 +21,7 @@ export class LanguageService {
     private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
     private compilerFactory: CompilerFactory;
+    private program: Program;
 
     constructor(private readonly fileSystem: FileSystemHost, private readonly compilerOptions: ts.CompilerOptions) {
         // I don't know what I'm doing for some of this...
@@ -73,6 +74,12 @@ export class LanguageService {
         this.languageService = ts.createLanguageService(languageServiceHost);
     }
 
+    /** @internal */
+    resetProgram() {
+        if (this.program != null)
+            this.program.reset(this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
+    }
+
     getCompilerLanguageService() {
         return this.languageService;
     }
@@ -81,7 +88,9 @@ export class LanguageService {
      * Gets the language service's program.
      */
     getProgram() {
-        return new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
+        if (this.program == null)
+            this.program = new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
+        return this.program;
     }
 
     /**
@@ -137,6 +146,7 @@ export class LanguageService {
 
     addSourceFile(sourceFile: SourceFile) {
         this.sourceFiles.push(sourceFile);
+        this.resetProgram();
     }
 
     getScriptTarget() {

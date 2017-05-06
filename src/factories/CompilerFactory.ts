@@ -456,4 +456,11 @@ export class CompilerFactory {
     removeNodeFromCache(node: compiler.Node) {
         this.nodeCache.removeByKey(node.getCompilerNode());
     }
+
+    /**
+     * Resets the program. This should be done after any modifications happen.
+     */
+    resetProgram() {
+        this.languageService.resetProgram();
+    }
 }

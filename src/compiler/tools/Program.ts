@@ -8,12 +8,23 @@ import {TypeChecker} from "./TypeChecker";
 export class Program {
     /** @internal */
     private readonly factory: CompilerFactory;
-    private readonly program: ts.Program;
+    private readonly typeChecker: TypeChecker;
+    private program: ts.Program;
 
     /** @internal */
     constructor(factory: CompilerFactory, rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
         this.factory = factory;
+        this.typeChecker = new TypeChecker(this.factory);
+        this.reset(rootNames, compilerOptions, host);
+    }
+
+    /**
+     * Resets the program.
+     * @internal
+     */
+    reset(rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
         this.program = ts.createProgram(rootNames, compilerOptions, host);
+        this.typeChecker.reset(this.program.getTypeChecker());
     }
 
     /**
@@ -27,6 +38,6 @@ export class Program {
      * Get the program's type checker.
      */
     getTypeChecker() {
-        return new TypeChecker(this.factory, this.program.getTypeChecker());
+        return this.typeChecker;
     }
 }

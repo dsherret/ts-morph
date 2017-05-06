@@ -14,8 +14,8 @@ export interface ExportableNode {
     getDefaultKeyword(): Node | undefined;
     isDefaultExport(): boolean;
     isNamedExport(): boolean;
-    setIsDefaultExport(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker): this;
-    setIsExported(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker): this;
+    setIsDefaultExport(value: boolean, sourceFile?: SourceFile): this;
+    setIsExported(value: boolean, sourceFile?: SourceFile): this;
 }
 
 export function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T {
@@ -50,15 +50,13 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         /**
          * Gets if this node is a default export.
-         * @param typeChecker - Optional type checker.
          */
-        isDefaultExport(typeChecker?: TypeChecker) {
+        isDefaultExport() {
             if (this.hasDefaultKeyword())
                 return true;
 
-            typeChecker = typeChecker || this.factory.getLanguageService().getProgram().getTypeChecker();
-            const thisSymbol = this.getSymbol(typeChecker);
-            const defaultExportSymbol = this.getRequiredSourceFile().getDefaultExportSymbol(typeChecker);
+            const thisSymbol = this.getSymbol();
+            const defaultExportSymbol = this.getRequiredSourceFile().getDefaultExportSymbol();
 
             if (defaultExportSymbol == null || thisSymbol == null)
                 return false;
@@ -66,7 +64,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (thisSymbol.equals(defaultExportSymbol))
                 return true;
 
-            const aliasedSymbol = defaultExportSymbol.getAliasedSymbol(typeChecker);
+            const aliasedSymbol = defaultExportSymbol.getAliasedSymbol();
             return thisSymbol.equals(aliasedSymbol);
         }
 
@@ -82,10 +80,9 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
          * Sets if this node is a default export.
          * @param value - If it should be a default export or not.
          * @param sourceFile - Optional source file to help with performance.
-         * @param typeChecker - Optional type checker.
          */
-        setIsDefaultExport(value: boolean, sourceFile?: SourceFile, typeChecker: TypeChecker = this.factory.getTypeChecker()) {
-            if (value === this.isDefaultExport(typeChecker))
+        setIsDefaultExport(value: boolean, sourceFile?: SourceFile) {
+            if (value === this.isDefaultExport())
                 return this;
 
             if (value && !this.getRequiredParent().isSourceFile())
@@ -93,10 +90,10 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             // remove any existing default export
             sourceFile = sourceFile || this.getRequiredSourceFile();
-            const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol(typeChecker);
+            const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol();
 
             if (fileDefaultExportSymbol != null)
-                sourceFile.removeDefaultExport(typeChecker, fileDefaultExportSymbol);
+                sourceFile.removeDefaultExport(fileDefaultExportSymbol);
 
             // set this node as the one to default export
             if (value) {
@@ -112,13 +109,11 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
          * Note: Will always remove the default export if set.
          * @param value - If it should be exported or not.
          * @param sourceFile - Optional source file to help with performance.
-         * @param typeChecker - Optional type checker.
          */
-        setIsExported(value: boolean, sourceFile?: SourceFile, typeChecker?: TypeChecker) {
+        setIsExported(value: boolean, sourceFile?: SourceFile) {
             // remove the default export if it is one no matter what
             if (this.getRequiredParent().isSourceFile()) {
-                typeChecker = typeChecker || this.factory.getTypeChecker();
-                this.setIsDefaultExport(false, sourceFile, typeChecker);
+                this.setIsDefaultExport(false, sourceFile);
             }
 
             if (value) {

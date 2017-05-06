@@ -54,20 +54,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the compiler symbol.
-     * @param typeChecker - Type checker to get the symbol with.
      */
-    getSymbol(typeChecker: TypeChecker = this.factory.getLanguageService().getProgram().getTypeChecker()): Symbol | undefined {
+    getSymbol(): Symbol | undefined {
         const boundSymbol = (this.node as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
             return this.factory.getSymbol(boundSymbol);
 
+        const typeChecker = this.factory.getTypeChecker();
         const typeCheckerSymbol = typeChecker.getSymbolAtLocation(this);
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
 
         const nameNode = (this.node as any).name as ts.Node | undefined;
         if (nameNode != null)
-            return this.factory.getNodeFromCompilerNode(nameNode).getSymbol(typeChecker);
+            return this.factory.getNodeFromCompilerNode(nameNode).getSymbol();
 
         return undefined;
     }
