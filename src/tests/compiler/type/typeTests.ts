@@ -194,4 +194,54 @@ describe(nameof(Type), () => {
             expect(firstType.getObjectFlags()).to.equal(ts.ObjectFlags.Interface);
         });
     });
+
+    describe(nameof<Type>(t => t.getSymbol), () => {
+        it("should get symbol when it has one", () => {
+            const {firstType} = getTypeFromText("let myType: MyClass; class MyClass {}");
+            expect(firstType.getSymbol()!.getName()).to.equal("MyClass");
+        });
+
+        it("should return undefined when it doesn't have one", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.getSymbol()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Type>(t => t.getApparentType), () => {
+        it("should get the apparent type", () => {
+            const {firstType} = getTypeFromText(`const myType = 4;`);
+            expect(firstType.getApparentType().getText()).to.equal("Number");
+        });
+    });
+
+    describe(nameof<Type>(t => t.getApparentProperties), () => {
+        it("should return the apparent properties of a type", () => {
+            const {firstType} = getTypeFromText("let myType: 1;");
+            expect(firstType.getApparentProperties().length).to.equal(6);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getCallSignatures), () => {
+        it("should return no call signatures when none exist", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.getCallSignatures().length).to.equal(0);
+        });
+
+        it("should return the call signatures of a type", () => {
+            const {firstType} = getTypeFromText("let myType: () => string;");
+            expect(firstType.getCallSignatures().length).to.equal(1);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getConstructSignatures), () => {
+        it("should return no construct signatures when none exist", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.getConstructSignatures().length).to.equal(0);
+        });
+
+        it("should return the construct signatures of a type", () => {
+            const {firstType} = getTypeFromText("let myType: { new(): MyClass; };");
+            expect(firstType.getConstructSignatures().length).to.equal(1);
+        });
+    });
 });

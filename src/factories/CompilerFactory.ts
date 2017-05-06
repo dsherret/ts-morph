@@ -406,8 +406,8 @@ export class CompilerFactory {
      * Gets a wrapped signature from a compiler signature.
      * @param signature - Compiler signature.
      */
-    getSignature(signature: ts.Signature, enclosingNode: compiler.Node<ts.SignatureDeclaration>): compiler.Signature {
-        return new compiler.Signature(this, signature, enclosingNode);
+    getSignature(signature: ts.Signature): compiler.Signature {
+        return new compiler.Signature(this, signature);
     }
 
     /**

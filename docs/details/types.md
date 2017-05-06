@@ -24,6 +24,22 @@ The underlying compiler type can be accessed via:
 const compilerType = type.getCompilerType();
 ```
 
+### Apparent type
+
+Given the following variable declaration:
+
+```typescript
+const myVar = 4;
+```
+
+The type is `4` and the apparent type is `Number`.
+
+You can retrieve the apparent type via the following:
+
+```typescript
+const apparentType = type.getApparentType();
+```
+
 ### Text
 
 Getting the type text can be achieved by calling `.getText()`:
@@ -46,14 +62,6 @@ const text = type.getText(parameter, ts.TypeFormatFlags.NoTruncation | ts.TypeFo
 
 Look at the TypeScript compiler definition file for more available options for `ts.TypeFormatFlags`.
 
-### Properties
-
-Get the properties of the type:
-
-```typescript
-const properties = type.getProperties();
-```
-
 ### Intersection types
 
 Get the intersection types of the type:
@@ -68,6 +76,36 @@ Get the union types of the type:
 
 ```typescript
 const unionTypes = type.getUnionTypes();
+```
+
+### Properties
+
+Get the properties of a type:
+
+```typescript
+const properties = type.getProperties();
+```
+
+Or the apparent properties:
+
+```typescript
+const apparentProperties = type.getApparentProperties();
+```
+
+### Call signatures
+
+Get the call signatures of a type:
+
+```typescript
+const callSignatures = type.getCallSignatures();
+```
+
+### Construct signatures
+
+Get the construct signatures (new signatures) of a type:
+
+```typescript
+const constructSignatures = type.getConstructSignatures();
 ```
 
 ### Type flags
@@ -86,6 +124,14 @@ This has information about object types, such as `ts.ObjectFlags.Mapped`.
 
 ```typescript
 const objectFlags = type.getObjectFlags();
+```
+
+### Symbol
+
+Get the symbol of the type if it exists:
+
+```typescript
+const typeSymbol = type.getSymbol();
 ```
 
 ### Telling type
@@ -111,14 +157,10 @@ Not implemented. Getting...
 
 * Number index type
 * String index type
-* Construct signatures
-* Call signatures
-* Apparent properties
 * One property
 * Non-nullable type
 * Base Types
 * Enum member types
-* Symbol
 * Destructuring pattern
 * Alias Symbol
 * Alias type arguments

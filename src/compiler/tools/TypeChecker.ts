@@ -24,6 +24,14 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the apparent type of a type.
+     * @param type - Type to get the apparent type of.
+     */
+    getApparentType(type: Type) {
+        return this.factory.getType(this.typeChecker.getApparentType(type.getCompilerType()));
+    }
+
+    /**
      * Gets the constant value of a declaration.
      * @param node - Node to get the constant value from.
      */
@@ -129,7 +137,7 @@ export class TypeChecker {
      * @param node - Node to get the signature from.
      */
     getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature {
-        return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()), node);
+        return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()));
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {

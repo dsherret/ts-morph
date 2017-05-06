@@ -2,6 +2,7 @@
 import {CompilerFactory} from "./../../factories";
 import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
+import {Signature} from "./../common/Signature";
 import {TypeChecker} from "./../tools";
 
 export class Type<TType extends ts.Type = ts.Type> {
@@ -42,11 +43,39 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
-     * Gets the properties of the type.
+     * Gets the apparent type.
      * @param typeChecker - Optional type checker.
      */
-    getProperties(typeChecker: TypeChecker = this.factory.getTypeChecker()): Symbol[] {
-        return typeChecker.getPropertiesOfType(this);
+    getApparentType(typeChecker: TypeChecker = this.factory.getTypeChecker()) {
+        return typeChecker.getApparentType(this);
+    }
+
+    /**
+     * Gets the call signatures.
+     */
+    getCallSignatures(): Signature[] {
+        return this.type.getCallSignatures().map(s => this.factory.getSignature(s));
+    }
+
+    /**
+     * Gets the construct signatures.
+     */
+    getConstructSignatures(): Signature[] {
+        return this.type.getConstructSignatures().map(s => this.factory.getSignature(s));
+    }
+
+    /**
+     * Gets the properties of the type.
+     */
+    getProperties(): Symbol[] {
+        return this.type.getProperties().map(s => this.factory.getSymbol(s));
+    }
+
+    /**
+     * Gets the apparent properties of the type.
+     */
+    getApparentProperties(): Symbol[] {
+        return this.type.getApparentProperties().map(s => this.factory.getSymbol(s));
     }
 
     /**
@@ -67,6 +96,14 @@ export class Type<TType extends ts.Type = ts.Type> {
             return [];
 
         return this.type.types.map(t => this.factory.getType(t));
+    }
+
+    /**
+     * Gets the symbol of the type.
+     */
+    getSymbol(): Symbol | undefined {
+        const tsSymbol = this.type.getSymbol();
+        return tsSymbol == null ? undefined : this.factory.getSymbol(tsSymbol);
     }
 
     /**
