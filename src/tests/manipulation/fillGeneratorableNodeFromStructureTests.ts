@@ -1,24 +1,25 @@
 ﻿import {expect} from "chai";
 import {ExportableNode, FunctionDeclaration} from "./../../compiler";
+import {GeneratorableStructure} from "./../../structures";
 import {getInfoFromText} from "./../compiler/testHelpers";
 import {fillGeneratorableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
 
+function doTest(startCode: string, structure: GeneratorableStructure, expectedCode: string) {
+    const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+    fillGeneratorableNodeFromStructure(sourceFile, firstChild, structure);
+    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+}
+
 describe(nameof(fillGeneratorableNodeFromStructure), () => {
     it("should not modify anything if the structure doesn't change anything", () => {
-        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function myFunction() {}");
-        fillGeneratorableNodeFromStructure(sourceFile, firstChild, {});
-        expect(firstChild.getText(sourceFile)).to.equal("function myFunction() {}");
+        doTest("function myFunction() {}", {}, "function myFunction() {}");
     });
 
     it("should not modify anything if the structure doesn't change anything and the node has everything set", () => {
-        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function* myFunction() {}");
-        fillGeneratorableNodeFromStructure(sourceFile, firstChild, {});
-        expect(firstChild.getText(sourceFile)).to.equal("function* myFunction() {}");
+        doTest("function* myFunction() {}", {}, "function* myFunction() {}");
     });
 
     it("should modify when setting as async", () => {
-        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function myFunction() {}");
-        fillGeneratorableNodeFromStructure(sourceFile, firstChild, { isGenerator: true });
-        expect(firstChild.getText(sourceFile)).to.equal("function* myFunction() {}");
+        doTest("function myFunction() {}", { isGenerator: true }, "function* myFunction() {}");
     });
 });

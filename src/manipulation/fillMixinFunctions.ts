@@ -27,3 +27,8 @@ export function fillGeneratorableNodeFromStructure(sourceFile: compiler.SourceFi
     if (structure.isGenerator != null)
         node.setIsGenerator(structure.isGenerator, sourceFile);
 }
+
+export function fillStaticableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.StaticableNode, structure: structures.StaticableStructure) {
+    if (structure.isStatic != null)
+        node.setIsStatic(structure.isStatic, sourceFile);
+}

@@ -4,3 +4,4 @@ export * from "./base/AsyncableStructure";
 export * from "./base/ExportableStructure";
 export * from "./base/GeneratorableStructure";
 export * from "./base/NamedStructure";
+export * from "./base/StaticableStructure";

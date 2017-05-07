@@ -3,7 +3,7 @@ import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {InitializerExpressionableNode, ModifierableNode} from "./../base";
-import {ConstructorDeclaration} from "./../class";
+import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
@@ -404,6 +404,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     isModifierableNode(): this is ModifierableNode {
         return (this as any)[nameof<ModifierableNode>(n => n.addModifier)] != null;
+    }
+
+    /**
+     * Gets if the current node is a method declaration.
+     * @internal
+     */
+    isMethodDeclaration(): this is MethodDeclaration {
+        return this.node.kind === ts.SyntaxKind.MethodDeclaration;
     }
 
     /**
