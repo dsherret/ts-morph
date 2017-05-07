@@ -32,3 +32,18 @@ export function fillStaticableNodeFromStructure(sourceFile: compiler.SourceFile,
     if (structure.isStatic != null)
         node.setIsStatic(structure.isStatic, sourceFile);
 }
+
+export function fillTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.TypedNode, structure: structures.TypedStructure) {
+    if (structure.type != null)
+        node.setType(structure.type, sourceFile);
+}
+
+export function fillReadonlyableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReadonlyableNode, structure: structures.ReadonlyableStructure) {
+    if (structure.isReadonly != null)
+        node.setIsReadonly(structure.isReadonly, sourceFile);
+}
+
+export function fillScopeableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ScopeableNode, structure: structures.ScopeableStructure) {
+    if (structure.scope != null)
+        node.setScope(structure.scope, sourceFile);
+}
