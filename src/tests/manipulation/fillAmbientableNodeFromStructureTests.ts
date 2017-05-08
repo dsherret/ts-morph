@@ -11,15 +11,15 @@ function doTest(startingCode: string, structure: AmbientableStructure, expectedC
 }
 
 describe(nameof(fillAmbientableNodeFromStructure), () => {
-    it("should not modify anything if the structure doesn't change anything", () => {
+    it("should not modify when not set and structure empty", () => {
         doTest("class MyClass {}", {}, "class MyClass {}");
     });
 
-    it("should not modify anything if the structure doesn't change anything and the node has everything set", () => {
+    it("should not modify when set and structure empty", () => {
         doTest("declare class MyClass {}", {}, "declare class MyClass {}");
     });
 
-    it("should modify when setting as has declare keyword", () => {
+    it("should modify when setting true", () => {
         doTest("class MyClass {}", { hasDeclareKeyword: true }, "declare class MyClass {}");
     });
 });

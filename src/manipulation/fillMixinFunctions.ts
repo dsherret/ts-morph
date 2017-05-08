@@ -28,14 +28,18 @@ export function fillGeneratorableNodeFromStructure(sourceFile: compiler.SourceFi
         node.setIsGenerator(structure.isGenerator, sourceFile);
 }
 
-export function fillStaticableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.StaticableNode, structure: structures.StaticableStructure) {
-    if (structure.isStatic != null)
-        node.setIsStatic(structure.isStatic, sourceFile);
+export function fillInitializerExpressionableNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.InitializerExpressionableNode,
+    structure: structures.InitializerExpressionableStructure
+) {
+    if (structure.initializer != null)
+        node.setInitializer(structure.initializer, sourceFile);
 }
 
-export function fillTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.TypedNode, structure: structures.TypedStructure) {
-    if (structure.type != null)
-        node.setType(structure.type, sourceFile);
+export function fillQuestionTokenableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.QuestionTokenableNode, structure: structures.QuestionTokenableStructure) {
+    if (structure.isOptional != null)
+        node.setIsOptional(structure.isOptional, sourceFile);
 }
 
 export function fillReadonlyableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReadonlyableNode, structure: structures.ReadonlyableStructure) {
@@ -46,4 +50,19 @@ export function fillReadonlyableNodeFromStructure(sourceFile: compiler.SourceFil
 export function fillScopeableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ScopeableNode, structure: structures.ScopeableStructure) {
     if (structure.scope != null)
         node.setScope(structure.scope, sourceFile);
+}
+
+export function fillScopedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ScopedNode, structure: structures.ScopedStructure) {
+    if (structure.scope != null)
+        node.setScope(structure.scope, sourceFile);
+}
+
+export function fillStaticableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.StaticableNode, structure: structures.StaticableStructure) {
+    if (structure.isStatic != null)
+        node.setIsStatic(structure.isStatic, sourceFile);
+}
+
+export function fillTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.TypedNode, structure: structures.TypedStructure) {
+    if (structure.type != null)
+        node.setType(structure.type, sourceFile);
 }

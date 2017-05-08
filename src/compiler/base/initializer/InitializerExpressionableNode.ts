@@ -1,14 +1,15 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../../errors";
 import {Node, Expression} from "./../../common";
+import {SourceFile} from "./../../file";
 
 export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 
 export interface InitializerExpressionableNode {
     hasInitializer(): boolean;
     getInitializer(): Expression | undefined;
-    removeInitializer(): this;
-    setInitializer(text: string): this;
+    removeInitializer(sourceFile?: SourceFile): this;
+    setInitializer(text: string, sourceFile?: SourceFile): this;
 }
 
 export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionedExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T {
@@ -30,7 +31,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
         /**
          * Removes the initailizer.
          */
-        removeInitializer() {
+        removeInitializer(sourceFile?: SourceFile) {
             const initializer = this.getInitializer();
             if (initializer == null)
                 return this;
@@ -40,7 +41,8 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
                 throw this.getNotImplementedError();
 
-            this.getRequiredSourceFile().removeNodes(previousSibling, initializer);
+            sourceFile = sourceFile || this.getRequiredSourceFile();
+            sourceFile.removeNodes(previousSibling, initializer);
             return this;
         }
 
@@ -48,13 +50,13 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
          * Sets the initializer.
          * @param text - New text to set for the initializer.
          */
-        setInitializer(text: string) {
+        setInitializer(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
             if (this.hasInitializer())
-                this.removeInitializer();
+                this.removeInitializer(sourceFile);
 
-            this.getRequiredSourceFile().insertText(this.getEnd(), ` = ${text}`);
+            sourceFile.insertText(this.getEnd(), ` = ${text}`);
             return this;
         }
     };
