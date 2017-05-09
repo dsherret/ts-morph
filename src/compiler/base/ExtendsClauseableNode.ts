@@ -6,7 +6,7 @@ import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments
 export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
 export interface ExtendsClauseableNode {
-    getExtendsExpressions(): ExpressionWithTypeArguments[];
+    getExtends(): ExpressionWithTypeArguments[];
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
@@ -14,7 +14,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
         /**
          * Gets the extends clauses
          */
-        getExtendsExpressions(): ExpressionWithTypeArguments[] {
+        getExtends(): ExpressionWithTypeArguments[] {
             const heritageClauses = this.getHeritageClauses();
             const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
             if (extendsClause == null)

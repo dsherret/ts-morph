@@ -66,3 +66,12 @@ export function fillTypedNodeFromStructure(sourceFile: compiler.SourceFile, node
     if (structure.type != null)
         node.setType(structure.type, sourceFile);
 }
+
+export function fillImplementsClauseableNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.ImplementsClauseableNode,
+    structure: structures.ImplementsClauseableStructure
+) {
+    if (structure.implements != null && structure.implements.length > 0)
+        node.addImplements(structure.implements.join(", "), sourceFile);
+}

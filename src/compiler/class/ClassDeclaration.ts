@@ -19,7 +19,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the extends expression.
      */
-    getExtendsExpression(): ExpressionWithTypeArguments | undefined {
+    getExtends(): ExpressionWithTypeArguments | undefined {
         const heritageClauses = this.getHeritageClauses();
         const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause == null)

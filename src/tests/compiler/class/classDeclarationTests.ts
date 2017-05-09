@@ -3,15 +3,15 @@ import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDec
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
-    describe(nameof<ClassDeclaration>(d => d.getExtendsExpression), () => {
+    describe(nameof<ClassDeclaration>(d => d.getExtends), () => {
         it("should return undefined when no extends clause exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
-            expect(firstChild.getExtendsExpression()).to.be.undefined;
+            expect(firstChild.getExtends()).to.be.undefined;
         });
 
         it("should return a heritage clause when an extends clause exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
-            expect(firstChild.getExtendsExpression()).to.be.instanceOf(ExpressionWithTypeArguments);
+            expect(firstChild.getExtends()).to.be.instanceOf(ExpressionWithTypeArguments);
         });
     });
 

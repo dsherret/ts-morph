@@ -14,19 +14,25 @@ const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !=
 
 ### Extends expression
 
-```typescript
-const extendsExpression = classDeclaration.getExtendsExpression();
-```
+Will return [`ExpressionWithTypeArguments | undefined`](expressions):
 
-Will return [`ExpressionWithTypeArguments | undefined`](expressions).
+```typescript
+const extendsExpression = classDeclaration.getExtends();
+```
 
 ### Implements expressions
 
+Will return [`ExpressionWithTypeArguments[]`](expressions):
+
 ```typescript
-const implementsExpressions = classDeclaration.getImplementsExpressions();
+const implementsExpressions = classDeclaration.getImplements();
 ```
 
-Will return [`ExpressionWithTypeArguments[]`](expressions).
+Add an implements:
+
+```typescript
+classDeclaration.addImplements("Named");
+```
 
 ### Constructor
 

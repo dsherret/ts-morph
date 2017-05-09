@@ -15,7 +15,7 @@ const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperti
 ### Get extends expressions
 
 ```typescript
-const extendsExpressions = interfaceDeclaration.getExtendsExpressions();
+const extendsExpressions = interfaceDeclaration.getExtends();
 ```
 
 Will return [`ExpressionWithTypeArguments[]`](expressions).

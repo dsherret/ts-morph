@@ -3,6 +3,7 @@ export * from "./base/AmbientableStructure";
 export * from "./base/AsyncableStructure";
 export * from "./base/ExportableStructure";
 export * from "./base/GeneratorableStructure";
+export * from "./base/ImplementsClauseableStructure";
 export * from "./base/InitializerExpressionableStructure";
 export * from "./base/NamedStructure";
 export * from "./base/QuestionTokenableStructure";
