@@ -15,6 +15,39 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.setExtends), () => {
+        it("should set an extends", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("  class Identifier {}  ");
+            firstChild.setExtends("Base");
+            expect(sourceFile.getFullText()).to.equal("  class Identifier extends Base {}  ");
+        });
+
+        it("should set an extends when an implements exists", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier implements IBase {}");
+            firstChild.setExtends("Base");
+            expect(sourceFile.getFullText()).to.equal("class Identifier extends Base implements IBase {}");
+        });
+
+        it("should set an extends when the brace is right beside the identifier", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("  class Identifier{}  ");
+            firstChild.setExtends("Base");
+            expect(sourceFile.getFullText()).to.equal("  class Identifier extends Base {}  ");
+        });
+
+        it("should set an extends when an extends already exists", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier extends Base1 {}");
+            firstChild.setExtends("Base2");
+            expect(sourceFile.getFullText()).to.equal("class Identifier extends Base2 {}");
+        });
+
+        it("should throw an error when providing invalid input", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier extends Base1 {}");
+            expect(() => firstChild.setExtends("")).to.throw();
+            expect(() => firstChild.setExtends("  ")).to.throw();
+            expect(() => firstChild.setExtends(5 as any)).to.throw();
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getConstructor), () => {
         it("should return undefined when no constructor exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");

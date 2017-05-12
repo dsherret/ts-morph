@@ -12,15 +12,21 @@ const interface1 = sourceFile.getInterface("Interface1");
 const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperties().length === 5);
 ```
 
-### Get extends expressions
+### Extends expressions
+
+Will return [`ExpressionWithTypeArguments[]`](expressions):
 
 ```typescript
 const extendsExpressions = interfaceDeclaration.getExtends();
 ```
 
-Will return [`ExpressionWithTypeArguments[]`](expressions).
+Add an extends expression:
 
-### Get method signatures
+```typescript
+interfaceDeclaration.addExtends("Named");
+```
+
+### Method signatures
 
 Use:
 
@@ -28,7 +34,7 @@ Use:
 const methodSignatures = interfaceDeclaration.getMethods();
 ```
 
-### Get properties
+### Properties
 
 Use:
 
@@ -36,6 +42,6 @@ Use:
 const properties = interfaceDeclaration.getProperties();
 ```
 
-### Get new signatures
+### New signatures
 
 TODO: Not implemented yet.

@@ -1,8 +1,10 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
 import {AbstractableNode} from "./base";
+import {SourceFile} from "./../file";
 import {ExpressionWithTypeArguments} from "./../type";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
@@ -27,6 +29,42 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         const types = extendsClause.getTypes();
         return types.length === 0 ? undefined : types[0];
+    }
+
+    /**
+     * Sets the extends expression.
+     * @param text - Text to set as the extends expression.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    setExtends(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        errors.throwIfNotStringOrWhitespace(text, nameof(text));
+
+        const heritageClauses = this.getHeritageClauses();
+        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+        if (extendsClause != null) {
+            sourceFile.replaceText(extendsClause.getStart(), extendsClause.getEnd(), `extends ${text}`);
+            return this;
+        }
+
+        const implementsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
+        let insertPos: number;
+        if (implementsClause != null) {
+            insertPos = implementsClause.getStart();
+        }
+        else {
+            const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken);
+            /* istanbul ignore if */
+            if (openBraceToken == null)
+                throw new errors.InvalidOperationError("Could not found open brace token.");
+            insertPos = openBraceToken.getStart();
+        }
+
+        const isLastSpace = /\s/.test(sourceFile.getFullText()[insertPos - 1]);
+        let insertText = `extends ${text} `;
+        if (!isLastSpace)
+            insertText = " " + insertText;
+
+        sourceFile.insertText(insertPos, insertText);
     }
 
     /**

@@ -20,6 +20,12 @@ Will return [`ExpressionWithTypeArguments | undefined`](expressions):
 const extendsExpression = classDeclaration.getExtends();
 ```
 
+Set the extends expression:
+
+```typescript
+classDeclaration.setExtends("BaseClass");
+```
+
 ### Implements expressions
 
 Will return [`ExpressionWithTypeArguments[]`](expressions):

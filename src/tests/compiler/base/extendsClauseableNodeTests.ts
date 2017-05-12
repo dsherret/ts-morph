@@ -16,4 +16,31 @@ describe(nameof(ExtendsClauseableNode), () => {
             expect(extendsExpressions.length).to.equal(2);
         });
     });
+
+    describe(nameof<ExtendsClauseableNode>(n => n.addExtends), () => {
+        it("should add an extends", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("  interface Identifier {}  ");
+            firstChild.addExtends("Base");
+            expect(sourceFile.getFullText()).to.equal("  interface Identifier extends Base {}  ");
+        });
+
+        it("should add an extends when the brace is right beside the identifier", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("  interface Identifier{}  ");
+            firstChild.addExtends("Base");
+            expect(sourceFile.getFullText()).to.equal("  interface Identifier extends Base {}  ");
+        });
+
+        it("should add an extends when an extends already exists", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
+            firstChild.addExtends("Base2");
+            expect(sourceFile.getFullText()).to.equal("interface Identifier extends Base1, Base2 {}");
+        });
+
+        it("should throw an error when providing invalid input", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
+            expect(() => firstChild.addExtends("")).to.throw();
+            expect(() => firstChild.addExtends("  ")).to.throw();
+            expect(() => firstChild.addExtends(5 as any)).to.throw();
+        });
+    });
 });

@@ -212,10 +212,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
     }
 
+    /**
+     * Gets the child count.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    getChildCount(sourceFile = this.getRequiredSourceFile()) {
+        return this.node.getChildCount(sourceFile.getCompilerNode());
+    }
+
+    /**
+     * Gets the start position with leading trivia.
+     */
     getPos() {
         return this.node.pos;
     }
 
+    /**
+     * Gets the end position.
+     */
     getEnd() {
         return this.node.end;
     }
@@ -348,6 +362,44 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
 
         return this.factory.getNodeFromCompilerNode(lastToken);
+    }
+
+    /**
+     * Gets if this node is in a syntax list.
+     */
+    isInSyntaxList() {
+        return this.getParentSyntaxList() != null;
+    }
+
+    /**
+     * Gets the parent if it's a syntax list.
+     */
+    getParentSyntaxList() {
+        const parent = this.getParent();
+        if (parent == null)
+            return undefined;
+
+        const pos = this.getPos();
+        const end = this.getEnd();
+        for (const child of parent.getChildren()) {
+            if (child.getPos() > pos || child === this)
+                return undefined;
+
+            if (child.getKind() === ts.SyntaxKind.SyntaxList && child.getPos() <= pos && child.getEnd() >= end)
+                return child;
+        }
+
+        return undefined; // shouldn't happen
+    }
+
+    /**
+     * Gets the parent if it's a syntax list or throws an error otherwise.
+     */
+    getRequiredParentSyntaxList() {
+        const parentSyntaxList = this.getParentSyntaxList();
+        if (parentSyntaxList == null)
+            throw new Error("The parent must be a SyntaxList in order to do this operation.");
+        return parentSyntaxList;
     }
 
     /**

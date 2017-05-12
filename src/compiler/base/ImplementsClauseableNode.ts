@@ -38,6 +38,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             }
 
             const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken);
+            /* istanbul ignore if */
             if (openBraceToken == null)
                 throw new errors.InvalidOperationError("Could not found open brace token.");
 

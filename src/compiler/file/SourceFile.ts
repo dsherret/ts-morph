@@ -166,16 +166,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param nodesBeingRemoved
      */
     replaceNodesFromNewSourceFile(rangeStart: number, rangeEnd: number, differenceLength: number, tempSourceFile: SourceFile, nodesBeingRemoved: Node[]) {
-        // todo: clean up this method... this is quite awful
+        // todo: clean up this method... this is very awful!
         const sourceFile = this;
+        const currentSourceFile = this.node;
         // temp solution
         function* wrapper() {
-            for (const value of Array.from(sourceFile.getAllChildren()).map(t => t.getCompilerNode())) {
+            for (const value of Array.from(sourceFile.getAllChildren())) {
                 yield value;
             }
         }
-        function getErrorMessageText(currentChild: ts.Node, newChild: Node) {
-            let text = `Unexpected! Perhaps a syntax error was inserted (${ts.SyntaxKind[currentChild.kind]}:${newChild.getKindName()}).\n\nCode:\n`;
+        function getErrorMessageText(currentChild: Node, newChild: Node) {
+            let text = `Unexpected! Perhaps a syntax error was inserted (${currentChild.getKindName()}:${newChild.getKindName()}).\n\nCode:\n`;
             const sourceFileText = tempSourceFile.getFullText();
             const startPos = sourceFileText.lastIndexOf("\n", newChild.getPos()) + 1;
             let endPos = sourceFileText.indexOf("\n", newChild.getEnd());
@@ -199,10 +200,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         for (const newChild of tempFileChildIterator) {
             const newChildPos = newChild.getPos();
             const newChildStart = newChild.getStart();
-            const isSyntaxListDisappearing = () => currentChild.kind === ts.SyntaxKind.SyntaxList && currentChild.kind !== newChild.getKind();
-            const isTypeReferenceDisappearing = () => currentChild.kind === ts.SyntaxKind.TypeReference && newChild.getKind() === ts.SyntaxKind.FirstAssignment;
+            const isSyntaxListDisappearing = () => currentChild.getKind() === ts.SyntaxKind.SyntaxList && currentChild.getKind() !== newChild.getKind();
+            const isTypeReferenceDisappearing = () => currentChild.getKind() === ts.SyntaxKind.TypeReference && newChild.getKind() === ts.SyntaxKind.FirstAssignment;
 
-            while (compilerNodesBeingRemoved.indexOf(currentChild) >= 0 || isSyntaxListDisappearing() || isTypeReferenceDisappearing()) {
+            while (compilerNodesBeingRemoved.indexOf(currentChild.getCompilerNode()) >= 0 || isSyntaxListDisappearing() || isTypeReferenceDisappearing()) {
                 if (isTypeReferenceDisappearing()) {
                     // skip all the children of this node
                     const parentEnd = currentChild.getEnd();
@@ -217,12 +218,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             }
 
             if (newChildPos <= rangeStart && !hasPassed) {
-                if (newChild.getKind() !== currentChild.kind) {
+                const isNewNode = newChild.getKind() !== currentChild.getKind() ||
+                    ( // this is for when a node in a syntax list of the same kind gets added (ex. adding a heritage clause before another one)
+                        currentChild.getKind() !== ts.SyntaxKind.SyntaxList &&
+                        newChildStart === rangeStart &&
+                        newChild.isInSyntaxList() && // todo: optimize and improve readability
+                        currentChild.isInSyntaxList() &&
+                        newChild.getRequiredParentSyntaxList().getChildCount() > currentChild.getRequiredParentSyntaxList().getChildCount()
+                    );
+
+                if (isNewNode) {
                     hasPassed = true;
                     continue;
                 }
 
-                if (currentChild.pos !== newChild.getPos()) {
+                if (currentChild.getPos() !== newChild.getPos()) {
                     if (newChildPos === newChild.getEnd())
                         continue;
                     throw new Error(getErrorMessageText(currentChild, newChild));
@@ -234,7 +244,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             else if (newChildStart >= rangeEnd) {
                 const adjustedPos = newChildStart - differenceLength;
 
-                if (currentChild.getStart() !== adjustedPos || currentChild.kind !== newChild.getKind()) {
+                if (currentChild.getStart() !== adjustedPos || currentChild.getKind() !== newChild.getKind()) {
                     if (newChildPos === newChild.getEnd())
                         continue;
                     throw new Error(getErrorMessageText(currentChild, newChild));
