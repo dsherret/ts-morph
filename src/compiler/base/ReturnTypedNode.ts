@@ -9,34 +9,34 @@ import {TypeNode} from "./../type/TypeNode";
 export type ReturnTypedNodeExtensionReturnType = Node<ts.SignatureDeclaration>;
 
 export interface ReturnTypedNode {
+    /**
+     * Gets the return type.
+     */
     getReturnType(): Type;
+    /**
+     * Gets the return type node or undefined if none exists.
+     */
     getReturnTypeNode(): TypeNode | undefined;
+    /**
+     * Sets the return type of the node.
+     * @param text - Text to set as the type.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     setReturnType(text: string, sourceFile?: SourceFile): this;
 }
 
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
-        /**
-         * Gets the return type.
-         */
         getReturnType() {
             const typeChecker = this.factory.getTypeChecker();
             const signature = typeChecker.getSignatureFromNode(this);
             return typeChecker.getReturnTypeOfSignature(signature);
         }
 
-        /**
-         * Gets the return type node or undefined if none exists.
-         */
         getReturnTypeNode() {
             return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
         }
 
-        /**
-         * Sets the return type of the node.
-         * @param text - Text to set as the type.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         setReturnType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             // remove previous return type
             const returnTypeNode = this.getReturnTypeNode();

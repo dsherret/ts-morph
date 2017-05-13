@@ -5,14 +5,14 @@ import {HeritageClause} from "./../general/HeritageClause";
 export type HeritageClauseableNodeExtensionType = Node<ts.Node & { heritageClauses?: ts.NodeArray<ts.HeritageClause>; }>;
 
 export interface HeritageClauseableNode {
+    /**
+     * Gets the heritage clauses of the node.
+     */
     getHeritageClauses(): HeritageClause[];
 }
 
 export function HeritageClauseableNode<T extends Constructor<HeritageClauseableNodeExtensionType>>(Base: T): Constructor<HeritageClauseableNode> & T {
     return class extends Base implements HeritageClauseableNode {
-        /**
-         * Gets the heritage clauses of the node.
-         */
         getHeritageClauses(): HeritageClause[] {
             const heritageClauses = this.node.heritageClauses;
             if (heritageClauses == null)

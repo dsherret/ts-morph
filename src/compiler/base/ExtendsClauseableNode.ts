@@ -9,40 +9,49 @@ import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments
 export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
 export interface ExtendsClauseableNode {
+    /**
+     * Gets the extends clauses.
+     */
     getExtends(): ExpressionWithTypeArguments[];
+    /**
+     * Adds multiple extends clauses.
+     * @param texts - Texts to add for the extends clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    /**
+     * Adds an extends clause.
+     * @param text - Text to add for the extends clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    /**
+     * Inserts multiple extends clauses.
+     * @param texts - Texts to insert for the extends clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    /**
+     * Inserts an extends clause.
+     * @param text - Text to insert for the extends clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
-        /**
-         * Gets the extends clauses.
-         */
         getExtends(): ExpressionWithTypeArguments[] {
             const extendsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 
-        /**
-         * Adds an extends clause.
-         * @param text - Text to add for the extends clause.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
         addExtends(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             return this.insertExtends(this.getExtends().length, text as any, sourceFile);
         }
 
-        /**
-         * Inserts an extends clause.
-         * @param index - Index to insert at.
-         * @param text - Text to insert for the implements clause.
-         * @param sourceFile - Optional source file to help with performance.
-         */
         insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
         insertExtends(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {

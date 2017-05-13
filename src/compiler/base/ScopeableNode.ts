@@ -7,24 +7,24 @@ import {ModifierableNode} from "./ModifierableNode";
 export type ScopeableNodeExtensionType = Node & ModifierableNode;
 
 export interface ScopeableNode {
+    /**
+     * Gets the scope.
+     */
     getScope(): Scope | undefined;
+    /**
+     * Sets the scope.
+     * @param scope - Scope to set to.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     setScope(scope: Scope | undefined, sourceFile?: SourceFile): this;
 }
 
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
     return class extends Base implements ScopeableNode {
-        /**
-         * Gets the scope.
-         */
         getScope() {
             return getScopeForNode(this);
         }
 
-        /**
-         * Sets the scope.
-         * @param scope - Scope to set to.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         setScope(scope: Scope | undefined, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             setScopeForNode(this, scope, sourceFile);
             return this;

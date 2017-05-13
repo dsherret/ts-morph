@@ -6,33 +6,33 @@ import {SourceFile} from "./../file";
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 
 export interface GeneratorableNode {
+    /**
+     * If it's a generator function.
+     */
     isGenerator(): boolean;
+    /**
+     * Gets the asterisk token or undefined if none exists.
+     */
     getAsteriskToken(): Node<ts.AsteriskToken> | undefined;
+    /**
+     * Sets if the node is a generator.
+     * @param value - If it should be a generator or not.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     setIsGenerator(value: boolean, sourceFile?: SourceFile): this;
 }
 
 export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensionType>>(Base: T): Constructor<GeneratorableNode> & T {
     return class extends Base implements GeneratorableNode {
-        /**
-         * If it's a generator function.
-         */
         isGenerator() {
             return this.node.asteriskToken != null;
         }
 
-        /**
-         * Gets the asterisk token or undefined if none exists.
-         */
         getAsteriskToken(): Node<ts.AsteriskToken> | undefined {
             const asteriskToken = this.node.asteriskToken;
             return asteriskToken == null ? undefined : (this.factory.getNodeFromCompilerNode(asteriskToken) as Node<ts.AsteriskToken>);
         }
 
-        /**
-         * Sets if the node is a generator.
-         * @param value - If it should be a generator or not.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         setIsGenerator(value: boolean, sourceFile?: SourceFile) {
             const asteriskToken = this.getAsteriskToken();
             const isSet = asteriskToken != null;

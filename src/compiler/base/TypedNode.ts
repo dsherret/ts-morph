@@ -9,32 +9,32 @@ import {TypeChecker} from "./../tools";
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
 export interface TypedNode {
+    /**
+     * Gets the type.
+     */
     getType(): Type;
+    /**
+     * Gets the type node or undefined if none exists.
+     */
     getTypeNode(): TypeNode | undefined;
+    /**
+     * Sets the type.
+     * @param text - Text to set the type to.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     setType(text: string, sourceFile?: SourceFile): this;
 }
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
-        /**
-         * Gets the type.
-         */
         getType() {
             return this.factory.getTypeChecker().getTypeAtLocation(this);
         }
 
-        /**
-         * Gets the type node or undefined if none exists.
-         */
         getTypeNode() {
             return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
         }
 
-        /**
-         * Sets the type.
-         * @param text - Text to set the type to.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         setType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);

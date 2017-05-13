@@ -10,39 +10,49 @@ import {TypeParameteredNode} from "./TypeParameteredNode";
 export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
 export interface ImplementsClauseableNode {
+    /**
+     * Gets the implements clauses.
+     */
     getImplements(): ExpressionWithTypeArguments[];
+    /**
+     * Adds an implements clause.
+     * @param text - Text to add for the implements clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    /**
+     * Adds multiple implements clauses.
+     * @param text - Texts to add for the implements clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    /**
+     * Inserts an implements clause.
+     * @param text - Text to insert for the implements clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     insertImplements(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    /**
+     * Inserts multiple implements clauses.
+     * @param text - Texts to insert for the implements clause.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
     insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
 }
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
     return class extends Base implements ImplementsClauseableNode {
-        /**
-         * Gets the implements clauses.
-         */
         getImplements(): ExpressionWithTypeArguments[] {
             const implementsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
-        /**
-         * Adds an implements clause.
-         * @param text - Text to add for the implements clause.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
         addImplements(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             return this.insertImplements(this.getImplements().length, text as any, sourceFile);
         }
 
-        /**
-         * Insert an implements clause.
-         * @param text - Text to insert for the implements clause.
-         * @param sourceFile - Optional source file to help improve performance.
-         */
         insertImplements(index: number, text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
         insertImplements(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {

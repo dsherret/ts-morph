@@ -6,31 +6,36 @@ import {SourceFile} from "./../../file";
 export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 
 export interface InitializerExpressionableNode {
+    /**
+     * Gets if node has an initializer.
+     */
     hasInitializer(): boolean;
+    /**
+     * Gets the initializer.
+     */
     getInitializer(): Expression | undefined;
+    /**
+     * Removes the initailizer.
+     */
     removeInitializer(sourceFile?: SourceFile): this;
+    /**
+     * Sets the initializer.
+     * @param text - New text to set for the initializer.
+     * @param sourceFile - Optional source file to help with performance.
+     */
     setInitializer(text: string, sourceFile?: SourceFile): this;
 }
 
 export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionedExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T {
     return class extends Base implements InitializerExpressionableNode {
-        /**
-         * Gets if node has an initializer.
-         */
         hasInitializer() {
             return this.node.initializer != null;
         }
 
-        /**
-         * Gets the initializer.
-         */
         getInitializer() {
             return this.node.initializer == null ? undefined : this.factory.getExpression(this.node.initializer);
         }
 
-        /**
-         * Removes the initailizer.
-         */
         removeInitializer(sourceFile?: SourceFile) {
             const initializer = this.getInitializer();
             if (initializer == null)
@@ -46,10 +51,6 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             return this;
         }
 
-        /**
-         * Sets the initializer.
-         * @param text - New text to set for the initializer.
-         */
         setInitializer(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
 

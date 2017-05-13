@@ -7,8 +7,18 @@ import {Node, Identifier} from "./../../common";
 export type NamedNodeExtensionType = Node<ts.Node & { name: ts.Identifier; }>;
 
 export interface NamedNode {
+    /**
+     * Gets the name node.
+     */
     getNameNode(): Identifier;
+    /**
+     * Gets the name.
+     */
     getName(): string;
+    /**
+     * Sets the name.
+     * @param newName - New name.
+     */
     setName(newName: string): this;
 }
 
