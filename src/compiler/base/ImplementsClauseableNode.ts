@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -10,7 +11,10 @@ export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNod
 
 export interface ImplementsClauseableNode {
     getImplements(): ExpressionWithTypeArguments[];
-    addImplements(text: string, sourceFile?: SourceFile): this;
+    addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
 }
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
@@ -19,7 +23,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
          * Gets the implements clauses.
          */
         getImplements(): ExpressionWithTypeArguments[] {
-            const implementsClause = getHeritageClause(this, ts.SyntaxKind.ImplementsKeyword);
+            const implementsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
@@ -28,13 +32,34 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
          * @param text - Text to add for the implements clause.
          * @param sourceFile - Optional source file to help improve performance.
          */
-        addImplements(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+        addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+        addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+        addImplements(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+            return this.insertImplements(this.getImplements().length, text as any, sourceFile);
+        }
 
-            const implementsClause = getHeritageClause(this, ts.SyntaxKind.ImplementsKeyword);
-            if (implementsClause != null) {
-                sourceFile.insertText(implementsClause.getEnd(), `, ${text}`);
-                return this;
+        /**
+         * Insert an implements clause.
+         * @param text - Text to insert for the implements clause.
+         * @param sourceFile - Optional source file to help improve performance.
+         */
+        insertImplements(index: number, text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+        insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+        insertImplements(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+            const length = text instanceof Array ? text.length : 0;
+            if (text instanceof Array) {
+                if (text.length === 0)
+                    return [];
+                text = text.join(", ");
+            }
+
+            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+            const implementsTypes = this.getImplements();
+            index = verifyAndGetIndex(index, implementsTypes.length);
+
+            if (implementsTypes.length > 0) {
+                insertIntoCommaSeparatedNodes(sourceFile, implementsTypes, index, text);
+                return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
             const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken);
@@ -49,13 +74,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 insertText = " " + insertText;
 
             sourceFile.insertText(openBraceStart, insertText);
-
-            return this;
+            return getNodeOrNodesToReturn(this.getImplements(), index, length);
         }
     };
-}
-
-function getHeritageClause(node: Node & HeritageClauseableNode, kind: ts.SyntaxKind) {
-    const heritageClauses = node.getHeritageClauses();
-    return heritageClauses.find(c => c.node.token === kind);
 }

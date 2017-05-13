@@ -34,10 +34,13 @@ Will return [`ExpressionWithTypeArguments[]`](expressions):
 const implementsExpressions = classDeclaration.getImplements();
 ```
 
-Add an implements:
+Add or insert implements expressions:
 
 ```typescript
 classDeclaration.addImplements("Named");
+classDeclaration.addImplements(["Named", "Aged"]);
+classDeclaration.insertImplements(1, "Named");
+classDeclaration.insertImplements(1, ["Named", "Aged"]);
 ```
 
 ### Constructor

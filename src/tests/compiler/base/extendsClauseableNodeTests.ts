@@ -18,22 +18,37 @@ describe(nameof(ExtendsClauseableNode), () => {
     });
 
     describe(nameof<ExtendsClauseableNode>(n => n.addExtends), () => {
+        function doTest(code: string, extendsTextOrArray: string | string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            if (extendsTextOrArray instanceof Array) {
+                const result = firstChild.addExtends(extendsTextOrArray);
+                expect(result.length).to.equal(extendsTextOrArray.length);
+            }
+            else {
+                const result = firstChild.addExtends(extendsTextOrArray);
+                expect(result).to.not.be.instanceOf(Array).and.to.be.not.undefined;
+            }
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
         it("should add an extends", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("  interface Identifier {}  ");
-            firstChild.addExtends("Base");
-            expect(sourceFile.getFullText()).to.equal("  interface Identifier extends Base {}  ");
+            doTest("  interface Identifier {}  ", "Base", "  interface Identifier extends Base {}  ");
         });
 
         it("should add an extends when the brace is right beside the identifier", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("  interface Identifier{}  ");
-            firstChild.addExtends("Base");
-            expect(sourceFile.getFullText()).to.equal("  interface Identifier extends Base {}  ");
+            doTest("  interface Identifier{}  ", "Base", "  interface Identifier extends Base {}  ");
         });
 
         it("should add an extends when an extends already exists", () => {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
-            firstChild.addExtends("Base2");
-            expect(sourceFile.getFullText()).to.equal("interface Identifier extends Base1, Base2 {}");
+            doTest("interface Identifier extends Base1 {}", "Base2", "interface Identifier extends Base1, Base2 {}");
+        });
+
+        it("should add multiple extends", () => {
+            doTest("interface Identifier {}", ["Base", "Base2"], "interface Identifier extends Base, Base2 {}");
+        });
+
+        it("should do nothing if an empty array", () => {
+            doTest("interface Identifier {}", [], "interface Identifier {}");
         });
 
         it("should throw an error when providing invalid input", () => {
@@ -41,6 +56,30 @@ describe(nameof(ExtendsClauseableNode), () => {
             expect(() => firstChild.addExtends("")).to.throw();
             expect(() => firstChild.addExtends("  ")).to.throw();
             expect(() => firstChild.addExtends(5 as any)).to.throw();
+        });
+    });
+
+    describe(nameof<ExtendsClauseableNode>(n => n.insertExtends), () => {
+        function doTest(code: string, index: number, extendsTextOrArray: string | string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            if (extendsTextOrArray instanceof Array) {
+                const result = firstChild.insertExtends(index, extendsTextOrArray);
+                expect(result.length).to.equal(extendsTextOrArray.length);
+            }
+            else {
+                const result = firstChild.insertExtends(index, extendsTextOrArray);
+                expect(result).to.not.be.instanceOf(Array).and.to.be.not.undefined;
+            }
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        // mosts of the tests for this are already in addExtends
+        it("should insert an extends at a position", () => {
+            doTest("interface Identifier extends Base, Base1 {}", 1, "Base2", "interface Identifier extends Base, Base2, Base1 {}");
+        });
+
+        it("should insert multiple extends at a position", () => {
+            doTest("interface Identifier extends Base, Base1 {}", 1, ["Base2", "Base3"], "interface Identifier extends Base, Base2, Base3, Base1 {}");
         });
     });
 });

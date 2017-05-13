@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode} from "./../base";
+import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode, FollowingCommableNode} from "./../base";
 
-export const EnumMemberBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
+export const EnumMemberBase = FollowingCommableNode(DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node))));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Gets the constant value of the enum.
@@ -12,29 +12,11 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     }
 
     /**
-     * Gets if this enum member ends with a comma.
-     */
-    hasFollowingComma() {
-        return this.getFollowingComma() != null;
-    }
-
-    /**
      * Removes this enum member and returns the parent.
      */
     remove() {
         const parent = this.getParent();
         this.getRequiredSourceFile().removeNodes(this, this.getFollowingComma());
         return parent;
-    }
-
-    /**
-     * Gets the following comma node if it exists.
-     */
-    getFollowingComma() {
-        const nextSibling = this.getNextSibling();
-        if (nextSibling == null || nextSibling.getKind() !== ts.SyntaxKind.CommaToken)
-            return undefined;
-
-        return nextSibling;
     }
 }

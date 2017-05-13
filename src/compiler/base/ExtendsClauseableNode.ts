@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -9,16 +10,19 @@ export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
 export interface ExtendsClauseableNode {
     getExtends(): ExpressionWithTypeArguments[];
-    addExtends(text: string, sourceFile?: SourceFile): this;
+    addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
         /**
-         * Gets the extends clauses
+         * Gets the extends clauses.
          */
         getExtends(): ExpressionWithTypeArguments[] {
-            const extendsClause = getHeritageClause(this, ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 
@@ -27,13 +31,35 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
          * @param text - Text to add for the extends clause.
          * @param sourceFile - Optional source file to help improve performance.
          */
-        addExtends(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+        addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+        addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+        addExtends(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+            return this.insertExtends(this.getExtends().length, text as any, sourceFile);
+        }
 
-            const extendsClause = getHeritageClause(this, ts.SyntaxKind.ExtendsKeyword);
-            if (extendsClause != null) {
-                sourceFile.insertText(extendsClause.getEnd(), `, ${text}`);
-                return this;
+        /**
+         * Inserts an extends clause.
+         * @param index - Index to insert at.
+         * @param text - Text to insert for the implements clause.
+         * @param sourceFile - Optional source file to help with performance.
+         */
+        insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+        insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+        insertExtends(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+            const length = text instanceof Array ? text.length : 0;
+            if (text instanceof Array) {
+                if (text.length === 0)
+                    return [];
+                text = text.join(", ");
+            }
+
+            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+            const extendsTypes = this.getExtends();
+            index = verifyAndGetIndex(index, extendsTypes.length);
+
+            if (extendsTypes.length > 0) {
+                insertIntoCommaSeparatedNodes(sourceFile, extendsTypes, index, text);
+                return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
             const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken);
@@ -48,13 +74,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 insertText = " " + insertText;
 
             sourceFile.insertText(openBraceStart, insertText);
-
-            return this;
+            return getNodeOrNodesToReturn(this.getExtends(), index, length);
         }
     };
-}
-
-function getHeritageClause(node: Node & HeritageClauseableNode, kind: ts.SyntaxKind) {
-    const heritageClauses = node.getHeritageClauses();
-    return heritageClauses.find(c => c.node.token === kind);
 }

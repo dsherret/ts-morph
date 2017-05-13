@@ -88,20 +88,6 @@ The value can be retrieved whether it is implicitly or explicitly defined:
 member.getValue(); // returns: number
 ```
 
-### Following comma
-
-Enum members may have a comma after them. You can check for that via:
-
-```typescript
-member.hasFollowingComma(); // returns: boolean
-```
-
-And get it via:
-
-```typescript
-member.getFollowingComma(); // returns: node | undefined
-```
-
 ### Remove a Member
 
 Call `remove()` on it:

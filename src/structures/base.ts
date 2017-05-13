@@ -13,3 +13,4 @@ export * from "./base/ScopedStructure";
 export * from "./base/ScopeableStructure";
 export * from "./base/StaticableStructure";
 export * from "./base/TypedStructure";
+export * from "./base/TypeParameteredStructure";

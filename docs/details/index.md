@@ -32,6 +32,7 @@ Common:
 * [Async](async)
 * [Decorators](decorators)
 * [Exports](exports)
+* [Following Comma](following-comma)
 * [Generators](generators)
 * [JS Docs](documentation)
 * [Modifiers](modifiers)

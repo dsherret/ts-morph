@@ -20,10 +20,13 @@ Will return [`ExpressionWithTypeArguments[]`](expressions):
 const extendsExpressions = interfaceDeclaration.getExtends();
 ```
 
-Add an extends expression:
+Add or insert extends expressions:
 
 ```typescript
 interfaceDeclaration.addExtends("Named");
+interfaceDeclaration.addExtends(["Named", "Aged"]);
+interfaceDeclaration.insertExtends(1, "Named");
+interfaceDeclaration.insertExtends(2, ["Named", "Aged"]);
 ```
 
 ### Method signatures

@@ -73,7 +73,7 @@ export function fillImplementsClauseableNodeFromStructure(
     structure: structures.ImplementsClauseableStructure
 ) {
     if (structure.implements != null && structure.implements.length > 0)
-        node.addImplements(structure.implements.join(", "), sourceFile);
+        node.addImplements(structure.implements, sourceFile);
 }
 
 export function fillExtendsClauseableNodeFromStructure(
@@ -82,5 +82,14 @@ export function fillExtendsClauseableNodeFromStructure(
     structure: structures.ExtendsClauseableStructure
 ) {
     if (structure.extends != null && structure.extends.length > 0)
-        node.addExtends(structure.extends.join(", "), sourceFile);
+        node.addExtends(structure.extends, sourceFile);
+}
+
+export function fillTypeParameteredNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.TypeParameteredNode,
+    structure: structures.TypeParameteredStructure
+) {
+    if (structure.typeParameters != null && structure.typeParameters.length > 0)
+        node.addTypeParameters(structure.typeParameters, sourceFile);
 }
