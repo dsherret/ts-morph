@@ -2,6 +2,12 @@
     private constructor() {
     }
 
+    static *getIterator<T>(a: T[]) {
+        for (const item of a) {
+            yield item;
+        }
+    }
+
     static isNullOrEmpty<T>(a: (T[] | undefined)): a is undefined {
         return !(a instanceof Array) || a.length === 0;
     }

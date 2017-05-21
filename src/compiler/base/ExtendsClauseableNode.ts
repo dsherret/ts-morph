@@ -54,20 +54,21 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
         insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertExtends(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
-            const length = text instanceof Array ? text.length : 0;
-            if (text instanceof Array) {
-                if (text.length === 0)
-                    return [];
-                text = text.join(", ");
+        insertExtends(index: number, texts: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+            const length = texts instanceof Array ? texts.length : 0;
+            if (typeof texts === "string") {
+                errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
+                texts = [texts];
+            }
+            else if (texts.length === 0) {
+                return [];
             }
 
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
             const extendsTypes = this.getExtends();
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(sourceFile, extendsTypes, index, text);
+                insertIntoCommaSeparatedNodes(sourceFile, extendsTypes, index, texts);
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
@@ -78,7 +79,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
-            let insertText = `extends ${text} `;
+            let insertText = `extends ${texts.join(", ")} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 

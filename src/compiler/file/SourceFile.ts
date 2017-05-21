@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
+import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {TypeChecker, Program, Diagnostic} from "./../tools";
-import {FileUtils} from "./../../utils";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -166,7 +167,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param nodesBeingRemoved
      */
     replaceNodesFromNewSourceFile(rangeStart: number, rangeEnd: number, differenceLength: number, tempSourceFile: SourceFile, nodesBeingRemoved: Node[]) {
-        // todo: clean up this method... this is very awful!
+        // todo: REMOVE... this method is awful. Better to use new manipulation functions
         const sourceFile = this;
         const currentSourceFile = this.node;
         // temp solution

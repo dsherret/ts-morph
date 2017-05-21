@@ -55,20 +55,21 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         insertImplements(index: number, text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertImplements(index: number, text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
-            const length = text instanceof Array ? text.length : 0;
-            if (text instanceof Array) {
-                if (text.length === 0)
-                    return [];
-                text = text.join(", ");
+        insertImplements(index: number, texts: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+            const length = texts instanceof Array ? texts.length : 0;
+            if (typeof texts === "string") {
+                errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
+                texts = [texts];
+            }
+            else if (texts.length === 0) {
+                return [];
             }
 
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
             const implementsTypes = this.getImplements();
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(sourceFile, implementsTypes, index, text);
+                insertIntoCommaSeparatedNodes(sourceFile, implementsTypes, index, texts);
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
@@ -79,7 +80,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
-            let insertText = `implements ${text} `;
+            let insertText = `implements ${texts.join(", ")} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 

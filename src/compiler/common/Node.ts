@@ -393,12 +393,30 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the child index of this node relative to the parent.
+     */
+    getChildIndex() {
+        const parent = this.getParentSyntaxList() || this.getParent();
+        if (parent == null)
+            throw new errors.InvalidOperationError("Node must have a parent in order to get the child index.");
+        let i = 0;
+        for (const child of parent.getChildren()) {
+            if (child === this)
+                return i;
+            i++;
+        }
+
+        /* istanbul ignore next */
+        throw new errors.NotImplementedError("For some reason the child's parent did not contain the child.");
+    }
+
+    /**
      * Gets the parent if it's a syntax list or throws an error otherwise.
      */
     getRequiredParentSyntaxList() {
         const parentSyntaxList = this.getParentSyntaxList();
         if (parentSyntaxList == null)
-            throw new Error("The parent must be a SyntaxList in order to do this operation.");
+            throw new errors.InvalidOperationError("The parent must be a SyntaxList in order to get the required parent syntax list.");
         return parentSyntaxList;
     }
 

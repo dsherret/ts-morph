@@ -1,4 +1,5 @@
 ﻿export * from "./errors/BaseError";
+export * from "./errors/ArgumentError";
 export * from "./errors/ArgumentNullOrWhitespaceError";
 export * from "./errors/ArgumentTypeError";
 export * from "./errors/DirectoryNotFoundError";

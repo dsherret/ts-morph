@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight, insertIntoSyntaxList} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
@@ -50,42 +50,37 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return typeParameters.map(t => this.factory.getTypeParameterDeclaration(t));
         }
 
-        addTypeParameter(structure: TypeParameterStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        addTypeParameter(structure: TypeParameterStructure, sourceFile = this.getRequiredSourceFile()) {
             return this.insertTypeParameter(getEndIndexFromArray(this.node.typeParameters), structure, sourceFile);
         }
 
-        addTypeParameters(structures: TypeParameterStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        addTypeParameters(structures: TypeParameterStructure[], sourceFile = this.getRequiredSourceFile()) {
             return this.insertTypeParameters(getEndIndexFromArray(this.node.typeParameters), structures, sourceFile);
         }
 
-        insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            this.insertTypeParameters(index, [structure], sourceFile);
-            return this.getTypeParameters()[index];
+        insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile = this.getRequiredSourceFile()) {
+            return this.insertTypeParameters(index, [structure], sourceFile)[0];
         }
 
-        insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile = this.getRequiredSourceFile()) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
             const typeParameters = this.getTypeParameters();
-            const code = getStructuresCode(structures);
+            const typeParamCodes = structures.map(s => getStructureCode(s));
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
                 const insertPos = getNamedNode(this).getNameNode().getEnd();
-                sourceFile.insertText(insertPos, `<${code}>`);
+                insertStraight(sourceFile, insertPos, `<${typeParamCodes.join(", ")}>`);
             }
             else {
-                insertIntoCommaSeparatedNodes(sourceFile, typeParameters, index, code);
+                insertIntoCommaSeparatedNodes(sourceFile, typeParameters, index, typeParamCodes);
             }
 
             return this.getTypeParameters().splice(index, index + structures.length);
         }
     };
-}
-
-function getStructuresCode(structures: TypeParameterStructure[]) {
-    return structures.map(s => getStructureCode(s)).join(", ");
 }
 
 function getStructureCode(structure: TypeParameterStructure) {

@@ -54,3 +54,11 @@ for (const arg of callExpression.arguments) {
     // use arg here
 }
 ```
+
+### Adding decorators
+
+todo
+
+### Inserting decorators
+
+todo
