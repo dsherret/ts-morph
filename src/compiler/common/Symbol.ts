@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
 import {Node} from "./../common";
-import {TypeChecker} from "./../tools";
 import {Type} from "./../type";
 
 export class Symbol {

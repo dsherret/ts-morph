@@ -4,7 +4,6 @@ import {getSymbolByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
 import {Signature} from "./../common/Signature";
-import {TypeChecker} from "./../tools";
 
 export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight, insertIntoSyntaxList} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";

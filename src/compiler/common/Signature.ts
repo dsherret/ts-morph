@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {CompilerFactory} from "./../../factories";
-import {Node} from "./../common";
 
 export class Signature {
     /** @internal */

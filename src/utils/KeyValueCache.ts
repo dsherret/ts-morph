@@ -1,9 +1,4 @@
-﻿interface KeyValueCacheItem<T, U> {
-    key: T;
-    value: U;
-}
-
-export class KeyValueCache<T, U> {
+﻿export class KeyValueCache<T, U> {
     private readonly cacheItems = new Map<T, U>();
 
     getEntries() {

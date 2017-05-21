@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
+import {SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {SourceFile} from "./../file";
 import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
 
 /**
@@ -23,7 +23,7 @@ export class Diagnostic {
     /**
      * Gets the source file.
      */
-    getSourceFile() {
+    getSourceFile(): SourceFile {
         return this.factory.getSourceFile(this.diagnostic.file);
     }
 

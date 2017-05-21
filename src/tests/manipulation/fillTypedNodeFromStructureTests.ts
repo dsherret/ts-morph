@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, TypeAliasDeclaration} from "./../../compiler";
+import {TypeAliasDeclaration} from "./../../compiler";
 import {TypedStructure} from "./../../structures";
 import {getInfoFromText} from "./../compiler/testHelpers";
 import {fillTypedNodeFromStructure} from "./../../manipulation/fillMixinFunctions";

@@ -8,7 +8,6 @@ import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
-import {TypeChecker} from "./../tools";
 import {Symbol} from "./Symbol";
 
 export class Node<NodeType extends ts.Node = ts.Node> {

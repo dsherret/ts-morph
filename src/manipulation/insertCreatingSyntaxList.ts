@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
-import {ArrayUtils} from "./../utils";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
 export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: number, newText: string) {

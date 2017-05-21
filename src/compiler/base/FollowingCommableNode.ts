@@ -1,7 +1,5 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 
 export interface FollowingCommableNode {
     /**

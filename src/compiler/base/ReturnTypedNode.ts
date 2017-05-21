@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {TypeChecker} from "./../tools";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";

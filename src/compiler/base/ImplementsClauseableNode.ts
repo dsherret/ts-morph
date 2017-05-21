@@ -5,7 +5,6 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
-import {TypeParameteredNode} from "./TypeParameteredNode";
 
 export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 

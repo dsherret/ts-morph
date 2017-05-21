@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, InterfaceDeclaration} from "./../../compiler";
+import {InterfaceDeclaration} from "./../../compiler";
 import {ExtendsClauseableStructure} from "./../../structures";
 import {getInfoFromText} from "./../compiler/testHelpers";
 import {fillExtendsClauseableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";

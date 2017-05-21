@@ -3,7 +3,7 @@ import * as errors from "./../../errors";
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
-import {TypeChecker, Program, Diagnostic} from "./../tools";
+import {Diagnostic} from "./../tools";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -70,9 +70,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the compiler diagnostics.
      * @param program - Optional program.
      */
-    getDiagnostics(program: Program = this.factory.getLanguageService().getProgram()): Diagnostic[] {
+    getDiagnostics(): Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(program.getCompilerProgram(), this.getCompilerNode());
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getLanguageService().getProgram().getCompilerProgram(), this.getCompilerNode());
         return compilerDiagnostics.map(d => this.factory.getDiagnostic(d));
     }
 

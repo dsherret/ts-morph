@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, InterfaceDeclaration, PropertyDeclaration} from "./../../compiler";
+import {InterfaceDeclaration, PropertyDeclaration} from "./../../compiler";
 import {QuestionTokenableStructure} from "./../../structures";
 import {getInfoFromText} from "./../compiler/testHelpers";
 import {fillQuestionTokenableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";

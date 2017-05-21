@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, ClassDeclaration} from "./../../compiler";
+import {ClassDeclaration} from "./../../compiler";
 import {AbstractableStructure} from "./../../structures";
 import {getInfoFromText} from "./../compiler/testHelpers";
 import {fillAbstractableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";

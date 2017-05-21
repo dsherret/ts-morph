@@ -1,10 +1,11 @@
 var gulp = require("gulp");
 var del = require("del");
+var tslint = require("tslint");
 var mocha = require("gulp-mocha");
 var istanbul = require("gulp-istanbul");
 var ts = require("gulp-typescript");
 var filter = require("gulp-filter");
-var tslint = require("gulp-tslint");
+var gulpTslint = require("gulp-tslint");
 var replace = require("gulp-replace");
 var sourcemaps = require("gulp-sourcemaps");
 var p = require("./package.json");
@@ -48,9 +49,10 @@ gulp.task("test", ["pre-test"], function() {
 });
 
 gulp.task("tslint", function() {
+    //var program = tslint.Linter.createProgram("./tsconfig.json"); // doesn't seem to work well
     return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts", "./code-generation/**/*.ts"])
-        .pipe(tslint({ formatter: "verbose" }))
-        .pipe(tslint.report());
+        .pipe(gulpTslint({ formatter: "verbose", /*program*/ }))
+        .pipe(gulpTslint.report());
 });
 
 gulp.task("watch", function() {

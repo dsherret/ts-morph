@@ -4,7 +4,6 @@ import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
-import {TypeChecker} from "./../tools";
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 

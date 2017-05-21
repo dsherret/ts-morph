@@ -34,8 +34,8 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: {
     return { tsSimpleAst, sourceFile, firstChild };
 }
 
-function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile, program: Program) {
-    const diagnostics = sourceFile.getDiagnostics(program).filter(checkAllowDiagnostic);
+function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile) {
+    const diagnostics = sourceFile.getDiagnostics().filter(checkAllowDiagnostic);
     if (diagnostics.length === 0)
         return;
 

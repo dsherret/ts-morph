@@ -1,7 +1,5 @@
-﻿import * as ts from "typescript";
-import * as errors from "./../errors";
+﻿import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
-import {ArrayUtils} from "./../utils";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
 /**
