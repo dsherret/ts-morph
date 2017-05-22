@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {insertStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 
@@ -49,7 +50,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             }
             else {
                 const insertPos = getAsteriskInsertPosition(this, sourceFile);
-                sourceFile.insertText(insertPos, "*");
+                insertStraight(sourceFile, insertPos, "*");
             }
 
             return this;

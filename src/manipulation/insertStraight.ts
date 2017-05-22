@@ -24,8 +24,9 @@ export function insertStraight(sourceFile: SourceFile, insertPos: number, newTex
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting straight.", currentNode, newNode));
 
         for (const newNodeChild of newNode.getChildren(tempSourceFile)) {
-            const newNodeChildPos = newNodeChild.getPos();
-            if (newNodeChildPos >= insertPos && newNodeChildPos < endPos)
+            // todo: is getStart slow? Maybe something could be added or changed here for performance reasons
+            const newNodeChildStart = newNodeChild.getStart(tempSourceFile);
+            if (newNodeChildStart >= insertPos && newNodeChildStart < endPos)
                 continue;
 
             handleNode(newNodeChild);

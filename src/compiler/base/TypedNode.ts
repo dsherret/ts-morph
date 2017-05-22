@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
@@ -39,35 +40,35 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
             const separatorNode = this.getFirstChildByKind(separatorSyntaxKind);
             const typeNode = this.getTypeNode();
-            sourceFile.removeNodes(separatorNode, typeNode);
+            const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
+
+            // sourceFile.removeNodes(separatorNode, typeNode);
+
+            let insertPosition: number;
+            let insertText = "";
+
+            if (separatorNode == null)
+                insertText += separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ";
+
+            if (typeNode == null) {
+                const identifier = this.getFirstChildByKind(ts.SyntaxKind.Identifier);
+                /* istanbul ignore if */
+                if (identifier == null)
+                    throw new errors.NotImplementedError("Unexpected: Could not find identifier.");
+                insertPosition = identifier.getEnd();
+            }
+            else {
+                insertPosition = typeNode.getStart();
+            }
+
+            insertText += text;
 
             // insert new type
-            const insertPosition = getTypeInsertPositionForNode(this, sourceFile);
-            const separatorText = separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " =" : ":";
-            sourceFile.insertText(insertPosition, separatorText + " " + text);
+            replaceStraight(sourceFile, insertPosition, replaceLength, insertText);
 
             return this;
         }
     };
-}
-
-function getTypeInsertPositionForNode(node: Node, sourceFile: SourceFile) {
-    if (node.isInitializerExpressionableNode()) {
-        const initializer = node.getInitializer();
-        if (initializer != null) {
-            const equalsToken = initializer.getPreviousSibling();
-            /* istanbul ignore if */
-            if (equalsToken == null || equalsToken.getKind() !== ts.SyntaxKind.EqualsToken)
-                throw new errors.NotImplementedError("Not implemented scenario where the initializer doesn't have an equals token preceeding it.");
-            return equalsToken.getPos();
-        }
-    }
-
-    const lastToken = node.getLastToken(sourceFile);
-    if (lastToken.getKind() === ts.SyntaxKind.SemicolonToken)
-        return lastToken.getStart();
-
-    return node.getEnd();
 }
 
 function getSeparatorSyntaxKindForNode(node: Node) {

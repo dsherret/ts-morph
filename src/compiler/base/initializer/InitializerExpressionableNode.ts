@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../../errors";
+import {insertStraight} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
 import {SourceFile} from "./../../file";
 
@@ -57,7 +58,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (this.hasInitializer())
                 this.removeInitializer(sourceFile);
 
-            sourceFile.insertText(this.getEnd(), ` = ${text}`);
+            insertStraight(sourceFile, this.getEnd(), ` = ${text}`);
             return this;
         }
     };

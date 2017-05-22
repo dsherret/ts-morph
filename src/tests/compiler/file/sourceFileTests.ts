@@ -71,24 +71,6 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertText), () => {
-        describe("adding a source file child", () => {
-            const {sourceFile} = getInfoFromText("    ");
-            sourceFile.insertText(2, "  enum MyEnum {}  ");
-            it("should update the source file text", () => {
-                expect(sourceFile.getFullText()).to.equal("    enum MyEnum {}    ");
-            });
-        });
-
-        describe("adding a child", () => {
-            const {sourceFile} = getInfoFromText("enum MyEnum {}");
-            sourceFile.insertText(13, "\n    myNewMember\n");
-            it("should update the source file text", () => {
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myNewMember\n}");
-            });
-        });
-    });
-
     describe(nameof<SourceFile>(n => n.isSourceFile), () => {
         const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
         it("should return true for the source file", () => {

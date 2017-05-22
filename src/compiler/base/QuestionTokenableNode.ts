@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {insertStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 
@@ -46,7 +47,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 if (colonNode == null)
                     throw new errors.NotImplementedError("Scenario not implemented. Could not find colon token.");
 
-                sourceFile.insertText(colonNode.getStart(), "?");
+                insertStraight(sourceFile, colonNode.getStart(), "?");
             }
             else
                 sourceFile.removeNodes(questionTokenNode);

@@ -234,6 +234,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the width of the node (length without trivia).
+     */
+    getWidth(sourceFile?: SourceFile) {
+        return this.node.getWidth(Node.getCompilerSourceFile(sourceFile));
+    }
+
+    /**
+     * Gets the full width of the node (length with trivia).
+     */
+    getFullWidth() {
+        return this.node.getFullWidth();
+    }
+
+    /**
      * Gets the text without leading trivia.
      * @param sourceFile - Optional source file to help improve performance.
      */

@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {insertStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
@@ -50,8 +51,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             /* istanbul ignore if */
             if (closeParenToken == null)
                 throw new errors.NotImplementedError("Expected a close parenthesis to be a child of the return typed node.");
-            const insertPosition = closeParenToken.getEnd();
-            sourceFile.insertText(insertPosition, ": " + text);
+
+            insertStraight(sourceFile, closeParenToken.getEnd(), `: ${text}`);
 
             return this;
         }

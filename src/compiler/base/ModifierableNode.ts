@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
@@ -92,13 +93,17 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (hasModifier)
                 return this.getModifiers().find(m => m.getText(sourceFile) === text) as Node<ts.Modifier>;
 
-            // get insert position
+            // get insert position & index
             let insertPos = this.getStart();
+            let insertIndex = 0;
             getAddAfterModifierTexts(text).forEach(addAfterText => {
-                for (const modifier of modifiers) {
+                for (let i = 0; i < modifiers.length; i++) {
+                    const modifier = modifiers[i];
                     if (modifier.getText(sourceFile) === addAfterText) {
-                        if (insertPos < modifier.getEnd())
+                        if (insertPos < modifier.getEnd()) {
                             insertPos = modifier.getEnd();
+                            insertIndex = i + 1;
+                        }
                         break;
                     }
                 }
@@ -118,7 +123,10 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             }
 
             // insert
-            sourceFile.insertText(insertPos, insertText);
+            if (modifiers.length === 0)
+                insertCreatingSyntaxList(sourceFile, insertPos, insertText);
+            else
+                insertIntoSyntaxList(sourceFile, insertPos, insertText, modifiers[0].getRequiredParentSyntaxList(), insertIndex, 1);
 
             return this.getModifiers().find(m => m.getStart(sourceFile) === startPos) as Node<ts.Modifier>;
         }

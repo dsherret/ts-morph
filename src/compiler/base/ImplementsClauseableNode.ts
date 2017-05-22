@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
-import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
+import {HeritageClause} from "./../general";
 import {SourceFile} from "./../file";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
@@ -41,8 +42,8 @@ export interface ImplementsClauseableNode {
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
     return class extends Base implements ImplementsClauseableNode {
-        getImplements(): ExpressionWithTypeArguments[] {
-            const implementsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
+        getImplements(heritageClauses: HeritageClause[] = this.getHeritageClauses()): ExpressionWithTypeArguments[] {
+            const implementsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
@@ -64,7 +65,8 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 return [];
             }
 
-            const implementsTypes = this.getImplements();
+            const heritageClauses = this.getHeritageClauses();
+            const implementsTypes = this.getImplements(heritageClauses);
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
@@ -83,7 +85,12 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             if (!isLastSpace)
                 insertText = " " + insertText;
 
-            sourceFile.insertText(openBraceStart, insertText);
+            // assumes there can only be another extends heritage clause
+            if (heritageClauses.length === 0)
+                insertCreatingSyntaxList(sourceFile, openBraceStart, insertText);
+            else
+                insertIntoSyntaxList(sourceFile, openBraceStart, insertText, heritageClauses[0].getRequiredParentSyntaxList(), 1, 1);
+
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
         }
     };

@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -64,7 +65,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (!isLastSpace)
             insertText = " " + insertText;
 
-        sourceFile.insertText(insertPos, insertText);
+        if (implementsClause == null)
+            insertCreatingSyntaxList(sourceFile, insertPos, insertText);
+        else
+            insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getRequiredParentSyntaxList(), 0, 1);
     }
 
     /**

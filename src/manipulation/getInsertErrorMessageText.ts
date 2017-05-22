@@ -1,5 +1,6 @@
 ﻿import {Node} from "./../compiler";
 
+/* istanbul ignore next */
 export function getInsertErrorMessageText(preText: string, currentNode: Node, newNode: Node) {
     let text = `${preText} Perhaps a syntax error was inserted (Current: ${currentNode.getKindName()} -- New: ${newNode.getKindName()}).\n\nCode:\n`;
     const sourceFileText = newNode.getRequiredSourceFile().getFullText();

@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -83,7 +83,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             if (!isLastSpace)
                 insertText = " " + insertText;
 
-            sourceFile.insertText(openBraceStart, insertText);
+            insertCreatingSyntaxList(sourceFile, openBraceStart, insertText);
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
         }
     };
