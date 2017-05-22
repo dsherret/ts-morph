@@ -14,6 +14,9 @@ export interface InsertIntoBracesOrSourceFileOptions {
     separator: string;
 }
 
+/**
+ * Used to insert non-comma separated nodes into braces or a source file.
+ */
 export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
     const {languageService, sourceFile, parent, index, childCodes, separator, children} = opts;
 
@@ -24,6 +27,8 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
         code = separator + code;
     else if (insertPos !== 0)
         code = languageService.getNewLine() + code;
+    else if (sourceFile.getFullWidth() > 0)
+        code = code + separator;
 
     insertIntoSyntaxList(sourceFile, insertPos, code, parent.getRequiredChildSyntaxList(sourceFile), index, childCodes.length);
 }

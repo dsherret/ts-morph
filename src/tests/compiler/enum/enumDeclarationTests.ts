@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
-import {EnumDeclaration} from "./../../../compiler";
+import {EnumDeclaration, EnumMember} from "./../../../compiler";
+import {EnumMemberStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -26,37 +27,27 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.addMember), () => {
+        function doTest(startCode: string, structure: EnumMemberStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startCode);
+            const result = firstChild.addMember(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(EnumMember);
+        }
+
         it("should add a member without a value", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {\n}\n");
-            firstChild.addMember({
-                name: "myName"
-            });
-            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myName\n}\n");
+            doTest("enum MyEnum {\n}\n", { name: "myName" }, "enum MyEnum {\n    myName\n}\n");
         });
 
         it("should add a member with a value", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {\n}\n");
-            firstChild.addMember({
-                name: "myName",
-                value: 5
-            });
-            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myName = 5\n}\n");
+            doTest("enum MyEnum {\n}\n", { name: "myName", value: 5 }, "enum MyEnum {\n    myName = 5\n}\n");
         });
 
         it("should add a member and add a comma to the last member when no comma exists", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {\n    member1\n}\n");
-            firstChild.addMember({
-                name: "member2"
-            });
-            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    member1,\n    member2\n}\n");
+            doTest("enum MyEnum {\n    member1\n}\n", { name: "member2" }, "enum MyEnum {\n    member1,\n    member2\n}\n");
         });
 
         it("should add a member and not add a comma to the last member when a comma exists", () => {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {\n    member1,\n}\n");
-            firstChild.addMember({
-                name: "member2"
-            });
-            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    member1,\n    member2\n}\n");
+            doTest("enum MyEnum {\n    member1,\n}\n", { name: "member2" }, "enum MyEnum {\n    member1,\n    member2\n}\n");
         });
     });
 
