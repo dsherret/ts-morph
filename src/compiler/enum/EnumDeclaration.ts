@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
-import * as structures from "./../../structures";
+import {EnumMemberStructure} from "./../../structures";
+import {insertIntoSyntaxList, insertStraight, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
@@ -13,40 +14,90 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structure - Structure of the enum.
      * @param sourceFile - Optional source file to help with performance.
      */
-    addMember(structure: structures.EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    addMember(structure: EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        return this.addMembers([structure], sourceFile)[0];
+    }
+
+    /**
+     * Adds members to the enum.
+     * @param structures - Structures of the enums.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    addMembers(structures: EnumMemberStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        return this.insertMembers(this.getMembers().length, structures, sourceFile);
+    }
+
+    /**
+     * Inserts a member to the enum.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the enum.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    insertMember(index: number, structure: EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        return this.insertMembers(index, [structure], sourceFile)[0];
+    }
+
+    /**
+     * Inserts members to an enum.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the enums.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    insertMembers(index: number, structures: EnumMemberStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
         const members = this.getMembers();
-        const lastMember = members.length === 0 ? null : members[members.length - 1];
-        const lastMemberEndsWithComma = lastMember != null && lastMember.hasFollowingComma();
+        index = verifyAndGetIndex(index, members.length);
+
+        if (structures.length === 0)
+            return [];
+
+        const previousMember: EnumMember | undefined = members[index - 1];
+        const previousMemberComma = previousMember == null ? undefined : previousMember.getFollowingComma();
+        const nextMember: EnumMember | undefined = members[index];
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
+        const syntaxList = this.getRequiredChildSyntaxList();
+        const syntaxListChildren = syntaxList.getChildren();
+        const insertChildIndex = previousMember == null ? 0 : syntaxListChildren.indexOf(previousMemberComma || previousMember) + 1;
 
-        // create member text
-        let memberText = "";
-        if (lastMember != null && !lastMemberEndsWithComma)
-            memberText += ",";
-        memberText += `${newLineChar}${indentationText}${structure.name}`;
+        // create member code
+        let numberChildren = 1;
+        let code = "";
+        if (previousMember != null && previousMemberComma == null) {
+            code += ",";
+            numberChildren++;
+        }
+        code += `${newLineChar}${getMemberText(structures[0])}`;
+        for (const structure of structures.slice(1)) {
+            code += `,${newLineChar}${getMemberText(structure)}`;
+            numberChildren += 2;
+        }
+        if (nextMember != null) {
+            code += ",";
+            numberChildren++;
+        }
+
+        function getMemberText(structure: EnumMemberStructure) {
+            let memberText = `${indentationText}${structure.name}`;
+            if (typeof structure.value !== "undefined")
+                memberText += ` = ${structure.value}`;
+            return memberText;
+        }
 
         // get the insert position
         let insertPos: number;
-        if (lastMember == null)
+        if (previousMember == null)
             insertPos = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile)!.getEnd();
-        else if (lastMemberEndsWithComma)
-            insertPos = lastMember.getFollowingComma()!.getEnd();
+        else if (previousMemberComma == null)
+            insertPos = previousMember.getEnd();
         else
-            insertPos = lastMember.getEnd();
+            insertPos = previousMember.getFollowingComma()!.getEnd();
 
         // insert
-        sourceFile.insertText(insertPos, memberText);
+        insertIntoSyntaxList(sourceFile, insertPos, code, syntaxList, insertChildIndex, numberChildren);
 
-        // get the member
+        // get the members
         const newMembers = this.getMembers();
-        const declaration = newMembers[newMembers.length - 1] as EnumMember;
-
-        // add any other properties to it
-        if (structure.value != null)
-            declaration.setInitializer(structure.value.toString());
-
-        return declaration;
+        return newMembers.slice(index, index + structures.length) as EnumMember[];
     }
 
     /**

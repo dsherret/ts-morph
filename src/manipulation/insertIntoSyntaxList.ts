@@ -12,7 +12,7 @@ import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
  * @param insertItemsCount - Number of items to insert.
  */
 export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, newText: string, syntaxList: Node, childIndex: number, insertItemsCount: number) {
-    const syntaxListChildren = Array.from(syntaxList.getChildren(sourceFile));
+    const syntaxListChildren = syntaxList.getChildren(sourceFile);
     const syntaxListParent = syntaxList.getParent();
 
     if (childIndex < 0 || childIndex > syntaxListChildren.length)

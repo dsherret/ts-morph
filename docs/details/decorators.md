@@ -55,10 +55,6 @@ for (const arg of callExpression.arguments) {
 }
 ```
 
-### Adding decorators
+### Add/Insert decorators
 
-todo
-
-### Inserting decorators
-
-todo
+Decorators can be added or inserted by calling `addDecorator()

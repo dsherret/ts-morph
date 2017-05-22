@@ -202,12 +202,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the child syntax list if it exists.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()): Node | undefined {
         let node: Node = this;
         if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
             node = this.getBody();
 
-        return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList, sourceFile);
+        if (node.isSourceFile() || this.isFunctionDeclaration() || this.isNamespaceDeclaration())
+            return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList);
+
+        let passedBrace = false;
+        for (const child of node.getChildrenIterator()) {
+            if (!passedBrace)
+                passedBrace = child.getKind() === ts.SyntaxKind.FirstPunctuation;
+            else if (child.getKind() === ts.SyntaxKind.SyntaxList)
+                return child;
+        }
+
+        return undefined;
     }
 
     /**
