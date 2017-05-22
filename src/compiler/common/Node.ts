@@ -83,17 +83,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the first child by syntax kind.
      * @param kind - Syntax kind.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChildByKind(kind: ts.SyntaxKind) {
-        return this.getFirstChild(child => child.getKind() === kind);
+    getFirstChildByKind(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        return this.getFirstChild(child => child.getKind() === kind, sourceFile);
     }
 
     /**
      * Gets the first child by a condition.
      * @param condition - Condition.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChild(condition: (node: Node) => boolean) {
-        for (const child of this.getChildren()) {
+    getFirstChild(condition: (node: Node) => boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        for (const child of this.getChildren(sourceFile)) {
             if (condition(child))
                 return child;
         }
@@ -155,7 +157,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
     }
 
-    *getChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
+    getChildren(sourceFile = this.getRequiredSourceFile()): Node[] {
+        return this.node.getChildren(sourceFile.getCompilerNode()).map(n => this.factory.getNodeFromCompilerNode(n));
+    }
+
+    /**
+     * @internal
+     */
+    *getChildrenIterator(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
         for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
             yield this.factory.getNodeFromCompilerNode(compilerChild);
         }
@@ -179,26 +188,35 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the main children of a kind.
-     * @internal
+     * Gets the child syntax list, requiring it exists.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    getMainChildrenOfKind<TInstance extends Node>(kind: ts.SyntaxKind) {
-        let node = this as Node;
-        if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
-            node = this.getBody();
-        return node.getMainChildren().filter(c => c.getKind() === kind) as TInstance[];
+    getRequiredChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        const syntaxList = this.getChildSyntaxList(sourceFile);
+        if (syntaxList == null)
+            throw new errors.InvalidOperationError("A child syntax list is expected in order to get the required child syntax list.");
+        return syntaxList;
     }
 
     /**
-     * Gets the main children.
-     * @internal
+     * Gets the child syntax list if it exists.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    getMainChildren() {
-        const childNodes: Node[] = [];
-        ts.forEachChild(this.node, childNode => {
-            childNodes.push(this.factory.getNodeFromCompilerNode(childNode));
-        });
-        return childNodes;
+    getChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        let node: Node = this;
+        if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
+            node = this.getBody();
+
+        return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList, sourceFile);
+    }
+
+    /**
+     * Gets the children based on a kind.
+     * @param kind - Syntax kind.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        return this.getChildren(sourceFile).filter(c => c.getKind() === kind) as T[];
     }
 
     *getAllChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {

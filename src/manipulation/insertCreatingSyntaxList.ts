@@ -16,8 +16,8 @@ export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: numb
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error creating syntax list!", currentNode, newNode));
 
-        const currentNodeChildren = currentNode.getChildren(sourceFile);
-        const newNodeChildren = newNode.getChildren(tempSourceFile);
+        const currentNodeChildren = currentNode.getChildrenIterator(sourceFile);
+        const newNodeChildren = newNode.getChildrenIterator(tempSourceFile);
         let currentNodeChildIteratorResult = currentNodeChildren.next();
 
         for (const newNodeChild of newNodeChildren) {

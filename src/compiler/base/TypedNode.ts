@@ -38,7 +38,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         setType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
-            const separatorNode = this.getFirstChildByKind(separatorSyntaxKind);
+            const separatorNode = this.getFirstChildByKind(separatorSyntaxKind, sourceFile);
             const typeNode = this.getTypeNode();
             const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
 
@@ -51,7 +51,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
                 insertText += separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ";
 
             if (typeNode == null) {
-                const identifier = this.getFirstChildByKind(ts.SyntaxKind.Identifier);
+                const identifier = this.getFirstChildByKind(ts.SyntaxKind.Identifier, sourceFile);
                 /* istanbul ignore if */
                 if (identifier == null)
                     throw new errors.NotImplementedError("Unexpected: Could not find identifier.");

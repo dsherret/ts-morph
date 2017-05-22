@@ -60,7 +60,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 
 function getAsteriskInsertPosition(node: Node, sourceFile: SourceFile) {
     if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
-        const funcKeyword = node.getFirstChildByKind(ts.SyntaxKind.FunctionKeyword);
+        const funcKeyword = node.getFirstChildByKind(ts.SyntaxKind.FunctionKeyword, sourceFile);
         /* istanbul ignore if */
         if (funcKeyword == null)
             throw new errors.NotImplementedError("Expected a function keyword within the function declaration.");

@@ -41,7 +41,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
-                const colonNode = this.getFirstChildByKind(ts.SyntaxKind.ColonToken);
+                const colonNode = this.getFirstChildByKind(ts.SyntaxKind.ColonToken, sourceFile);
 
                 /* istanbul ignore if */
                 if (colonNode == null)

@@ -52,10 +52,11 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
 
     /**
      * Gets the namespace or module keyword.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    getDeclarationTypeKeyword() {
+    getDeclarationTypeKeyword(sourceFile: SourceFile = this.getRequiredSourceFile()) {
         return this.getFirstChild(child =>
             child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
-            child.getKind() === ts.SyntaxKind.ModuleKeyword);
+            child.getKind() === ts.SyntaxKind.ModuleKeyword, sourceFile);
     }
 }

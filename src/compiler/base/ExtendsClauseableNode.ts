@@ -72,7 +72,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken);
+            const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile);
             /* istanbul ignore if */
             if (openBraceToken == null)
                 throw new errors.InvalidOperationError("Could not found open brace token.");

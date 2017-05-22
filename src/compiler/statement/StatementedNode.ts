@@ -1,8 +1,10 @@
 import * as ts from "typescript";
 import * as errors from "./../../errors";
 import * as structures from "./../../structures";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
+import {SourceFile} from "./../file";
 import * as classes from "./../class";
 import * as enums from "./../enum";
 import * as functions from "./../function";
@@ -13,6 +15,8 @@ import * as variable from "./../variable";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
 
+// todo: most of these should accept an optional sourceFile
+
 export interface StatementedNode {
     /**
      * Gets the body node or returns the source file if a source file.
@@ -21,8 +25,29 @@ export interface StatementedNode {
     /**
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    addEnum(structure: structures.EnumStructure): enums.EnumDeclaration;
+    addEnum(structure: structures.EnumStructure, sourceFile?: SourceFile): enums.EnumDeclaration;
+    /**
+     * Adds enum declarations as a child.
+     * @param structures - Structures of the enum declarations to add.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    addEnums(structures: structures.EnumStructure[], sourceFile?: SourceFile): enums.EnumDeclaration[];
+    /**
+     * Inserts an enum declaration as a child.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the enum declaration to insert.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    insertEnum(index: number, structure: structures.EnumStructure, sourceFile?: SourceFile): enums.EnumDeclaration;
+    /**
+     * Inserts enum declarations as a child.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the enum declarations to insert.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    insertEnums(index: number, structures: structures.EnumStructure[], sourceFile?: SourceFile): enums.EnumDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
@@ -160,35 +185,36 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 throw this.getNotImplementedError();
         }
 
-        /** @internal */
-        getInsertPosition() {
-            if (this.isSourceFile())
-                return this.getEnd();
-            else
-                return this.getBody().getEnd() - 1;
+        addEnum(structure: structures.EnumStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+            return this.addEnums([structure], sourceFile)[0];
         }
 
-        addEnum(structure: structures.EnumStructure): enums.EnumDeclaration {
-            const sourceFile = this.getRequiredSourceFile();
+        addEnums(structures: structures.EnumStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+            return this.insertEnums(this.getRequiredChildSyntaxList(sourceFile).getChildren(sourceFile).length, structures, sourceFile);
+        }
+
+        insertEnum(index: number, structure: structures.EnumStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+            return this.insertEnums(index, [structure], sourceFile)[0];
+        }
+
+        insertEnums(index: number, structures: structures.EnumStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText(sourceFile);
-            this.appendNewLineSeparatorIfNecessary(sourceFile);
-            const text = `${indentationText}enum ${structure.name} {${newLineChar}${indentationText}}${newLineChar}`;
-            sourceFile.insertText(this.getInsertPosition(), text);
+            const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
+            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(sourceFile, index, texts, ts.SyntaxKind.EnumDeclaration);
 
-            const enumDeclarations = this.getEnums();
-            const declaration = enumDeclarations[enumDeclarations.length - 1];
-
-            declaration.setIsConstEnum(structure.isConst || false);
-            for (const member of structure.members || []) {
-                declaration.addMember(member);
+            for (let i = 0; i < newChildren.length; i++) {
+                const newChild = newChildren[i];
+                for (const member of structures[i].members || []) {
+                    newChild.addMember(member);
+                }
             }
 
-            return declaration;
+            return newChildren;
         }
 
         getClasses(): classes.ClassDeclaration[] {
-            return this.getMainChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
         }
 
         getClass(name: string): classes.ClassDeclaration | undefined;
@@ -198,7 +224,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): enums.EnumDeclaration[] {
-            return this.getMainChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
         }
 
         getEnum(name: string): enums.EnumDeclaration | undefined;
@@ -208,7 +234,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): functions.FunctionDeclaration[] {
-            return this.getMainChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
         }
 
         getFunction(name: string): functions.FunctionDeclaration | undefined;
@@ -218,7 +244,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): interfaces.InterfaceDeclaration[] {
-            return this.getMainChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
         }
 
         getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
@@ -228,7 +254,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): namespaces.NamespaceDeclaration[] {
-            return this.getMainChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
         }
 
         getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
@@ -238,7 +264,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getTypeAliases(): types.TypeAliasDeclaration[] {
-            return this.getMainChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
@@ -248,7 +274,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatements(): variable.VariableStatement[] {
-            return this.getMainChildrenOfKind<variable.VariableStatement>(ts.SyntaxKind.VariableStatement);
+            return this.getRequiredChildSyntaxList().getChildrenOfKind<variable.VariableStatement>(ts.SyntaxKind.VariableStatement);
         }
 
         getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined {
@@ -278,5 +304,41 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
+
+        private _insertMainChildren<T extends Node>(sourceFile: SourceFile, index: number, childCodes: string[], expectedSyntaxKind: ts.SyntaxKind) {
+            const syntaxList = this.getRequiredChildSyntaxList();
+            const mainChildren = syntaxList.getChildren();
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            index = verifyAndGetIndex(index, mainChildren.length);
+
+            // insert
+            insertIntoBracesOrSourceFile({
+                languageService: this.factory.getLanguageService(),
+                sourceFile,
+                parent: this as any as Node,
+                children: mainChildren,
+                index,
+                childCodes,
+                separator: newLineChar + newLineChar
+            });
+            this.appendNewLineSeparatorIfNecessary(sourceFile);
+
+            // get children
+            const newMainChildren = syntaxList.getChildren();
+            const children = newMainChildren.slice(index, index + childCodes.length);
+            for (const child of children) {
+                if (child.getKind() !== expectedSyntaxKind)
+                    throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${ts.SyntaxKind[expectedSyntaxKind]}` +
+                        `, but ${child.getKindName()} was inserted.`);
+            }
+            return children as T[];
+        }
     };
+}
+
+function getInsertPosition(node: StatementedNode & Node) {
+    if (node.isSourceFile())
+        return node.getEnd();
+    else
+        return node.getBody().getEnd() - 1;
 }

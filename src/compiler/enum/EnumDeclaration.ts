@@ -11,8 +11,9 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
+     * @param sourceFile - Optional source file to help with performance.
      */
-    addMember(structure: structures.EnumMemberStructure) {
+    addMember(structure: structures.EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
         const members = this.getMembers();
         const lastMember = members.length === 0 ? null : members[members.length - 1];
         const lastMemberEndsWithComma = lastMember != null && lastMember.hasFollowingComma();
@@ -28,14 +29,14 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // get the insert position
         let insertPos: number;
         if (lastMember == null)
-            insertPos = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getEnd();
+            insertPos = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile)!.getEnd();
         else if (lastMemberEndsWithComma)
             insertPos = lastMember.getFollowingComma()!.getEnd();
         else
             insertPos = lastMember.getEnd();
 
         // insert
-        this.getRequiredSourceFile().insertText(insertPos, memberText);
+        sourceFile.insertText(insertPos, memberText);
 
         // get the member
         const newMembers = this.getMembers();
@@ -63,7 +64,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers() {
-        return this.getMainChildren().filter(c => c instanceof EnumMember) as EnumMember[];
+        return this.getRequiredChildSyntaxList().getChildren().filter(c => c instanceof EnumMember) as EnumMember[];
     }
 
     /**

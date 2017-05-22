@@ -47,7 +47,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             sourceFile.removeNodes(colonToken, returnTypeNode);
 
             // insert new type
-            const closeParenToken = this.getFirstChildByKind(ts.SyntaxKind.CloseParenToken);
+            const closeParenToken = this.getFirstChildByKind(ts.SyntaxKind.CloseParenToken, sourceFile);
             /* istanbul ignore if */
             if (closeParenToken == null)
                 throw new errors.NotImplementedError("Expected a close parenthesis to be a child of the return typed node.");

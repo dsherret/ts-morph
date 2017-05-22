@@ -40,9 +40,9 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting into syntax list!", currentNode, newNode));
 
-        const currentNodeChildren = currentNode.getChildren(sourceFile);
+        const currentNodeChildren = currentNode.getChildrenIterator(sourceFile);
 
-        for (const newNodeChild of newNode.getChildren(tempSourceFile)) {
+        for (const newNodeChild of newNode.getChildrenIterator(tempSourceFile)) {
             if (areNodesEqual(newNodeChild, syntaxList) && areNodesEqual(newNodeChild.getParent(), syntaxListParent))
                 handleSyntaxList(currentNodeChildren.next().value, newNodeChild);
             else
@@ -53,7 +53,7 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
     }
 
     function handleSyntaxList(currentNode: Node, newNode: Node) {
-        const currentNodeChildren = currentNode.getChildren();
+        const currentNodeChildren = currentNode.getChildrenIterator();
         let i = 0;
 
         for (const newNodeChild of newNode.getChildren()) {
