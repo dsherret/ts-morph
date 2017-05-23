@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertStraight} from "./../../manipulation";
+import {insertStraight, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 
@@ -50,7 +50,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 insertStraight(sourceFile, colonNode.getStart(), "?");
             }
             else
-                sourceFile.removeNodes(questionTokenNode);
+                removeNodes(sourceFile, [questionTokenNode]);
 
             return this;
         }

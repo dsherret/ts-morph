@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertStraight} from "./../../manipulation";
+import {insertStraight, replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
@@ -38,13 +38,13 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         setReturnType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            // remove previous return type
+            // get replace length of previous return type
             const returnTypeNode = this.getReturnTypeNode();
             const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSibling();
             /* istanbul ignore if */
             if (colonToken != null && colonToken.getKind() !== ts.SyntaxKind.ColonToken)
                 throw new errors.NotImplementedError("Expected a colon token to be the previous sibling of a return type.");
-            sourceFile.removeNodes(colonToken, returnTypeNode);
+            const replaceLength = colonToken == null ? 0 : returnTypeNode!.getEnd() - colonToken.getPos();
 
             // insert new type
             const closeParenToken = this.getFirstChildByKind(ts.SyntaxKind.CloseParenToken, sourceFile);
@@ -52,7 +52,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             if (closeParenToken == null)
                 throw new errors.NotImplementedError("Expected a close parenthesis to be a child of the return typed node.");
 
-            insertStraight(sourceFile, closeParenToken.getEnd(), `: ${text}`);
+            replaceStraight(sourceFile, closeParenToken.getEnd(), replaceLength, `: ${text}`);
 
             return this;
         }

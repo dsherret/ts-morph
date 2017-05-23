@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {replaceNodeText} from "./../../manipulation";
 import {CompilerFactory} from "./../../factories";
 import {SourceFile} from "./../file";
 import {InitializerExpressionableNode, ModifierableNode} from "./../base";
@@ -389,7 +390,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             const indentationText = this.getIndentationText(sourceFile);
             const lastToken = this.getLastToken(sourceFile);
             const lastTokenPos = lastToken.getStart();
-            sourceFile.replaceText(lastTokenPos, lastTokenPos, newLineText + indentationText);
+            replaceNodeText(sourceFile, lastTokenPos, lastTokenPos, newLineText + indentationText);
         }
     }
 

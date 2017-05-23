@@ -25,25 +25,25 @@ describe(nameof(EnumMember), () => {
     describe(nameof<EnumMember>(d => d.remove), () => {
         it("should remove the member and its comma when its the only member", () => {
             const {firstEnumMember, firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member,\n}\n");
-            expect(firstEnumMember.remove()).to.equal(firstChild);
+            firstEnumMember.remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n}\n");
         });
 
         it("should remove the member and its comma when it's the first member", () => {
             const {firstEnumMember, firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
-            expect(firstEnumMember.remove()).to.equal(firstChild);
+            firstEnumMember.remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member2\n}\n");
         });
 
         it("should remove the member when it's the last member", () => {
             const {firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
-            expect(firstChild.getMembers()[1].remove()).to.equal(firstChild);
+            firstChild.getMembers()[1].remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member1 = 2,\n}\n");
         });
 
         it("should remove the member when it's in the middle", () => {
             const {firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2,\n  member3\n}\n");
-            expect(firstChild.getMembers()[1].remove()).to.equal(firstChild);
+            firstChild.getMembers()[1].remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member1 = 2,\n  member3\n}\n");
         });
     });

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../../errors";
-import {insertStraight} from "./../../../manipulation";
+import {insertStraight, removeNodes} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
 import {SourceFile} from "./../../file";
 
@@ -48,7 +48,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
                 throw this.getNotImplementedError();
 
             sourceFile = sourceFile || this.getRequiredSourceFile();
-            sourceFile.removeNodes(previousSibling, initializer);
+            removeNodes(sourceFile, [previousSibling, initializer]);
             return this;
         }
 

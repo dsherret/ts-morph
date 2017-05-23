@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {replaceNodeText} from "./../../manipulation";
 import {Logger} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
@@ -38,7 +39,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         }
 
         sourceFile = sourceFile || this.getRequiredSourceFile();
-        sourceFile.replaceText(declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
+        replaceNodeText(sourceFile, declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
         return this;
     }
 

@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {FileSystemHost} from "./../../FileSystemHost";
 import {CompilerFactory} from "./../../factories";
+import {replaceNodeText} from "./../../manipulation";
 import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
@@ -111,7 +112,7 @@ export class LanguageService {
             let difference = 0;
             for (const textSpan of renameReplace.textSpans) {
                 textSpan.start -= difference;
-                renameReplace.sourceFile.replaceText(textSpan.start, textSpan.start + textSpan.length, newName);
+                replaceNodeText(renameReplace.sourceFile, textSpan.start, textSpan.start + textSpan.length, newName);
                 difference += textSpan.length - newName.length;
             }
         }

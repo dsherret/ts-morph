@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
+import {insertCreatingSyntaxList, insertIntoSyntaxList, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file/SourceFile";
 
@@ -82,7 +82,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (!hasModifier)
                 this.addModifier(text, sourceFile);
             else
-                sourceFile.removeNodes(this.getModifiers().find(m => m.getText() === text));
+                removeNodes(sourceFile, [this.getModifiers().find(m => m.getText() === text)]);
 
             return this;
         }

@@ -42,8 +42,6 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             const typeNode = this.getTypeNode();
             const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
 
-            // sourceFile.removeNodes(separatorNode, typeNode);
-
             let insertPosition: number;
             let insertText = "";
 

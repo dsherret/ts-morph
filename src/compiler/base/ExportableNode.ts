@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
@@ -111,9 +112,8 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         setIsExported(value: boolean, sourceFile?: SourceFile) {
             // remove the default export if it is one no matter what
-            if (this.getRequiredParent().isSourceFile()) {
+            if (this.getRequiredParent().isSourceFile())
                 this.setIsDefaultExport(false, sourceFile);
-            }
 
             if (value) {
                 if (!this.hasExportKeyword())
@@ -122,7 +122,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             else {
                 const exportKeyword = this.getExportKeyword();
                 if (exportKeyword != null)
-                    (sourceFile || this.getRequiredSourceFile()).removeNodes(exportKeyword);
+                    removeNodes(sourceFile || this.getRequiredSourceFile(), [exportKeyword]);
             }
 
             return this;

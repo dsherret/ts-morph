@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
+import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -43,7 +43,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const heritageClauses = this.getHeritageClauses();
         const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
-            sourceFile.replaceText(extendsClause.getStart(), extendsClause.getEnd(), `extends ${text}`);
+            const extendsClauseStart = extendsClause.getStart(sourceFile);
+            replaceStraight(sourceFile, extendsClauseStart, extendsClause.getEnd() - extendsClauseStart, `extends ${text}`);
             return this;
         }
 
@@ -69,6 +70,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             insertCreatingSyntaxList(sourceFile, insertPos, insertText);
         else
             insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getRequiredParentSyntaxList(), 0, 1);
+
+        return this;
     }
 
     /**

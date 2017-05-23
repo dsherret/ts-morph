@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertStraight} from "./../../manipulation";
+import {insertStraight, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 
@@ -43,15 +43,10 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 
             sourceFile = sourceFile || this.getRequiredSourceFile();
 
-            if (asteriskToken != null) {
-                sourceFile.removeNodesWithOptions([asteriskToken], {
-                    removePrecedingSpaces: false
-                });
-            }
-            else {
-                const insertPos = getAsteriskInsertPosition(this, sourceFile);
-                insertStraight(sourceFile, insertPos, "*");
-            }
+            if (asteriskToken != null)
+                removeNodes(sourceFile, [asteriskToken], { removePrecedingSpaces: false });
+            else
+                insertStraight(sourceFile, getAsteriskInsertPosition(this, sourceFile), "*");
 
             return this;
         }
