@@ -93,3 +93,12 @@ export function fillTypeParameteredNodeFromStructure(
     if (structure.typeParameters != null && structure.typeParameters.length > 0)
         node.addTypeParameters(structure.typeParameters, sourceFile);
 }
+
+export function fillDecoratableNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.DecoratableNode,
+    structure: structures.DecoratableStructure
+) {
+    if (structure.decorators != null && structure.decorators.length > 0)
+        node.addDecorators(structure.decorators, sourceFile);
+}
