@@ -40,6 +40,7 @@
         "variable-name": false,
         "no-reference": false,
         "curly": false,
-        "no-console": [ false ]
+        "no-console": [ false ],
+        "prefer-conditional-expression": false
     }
 }

@@ -22,7 +22,7 @@ export class CompilerOptionsResolver {
         let compilerOptions: ts.CompilerOptions;
 
         if (options.compilerOptions != null)
-            compilerOptions = Object.assign({}, options.compilerOptions) as ts.CompilerOptions;
+            compilerOptions = {...options.compilerOptions};
         else if (options.tsConfigFilePath != null)
             compilerOptions = this.getCompilerOptionsFromTsConfig(options.tsConfigFilePath);
         else {

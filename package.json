@@ -45,7 +45,7 @@
     "merge2": "^1.0.3",
     "mocha": "^3.3.0",
     "ts-nameof": "^0.8.0",
-    "tslint": "^5.1.0"
+    "tslint": "^5.3.2"
   },
   "dependencies": {
     "code-block-writer": "^4.1.0",
