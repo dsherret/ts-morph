@@ -2,6 +2,7 @@
 export * from "./base/AmbientableStructure";
 export * from "./base/AsyncableStructure";
 export * from "./base/DecoratableStructure";
+export * from "./base/DocumentationableStructure";
 export * from "./base/ExportableStructure";
 export * from "./base/GeneratorableStructure";
 export * from "./base/ExtendsClauseableStructure";

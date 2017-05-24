@@ -32,3 +32,17 @@ You can get all the documentation comment nodes by using `getDocumentationCommen
 ```typescript
 functionDeclaration.getDocumentationCommentNodes(); // returns: JSDoc[]
 ```
+
+### Add/insert docs
+
+You can add or insert documentation comments using the `addDoc()`, `addDocs()`, `insertDoc()`, and `insertDocs()` methods.
+
+For example:
+
+```typescript
+const docNode = classDeclaration.addDoc({
+    description: "Some description..."
+});
+```
+
+Right now you can only add a description, but in the future support will be added for easily manipulating more JS doc syntax.

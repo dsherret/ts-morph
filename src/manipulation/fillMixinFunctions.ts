@@ -102,3 +102,12 @@ export function fillDecoratableNodeFromStructure(
     if (structure.decorators != null && structure.decorators.length > 0)
         node.addDecorators(structure.decorators, sourceFile);
 }
+
+export function fillDocumentationableNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.DocumentationableNode,
+    structure: structures.DocumentationableStructure
+) {
+    if (structure.docs != null && structure.docs.length > 0)
+        node.addDocs(structure.docs, sourceFile);
+}

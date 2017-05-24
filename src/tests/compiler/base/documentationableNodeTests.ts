@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {DocumentationableNode, VariableStatement, FunctionDeclaration} from "./../../../compiler";
+import {DocumentationableNode, VariableStatement, FunctionDeclaration, Node} from "./../../../compiler";
+import {JSDocStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(DocumentationableNode), () => {
@@ -67,6 +68,80 @@ describe(nameof(DocumentationableNode), () => {
 
         it("should have the right node kind", () => {
             expect(doc.getKind()).to.equal(ts.SyntaxKind.JSDocComment);
+        });
+    });
+
+    describe(nameof<DocumentationableNode>(n => n.insertDocs), () => {
+        function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const result = firstChild.insertDocs(insertIndex, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert when none exist", () => {
+            doTest("function identifier() {}", 0, [{ description: "Description" }], "/**\n * Description\n */\nfunction identifier() {}");
+        });
+
+        it("should insert at start when indentation is different", () => {
+            doTest("  /**\n   * Desc2\n   */\n  function identifier() {}", 0, [{ description: "Desc1" }],
+                "  /**\n   * Desc1\n   */\n  /**\n   * Desc2\n   */\n  function identifier() {}");
+        });
+
+        it("should insert multiple at end", () => {
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }, { description: "Desc3" }],
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
+        });
+
+        it("should insert in the middle", () => {
+            doTest("/**\n * Desc1\n */\n/**\n * Desc3\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }],
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
+        });
+
+        it("should do nothing if empty array", () => {
+            doTest("function identifier() {}", 0, [], "function identifier() {}");
+        });
+    });
+
+    describe(nameof<DocumentationableNode>(n => n.insertDoc), () => {
+        function doTest(startCode: string, index: number, structure: JSDocStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const result = firstChild.insertDoc(index, structure);
+            expect(result).to.be.instanceOf(Node);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert", () => {
+            doTest("/**\n * Desc2\n */\nfunction identifier() {}", 0, { description: "Desc1" },
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\nfunction identifier() {}");
+        });
+    });
+
+    describe(nameof<DocumentationableNode>(n => n.addDocs), () => {
+        function doTest(startCode: string, structures: JSDocStructure[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const result = firstChild.addDocs(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple at end", () => {
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", [{ description: "Desc2" }, { description: "Desc3" }],
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
+        });
+    });
+
+    describe(nameof<DocumentationableNode>(n => n.addDoc), () => {
+        function doTest(startCode: string, structure: JSDocStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const result = firstChild.addDoc(structure);
+            expect(result).to.be.instanceOf(Node);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add at the end", () => {
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", { description: "Desc2" },
+                "/**\n * Desc1\n */\n/**\n * Desc2\n */\nfunction identifier() {}");
         });
     });
 });
