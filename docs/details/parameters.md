@@ -4,7 +4,7 @@ title: Parameters
 
 ## Parameters
 
-Parameters can be retreived from nodes like functions by calling `getParameters()`:
+Parameters can be retreived from nodes by calling `getParameters()`:
 
 ```typescript
 const parameters = functionDeclaration.getParameters();
@@ -12,7 +12,7 @@ const parameters = functionDeclaration.getParameters();
 
 ### Inserting/Adding
 
-You can insert or add rest parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`:
+You can insert or add rest parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`.
 
 For example:
 
