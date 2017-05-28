@@ -17,27 +17,41 @@ TypeScript compiler wrapper. Provides a simple way to navigate and manipulate th
 
 Changes made in the simple layer will be made to the underlying compiler layer.
 
+## Documentation
+
+Work in progress: https://dsherret.github.io/ts-simple-ast/
 
 ## Example
 
 ```typescript
 import Ast from "ts-simple-ast";
 
+// add source files to ast
 const ast = new Ast();
 const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
-const enumDeclaration = sourceFile.getEnums()[0];
-enumDeclaration.getName(); // "MyEnum"
+
+// get information from ast
+const enumDeclaration = sourceFile.getEnum("MyEnum")!;
+enumDeclaration.getName();          // returns: "MyEnum"
+enumDeclaration.hasExportKeyword(); // returns: false
+enumDeclaration.isDefaultExport();  // returns: true
+
+// manipulate ast
 enumDeclaration.setName("NewName");
 enumDeclaration.addMember({
     name: "myNewMember"
 });
 enumDeclaration.setIsDefaultExport(false);
-sourceFile.getFullText(); // "enum NewName {\n    myNewMember\n}\nlet myEnum: NewName;"
-const sourceFileNode = sourceFile.getCompilerNode(); // underlying compiler node from the typescript AST
+
+// result
+sourceFile.getFullText(); // returns: "enum NewName {\n    myNewMember\n}\nlet myEnum: NewName;"
+sourceFile.save();        // save it to MyFile.ts
+
+// get underlying compiler node from the typescript AST from any node
+const sourceFileNode = sourceFile.getCompilerNode();
 ```
 
-## Library Development - Progress Update (06 April 2017)
+## Library Development - Progress Update (28 May 2017)
 
-Most AST navigation is implemented. This library can be currently used to help you easily navigate the TypeScript compiler's AST.
-
-Most code manipulation abilities are not implemented. This will take a few more months before it gets up to speed probably.
+* Most AST navigation is implemented. This library can be currently used to help you easily navigate the TypeScript compiler's AST.
+* Code manipulation/generation is making steady progress. Most common manipulation tasks should be done within a month.
