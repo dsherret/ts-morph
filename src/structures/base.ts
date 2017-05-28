@@ -11,6 +11,7 @@ export * from "./base/InitializerExpressionableStructure";
 export * from "./base/NamedStructure";
 export * from "./base/QuestionTokenableStructure";
 export * from "./base/ReadonlyableStructure";
+export * from "./base/ReturnTypedStructure";
 export * from "./base/ScopedStructure";
 export * from "./base/ScopeableStructure";
 export * from "./base/StaticableStructure";

@@ -111,3 +111,8 @@ export function fillDocumentationableNodeFromStructure(
     if (structure.docs != null && structure.docs.length > 0)
         node.addDocs(structure.docs, sourceFile);
 }
+
+export function fillReturnTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReturnTypedNode, structure: structures.ReturnTypedStructure) {
+    if (structure.returnType != null)
+        node.setReturnType(structure.returnType, sourceFile);
+}
