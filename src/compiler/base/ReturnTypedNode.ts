@@ -37,7 +37,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
         }
 
-        setReturnType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setReturnType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             // get replace length of previous return type
             const returnTypeNode = this.getReturnTypeNode();
             const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSibling();

@@ -119,7 +119,7 @@ export class LanguageService {
     }
 
     findRenameReplaces(node: Node): SourceFileReplace[] {
-        const sourceFile = node.getRequiredSourceFile();
+        const sourceFile = node.getSourceFileOrThrow();
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
 

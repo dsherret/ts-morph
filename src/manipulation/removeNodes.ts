@@ -11,7 +11,7 @@ export function removeNodes(sourceFile: SourceFile, nodes: (Node | undefined)[],
 
     // get the start and end position
     const {removePrecedingSpaces = true} = opts;
-    const parentStart = nonNullNodes[0].getRequiredParent().getStart();
+    const parentStart = nonNullNodes[0].getParentOrThrow().getStart();
     const nodeStart = nonNullNodes[0].getStart();
     const currentText = sourceFile.getFullText();
     const removeRangeStart = removePrecedingSpaces ? Math.max(parentStart, nonNullNodes[0].getPos()) : nonNullNodes[0].getStart();

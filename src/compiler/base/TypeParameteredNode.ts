@@ -50,19 +50,19 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return typeParameters.map(t => this.factory.getTypeParameterDeclaration(t));
         }
 
-        addTypeParameter(structure: TypeParameterStructure, sourceFile = this.getRequiredSourceFile()) {
+        addTypeParameter(structure: TypeParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.insertTypeParameter(getEndIndexFromArray(this.node.typeParameters), structure, sourceFile);
         }
 
-        addTypeParameters(structures: TypeParameterStructure[], sourceFile = this.getRequiredSourceFile()) {
+        addTypeParameters(structures: TypeParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
             return this.insertTypeParameters(getEndIndexFromArray(this.node.typeParameters), structures, sourceFile);
         }
 
-        insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile = this.getRequiredSourceFile()) {
+        insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.insertTypeParameters(index, [structure], sourceFile)[0];
         }
 
-        insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile = this.getRequiredSourceFile()) {
+        insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

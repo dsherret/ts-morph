@@ -25,7 +25,7 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
             return scopeableNode.getScopeForNode(this) || Scope.Public;
         }
 
-        setScope(scope: Scope, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setScope(scope: Scope, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             scopeableNode.setScopeForNode(this, scope === Scope.Public ? undefined : scope, sourceFile);
             return this;
         }

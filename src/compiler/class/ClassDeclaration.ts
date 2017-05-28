@@ -37,7 +37,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param text - Text to set as the extends expression.
      * @param sourceFile - Optional source file to help with performance.
      */
-    setExtends(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    setExtends(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
         const heritageClauses = this.getHeritageClauses();
@@ -69,7 +69,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (implementsClause == null)
             insertCreatingSyntaxList(sourceFile, insertPos, insertText);
         else
-            insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getRequiredParentSyntaxList(), 0, 1);
+            insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getParentSyntaxListOrThrow(), 0, 1);
 
         return this;
     }

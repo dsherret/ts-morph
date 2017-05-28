@@ -32,7 +32,7 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
             return this.getFirstModifierByKind(ts.SyntaxKind.ReadonlyKeyword);
         }
 
-        setIsReadonly(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setIsReadonly(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             this.toggleModifier("readonly", value, sourceFile);
             return this;
         }

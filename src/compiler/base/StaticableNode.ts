@@ -32,7 +32,7 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
             return this.getFirstModifierByKind(ts.SyntaxKind.StaticKeyword);
         }
 
-        setIsStatic(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setIsStatic(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             this.toggleModifier("static", value, sourceFile);
             return this;
         }

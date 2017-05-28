@@ -35,7 +35,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
         }
 
-        setType(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
             const separatorNode = this.getFirstChildByKind(separatorSyntaxKind, sourceFile);

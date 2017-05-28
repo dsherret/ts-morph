@@ -38,7 +38,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             return this;
         }
 
-        sourceFile = sourceFile || this.getRequiredSourceFile();
+        sourceFile = sourceFile || this.getSourceFileOrThrow();
         replaceNodeText(sourceFile, declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
         return this;
     }
@@ -55,7 +55,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getDeclarationTypeKeyword(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getDeclarationTypeKeyword(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.getFirstChild(child =>
             child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
             child.getKind() === ts.SyntaxKind.ModuleKeyword, sourceFile);

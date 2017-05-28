@@ -41,7 +41,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             if (isSet === value)
                 return this;
 
-            sourceFile = sourceFile || this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getSourceFileOrThrow();
 
             if (asteriskToken != null)
                 removeNodes(sourceFile, [asteriskToken], { removePrecedingSpaces: false });

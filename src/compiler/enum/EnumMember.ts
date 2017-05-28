@@ -17,7 +17,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Removes this enum member and returns the parent.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    remove(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    remove(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         removeNodes(sourceFile, [this, this.getFollowingComma()]);
     }
 }

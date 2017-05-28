@@ -32,7 +32,7 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
             return this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
         }
 
-        setIsAsync(value: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setIsAsync(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             this.toggleModifier("async", value, sourceFile);
             return this;
         }

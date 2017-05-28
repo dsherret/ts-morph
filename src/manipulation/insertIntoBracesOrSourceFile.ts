@@ -30,7 +30,7 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     else if (sourceFile.getFullWidth() > 0)
         code = code + separator;
 
-    insertIntoSyntaxList(sourceFile, insertPos, code, parent.getRequiredChildSyntaxList(sourceFile), index, childCodes.length);
+    insertIntoSyntaxList(sourceFile, insertPos, code, parent.getChildSyntaxListOrThrow(sourceFile), index, childCodes.length);
 }
 
 function getInsertPosition(sourceFile: SourceFile, index: number, parent: Node, children: Node[]) {

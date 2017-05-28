@@ -23,7 +23,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: {
     const {isDefinitionFile = false, filePath = undefined, host = defaultHost, disableErrorCheck = false} = opts || {};
     const tsSimpleAst = new TsSimpleAst({ compilerOptions: { target: ts.ScriptTarget.ES2017 }}, host);
     const sourceFile = tsSimpleAst.addSourceFileFromText(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
-    const firstChild = sourceFile.getRequiredChildSyntaxList(sourceFile).getChildren(sourceFile)[0] as TFirstChild;
+    const firstChild = sourceFile.getChildSyntaxListOrThrow(sourceFile).getChildren(sourceFile)[0] as TFirstChild;
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)
     /*

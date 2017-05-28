@@ -47,12 +47,12 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
                 throw this.getNotImplementedError();
 
-            sourceFile = sourceFile || this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getSourceFileOrThrow();
             removeNodes(sourceFile, [previousSibling, initializer]);
             return this;
         }
 
-        setInitializer(text: string, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setInitializer(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
             if (this.hasInitializer())

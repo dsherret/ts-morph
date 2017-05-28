@@ -14,7 +14,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structure - Structure of the enum.
      * @param sourceFile - Optional source file to help with performance.
      */
-    addMember(structure: EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    addMember(structure: EnumMemberStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.addMembers([structure], sourceFile)[0];
     }
 
@@ -23,7 +23,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structures - Structures of the enums.
      * @param sourceFile - Optional source file to help with performance.
      */
-    addMembers(structures: EnumMemberStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    addMembers(structures: EnumMemberStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.insertMembers(this.getMembers().length, structures, sourceFile);
     }
 
@@ -33,7 +33,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structure - Structure of the enum.
      * @param sourceFile - Optional source file to help with performance.
      */
-    insertMember(index: number, structure: EnumMemberStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    insertMember(index: number, structure: EnumMemberStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.insertMembers(index, [structure], sourceFile)[0];
     }
 
@@ -43,7 +43,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param structures - Structures of the enums.
      * @param sourceFile - Optional source file to help with performance.
      */
-    insertMembers(index: number, structures: EnumMemberStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    insertMembers(index: number, structures: EnumMemberStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         const members = this.getMembers();
         index = verifyAndGetIndex(index, members.length);
 
@@ -55,7 +55,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         const nextMember: EnumMember | undefined = members[index];
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
-        const syntaxList = this.getRequiredChildSyntaxList();
+        const syntaxList = this.getChildSyntaxListOrThrow();
         const syntaxListChildren = syntaxList.getChildren();
         const insertChildIndex = previousMember == null ? 0 : syntaxListChildren.indexOf(previousMemberComma || previousMember) + 1;
 
@@ -115,7 +115,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers() {
-        return this.getRequiredChildSyntaxList().getChildren().filter(c => c instanceof EnumMember) as EnumMember[];
+        return this.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof EnumMember) as EnumMember[];
     }
 
     /**

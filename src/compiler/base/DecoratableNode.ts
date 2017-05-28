@@ -49,19 +49,19 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             return this.node.decorators.map(d => this.factory.getDecorator(d));
         }
 
-        addDecorator(structure: DecoratorStructure, sourceFile = this.getRequiredSourceFile()) {
+        addDecorator(structure: DecoratorStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.insertDecorator(getEndIndexFromArray(this.node.decorators), structure, sourceFile);
         }
 
-        addDecorators(structures: DecoratorStructure[], sourceFile = this.getRequiredSourceFile()) {
+        addDecorators(structures: DecoratorStructure[], sourceFile = this.getSourceFileOrThrow()) {
             return this.insertDecorators(getEndIndexFromArray(this.node.decorators), structures, sourceFile);
         }
 
-        insertDecorator(index: number, structure: DecoratorStructure, sourceFile = this.getRequiredSourceFile()) {
+        insertDecorator(index: number, structure: DecoratorStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.insertDecorators(index, [structure], sourceFile)[0];
         }
 
-        insertDecorators(index: number, structures: DecoratorStructure[], sourceFile = this.getRequiredSourceFile()) {
+        insertDecorators(index: number, structures: DecoratorStructure[], sourceFile = this.getSourceFileOrThrow()) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -81,7 +81,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                     const previousDecorator = decorators[index - 1];
                     const indentationText = previousDecorator.getIndentationText(sourceFile);
                     const decoratorCode = newLineText + prependIndentationText(decoratorLines, indentationText).join(newLineText);
-                    insertIntoSyntaxList(sourceFile, previousDecorator.getEnd(), decoratorCode, decorators[0].getRequiredParentSyntaxList(), index, structures.length);
+                    insertIntoSyntaxList(sourceFile, previousDecorator.getEnd(), decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
                 }
                 else {
                     const indentationText = nextDecorator.getIndentationText(sourceFile);
@@ -89,7 +89,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                     if (decoratorLines.length > 1)
                         decoratorCode += prependIndentationText(decoratorLines.slice(1), indentationText).join(newLineText) + newLineText;
                     decoratorCode += indentationText;
-                    insertIntoSyntaxList(sourceFile, nextDecorator.getStart(sourceFile), decoratorCode, decorators[0].getRequiredParentSyntaxList(), index, structures.length);
+                    insertIntoSyntaxList(sourceFile, nextDecorator.getStart(sourceFile), decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
                 }
             }
 

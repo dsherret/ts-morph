@@ -185,19 +185,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 throw this.getNotImplementedError();
         }
 
-        addEnum(structure: structures.EnumStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        addEnum(structure: structures.EnumStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             return this.addEnums([structure], sourceFile)[0];
         }
 
-        addEnums(structures: structures.EnumStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
-            return this.insertEnums(this.getRequiredChildSyntaxList(sourceFile).getChildren(sourceFile).length, structures, sourceFile);
+        addEnums(structures: structures.EnumStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+            return this.insertEnums(this.getChildSyntaxListOrThrow(sourceFile).getChildren(sourceFile).length, structures, sourceFile);
         }
 
-        insertEnum(index: number, structure: structures.EnumStructure, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        insertEnum(index: number, structure: structures.EnumStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             return this.insertEnums(index, [structure], sourceFile)[0];
         }
 
-        insertEnums(index: number, structures: structures.EnumStructure[], sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        insertEnums(index: number, structures: structures.EnumStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText(sourceFile);
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
@@ -214,7 +214,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getClasses(): classes.ClassDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
         }
 
         getClass(name: string): classes.ClassDeclaration | undefined;
@@ -224,7 +224,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): enums.EnumDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
         }
 
         getEnum(name: string): enums.EnumDeclaration | undefined;
@@ -234,7 +234,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): functions.FunctionDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
         }
 
         getFunction(name: string): functions.FunctionDeclaration | undefined;
@@ -244,7 +244,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): interfaces.InterfaceDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
         }
 
         getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
@@ -254,7 +254,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): namespaces.NamespaceDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
         }
 
         getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
@@ -264,7 +264,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getTypeAliases(): types.TypeAliasDeclaration[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
@@ -274,7 +274,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatements(): variable.VariableStatement[] {
-            return this.getRequiredChildSyntaxList().getChildrenOfKind<variable.VariableStatement>(ts.SyntaxKind.VariableStatement);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<variable.VariableStatement>(ts.SyntaxKind.VariableStatement);
         }
 
         getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined {
@@ -306,7 +306,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         private _insertMainChildren<T extends Node>(sourceFile: SourceFile, index: number, childCodes: string[], expectedSyntaxKind: ts.SyntaxKind) {
-            const syntaxList = this.getRequiredChildSyntaxList();
+            const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
             const newLineChar = this.factory.getLanguageService().getNewLine();
             index = verifyAndGetIndex(index, mainChildren.length);

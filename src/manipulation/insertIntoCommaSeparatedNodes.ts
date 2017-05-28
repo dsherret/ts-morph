@@ -7,11 +7,11 @@ export function insertIntoCommaSeparatedNodes(sourceFile: SourceFile, currentNod
 
     if (nextNode == null) {
         const previousNode = currentNodes[index - 1];
-        insertIntoSyntaxList(sourceFile, previousNode.getEnd(), `, ${codes.join(", ")}`, previousNode.getRequiredParentSyntaxList(),
+        insertIntoSyntaxList(sourceFile, previousNode.getEnd(), `, ${codes.join(", ")}`, previousNode.getParentSyntaxListOrThrow(),
             previousNode.getChildIndex() + 1, numberOfSyntaxListItemsInserting);
     }
     else {
-        insertIntoSyntaxList(sourceFile, nextNode.getStart(), `${codes.join(", ")}, `, nextNode.getRequiredParentSyntaxList(),
+        insertIntoSyntaxList(sourceFile, nextNode.getStart(), `${codes.join(", ")}, `, nextNode.getParentSyntaxListOrThrow(),
             nextNode.getChildIndex(), numberOfSyntaxListItemsInserting);
     }
 }

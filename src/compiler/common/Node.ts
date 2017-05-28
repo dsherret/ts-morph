@@ -82,11 +82,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the first child by syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     * @param sourceFile - Optional source file to help with performance.
+     */
+    getFirstChildByKindOrThrow(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        const firstChild = this.getFirstChildByKind(kind, sourceFile);
+        if (firstChild == null)
+            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return firstChild;
+    }
+
+    /**
      * Gets the first child by syntax kind.
      * @param kind - Syntax kind.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChildByKind(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getFirstChildByKind(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.getFirstChild(child => child.getKind() === kind, sourceFile);
     }
 
@@ -95,7 +107,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Condition.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChild(condition: (node: Node) => boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getFirstChild(condition: (node: Node) => boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         for (const child of this.getChildren(sourceFile)) {
             if (condition(child))
                 return child;
@@ -133,7 +145,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     *getSiblingsBefore() {
-        const parent = this.getRequiredParent();
+        const parent = this.getParentOrThrow();
 
         for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (child === this)
@@ -146,7 +158,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     *getSiblingsAfter() {
         // todo: optimize
         let foundChild = false;
-        const parent = this.getRequiredParent();
+        const parent = this.getParentOrThrow();
 
         for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
             if (!foundChild) {
@@ -158,14 +170,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
     }
 
-    getChildren(sourceFile = this.getRequiredSourceFile()): Node[] {
+    getChildren(sourceFile = this.getSourceFileOrThrow()): Node[] {
         return this.node.getChildren(sourceFile.getCompilerNode()).map(n => this.factory.getNodeFromCompilerNode(n));
     }
 
     /**
      * @internal
      */
-    *getChildrenIterator(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
+    *getChildrenIterator(sourceFile = this.getSourceFileOrThrow()): IterableIterator<Node> {
         for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
             yield this.factory.getNodeFromCompilerNode(compilerChild);
         }
@@ -189,13 +201,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the child syntax list, requiring it exists.
+     * Gets the child syntax list or throws if it doesn't exist.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getRequiredChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getChildSyntaxListOrThrow(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         const syntaxList = this.getChildSyntaxList(sourceFile);
         if (syntaxList == null)
-            throw new errors.InvalidOperationError("A child syntax list is expected in order to get the required child syntax list.");
+            throw new errors.InvalidOperationError("A child syntax list was expected.");
         return syntaxList;
     }
 
@@ -203,7 +215,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the child syntax list if it exists.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getChildSyntaxList(sourceFile: SourceFile = this.getRequiredSourceFile()): Node | undefined {
+    getChildSyntaxList(sourceFile: SourceFile = this.getSourceFileOrThrow()): Node | undefined {
         let node: Node = this;
         if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
             node = this.getBody();
@@ -227,11 +239,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
         return this.getChildren(sourceFile).filter(c => c.getKind() === kind) as T[];
     }
 
-    *getAllChildren(sourceFile = this.getRequiredSourceFile()): IterableIterator<Node> {
+    *getAllChildren(sourceFile = this.getSourceFileOrThrow()): IterableIterator<Node> {
         for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
             const child = this.factory.getNodeFromCompilerNode(compilerChild);
             yield child;
@@ -245,7 +257,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the child count.
      * @param sourceFile - Optional source file to help with performance.
      */
-    getChildCount(sourceFile = this.getRequiredSourceFile()) {
+    getChildCount(sourceFile = this.getSourceFileOrThrow()) {
         return this.node.getChildCount(sourceFile.getCompilerNode());
     }
 
@@ -304,10 +316,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         this.node = compilerNode;
     }
 
-    getRequiredSourceFile() {
+    /**
+     * Gets the source file of a node or throws if it doesn't exist.
+     */
+    getSourceFileOrThrow() {
         const sourceFile = this.getSourceFile();
         if (sourceFile == null)
-            throw new Error("A source file or source file parent is required to do this operation.");
+            throw new Error("A source file or source file parent was expected.");
         return sourceFile;
     }
 
@@ -340,16 +355,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the parent and throws an exception if it doesn't exist.
+     * Gets the parent or throws an error if it doesn't exist.
      */
-    getRequiredParent() {
+    getParentOrThrow() {
         const parentNode = this.getParent();
         if (parentNode == null)
             throw new Error("A parent is required to do this operation.");
         return parentNode;
     }
 
-    appendNewLineSeparatorIfNecessary(sourceFile = this.getRequiredSourceFile()) {
+    appendNewLineSeparatorIfNecessary(sourceFile = this.getSourceFileOrThrow()) {
         const text = this.getFullText(sourceFile);
         if (this.isSourceFile()) {
             const hasText = text.length > 0;
@@ -360,12 +375,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             this.ensureLastChildNewLine();
     }
 
-    ensureLastChildNewLine(sourceFile = this.getRequiredSourceFile()) {
+    ensureLastChildNewLine(sourceFile = this.getSourceFileOrThrow()) {
         if (!this.isLastChildTextNewLine(sourceFile))
             this.appendChildNewLine(sourceFile);
     }
 
-    isLastChildTextNewLine(sourceFile = this.getRequiredSourceFile()): boolean {
+    isLastChildTextNewLine(sourceFile = this.getSourceFileOrThrow()): boolean {
         const text = this.getFullText(sourceFile);
         /* istanbul ignore else */
         if (this.isSourceFile())
@@ -386,7 +401,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             sourceFile.node.end += newLineText.length;
         }
         else {
-            sourceFile = sourceFile || this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getSourceFileOrThrow();
             const indentationText = this.getIndentationText(sourceFile);
             const lastToken = this.getLastToken(sourceFile);
             const lastTokenPos = lastToken.getStart();
@@ -398,7 +413,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last token of this node. Usually this is a close brace.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    getLastToken(sourceFile = this.getRequiredSourceFile()) {
+    getLastToken(sourceFile = this.getSourceFileOrThrow()) {
         const lastToken = this.node.getLastToken(sourceFile.getCompilerNode());
         /* istanbul ignore if */
         if (lastToken == null)
@@ -456,7 +471,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the parent if it's a syntax list or throws an error otherwise.
      */
-    getRequiredParentSyntaxList() {
+    getParentSyntaxListOrThrow() {
         const parentSyntaxList = this.getParentSyntaxList();
         if (parentSyntaxList == null)
             throw new errors.InvalidOperationError("The parent must be a SyntaxList in order to get the required parent syntax list.");
@@ -547,7 +562,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the indentation text.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    getIndentationText(sourceFile = this.getRequiredSourceFile()) {
+    getIndentationText(sourceFile = this.getSourceFileOrThrow()) {
         const sourceFileText = sourceFile.getFullText();
         const startLinePos = this.getStartLinePos(sourceFile);
         const startPos = this.getStart(sourceFile);
@@ -574,7 +589,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next indentation level text.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    getChildIndentationText(sourceFile = this.getRequiredSourceFile()) {
+    getChildIndentationText(sourceFile = this.getSourceFileOrThrow()) {
         if (this.isSourceFile())
             return "";
 
@@ -586,7 +601,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the position of the start of the line that this node is on.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    getStartLinePos(sourceFile = this.getRequiredSourceFile()) {
+    getStartLinePos(sourceFile = this.getSourceFileOrThrow()) {
         const sourceFileText = sourceFile.getFullText();
         const startPos = this.getStart();
 
@@ -603,7 +618,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the start without trivia.
      * @param sourceFile - Optional source file to help improve performance.
      */
-    getStart(sourceFile = this.getRequiredSourceFile()) {
+    getStart(sourceFile = this.getSourceFileOrThrow()) {
         return this.node.getStart(sourceFile.getCompilerNode());
     }
 

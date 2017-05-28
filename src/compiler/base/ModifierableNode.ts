@@ -65,14 +65,14 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
         hasModifier(textOrKind: ModifierTexts | ts.SyntaxKind, sourceFile?: SourceFile) {
             if (typeof textOrKind === "string") {
-                sourceFile = sourceFile || this.getRequiredSourceFile();
+                sourceFile = sourceFile || this.getSourceFileOrThrow();
                 return this.getModifiers().some(m => m.getText(sourceFile) === textOrKind);
             }
             else
                 return this.getModifiers().some(m => m.getKind() === textOrKind);
         }
 
-        toggleModifier(text: ModifierTexts, value?: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        toggleModifier(text: ModifierTexts, value?: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             const hasModifier = this.hasModifier(text);
             if (value == null)
                 value = !hasModifier;
@@ -87,7 +87,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return this;
         }
 
-        addModifier(text: ModifierTexts, sourceFile: SourceFile = this.getRequiredSourceFile()): Node<ts.Modifier> {
+        addModifier(text: ModifierTexts, sourceFile: SourceFile = this.getSourceFileOrThrow()): Node<ts.Modifier> {
             const modifiers = this.getModifiers();
             const hasModifier = modifiers.some(m => m.getText(sourceFile) === text);
             if (hasModifier)
@@ -126,7 +126,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (modifiers.length === 0)
                 insertCreatingSyntaxList(sourceFile, insertPos, insertText);
             else
-                insertIntoSyntaxList(sourceFile, insertPos, insertText, modifiers[0].getRequiredParentSyntaxList(), insertIndex, 1);
+                insertIntoSyntaxList(sourceFile, insertPos, insertText, modifiers[0].getParentSyntaxListOrThrow(), insertIndex, 1);
 
             return this.getModifiers().find(m => m.getStart(sourceFile) === startPos) as Node<ts.Modifier>;
         }

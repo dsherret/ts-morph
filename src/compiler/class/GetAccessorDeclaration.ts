@@ -13,7 +13,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      * Gets the corresponding set accessor if one exists.
      */
     getSetAccessor(): SetAccessorDeclaration | undefined {
-        const parent = this.getRequiredParent() as ClassDeclaration;
+        const parent = this.getParentOrThrow() as ClassDeclaration;
         errors.throwIfNotSyntaxKind(parent, ts.SyntaxKind.ClassDeclaration, "Expected the parent to be a class declaration");
 
         const thisName = this.getName();

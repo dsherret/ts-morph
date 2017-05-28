@@ -70,7 +70,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 return true;
 
             const thisSymbol = this.getSymbol();
-            const defaultExportSymbol = this.getRequiredSourceFile().getDefaultExportSymbol();
+            const defaultExportSymbol = this.getSourceFileOrThrow().getDefaultExportSymbol();
 
             if (defaultExportSymbol == null || thisSymbol == null)
                 return false;
@@ -83,7 +83,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         }
 
         isNamedExport() {
-            const parentNode = this.getRequiredParent();
+            const parentNode = this.getParentOrThrow();
             return parentNode.isSourceFile() && this.hasExportKeyword() && !this.hasDefaultKeyword();
         }
 
@@ -91,11 +91,11 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (value === this.isDefaultExport())
                 return this;
 
-            if (value && !this.getRequiredParent().isSourceFile())
+            if (value && !this.getParentOrThrow().isSourceFile())
                 throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
-            sourceFile = sourceFile || this.getRequiredSourceFile();
+            sourceFile = sourceFile || this.getSourceFileOrThrow();
             const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol();
 
             if (fileDefaultExportSymbol != null)
@@ -112,7 +112,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         setIsExported(value: boolean, sourceFile?: SourceFile) {
             // remove the default export if it is one no matter what
-            if (this.getRequiredParent().isSourceFile())
+            if (this.getParentOrThrow().isSourceFile())
                 this.setIsDefaultExport(false, sourceFile);
 
             if (value) {
@@ -122,7 +122,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             else {
                 const exportKeyword = this.getExportKeyword();
                 if (exportKeyword != null)
-                    removeNodes(sourceFile || this.getRequiredSourceFile(), [exportKeyword]);
+                    removeNodes(sourceFile || this.getSourceFileOrThrow(), [exportKeyword]);
             }
 
             return this;

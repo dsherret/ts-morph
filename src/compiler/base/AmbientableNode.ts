@@ -53,7 +53,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             return topParent.isSourceFile() && topParent.isDeclarationFile();
         }
 
-        toggleDeclareKeyword(value?: boolean, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        toggleDeclareKeyword(value?: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             this.toggleModifier("declare", value, sourceFile);
             return this;
         }

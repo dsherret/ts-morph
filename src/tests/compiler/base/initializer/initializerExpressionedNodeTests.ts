@@ -49,7 +49,7 @@ describe(nameof(InitializerExpressionableNode), () => {
     describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
         describe("having initializer", () => {
             const member = getMemberWithInitializer();
-            const sourceFile = member.getRequiredSourceFile();
+            const sourceFile = member.getSourceFileOrThrow();
             it("should remove the initializer", () => {
                 member.removeInitializer();
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember\n}\n");
@@ -58,7 +58,7 @@ describe(nameof(InitializerExpressionableNode), () => {
 
         describe("not having initializer", () => {
             const member = getMemberWithoutInitializer();
-            const sourceFile = member.getRequiredSourceFile();
+            const sourceFile = member.getSourceFileOrThrow();
             it("should not remove the initializer because there isn't on", () => {
                 member.removeInitializer();
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember\n}\n");
@@ -74,7 +74,7 @@ describe(nameof(InitializerExpressionableNode), () => {
 
         describe("having initializer", () => {
             const member = getMemberWithInitializer();
-            const sourceFile = member.getRequiredSourceFile();
+            const sourceFile = member.getSourceFileOrThrow();
             it("should set the new initializer", () => {
                 member.setInitializer("5");
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5\n}\n");
@@ -83,7 +83,7 @@ describe(nameof(InitializerExpressionableNode), () => {
 
         describe("having initializer with comma", () => {
             const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
-            const sourceFile = member.getRequiredSourceFile();
+            const sourceFile = member.getSourceFileOrThrow();
             it("should set the new initializer", () => {
                 member.setInitializer("5");
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5,\n}\n");
@@ -108,7 +108,7 @@ describe(nameof(InitializerExpressionableNode), () => {
 
         describe("not having initializer", () => {
             const member = getMemberWithoutInitializer();
-            const sourceFile = member.getRequiredSourceFile();
+            const sourceFile = member.getSourceFileOrThrow();
             it("should set the initializer", () => {
                 member.setInitializer("5");
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5\n}\n");

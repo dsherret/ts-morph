@@ -58,7 +58,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the default export symbol of the file.
      */
     getDefaultExportSymbol(): Symbol | undefined {
-        const sourceFileSymbol = this.getRequiredSourceFile().getSymbol();
+        const sourceFileSymbol = this.getSourceFileOrThrow().getSymbol();
 
         // will be undefined when the source file doesn't have an export
         if (sourceFileSymbol == null)

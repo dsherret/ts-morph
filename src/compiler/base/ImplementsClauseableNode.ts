@@ -49,13 +49,13 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        addImplements(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        addImplements(text: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             return this.insertImplements(this.getImplements().length, text as any, sourceFile);
         }
 
         insertImplements(index: number, text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        insertImplements(index: number, texts: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
@@ -89,7 +89,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             if (heritageClauses.length === 0)
                 insertCreatingSyntaxList(sourceFile, openBraceStart, insertText);
             else
-                insertIntoSyntaxList(sourceFile, openBraceStart, insertText, heritageClauses[0].getRequiredParentSyntaxList(), 1, 1);
+                insertIntoSyntaxList(sourceFile, openBraceStart, insertText, heritageClauses[0].getParentSyntaxListOrThrow(), 1, 1);
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
         }

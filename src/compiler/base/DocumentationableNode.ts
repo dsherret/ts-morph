@@ -62,19 +62,19 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             return nodes.map(n => this.factory.getJSDoc(n));
         }
 
-        addDoc(structure: JSDocStructure, sourceFile = this.getRequiredSourceFile()) {
+        addDoc(structure: JSDocStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.addDocs([structure], sourceFile)[0];
         }
 
-        addDocs(structures: JSDocStructure[], sourceFile = this.getRequiredSourceFile()) {
+        addDocs(structures: JSDocStructure[], sourceFile = this.getSourceFileOrThrow()) {
             return this.insertDocs(getEndIndexFromArray((this.node as any).jsDoc), structures, sourceFile);
         }
 
-        insertDoc(index: number, structure: JSDocStructure, sourceFile = this.getRequiredSourceFile()) {
+        insertDoc(index: number, structure: JSDocStructure, sourceFile = this.getSourceFileOrThrow()) {
             return this.insertDocs(index, [structure], sourceFile)[0];
         }
 
-        insertDocs(index: number, structures: JSDocStructure[], sourceFile = this.getRequiredSourceFile()) {
+        insertDocs(index: number, structures: JSDocStructure[], sourceFile = this.getSourceFileOrThrow()) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

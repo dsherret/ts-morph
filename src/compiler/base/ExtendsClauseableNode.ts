@@ -48,13 +48,13 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
 
         addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        addExtends(text: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        addExtends(text: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             return this.insertExtends(this.getExtends().length, text as any, sourceFile);
         }
 
         insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | string[], sourceFile: SourceFile = this.getRequiredSourceFile()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        insertExtends(index: number, texts: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));

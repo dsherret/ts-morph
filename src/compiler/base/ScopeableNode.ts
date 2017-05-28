@@ -25,7 +25,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             return getScopeForNode(this);
         }
 
-        setScope(scope: Scope | undefined, sourceFile: SourceFile = this.getRequiredSourceFile()) {
+        setScope(scope: Scope | undefined, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             setScopeForNode(this, scope, sourceFile);
             return this;
         }
