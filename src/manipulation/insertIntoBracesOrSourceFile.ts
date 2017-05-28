@@ -39,11 +39,8 @@ function getInsertPosition(sourceFile: SourceFile, index: number, parent: Node, 
             return 0;
         else {
             const parentContainer = parent.isFunctionDeclaration() || parent.isNamespaceDeclaration() ? parent.getBody() : parent;
-            const openBraceToken = parentContainer.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile);
-            if (openBraceToken == null)
-                throw new errors.NotImplementedError("Unexpected! Could not find parent's OpenBraceToken.");
-
-            return openBraceToken!.getEnd();
+            const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
+            return openBraceToken.getEnd();
         }
     }
 

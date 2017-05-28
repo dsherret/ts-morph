@@ -74,11 +74,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile);
-            /* istanbul ignore if */
-            if (openBraceToken == null)
-                throw new errors.InvalidOperationError("Could not found open brace token.");
-
+            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
             let insertText = `implements ${texts.join(", ")} `;

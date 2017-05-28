@@ -47,11 +47,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             const replaceLength = colonToken == null ? 0 : returnTypeNode!.getEnd() - colonToken.getPos();
 
             // insert new type
-            const closeParenToken = this.getFirstChildByKind(ts.SyntaxKind.CloseParenToken, sourceFile);
-            /* istanbul ignore if */
-            if (closeParenToken == null)
-                throw new errors.NotImplementedError("Expected a close parenthesis to be a child of the return typed node.");
-
+            const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken, sourceFile);
             replaceStraight(sourceFile, closeParenToken.getEnd(), replaceLength, `: ${text}`);
 
             return this;

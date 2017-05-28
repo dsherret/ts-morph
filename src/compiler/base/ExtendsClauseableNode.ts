@@ -72,11 +72,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile);
-            /* istanbul ignore if */
-            if (openBraceToken == null)
-                throw new errors.InvalidOperationError("Could not found open brace token.");
-
+            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
             let insertText = `extends ${texts.join(", ")} `;

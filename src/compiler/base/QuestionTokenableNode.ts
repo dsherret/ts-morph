@@ -41,12 +41,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
-                const colonNode = this.getFirstChildByKind(ts.SyntaxKind.ColonToken, sourceFile);
-
-                /* istanbul ignore if */
-                if (colonNode == null)
-                    throw new errors.NotImplementedError("Scenario not implemented. Could not find colon token.");
-
+                const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken, sourceFile);
                 insertStraight(sourceFile, colonNode.getStart(), "?");
             }
             else

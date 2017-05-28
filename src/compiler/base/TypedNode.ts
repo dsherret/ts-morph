@@ -49,10 +49,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
                 insertText += separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ";
 
             if (typeNode == null) {
-                const identifier = this.getFirstChildByKind(ts.SyntaxKind.Identifier, sourceFile);
-                /* istanbul ignore if */
-                if (identifier == null)
-                    throw new errors.NotImplementedError("Unexpected: Could not find identifier.");
+                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier, sourceFile);
                 insertPosition = identifier.getEnd();
             }
             else {

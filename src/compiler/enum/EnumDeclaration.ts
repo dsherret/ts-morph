@@ -86,7 +86,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // get the insert position
         let insertPos: number;
         if (previousMember == null)
-            insertPos = this.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken, sourceFile)!.getEnd();
+            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile).getEnd();
         else if (previousMemberComma == null)
             insertPos = previousMember.getEnd();
         else
