@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertStraight, replaceStraight} from "./../../manipulation";
+import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
@@ -38,8 +38,11 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         setReturnType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            // get replace length of previous return type
             const returnTypeNode = this.getReturnTypeNode();
+            if (returnTypeNode != null && returnTypeNode.getText(sourceFile) === text)
+                return this;
+
+            // get replace length of previous return type
             const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSibling();
             /* istanbul ignore if */
             if (colonToken != null && colonToken.getKind() !== ts.SyntaxKind.ColonToken)

@@ -6,7 +6,7 @@ import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 /**
  * Simple insert where the new nodes are well defined.
  */
-export function insertStraight(sourceFile: SourceFile, insertPos: number, newText: string) {
+export function insertStraight(sourceFile: SourceFile, insertPos: number, parent: Node, newText: string) {
     const compilerFactory = sourceFile.factory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
@@ -23,11 +23,14 @@ export function insertStraight(sourceFile: SourceFile, insertPos: number, newTex
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting straight.", currentNode, newNode));
 
+        const parentMatches = parent.getPos() === newNode.getPos() && parent.getKind() === newNode.getKind();
+
         for (const newNodeChild of newNode.getChildren(tempSourceFile)) {
-            // todo: is getStart slow? Maybe something could be added or changed here for performance reasons
-            const newNodeChildStart = newNodeChild.getStart(tempSourceFile);
-            if (newNodeChildStart >= insertPos && newNodeChildStart < endPos)
-                continue;
+            if (parentMatches) {
+                const newNodeChildStart = newNodeChild.getStart(tempSourceFile);
+                if (newNodeChildStart >= insertPos && newNodeChildStart < endPos)
+                    continue;
+            }
 
             handleNode(newNodeChild);
         }

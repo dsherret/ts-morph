@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {EnumMemberStructure} from "./../../structures";
-import {insertIntoSyntaxList, insertStraight, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";

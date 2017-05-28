@@ -145,9 +145,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     *getSiblingsBefore() {
-        const parent = this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
 
-        for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
+        for (const child of parent.getChildrenIterator()) {
             if (child === this)
                 return;
 
@@ -158,9 +158,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     *getSiblingsAfter() {
         // todo: optimize
         let foundChild = false;
-        const parent = this.getParentOrThrow();
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
 
-        for (const child of parent.getChildrenWithFlattenedSyntaxList()) {
+        for (const child of parent.getChildrenIterator()) {
             if (!foundChild) {
                 foundChild = child === this;
                 continue;

@@ -85,7 +85,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             index = verifyAndGetIndex(index, nodes.length);
 
             const insertPos = index === nodes.length ? this.getStart() : nodes[index].getStart();
-            insertStraight(sourceFile, insertPos, code);
+            insertStraight(sourceFile, insertPos, this, code);
 
             return this.getDocumentationCommentNodes().slice(index, index + structures.length);
         }

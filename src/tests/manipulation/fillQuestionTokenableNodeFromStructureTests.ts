@@ -26,6 +26,6 @@ describe(nameof(fillQuestionTokenableNodeFromStructure), () => {
     });
 
     it("should modify when setting true", () => {
-        doTest("interface Identifier { prop: string; }", { isOptional: true }, "interface Identifier { prop?: string; }");
+        doTest("interface Identifier { prop: string; }", { hasQuestionToken: true }, "interface Identifier { prop?: string; }");
     });
 });

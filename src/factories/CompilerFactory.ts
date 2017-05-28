@@ -150,6 +150,8 @@ export class CompilerFactory {
                 return this.getSetAccessorDeclaration(compilerNode as ts.SetAccessorDeclaration);
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return this.getTypeAliasDeclaration(compilerNode as ts.TypeAliasDeclaration);
+            case ts.SyntaxKind.TypeParameter:
+                return this.getTypeParameterDeclaration(compilerNode as ts.TypeParameterDeclaration);
             case ts.SyntaxKind.VariableDeclaration:
                 return this.getVariableDeclaration(compilerNode as ts.VariableDeclaration);
             case ts.SyntaxKind.VariableDeclarationList:

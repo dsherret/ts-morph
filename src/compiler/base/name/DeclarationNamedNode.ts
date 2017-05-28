@@ -8,13 +8,34 @@ import {Node, Identifier} from "./../../common";
 export type DeclarationNamedNodeExtensionType = Node<ts.Declaration>;
 
 export interface DeclarationNamedNode {
+    /**
+     * Gets the name node.
+     */
     getNameNode(): Identifier | undefined;
+    /**
+     * Gets the name node or throws an error if it doesn't exists.
+     */
+    getNameNodeOrThrow(): Identifier;
+    /**
+     * Gets the name.
+     */
     getName(): string | undefined;
+    /**
+     * Sets the name.
+     * @param text - Text to set as the name.
+     */
     setName(text: string): this;
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
     return class extends Base implements DeclarationNamedNode {
+        getNameNodeOrThrow() {
+            const nameNode = this.getNameNode();
+            if (nameNode == null)
+                throw new errors.InvalidOperationError("Expected a name node.");
+            return nameNode;
+        }
+
         getNameNode() {
             const compilerNameNode = this.node.name;
 

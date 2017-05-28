@@ -8,9 +8,9 @@ export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?
 
 export interface QuestionTokenableNode {
     /**
-     * If it's optional.
+     * If it has a question token.
      */
-    isOptional(): boolean;
+    hasQuestionToken(): boolean;
     /**
      * Gets the question token node.
      */
@@ -25,7 +25,7 @@ export interface QuestionTokenableNode {
 
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
     return class extends Base implements QuestionTokenableNode {
-        isOptional() {
+        hasQuestionToken() {
             return this.node.questionToken != null;
         }
 
@@ -35,14 +35,14 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
         setIsOptional(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             const questionTokenNode = this.getQuestionTokenNode();
-            const isOptional = questionTokenNode != null;
+            const hasQuestionToken = questionTokenNode != null;
 
-            if (value === isOptional)
+            if (value === hasQuestionToken)
                 return this;
 
             if (value) {
                 const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken, sourceFile);
-                insertStraight(sourceFile, colonNode.getStart(), "?");
+                insertStraight(sourceFile, colonNode.getStart(), this, "?");
             }
             else
                 removeNodes(sourceFile, [questionTokenNode]);

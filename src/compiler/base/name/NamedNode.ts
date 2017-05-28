@@ -33,6 +33,9 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
         }
 
         setName(newName: string) {
+            if (newName === this.getName())
+                return this;
+
             errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
             this.getNameNode().rename(newName);
             return this;

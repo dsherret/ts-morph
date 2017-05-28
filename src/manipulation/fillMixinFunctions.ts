@@ -38,8 +38,8 @@ export function fillInitializerExpressionableNodeFromStructure(
 }
 
 export function fillQuestionTokenableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.QuestionTokenableNode, structure: structures.QuestionTokenableStructure) {
-    if (structure.isOptional != null)
-        node.setIsOptional(structure.isOptional, sourceFile);
+    if (structure.hasQuestionToken != null)
+        node.setIsOptional(structure.hasQuestionToken, sourceFile);
 }
 
 export function fillReadonlyableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReadonlyableNode, structure: structures.ReadonlyableStructure) {
@@ -115,4 +115,13 @@ export function fillDocumentationableNodeFromStructure(
 export function fillReturnTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReturnTypedNode, structure: structures.ReturnTypedStructure) {
     if (structure.returnType != null)
         node.setReturnType(structure.returnType, sourceFile);
+}
+
+export function fillParameteredNodeFromStructure(
+    sourceFile: compiler.SourceFile,
+    node: compiler.ParameteredNode,
+    structure: structures.ParameteredStructure
+) {
+    if (structure.parameters != null && structure.parameters.length > 0)
+        node.addParameters(structure.parameters, sourceFile);
 }

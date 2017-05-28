@@ -58,7 +58,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (this.hasInitializer())
                 this.removeInitializer(sourceFile);
 
-            insertStraight(sourceFile, this.getEnd(), ` = ${text}`);
+            insertStraight(sourceFile, this.getEnd(), this, ` = ${text}`);
             return this;
         }
     };

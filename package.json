@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Base project for typescript libraries",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",

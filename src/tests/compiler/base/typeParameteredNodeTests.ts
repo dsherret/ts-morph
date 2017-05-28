@@ -29,8 +29,9 @@ describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameter), () => {
         function doTest(startCode: string, structure: TypeParameterStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.addTypeParameter(structure);
+            const result = firstChild.addTypeParameter(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceof(TypeParameterDeclaration);
         }
 
         it("should add when none exists", () => {
@@ -45,20 +46,22 @@ describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(n => n.addTypeParameters), () => {
         function doTest(startCode: string, structures: TypeParameterStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.addTypeParameters(structures);
+            const result = firstChild.addTypeParameters(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
         }
 
         it("should add multiple", () => {
-            doTest("function identifier() {}", [{ name: "T" }, { name: "U" }], "function identifier<T, U>() {}");
+            doTest("function identifier<T>() {}", [{ name: "U" }, { name: "V" }], "function identifier<T, U, V>() {}");
         });
     });
 
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameter), () => {
         function doTest(startCode: string, insertIndex: number, structure: TypeParameterStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
-            firstChild.insertTypeParameter(insertIndex, structure);
+            const result = firstChild.insertTypeParameter(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceof(TypeParameterDeclaration);
         }
 
         it("should insert when none exists", () => {
@@ -86,8 +89,8 @@ describe(nameof(TypeParameteredNode), () => {
         function doTest(startCode: string, insertIndex: number, structures: TypeParameterStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameters(insertIndex, structures);
-            expect(result.length).to.equal(structures.length);
             expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
         }
 
         it("should insert multiple", () => {

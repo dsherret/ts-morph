@@ -51,7 +51,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
         }
 
         addTypeParameter(structure: TypeParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
-            return this.insertTypeParameter(getEndIndexFromArray(this.node.typeParameters), structure, sourceFile);
+            return this.addTypeParameters([structure], sourceFile)[0];
         }
 
         addTypeParameters(structures: TypeParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
@@ -72,7 +72,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             if (typeParameters.length === 0) {
                 const insertPos = getNamedNode(this).getNameNode().getEnd();
-                insertStraight(sourceFile, insertPos, `<${typeParamCodes.join(", ")}>`);
+                insertStraight(sourceFile, insertPos, this, `<${typeParamCodes.join(", ")}>`);
             }
             else {
                 insertIntoCommaSeparatedNodes(sourceFile, typeParameters, index, typeParamCodes);

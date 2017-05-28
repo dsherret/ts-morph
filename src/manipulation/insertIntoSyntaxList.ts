@@ -1,6 +1,7 @@
 ﻿import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
+import {insertStraight} from "./insertStraight";
 
 /**
  * Insert into a syntax list.

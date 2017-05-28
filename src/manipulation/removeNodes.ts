@@ -11,10 +11,10 @@ export function removeNodes(sourceFile: SourceFile, nodes: (Node | undefined)[],
 
     // get the start and end position
     const {removePrecedingSpaces = true} = opts;
-    const parentStart = nonNullNodes[0].getParentOrThrow().getStart();
-    const nodeStart = nonNullNodes[0].getStart();
+    const parentStart = nonNullNodes[0].getParentOrThrow().getStart(sourceFile);
+    const nodeStart = nonNullNodes[0].getStart(sourceFile);
     const currentText = sourceFile.getFullText();
-    const removeRangeStart = removePrecedingSpaces ? Math.max(parentStart, nonNullNodes[0].getPos()) : nonNullNodes[0].getStart();
+    const removeRangeStart = removePrecedingSpaces ? Math.max(parentStart, nonNullNodes[0].getPos()) : nodeStart;
     let removeRangeEnd = nonNullNodes[nonNullNodes.length - 1].getEnd();
 
     // trim any end spaces when the current node is the first node of the parent

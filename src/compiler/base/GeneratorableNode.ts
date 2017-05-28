@@ -46,7 +46,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             if (asteriskToken != null)
                 removeNodes(sourceFile, [asteriskToken], { removePrecedingSpaces: false });
             else
-                insertStraight(sourceFile, getAsteriskInsertPosition(this, sourceFile), "*");
+                insertStraight(sourceFile, getAsteriskInsertPosition(this, sourceFile), this, "*");
 
             return this;
         }

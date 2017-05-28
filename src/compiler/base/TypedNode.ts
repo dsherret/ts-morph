@@ -36,10 +36,13 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         setType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+            const typeNode = this.getTypeNode();
+            if (typeNode != null && typeNode.getText(sourceFile) === text)
+                return this;
+
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
             const separatorNode = this.getFirstChildByKind(separatorSyntaxKind, sourceFile);
-            const typeNode = this.getTypeNode();
             const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
 
             let insertPosition: number;

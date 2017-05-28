@@ -1,3 +1,3 @@
 ﻿export interface QuestionTokenableStructure {
-    isOptional?: boolean;
+    hasQuestionToken?: boolean;
 }

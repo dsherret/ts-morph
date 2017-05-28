@@ -8,15 +8,15 @@ describe(nameof(QuestionTokenableNode), () => {
         return {...result, firstProperty: result.firstChild.getInstanceProperties()[0] as PropertyDeclaration };
     }
 
-    describe(nameof<QuestionTokenableNode>(d => d.isOptional), () => {
-        it("should be optional when optional", () => {
+    describe(nameof<QuestionTokenableNode>(d => d.hasQuestionToken), () => {
+        it("should have a question token when has one", () => {
             const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop?: string;}\n");
-            expect(firstProperty.isOptional()).to.be.true;
+            expect(firstProperty.hasQuestionToken()).to.be.true;
         });
 
-        it("should not be optional when not optional", () => {
+        it("should not have a question token when not has one", () => {
             const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
-            expect(firstProperty.isOptional()).to.be.false;
+            expect(firstProperty.hasQuestionToken()).to.be.false;
         });
     });
 

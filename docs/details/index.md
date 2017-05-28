@@ -12,12 +12,15 @@ Find out more information about:
 
 * [Source Files](source-files)
 * [Classes](classes)
+* [Decorators](decorators)
 * [Enums](enums)
 * [Functions](functions)
 * [Interfaces](interfaces)
 * [Namespaces](namespaces)
+* [Parameters](parameters)
 * [Type Aliases](type-aliases)
 * [Variables](variables)
+* Type parameters - todo
 * Symbols - todo
 
 Types:
@@ -30,15 +33,13 @@ Common:
 
 * [Ambient](ambient)
 * [Async](async)
-* [Decorators](decorators)
 * [Exports](exports)
 * [Following Comma](following-comma)
 * [Generators](generators)
 * [JS Docs](documentation)
 * [Modifiers](modifiers)
-* Parameters - todo
+* Question tokenable - todo
 * Readonly - todo
 * Return Types - todo
 * Scope - todo
 * Static - todo
-* Type parameters - todo
