@@ -2,7 +2,7 @@ import * as ts from "typescript";
 import * as errors from "./../../errors";
 import * as structures from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import * as classes from "./../class";
@@ -22,6 +22,20 @@ export interface StatementedNode {
      * Gets the body node or returns the source file if a source file.
      */
     getBody(): Node;
+    /**
+     * Gets the direct class declaration children.
+     */
+    getClasses(): classes.ClassDeclaration[];
+    /**
+     * Gets a class.
+     * @param name - Name of the class.
+     */
+    getClass(name: string): classes.ClassDeclaration | undefined;
+    /**
+     * Gets a class.
+     * @param findFunction - Function to use to find the class.
+     */
+    getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
     /**
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
@@ -48,20 +62,6 @@ export interface StatementedNode {
      * @param sourceFile - Optional source file to help with performance.
      */
     insertEnums(index: number, structures: structures.EnumStructure[], sourceFile?: SourceFile): enums.EnumDeclaration[];
-    /**
-     * Gets the direct class declaration children.
-     */
-    getClasses(): classes.ClassDeclaration[];
-    /**
-     * Gets a class.
-     * @param name - Name of the class.
-     */
-    getClass(name: string): classes.ClassDeclaration | undefined;
-    /**
-     * Gets a class.
-     * @param findFunction - Function to use to find the class.
-     */
-    getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
     /**
      * Gets the direct enum declaration children.
      */
@@ -185,6 +185,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 throw this.getNotImplementedError();
         }
 
+        /* Classes */
+
+        getClasses(): classes.ClassDeclaration[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
+        }
+
+        getClass(name: string): classes.ClassDeclaration | undefined;
+        getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
+        getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined {
+            return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
+        }
+
+        /* Enums */
+
         addEnum(structure: structures.EnumStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
             return this.addEnums([structure], sourceFile)[0];
         }
@@ -201,26 +215,14 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText(sourceFile);
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
-            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(sourceFile, index, texts, ts.SyntaxKind.EnumDeclaration);
-
-            for (let i = 0; i < newChildren.length; i++) {
-                const newChild = newChildren[i];
+            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(sourceFile, index, texts, ts.SyntaxKind.EnumDeclaration, (tempSourceFile, child, i) => {
+                // todo: should insert based on fill function
                 for (const member of structures[i].members || []) {
-                    newChild.addMember(member);
+                    child.addMember(member, tempSourceFile);
                 }
-            }
+            });
 
             return newChildren;
-        }
-
-        getClasses(): classes.ClassDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
-        }
-
-        getClass(name: string): classes.ClassDeclaration | undefined;
-        getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
-        getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
         }
 
         getEnums(): enums.EnumDeclaration[] {
@@ -305,11 +307,27 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
 
-        private _insertMainChildren<T extends Node>(sourceFile: SourceFile, index: number, childCodes: string[], expectedSyntaxKind: ts.SyntaxKind) {
+        private _insertMainChildren<T extends Node>(
+            sourceFile: SourceFile,
+            index: number,
+            childCodes: string[],
+            expectedSyntaxKind: ts.SyntaxKind,
+            withEachChild: (tempSourceFile: SourceFile, child: T, index: number) => void
+        ) {
             const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
             const newLineChar = this.factory.getLanguageService().getNewLine();
             index = verifyAndGetIndex(index, mainChildren.length);
+
+            // insert into a temp file
+            const finalChildCodes: string[] = [];
+            for (let i = 0; i < childCodes.length; i++) {
+                using(this.factory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
+                    const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
+                    withEachChild(tempSourceFile, tempSyntaxList.getChildren()[0] as T, i);
+                    finalChildCodes.push(tempSourceFile.getFullText());
+                });
+            }
 
             // insert
             insertIntoBracesOrSourceFile({
@@ -318,7 +336,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 parent: this as any as Node,
                 children: mainChildren,
                 index,
-                childCodes,
+                childCodes: finalChildCodes,
                 separator: newLineChar + newLineChar
             });
             this.appendNewLineSeparatorIfNecessary(sourceFile);

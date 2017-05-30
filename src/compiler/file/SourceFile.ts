@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {CompilerFactory} from "./../../factories";
 import {removeNodes} from "./../../manipulation";
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
@@ -8,6 +9,19 @@ import {Diagnostic} from "./../tools";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
+    /**
+     * Initializes a new instance.
+     * @internal
+     * @param factory - Compiler factory.
+     * @param node - Underlying node.
+     */
+    constructor(
+        factory: CompilerFactory,
+        node: ts.SourceFile
+    ) {
+        super(factory, node);
+    }
+
     /**
      * Gets the file path.
      */

@@ -6,3 +6,4 @@ export * from "./utils/Logger";
 export * from "./utils/KeyValueCache";
 export * from "./utils/getNamedNodeByNameOrFindFunction";
 export * from "./utils/getSymbolByNameOrFindFunction";
+export * from "./utils/using";

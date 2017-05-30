@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {replaceNodeText} from "./../../manipulation";
 import {CompilerFactory} from "./../../factories";
+import {replaceNodeText} from "./../../manipulation";
+import {IDisposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import {InitializerExpressionableNode, ModifierableNode} from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -11,7 +12,7 @@ import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./Symbol";
 
-export class Node<NodeType extends ts.Node = ts.Node> {
+export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
@@ -29,6 +30,18 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     ) {
         this.factory = factory;
         this.node = node;
+    }
+
+    /**
+     * Releases the node from the cache and ast.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    dispose(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        for (const child of this.getChildren(sourceFile)) {
+            child.dispose(sourceFile);
+        }
+
+        this.factory.removeNodeFromCache(this);
     }
 
     /**

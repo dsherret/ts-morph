@@ -12,7 +12,6 @@ export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
     private readonly normalizedDirectories = new Set<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
-    private readonly fileNameUsedForTempSourceFile = "tsSimpleAstTemporaryFile.ts";
 
     /**
      * Initializes a new instance of CompilerFactory.
@@ -64,9 +63,11 @@ export class CompilerFactory {
      * @param filePath - File path to use.
      * @returns Wrapped source file.
      */
-    createTempSourceFileFromText(sourceText: string, filePath = this.fileNameUsedForTempSourceFile) {
-        const sourceFile = ts.createSourceFile(filePath, sourceText, this.getLanguageService().getScriptTarget(), true);
-        return new compiler.SourceFile(this, sourceFile);
+    createTempSourceFileFromText(sourceText: string, filePath = "tsSimpleAstTempFile.ts") {
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.getLanguageService().getScriptTarget(), true);
+        const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
+        this.nodeCache.set(compilerSourceFile, sourceFile);
+        return sourceFile;
     }
 
     /**
@@ -346,10 +347,6 @@ export class CompilerFactory {
      * @param sourceFile - Compiler source file.
      */
     getSourceFile(compilerSourceFile: ts.SourceFile): compiler.SourceFile {
-        // don't use the cache for temporary source files
-        if (compilerSourceFile.fileName === this.fileNameUsedForTempSourceFile)
-            return new compiler.SourceFile(this, compilerSourceFile);
-
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
             const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
@@ -456,7 +453,13 @@ export class CompilerFactory {
      * @param node - Node to remove.
      */
     removeNodeFromCache(node: compiler.Node) {
-        this.nodeCache.removeByKey(node.getCompilerNode());
+        const compilerNode = node.getCompilerNode();
+        this.nodeCache.removeByKey(compilerNode);
+
+        if (compilerNode.kind === ts.SyntaxKind.SourceFile) {
+            const sourceFile = compilerNode as ts.SourceFile;
+            this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
+        }
     }
 
     /**
