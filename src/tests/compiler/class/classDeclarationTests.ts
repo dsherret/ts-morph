@@ -82,6 +82,11 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    myMethod() {}\n}", 0, [{ name: "prop" }],
                 "class c {\n    prop;\n\n    myMethod() {}\n}");
         });
+
+        it("should add an extra newline if inserting ater non-property", () => {
+            doTest("class c {\n    myMethod() {}\n}", 1, [{ name: "prop" }],
+                "class c {\n    myMethod() {}\n\n    prop;\n}");
+        });
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertProperty), () => {
