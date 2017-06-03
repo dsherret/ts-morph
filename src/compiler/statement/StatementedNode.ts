@@ -1,7 +1,7 @@
 import * as ts from "typescript";
 import * as errors from "./../../errors";
 import * as structures from "./../../structures";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile} from "./../../manipulation";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -18,10 +18,6 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDecla
 // todo: most of these should accept an optional sourceFile
 
 export interface StatementedNode {
-    /**
-     * Gets the body node or returns the source file if a source file.
-     */
-    getBody(): Node;
     /**
      * Gets the direct class declaration children.
      */
@@ -168,23 +164,6 @@ export interface StatementedNode {
 
 export function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T {
     return class extends Base implements StatementedNode {
-        getBody(): Node {
-            /* istanbul ignore else */
-            if (this.isSourceFile())
-                return this;
-            else if (this.isNamespaceDeclaration())
-                return this.factory.getNodeFromCompilerNode(this.node.body);
-            else if (this.isFunctionDeclaration()) {
-                /* istanbul ignore if */
-                if (this.node.body == null)
-                    throw new errors.NotImplementedError("Function declaration has no body.");
-
-                return this.factory.getNodeFromCompilerNode(this.node.body);
-            }
-            else
-                throw this.getNotImplementedError();
-        }
-
         /* Classes */
 
         getClasses(): classes.ClassDeclaration[] {
@@ -342,21 +321,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             this.appendNewLineSeparatorIfNecessary(sourceFile);
 
             // get children
-            const newMainChildren = syntaxList.getChildren();
-            const children = newMainChildren.slice(index, index + childCodes.length);
-            for (const child of children) {
-                if (child.getKind() !== expectedSyntaxKind)
-                    throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${ts.SyntaxKind[expectedSyntaxKind]}` +
-                        `, but ${child.getKindName()} was inserted.`);
-            }
-            return children as T[];
+            return getRangeFromArray<T>(syntaxList.getChildren(), index, childCodes.length, expectedSyntaxKind);
         }
     };
-}
-
-function getInsertPosition(node: StatementedNode & Node) {
-    if (node.isSourceFile())
-        return node.getEnd();
-    else
-        return node.getBody().getEnd() - 1;
 }

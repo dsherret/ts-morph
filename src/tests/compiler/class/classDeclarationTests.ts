@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments} from "./../../../compiler";
+import {PropertyStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -60,24 +61,65 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
-        describe("no methods", () => {
-            it("should not have any methods", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getInstanceMethods().length).to.equal(0);
-            });
+    describe(nameof<ClassDeclaration>(d => d.insertProperties), () => {
+        function doTest(startCode: string, insertIndex: number, structures: PropertyStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertProperties(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, [{ name: "prop" }], "class c {\n    prop;\n}");
         });
 
-        describe("has methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+        it("should insert multiple into other properties", () => {
+            doTest("class c {\n    prop1;\n    prop4;\n}", 1, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
+                "class c {\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
+        });
 
-            it("should get the right number of methods", () => {
-                expect(firstChild.getInstanceMethods().length).to.equal(2);
-            });
+        it("should add an extra newline if inserting before non-property", () => {
+            doTest("class c {\n    myMethod() {}\n}", 0, [{ name: "prop" }],
+                "class c {\n    prop;\n\n    myMethod() {}\n}");
+        });
+    });
 
-            it("should get a method of the right instance of", () => {
-                expect(firstChild.getInstanceMethods()[0]).to.be.instanceOf(MethodDeclaration);
-            });
+    describe(nameof<ClassDeclaration>(d => d.insertProperty), () => {
+        function doTest(startCode: string, insertIndex: number, structure: PropertyStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertProperty(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(PropertyDeclaration);
+        }
+
+        it("should insert at index", () => {
+            doTest("class c {\n    prop1;\n    prop3;\n}", 1, { name: "prop2" }, "class c {\n    prop1;\n    prop2;\n    prop3;\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addProperties), () => {
+        function doTest(startCode: string, structures: PropertyStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addProperties(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple at end", () => {
+            doTest("class c {\n    prop1;\n}", [{ name: "prop2" }, { name: "prop3" }], "class c {\n    prop1;\n    prop2;\n    prop3;\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addProperty), () => {
+        function doTest(startCode: string, structure: PropertyStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addProperty(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(PropertyDeclaration);
+        }
+
+        it("should add at end", () => {
+            doTest("class c {\n    prop1;\n}", { name: "prop2" }, "class c {\n    prop1;\n    prop2;\n}");
         });
     });
 
@@ -112,27 +154,6 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getStaticMethods), () => {
-        describe("no static methods", () => {
-            it("should not have any static methods", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
-                expect(firstChild.getStaticMethods().length).to.equal(0);
-            });
-        });
-
-        describe("has static methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
-
-            it("should get the right number of static methods", () => {
-                expect(firstChild.getStaticMethods().length).to.equal(1);
-            });
-
-            it("should get a method of the right instance of", () => {
-                expect(firstChild.getStaticMethods()[0]).to.be.instanceOf(MethodDeclaration);
-            });
-        });
-    });
-
     describe(nameof<ClassDeclaration>(d => d.getStaticProperties), () => {
         describe("no static properties", () => {
             it("should not have any properties", () => {
@@ -160,6 +181,48 @@ describe(nameof(ClassDeclaration), () => {
 
             it("should get a property of the right instance of for the set accessor", () => {
                 expect(firstChild.getStaticProperties()[2]).to.be.instanceOf(SetAccessorDeclaration);
+            });
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
+        describe("no methods", () => {
+            it("should not have any methods", () => {
+                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                expect(firstChild.getInstanceMethods().length).to.equal(0);
+            });
+        });
+
+        describe("has methods", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+
+            it("should get the right number of methods", () => {
+                expect(firstChild.getInstanceMethods().length).to.equal(2);
+            });
+
+            it("should get a method of the right instance of", () => {
+                expect(firstChild.getInstanceMethods()[0]).to.be.instanceOf(MethodDeclaration);
+            });
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getStaticMethods), () => {
+        describe("no static methods", () => {
+            it("should not have any static methods", () => {
+                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                expect(firstChild.getStaticMethods().length).to.equal(0);
+            });
+        });
+
+        describe("has static methods", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+
+            it("should get the right number of static methods", () => {
+                expect(firstChild.getStaticMethods().length).to.equal(1);
+            });
+
+            it("should get a method of the right instance of", () => {
+                expect(firstChild.getStaticMethods()[0]).to.be.instanceOf(MethodDeclaration);
             });
         });
     });

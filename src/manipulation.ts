@@ -1,4 +1,5 @@
 ﻿export * from "./manipulation/getNodeOrNodesToReturn";
+export * from "./manipulation/getRangeFromArray";
 export * from "./manipulation/insertIntoCommaSeparatedNodes";
 export * from "./manipulation/insertIntoSyntaxList";
 export * from "./manipulation/insertCreatingSyntaxList";

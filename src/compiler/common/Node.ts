@@ -4,7 +4,7 @@ import {CompilerFactory} from "./../../factories";
 import {replaceNodeText} from "./../../manipulation";
 import {IDisposable} from "./../../utils";
 import {SourceFile} from "./../file";
-import {InitializerExpressionableNode, ModifierableNode} from "./../base";
+import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
@@ -196,23 +196,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
     }
 
-    // todo: make this a flags enum option for getChildren
-    *getChildrenWithFlattenedSyntaxList(): IterableIterator<Node> {
-        for (const compilerChild of this.node.getChildren()) {
-            const child = this.factory.getNodeFromCompilerNode(compilerChild);
-
-            // flatten out syntax list
-            if (child.getKind() === ts.SyntaxKind.SyntaxList) {
-                for (const syntaxChild of child.getChildrenWithFlattenedSyntaxList()) {
-                    yield syntaxChild;
-                }
-            }
-            else {
-                yield child;
-            }
-        }
-    }
-
     /**
      * Gets the child syntax list or throws if it doesn't exist.
      * @param sourceFile - Optional source file to help with performance.
@@ -230,10 +213,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      */
     getChildSyntaxList(sourceFile: SourceFile = this.getSourceFileOrThrow()): Node | undefined {
         let node: Node = this;
-        if (this.isFunctionDeclaration() || this.isNamespaceDeclaration())
-            node = this.getBody();
+        if (this.isBodyableNode() || this.isBodiedNode())
+            node = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
 
-        if (node.isSourceFile() || this.isFunctionDeclaration() || this.isNamespaceDeclaration())
+        if (node.isSourceFile() || this.isBodyableNode() || this.isBodiedNode())
             return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList);
 
         let passedBrace = false;
@@ -398,8 +381,9 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         /* istanbul ignore else */
         if (this.isSourceFile())
             return text.endsWith("\n");
-        else if (this.isNamespaceDeclaration() || this.isFunctionDeclaration()) {
-            const bodyText = this.getBody().getFullText(sourceFile);
+        else if (this.isBodyableNode() || this.isBodiedNode()) {
+            const body = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
+            const bodyText = body.getFullText(sourceFile);
             return /\n\s*\}$/.test(bodyText);
         }
         else
@@ -543,8 +527,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * Gets if the current node is a modifierable node.
      * @internal
      */
-    isModifierableNode(): this is ModifierableNode {
-        return (this as any)[nameof<ModifierableNode>(n => n.addModifier)] != null;
+    isModifierableNode(): this is base.ModifierableNode {
+        return (this as any)[nameof<base.ModifierableNode>(n => n.addModifier)] != null;
     }
 
     /**
@@ -555,13 +539,30 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         return this.node.kind === ts.SyntaxKind.MethodDeclaration;
     }
 
+    /* Mixin type guards (overridden in mixins to set to true) */
+
     /**
-     * Gets if the current node is an initializer expressionable node.
-     * @internal
+     * Gets if this is a bodied node.
      */
-    isInitializerExpressionableNode(): this is InitializerExpressionableNode {
-        return (this as any)[nameof<InitializerExpressionableNode >(n => n.hasInitializer)] != null;
+    isBodiedNode(): this is base.BodiedNode {
+        return false;
     }
+
+    /**
+     * Gets if this is a bodyable node.
+     */
+    isBodyableNode(): this is base.BodyableNode {
+        return false;
+    }
+
+    /**
+     * Gets if this is an initializer expressionable node.
+     */
+    isInitializerExpressionableNode(): this is base.InitializerExpressionableNode {
+        return false;
+    }
+
+    /* End mixin type guards */
 
     /**
      * Gets an error to throw when a feature is not implemented for this node.

@@ -12,6 +12,8 @@ export interface InsertIntoBracesOrSourceFileOptions {
     index: number;
     childCodes: string[];
     separator: string;
+    previousNewlineWhen?: (previousMember: Node) => boolean;
+    nextNewlineWhen?: (nextMember: Node) => boolean;
 }
 
 /**
@@ -30,6 +32,17 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     else if (sourceFile.getFullWidth() > 0)
         code = code + separator;
 
+    if (opts.previousNewlineWhen instanceof Function) {
+        const previousMember: Node | undefined = children[index - 1];
+        if (previousMember != null && opts.previousNewlineWhen(previousMember))
+            code = languageService.getNewLine() + code;
+    }
+    if (opts.nextNewlineWhen instanceof Function) {
+        const nextMember: Node | undefined = children[index];
+        if (nextMember != null && opts.nextNewlineWhen(nextMember))
+            code = code + languageService.getNewLine();
+    }
+
     insertIntoSyntaxList(sourceFile, insertPos, code, parent.getChildSyntaxListOrThrow(sourceFile), index, childCodes.length);
 }
 
@@ -38,11 +51,20 @@ function getInsertPosition(sourceFile: SourceFile, index: number, parent: Node, 
         if (parent.isSourceFile())
             return 0;
         else {
-            const parentContainer = parent.isFunctionDeclaration() || parent.isNamespaceDeclaration() ? parent.getBody() : parent;
+            const parentContainer = getParentContainer(parent);
             const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
             return openBraceToken.getEnd();
         }
     }
 
     return children[index - 1].getEnd();
+}
+
+function getParentContainer(parent: Node) {
+    if (parent.isBodiedNode())
+        return parent.getBody();
+    if (parent.isBodyableNode())
+        return parent.getBodyOrThrow();
+    else
+        return parent;
 }

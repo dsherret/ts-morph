@@ -79,6 +79,12 @@ Get the static properties using `getStaticProperties()`:
 const staticProperties = classDeclaration.getStaticProperties();
 ```
 
+Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:
+
+```typescript
+const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
+```
+
 ### Get members
 
 Get all static and instance members:

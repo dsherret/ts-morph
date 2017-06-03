@@ -8,6 +8,10 @@ export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?
 
 export interface InitializerExpressionableNode {
     /**
+     * Gets if this is an InitializerExpressionableNode.
+     */
+    isInitializerExpressionableNode(): this is InitializerExpressionableNode;
+    /**
      * Gets if node has an initializer.
      */
     hasInitializer(): boolean;
@@ -29,6 +33,10 @@ export interface InitializerExpressionableNode {
 
 export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionedExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T {
     return class extends Base implements InitializerExpressionableNode {
+        isInitializerExpressionableNode() {
+            return true;
+        }
+
         hasInitializer() {
             return this.node.initializer != null;
         }

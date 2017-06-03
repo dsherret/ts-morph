@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight} from "./../../manipulation";
+import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray,
+    getEndIndexFromArray} from "./../../manipulation";
+import {PropertyStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -14,6 +16,7 @@ import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
     DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
@@ -80,10 +83,77 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the class instance method declarations.
+     * Add property.
+     * @param structure - Structure representing the property.
+     * @param sourceFile - Optional source file to help improve performance.
      */
-    getInstanceMethods(): MethodDeclaration[] {
-        return this.getInstanceMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
+    addProperty(structure: PropertyStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.addProperties([structure], sourceFile)[0];
+    }
+
+    /**
+     * Add properties.
+     * @param structures - Structures representing the properties.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    addProperties(structures: PropertyStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.insertProperties(getEndIndexFromArray(this.node.members), structures, sourceFile);
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the property.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    insertProperty(index: number, structure: PropertyStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.insertProperties(index, [structure], sourceFile)[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the properties.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    insertProperties(index: number, structures: PropertyStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        const members = this.getAllMembers();
+        index = verifyAndGetIndex(index, members.length);
+
+        const indentationText = this.getChildIndentationText();
+        const languageService = this.factory.getLanguageService();
+        const newLineChar = languageService.getNewLine();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = `${indentationText}`;
+            if (structure.isStatic)
+                code += "static ";
+            code += structure.name;
+            if (structure.hasQuestionToken)
+                code += "?";
+            if (structure.type != null && structure.type.length > 0)
+                code += `: ${structure.type}`;
+            code += ";";
+            codes.push(code);
+        }
+
+        // insert
+        insertIntoBracesOrSourceFile({
+            languageService,
+            sourceFile,
+            parent: this,
+            children: members,
+            index,
+            childCodes: codes,
+            separator: newLineChar,
+            previousNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
+            nextNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode()
+        });
+
+        // return children
+        return getRangeFromArray<PropertyDeclaration>(this.getAllMembers(), index, structures.length, ts.SyntaxKind.PropertyDeclaration);
     }
 
     /**
@@ -95,10 +165,18 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the instance members.
+     * Gets the class instance property declarations.
      */
-    getInstanceMembers() {
-        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !m.isStatic());
+    getStaticProperties(): ClassPropertyTypes[] {
+        return this.getStaticMembers()
+            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+    }
+
+    /**
+     * Gets the class instance method declarations.
+     */
+    getInstanceMethods(): MethodDeclaration[] {
+        return this.getInstanceMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
     }
 
     /**
@@ -109,11 +187,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the class instance property declarations.
+     * Gets the instance members.
      */
-    getStaticProperties(): ClassPropertyTypes[] {
-        return this.getStaticMembers()
-            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+    getInstanceMembers() {
+        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !m.isStatic());
     }
 
     /**
@@ -127,8 +204,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance and static members.
      */
     getAllMembers() {
-        return this.node.members
-            .map(m => this.factory.getNodeFromCompilerNode(m)) as (MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration)[];
+        return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m)) as ClassMemberTypes[];
     }
 }
 
