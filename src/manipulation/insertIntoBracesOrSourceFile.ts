@@ -3,6 +3,7 @@ import * as errors from "./../errors";
 import {SourceFile, Node, LanguageService} from "./../compiler";
 import {verifyAndGetIndex} from "./verifyAndGetIndex";
 import {insertIntoSyntaxList} from "./insertIntoSyntaxList";
+import {isBlankLineAtPos} from "./isBlankLineAtPos";
 
 export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     languageService: LanguageService;
@@ -13,8 +14,8 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     childCodes: string[];
     separator: string;
     structures?: TStructure[];
-    previousNewlineWhen?: (previousMember: Node, firstStructure: TStructure) => boolean;
-    nextNewlineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean;
+    previousBlanklineWhen?: (previousMember: Node, firstStructure: TStructure) => boolean;
+    nextBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean;
     separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean;
 }
 
@@ -44,18 +45,20 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     else if (sourceFile.getFullWidth() > 0)
         code = code + separator;
 
-    if (opts.previousNewlineWhen != null) {
+    if (opts.previousBlanklineWhen != null) {
         const previousMember: Node | undefined = children[index - 1];
         const firstStructure = opts.structures![0];
-        if (previousMember != null && opts.previousNewlineWhen(previousMember, firstStructure))
+        if (previousMember != null && opts.previousBlanklineWhen(previousMember, firstStructure))
             code = languageService.getNewLine() + code;
     }
 
-    if (opts.nextNewlineWhen != null) {
+    if (opts.nextBlanklineWhen != null) {
         const nextMember: Node | undefined = children[index];
         const lastStructure = opts.structures![opts.structures!.length - 1];
-        if (nextMember != null && opts.nextNewlineWhen(nextMember, lastStructure))
-            code = code + languageService.getNewLine();
+        if (nextMember != null && opts.nextBlanklineWhen(nextMember, lastStructure)) {
+            if (!isBlankLineAtPos(sourceFile, insertPos))
+                code = code + languageService.getNewLine();
+        }
     }
 
     insertIntoSyntaxList(sourceFile, insertPos, code, parent.getChildSyntaxListOrThrow(sourceFile), index, childCodes.length);

@@ -65,6 +65,12 @@ Get the static methods using `getStaticMethods()`:
 const staticMethods = classDeclaration.getStaticMethods();
 ```
 
+Add or insert methods by using `insertMethods()`, `insertMethod`, `addMethod`, or `addMethods`:
+
+```typescript
+const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", returnType: "string" });
+```
+
 ### Properties
 
 Get the instance properties using `getInstanceProperties()`:

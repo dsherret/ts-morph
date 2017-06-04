@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments} from "./../../../compiler";
-import {PropertyStructure} from "./../../../structures";
+import {PropertyStructure, MethodStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -187,6 +187,66 @@ describe(nameof(ClassDeclaration), () => {
             it("should get a property of the right instance of for the set accessor", () => {
                 expect(firstChild.getStaticProperties()[2]).to.be.instanceOf(SetAccessorDeclaration);
             });
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertMethods), () => {
+        function doTest(startCode: string, insertIndex: number, structures: MethodStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertMethods(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, [{ name: "myMethod" }], "class c {\n    myMethod() {\n    }\n}");
+        });
+
+        it("should insert multiple into other methods", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertMethod), () => {
+        function doTest(startCode: string, insertIndex: number, structure: MethodStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertMethod(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(MethodDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n\n    m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addMethods), () => {
+        function doTest(startCode: string, structures: MethodStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addMethods(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple", () => {
+            doTest("class c {\n    m1() {\n    }\n}", [{ name: "m2" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n\n    m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addMethod), () => {
+        function doTest(startCode: string, structure: MethodStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addMethod(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(MethodDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    m2() {\n    }\n}");
         });
     });
 

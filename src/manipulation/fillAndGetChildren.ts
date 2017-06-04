@@ -4,7 +4,7 @@ import {getRangeFromArray} from "./getRangeFromArray";
 
 export interface FillAndGetChildrenOptions<TNode extends Node, TStructure> {
     sourceFile: SourceFile;
-    allMembers: Node[];
+    allChildren: Node[];
     index: number;
     expectedKind: ts.SyntaxKind;
     structures: TStructure[];
@@ -12,7 +12,7 @@ export interface FillAndGetChildrenOptions<TNode extends Node, TStructure> {
 }
 
 export function fillAndGetChildren<TNode extends Node, TStructure>(opts: FillAndGetChildrenOptions<TNode, TStructure>) {
-    const children = getRangeFromArray<TNode>(opts.allMembers, opts.index, opts.structures.length, opts.expectedKind);
+    const children = getRangeFromArray<TNode>(opts.allChildren, opts.index, opts.structures.length, opts.expectedKind);
 
     if (opts.fillFunction != null) {
         for (let i = 0; i < children.length; i++) {

@@ -1,8 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, verifyAndGetIndex, insertIntoBracesOrSourceFile, fillAndGetChildren,
-    getEndIndexFromArray} from "./../../manipulation";
-import {PropertyStructure} from "./../../structures";
+import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {PropertyStructure, MethodStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -101,7 +100,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Insert properties.
+     * Insert property.
      * @param index - Index to insert at.
      * @param structure - Structure representing the property.
      * @param sourceFile - Optional source file to help improve performance.
@@ -117,12 +116,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param sourceFile - Optional source file to help improve performance.
      */
     insertProperties(index: number, structures: PropertyStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        const members = this.getAllMembers();
-        index = verifyAndGetIndex(index, members.length);
-
         const indentationText = this.getChildIndentationText();
-        const languageService = this.factory.getLanguageService();
-        const newLineChar = languageService.getNewLine();
 
         // create code
         const codes: string[] = [];
@@ -139,26 +133,15 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             codes.push(code);
         }
 
-        // insert
-        insertIntoBracesOrSourceFile({
-            languageService,
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyStructure>({
+            getChildren: () => this.getAllMembers(),
             sourceFile,
             parent: this,
-            children: members,
             index,
             childCodes: codes,
-            separator: newLineChar,
             structures,
-            previousNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
-            nextNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode()
-        });
-
-        // fill and return children
-        return fillAndGetChildren<PropertyDeclaration, PropertyStructure>({
-            sourceFile,
-            allMembers: this.getAllMembers(),
-            index,
-            structures,
+            previousBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
+            nextBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
             expectedKind: ts.SyntaxKind.PropertyDeclaration
         });
     }
@@ -177,6 +160,73 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     getStaticProperties(): ClassPropertyTypes[] {
         return this.getStaticMembers()
             .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+    }
+
+    /**
+     * Add method.
+     * @param structure - Structure representing the method.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    addMethod(structure: MethodStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.addMethods([structure], sourceFile)[0];
+    }
+
+    /**
+     * Add methods.
+     * @param structures - Structures representing the methods.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    addMethods(structures: MethodStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.insertMethods(getEndIndexFromArray(this.node.members), structures, sourceFile);
+    }
+
+    /**
+     * Insert method.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the method.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    insertMethod(index: number, structure: MethodStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.insertMethods(index, [structure], sourceFile)[0];
+    }
+
+    /**
+     * Insert methods.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the methods.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    insertMethods(index: number, structures: MethodStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        const indentationText = this.getChildIndentationText();
+        const newLineChar = this.factory.getLanguageService().getNewLine();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = indentationText;
+            if (structure.isStatic)
+                code += "static ";
+            code += `${structure.name}()`;
+            if (structure.returnType != null && structure.returnType.length > 0)
+                code += `: ${structure.returnType}`;
+            code += ` {` + newLineChar;
+            code += indentationText + `}`;
+            codes.push(code);
+        }
+
+        // insert, fill, and get created nodes
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodStructure>({
+            getChildren: () => this.getAllMembers(),
+            sourceFile,
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            previousBlanklineWhen: () => true,
+            nextBlanklineWhen: () => true,
+            separatorNewlineWhen: () => true,
+            expectedKind: ts.SyntaxKind.MethodDeclaration
+        });
     }
 
     /**
