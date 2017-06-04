@@ -8,6 +8,11 @@
 
 TypeScript compiler wrapper. Provides a simple way to navigate and manipulate the TypeScript AST.
 
+## Library Development - Progress Update (03 June 2017)
+
+* Most AST navigation is implemented, but still some missing. This library can be used to help you easily navigate the TypeScript compiler's AST.
+* Code manipulation/generation is making steady progress, but it's not very usable at this point. Most common manipulation tasks should be done within a month.
+
 ## Simple Layer
 
 *ts-simple-ast* adds a layer over the compiler while still providing access to the underlying TypeScript compiler AST.
@@ -50,8 +55,3 @@ sourceFile.save();        // save it to MyFile.ts
 // get underlying compiler node from the typescript AST from any node
 const sourceFileNode = sourceFile.getCompilerNode();
 ```
-
-## Library Development - Progress Update (28 May 2017)
-
-* Most AST navigation is implemented. This library can be currently used to help you easily navigate the TypeScript compiler's AST.
-* Code manipulation/generation is making steady progress. Most common manipulation tasks should be done within a month.
