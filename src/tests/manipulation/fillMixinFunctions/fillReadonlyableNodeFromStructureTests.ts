@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, PropertyDeclaration} from "./../../compiler";
-import {ReadonlyableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillReadonlyableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {ClassDeclaration, PropertyDeclaration} from "./../../../compiler";
+import {ReadonlyableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillReadonlyableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function getFirstProperty(code: string) {
     const result = getInfoFromText<ClassDeclaration>(code);

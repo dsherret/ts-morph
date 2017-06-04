@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {TypeAliasDeclaration} from "./../../compiler";
-import {TypedStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillTypedNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {TypeAliasDeclaration} from "./../../../compiler";
+import {TypedStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillTypedNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function doTest(startingCode: string, structure: TypedStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);

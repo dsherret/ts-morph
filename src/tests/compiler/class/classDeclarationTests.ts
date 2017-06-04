@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments} from "./../../../compiler";
-import {PropertyStructure, MethodStructure} from "./../../../structures";
+import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
+    ConstructorDeclaration} from "./../../../compiler";
+import {PropertyStructure, MethodStructure, ConstructorStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -46,6 +47,38 @@ describe(nameof(ClassDeclaration), () => {
             expect(() => firstChild.setExtends("")).to.throw();
             expect(() => firstChild.setExtends("  ")).to.throw();
             expect(() => firstChild.setExtends(5 as any)).to.throw();
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertConstructor), () => {
+        function doTest(startCode: string, insertIndex: number, structure: ConstructorStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertConstructor(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ConstructorDeclaration);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, {}, "class c {\n    constructor() {\n    }\n}");
+        });
+
+        it("should insert multiple into other members", () => {
+            doTest("class c {\n    prop1;\n    prop2;\n}", 1, {},
+                "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addConstructor), () => {
+        function doTest(startCode: string, structure: ConstructorStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addConstructor(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ConstructorDeclaration);
+        }
+
+        it("should add at the end", () => {
+            doTest("class c {\n    prop1;\n}", {},
+                "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
         });
     });
 

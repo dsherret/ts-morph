@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {InterfaceDeclaration, PropertyDeclaration} from "./../../compiler";
-import {QuestionTokenableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillQuestionTokenableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {InterfaceDeclaration, PropertyDeclaration} from "./../../../compiler";
+import {QuestionTokenableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillQuestionTokenableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function getFirstProperty(code: string) {
     const result = getInfoFromText<InterfaceDeclaration>(code);

@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, MethodDeclaration} from "./../../compiler";
-import {StaticableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillStaticableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {ClassDeclaration, MethodDeclaration} from "./../../../compiler";
+import {StaticableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillStaticableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function getFirstMethod(code: string) {
     const result = getInfoFromText<ClassDeclaration>(code);

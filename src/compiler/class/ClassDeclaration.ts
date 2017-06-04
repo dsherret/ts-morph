@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
-import {PropertyStructure, MethodStructure} from "./../../structures";
+import {PropertyStructure, MethodStructure, ConstructorStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -21,19 +21,6 @@ export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableN
     DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
 ))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
-    /**
-     * Gets the extends expression.
-     */
-    getExtends(): ExpressionWithTypeArguments | undefined {
-        const heritageClauses = this.getHeritageClauses();
-        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
-        if (extendsClause == null)
-            return undefined;
-
-        const types = extendsClause.getTypes();
-        return types.length === 0 ? undefined : types[0];
-    }
-
     /**
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
@@ -71,6 +58,56 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getParentSyntaxListOrThrow(), 0, 1);
 
         return this;
+    }
+
+    /**
+     * Gets the extends expression.
+     */
+    getExtends(): ExpressionWithTypeArguments | undefined {
+        const heritageClauses = this.getHeritageClauses();
+        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+        if (extendsClause == null)
+            return undefined;
+
+        const types = extendsClause.getTypes();
+        return types.length === 0 ? undefined : types[0];
+    }
+
+    /**
+     * Adds a constructor. Will remove the previous constructor if it exists.
+     * @param structure - Structure of the constructor.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    addConstructor(structure: ConstructorStructure = {}, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        return this.insertConstructor(getEndIndexFromArray(this.node.members), structure, sourceFile);
+    }
+
+    /**
+     * Inserts a constructor. Will remove the previous constructor if it exists.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the constructor.
+     * @param sourceFile - Optional source file to help improve performance.
+     */
+    insertConstructor(index: number, structure: ConstructorStructure = {}, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        const currentCtor = this.getConstructor();
+        if (currentCtor != null)
+            currentCtor.remove();
+
+        const indentationText = this.getChildIndentationText();
+        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorStructure>({
+            getChildren: () => this.getAllMembers(),
+            sourceFile,
+            parent: this,
+            index,
+            childCodes: [code],
+            structures: [structure],
+            previousBlanklineWhen: () => true,
+            nextBlanklineWhen: () => true,
+            expectedKind: ts.SyntaxKind.Constructor
+        })[0];
     }
 
     /**

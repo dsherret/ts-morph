@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration} from "./../../compiler";
-import {AmbientableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillAmbientableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {ClassDeclaration} from "./../../../compiler";
+import {AmbientableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillAmbientableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function doTest(startingCode: string, structure: AmbientableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);

@@ -3,7 +3,13 @@ import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
-export function removeNodes(sourceFile: SourceFile, nodes: (Node | undefined)[], opts: { removePrecedingSpaces?: boolean; } = {}) {
+// todo: remove and replace this...
+
+export interface RemoveNodesOptions {
+    removePrecedingSpaces?: boolean;
+}
+
+export function removeNodes(sourceFile: SourceFile, nodes: (Node | undefined)[], opts: RemoveNodesOptions = {}) {
     const nonNullNodes = nodes.filter(n => n != null) as Node[];
     if (nonNullNodes.length === 0 || nonNullNodes[0].getPos() === nonNullNodes[nonNullNodes.length - 1].getEnd())
         return;

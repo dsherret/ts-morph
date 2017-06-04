@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {FunctionDeclaration} from "./../../compiler";
-import {ExportableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillExportableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {FunctionDeclaration} from "./../../../compiler";
+import {ExportableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillExportableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function doTest(startingCode: string, structure: ExportableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);

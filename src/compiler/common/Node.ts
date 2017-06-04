@@ -451,9 +451,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * Gets the child index of this node relative to the parent.
      */
     getChildIndex() {
-        const parent = this.getParentSyntaxList() || this.getParent();
-        if (parent == null)
-            throw new errors.InvalidOperationError("Node must have a parent in order to get the child index.");
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         let i = 0;
         for (const child of parent.getChildren()) {
             if (child === this)

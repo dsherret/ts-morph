@@ -27,6 +27,9 @@ export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode
 export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends Node, TStructure>(
     opts: InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode, TStructure>
 ) {
+    if (opts.structures.length === 0)
+        return [];
+
     const languageService = opts.sourceFile.factory.getLanguageService();
     const startChildren = opts.getChildren();
     const index =  verifyAndGetIndex(opts.index, startChildren.length);

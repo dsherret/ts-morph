@@ -2,6 +2,7 @@
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 import {insertStraight} from "./insertStraight";
+import {areNodesEqual} from "./areNodesEqual";
 
 /**
  * Insert into a syntax list.
@@ -25,16 +26,6 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
 
     handleNode(sourceFile, tempSourceFile);
-
-    function areNodesEqual(a: Node | undefined, b: Node | undefined) {
-        if (a == null && b == null)
-            return true;
-        if (a == null || b == null)
-            return false;
-        if (a.getPos() === b.getPos() && a.getKind() === b.getKind())
-            return true;
-        return false;
-    }
 
     function handleNode(currentNode: Node, newNode: Node) {
         /* istanbul ignore if */

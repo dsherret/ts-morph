@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, PropertyDeclaration, Scope} from "./../../compiler";
-import {ScopeableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillScopeableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {ClassDeclaration, PropertyDeclaration, Scope} from "./../../../compiler";
+import {ScopedStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillScopedNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function getFirstProperty(code: string) {
     const result = getInfoFromText<ClassDeclaration>(code);
@@ -10,13 +10,13 @@ function getFirstProperty(code: string) {
     return {firstProperty, ...result};
 }
 
-function doTest(startCode: string, structure: ScopeableStructure, expectedCode: string) {
+function doTest(startCode: string, structure: ScopedStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
-    fillScopeableNodeFromStructure(sourceFile, firstProperty, structure);
+    fillScopedNodeFromStructure(sourceFile, firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
 }
 
-describe(nameof(fillScopeableNodeFromStructure), () => {
+describe(nameof(fillScopedNodeFromStructure), () => {
     it("should not modify when not set and structure empty", () => {
         doTest("class MyClass { prop: string; }", {}, "class MyClass { prop: string; }");
     });

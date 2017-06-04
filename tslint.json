@@ -41,6 +41,7 @@
         "no-reference": false,
         "curly": false,
         "no-console": [ false ],
-        "prefer-conditional-expression": false
+        "prefer-conditional-expression": false,
+        "no-empty-interface": false
     }
 }

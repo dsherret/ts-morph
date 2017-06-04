@@ -11,5 +11,6 @@ export * from "./manipulation/insertStraight";
 export * from "./manipulation/isBlankLineAtPos";
 export * from "./manipulation/replaceStraight";
 export * from "./manipulation/removeNodes";
+export * from "./manipulation/removeFromBracesOrSourceFile";
 export * from "./manipulation/replaceNodeText";
 export * from "./manipulation/verifyAndGetIndex";

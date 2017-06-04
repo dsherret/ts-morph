@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {InterfaceDeclaration} from "./../../compiler";
-import {ExtendsClauseableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillExtendsClauseableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {InterfaceDeclaration} from "./../../../compiler";
+import {ExtendsClauseableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillExtendsClauseableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function doTest(startingCode: string, structure: ExtendsClauseableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);

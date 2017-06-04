@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration} from "./../../compiler";
-import {AbstractableStructure} from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import {fillAbstractableNodeFromStructure} from "./../../manipulation/fillMixinFunctions";
+import {ClassDeclaration} from "./../../../compiler";
+import {AbstractableStructure} from "./../../../structures";
+import {getInfoFromText} from "./../../compiler/testHelpers";
+import {fillAbstractableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
 function doTest(startingCode: string, structure: AbstractableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);

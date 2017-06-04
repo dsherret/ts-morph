@@ -51,6 +51,12 @@ If one exists, it can be retrieved via `getConstructor`:
 const ctor = classDeclaration.getConstructor();
 ```
 
+Add or insert a constructor by calling `addConstructor()` or `insertConstructor()` respectively.
+
+```typescript
+const ctor = classDeclaration.addConstructor();
+```
+
 ### Methods
 
 Get the instance methods using `getInstanceMethods()`:
