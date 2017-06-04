@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray,
+import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, verifyAndGetIndex, insertIntoBracesOrSourceFile, fillAndGetChildren,
     getEndIndexFromArray} from "./../../manipulation";
 import {PropertyStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -148,12 +148,19 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             index,
             childCodes: codes,
             separator: newLineChar,
+            structures,
             previousNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
             nextNewlineWhen: n => n.isBodyableNode() || n.isBodiedNode()
         });
 
-        // return children
-        return getRangeFromArray<PropertyDeclaration>(this.getAllMembers(), index, structures.length, ts.SyntaxKind.PropertyDeclaration);
+        // fill and return children
+        return fillAndGetChildren<PropertyDeclaration, PropertyStructure>({
+            sourceFile,
+            allMembers: this.getAllMembers(),
+            index,
+            structures,
+            expectedKind: ts.SyntaxKind.PropertyDeclaration
+        });
     }
 
     /**

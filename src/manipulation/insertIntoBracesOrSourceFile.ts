@@ -4,7 +4,7 @@ import {SourceFile, Node, LanguageService} from "./../compiler";
 import {verifyAndGetIndex} from "./verifyAndGetIndex";
 import {insertIntoSyntaxList} from "./insertIntoSyntaxList";
 
-export interface InsertIntoBracesOrSourceFileOptions {
+export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     languageService: LanguageService;
     sourceFile: SourceFile;
     parent: Node;
@@ -12,19 +12,31 @@ export interface InsertIntoBracesOrSourceFileOptions {
     index: number;
     childCodes: string[];
     separator: string;
-    previousNewlineWhen?: (previousMember: Node) => boolean;
-    nextNewlineWhen?: (nextMember: Node) => boolean;
+    structures?: TStructure[];
+    previousNewlineWhen?: (previousMember: Node, firstStructure: TStructure) => boolean;
+    nextNewlineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean;
+    separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean;
 }
 
 /**
  * Used to insert non-comma separated nodes into braces or a source file.
  */
-export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileOptions) {
+export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
     const {languageService, sourceFile, parent, index, childCodes, separator, children} = opts;
 
     const insertPos = getInsertPosition(sourceFile, index, parent, children);
 
-    let code = childCodes.join(separator);
+    let code = "";
+
+    for (let i = 0; i < childCodes.length; i++) {
+        if (i > 0) {
+            code += separator;
+            if (opts.separatorNewlineWhen != null && opts.separatorNewlineWhen(opts.structures![i - 1], opts.structures![i]))
+                code += languageService.getNewLine();
+        }
+        code += childCodes[i];
+    }
+
     if (index !== 0)
         code = separator + code;
     else if (insertPos !== 0)
@@ -32,14 +44,17 @@ export function insertIntoBracesOrSourceFile(opts: InsertIntoBracesOrSourceFileO
     else if (sourceFile.getFullWidth() > 0)
         code = code + separator;
 
-    if (opts.previousNewlineWhen instanceof Function) {
+    if (opts.previousNewlineWhen != null) {
         const previousMember: Node | undefined = children[index - 1];
-        if (previousMember != null && opts.previousNewlineWhen(previousMember))
+        const firstStructure = opts.structures![0];
+        if (previousMember != null && opts.previousNewlineWhen(previousMember, firstStructure))
             code = languageService.getNewLine() + code;
     }
-    if (opts.nextNewlineWhen instanceof Function) {
+
+    if (opts.nextNewlineWhen != null) {
         const nextMember: Node | undefined = children[index];
-        if (nextMember != null && opts.nextNewlineWhen(nextMember))
+        const lastStructure = opts.structures![opts.structures!.length - 1];
+        if (nextMember != null && opts.nextNewlineWhen(nextMember, lastStructure))
             code = code + languageService.getNewLine();
     }
 
