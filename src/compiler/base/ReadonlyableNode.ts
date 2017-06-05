@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ReadonlyableNodeExtensionType = Node & ModifierableNode;
@@ -17,9 +16,8 @@ export interface ReadonlyableNode {
     /**
      * Sets if this node is readonly.
      * @param value - If readonly or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setIsReadonly(value: boolean, sourceFile?: SourceFile): this;
+    setIsReadonly(value: boolean): this;
 }
 
 export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtensionType>>(Base: T): Constructor<ReadonlyableNode> & T {
@@ -32,8 +30,8 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
             return this.getFirstModifierByKind(ts.SyntaxKind.ReadonlyKeyword);
         }
 
-        setIsReadonly(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            this.toggleModifier("readonly", value, sourceFile);
+        setIsReadonly(value: boolean) {
+            this.toggleModifier("readonly", value);
             return this;
         }
     };

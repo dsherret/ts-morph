@@ -6,8 +6,8 @@ import {fillAsyncableNodeFromStructure} from "./../../../manipulation/fillMixinF
 
 function doTest(startCode: string, structure: AsyncableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-    fillAsyncableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillAsyncableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillAsyncableNodeFromStructure), () => {

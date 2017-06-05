@@ -2,7 +2,6 @@
 import * as errors from "./../../../errors";
 import {insertStraight, removeNodes} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
-import {SourceFile} from "./../../file";
 
 export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 
@@ -22,13 +21,12 @@ export interface InitializerExpressionableNode {
     /**
      * Removes the initailizer.
      */
-    removeInitializer(sourceFile?: SourceFile): this;
+    removeInitializer(): this;
     /**
      * Sets the initializer.
      * @param text - New text to set for the initializer.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    setInitializer(text: string, sourceFile?: SourceFile): this;
+    setInitializer(text: string): this;
 }
 
 export function InitializerExpressionableNode<T extends Constructor<InitializerExpressionedExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T {
@@ -42,10 +40,10 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
         }
 
         getInitializer() {
-            return this.node.initializer == null ? undefined : this.factory.getExpression(this.node.initializer);
+            return this.node.initializer == null ? undefined : this.factory.getExpression(this.node.initializer, this.sourceFile);
         }
 
-        removeInitializer(sourceFile?: SourceFile) {
+        removeInitializer() {
             const initializer = this.getInitializer();
             if (initializer == null)
                 return this;
@@ -55,18 +53,17 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
                 throw this.getNotImplementedError();
 
-            sourceFile = sourceFile || this.getSourceFileOrThrow();
-            removeNodes(sourceFile, [previousSibling, initializer]);
+            removeNodes(this.getSourceFile(), [previousSibling, initializer]);
             return this;
         }
 
-        setInitializer(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        setInitializer(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
             if (this.hasInitializer())
-                this.removeInitializer(sourceFile);
+                this.removeInitializer();
 
-            insertStraight(sourceFile, this.getEnd(), this, ` = ${text}`);
+            insertStraight(this.getSourceFile(), this.getEnd(), this, ` = ${text}`);
             return this;
         }
     };

@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {insertStraight, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 
@@ -18,9 +17,8 @@ export interface GeneratorableNode {
     /**
      * Sets if the node is a generator.
      * @param value - If it should be a generator or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setIsGenerator(value: boolean, sourceFile?: SourceFile): this;
+    setIsGenerator(value: boolean): this;
 }
 
 export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensionType>>(Base: T): Constructor<GeneratorableNode> & T {
@@ -31,31 +29,29 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 
         getAsteriskToken(): Node<ts.AsteriskToken> | undefined {
             const asteriskToken = this.node.asteriskToken;
-            return asteriskToken == null ? undefined : (this.factory.getNodeFromCompilerNode(asteriskToken) as Node<ts.AsteriskToken>);
+            return asteriskToken == null ? undefined : (this.factory.getNodeFromCompilerNode(asteriskToken, this.sourceFile) as Node<ts.AsteriskToken>);
         }
 
-        setIsGenerator(value: boolean, sourceFile?: SourceFile) {
+        setIsGenerator(value: boolean) {
             const asteriskToken = this.getAsteriskToken();
             const isSet = asteriskToken != null;
 
             if (isSet === value)
                 return this;
 
-            sourceFile = sourceFile || this.getSourceFileOrThrow();
-
             if (asteriskToken != null)
-                removeNodes(sourceFile, [asteriskToken], { removePrecedingSpaces: false });
+                removeNodes(this.getSourceFile(), [asteriskToken], { removePrecedingSpaces: false });
             else
-                insertStraight(sourceFile, getAsteriskInsertPosition(this, sourceFile), this, "*");
+                insertStraight(this.getSourceFile(), getAsteriskInsertPosition(this), this, "*");
 
             return this;
         }
     };
 }
 
-function getAsteriskInsertPosition(node: Node, sourceFile: SourceFile) {
+function getAsteriskInsertPosition(node: Node) {
     if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
-        return node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword, sourceFile).getEnd();
+        return node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword).getEnd();
     }
 
     const nameNode = (node.node as any).name as ts.Node | undefined;
@@ -63,5 +59,5 @@ function getAsteriskInsertPosition(node: Node, sourceFile: SourceFile) {
     if (nameNode == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 
-    return nameNode.getStart(sourceFile.getCompilerNode());
+    return nameNode.getStart(node.sourceFile.getCompilerNode());
 }

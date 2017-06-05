@@ -15,8 +15,6 @@ import * as variable from "./../variable";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
 
-// todo: most of these should accept an optional sourceFile
-
 export interface StatementedNode {
     /**
      * Gets the direct class declaration children.
@@ -35,29 +33,25 @@ export interface StatementedNode {
     /**
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addEnum(structure: structures.EnumStructure, sourceFile?: SourceFile): enums.EnumDeclaration;
+    addEnum(structure: structures.EnumStructure): enums.EnumDeclaration;
     /**
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addEnums(structures: structures.EnumStructure[], sourceFile?: SourceFile): enums.EnumDeclaration[];
+    addEnums(structures: structures.EnumStructure[]): enums.EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the enum declaration to insert.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertEnum(index: number, structure: structures.EnumStructure, sourceFile?: SourceFile): enums.EnumDeclaration;
+    insertEnum(index: number, structure: structures.EnumStructure): enums.EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the enum declarations to insert.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertEnums(index: number, structures: structures.EnumStructure[], sourceFile?: SourceFile): enums.EnumDeclaration[];
+    insertEnums(index: number, structures: structures.EnumStructure[]): enums.EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
@@ -178,26 +172,26 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Enums */
 
-        addEnum(structure: structures.EnumStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            return this.addEnums([structure], sourceFile)[0];
+        addEnum(structure: structures.EnumStructure) {
+            return this.addEnums([structure])[0];
         }
 
-        addEnums(structures: structures.EnumStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            return this.insertEnums(this.getChildSyntaxListOrThrow(sourceFile).getChildren(sourceFile).length, structures, sourceFile);
+        addEnums(structures: structures.EnumStructure[]) {
+            return this.insertEnums(this.getChildSyntaxListOrThrow().getChildren().length, structures);
         }
 
-        insertEnum(index: number, structure: structures.EnumStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            return this.insertEnums(index, [structure], sourceFile)[0];
+        insertEnum(index: number, structure: structures.EnumStructure) {
+            return this.insertEnums(index, [structure])[0];
         }
 
-        insertEnums(index: number, structures: structures.EnumStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        insertEnums(index: number, structures: structures.EnumStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
-            const indentationText = this.getChildIndentationText(sourceFile);
+            const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
-            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(sourceFile, index, texts, ts.SyntaxKind.EnumDeclaration, (tempSourceFile, child, i) => {
+            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(this.getSourceFile(), index, texts, ts.SyntaxKind.EnumDeclaration, (tempSourceFile, child, i) => {
                 // todo: should insert based on fill function
                 for (const member of structures[i].members || []) {
-                    child.addMember(member, tempSourceFile);
+                    child.addMember(member);
                 }
             });
 
@@ -318,7 +312,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 childCodes: finalChildCodes,
                 separator: newLineChar + newLineChar
             });
-            this.appendNewLineSeparatorIfNecessary(sourceFile);
+            this.appendNewLineSeparatorIfNecessary();
 
             // get children
             return getRangeFromArray<T>(syntaxList.getChildren(), index, childCodes.length, expectedSyntaxKind);

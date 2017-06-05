@@ -6,8 +6,8 @@ import {fillGeneratorableNodeFromStructure} from "./../../../manipulation/fillMi
 
 function doTest(startCode: string, structure: GeneratorableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-    fillGeneratorableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillGeneratorableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillGeneratorableNodeFromStructure), () => {

@@ -7,7 +7,7 @@ import {fillInitializerExpressionableNodeFromStructure} from "./../../../manipul
 function doTest(startingCode: string, structure: InitializerExpressionableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startingCode);
     const firstDeclaration = firstChild.getDeclarationList().getDeclarations()[0];
-    fillInitializerExpressionableNodeFromStructure(sourceFile, firstDeclaration, structure);
+    fillInitializerExpressionableNodeFromStructure(firstDeclaration, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
 }
 

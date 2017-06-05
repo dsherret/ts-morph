@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {insertStraight, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 
 export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken; }>;
 
@@ -18,9 +17,8 @@ export interface QuestionTokenableNode {
     /**
      * Sets if this node is optional.
      * @param value - If optional or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setIsOptional(value: boolean, sourceFile?: SourceFile): this;
+    setIsOptional(value: boolean): this;
 }
 
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
@@ -30,10 +28,10 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
         }
 
         getQuestionTokenNode(): Node<ts.QuestionToken> | undefined {
-            return this.node.questionToken == null ? undefined : (this.factory.getNodeFromCompilerNode(this.node.questionToken) as Node<ts.QuestionToken>);
+            return this.node.questionToken == null ? undefined : (this.factory.getNodeFromCompilerNode(this.node.questionToken, this.sourceFile) as Node<ts.QuestionToken>);
         }
 
-        setIsOptional(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        setIsOptional(value: boolean) {
             const questionTokenNode = this.getQuestionTokenNode();
             const hasQuestionToken = questionTokenNode != null;
 
@@ -41,11 +39,11 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
-                const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken, sourceFile);
-                insertStraight(sourceFile, colonNode.getStart(), this, "?");
+                const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken);
+                insertStraight(this.getSourceFile(), colonNode.getStart(), this, "?");
             }
             else
-                removeNodes(sourceFile, [questionTokenNode]);
+                removeNodes(this.getSourceFile(), [questionTokenNode]);
 
             return this;
         }

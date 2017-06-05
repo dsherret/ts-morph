@@ -12,7 +12,7 @@ function getFirstMethod(code: string) {
 
 function doTest(startCode: string, structure: StaticableStructure, expectedCode: string) {
     const {firstMethod, sourceFile} = getFirstMethod(startCode);
-    fillStaticableNodeFromStructure(sourceFile, firstMethod, structure);
+    fillStaticableNodeFromStructure(firstMethod, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
 }
 

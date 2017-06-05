@@ -25,7 +25,7 @@ export interface NamedNode {
 export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
     return class extends Base implements NamedNode {
         getNameNode() {
-            return this.factory.getIdentifier(this.node.name);
+            return this.factory.getIdentifier(this.node.name, this.sourceFile);
         }
 
         getName() {

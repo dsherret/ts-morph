@@ -12,7 +12,7 @@ function getFirstProperty(code: string) {
 
 function doTest(startCode: string, structure: ReadonlyableStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
-    fillReadonlyableNodeFromStructure(sourceFile, firstProperty, structure);
+    fillReadonlyableNodeFromStructure(firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
 }
 

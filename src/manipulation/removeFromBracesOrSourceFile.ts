@@ -5,12 +5,12 @@ import {areNodesEqual} from "./areNodesEqual";
 import {getPosAfterPreviousNonBlankLine, getPosAtNextNonBlankLine} from "./textSeek";
 
 export interface RemoveFromBracesOrSourceFileOptions {
-    sourceFile: SourceFile;
     node: Node;
 }
 
 export function removeFromBracesOrSourceFile(opts: RemoveFromBracesOrSourceFileOptions) {
-    const {node, sourceFile} = opts;
+    const {node} = opts;
+    const sourceFile = node.getSourceFile();
     const compilerFactory = sourceFile.factory;
     const syntaxList = node.getParentSyntaxListOrThrow();
     const syntaxListParent = syntaxList.getParent();
@@ -34,9 +34,9 @@ export function removeFromBracesOrSourceFile(opts: RemoveFromBracesOrSourceFileO
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error removing nodes!", currentNode, newNode));
 
-        const currentNodeChildren = currentNode.getChildrenIterator(sourceFile);
+        const currentNodeChildren = currentNode.getChildrenIterator();
 
-        for (const newNodeChild of newNode.getChildrenIterator(tempSourceFile)) {
+        for (const newNodeChild of newNode.getChildrenIterator()) {
             if (areNodesEqual(newNodeChild, syntaxList) && areNodesEqual(newNodeChild.getParent(), syntaxListParent))
                 handleSyntaxList(currentNodeChildren.next().value, newNodeChild);
             else

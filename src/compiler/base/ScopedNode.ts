@@ -1,6 +1,5 @@
 ﻿import {Node} from "./../common";
 import {Scope} from "./../common/Scope";
-import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 import * as scopeableNode from "./ScopeableNode";
 
@@ -14,9 +13,8 @@ export interface ScopedNode {
     /**
      * Sets the scope.
      * @param scope - Scope to set to.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setScope(scope: Scope, sourceFile?: SourceFile): this;
+    setScope(scope: Scope): this;
 }
 
 export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base: T): Constructor<ScopedNode> & T {
@@ -25,8 +23,8 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
             return scopeableNode.getScopeForNode(this) || Scope.Public;
         }
 
-        setScope(scope: Scope, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            scopeableNode.setScopeForNode(this, scope === Scope.Public ? undefined : scope, sourceFile);
+        setScope(scope: Scope) {
+            scopeableNode.setScopeForNode(this, scope === Scope.Public ? undefined : scope);
             return this;
         }
     };

@@ -23,11 +23,11 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting straight.", currentNode, newNode));
 
-        const currentNodeChildren = currentNode.getChildrenIterator(sourceFile);
+        const currentNodeChildren = currentNode.getChildrenIterator();
         let currentNodeChild: Node | undefined;
-        for (const newNodeChild of newNode.getChildrenIterator(tempSourceFile)) {
+        for (const newNodeChild of newNode.getChildrenIterator()) {
             // todo: is getStart slow? Maybe something could be added or changed here for performance reasons
-            const newNodeChildStart = newNodeChild.getStart(tempSourceFile);
+            const newNodeChildStart = newNodeChild.getStart();
             if (newNodeChildStart >= replacePos && newNodeChildStart < endPos)
                 continue;
 
@@ -37,7 +37,7 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
                 if (currentNodeChild != null)
                     removedNodes.push(currentNodeChild);
                 currentNodeChild = currentNodeChildren.next().value;
-                currentNodeChildStart = currentNodeChild.getStart(sourceFile);
+                currentNodeChildStart = currentNodeChild.getStart();
             }
             while (currentNodeChild.getKind() === ts.SyntaxKind.TypeReference ||
                 replaceLength > 0 && currentNodeChildStart >= replacePos && currentNodeChildStart < replacePos + replaceLength);

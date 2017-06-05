@@ -6,8 +6,8 @@ import {fillTypedNodeFromStructure} from "./../../../manipulation/fillMixinFunct
 
 function doTest(startingCode: string, structure: TypedStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
-    fillTypedNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillTypedNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillTypedNodeFromStructure), () => {

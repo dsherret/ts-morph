@@ -2,7 +2,6 @@
 import {EnumMemberStructure} from "./../../structures";
 import {insertIntoSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
-import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {EnumMember} from "./EnumMember";
@@ -12,38 +11,34 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Adds a member to the enum.
      * @param structure - Structure of the enum.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addMember(structure: EnumMemberStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.addMembers([structure], sourceFile)[0];
+    addMember(structure: EnumMemberStructure) {
+        return this.addMembers([structure])[0];
     }
 
     /**
      * Adds members to the enum.
      * @param structures - Structures of the enums.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addMembers(structures: EnumMemberStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertMembers(this.getMembers().length, structures, sourceFile);
+    addMembers(structures: EnumMemberStructure[]) {
+        return this.insertMembers(this.getMembers().length, structures);
     }
 
     /**
      * Inserts a member to the enum.
      * @param index - Index to insert at.
      * @param structure - Structure of the enum.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertMember(index: number, structure: EnumMemberStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertMembers(index, [structure], sourceFile)[0];
+    insertMember(index: number, structure: EnumMemberStructure) {
+        return this.insertMembers(index, [structure])[0];
     }
 
     /**
      * Inserts members to an enum.
      * @param index - Index to insert at.
      * @param structures - Structures of the enums.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertMembers(index: number, structures: EnumMemberStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    insertMembers(index: number, structures: EnumMemberStructure[]) {
         const members = this.getMembers();
         index = verifyAndGetIndex(index, members.length);
 
@@ -86,14 +81,14 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // get the insert position
         let insertPos: number;
         if (previousMember == null)
-            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile).getEnd();
+            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken).getEnd();
         else if (previousMemberComma == null)
             insertPos = previousMember.getEnd();
         else
             insertPos = previousMember.getFollowingComma()!.getEnd();
 
         // insert
-        insertIntoSyntaxList(sourceFile, insertPos, code, syntaxList, insertChildIndex, numberChildren);
+        insertIntoSyntaxList(this.getSourceFile(), insertPos, code, syntaxList, insertChildIndex, numberChildren);
 
         // get the members
         const newMembers = this.getMembers();
@@ -121,8 +116,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Toggle if it's a const enum
      */
-    setIsConstEnum(value: boolean, sourceFile?: SourceFile) {
-        return this.toggleModifier("const", value, sourceFile);
+    setIsConstEnum(value: boolean) {
+        return this.toggleModifier("const", value);
     }
 
     /**

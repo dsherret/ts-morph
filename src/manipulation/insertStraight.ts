@@ -25,9 +25,9 @@ export function insertStraight(sourceFile: SourceFile, insertPos: number, parent
 
         const parentMatches = parent.getPos() === newNode.getPos() && parent.getKind() === newNode.getKind();
 
-        for (const newNodeChild of newNode.getChildren(tempSourceFile)) {
+        for (const newNodeChild of newNode.getChildren()) {
             if (parentMatches) {
-                const newNodeChildStart = newNodeChild.getStart(tempSourceFile);
+                const newNodeChildStart = newNodeChild.getStart();
                 if (newNodeChildStart >= insertPos && newNodeChildStart < endPos)
                     continue;
             }

@@ -70,7 +70,7 @@ export class Symbol {
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return this.symbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d));
+        return this.symbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
     }
 
     /**

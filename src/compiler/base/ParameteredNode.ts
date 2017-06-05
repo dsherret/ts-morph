@@ -4,7 +4,6 @@ import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, 
 import {ParameterStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
@@ -17,50 +16,46 @@ export interface ParameteredNode {
     /**
      * Adds a parameter.
      * @param structure - Structure of the parameter.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addParameter(structure: ParameterStructure, sourceFile?: SourceFile): ParameterDeclaration;
+    addParameter(structure: ParameterStructure): ParameterDeclaration;
     /**
      * Adds parameters.
      * @param structures - Structures of the parameters.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addParameters(structures: ParameterStructure[], sourceFile?: SourceFile): ParameterDeclaration[];
+    addParameters(structures: ParameterStructure[]): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Index to insert at.
      * @param structures - Parameters to insert.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertParameters(index: number, structures: ParameterStructure[], sourceFile?: SourceFile): ParameterDeclaration[];
+    insertParameters(index: number, structures: ParameterStructure[]): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Index to insert at.
      * @param structures - Parameter to insert.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertParameter(index: number, structure: ParameterStructure, sourceFile?: SourceFile): ParameterDeclaration;
+    insertParameter(index: number, structure: ParameterStructure): ParameterDeclaration;
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
     return class extends Base implements ParameteredNode {
         getParameters() {
-            return this.node.parameters.map(p => this.factory.getParameterDeclaration(p));
+            return this.node.parameters.map(p => this.factory.getParameterDeclaration(p, this.sourceFile));
         }
 
-        addParameter(structure: ParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
-            return this.addParameters([structure], sourceFile)[0];
+        addParameter(structure: ParameterStructure) {
+            return this.addParameters([structure])[0];
         }
 
-        addParameters(structures: ParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
-            return this.insertParameters(getEndIndexFromArray(this.node.parameters), structures, sourceFile);
+        addParameters(structures: ParameterStructure[]) {
+            return this.insertParameters(getEndIndexFromArray(this.node.parameters), structures);
         }
 
-        insertParameter(index: number, structure: ParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
-            return this.insertParameters(index, [structure], sourceFile)[0];
+        insertParameter(index: number, structure: ParameterStructure) {
+            return this.insertParameters(index, [structure])[0];
         }
 
-        insertParameters(index: number, structures: ParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
+        insertParameters(index: number, structures: ParameterStructure[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -73,10 +68,10 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 if (syntaxList == null || syntaxList.getKind() !== ts.SyntaxKind.SyntaxList)
                     throw new errors.NotImplementedError("Expected to find a syntax list after the open parens");
 
-                insertIntoSyntaxList(sourceFile, syntaxList.getPos(), parameterCodes.join(", "), syntaxList, 0, structures.length * 2 - 1);
+                insertIntoSyntaxList(this.getSourceFile(), syntaxList.getPos(), parameterCodes.join(", "), syntaxList, 0, structures.length * 2 - 1);
             }
             else {
-                insertIntoCommaSeparatedNodes(sourceFile, parameters, index, parameterCodes);
+                insertIntoCommaSeparatedNodes(this.getSourceFile(), parameters, index, parameterCodes);
             }
 
             return this.getParameters().slice(index, index + structures.length);

@@ -6,8 +6,8 @@ import {fillReturnTypedNodeFromStructure} from "./../../../manipulation/fillMixi
 
 function doTest(startingCode: string, structure: ReturnTypedStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-    fillReturnTypedNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillReturnTypedNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillReturnTypedNodeFromStructure), () => {

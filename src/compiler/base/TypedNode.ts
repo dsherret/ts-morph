@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
 
@@ -20,9 +19,8 @@ export interface TypedNode {
     /**
      * Sets the type.
      * @param text - Text to set the type to.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setType(text: string, sourceFile?: SourceFile): this;
+    setType(text: string): this;
 }
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
@@ -32,17 +30,17 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         getTypeNode() {
-            return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
+            return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type, this.sourceFile);
         }
 
-        setType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        setType(text: string) {
             const typeNode = this.getTypeNode();
-            if (typeNode != null && typeNode.getText(sourceFile) === text)
+            if (typeNode != null && typeNode.getText() === text)
                 return this;
 
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
-            const separatorNode = this.getFirstChildByKind(separatorSyntaxKind, sourceFile);
+            const separatorNode = this.getFirstChildByKind(separatorSyntaxKind);
             const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
 
             let insertPosition: number;
@@ -52,7 +50,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
                 insertText += separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ";
 
             if (typeNode == null) {
-                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier, sourceFile);
+                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier);
                 insertPosition = identifier.getEnd();
             }
             else {
@@ -62,7 +60,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             insertText += text;
 
             // insert new type
-            replaceStraight(sourceFile, insertPosition, replaceLength, insertText);
+            replaceStraight(this.getSourceFile(), insertPosition, replaceLength, insertText);
 
             return this;
         }

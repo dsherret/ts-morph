@@ -6,8 +6,8 @@ import {fillTypeParameteredNodeFromStructure} from "./../../../manipulation/fill
 
 function doTest(startingCode: string, structure: TypeParameteredStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
-    fillTypeParameteredNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillTypeParameteredNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillTypeParameteredNodeFromStructure), () => {

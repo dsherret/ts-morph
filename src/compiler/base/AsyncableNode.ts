@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type AsyncableNodeExtensionType = Node & ModifierableNode;
@@ -17,9 +16,8 @@ export interface AsyncableNode {
     /**
      * Sets if the node is async.
      * @param value - If it should be async or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setIsAsync(value: boolean, sourceFile?: SourceFile): this;
+    setIsAsync(value: boolean): this;
 }
 
 export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>(Base: T): Constructor<AsyncableNode> & T {
@@ -32,8 +30,8 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
             return this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
         }
 
-        setIsAsync(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            this.toggleModifier("async", value, sourceFile);
+        setIsAsync(value: boolean) {
+            this.toggleModifier("async", value);
             return this;
         }
     };

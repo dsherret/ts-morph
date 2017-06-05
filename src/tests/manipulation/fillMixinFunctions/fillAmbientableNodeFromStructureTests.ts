@@ -6,8 +6,8 @@ import {fillAmbientableNodeFromStructure} from "./../../../manipulation/fillMixi
 
 function doTest(startingCode: string, structure: AmbientableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillAmbientableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillAmbientableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillAmbientableNodeFromStructure), () => {

@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;
@@ -35,16 +34,14 @@ export interface ExportableNode {
     /**
      * Sets if this node is a default export.
      * @param value - If it should be a default export or not.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    setIsDefaultExport(value: boolean, sourceFile?: SourceFile): this;
+    setIsDefaultExport(value: boolean): this;
     /**
      * Sets if the node is exported.
      * Note: Will always remove the default export if set.
      * @param value - If it should be exported or not.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    setIsExported(value: boolean, sourceFile?: SourceFile): this;
+    setIsExported(value: boolean): this;
 }
 
 export function ExportableNode<T extends Constructor<ExportableNodeExtensionType>>(Base: T): Constructor<ExportableNode> & T {
@@ -70,7 +67,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 return true;
 
             const thisSymbol = this.getSymbol();
-            const defaultExportSymbol = this.getSourceFileOrThrow().getDefaultExportSymbol();
+            const defaultExportSymbol = this.getSourceFile().getDefaultExportSymbol();
 
             if (defaultExportSymbol == null || thisSymbol == null)
                 return false;
@@ -87,7 +84,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return parentNode.isSourceFile() && this.hasExportKeyword() && !this.hasDefaultKeyword();
         }
 
-        setIsDefaultExport(value: boolean, sourceFile?: SourceFile) {
+        setIsDefaultExport(value: boolean) {
             if (value === this.isDefaultExport())
                 return this;
 
@@ -95,7 +92,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
-            sourceFile = sourceFile || this.getSourceFileOrThrow();
+            const sourceFile = this.getSourceFile();
             const fileDefaultExportSymbol = sourceFile.getDefaultExportSymbol();
 
             if (fileDefaultExportSymbol != null)
@@ -103,26 +100,26 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             // set this node as the one to default export
             if (value) {
-                this.addModifier("export", sourceFile);
-                this.addModifier("default", sourceFile);
+                this.addModifier("export");
+                this.addModifier("default");
             }
 
             return this;
         }
 
-        setIsExported(value: boolean, sourceFile?: SourceFile) {
+        setIsExported(value: boolean) {
             // remove the default export if it is one no matter what
             if (this.getParentOrThrow().isSourceFile())
-                this.setIsDefaultExport(false, sourceFile);
+                this.setIsDefaultExport(false);
 
             if (value) {
                 if (!this.hasExportKeyword())
-                    this.addModifier("export", sourceFile);
+                    this.addModifier("export");
             }
             else {
                 const exportKeyword = this.getExportKeyword();
                 if (exportKeyword != null)
-                    removeNodes(sourceFile || this.getSourceFileOrThrow(), [exportKeyword]);
+                    removeNodes(this.getSourceFile(), [exportKeyword]);
             }
 
             return this;

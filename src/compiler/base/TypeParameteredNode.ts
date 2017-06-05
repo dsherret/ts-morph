@@ -4,7 +4,6 @@ import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, 
 import {ArrayUtils} from "./../../utils";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {TypeParameterDeclaration} from "./../type/TypeParameterDeclaration";
 import {TypeParameterStructure} from "./../../structures";
 
@@ -18,51 +17,47 @@ export interface TypeParameteredNode {
     /**
      * Adds a type parameter.
      * @param structure - Structure of the type parameter.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addTypeParameter(structure: TypeParameterStructure, sourceFile?: SourceFile): TypeParameterDeclaration;
+    addTypeParameter(structure: TypeParameterStructure): TypeParameterDeclaration;
     /**
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    addTypeParameters(structures: TypeParameterStructure[], sourceFile?: SourceFile): TypeParameterDeclaration[];
+    addTypeParameters(structures: TypeParameterStructure[]): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile?: SourceFile): TypeParameterDeclaration;
+    insertTypeParameter(index: number, structure: TypeParameterStructure): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
      * @param index - Index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile?: SourceFile): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: TypeParameterStructure[]): TypeParameterDeclaration[];
 }
 
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
     return class extends Base implements TypeParameteredNode {
         getTypeParameters() {
             const typeParameters = (this.node.typeParameters || []) as ts.TypeParameterDeclaration[]; // why do I need this assert?
-            return typeParameters.map(t => this.factory.getTypeParameterDeclaration(t));
+            return typeParameters.map(t => this.factory.getTypeParameterDeclaration(t, this.sourceFile));
         }
 
-        addTypeParameter(structure: TypeParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
-            return this.addTypeParameters([structure], sourceFile)[0];
+        addTypeParameter(structure: TypeParameterStructure) {
+            return this.addTypeParameters([structure])[0];
         }
 
-        addTypeParameters(structures: TypeParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
-            return this.insertTypeParameters(getEndIndexFromArray(this.node.typeParameters), structures, sourceFile);
+        addTypeParameters(structures: TypeParameterStructure[]) {
+            return this.insertTypeParameters(getEndIndexFromArray(this.node.typeParameters), structures);
         }
 
-        insertTypeParameter(index: number, structure: TypeParameterStructure, sourceFile = this.getSourceFileOrThrow()) {
-            return this.insertTypeParameters(index, [structure], sourceFile)[0];
+        insertTypeParameter(index: number, structure: TypeParameterStructure) {
+            return this.insertTypeParameters(index, [structure])[0];
         }
 
-        insertTypeParameters(index: number, structures: TypeParameterStructure[], sourceFile = this.getSourceFileOrThrow()) {
+        insertTypeParameters(index: number, structures: TypeParameterStructure[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -72,10 +67,10 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             if (typeParameters.length === 0) {
                 const insertPos = getNamedNode(this).getNameNode().getEnd();
-                insertStraight(sourceFile, insertPos, this, `<${typeParamCodes.join(", ")}>`);
+                insertStraight(this.getSourceFile(), insertPos, this, `<${typeParamCodes.join(", ")}>`);
             }
             else {
-                insertIntoCommaSeparatedNodes(sourceFile, typeParameters, index, typeParamCodes);
+                insertIntoCommaSeparatedNodes(this.getSourceFile(), typeParameters, index, typeParamCodes);
             }
 
             return this.getTypeParameters().slice(index, index + structures.length);

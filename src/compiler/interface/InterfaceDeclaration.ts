@@ -14,7 +14,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getMethods(): MethodSignature[] {
         return this.node.members.filter(m => m.kind === ts.SyntaxKind.MethodSignature)
-            .map(m => this.factory.getMethodSignature(m as ts.MethodSignature));
+            .map(m => this.factory.getMethodSignature(m as ts.MethodSignature, this.sourceFile));
     }
 
     /**
@@ -22,6 +22,6 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getProperties(): PropertySignature[] {
         return this.node.members.filter(m => m.kind === ts.SyntaxKind.PropertySignature)
-            .map(m => this.factory.getPropertySignature(m as ts.PropertySignature));
+            .map(m => this.factory.getPropertySignature(m as ts.PropertySignature, this.sourceFile));
     }
 }

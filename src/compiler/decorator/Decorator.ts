@@ -7,7 +7,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the decorator name.
      */
     getName() {
-        const sourceFile = this.getSourceFileOrThrow();
+        const sourceFile = this.getSourceFile();
         function getNameFromExpression(expression: ts.LeftHandSideExpression) {
             if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
                 const propAccess = expression as ts.PropertyAccessExpression;
@@ -28,7 +28,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the full decorator name.
      */
     getFullName() {
-        const sourceFile = this.getSourceFileOrThrow();
+        const sourceFile = this.getSourceFile();
         if (this.isDecoratorFactory()) {
             const callExpression = this.node.expression as ts.CallExpression;
             return callExpression.expression.getText(sourceFile.node);
@@ -51,6 +51,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.factory.getNodeFromCompilerNode(this.node.expression) as Node<ts.CallExpression>;
+        return this.factory.getNodeFromCompilerNode(this.node.expression, this.sourceFile) as Node<ts.CallExpression>;
     }
 }

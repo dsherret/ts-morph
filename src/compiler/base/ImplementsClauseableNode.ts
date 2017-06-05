@@ -3,7 +3,6 @@ import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {HeritageClause} from "./../general";
-import {SourceFile} from "./../file";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
 
@@ -17,27 +16,23 @@ export interface ImplementsClauseableNode {
     /**
      * Adds an implements clause.
      * @param text - Text to add for the implements clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    addImplements(text: string): ExpressionWithTypeArguments;
     /**
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    addImplements(text: string[]): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertImplements(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: string[]): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    insertImplements(index: number, text: string): ExpressionWithTypeArguments;
 }
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
@@ -47,15 +42,15 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
-        addImplements(text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
-        addImplements(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        addImplements(text: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
-            return this.insertImplements(this.getImplements().length, text as any, sourceFile);
+        addImplements(text: string[]): ExpressionWithTypeArguments[];
+        addImplements(text: string): ExpressionWithTypeArguments;
+        addImplements(text: string | string[]): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+            return this.insertImplements(this.getImplements().length, text as any);
         }
 
-        insertImplements(index: number, text: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
-        insertImplements(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        insertImplements(index: number, text: string[]): ExpressionWithTypeArguments[];
+        insertImplements(index: number, text: string): ExpressionWithTypeArguments;
+        insertImplements(index: number, texts: string | string[]): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
@@ -70,22 +65,22 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(sourceFile, implementsTypes, index, texts);
+                insertIntoCommaSeparatedNodes(this.getSourceFile(), implementsTypes, index, texts);
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
+            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
-            const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
+            const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
             let insertText = `implements ${texts.join(", ")} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 
             // assumes there can only be another extends heritage clause
             if (heritageClauses.length === 0)
-                insertCreatingSyntaxList(sourceFile, openBraceStart, insertText);
+                insertCreatingSyntaxList(this.getSourceFile(), openBraceStart, insertText);
             else
-                insertIntoSyntaxList(sourceFile, openBraceStart, insertText, heritageClauses[0].getParentSyntaxListOrThrow(), 1, 1);
+                insertIntoSyntaxList(this.getSourceFile(), openBraceStart, insertText, heritageClauses[0].getParentSyntaxListOrThrow(), 1, 1);
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
         }

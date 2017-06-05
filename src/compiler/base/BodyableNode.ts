@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 
 export type BodyableNodeExtensionType = Node<ts.Node>;
 
@@ -35,7 +34,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
 
         getBody() {
             const body = (this.node as any).body as ts.Node;
-            return body == null ? undefined : this.factory.getNodeFromCompilerNode(body);
+            return body == null ? undefined : this.factory.getNodeFromCompilerNode(body, this.sourceFile);
         }
     };
 }

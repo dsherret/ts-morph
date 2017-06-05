@@ -8,7 +8,7 @@ export class VariableDeclarationList extends Node<ts.VariableDeclarationList> {
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.node.declarations.map(d => this.factory.getVariableDeclaration(d));
+        return this.node.declarations.map(d => this.factory.getVariableDeclaration(d, this.sourceFile));
     }
 
     /**

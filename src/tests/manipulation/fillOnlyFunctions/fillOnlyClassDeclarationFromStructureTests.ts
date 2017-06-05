@@ -6,8 +6,8 @@ import {fillOnlyClassDeclarationFromStructure} from "./../../../manipulation/fil
 
 function doTest(startingCode: string, structure: ClassSpecificStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillOnlyClassDeclarationFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillOnlyClassDeclarationFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillOnlyClassDeclarationFromStructure), () => {

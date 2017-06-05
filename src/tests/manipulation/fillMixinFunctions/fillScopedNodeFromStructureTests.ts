@@ -12,7 +12,7 @@ function getFirstProperty(code: string) {
 
 function doTest(startCode: string, structure: ScopedStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
-    fillScopedNodeFromStructure(sourceFile, firstProperty, structure);
+    fillScopedNodeFromStructure(firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
 }
 

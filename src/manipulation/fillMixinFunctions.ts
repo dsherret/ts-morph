@@ -1,127 +1,120 @@
 ﻿import * as compiler from "./../compiler";
 import * as structures from "./../structures";
 
-export function fillAbstractableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.AbstractableNode, structure: structures.AbstractableStructure) {
+export function fillAbstractableNodeFromStructure(node: compiler.AbstractableNode, structure: structures.AbstractableStructure) {
     if (structure.isAbstract != null)
-        node.setIsAbstract(structure.isAbstract, sourceFile);
+        node.setIsAbstract(structure.isAbstract);
 }
 
-export function fillAmbientableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.AmbientableNode, structure: structures.AmbientableStructure) {
+export function fillAmbientableNodeFromStructure(node: compiler.AmbientableNode, structure: structures.AmbientableStructure) {
     if (structure.hasDeclareKeyword != null)
-        node.toggleDeclareKeyword(structure.hasDeclareKeyword, sourceFile);
+        node.toggleDeclareKeyword(structure.hasDeclareKeyword);
 }
 
-export function fillAsyncableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.AsyncableNode, structure: structures.AsyncableStructure) {
+export function fillAsyncableNodeFromStructure(node: compiler.AsyncableNode, structure: structures.AsyncableStructure) {
     if (structure.isAsync != null)
-        node.setIsAsync(structure.isAsync, sourceFile);
+        node.setIsAsync(structure.isAsync);
 }
 
-export function fillExportableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ExportableNode, structure: structures.ExportableStructure) {
+export function fillExportableNodeFromStructure(node: compiler.ExportableNode, structure: structures.ExportableStructure) {
     if (structure.isExported != null)
-        node.setIsExported(structure.isExported, sourceFile);
+        node.setIsExported(structure.isExported);
     if (structure.isDefaultExport != null)
-        node.setIsDefaultExport(structure.isDefaultExport, sourceFile);
+        node.setIsDefaultExport(structure.isDefaultExport);
 }
 
-export function fillGeneratorableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.GeneratorableNode, structure: structures.GeneratorableStructure) {
+export function fillGeneratorableNodeFromStructure(node: compiler.GeneratorableNode, structure: structures.GeneratorableStructure) {
     if (structure.isGenerator != null)
-        node.setIsGenerator(structure.isGenerator, sourceFile);
+        node.setIsGenerator(structure.isGenerator);
 }
 
 export function fillInitializerExpressionableNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.InitializerExpressionableNode,
     structure: structures.InitializerExpressionableStructure
 ) {
     if (structure.initializer != null)
-        node.setInitializer(structure.initializer, sourceFile);
+        node.setInitializer(structure.initializer);
 }
 
-export function fillQuestionTokenableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.QuestionTokenableNode, structure: structures.QuestionTokenableStructure) {
+export function fillQuestionTokenableNodeFromStructure(node: compiler.QuestionTokenableNode, structure: structures.QuestionTokenableStructure) {
     if (structure.hasQuestionToken != null)
-        node.setIsOptional(structure.hasQuestionToken, sourceFile);
+        node.setIsOptional(structure.hasQuestionToken);
 }
 
-export function fillReadonlyableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReadonlyableNode, structure: structures.ReadonlyableStructure) {
+export function fillReadonlyableNodeFromStructure(node: compiler.ReadonlyableNode, structure: structures.ReadonlyableStructure) {
     if (structure.isReadonly != null)
-        node.setIsReadonly(structure.isReadonly, sourceFile);
+        node.setIsReadonly(structure.isReadonly);
 }
 
-export function fillScopeableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ScopeableNode, structure: structures.ScopeableStructure) {
+export function fillScopeableNodeFromStructure(node: compiler.ScopeableNode, structure: structures.ScopeableStructure) {
     if (structure.scope != null)
-        node.setScope(structure.scope, sourceFile);
+        node.setScope(structure.scope);
 }
 
-export function fillScopedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ScopedNode, structure: structures.ScopedStructure) {
+export function fillScopedNodeFromStructure(node: compiler.ScopedNode, structure: structures.ScopedStructure) {
     if (structure.scope != null)
-        node.setScope(structure.scope, sourceFile);
+        node.setScope(structure.scope);
 }
 
-export function fillStaticableNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.StaticableNode, structure: structures.StaticableStructure) {
+export function fillStaticableNodeFromStructure(node: compiler.StaticableNode, structure: structures.StaticableStructure) {
     if (structure.isStatic != null)
-        node.setIsStatic(structure.isStatic, sourceFile);
+        node.setIsStatic(structure.isStatic);
 }
 
-export function fillTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.TypedNode, structure: structures.TypedStructure) {
+export function fillTypedNodeFromStructure(node: compiler.TypedNode, structure: structures.TypedStructure) {
     if (structure.type != null)
-        node.setType(structure.type, sourceFile);
+        node.setType(structure.type);
 }
 
 export function fillImplementsClauseableNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.ImplementsClauseableNode,
     structure: structures.ImplementsClauseableStructure
 ) {
     if (structure.implements != null && structure.implements.length > 0)
-        node.addImplements(structure.implements, sourceFile);
+        node.addImplements(structure.implements);
 }
 
 export function fillExtendsClauseableNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.ExtendsClauseableNode,
     structure: structures.ExtendsClauseableStructure
 ) {
     if (structure.extends != null && structure.extends.length > 0)
-        node.addExtends(structure.extends, sourceFile);
+        node.addExtends(structure.extends);
 }
 
 export function fillTypeParameteredNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.TypeParameteredNode,
     structure: structures.TypeParameteredStructure
 ) {
     if (structure.typeParameters != null && structure.typeParameters.length > 0)
-        node.addTypeParameters(structure.typeParameters, sourceFile);
+        node.addTypeParameters(structure.typeParameters);
 }
 
 export function fillDecoratableNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.DecoratableNode,
     structure: structures.DecoratableStructure
 ) {
     if (structure.decorators != null && structure.decorators.length > 0)
-        node.addDecorators(structure.decorators, sourceFile);
+        node.addDecorators(structure.decorators);
 }
 
 export function fillDocumentationableNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.DocumentationableNode,
     structure: structures.DocumentationableStructure
 ) {
     if (structure.docs != null && structure.docs.length > 0)
-        node.addDocs(structure.docs, sourceFile);
+        node.addDocs(structure.docs);
 }
 
-export function fillReturnTypedNodeFromStructure(sourceFile: compiler.SourceFile, node: compiler.ReturnTypedNode, structure: structures.ReturnTypedStructure) {
+export function fillReturnTypedNodeFromStructure(node: compiler.ReturnTypedNode, structure: structures.ReturnTypedStructure) {
     if (structure.returnType != null)
-        node.setReturnType(structure.returnType, sourceFile);
+        node.setReturnType(structure.returnType);
 }
 
 export function fillParameteredNodeFromStructure(
-    sourceFile: compiler.SourceFile,
     node: compiler.ParameteredNode,
     structure: structures.ParameteredStructure
 ) {
     if (structure.parameters != null && structure.parameters.length > 0)
-        node.addParameters(structure.parameters, sourceFile);
+        node.addParameters(structure.parameters);
 }

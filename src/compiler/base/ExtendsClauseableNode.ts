@@ -2,7 +2,6 @@
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
 
@@ -16,27 +15,23 @@ export interface ExtendsClauseableNode {
     /**
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    addExtends(texts: string[]): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    addExtends(text: string): ExpressionWithTypeArguments;
     /**
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: string[]): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
+    insertExtends(index: number, text: string): ExpressionWithTypeArguments;
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
@@ -46,15 +41,15 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 
-        addExtends(texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
-        addExtends(text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        addExtends(text: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
-            return this.insertExtends(this.getExtends().length, text as any, sourceFile);
+        addExtends(texts: string[]): ExpressionWithTypeArguments[];
+        addExtends(text: string): ExpressionWithTypeArguments;
+        addExtends(text: string | string[]): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+            return this.insertExtends(this.getExtends().length, text as any);
         }
 
-        insertExtends(index: number, texts: string[], sourceFile?: SourceFile): ExpressionWithTypeArguments[];
-        insertExtends(index: number, text: string, sourceFile?: SourceFile): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | string[], sourceFile: SourceFile = this.getSourceFileOrThrow()): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        insertExtends(index: number, texts: string[]): ExpressionWithTypeArguments[];
+        insertExtends(index: number, text: string): ExpressionWithTypeArguments;
+        insertExtends(index: number, texts: string | string[]): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));
@@ -68,18 +63,18 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(sourceFile, extendsTypes, index, texts);
+                insertIntoCommaSeparatedNodes(this.getSourceFile(), extendsTypes, index, texts);
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
+            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
-            const isLastSpace = /\s/.test(sourceFile.getFullText()[openBraceStart - 1]);
+            const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
             let insertText = `extends ${texts.join(", ")} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 
-            insertCreatingSyntaxList(sourceFile, openBraceStart, insertText);
+            insertCreatingSyntaxList(this.getSourceFile(), openBraceStart, insertText);
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
         }
     };

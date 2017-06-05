@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
 
@@ -20,9 +19,8 @@ export interface ReturnTypedNode {
     /**
      * Sets the return type of the node.
      * @param text - Text to set as the type.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setReturnType(text: string, sourceFile?: SourceFile): this;
+    setReturnType(text: string): this;
 }
 
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
@@ -34,12 +32,12 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         getReturnTypeNode() {
-            return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type);
+            return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type, this.sourceFile);
         }
 
-        setReturnType(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        setReturnType(text: string) {
             const returnTypeNode = this.getReturnTypeNode();
-            if (returnTypeNode != null && returnTypeNode.getText(sourceFile) === text)
+            if (returnTypeNode != null && returnTypeNode.getText() === text)
                 return this;
 
             // get replace length of previous return type
@@ -50,8 +48,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             const replaceLength = colonToken == null ? 0 : returnTypeNode!.getEnd() - colonToken.getPos();
 
             // insert new type
-            const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken, sourceFile);
-            replaceStraight(sourceFile, closeParenToken.getEnd(), replaceLength, `: ${text}`);
+            const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken);
+            replaceStraight(this.getSourceFile(), closeParenToken.getEnd(), replaceLength, `: ${text}`);
 
             return this;
         }

@@ -6,8 +6,8 @@ import {fillImplementsClauseableNodeFromStructure} from "./../../../manipulation
 
 function doTest(startingCode: string, structure: ImplementsClauseableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillImplementsClauseableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillImplementsClauseableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillImplementsClauseableNodeFromStructure), () => {

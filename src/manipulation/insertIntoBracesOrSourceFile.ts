@@ -25,7 +25,7 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
     const {languageService, sourceFile, parent, index, childCodes, separator, children} = opts;
 
-    const insertPos = getInsertPosition(sourceFile, index, parent, children);
+    const insertPos = getInsertPosition(index, parent, children);
 
     let code = "";
 
@@ -61,16 +61,16 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         }
     }
 
-    insertIntoSyntaxList(sourceFile, insertPos, code, parent.getChildSyntaxListOrThrow(sourceFile), index, childCodes.length);
+    insertIntoSyntaxList(sourceFile, insertPos, code, parent.getChildSyntaxListOrThrow(), index, childCodes.length);
 }
 
-function getInsertPosition(sourceFile: SourceFile, index: number, parent: Node, children: Node[]) {
+function getInsertPosition(index: number, parent: Node, children: Node[]) {
     if (index === 0) {
         if (parent.isSourceFile())
             return 0;
         else {
             const parentContainer = getParentContainer(parent);
-            const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
+            const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
             return openBraceToken.getEnd();
         }
     }

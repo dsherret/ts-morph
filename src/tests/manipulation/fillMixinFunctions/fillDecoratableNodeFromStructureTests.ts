@@ -6,8 +6,8 @@ import {fillDecoratableNodeFromStructure} from "./../../../manipulation/fillMixi
 
 function doTest(startingCode: string, structure: DecoratableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillDecoratableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillDecoratableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillDecoratableNodeFromStructure), () => {

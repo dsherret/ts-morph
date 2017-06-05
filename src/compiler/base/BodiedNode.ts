@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 
 export type BodiedNodeExtensionType = Node<ts.Node>;
 
@@ -27,7 +26,7 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             if (body == null)
                 throw new errors.InvalidOperationError("Bodied node should have a body.");
 
-            return this.factory.getNodeFromCompilerNode(body);
+            return this.factory.getNodeFromCompilerNode(body, this.sourceFile);
         }
     };
 }

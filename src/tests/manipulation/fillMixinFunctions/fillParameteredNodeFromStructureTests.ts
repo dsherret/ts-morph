@@ -6,8 +6,8 @@ import {fillParameteredNodeFromStructure} from "./../../../manipulation/fillMixi
 
 function doTest(startingCode: string, structure: ParameteredStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-    fillParameteredNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillParameteredNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillParameteredNodeFromStructure), () => {

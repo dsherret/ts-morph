@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
-import {SourceFile} from "./../file/SourceFile";
 
 export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
@@ -20,36 +19,32 @@ export interface ModifierableNode {
     /**
      * Gets if it has the specified modifier.
      * @param kind - Syntax kind to check for.
-     * @param sourceFile - Optional source file to help improve performance.
      */
     hasModifier(kind: ts.SyntaxKind): boolean;
     /**
      * Gets if it has the specified modifier.
      * @param text - Text to check for.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
+    hasModifier(text: ModifierTexts): boolean;
     /**
      * Toggles a modifier.
      * @param text - Text to toggle the modifier for.
      * @param value - Optional toggling value.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    toggleModifier(text: ModifierTexts, value?: boolean, sourceFile?: SourceFile): this;
+    toggleModifier(text: ModifierTexts, value?: boolean): this;
     /**
      * Add a modifier with the specified text.
      * @param text - Modifier text to add.
-     * @param sourceFile - Optional source file to help improve performance.
      * @returns The added modifier.
      * @internal
      */
-    addModifier(text: ModifierTexts, sourceFile?: SourceFile): Node<ts.Modifier>;
+    addModifier(text: ModifierTexts): Node<ts.Modifier>;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
     return class extends Base implements ModifierableNode {
         getModifiers() {
-            return this.node.modifiers == null ? [] : this.node.modifiers.map(m => this.factory.getNodeFromCompilerNode(m));
+            return this.node.modifiers == null ? [] : this.node.modifiers.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile));
         }
 
         getFirstModifierByKind(kind: ts.SyntaxKind) {
@@ -62,17 +57,15 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         hasModifier(kind: ts.SyntaxKind): boolean;
-        hasModifier(text: ModifierTexts, sourceFile?: SourceFile): boolean;
-        hasModifier(textOrKind: ModifierTexts | ts.SyntaxKind, sourceFile?: SourceFile) {
-            if (typeof textOrKind === "string") {
-                sourceFile = sourceFile || this.getSourceFileOrThrow();
-                return this.getModifiers().some(m => m.getText(sourceFile) === textOrKind);
-            }
+        hasModifier(text: ModifierTexts): boolean;
+        hasModifier(textOrKind: ModifierTexts | ts.SyntaxKind) {
+            if (typeof textOrKind === "string")
+                return this.getModifiers().some(m => m.getText() === textOrKind);
             else
                 return this.getModifiers().some(m => m.getKind() === textOrKind);
         }
 
-        toggleModifier(text: ModifierTexts, value?: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+        toggleModifier(text: ModifierTexts, value?: boolean) {
             const hasModifier = this.hasModifier(text);
             if (value == null)
                 value = !hasModifier;
@@ -80,18 +73,18 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 return this;
 
             if (!hasModifier)
-                this.addModifier(text, sourceFile);
+                this.addModifier(text);
             else
-                removeNodes(sourceFile, [this.getModifiers().find(m => m.getText() === text)]);
+                removeNodes(this.getSourceFile(), [this.getModifiers().find(m => m.getText() === text)]);
 
             return this;
         }
 
-        addModifier(text: ModifierTexts, sourceFile: SourceFile = this.getSourceFileOrThrow()): Node<ts.Modifier> {
+        addModifier(text: ModifierTexts): Node<ts.Modifier> {
             const modifiers = this.getModifiers();
-            const hasModifier = modifiers.some(m => m.getText(sourceFile) === text);
+            const hasModifier = modifiers.some(m => m.getText() === text);
             if (hasModifier)
-                return this.getModifiers().find(m => m.getText(sourceFile) === text) as Node<ts.Modifier>;
+                return this.getModifiers().find(m => m.getText() === text) as Node<ts.Modifier>;
 
             // get insert position & index
             let insertPos = this.getStart();
@@ -99,7 +92,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             getAddAfterModifierTexts(text).forEach(addAfterText => {
                 for (let i = 0; i < modifiers.length; i++) {
                     const modifier = modifiers[i];
-                    if (modifier.getText(sourceFile) === addAfterText) {
+                    if (modifier.getText() === addAfterText) {
                         if (insertPos < modifier.getEnd()) {
                             insertPos = modifier.getEnd();
                             insertIndex = i + 1;
@@ -124,11 +117,11 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
             // insert
             if (modifiers.length === 0)
-                insertCreatingSyntaxList(sourceFile, insertPos, insertText);
+                insertCreatingSyntaxList(this.getSourceFile(), insertPos, insertText);
             else
-                insertIntoSyntaxList(sourceFile, insertPos, insertText, modifiers[0].getParentSyntaxListOrThrow(), insertIndex, 1);
+                insertIntoSyntaxList(this.getSourceFile(), insertPos, insertText, modifiers[0].getParentSyntaxListOrThrow(), insertIndex, 1);
 
-            return this.getModifiers().find(m => m.getStart(sourceFile) === startPos) as Node<ts.Modifier>;
+            return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
         }
     };
 }

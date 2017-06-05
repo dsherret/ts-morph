@@ -6,8 +6,8 @@ import {fillAbstractableNodeFromStructure} from "./../../../manipulation/fillMix
 
 function doTest(startingCode: string, structure: AbstractableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillAbstractableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillAbstractableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillAbstractableNodeFromStructure), () => {

@@ -6,8 +6,8 @@ import {fillExportableNodeFromStructure} from "./../../../manipulation/fillMixin
 
 function doTest(startingCode: string, structure: ExportableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
-    fillExportableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillExportableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillExportableNodeFromStructure), () => {

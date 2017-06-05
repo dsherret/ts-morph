@@ -14,7 +14,7 @@ import {areNodesEqual} from "./areNodesEqual";
  * @param insertItemsCount - Number of items to insert.
  */
 export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, newText: string, syntaxList: Node, childIndex: number, insertItemsCount: number) {
-    const syntaxListChildren = syntaxList.getChildren(sourceFile);
+    const syntaxListChildren = syntaxList.getChildren();
     const syntaxListParent = syntaxList.getParent();
 
     if (childIndex < 0 || childIndex > syntaxListChildren.length)
@@ -32,9 +32,9 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
         if (currentNode.getKind() !== newNode.getKind())
             throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting into syntax list!", currentNode, newNode));
 
-        const currentNodeChildren = currentNode.getChildrenIterator(sourceFile);
+        const currentNodeChildren = currentNode.getChildrenIterator();
 
-        for (const newNodeChild of newNode.getChildrenIterator(tempSourceFile)) {
+        for (const newNodeChild of newNode.getChildrenIterator()) {
             if (areNodesEqual(newNodeChild, syntaxList) && areNodesEqual(newNodeChild.getParent(), syntaxListParent))
                 handleSyntaxList(currentNodeChildren.next().value, newNodeChild);
             else

@@ -6,8 +6,8 @@ import {fillDocumentationableNodeFromStructure} from "./../../../manipulation/fi
 
 function doTest(startingCode: string, structure: DocumentationableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-    fillDocumentationableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(sourceFile.getFullText(sourceFile)).to.equal(expectedCode);
+    fillDocumentationableNodeFromStructure(firstChild, structure);
+    expect(sourceFile.getFullText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillDocumentationableNodeFromStructure), () => {

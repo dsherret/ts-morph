@@ -3,7 +3,6 @@ import {replaceNodeText} from "./../../manipulation";
 import {Logger} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode} from "./../base";
-import {SourceFile} from "./../file";
 import {StatementedNode} from "./../statement";
 
 export const NamespaceDeclarationBase = StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(BodiedNode(NamedNode(Node)))))));
@@ -25,9 +24,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     /**
      * Set if this namespace has a namepsace keyword.
      * @param value - Whether to set it or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setHasNamespaceKeyword(value = true, sourceFile?: SourceFile) {
+    setHasNamespaceKeyword(value = true) {
         if (this.hasNamespaceKeyword() === value)
             return this;
 
@@ -38,8 +36,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             return this;
         }
 
-        sourceFile = sourceFile || this.getSourceFileOrThrow();
-        replaceNodeText(sourceFile, declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
+        replaceNodeText(this.getSourceFile(), declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
         return this;
     }
 
@@ -53,11 +50,10 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
 
     /**
      * Gets the namespace or module keyword.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getDeclarationTypeKeyword(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    getDeclarationTypeKeyword() {
         return this.getFirstChild(child =>
             child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
-            child.getKind() === ts.SyntaxKind.ModuleKeyword, sourceFile);
+            child.getKind() === ts.SyntaxKind.ModuleKeyword);
     }
 }

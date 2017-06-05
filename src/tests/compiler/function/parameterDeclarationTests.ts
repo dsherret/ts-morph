@@ -23,7 +23,7 @@ describe(nameof(ParameterDeclaration), () => {
         function doTest(startCode: string, isRestParameter: boolean, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
-            firstParam.setIsRestParameter(isRestParameter, sourceFile);
+            firstParam.setIsRestParameter(isRestParameter);
             expect(sourceFile.getFullText()).to.be.equal(expectedCode);
         }
 

@@ -17,6 +17,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     readonly factory: CompilerFactory;
     /** @internal */
     node: NodeType;
+    /** @internal */
+    sourceFile: SourceFile;
 
     /**
      * Initializes a new instance.
@@ -26,19 +28,20 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      */
     constructor(
         factory: CompilerFactory,
-        node: NodeType
+        node: NodeType,
+        sourceFile: SourceFile
     ) {
         this.factory = factory;
         this.node = node;
+        this.sourceFile = sourceFile;
     }
 
     /**
      * Releases the node from the cache and ast.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    dispose(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        for (const child of this.getChildren(sourceFile)) {
-            child.dispose(sourceFile);
+    dispose() {
+        for (const child of this.getChildren()) {
+            child.dispose();
         }
 
         this.factory.removeNodeFromCache(this);
@@ -80,7 +83,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
         const nameNode = (this.node as any).name as ts.Node | undefined;
         if (nameNode != null)
-            return this.factory.getNodeFromCompilerNode(nameNode).getSymbol();
+            return this.factory.getNodeFromCompilerNode(nameNode, this.sourceFile).getSymbol();
 
         return undefined;
     }
@@ -97,10 +100,9 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /**
      * Gets the first child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChildByKindOrThrow(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        const firstChild = this.getFirstChildByKind(kind, sourceFile);
+    getFirstChildByKindOrThrow(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChildByKind(kind);
         if (firstChild == null)
             throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
         return firstChild;
@@ -109,19 +111,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /**
      * Gets the first child by syntax kind.
      * @param kind - Syntax kind.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChildByKind(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.getFirstChild(child => child.getKind() === kind, sourceFile);
+    getFirstChildByKind(kind: ts.SyntaxKind) {
+        return this.getFirstChild(child => child.getKind() === kind);
     }
 
     /**
      * Gets the first child by a condition.
      * @param condition - Condition.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getFirstChild(condition: (node: Node) => boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        for (const child of this.getChildren(sourceFile)) {
+    getFirstChild(condition: (node: Node) => boolean) {
+        for (const child of this.getChildren()) {
             if (condition(child))
                 return child;
         }
@@ -183,25 +183,24 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
     }
 
-    getChildren(sourceFile = this.getSourceFileOrThrow()): Node[] {
-        return this.node.getChildren(sourceFile.getCompilerNode()).map(n => this.factory.getNodeFromCompilerNode(n));
+    getChildren(): Node[] {
+        return this.node.getChildren().map(n => this.factory.getNodeFromCompilerNode(n, this.sourceFile));
     }
 
     /**
      * @internal
      */
-    *getChildrenIterator(sourceFile = this.getSourceFileOrThrow()): IterableIterator<Node> {
-        for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
-            yield this.factory.getNodeFromCompilerNode(compilerChild);
+    *getChildrenIterator(): IterableIterator<Node> {
+        for (const compilerChild of this.node.getChildren(this.sourceFile.getCompilerNode())) {
+            yield this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
         }
     }
 
     /**
      * Gets the child syntax list or throws if it doesn't exist.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getChildSyntaxListOrThrow(sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        const syntaxList = this.getChildSyntaxList(sourceFile);
+    getChildSyntaxListOrThrow() {
+        const syntaxList = this.getChildSyntaxList();
         if (syntaxList == null)
             throw new errors.InvalidOperationError("A child syntax list was expected.");
         return syntaxList;
@@ -209,9 +208,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Gets the child syntax list if it exists.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getChildSyntaxList(sourceFile: SourceFile = this.getSourceFileOrThrow()): Node | undefined {
+    getChildSyntaxList(): Node | undefined {
         let node: Node = this;
         if (this.isBodyableNode() || this.isBodiedNode())
             node = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
@@ -233,28 +231,26 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /**
      * Gets the children based on a kind.
      * @param kind - Syntax kind.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.getChildren(sourceFile).filter(c => c.getKind() === kind) as T[];
+    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind) {
+        return this.getChildren().filter(c => c.getKind() === kind) as T[];
     }
 
-    *getAllChildren(sourceFile = this.getSourceFileOrThrow()): IterableIterator<Node> {
-        for (const compilerChild of this.node.getChildren(sourceFile.getCompilerNode())) {
-            const child = this.factory.getNodeFromCompilerNode(compilerChild);
+    *getAllChildren(): IterableIterator<Node> {
+        for (const compilerChild of this.node.getChildren(this.sourceFile.getCompilerNode())) {
+            const child = this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
             yield child;
 
-            for (const childChild of child.getAllChildren(sourceFile))
+            for (const childChild of child.getAllChildren())
                 yield childChild;
         }
     }
 
     /**
      * Gets the child count.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    getChildCount(sourceFile = this.getSourceFileOrThrow()) {
-        return this.node.getChildCount(sourceFile.getCompilerNode());
+    getChildCount() {
+        return this.node.getChildCount(this.sourceFile.getCompilerNode());
     }
 
     /**
@@ -274,8 +270,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /**
      * Gets the width of the node (length without trivia).
      */
-    getWidth(sourceFile?: SourceFile) {
-        return this.node.getWidth(Node.getCompilerSourceFile(sourceFile));
+    getWidth() {
+        return this.node.getWidth(this.sourceFile.getCompilerNode());
     }
 
     /**
@@ -287,18 +283,16 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Gets the text without leading trivia.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getText(sourceFile?: SourceFile) {
-        return this.node.getText(Node.getCompilerSourceFile(sourceFile));
+    getText() {
+        return this.node.getText(this.sourceFile.getCompilerNode());
     }
 
     /**
      * Gets the full text with leading trivia.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getFullText(sourceFile?: SourceFile) {
-        return this.node.getFullText(Node.getCompilerSourceFile(sourceFile));
+    getFullText() {
+        return this.node.getFullText(this.sourceFile.getCompilerNode());
     }
 
     /**
@@ -313,18 +307,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /**
-     * Gets the source file of a node or throws if it doesn't exist.
+     * Gets the source file.
      */
-    getSourceFileOrThrow() {
-        const sourceFile = this.getSourceFile();
-        if (sourceFile == null)
-            throw new Error("A source file or source file parent was expected.");
-        return sourceFile;
-    }
-
-    getSourceFile(): SourceFile | undefined {
-        const topParent = this.getTopParent();
-        return (topParent != null && topParent.isSourceFile() ? topParent : undefined) as SourceFile | undefined;
+    getSourceFile(): SourceFile {
+        return this.sourceFile;
     }
 
     /**
@@ -347,7 +333,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     getParent() {
-        return (this.node.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.node.parent);
+        return (this.node.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.node.parent, this.sourceFile);
     }
 
     /**
@@ -360,8 +346,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         return parentNode;
     }
 
-    appendNewLineSeparatorIfNecessary(sourceFile = this.getSourceFileOrThrow()) {
-        const text = this.getFullText(sourceFile);
+    appendNewLineSeparatorIfNecessary() {
+        const text = this.getFullText();
         if (this.isSourceFile()) {
             const hasText = text.length > 0;
             if (hasText)
@@ -371,52 +357,49 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
             this.ensureLastChildNewLine();
     }
 
-    ensureLastChildNewLine(sourceFile = this.getSourceFileOrThrow()) {
-        if (!this.isLastChildTextNewLine(sourceFile))
-            this.appendChildNewLine(sourceFile);
+    ensureLastChildNewLine() {
+        if (!this.isLastChildTextNewLine())
+            this.appendChildNewLine();
     }
 
-    isLastChildTextNewLine(sourceFile = this.getSourceFileOrThrow()): boolean {
-        const text = this.getFullText(sourceFile);
+    isLastChildTextNewLine(): boolean {
+        const text = this.getFullText();
         /* istanbul ignore else */
         if (this.isSourceFile())
             return text.endsWith("\n");
         else if (this.isBodyableNode() || this.isBodiedNode()) {
             const body = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
-            const bodyText = body.getFullText(sourceFile);
+            const bodyText = body.getFullText();
             return /\n\s*\}$/.test(bodyText);
         }
         else
             throw this.getNotImplementedError();
     }
 
-    appendChildNewLine(sourceFile?: SourceFile) {
+    appendChildNewLine() {
         const newLineText = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile()) {
-            sourceFile = this as SourceFile;
-            sourceFile.node.text += newLineText;
-            sourceFile.node.end += newLineText.length;
+            this.sourceFile.node.text += newLineText;
+            this.sourceFile.node.end += newLineText.length;
         }
         else {
-            sourceFile = sourceFile || this.getSourceFileOrThrow();
-            const indentationText = this.getIndentationText(sourceFile);
-            const lastToken = this.getLastToken(sourceFile);
+            const indentationText = this.getIndentationText();
+            const lastToken = this.getLastToken();
             const lastTokenPos = lastToken.getStart();
-            replaceNodeText(sourceFile, lastTokenPos, lastTokenPos, newLineText + indentationText);
+            replaceNodeText(this.sourceFile, lastTokenPos, lastTokenPos, newLineText + indentationText);
         }
     }
 
     /**
      * Gets the last token of this node. Usually this is a close brace.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getLastToken(sourceFile = this.getSourceFileOrThrow()) {
-        const lastToken = this.node.getLastToken(sourceFile.getCompilerNode());
+    getLastToken() {
+        const lastToken = this.node.getLastToken(this.sourceFile.getCompilerNode());
         /* istanbul ignore if */
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
 
-        return this.factory.getNodeFromCompilerNode(lastToken);
+        return this.factory.getNodeFromCompilerNode(lastToken, this.sourceFile);
     }
 
     /**
@@ -572,12 +555,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Gets the indentation text.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getIndentationText(sourceFile = this.getSourceFileOrThrow()) {
-        const sourceFileText = sourceFile.getFullText();
-        const startLinePos = this.getStartLinePos(sourceFile);
-        const startPos = this.getStart(sourceFile);
+    getIndentationText() {
+        const sourceFileText = this.sourceFile.getFullText();
+        const startLinePos = this.getStartLinePos();
+        const startPos = this.getStart();
         let text = "";
 
         for (let i = startPos - 1; i >= startLinePos; i--) {
@@ -599,22 +581,20 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Gets the next indentation level text.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getChildIndentationText(sourceFile = this.getSourceFileOrThrow()) {
+    getChildIndentationText() {
         if (this.isSourceFile())
             return "";
 
         const oneIndentationLevelText = this.factory.getLanguageService().getOneIndentationLevelText();
-        return this.getIndentationText(sourceFile) + oneIndentationLevelText;
+        return this.getIndentationText() + oneIndentationLevelText;
     }
 
     /**
      * Gets the position of the start of the line that this node is on.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getStartLinePos(sourceFile = this.getSourceFileOrThrow()) {
-        const sourceFileText = sourceFile.getFullText();
+    getStartLinePos() {
+        const sourceFileText = this.sourceFile.getFullText();
         const startPos = this.getStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
@@ -628,13 +608,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Gets the start without trivia.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    getStart(sourceFile = this.getSourceFileOrThrow()) {
-        return this.node.getStart(sourceFile.getCompilerNode());
-    }
-
-    private static getCompilerSourceFile(sourceFile: SourceFile | undefined) {
-        return sourceFile != null ? sourceFile.getCompilerNode() : undefined;
+    getStart() {
+        return this.node.getStart(this.sourceFile.getCompilerNode());
     }
 }

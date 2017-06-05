@@ -1,7 +1,7 @@
 ﻿import {SourceFile} from "./../compiler";
 
 export function isBlankLineAtPos(sourceFile: SourceFile, pos: number) {
-    const fullText = sourceFile.getFullText(sourceFile);
+    const fullText = sourceFile.getFullText();
     let foundBlankLine = false;
 
     for (let i = pos; i < fullText.length; i++) {

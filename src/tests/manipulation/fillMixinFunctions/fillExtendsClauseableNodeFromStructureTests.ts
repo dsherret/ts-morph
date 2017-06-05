@@ -6,8 +6,8 @@ import {fillExtendsClauseableNodeFromStructure} from "./../../../manipulation/fi
 
 function doTest(startingCode: string, structure: ExtendsClauseableStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
-    fillExtendsClauseableNodeFromStructure(sourceFile, firstChild, structure);
-    expect(firstChild.getText(sourceFile)).to.equal(expectedCode);
+    fillExtendsClauseableNodeFromStructure(firstChild, structure);
+    expect(firstChild.getText()).to.equal(expectedCode);
 }
 
 describe(nameof(fillExtendsClauseableNodeFromStructure), () => {

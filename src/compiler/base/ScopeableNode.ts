@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
 import {Scope} from "./../common/Scope";
-import {SourceFile} from "./../file";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ScopeableNodeExtensionType = Node & ModifierableNode;
@@ -14,9 +13,8 @@ export interface ScopeableNode {
     /**
      * Sets the scope.
      * @param scope - Scope to set to.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setScope(scope: Scope | undefined, sourceFile?: SourceFile): this;
+    setScope(scope: Scope | undefined): this;
 }
 
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
@@ -25,8 +23,8 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             return getScopeForNode(this);
         }
 
-        setScope(scope: Scope | undefined, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-            setScopeForNode(this, scope, sourceFile);
+        setScope(scope: Scope | undefined) {
+            setScopeForNode(this, scope);
             return this;
         }
     };
@@ -54,10 +52,9 @@ export function getScopeForNode(node: Node) {
  * @internal
  * @param node - Node to set the scope for.
  * @param scope - Scope to be set to.
- * @param sourceFile - Source file.
  */
-export function setScopeForNode(node: Node & ModifierableNode, scope: Scope | undefined, sourceFile: SourceFile) {
-    node.toggleModifier("public", scope === Scope.Public, sourceFile); // always be implicit with scope
-    node.toggleModifier("protected", scope === Scope.Protected, sourceFile);
-    node.toggleModifier("private", scope === Scope.Private, sourceFile);
+export function setScopeForNode(node: Node & ModifierableNode, scope: Scope | undefined) {
+    node.toggleModifier("public", scope === Scope.Public); // always be implicit with scope
+    node.toggleModifier("protected", scope === Scope.Protected);
+    node.toggleModifier("private", scope === Scope.Private);
 }

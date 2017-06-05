@@ -14,11 +14,11 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
     replaceForNode(sourceFile);
 
     function replaceForNode(node: Node) {
-        const currentStart = node.getStart(sourceFile);
+        const currentStart = node.getStart();
         const compilerNode = node.getCompilerNode();
 
         // do the children first so that the underlying _children array is filled in based on the source file
-        for (const child of node.getChildren(sourceFile)) {
+        for (const child of node.getChildren()) {
             replaceForNode(child);
         }
 

@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {SourceFile} from "./../file";
 import {insertStraight, removeNodes} from "./../../manipulation";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
 
@@ -12,7 +11,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      * Gets the dot dot dot token (...) for a rest parameter.
      */
     getDotDotDotToken() {
-        return this.node.dotDotDotToken == null ? undefined : this.factory.getNodeFromCompilerNode(this.node.dotDotDotToken);
+        return this.node.dotDotDotToken == null ? undefined : this.factory.getNodeFromCompilerNode(this.node.dotDotDotToken, this.sourceFile);
     }
 
     /**
@@ -25,16 +24,15 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     /**
      * Sets if it's a rest parameter.
      * @param value - Sets if it's a rest parameter or not.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    setIsRestParameter(value: boolean, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    setIsRestParameter(value: boolean) {
         if (this.isRestParameter() === value)
             return this;
 
         if (value)
-            insertStraight(sourceFile, this.getNameNodeOrThrow().getStart(), this, "...");
+            insertStraight(this.getSourceFile(), this.getNameNodeOrThrow().getStart(), this, "...");
         else
-            removeNodes(sourceFile, [this.getDotDotDotToken()!], { removePrecedingSpaces: false });
+            removeNodes(this.getSourceFile(), [this.getDotDotDotToken()!], { removePrecedingSpaces: false });
 
         return this;
     }

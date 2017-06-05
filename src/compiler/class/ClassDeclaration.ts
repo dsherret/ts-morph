@@ -24,16 +24,15 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.
-     * @param sourceFile - Optional source file to help with performance.
      */
-    setExtends(text: string, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    setExtends(text: string) {
         errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
         const heritageClauses = this.getHeritageClauses();
         const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
-            const extendsClauseStart = extendsClause.getStart(sourceFile);
-            replaceStraight(sourceFile, extendsClauseStart, extendsClause.getEnd() - extendsClauseStart, `extends ${text}`);
+            const extendsClauseStart = extendsClause.getStart();
+            replaceStraight(this.getSourceFile(), extendsClauseStart, extendsClause.getEnd() - extendsClauseStart, `extends ${text}`);
             return this;
         }
 
@@ -43,19 +42,19 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             insertPos = implementsClause.getStart();
         }
         else {
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken, sourceFile);
+            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
             insertPos = openBraceToken.getStart();
         }
 
-        const isLastSpace = /\s/.test(sourceFile.getFullText()[insertPos - 1]);
+        const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
         let insertText = `extends ${text} `;
         if (!isLastSpace)
             insertText = " " + insertText;
 
         if (implementsClause == null)
-            insertCreatingSyntaxList(sourceFile, insertPos, insertText);
+            insertCreatingSyntaxList(this.getSourceFile(), insertPos, insertText);
         else
-            insertIntoSyntaxList(sourceFile, insertPos, insertText, implementsClause.getParentSyntaxListOrThrow(), 0, 1);
+            insertIntoSyntaxList(this.getSourceFile(), insertPos, insertText, implementsClause.getParentSyntaxListOrThrow(), 0, 1);
 
         return this;
     }
@@ -76,19 +75,17 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Adds a constructor. Will remove the previous constructor if it exists.
      * @param structure - Structure of the constructor.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addConstructor(structure: ConstructorStructure = {}, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertConstructor(getEndIndexFromArray(this.node.members), structure, sourceFile);
+    addConstructor(structure: ConstructorStructure = {}) {
+        return this.insertConstructor(getEndIndexFromArray(this.node.members), structure);
     }
 
     /**
      * Inserts a constructor. Will remove the previous constructor if it exists.
      * @param index - Index to insert at.
      * @param structure - Structure of the constructor.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertConstructor(index: number, structure: ConstructorStructure = {}, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    insertConstructor(index: number, structure: ConstructorStructure = {}) {
         const currentCtor = this.getConstructor();
         if (currentCtor != null)
             currentCtor.remove();
@@ -99,7 +96,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorStructure>({
             getChildren: () => this.getAllMembers(),
-            sourceFile,
+            sourceFile: this.getSourceFile(),
             parent: this,
             index,
             childCodes: [code],
@@ -115,44 +112,40 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getConstructor() {
         const constructorMember = this.node.members.find(m => m.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration | undefined;
-        return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember);
+        return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember, this.sourceFile);
     }
 
     /**
      * Add property.
      * @param structure - Structure representing the property.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addProperty(structure: PropertyStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.addProperties([structure], sourceFile)[0];
+    addProperty(structure: PropertyStructure) {
+        return this.addProperties([structure])[0];
     }
 
     /**
      * Add properties.
      * @param structures - Structures representing the properties.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addProperties(structures: PropertyStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertProperties(getEndIndexFromArray(this.node.members), structures, sourceFile);
+    addProperties(structures: PropertyStructure[]) {
+        return this.insertProperties(getEndIndexFromArray(this.node.members), structures);
     }
 
     /**
      * Insert property.
      * @param index - Index to insert at.
      * @param structure - Structure representing the property.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertProperty(index: number, structure: PropertyStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertProperties(index, [structure], sourceFile)[0];
+    insertProperty(index: number, structure: PropertyStructure) {
+        return this.insertProperties(index, [structure])[0];
     }
 
     /**
      * Insert properties.
      * @param index - Index to insert at.
      * @param structures - Structures representing the properties.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertProperties(index: number, structures: PropertyStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    insertProperties(index: number, structures: PropertyStructure[]) {
         const indentationText = this.getChildIndentationText();
 
         // create code
@@ -172,7 +165,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyStructure>({
             getChildren: () => this.getAllMembers(),
-            sourceFile,
+            sourceFile: this.getSourceFile(),
             parent: this,
             index,
             childCodes: codes,
@@ -202,38 +195,34 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Add method.
      * @param structure - Structure representing the method.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addMethod(structure: MethodStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.addMethods([structure], sourceFile)[0];
+    addMethod(structure: MethodStructure) {
+        return this.addMethods([structure])[0];
     }
 
     /**
      * Add methods.
      * @param structures - Structures representing the methods.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    addMethods(structures: MethodStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertMethods(getEndIndexFromArray(this.node.members), structures, sourceFile);
+    addMethods(structures: MethodStructure[]) {
+        return this.insertMethods(getEndIndexFromArray(this.node.members), structures);
     }
 
     /**
      * Insert method.
      * @param index - Index to insert at.
      * @param structure - Structure representing the method.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertMethod(index: number, structure: MethodStructure, sourceFile: SourceFile = this.getSourceFileOrThrow()) {
-        return this.insertMethods(index, [structure], sourceFile)[0];
+    insertMethod(index: number, structure: MethodStructure) {
+        return this.insertMethods(index, [structure])[0];
     }
 
     /**
      * Insert methods.
      * @param index - Index to insert at.
      * @param structures - Structures representing the methods.
-     * @param sourceFile - Optional source file to help improve performance.
      */
-    insertMethods(index: number, structures: MethodStructure[], sourceFile: SourceFile = this.getSourceFileOrThrow()) {
+    insertMethods(index: number, structures: MethodStructure[]) {
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
 
@@ -254,7 +243,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodStructure>({
             getChildren: () => this.getAllMembers(),
-            sourceFile,
+            sourceFile: this.getSourceFile(),
             parent: this,
             index,
             childCodes: codes,
@@ -298,7 +287,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance and static members.
      */
     getAllMembers() {
-        return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m)) as ClassMemberTypes[];
+        return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
     }
 }
 
