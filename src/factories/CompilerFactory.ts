@@ -153,14 +153,16 @@ export class CompilerFactory {
                 return this.getIdentifier(compilerNode as ts.Identifier, sourceFile);
             case ts.SyntaxKind.MethodDeclaration:
                 return this.getMethodDeclaration(compilerNode as ts.MethodDeclaration, sourceFile);
-            case ts.SyntaxKind.PropertyDeclaration:
-                return this.getPropertyDeclaration(compilerNode as ts.PropertyDeclaration, sourceFile);
             case ts.SyntaxKind.ModuleDeclaration:
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration, sourceFile);
             case ts.SyntaxKind.NumericLiteral:
                 return this.getExpression(compilerNode as ts.Expression, sourceFile);
             case ts.SyntaxKind.Parameter:
                 return this.getParameterDeclaration(compilerNode as ts.ParameterDeclaration, sourceFile);
+            case ts.SyntaxKind.PropertyDeclaration:
+                return this.getPropertyDeclaration(compilerNode as ts.PropertyDeclaration, sourceFile);
+            case ts.SyntaxKind.PropertySignature:
+                return this.getPropertySignature(compilerNode as ts.PropertySignature, sourceFile);
             case ts.SyntaxKind.SetAccessor:
                 return this.getSetAccessorDeclaration(compilerNode as ts.SetAccessorDeclaration, sourceFile);
             case ts.SyntaxKind.TypeAliasDeclaration:

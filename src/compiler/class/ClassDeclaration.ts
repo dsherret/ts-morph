@@ -38,13 +38,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         const implementsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
         let insertPos: number;
-        if (implementsClause != null) {
+        if (implementsClause != null)
             insertPos = implementsClause.getStart();
-        }
-        else {
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
-            insertPos = openBraceToken.getStart();
-        }
+        else
+            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken).getStart();
 
         const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
         let insertText = `extends ${text} `;
