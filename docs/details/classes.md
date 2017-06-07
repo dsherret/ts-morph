@@ -12,6 +12,16 @@ const class1 = sourceFile.getClass("Class1");
 const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !== undefined);
 ```
 
+### Add/Insert
+
+You can add or insert class to a source file or namespace by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
+
+```typescript
+const classDeclaration = sourceFile.addClass({
+    name: "ClassName"
+});
+```
+
 ### Extends expression
 
 Will return [`ExpressionWithTypeArguments | undefined`](expressions):

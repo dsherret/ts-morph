@@ -17,6 +17,28 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDecla
 
 export interface StatementedNode {
     /**
+     * Adds an class declaration as a child.
+     * @param structure - Structure of the class declaration to add.
+     */
+    addClass(structure: structures.ClassStructure): classes.ClassDeclaration;
+    /**
+     * Adds class declarations as a child.
+     * @param structures - Structures of the class declarations to add.
+     */
+    addClasses(structures: structures.ClassStructure[]): classes.ClassDeclaration[];
+    /**
+     * Inserts an class declaration as a child.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the class declaration to insert.
+     */
+    insertClass(index: number, structure: structures.ClassStructure): classes.ClassDeclaration;
+    /**
+     * Inserts class declarations as a child.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the class declarations to insert.
+     */
+    insertClasses(index: number, structures: structures.ClassStructure[]): classes.ClassDeclaration[];
+    /**
      * Gets the direct class declaration children.
      */
     getClasses(): classes.ClassDeclaration[];
@@ -160,6 +182,29 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* Classes */
 
+        addClass(structure: structures.ClassStructure) {
+            return this.addClasses([structure])[0];
+        }
+
+        addClasses(structures: structures.ClassStructure[]) {
+            return this.insertClasses(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertClass(index: number, structure: structures.ClassStructure) {
+            return this.insertClasses(index, [structure])[0];
+        }
+
+        insertClasses(index: number, structures: structures.ClassStructure[]): classes.ClassDeclaration[] {
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const indentationText = this.getChildIndentationText();
+            const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
+            const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, ts.SyntaxKind.ClassDeclaration, (child, i) => {
+                // todo: should insert based on fill function
+            });
+
+            return newChildren;
+        }
+
         getClasses(): classes.ClassDeclaration[] {
             return this.getChildSyntaxListOrThrow().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
         }
@@ -177,7 +222,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addEnums(structures: structures.EnumStructure[]) {
-            return this.insertEnums(this.getChildSyntaxListOrThrow().getChildren().length, structures);
+            return this.insertEnums(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
         insertEnum(index: number, structure: structures.EnumStructure) {
@@ -188,7 +233,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
-            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(this.getSourceFile(), index, texts, ts.SyntaxKind.EnumDeclaration, (tempSourceFile, child, i) => {
+            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, ts.SyntaxKind.EnumDeclaration, (child, i) => {
                 // todo: should insert based on fill function
                 for (const member of structures[i].members || []) {
                     child.addMember(member);
@@ -281,11 +326,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         private _insertMainChildren<T extends Node>(
-            sourceFile: SourceFile,
             index: number,
             childCodes: string[],
             expectedSyntaxKind: ts.SyntaxKind,
-            withEachChild: (tempSourceFile: SourceFile, child: T, index: number) => void
+            withEachChild: (child: T, index: number) => void
         ) {
             const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
@@ -297,7 +341,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             for (let i = 0; i < childCodes.length; i++) {
                 using(this.factory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
                     const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
-                    withEachChild(tempSourceFile, tempSyntaxList.getChildren()[0] as T, i);
+                    withEachChild(tempSyntaxList.getChildren()[0] as T, i);
                     finalChildCodes.push(tempSourceFile.getFullText());
                 });
             }
@@ -305,7 +349,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             // insert
             insertIntoBracesOrSourceFile({
                 languageService: this.factory.getLanguageService(),
-                sourceFile,
+                sourceFile: this.getSourceFile(),
                 parent: this as any as Node,
                 children: mainChildren,
                 index,

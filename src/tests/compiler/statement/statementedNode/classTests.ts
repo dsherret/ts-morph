@@ -1,8 +1,89 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, ClassDeclaration} from "./../../../../compiler";
+import {ClassStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
+    describe(nameof<StatementedNode>(n => n.insertClasses), () => {
+        function doTest(startCode: string, index: number, structures: ClassStructure[], expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertClasses(index, structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert to an empty file", () => {
+            doTest("", 0, [{
+                name: "Class"
+            }], "class Class {\n}\n");
+        });
+
+        it("should insert at the start of a file", () => {
+            doTest("enum Enum {\n}\n", 0, [{ name: "Class" }], "class Class {\n}\n\nenum Enum {\n}\n");
+        });
+
+        it("should insert at the end of a file", () => {
+            doTest("enum Enum {\n}\n", 1, [{ name: "Class" }], "enum Enum {\n}\n\nclass Class {\n}\n");
+        });
+
+        it("should insert in the middle of children", () => {
+            doTest("class Class1 {\n}\n\nclass Class3 {\n}\n", 1, [{ name: "Class2" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+        });
+
+        it("should insert multiple classes", () => {
+            doTest("class Class1 {\n}\n", 1, [{ name: "Class2" }, { name: "Class3" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+        });
+
+        it("should have the expected text adding to non-source file", () => {
+            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const namespaceDec = sourceFile.getNamespaces()[0];
+            namespaceDec.insertClasses(0, [{
+                name: "Class"
+            }]);
+
+            expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    class Class {\n    }\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.insertClass), () => {
+        function doTest(startCode: string, index: number, structure: ClassStructure, expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertClass(index, structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceOf(ClassDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class Class2 {\n}\n", 0, { name: "Class1" }, "class Class1 {\n}\n\nclass Class2 {\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.addClasses), () => {
+        function doTest(startCode: string, structures: ClassStructure[], expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addClasses(structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple", () => {
+            doTest("class Class1 {\n}\n", [{ name: "Class2" }, { name: "Class3" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.addClass), () => {
+        function doTest(startCode: string, structure: ClassStructure, expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addClass(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceOf(ClassDeclaration);
+        }
+
+        it("should add one", () => {
+            doTest("class Class1 {\n}\n", { name: "Class2" }, "class Class1 {\n}\n\nclass Class2 {\n}\n");
+        });
+    });
+
     describe(nameof<StatementedNode>(n => n.getClasses), () => {
         const {sourceFile} = getInfoFromText("class Class1 {}\nclass Class2 { prop: string; }");
         const classes = sourceFile.getClasses();
