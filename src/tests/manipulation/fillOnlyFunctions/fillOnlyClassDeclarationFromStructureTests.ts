@@ -17,10 +17,10 @@ describe(nameof(fillOnlyClassDeclarationFromStructure), () => {
 
     it("should modify when changed", () => {
         const structure: MakeRequired<ClassSpecificStructure> = {
-            properties: [{ name: "p" }],
             ctor: {},
+            properties: [{ name: "p" }],
             methods: [{ name: "m" }]
         };
-        doTest("class MyClass {\n}", structure, "class MyClass {\n    p;\n\n    constructor() {\n    }\n\n    m() {\n    }\n}");
+        doTest("class MyClass {\n}", structure, "class MyClass {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
     });
 });
