@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
-import {PropertySignatureStructure} from "./../../structures";
+import {PropertySignatureStructure, MethodSignatureStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
@@ -13,6 +13,65 @@ export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseable
     ExportableNode(ModifierableNode(NamedNode(Node)))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
+    /**
+     * Add method.
+     * @param structure - Structure representing the method.
+     */
+    addMethod(structure: MethodSignatureStructure) {
+        return this.addMethods([structure])[0];
+    }
+
+    /**
+     * Add methods.
+     * @param structures - Structures representing the methods.
+     */
+    addMethods(structures: MethodSignatureStructure[]) {
+        return this.insertMethods(getEndIndexFromArray(this.node.members), structures);
+    }
+
+    /**
+     * Insert method.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the method.
+     */
+    insertMethod(index: number, structure: MethodSignatureStructure) {
+        return this.insertMethods(index, [structure])[0];
+    }
+
+    /**
+     * Insert methods.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the methods.
+     */
+    insertMethods(index: number, structures: MethodSignatureStructure[]) {
+        const indentationText = this.getChildIndentationText();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = indentationText;
+            code += structure.name;
+            if (structure.hasQuestionToken)
+                code += "?";
+            code += "()";
+            if (structure.returnType != null && structure.returnType.length > 0)
+                code += `: ${structure.returnType}`;
+            code += ";";
+            codes.push(code);
+        }
+
+        // insert, fill, and get created nodes
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodSignature, MethodSignatureStructure>({
+            getChildren: () => this.getAllMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            expectedKind: ts.SyntaxKind.MethodSignature
+        });
+    }
+
     /**
      * Gets the interface method signatures.
      */

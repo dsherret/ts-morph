@@ -153,6 +153,8 @@ export class CompilerFactory {
                 return this.getIdentifier(compilerNode as ts.Identifier, sourceFile);
             case ts.SyntaxKind.MethodDeclaration:
                 return this.getMethodDeclaration(compilerNode as ts.MethodDeclaration, sourceFile);
+            case ts.SyntaxKind.MethodSignature:
+                return this.getMethodSignature(compilerNode as ts.MethodSignature, sourceFile);
             case ts.SyntaxKind.ModuleDeclaration:
                 return this.getNamespaceDeclaration(compilerNode as ts.NamespaceDeclaration, sourceFile);
             case ts.SyntaxKind.NumericLiteral:

@@ -37,12 +37,24 @@ Use:
 const methodSignatures = interfaceDeclaration.getMethods();
 ```
 
+To add or insert use `addMethod()`, `addMethods()`, `insertMethod`, or `insertMethods()`:
+
+```typescript
+const methodSignature = interfaceDeclaration.insertMethod(1, { name: "newMethod", returnType: "boolean" });
+```
+
 ### Properties
 
 Use:
 
 ```typescript
 const properties = interfaceDeclaration.getProperties();
+
+To add or insert use `addProperty()`, `addPropertys()`, `insertProperty`, or `insertPropertys()`:
+
+```typescript
+const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
+```
 ```
 
 ### New signatures
