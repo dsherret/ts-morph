@@ -89,25 +89,25 @@ export interface StatementedNode {
      */
     getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
     /**
-     * Adds an enum declaration as a child.
-     * @param structure - Structure of the enum declaration to add.
+     * Adds a function declaration as a child.
+     * @param structure - Structure of the function declaration to add.
      */
     addFunction(structure: structures.FunctionStructure): functions.FunctionDeclaration;
     /**
-     * Adds enum declarations as a child.
-     * @param structures - Structures of the enum declarations to add.
+     * Adds function declarations as a child.
+     * @param structures - Structures of the function declarations to add.
      */
     addFunctions(structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
     /**
-     * Inserts an enum declaration as a child.
+     * Inserts an function declaration as a child.
      * @param index - Index to insert at.
-     * @param structure - Structure of the enum declaration to insert.
+     * @param structure - Structure of the function declaration to insert.
      */
     insertFunction(index: number, structure: structures.FunctionStructure): functions.FunctionDeclaration;
     /**
-     * Inserts enum declarations as a child.
+     * Inserts function declarations as a child.
      * @param index - Index to insert at.
-     * @param structures - Structures of the enum declarations to insert.
+     * @param structures - Structures of the function declarations to insert.
      */
     insertFunctions(index: number, structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
     /**
@@ -124,6 +124,28 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the function.
      */
     getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
+    /**
+     * Adds a interface declaration as a child.
+     * @param structure - Structure of the interface declaration to add.
+     */
+    addInterface(structure: structures.InterfaceStructure): interfaces.InterfaceDeclaration;
+    /**
+     * Adds interface declarations as a child.
+     * @param structures - Structures of the interface declarations to add.
+     */
+    addInterfaces(structures: structures.InterfaceStructure[]): interfaces.InterfaceDeclaration[];
+    /**
+     * Inserts an interface declaration as a child.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the interface declaration to insert.
+     */
+    insertInterface(index: number, structure: structures.InterfaceStructure): interfaces.InterfaceDeclaration;
+    /**
+     * Inserts interface declarations as a child.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the interface declarations to insert.
+     */
+    insertInterfaces(index: number, structures: structures.InterfaceStructure[]): interfaces.InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
@@ -308,6 +330,31 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
         getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
+        }
+
+        /* Interfaces */
+
+        addInterface(structure: structures.InterfaceStructure) {
+            return this.addInterfaces([structure])[0];
+        }
+
+        addInterfaces(structures: structures.InterfaceStructure[]) {
+            return this.insertInterfaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertInterface(index: number, structure: structures.InterfaceStructure) {
+            return this.insertInterfaces(index, [structure])[0];
+        }
+
+        insertInterfaces(index: number, structures: structures.InterfaceStructure[]) {
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const indentationText = this.getChildIndentationText();
+            const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
+            const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
+                // todo: should insert based on fill function
+            });
+
+            return newChildren;
         }
 
         getInterfaces(): interfaces.InterfaceDeclaration[] {
