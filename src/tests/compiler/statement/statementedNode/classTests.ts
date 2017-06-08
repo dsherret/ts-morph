@@ -14,34 +14,34 @@ describe(nameof(StatementedNode), () => {
 
         it("should insert to an empty file", () => {
             doTest("", 0, [{
-                name: "Class"
-            }], "class Class {\n}\n");
+                name: "Identifier"
+            }], "class Identifier {\n}\n");
         });
 
         it("should insert at the start of a file", () => {
-            doTest("enum Enum {\n}\n", 0, [{ name: "Class" }], "class Class {\n}\n\nenum Enum {\n}\n");
+            doTest("enum Enum {\n}\n", 0, [{ name: "Identifier" }], "class Identifier {\n}\n\nenum Enum {\n}\n");
         });
 
         it("should insert at the end of a file", () => {
-            doTest("enum Enum {\n}\n", 1, [{ name: "Class" }], "enum Enum {\n}\n\nclass Class {\n}\n");
+            doTest("enum Enum {\n}\n", 1, [{ name: "Identifier" }], "enum Enum {\n}\n\nclass Identifier {\n}\n");
         });
 
         it("should insert in the middle of children", () => {
-            doTest("class Class1 {\n}\n\nclass Class3 {\n}\n", 1, [{ name: "Class2" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+            doTest("class Identifier1 {\n}\n\nclass Identifier3 {\n}\n", 1, [{ name: "Identifier2" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
 
-        it("should insert multiple classes", () => {
-            doTest("class Class1 {\n}\n", 1, [{ name: "Class2" }, { name: "Class3" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+        it("should insert multiple", () => {
+            doTest("class Identifier1 {\n}\n", 1, [{ name: "Identifier2" }, { name: "Identifier3" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
 
         it("should have the expected text adding to non-source file", () => {
             const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
             namespaceDec.insertClasses(0, [{
-                name: "Class"
+                name: "Identifier"
             }]);
 
-            expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    class Class {\n    }\n}\n");
+            expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    class Identifier {\n    }\n}\n");
         });
     });
 
@@ -54,7 +54,7 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should insert", () => {
-            doTest("class Class2 {\n}\n", 0, { name: "Class1" }, "class Class1 {\n}\n\nclass Class2 {\n}\n");
+            doTest("class Identifier2 {\n}\n", 0, { name: "Identifier1" }, "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n");
         });
     });
 
@@ -67,7 +67,7 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should add multiple", () => {
-            doTest("class Class1 {\n}\n", [{ name: "Class2" }, { name: "Class3" }], "class Class1 {\n}\n\nclass Class2 {\n}\n\nclass Class3 {\n}\n");
+            doTest("class Identifier1 {\n}\n", [{ name: "Identifier2" }, { name: "Identifier3" }], "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n\nclass Identifier3 {\n}\n");
         });
     });
 
@@ -80,12 +80,12 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should add one", () => {
-            doTest("class Class1 {\n}\n", { name: "Class2" }, "class Class1 {\n}\n\nclass Class2 {\n}\n");
+            doTest("class Identifier1 {\n}\n", { name: "Identifier2" }, "class Identifier1 {\n}\n\nclass Identifier2 {\n}\n");
         });
     });
 
     describe(nameof<StatementedNode>(n => n.getClasses), () => {
-        const {sourceFile} = getInfoFromText("class Class1 {}\nclass Class2 { prop: string; }");
+        const {sourceFile} = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
         const classes = sourceFile.getClasses();
 
         it("should have the expected number of classes", () => {

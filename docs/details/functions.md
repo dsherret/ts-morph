@@ -13,3 +13,13 @@ const firstFunctionWithChildFunction = sourceFile.getFunction(f => f.getFunction
 ```
 
 Most of the information you can get about functions is covered in other sections.
+
+### Add/Insert
+
+You can add or insert enums to a source file or namespace by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
+
+```typescript
+const functionDeclaration = sourceFile.addFunction({
+    name: "FunctionName"
+});
+```

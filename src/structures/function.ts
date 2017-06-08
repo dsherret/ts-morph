@@ -1,1 +1,2 @@
-﻿export * from "./function/ParameterStructure";
+﻿export * from "./function/FunctionStructure";
+export * from "./function/ParameterStructure";

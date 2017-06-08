@@ -89,6 +89,28 @@ export interface StatementedNode {
      */
     getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
     /**
+     * Adds an enum declaration as a child.
+     * @param structure - Structure of the enum declaration to add.
+     */
+    addFunction(structure: structures.FunctionStructure): functions.FunctionDeclaration;
+    /**
+     * Adds enum declarations as a child.
+     * @param structures - Structures of the enum declarations to add.
+     */
+    addFunctions(structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
+    /**
+     * Inserts an enum declaration as a child.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the enum declaration to insert.
+     */
+    insertFunction(index: number, structure: structures.FunctionStructure): functions.FunctionDeclaration;
+    /**
+     * Inserts enum declarations as a child.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the enum declarations to insert.
+     */
+    insertFunctions(index: number, structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
+    /**
      * Gets the direct function declaration children.
      */
     getFunctions(): functions.FunctionDeclaration[];
@@ -251,6 +273,31 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
         getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
+        }
+
+        /* Functions */
+
+        addFunction(structure: structures.FunctionStructure) {
+            return this.addFunctions([structure])[0];
+        }
+
+        addFunctions(structures: structures.FunctionStructure[]) {
+            return this.insertFunctions(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertFunction(index: number, structure: structures.FunctionStructure) {
+            return this.insertFunctions(index, [structure])[0];
+        }
+
+        insertFunctions(index: number, structures: structures.FunctionStructure[]) {
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const indentationText = this.getChildIndentationText();
+            const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
+            const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
+                // todo: should insert based on fill function
+            });
+
+            return newChildren;
         }
 
         getFunctions(): functions.FunctionDeclaration[] {
