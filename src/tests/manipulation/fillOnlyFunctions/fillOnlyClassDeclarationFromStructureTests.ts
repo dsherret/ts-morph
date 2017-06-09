@@ -12,7 +12,7 @@ function doTest(startingCode: string, structure: ClassSpecificStructure, expecte
 
 describe(nameof(fillOnlyClassDeclarationFromStructure), () => {
     it("should not modify anything if the structure doesn't change anything", () => {
-        doTest("class MyClass {\n}", {}, "class MyClass {\n}");
+        doTest("class Identifier {\n}", {}, "class Identifier {\n}");
     });
 
     it("should modify when changed", () => {
@@ -21,6 +21,6 @@ describe(nameof(fillOnlyClassDeclarationFromStructure), () => {
             properties: [{ name: "p" }],
             methods: [{ name: "m" }]
         };
-        doTest("class MyClass {\n}", structure, "class MyClass {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
+        doTest("class Identifier {\n}", structure, "class Identifier {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
     });
 });

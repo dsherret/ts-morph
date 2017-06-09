@@ -161,6 +161,28 @@ export interface StatementedNode {
      */
     getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
     /**
+     * Adds a namespace declaration as a child.
+     * @param structure - Structure of the namespace declaration to add.
+     */
+    addNamespace(structure: structures.NamespaceStructure): namespaces.NamespaceDeclaration;
+    /**
+     * Adds namespace declarations as a child.
+     * @param structures - Structures of the namespace declarations to add.
+     */
+    addNamespaces(structures: structures.NamespaceStructure[]): namespaces.NamespaceDeclaration[];
+    /**
+     * Inserts an namespace declaration as a child.
+     * @param index - Index to insert at.
+     * @param structure - Structure of the namespace declaration to insert.
+     */
+    insertNamespace(index: number, structure: structures.NamespaceStructure): namespaces.NamespaceDeclaration;
+    /**
+     * Inserts namespace declarations as a child.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the namespace declarations to insert.
+     */
+    insertNamespaces(index: number, structures: structures.NamespaceStructure[]): namespaces.NamespaceDeclaration[];
+    /**
      * Gets the direct namespace declaration children.
      */
     getNamespaces(): namespaces.NamespaceDeclaration[];
@@ -365,6 +387,33 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
         getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
+        }
+
+        /* Namespace */
+
+        addNamespace(structure: structures.NamespaceStructure) {
+            return this.addNamespaces([structure])[0];
+        }
+
+        addNamespaces(structures: structures.NamespaceStructure[]) {
+            return this.insertNamespaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertNamespace(index: number, structure: structures.NamespaceStructure) {
+            return this.insertNamespaces(index, [structure])[0];
+        }
+
+        insertNamespaces(index: number, structures: structures.NamespaceStructure[]) {
+            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const indentationText = this.getChildIndentationText();
+            const texts = structures.map(structure => {
+                return `${indentationText}${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} {${newLineChar}${indentationText}}`;
+            });
+            const newChildren = this._insertMainChildren<namespaces.NamespaceDeclaration>(index, texts, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
+                // todo: should insert based on fill function
+            });
+
+            return newChildren;
         }
 
         getNamespaces(): namespaces.NamespaceDeclaration[] {

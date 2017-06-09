@@ -22,7 +22,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /**
-     * Set if this namespace has a namepsace keyword.
+     * Set if this namespace has a namespace keyword.
      * @param value - Whether to set it or not.
      */
     setHasNamespaceKeyword(value = true) {

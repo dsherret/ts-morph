@@ -16,3 +16,8 @@ export function fillOnlyInterfaceDeclarationFromStructure(node: compiler.Interfa
     if (structure.methods != null)
         node.addMethods(structure.methods);
 }
+
+export function fillOnlyNamespaceDeclarationFromStructure(node: compiler.NamespaceDeclaration, structure: structures.NamespaceSpecificStructure) {
+    if (structure.hasModuleKeyword != null)
+        node.setHasModuleKeyword(structure.hasModuleKeyword);
+}

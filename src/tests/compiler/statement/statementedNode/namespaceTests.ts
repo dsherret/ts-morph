@@ -1,8 +1,93 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, NamespaceDeclaration} from "./../../../../compiler";
+import {NamespaceStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
+    describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
+        function doTest(startCode: string, index: number, structures: NamespaceStructure[], expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertNamespaces(index, structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert to an empty file", () => {
+            doTest("", 0, [{
+                name: "Identifier",
+                hasModuleKeyword: true
+            }], "module Identifier {\n}\n");
+        });
+
+        it("should insert at the start of a file", () => {
+            doTest("namespace Identifier2 {\n}\n", 0, [{ name: "Identifier1" }], "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n");
+        });
+
+        it("should insert at the end of a file", () => {
+            doTest("namespace Identifier1 {\n}\n", 1, [{ name: "Identifier2" }], "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n");
+        });
+
+        it("should insert in the middle of children", () => {
+            doTest("namespace Identifier1 {\n}\n\nnamespace Identifier3 {\n}\n", 1, [{ name: "Identifier2" }],
+                "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n\nnamespace Identifier3 {\n}\n");
+        });
+
+        it("should insert multiple", () => {
+            doTest("namespace Identifier1 {\n}\n", 1, [{ name: "Identifier2" }, { name: "Identifier3" }],
+                "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n\nnamespace Identifier3 {\n}\n");
+        });
+
+        it("should have the expected text adding to non-source file", () => {
+            const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
+            const namespaceDec = sourceFile.getNamespaces()[0];
+            namespaceDec.insertNamespaces(0, [{
+                name: "Identifier"
+            }]);
+
+            expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    namespace Identifier {\n    }\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
+        function doTest(startCode: string, index: number, structure: NamespaceStructure, expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertNamespace(index, structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceOf(NamespaceDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("namespace Identifier2 {\n}\n", 0, { name: "Identifier1" }, "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
+        function doTest(startCode: string, structures: NamespaceStructure[], expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addNamespaces(structures);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple", () => {
+            doTest("namespace Identifier1 {\n}\n", [{ name: "Identifier2" }, { name: "Identifier3" }],
+                "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n\nnamespace Identifier3 {\n}\n");
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.addNamespace), () => {
+        function doTest(startCode: string, structure: NamespaceStructure, expectedText: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addNamespace(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(result).to.be.instanceOf(NamespaceDeclaration);
+        }
+
+        it("should add one", () => {
+            doTest("namespace Identifier1 {\n}\n", { name: "Identifier2" }, "namespace Identifier1 {\n}\n\nnamespace Identifier2 {\n}\n");
+        });
+    });
+
     describe(nameof<StatementedNode>(n => n.getNamespaces), () => {
         const {sourceFile} = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
         const namespaces = sourceFile.getNamespaces();

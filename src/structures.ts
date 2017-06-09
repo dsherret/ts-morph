@@ -5,4 +5,5 @@ export * from "./structures/doc";
 export * from "./structures/enum";
 export * from "./structures/function";
 export * from "./structures/interface";
+export * from "./structures/namespace";
 export * from "./structures/type";
