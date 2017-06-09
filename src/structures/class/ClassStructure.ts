@@ -8,6 +8,7 @@ export interface ClassStructure extends NamedStructure, ClassSpecificStructure {
 }
 
 export interface ClassSpecificStructure {
+    extends?: string;
     ctor?: ConstructorStructure;
     properties?: PropertyStructure[];
     methods?: MethodStructure[];

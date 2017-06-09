@@ -17,10 +17,11 @@ describe(nameof(fillOnlyClassDeclarationFromStructure), () => {
 
     it("should modify when changed", () => {
         const structure: MakeRequired<ClassSpecificStructure> = {
+            extends: "Other",
             ctor: {},
             properties: [{ name: "p" }],
             methods: [{ name: "m" }]
         };
-        doTest("class Identifier {\n}", structure, "class Identifier {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
+        doTest("class Identifier {\n}", structure, "class Identifier extends Other {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
     });
 });
