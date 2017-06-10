@@ -5,15 +5,24 @@ import {PropertySignatureStructure, MethodSignatureStructure} from "./../../stru
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
+import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
 
-export type InterfaceMemberTypes = PropertySignature | MethodSignature; // todo: when adding NewSignatures, remove getAllMembers being internal
+export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration;
 
 export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(
     ExportableNode(ModifierableNode(NamedNode(Node)))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
+    /**
+     * Gets the interface method signatures.
+     */
+    getConstructSignatures(): ConstructSignatureDeclaration[] {
+        return this.node.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
+            .map(m => this.factory.getConstructSignatureDeclaration(m as ts.ConstructSignatureDeclaration, this.sourceFile));
+    }
+
     /**
      * Add method.
      * @param structure - Structure representing the method.
@@ -150,7 +159,6 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
 
     /**
      * Gets all members.
-     * @internal
      */
     getAllMembers(): InterfaceMemberTypes[] {
         return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];

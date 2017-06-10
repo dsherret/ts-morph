@@ -133,6 +133,8 @@ export class CompilerFactory {
                 return this.getClassDeclaration(compilerNode as ts.ClassDeclaration, sourceFile);
             case ts.SyntaxKind.Constructor:
                 return this.getConstructorDeclaration(compilerNode as ts.ConstructorDeclaration, sourceFile);
+            case ts.SyntaxKind.ConstructSignature:
+                return this.getConstructSignatureDeclaration(compilerNode as ts.ConstructSignatureDeclaration, sourceFile);
             case ts.SyntaxKind.Decorator:
                 return this.getDecorator(compilerNode as ts.Decorator, sourceFile);
             case ts.SyntaxKind.EnumDeclaration:
@@ -200,6 +202,16 @@ export class CompilerFactory {
      */
     getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructorDeclaration {
         return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration, () => new compiler.ConstructorDeclaration(this, constructorDeclaration, sourceFile));
+    }
+
+    /**
+     * Gets a wrapped construct signature declaration from a compiler object.
+     * @param constructSignature - Construct signature compiler object.
+     * @param sourceFile - Source file for the node.
+     */
+    getConstructSignatureDeclaration(constructSignature: ts.ConstructSignatureDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructSignatureDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ConstructSignatureDeclaration>(constructSignature,
+            () => new compiler.ConstructSignatureDeclaration(this, constructSignature, sourceFile));
     }
 
     /**

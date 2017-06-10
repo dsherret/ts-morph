@@ -1,9 +1,30 @@
 ﻿import {expect} from "chai";
-import {InterfaceDeclaration, MethodSignature, PropertySignature} from "./../../../compiler";
+import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration} from "./../../../compiler";
 import {PropertySignatureStructure, MethodSignatureStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
+    describe(nameof<InterfaceDeclaration>(d => d.getConstructSignatures), () => {
+        describe("none", () => {
+            it("should not have any", () => {
+                const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
+                expect(firstChild.getConstructSignatures().length).to.equal(0);
+            });
+        });
+
+        describe("has construct signatures", () => {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n    prop: string;\n    new(): string;\n    method1():void;\n    method2():string;\n}\n");
+
+            it("should get the right number of construct signatures", () => {
+                expect(firstChild.getConstructSignatures().length).to.equal(1);
+            });
+
+            it("should get a construct signature of the right instance of", () => {
+                expect(firstChild.getConstructSignatures()[0]).to.be.instanceOf(ConstructSignatureDeclaration);
+            });
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(d => d.insertMethods), () => {
         function doTest(startCode: string, insertIndex: number, structures: MethodSignatureStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);

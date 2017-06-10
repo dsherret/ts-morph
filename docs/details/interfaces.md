@@ -49,14 +49,18 @@ Use:
 
 ```typescript
 const properties = interfaceDeclaration.getProperties();
+```
 
 To add or insert use `addProperty()`, `addPropertys()`, `insertProperty`, or `insertPropertys()`:
 
 ```typescript
 const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
 ```
+
+### Construct signatures
+
+Use:
+
+```typescript
+const constructSignatures = interfaceDeclaration.getConstructSignatures();
 ```
-
-### New signatures
-
-TODO: Not implemented yet.
