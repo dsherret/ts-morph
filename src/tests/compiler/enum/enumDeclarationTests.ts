@@ -56,8 +56,8 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should insert multiple", () => {
-            doTest("enum MyEnum {\n}\n", 0, [{ name: "member1" }, { name: "member2", value: 2 }, { name: "member3" }],
-                "enum MyEnum {\n    member1,\n    member2 = 2,\n    member3\n}\n");
+            doTest("enum MyEnum {\n}\n", 0, [{ name: "member1" }, { name: "member2", value: 2, docs: [{ description: "description" }] }, { name: "member3" }],
+                "enum MyEnum {\n    member1,\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
         });
     });
 

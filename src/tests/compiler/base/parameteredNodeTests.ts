@@ -73,8 +73,8 @@ describe(nameof(ParameteredNode), () => {
         }
 
         it("should insert when none exists", () => {
-            doTest("function identifier() {}", 0, [{ name: "param1" }, { name: "param2", type: "string[]", isRestParameter: true }],
-                "function identifier(param1, ...param2: string[]) {}");
+            doTest("function identifier() {}", 0, [{ name: "param1", isReadonly: true }, { name: "param2", type: "string[]", isRestParameter: true }],
+                "function identifier(readonly param1, ...param2: string[]) {}");
         });
 
         it("should insert at the start", () => {

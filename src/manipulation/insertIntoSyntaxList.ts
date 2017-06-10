@@ -51,6 +51,7 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
         for (const newNodeChild of newNode.getChildren()) {
             if (i >= childIndex && i < childIndex + insertItemsCount) {
                 i++;
+                newNodeChild.setSourceFile(sourceFile);
                 continue;
             }
             const currentChild = currentNodeChildren.next().value;

@@ -21,8 +21,10 @@ export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: numb
         let currentNodeChildIteratorResult = currentNodeChildren.next();
 
         for (const newNodeChild of newNodeChildren) {
-            if (newNodeChild.getKind() === ts.SyntaxKind.SyntaxList && currentNodeChildIteratorResult.value.getKind() !== ts.SyntaxKind.SyntaxList)
+            if (newNodeChild.getKind() === ts.SyntaxKind.SyntaxList && currentNodeChildIteratorResult.value.getKind() !== ts.SyntaxKind.SyntaxList) {
+                newNodeChild.setSourceFile(sourceFile);
                 continue;
+            }
 
             handleNode(currentNodeChildIteratorResult.value, newNodeChild);
             currentNodeChildIteratorResult = currentNodeChildren.next();

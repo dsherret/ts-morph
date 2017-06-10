@@ -1,5 +1,5 @@
-﻿import {NamedStructure, TypedStructure} from "./../base";
+﻿import {NamedStructure, TypedStructure, ReadonlyableStructure, DecoratableStructure} from "./../base";
 
-export interface ParameterDeclarationStructure extends NamedStructure, TypedStructure {
+export interface ParameterDeclarationStructure extends NamedStructure, TypedStructure, ReadonlyableStructure, DecoratableStructure {
     isRestParameter?: boolean;
 }

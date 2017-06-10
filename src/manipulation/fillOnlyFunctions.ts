@@ -19,6 +19,13 @@ export function fillOnlyInterfaceDeclarationFromStructure(node: compiler.Interfa
         node.addMethods(structure.methods);
 }
 
+export function fillOnlyEnumDeclarationFromStructure(node: compiler.EnumDeclaration, structure: structures.EnumDeclarationSpecificStructure) {
+    if (structure.isConst != null)
+        node.setIsConstEnum(structure.isConst);
+    if (structure.members != null && structure.members.length > 0)
+        node.addMembers(structure.members);
+}
+
 export function fillOnlyNamespaceDeclarationFromStructure(node: compiler.NamespaceDeclaration, structure: structures.NamespaceDeclarationSpecificStructure) {
     if (structure.hasModuleKeyword != null)
         node.setHasModuleKeyword(structure.hasModuleKeyword);

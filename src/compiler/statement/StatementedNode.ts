@@ -2,6 +2,7 @@ import * as ts from "typescript";
 import * as errors from "./../../errors";
 import * as structures from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
+import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -287,7 +288,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
-                // todo: should insert based on fill function
+                fillClassFuncs.fillClassDeclarationFromStructure(child, structures[i]);
             });
 
             return newChildren;
@@ -322,10 +323,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
-                // todo: should insert based on fill function
-                for (const member of structures[i].members || []) {
-                    child.addMember(member);
-                }
+                fillClassFuncs.fillEnumDeclarationFromStructure(child, structures[i]);
             });
 
             return newChildren;
@@ -360,7 +358,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
-                // todo: should insert based on fill function
+                fillClassFuncs.fillFunctionDeclarationFromStructure(child, structures[i]);
             });
 
             return newChildren;
@@ -395,7 +393,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
-                // todo: should insert based on fill function
+                fillClassFuncs.fillInterfaceDeclarationFromStructure(child, structures[i]);
             });
 
             return newChildren;
@@ -432,7 +430,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return `${indentationText}${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} {${newLineChar}${indentationText}}`;
             });
             const newChildren = this._insertMainChildren<namespaces.NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
-                // todo: should insert based on fill function
+                fillClassFuncs.fillNamespaceDeclarationFromStructure(child, structures[i]);
             });
 
             return newChildren;
@@ -470,7 +468,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             });
             const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, structures.TypeAliasDeclarationStructure>(
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
-                    // todo: should insert based on fill function
+                    fillClassFuncs.fillTypeAliasDeclarationFromStructure(child, structures[i]);
                 }, {
                     previousBlanklineWhen: previousMember => !previousMember.isTypeAliasDeclaration(),
                     separatorNewlineWhen: () => false,

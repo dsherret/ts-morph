@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {ParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -74,7 +75,9 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 insertIntoCommaSeparatedNodes(this.getSourceFile(), parameters, index, parameterCodes);
             }
 
-            return this.getParameters().slice(index, index + structures.length);
+            const newParameters = this.getParameters().slice(index, index + structures.length);
+            newParameters.forEach((p, i) => fillClassFuncs.fillParameterDeclarationFromStructure(p, structures[i]));
+            return newParameters;
         }
     };
 }

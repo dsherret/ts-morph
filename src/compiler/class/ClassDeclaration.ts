@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
@@ -100,7 +101,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             structures: [structure],
             previousBlanklineWhen: () => true,
             nextBlanklineWhen: () => true,
-            expectedKind: ts.SyntaxKind.Constructor
+            expectedKind: ts.SyntaxKind.Constructor,
+            fillFunction: fillClassFuncs.fillConstructorDeclarationFromStructure
         })[0];
     }
 
@@ -169,7 +171,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             structures,
             previousBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
             nextBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
-            expectedKind: ts.SyntaxKind.PropertyDeclaration
+            expectedKind: ts.SyntaxKind.PropertyDeclaration,
+            fillFunction: fillClassFuncs.fillPropertyDeclarationFromStructure
         });
     }
 
@@ -248,7 +251,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: () => true,
             nextBlanklineWhen: () => true,
             separatorNewlineWhen: () => true,
-            expectedKind: ts.SyntaxKind.MethodDeclaration
+            expectedKind: ts.SyntaxKind.MethodDeclaration,
+            fillFunction: fillClassFuncs.fillMethodDeclarationFromStructure
         });
     }
 

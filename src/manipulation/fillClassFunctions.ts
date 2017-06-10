@@ -48,6 +48,7 @@ export function fillEnumDeclarationFromStructure(node: compiler.EnumDeclaration,
     fillFuncs.fillDocumentationableNodeFromStructure(node, structure);
     fillFuncs.fillAmbientableNodeFromStructure(node, structure);
     fillFuncs.fillExportableNodeFromStructure(node, structure);
+    fillOnlyFuncs.fillOnlyEnumDeclarationFromStructure(node, structure);
 }
 
 export function fillEnumMemberFromStructure(node: compiler.EnumMember, structure: structures.EnumMemberStructure) {

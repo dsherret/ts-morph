@@ -48,6 +48,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /**
+     * Sets the source file.
+     * @internal
+     * @param sourceFile - Source file to set.
+     */
+    setSourceFile(sourceFile: SourceFile) {
+        this.sourceFile = sourceFile;
+        for (const child of this.getChildren())
+            child.setSourceFile(sourceFile);
+    }
+
+    /**
      * Gets the underlying compiler node.
      */
     getCompilerNode() {

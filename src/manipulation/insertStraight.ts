@@ -28,8 +28,10 @@ export function insertStraight(sourceFile: SourceFile, insertPos: number, parent
         for (const newNodeChild of newNode.getChildren()) {
             if (parentMatches) {
                 const newNodeChildStart = newNodeChild.getStart();
-                if (newNodeChildStart >= insertPos && newNodeChildStart < endPos)
+                if (newNodeChildStart >= insertPos && newNodeChildStart < endPos) {
+                    newNodeChild.setSourceFile(sourceFile);
                     continue;
+                }
             }
 
             handleNode(newNodeChild);
