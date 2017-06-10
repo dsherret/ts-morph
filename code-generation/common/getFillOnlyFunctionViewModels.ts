@@ -1,5 +1,5 @@
-﻿import TsSimpleAst from "./../src/main";
-import {FillOnlyFunctionViewModel} from "./view-models";
+﻿import TsSimpleAst from "./../../src/main";
+import {FillOnlyFunctionViewModel} from "./../view-models";
 
 export function getFillOnlyFunctionViewModels(ast: TsSimpleAst): FillOnlyFunctionViewModel[] {
     const sourceFile = ast.getSourceFile("fillOnlyFunctions.ts")!;

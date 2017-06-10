@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {ClassViewModel, MixinViewModel} from "./view-models";
-import TsSimpleAst from "./../src/main";
-import {ClassDeclaration, Node, VariableDeclaration, TypeChecker} from "./../src/main";
+import {ClassViewModel, MixinViewModel} from "./../view-models";
+import TsSimpleAst from "./../../src/main";
+import {ClassDeclaration, Node, VariableDeclaration, TypeChecker} from "./../../src/main";
 
 export function* getMixinViewModels(classDeclaration: ClassDeclaration): IterableIterator<MixinViewModel> {
     const extendsExpression = classDeclaration.getExtends();

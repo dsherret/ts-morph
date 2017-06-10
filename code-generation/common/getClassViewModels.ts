@@ -1,6 +1,6 @@
-﻿import {ClassViewModel} from "./view-models";
-import TsSimpleAst from "./../src/main";
-import {ClassDeclaration} from "./../src/main";
+﻿import {ClassViewModel} from "./../view-models";
+import TsSimpleAst from "./../../src/main";
+import {ClassDeclaration} from "./../../src/main";
 import {getMixinViewModels} from "./getMixinViewModels";
 
 export function* getClassViewModels(ast: TsSimpleAst): IterableIterator<ClassViewModel> {

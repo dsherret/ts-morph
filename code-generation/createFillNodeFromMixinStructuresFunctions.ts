@@ -1,5 +1,6 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {ClassViewModel, MixinViewModel, MixinableViewModel, FillOnlyFunctionViewModel} from "./view-models";
+import {isAllowedClass, isAllowedMixin} from "./config";
 
 export function createFillNodeFromMixinStructuresFunctions(opts: { classVMs: ClassViewModel[]; fillOnlyFunctionVMs: FillOnlyFunctionViewModel[]; }) {
     const {classVMs, fillOnlyFunctionVMs} = opts;
@@ -58,35 +59,4 @@ function write(writer: CodeBlockWriter, vm: ClassViewModel | MixinViewModel, fil
 function removeNotAllowedMixins(mixinable: MixinableViewModel) {
     mixinable.mixins = mixinable.mixins.filter(isAllowedMixin);
     mixinable.mixins.forEach(m => removeNotAllowedMixins(m));
-}
-
-function isAllowedMixin(mixin: MixinViewModel) {
-    switch (mixin.name) {
-        case "ModifierableNode":
-        case "NamedNode":
-        case "PropertyNamedNode":
-        case "DeclarationNamedNode":
-        case "BindingNamedNode":
-        case "HeritageClauseableNode":
-        case "FollowingCommableNode":
-        case "BodiedNode":
-        case "BodyableNode":
-            return false;
-        default:
-            return true;
-    }
-}
-
-function isAllowedClass(classVM: ClassViewModel) {
-    switch (classVM.name) {
-        // not supported yet...
-        case "GetAccessorDeclaration":
-        case "SetAccessorDeclaration":
-        case "VariableStatement":
-        case "VariableDeclaration":
-        case "VariableDeclarationList":
-            return false;
-        default:
-            return true;
-    }
 }

@@ -8,7 +8,8 @@
     "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "gulp typescript",
     "pre-publish": "gulp tslint && gulp test",
-    "code-generate": "gulp code-generate && node dist-cg/code-generation/main"
+    "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
+    "check-structures-match": "gulp code-generate && node dist-cg/code-generation/ensureStructuresMatchMixins"
   },
   "repository": {
     "type": "git",
