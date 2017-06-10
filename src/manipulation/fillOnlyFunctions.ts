@@ -13,6 +13,8 @@ export function fillOnlyClassDeclarationFromStructure(node: compiler.ClassDeclar
 }
 
 export function fillOnlyInterfaceDeclarationFromStructure(node: compiler.InterfaceDeclaration, structure: structures.InterfaceDeclarationSpecificStructure) {
+    if (structure.constructSignatures != null)
+        node.addConstructSignatures(structure.constructSignatures);
     if (structure.properties != null)
         node.addProperties(structure.properties);
     if (structure.methods != null)

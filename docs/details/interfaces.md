@@ -29,6 +29,20 @@ interfaceDeclaration.insertExtends(1, "Named");
 interfaceDeclaration.insertExtends(2, ["Named", "Aged"]);
 ```
 
+### Construct signatures
+
+Use:
+
+```typescript
+const constructSignatures = interfaceDeclaration.getConstructSignatures();
+```
+
+To add or insert use `addConstructSignature()`, `addConstructSignatures()`, `insertConstructSignature`, or `insertConstructSignatures()`:
+
+```typescript
+const constructSignature = interfaceDeclaration.addConstructSignature({ returnType: "SomeClass" });
+```
+
 ### Method signatures
 
 Use:
@@ -51,16 +65,8 @@ Use:
 const properties = interfaceDeclaration.getProperties();
 ```
 
-To add or insert use `addProperty()`, `addPropertys()`, `insertProperty`, or `insertPropertys()`:
+To add or insert use `addProperty()`, `addProperties()`, `insertProperty`, or `insertProperties()`:
 
 ```typescript
 const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
-```
-
-### Construct signatures
-
-Use:
-
-```typescript
-const constructSignatures = interfaceDeclaration.getConstructSignatures();
 ```

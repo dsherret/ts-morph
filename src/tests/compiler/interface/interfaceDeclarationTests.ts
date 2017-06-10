@@ -1,9 +1,66 @@
 ﻿import {expect} from "chai";
 import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration} from "./../../../compiler";
-import {PropertySignatureStructure, MethodSignatureStructure} from "./../../../structures";
+import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
+    describe(nameof<InterfaceDeclaration>(d => d.insertConstructSignatures), () => {
+        function doTest(startCode: string, insertIndex: number, structures: ConstructSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertConstructSignatures(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("interface i {\n}", 0, [{ }], "interface i {\n    new();\n}");
+        });
+
+        it("should insert multiple into other", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, { }],
+                "interface i {\n    method1();\n    new(): string;\n    new();\n    method2();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.insertConstructSignature), () => {
+        function doTest(startCode: string, insertIndex: number, structure: ConstructSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertConstructSignature(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ConstructSignatureDeclaration);
+        }
+
+        it("should insert at index", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, { }, "interface i {\n    method1();\n    new();\n    method2();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addConstructSignatures), () => {
+        function doTest(startCode: string, structures: ConstructSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addConstructSignatures(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple at end", () => {
+            doTest("interface i {\n    method1();\n}", [{ }, { }], "interface i {\n    method1();\n    new();\n    new();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addConstructSignature), () => {
+        function doTest(startCode: string, structure: ConstructSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addConstructSignature(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(ConstructSignatureDeclaration);
+        }
+
+        it("should add at end", () => {
+            doTest("interface i {\n    method1();\n}", { }, "interface i {\n    method1();\n    new();\n}");
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(d => d.getConstructSignatures), () => {
         describe("none", () => {
             it("should not have any", () => {
@@ -37,7 +94,7 @@ describe(nameof(InterfaceDeclaration), () => {
             doTest("interface i {\n}", 0, [{ name: "method" }], "interface i {\n    method();\n}");
         });
 
-        it("should insert multiple into other properties", () => {
+        it("should insert multiple into other methods", () => {
             doTest("interface i {\n    method1();\n    method4();\n}", 1, [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
                 "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}");
         });

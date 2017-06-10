@@ -78,6 +78,11 @@ export function fillParameterDeclarationFromStructure(node: compiler.ParameterDe
     fillFuncs.fillInitializerExpressionableNodeFromStructure(node, structure);
 }
 
+export function fillConstructSignatureDeclarationFromStructure(node: compiler.ConstructSignatureDeclaration, structure: structures.ConstructSignatureDeclarationStructure) {
+    fillFuncs.fillDocumentationableNodeFromStructure(node, structure);
+    fillSignaturedDeclarationFromStructure(node, structure);
+}
+
 export function fillInterfaceDeclarationFromStructure(node: compiler.InterfaceDeclaration, structure: structures.InterfaceDeclarationStructure) {
     fillFuncs.fillExtendsClauseableNodeFromStructure(node, structure);
     fillFuncs.fillTypeParameteredNodeFromStructure(node, structure);

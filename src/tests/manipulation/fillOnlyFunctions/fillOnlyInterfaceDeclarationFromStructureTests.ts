@@ -17,9 +17,10 @@ describe(nameof(fillOnlyInterfaceDeclarationFromStructure), () => {
 
     it("should modify when changed", () => {
         const structure: MakeRequired<InterfaceDeclarationSpecificStructure> = {
+            constructSignatures: [{ returnType: "string" }],
             properties: [{ name: "p" }],
             methods: [{ name: "m" }]
         };
-        doTest("interface Identifier {\n}", structure, "interface Identifier {\n    p;\n    m();\n}");
+        doTest("interface Identifier {\n}", structure, "interface Identifier {\n    new(): string;\n    p;\n    m();\n}");
     });
 });

@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
-import {PropertySignatureStructure, MethodSignatureStructure} from "./../../structures";
+import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
@@ -15,6 +15,61 @@ export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseable
     ExportableNode(ModifierableNode(NamedNode(Node)))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
+    /**
+     * Add construct signature.
+     * @param structure - Structure representing the construct signature.
+     */
+    addConstructSignature(structure: ConstructSignatureDeclarationStructure) {
+        return this.addConstructSignatures([structure])[0];
+    }
+
+    /**
+     * Add construct signatures.
+     * @param structures - Structures representing the construct signatures.
+     */
+    addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]) {
+        return this.insertConstructSignatures(getEndIndexFromArray(this.node.members), structures);
+    }
+
+    /**
+     * Insert construct signature.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the construct signature.
+     */
+    insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure) {
+        return this.insertConstructSignatures(index, [structure])[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the construct signatures.
+     */
+    insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = `${indentationText}new()`;
+            if (structure.returnType != null && structure.returnType.length > 0)
+                code += `: ${structure.returnType}`;
+            code += ";";
+            codes.push(code);
+        }
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
+            getChildren: () => this.getAllMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            expectedKind: ts.SyntaxKind.ConstructSignature,
+            fillFunction: fillClassFuncs.fillConstructSignatureDeclarationFromStructure
+        });
+    }
+
     /**
      * Gets the interface method signatures.
      */
