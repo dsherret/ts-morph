@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, NamespaceDeclaration} from "./../../../../compiler";
-import {NamespaceStructure} from "./../../../../structures";
+import {NamespaceDeclarationStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {
-        function doTest(startCode: string, index: number, structures: NamespaceStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: NamespaceDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertNamespaces(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
-        function doTest(startCode: string, index: number, structure: NamespaceStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: NamespaceDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertNamespace(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -62,7 +62,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespaces), () => {
-        function doTest(startCode: string, structures: NamespaceStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: NamespaceDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addNamespaces(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -76,7 +76,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addNamespace), () => {
-        function doTest(startCode: string, structure: NamespaceStructure, expectedText: string) {
+        function doTest(startCode: string, structure: NamespaceDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addNamespace(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

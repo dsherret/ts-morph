@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
-import {PropertyStructure, MethodStructure, ConstructorStructure} from "./../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -73,7 +73,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Adds a constructor. Will remove the previous constructor if it exists.
      * @param structure - Structure of the constructor.
      */
-    addConstructor(structure: ConstructorStructure = {}) {
+    addConstructor(structure: ConstructorDeclarationStructure = {}) {
         return this.insertConstructor(getEndIndexFromArray(this.node.members), structure);
     }
 
@@ -82,7 +82,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Index to insert at.
      * @param structure - Structure of the constructor.
      */
-    insertConstructor(index: number, structure: ConstructorStructure = {}) {
+    insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
         const currentCtor = this.getConstructor();
         if (currentCtor != null)
             currentCtor.remove();
@@ -91,7 +91,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const newLineChar = this.factory.getLanguageService().getNewLine();
         const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
 
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorStructure>({
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
             getChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
@@ -116,7 +116,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add property.
      * @param structure - Structure representing the property.
      */
-    addProperty(structure: PropertyStructure) {
+    addProperty(structure: PropertyDeclarationStructure) {
         return this.addProperties([structure])[0];
     }
 
@@ -124,7 +124,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: PropertyStructure[]) {
+    addProperties(structures: PropertyDeclarationStructure[]) {
         return this.insertProperties(getEndIndexFromArray(this.node.members), structures);
     }
 
@@ -133,7 +133,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Index to insert at.
      * @param structure - Structure representing the property.
      */
-    insertProperty(index: number, structure: PropertyStructure) {
+    insertProperty(index: number, structure: PropertyDeclarationStructure) {
         return this.insertProperties(index, [structure])[0];
     }
 
@@ -142,7 +142,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: PropertyStructure[]) {
+    insertProperties(index: number, structures: PropertyDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
 
         // create code
@@ -160,7 +160,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             codes.push(code);
         }
 
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyStructure>({
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
             getChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
@@ -193,7 +193,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add method.
      * @param structure - Structure representing the method.
      */
-    addMethod(structure: MethodStructure) {
+    addMethod(structure: MethodDeclarationStructure) {
         return this.addMethods([structure])[0];
     }
 
@@ -201,7 +201,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: MethodStructure[]) {
+    addMethods(structures: MethodDeclarationStructure[]) {
         return this.insertMethods(getEndIndexFromArray(this.node.members), structures);
     }
 
@@ -210,7 +210,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Index to insert at.
      * @param structure - Structure representing the method.
      */
-    insertMethod(index: number, structure: MethodStructure) {
+    insertMethod(index: number, structure: MethodDeclarationStructure) {
         return this.insertMethods(index, [structure])[0];
     }
 
@@ -219,7 +219,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: MethodStructure[]) {
+    insertMethods(index: number, structures: MethodDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
 
@@ -238,7 +238,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         // insert, fill, and get created nodes
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodStructure>({
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
             getChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,

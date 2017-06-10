@@ -118,3 +118,21 @@ export function fillParameteredNodeFromStructure(
     if (structure.parameters != null && structure.parameters.length > 0)
         node.addParameters(structure.parameters);
 }
+
+export function fillStatementedNodeFromStructure(
+    node: compiler.StatementedNode,
+    structure: structures.StatementedStructure
+) {
+    if (structure.classes != null && structure.classes.length > 0)
+        node.addClasses(structure.classes);
+    if (structure.enums != null && structure.enums.length > 0)
+        node.addEnums(structure.enums);
+    if (structure.functions != null && structure.functions.length > 0)
+        node.addFunctions(structure.functions);
+    if (structure.interfaces != null && structure.interfaces.length > 0)
+        node.addInterfaces(structure.interfaces);
+    if (structure.namespaces != null && structure.namespaces.length > 0)
+        node.addNamespaces(structure.namespaces);
+    if (structure.typeAliases != null && structure.typeAliases.length > 0)
+        node.addTypeAliases(structure.typeAliases);
+}

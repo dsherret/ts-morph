@@ -1,7 +1,7 @@
 ﻿import {NamedStructure} from "./../base";
 import {EnumMemberStructure} from "./EnumMemberStructure";
 
-export interface EnumStructure extends NamedStructure {
+export interface EnumDeclarationStructure extends NamedStructure {
     isConst?: boolean;
     members?: EnumMemberStructure[];
 }

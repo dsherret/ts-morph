@@ -1,5 +1,5 @@
 ﻿import {NamedStructure, TypedStructure} from "./../base";
 
-export interface ParameterStructure extends NamedStructure, TypedStructure {
+export interface ParameterDeclarationStructure extends NamedStructure, TypedStructure {
     isRestParameter?: boolean;
 }

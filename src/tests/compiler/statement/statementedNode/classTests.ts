@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, ClassDeclaration} from "./../../../../compiler";
-import {ClassStructure} from "./../../../../structures";
+import {ClassDeclarationStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertClasses), () => {
-        function doTest(startCode: string, index: number, structures: ClassStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: ClassDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertClasses(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -46,7 +46,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertClass), () => {
-        function doTest(startCode: string, index: number, structure: ClassStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: ClassDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertClass(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -59,7 +59,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addClasses), () => {
-        function doTest(startCode: string, structures: ClassStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: ClassDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addClasses(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -72,7 +72,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addClass), () => {
-        function doTest(startCode: string, structure: ClassStructure, expectedText: string) {
+        function doTest(startCode: string, structure: ClassDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addClass(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

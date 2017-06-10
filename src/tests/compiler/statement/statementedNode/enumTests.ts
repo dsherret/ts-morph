@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, EnumDeclaration} from "./../../../../compiler";
-import {EnumStructure} from "./../../../../structures";
+import {EnumDeclarationStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertEnums), () => {
-        function doTest(startCode: string, index: number, structures: EnumStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: EnumDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertEnums(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -49,7 +49,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertEnum), () => {
-        function doTest(startCode: string, index: number, structure: EnumStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: EnumDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertEnum(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -62,7 +62,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnums), () => {
-        function doTest(startCode: string, structures: EnumStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: EnumDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addEnums(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -75,7 +75,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addEnum), () => {
-        function doTest(startCode: string, structure: EnumStructure, expectedText: string) {
+        function doTest(startCode: string, structure: EnumDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addEnum(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

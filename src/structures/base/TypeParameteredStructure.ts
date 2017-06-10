@@ -1,5 +1,5 @@
-﻿import {TypeParameterStructure} from "./../type";
+﻿import {TypeParameterDeclarationStructure} from "./../type";
 
 export interface TypeParameteredStructure {
-    typeParameters?: TypeParameterStructure[];
+    typeParameters?: TypeParameterDeclarationStructure[];
 }

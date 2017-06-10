@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, TypeAliasDeclaration} from "./../../../../compiler";
-import {TypeAliasStructure} from "./../../../../structures";
+import {TypeAliasDeclarationStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertTypeAliases), () => {
-        function doTest(startCode: string, index: number, structures: TypeAliasStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: TypeAliasDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAliases(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -57,7 +57,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertTypeAlias), () => {
-        function doTest(startCode: string, index: number, structure: TypeAliasStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: TypeAliasDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertTypeAlias(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -70,7 +70,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAliases), () => {
-        function doTest(startCode: string, structures: TypeAliasStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: TypeAliasDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addTypeAliases(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -84,7 +84,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addTypeAlias), () => {
-        function doTest(startCode: string, structure: TypeAliasStructure, expectedText: string) {
+        function doTest(startCode: string, structure: TypeAliasDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addTypeAlias(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

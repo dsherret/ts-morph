@@ -1,1 +1,1 @@
-﻿export * from "./namespace/NamespaceStructure";
+﻿export * from "./namespace/NamespaceDeclarationStructure";

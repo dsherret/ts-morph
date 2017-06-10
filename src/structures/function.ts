@@ -1,2 +1,4 @@
-﻿export * from "./function/FunctionStructure";
-export * from "./function/ParameterStructure";
+﻿export * from "./function/FunctionDeclarationStructure";
+export * from "./function/FunctionLikeDeclarationStructure";
+export * from "./function/ParameterDeclarationStructure";
+export * from "./function/SignaturedDeclarationStructure";

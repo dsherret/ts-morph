@@ -1,2 +1,0 @@
-﻿export interface ConstructorStructure {
-}

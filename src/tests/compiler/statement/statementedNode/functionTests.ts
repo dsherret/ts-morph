@@ -1,11 +1,11 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, FunctionDeclaration} from "./../../../../compiler";
-import {FunctionStructure} from "./../../../../structures";
+import {FunctionDeclarationStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertFunctions), () => {
-        function doTest(startCode: string, index: number, structures: FunctionStructure[], expectedText: string) {
+        function doTest(startCode: string, index: number, structures: FunctionDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertFunctions(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -48,7 +48,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
-        function doTest(startCode: string, index: number, structure: FunctionStructure, expectedText: string) {
+        function doTest(startCode: string, index: number, structure: FunctionDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.insertFunction(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -61,7 +61,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunctions), () => {
-        function doTest(startCode: string, structures: FunctionStructure[], expectedText: string) {
+        function doTest(startCode: string, structures: FunctionDeclarationStructure[], expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addFunctions(structures);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -75,7 +75,7 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.addFunction), () => {
-        function doTest(startCode: string, structure: FunctionStructure, expectedText: string) {
+        function doTest(startCode: string, structure: FunctionDeclarationStructure, expectedText: string) {
             const {sourceFile} = getInfoFromText(startCode);
             const result = sourceFile.addFunction(structure);
             expect(sourceFile.getFullText()).to.equal(expectedText);

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ParameteredNode, FunctionDeclaration, ParameterDeclaration} from "./../../../compiler";
-import {ParameterStructure} from "./../../../structures";
+import {ParameterDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ParameteredNode), () => {
@@ -18,7 +18,7 @@ describe(nameof(ParameteredNode), () => {
     });
 
     describe(nameof<ParameteredNode>(n => n.addParameter), () => {
-        function doTest(startCode: string, structure: ParameterStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: ParameterDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addParameter(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -35,7 +35,7 @@ describe(nameof(ParameteredNode), () => {
     });
 
     describe(nameof<ParameteredNode>(n => n.addParameters), () => {
-        function doTest(startCode: string, structures: ParameterStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: ParameterDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addParameters(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -48,7 +48,7 @@ describe(nameof(ParameteredNode), () => {
     });
 
     describe(nameof<ParameteredNode>(n => n.insertParameter), () => {
-        function doTest(startCode: string, index: number, structure: ParameterStructure, expectedCode: string) {
+        function doTest(startCode: string, index: number, structure: ParameterDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertParameter(index, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -65,7 +65,7 @@ describe(nameof(ParameteredNode), () => {
     });
 
     describe(nameof<ParameteredNode>(n => n.insertParameters), () => {
-        function doTest(startCode: string, insertIndex: number, structures: ParameterStructure[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: ParameterDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertParameters(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);

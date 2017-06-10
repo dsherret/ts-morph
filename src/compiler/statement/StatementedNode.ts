@@ -20,24 +20,24 @@ export interface StatementedNode {
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
      */
-    addClass(structure: structures.ClassStructure): classes.ClassDeclaration;
+    addClass(structure: structures.ClassDeclarationStructure): classes.ClassDeclaration;
     /**
      * Adds class declarations as a child.
      * @param structures - Structures of the class declarations to add.
      */
-    addClasses(structures: structures.ClassStructure[]): classes.ClassDeclaration[];
+    addClasses(structures: structures.ClassDeclarationStructure[]): classes.ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
-    insertClass(index: number, structure: structures.ClassStructure): classes.ClassDeclaration;
+    insertClass(index: number, structure: structures.ClassDeclarationStructure): classes.ClassDeclaration;
     /**
      * Inserts class declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
-    insertClasses(index: number, structures: structures.ClassStructure[]): classes.ClassDeclaration[];
+    insertClasses(index: number, structures: structures.ClassDeclarationStructure[]): classes.ClassDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
@@ -56,24 +56,24 @@ export interface StatementedNode {
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
      */
-    addEnum(structure: structures.EnumStructure): enums.EnumDeclaration;
+    addEnum(structure: structures.EnumDeclarationStructure): enums.EnumDeclaration;
     /**
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
      */
-    addEnums(structures: structures.EnumStructure[]): enums.EnumDeclaration[];
+    addEnums(structures: structures.EnumDeclarationStructure[]): enums.EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
-    insertEnum(index: number, structure: structures.EnumStructure): enums.EnumDeclaration;
+    insertEnum(index: number, structure: structures.EnumDeclarationStructure): enums.EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
-    insertEnums(index: number, structures: structures.EnumStructure[]): enums.EnumDeclaration[];
+    insertEnums(index: number, structures: structures.EnumDeclarationStructure[]): enums.EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
@@ -92,24 +92,24 @@ export interface StatementedNode {
      * Adds a function declaration as a child.
      * @param structure - Structure of the function declaration to add.
      */
-    addFunction(structure: structures.FunctionStructure): functions.FunctionDeclaration;
+    addFunction(structure: structures.FunctionDeclarationStructure): functions.FunctionDeclaration;
     /**
      * Adds function declarations as a child.
      * @param structures - Structures of the function declarations to add.
      */
-    addFunctions(structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
+    addFunctions(structures: structures.FunctionDeclarationStructure[]): functions.FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
-    insertFunction(index: number, structure: structures.FunctionStructure): functions.FunctionDeclaration;
+    insertFunction(index: number, structure: structures.FunctionDeclarationStructure): functions.FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
-    insertFunctions(index: number, structures: structures.FunctionStructure[]): functions.FunctionDeclaration[];
+    insertFunctions(index: number, structures: structures.FunctionDeclarationStructure[]): functions.FunctionDeclaration[];
     /**
      * Gets the direct function declaration children.
      */
@@ -128,24 +128,24 @@ export interface StatementedNode {
      * Adds a interface declaration as a child.
      * @param structure - Structure of the interface declaration to add.
      */
-    addInterface(structure: structures.InterfaceStructure): interfaces.InterfaceDeclaration;
+    addInterface(structure: structures.InterfaceDeclarationStructure): interfaces.InterfaceDeclaration;
     /**
      * Adds interface declarations as a child.
      * @param structures - Structures of the interface declarations to add.
      */
-    addInterfaces(structures: structures.InterfaceStructure[]): interfaces.InterfaceDeclaration[];
+    addInterfaces(structures: structures.InterfaceDeclarationStructure[]): interfaces.InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
-    insertInterface(index: number, structure: structures.InterfaceStructure): interfaces.InterfaceDeclaration;
+    insertInterface(index: number, structure: structures.InterfaceDeclarationStructure): interfaces.InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
-    insertInterfaces(index: number, structures: structures.InterfaceStructure[]): interfaces.InterfaceDeclaration[];
+    insertInterfaces(index: number, structures: structures.InterfaceDeclarationStructure[]): interfaces.InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
@@ -164,24 +164,24 @@ export interface StatementedNode {
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: structures.NamespaceStructure): namespaces.NamespaceDeclaration;
+    addNamespace(structure: structures.NamespaceDeclarationStructure): namespaces.NamespaceDeclaration;
     /**
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: structures.NamespaceStructure[]): namespaces.NamespaceDeclaration[];
+    addNamespaces(structures: structures.NamespaceDeclarationStructure[]): namespaces.NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: structures.NamespaceStructure): namespaces.NamespaceDeclaration;
+    insertNamespace(index: number, structure: structures.NamespaceDeclarationStructure): namespaces.NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: structures.NamespaceStructure[]): namespaces.NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: structures.NamespaceDeclarationStructure[]): namespaces.NamespaceDeclaration[];
     /**
      * Gets the direct namespace declaration children.
      */
@@ -200,24 +200,24 @@ export interface StatementedNode {
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
      */
-    addTypeAlias(structure: structures.TypeAliasStructure): types.TypeAliasDeclaration;
+    addTypeAlias(structure: structures.TypeAliasDeclarationStructure): types.TypeAliasDeclaration;
     /**
      * Adds type alias declarations as a child.
      * @param structures - Structures of the type alias declarations to add.
      */
-    addTypeAliases(structures: structures.TypeAliasStructure[]): types.TypeAliasDeclaration[];
+    addTypeAliases(structures: structures.TypeAliasDeclarationStructure[]): types.TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
-    insertTypeAlias(index: number, structure: structures.TypeAliasStructure): types.TypeAliasDeclaration;
+    insertTypeAlias(index: number, structure: structures.TypeAliasDeclarationStructure): types.TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
-    insertTypeAliases(index: number, structures: structures.TypeAliasStructure[]): types.TypeAliasDeclaration[];
+    insertTypeAliases(index: number, structures: structures.TypeAliasDeclarationStructure[]): types.TypeAliasDeclaration[];
     /**
      * Gets the direct type alias declaration children.
      */
@@ -270,19 +270,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* Classes */
 
-        addClass(structure: structures.ClassStructure) {
+        addClass(structure: structures.ClassDeclarationStructure) {
             return this.addClasses([structure])[0];
         }
 
-        addClasses(structures: structures.ClassStructure[]) {
+        addClasses(structures: structures.ClassDeclarationStructure[]) {
             return this.insertClasses(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertClass(index: number, structure: structures.ClassStructure) {
+        insertClass(index: number, structure: structures.ClassDeclarationStructure) {
             return this.insertClasses(index, [structure])[0];
         }
 
-        insertClasses(index: number, structures: structures.ClassStructure[]): classes.ClassDeclaration[] {
+        insertClasses(index: number, structures: structures.ClassDeclarationStructure[]): classes.ClassDeclaration[] {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
@@ -305,19 +305,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Enums */
 
-        addEnum(structure: structures.EnumStructure) {
+        addEnum(structure: structures.EnumDeclarationStructure) {
             return this.addEnums([structure])[0];
         }
 
-        addEnums(structures: structures.EnumStructure[]) {
+        addEnums(structures: structures.EnumDeclarationStructure[]) {
             return this.insertEnums(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertEnum(index: number, structure: structures.EnumStructure) {
+        insertEnum(index: number, structure: structures.EnumDeclarationStructure) {
             return this.insertEnums(index, [structure])[0];
         }
 
-        insertEnums(index: number, structures: structures.EnumStructure[]) {
+        insertEnums(index: number, structures: structures.EnumDeclarationStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
@@ -343,19 +343,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Functions */
 
-        addFunction(structure: structures.FunctionStructure) {
+        addFunction(structure: structures.FunctionDeclarationStructure) {
             return this.addFunctions([structure])[0];
         }
 
-        addFunctions(structures: structures.FunctionStructure[]) {
+        addFunctions(structures: structures.FunctionDeclarationStructure[]) {
             return this.insertFunctions(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertFunction(index: number, structure: structures.FunctionStructure) {
+        insertFunction(index: number, structure: structures.FunctionDeclarationStructure) {
             return this.insertFunctions(index, [structure])[0];
         }
 
-        insertFunctions(index: number, structures: structures.FunctionStructure[]) {
+        insertFunctions(index: number, structures: structures.FunctionDeclarationStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
@@ -378,19 +378,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Interfaces */
 
-        addInterface(structure: structures.InterfaceStructure) {
+        addInterface(structure: structures.InterfaceDeclarationStructure) {
             return this.addInterfaces([structure])[0];
         }
 
-        addInterfaces(structures: structures.InterfaceStructure[]) {
+        addInterfaces(structures: structures.InterfaceDeclarationStructure[]) {
             return this.insertInterfaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertInterface(index: number, structure: structures.InterfaceStructure) {
+        insertInterface(index: number, structure: structures.InterfaceDeclarationStructure) {
             return this.insertInterfaces(index, [structure])[0];
         }
 
-        insertInterfaces(index: number, structures: structures.InterfaceStructure[]) {
+        insertInterfaces(index: number, structures: structures.InterfaceDeclarationStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
@@ -413,19 +413,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Namespaces */
 
-        addNamespace(structure: structures.NamespaceStructure) {
+        addNamespace(structure: structures.NamespaceDeclarationStructure) {
             return this.addNamespaces([structure])[0];
         }
 
-        addNamespaces(structures: structures.NamespaceStructure[]) {
+        addNamespaces(structures: structures.NamespaceDeclarationStructure[]) {
             return this.insertNamespaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertNamespace(index: number, structure: structures.NamespaceStructure) {
+        insertNamespace(index: number, structure: structures.NamespaceDeclarationStructure) {
             return this.insertNamespaces(index, [structure])[0];
         }
 
-        insertNamespaces(index: number, structures: structures.NamespaceStructure[]) {
+        insertNamespaces(index: number, structures: structures.NamespaceDeclarationStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => {
@@ -450,25 +450,25 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Type aliases */
 
-        addTypeAlias(structure: structures.TypeAliasStructure) {
+        addTypeAlias(structure: structures.TypeAliasDeclarationStructure) {
             return this.addTypeAliases([structure])[0];
         }
 
-        addTypeAliases(structures: structures.TypeAliasStructure[]) {
+        addTypeAliases(structures: structures.TypeAliasDeclarationStructure[]) {
             return this.insertTypeAliases(this.getChildSyntaxListOrThrow().getChildCount(), structures);
         }
 
-        insertTypeAlias(index: number, structure: structures.TypeAliasStructure) {
+        insertTypeAlias(index: number, structure: structures.TypeAliasDeclarationStructure) {
             return this.insertTypeAliases(index, [structure])[0];
         }
 
-        insertTypeAliases(index: number, structures: structures.TypeAliasStructure[]) {
+        insertTypeAliases(index: number, structures: structures.TypeAliasDeclarationStructure[]) {
             const newLineChar = this.factory.getLanguageService().getNewLine();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => {
                 return `${indentationText}type ${structure.name} = ${structure.type};`;
             });
-            const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, structures.TypeAliasStructure>(
+            const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, structures.TypeAliasDeclarationStructure>(
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
                     // todo: should insert based on fill function
                 }, {

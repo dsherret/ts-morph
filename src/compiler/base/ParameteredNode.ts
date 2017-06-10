@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
-import {ParameterStructure} from "./../../structures";
+import {ParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
@@ -17,24 +17,24 @@ export interface ParameteredNode {
      * Adds a parameter.
      * @param structure - Structure of the parameter.
      */
-    addParameter(structure: ParameterStructure): ParameterDeclaration;
+    addParameter(structure: ParameterDeclarationStructure): ParameterDeclaration;
     /**
      * Adds parameters.
      * @param structures - Structures of the parameters.
      */
-    addParameters(structures: ParameterStructure[]): ParameterDeclaration[];
+    addParameters(structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Index to insert at.
      * @param structures - Parameters to insert.
      */
-    insertParameters(index: number, structures: ParameterStructure[]): ParameterDeclaration[];
+    insertParameters(index: number, structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Index to insert at.
      * @param structures - Parameter to insert.
      */
-    insertParameter(index: number, structure: ParameterStructure): ParameterDeclaration;
+    insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
@@ -43,19 +43,19 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this.node.parameters.map(p => this.factory.getParameterDeclaration(p, this.sourceFile));
         }
 
-        addParameter(structure: ParameterStructure) {
+        addParameter(structure: ParameterDeclarationStructure) {
             return this.addParameters([structure])[0];
         }
 
-        addParameters(structures: ParameterStructure[]) {
+        addParameters(structures: ParameterDeclarationStructure[]) {
             return this.insertParameters(getEndIndexFromArray(this.node.parameters), structures);
         }
 
-        insertParameter(index: number, structure: ParameterStructure) {
+        insertParameter(index: number, structure: ParameterDeclarationStructure) {
             return this.insertParameters(index, [structure])[0];
         }
 
-        insertParameters(index: number, structures: ParameterStructure[]) {
+        insertParameters(index: number, structures: ParameterDeclarationStructure[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -79,7 +79,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
     };
 }
 
-function getStructureCode(structure: ParameterStructure) {
+function getStructureCode(structure: ParameterDeclarationStructure) {
     let code = "";
     if (structure.isRestParameter)
         code += "...";

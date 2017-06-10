@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration} from "./../../../compiler";
-import {ClassSpecificStructure} from "./../../../structures";
+import {ClassDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillOnlyClassDeclarationFromStructure} from "./../../../manipulation/fillOnlyFunctions";
 
-function doTest(startingCode: string, structure: ClassSpecificStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
     fillOnlyClassDeclarationFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);
@@ -16,7 +16,7 @@ describe(nameof(fillOnlyClassDeclarationFromStructure), () => {
     });
 
     it("should modify when changed", () => {
-        const structure: MakeRequired<ClassSpecificStructure> = {
+        const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
             extends: "Other",
             ctor: {},
             properties: [{ name: "p" }],

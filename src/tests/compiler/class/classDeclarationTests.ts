@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
     ConstructorDeclaration} from "./../../../compiler";
-import {PropertyStructure, MethodStructure, ConstructorStructure} from "./../../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -51,7 +51,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertConstructor), () => {
-        function doTest(startCode: string, insertIndex: number, structure: ConstructorStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: ConstructorDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -69,7 +69,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.addConstructor), () => {
-        function doTest(startCode: string, structure: ConstructorStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: ConstructorDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -95,7 +95,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertProperties), () => {
-        function doTest(startCode: string, insertIndex: number, structures: PropertyStructure[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: PropertyDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -123,7 +123,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertProperty), () => {
-        function doTest(startCode: string, insertIndex: number, structure: PropertyStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: PropertyDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -136,7 +136,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.addProperties), () => {
-        function doTest(startCode: string, structures: PropertyStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: PropertyDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -149,7 +149,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.addProperty), () => {
-        function doTest(startCode: string, structure: PropertyStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: PropertyDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -224,7 +224,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertMethods), () => {
-        function doTest(startCode: string, insertIndex: number, structures: MethodStructure[], expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structures: MethodDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethods(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -242,7 +242,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertMethod), () => {
-        function doTest(startCode: string, insertIndex: number, structure: MethodStructure, expectedCode: string) {
+        function doTest(startCode: string, insertIndex: number, structure: MethodDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -256,7 +256,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.addMethods), () => {
-        function doTest(startCode: string, structures: MethodStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: MethodDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
@@ -270,7 +270,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.addMethod), () => {
-        function doTest(startCode: string, structure: MethodStructure, expectedCode: string) {
+        function doTest(startCode: string, structure: MethodDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
             expect(firstChild.getText()).to.equal(expectedCode);

@@ -1,2 +1,2 @@
-﻿export * from "./type/TypeAliasStructure";
-export * from "./type/TypeParameterStructure";
+﻿export * from "./type/TypeAliasDeclarationStructure";
+export * from "./type/TypeParameterDeclarationStructure";

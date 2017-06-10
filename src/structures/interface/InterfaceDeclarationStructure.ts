@@ -2,11 +2,10 @@
 import {PropertySignatureStructure} from "./PropertySignatureStructure";
 import {MethodSignatureStructure} from "./MethodSignatureStructure";
 
-// todo: implement this
-export interface InterfaceStructure extends NamedStructure, InterfaceSpecificStructure {
+export interface InterfaceDeclarationStructure extends NamedStructure, InterfaceDeclarationSpecificStructure {
 }
 
-export interface InterfaceSpecificStructure {
+export interface InterfaceDeclarationSpecificStructure {
     properties?: PropertySignatureStructure[];
     methods?: MethodSignatureStructure[];
 }
