@@ -14,14 +14,14 @@ export function* getMixinViewModels(classDeclaration: ClassDeclaration): Iterabl
     const intersectionTypes = extendsType.getIntersectionTypes();
 
     if (intersectionTypes.length === 0) {
-        console.log(`Can't get mixin of: ${classDeclaration.getName()}`);
+        // console.log(`Can't get mixin of: ${classDeclaration.getName()}`);
         return;
     }
 
     for (const intersectionType of intersectionTypes) {
         const aliasSymbol = intersectionType.getAliasSymbol();
         if (aliasSymbol == null || aliasSymbol.getName() !== "Constructor") {
-            console.log(`Can't get intersection type of ${intersectionType.getText()}`);
+            // console.log(`Can't get intersection type of ${intersectionType.getText()}`);
             continue;
         }
 

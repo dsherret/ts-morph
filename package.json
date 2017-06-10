@@ -9,7 +9,7 @@
     "build": "gulp typescript",
     "pre-publish": "gulp tslint && gulp test",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "check-structures-match": "gulp code-generate && node dist-cg/code-generation/ensureStructuresMatchMixins"
+    "check-structures-match": "gulp code-generate && node dist-cg/code-generation/ensureStructuresMatchClasses"
   },
   "repository": {
     "type": "git",
