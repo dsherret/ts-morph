@@ -1,5 +1,5 @@
 ﻿import {ParameterDeclarationStructure} from "./../function";
 
-export interface ParameteredStructure {
+export interface ParameteredNodeStructure {
     parameters?: ParameterDeclarationStructure[];
 }

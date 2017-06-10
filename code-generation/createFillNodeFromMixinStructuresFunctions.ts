@@ -1,6 +1,7 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {ClassViewModel, MixinViewModel, MixinableViewModel, FillOnlyFunctionViewModel} from "./view-models";
 import {isAllowedClass, isAllowedMixin} from "./config";
+import {getMixinOfMixins} from "./common";
 
 export function createFillNodeFromMixinStructuresFunctions(opts: { classVMs: ClassViewModel[]; fillOnlyFunctionVMs: FillOnlyFunctionViewModel[]; }) {
     const {classVMs, fillOnlyFunctionVMs} = opts;
@@ -22,24 +23,6 @@ export function createFillNodeFromMixinStructuresFunctions(opts: { classVMs: Cla
     }
 
     return writer.toString();
-}
-
-function getMixinOfMixins(classVMs: ClassViewModel[]) {
-    const result: MixinViewModel[] = [];
-
-    function handleMixinable(mixinable: MixinableViewModel) {
-        for (const mixin of mixinable.mixins) {
-            if (mixin.mixins.length > 0 && result.every(m => m.name !== mixin.name))
-                result.push(mixin);
-            handleMixinable(mixin);
-        }
-    }
-
-    for (const c of classVMs) {
-        handleMixinable(c);
-    }
-
-    return result;
 }
 
 function write(writer: CodeBlockWriter, vm: ClassViewModel | MixinViewModel, fillOnlyFunctionVMs: FillOnlyFunctionViewModel[]) {

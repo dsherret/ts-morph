@@ -1,4 +1,4 @@
-﻿import {ParameteredStructure, ReturnTypedNodeStructure, TypeParameteredNodeStructure} from "./../base";
+﻿import {ParameteredNodeStructure, ReturnTypedNodeStructure, TypeParameteredNodeStructure} from "./../base";
 
-export interface SignaturedDeclarationStructure extends ParameteredStructure, ReturnTypedNodeStructure, TypeParameteredNodeStructure {
+export interface SignaturedDeclarationStructure extends ParameteredNodeStructure, ReturnTypedNodeStructure, TypeParameteredNodeStructure {
 }

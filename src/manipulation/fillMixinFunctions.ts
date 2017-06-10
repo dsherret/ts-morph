@@ -113,7 +113,7 @@ export function fillReturnTypedNodeFromStructure(node: compiler.ReturnTypedNode,
 
 export function fillParameteredNodeFromStructure(
     node: compiler.ParameteredNode,
-    structure: structures.ParameteredStructure
+    structure: structures.ParameteredNodeStructure
 ) {
     if (structure.parameters != null && structure.parameters.length > 0)
         node.addParameters(structure.parameters);
