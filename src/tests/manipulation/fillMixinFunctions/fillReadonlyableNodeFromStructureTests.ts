@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, PropertyDeclaration} from "./../../../compiler";
-import {ReadonlyableStructure} from "./../../../structures";
+import {ReadonlyableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillReadonlyableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
@@ -10,7 +10,7 @@ function getFirstProperty(code: string) {
     return {firstProperty, ...result};
 }
 
-function doTest(startCode: string, structure: ReadonlyableStructure, expectedCode: string) {
+function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
     fillReadonlyableNodeFromStructure(firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {InterfaceDeclaration, PropertyDeclaration} from "./../../../compiler";
-import {QuestionTokenableStructure} from "./../../../structures";
+import {QuestionTokenableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillQuestionTokenableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
@@ -10,7 +10,7 @@ function getFirstProperty(code: string) {
     return {firstProperty, ...result};
 }
 
-function doTest(startCode: string, structure: QuestionTokenableStructure, expectedCode: string) {
+function doTest(startCode: string, structure: QuestionTokenableNodeStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
     fillQuestionTokenableNodeFromStructure(firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);

@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {FunctionDeclaration} from "./../../../compiler";
-import {ExportableStructure} from "./../../../structures";
+import {ExportableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillExportableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: ExportableStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
     fillExportableNodeFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);

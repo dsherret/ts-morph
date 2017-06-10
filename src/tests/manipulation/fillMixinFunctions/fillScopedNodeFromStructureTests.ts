@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, PropertyDeclaration, Scope} from "./../../../compiler";
-import {ScopedStructure} from "./../../../structures";
+import {ScopedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillScopedNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
@@ -10,7 +10,7 @@ function getFirstProperty(code: string) {
     return {firstProperty, ...result};
 }
 
-function doTest(startCode: string, structure: ScopedStructure, expectedCode: string) {
+function doTest(startCode: string, structure: ScopedNodeStructure, expectedCode: string) {
     const {firstProperty, sourceFile} = getFirstProperty(startCode);
     fillScopedNodeFromStructure(firstProperty, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);

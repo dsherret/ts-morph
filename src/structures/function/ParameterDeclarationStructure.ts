@@ -1,5 +1,9 @@
-﻿import {NamedStructure, TypedStructure, ReadonlyableStructure, DecoratableStructure} from "./../base";
+﻿import {NamedStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
+    InitializerExpressionableNodeStructure} from "./../base";
 
-export interface ParameterDeclarationStructure extends NamedStructure, TypedStructure, ReadonlyableStructure, DecoratableStructure {
+export interface ParameterDeclarationStructure
+    extends NamedStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
+        InitializerExpressionableNodeStructure
+{
     isRestParameter?: boolean;
 }

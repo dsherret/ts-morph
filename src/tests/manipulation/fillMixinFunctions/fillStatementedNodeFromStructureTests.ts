@@ -1,9 +1,9 @@
 ﻿import {expect} from "chai";
-import {StatementedStructure} from "./../../../structures";
+import {StatementedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillStatementedNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: StatementedStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
     const {sourceFile} = getInfoFromText(startingCode);
     fillStatementedNodeFromStructure(sourceFile, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);
@@ -15,7 +15,7 @@ describe(nameof(fillStatementedNodeFromStructure), () => {
     });
 
     it("should modify when changed", () => {
-        const structure: MakeRequired<StatementedStructure> = {
+        const structure: MakeRequired<StatementedNodeStructure> = {
             classes: [{ name: "Identifier1" }],
             enums: [{ name: "Identifier2" }],
             functions: [{ name: "Identifier3" }],

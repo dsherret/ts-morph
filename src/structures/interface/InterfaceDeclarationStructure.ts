@@ -1,8 +1,12 @@
-﻿import {NamedStructure} from "./../base";
+﻿import {NamedStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, DocumentationableNodeStructure,
+    AmbientableNodeStructure, ExportableNodeStructure} from "./../base";
 import {PropertySignatureStructure} from "./PropertySignatureStructure";
 import {MethodSignatureStructure} from "./MethodSignatureStructure";
 
-export interface InterfaceDeclarationStructure extends NamedStructure, InterfaceDeclarationSpecificStructure {
+export interface InterfaceDeclarationStructure
+    extends NamedStructure, InterfaceDeclarationSpecificStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure,
+        DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+{
 }
 
 export interface InterfaceDeclarationSpecificStructure {

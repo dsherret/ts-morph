@@ -1,4 +1,4 @@
-﻿import {StatementedStructure} from "./../statement";
+﻿import {StatementedNodeStructure} from "./../statement";
 
-export interface SourceFileStructure extends StatementedStructure {
+export interface SourceFileStructure extends StatementedNodeStructure {
 }

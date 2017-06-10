@@ -1,6 +1,9 @@
-﻿import {NamedStructure} from "./../base";
+﻿import {NamedStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure} from "./../base";
+import {StatementedNodeStructure} from "./../statement";
 
-export interface NamespaceDeclarationStructure extends NamedStructure, NamespaceDeclarationSpecificStructure {
+export interface NamespaceDeclarationStructure
+    extends NamedStructure, NamespaceDeclarationSpecificStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure
+{
 }
 
 export interface NamespaceDeclarationSpecificStructure {

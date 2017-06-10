@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {TypeAliasDeclaration} from "./../../../compiler";
-import {TypeParameteredStructure} from "./../../../structures";
+import {TypeParameteredNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillTypeParameteredNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: TypeParameteredStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: TypeParameteredNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
     fillTypeParameteredNodeFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);

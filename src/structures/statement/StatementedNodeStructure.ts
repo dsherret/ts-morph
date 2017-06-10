@@ -5,7 +5,7 @@ import {InterfaceDeclarationStructure} from "./../interface";
 import {NamespaceDeclarationStructure} from "./../namespace";
 import {TypeAliasDeclarationStructure} from "./../type";
 
-export interface StatementedStructure {
+export interface StatementedNodeStructure {
     classes?: ClassDeclarationStructure[];
     enums?: EnumDeclarationStructure[];
     functions?: FunctionDeclarationStructure[];

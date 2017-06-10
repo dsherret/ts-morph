@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration} from "./../../../compiler";
-import {AbstractableStructure} from "./../../../structures";
+import {AbstractableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillAbstractableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: AbstractableStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: AbstractableNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
     fillAbstractableNodeFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);

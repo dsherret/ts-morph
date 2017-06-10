@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration} from "./../../../compiler";
-import {StaticableStructure} from "./../../../structures";
+import {StaticableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillStaticableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
@@ -10,7 +10,7 @@ function getFirstMethod(code: string) {
     return {firstMethod, ...result};
 }
 
-function doTest(startCode: string, structure: StaticableStructure, expectedCode: string) {
+function doTest(startCode: string, structure: StaticableNodeStructure, expectedCode: string) {
     const {firstMethod, sourceFile} = getFirstMethod(startCode);
     fillStaticableNodeFromStructure(firstMethod, structure);
     expect(sourceFile.getText()).to.equal(expectedCode);

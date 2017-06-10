@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration} from "./../../../compiler";
-import {ImplementsClauseableStructure} from "./../../../structures";
+import {ImplementsClauseableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillImplementsClauseableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: ImplementsClauseableStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
     fillImplementsClauseableNodeFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);

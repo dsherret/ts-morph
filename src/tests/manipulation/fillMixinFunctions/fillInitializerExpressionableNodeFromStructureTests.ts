@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {VariableStatement} from "./../../../compiler";
-import {InitializerExpressionableStructure} from "./../../../structures";
+import {InitializerExpressionableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillInitializerExpressionableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startingCode: string, structure: InitializerExpressionableStructure, expectedCode: string) {
+function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startingCode);
     const firstDeclaration = firstChild.getDeclarationList().getDeclarations()[0];
     fillInitializerExpressionableNodeFromStructure(firstDeclaration, structure);

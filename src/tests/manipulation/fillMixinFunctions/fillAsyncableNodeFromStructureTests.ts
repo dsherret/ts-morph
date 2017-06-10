@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {FunctionDeclaration} from "./../../../compiler";
-import {AsyncableStructure} from "./../../../structures";
+import {AsyncableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../../compiler/testHelpers";
 import {fillAsyncableNodeFromStructure} from "./../../../manipulation/fillMixinFunctions";
 
-function doTest(startCode: string, structure: AsyncableStructure, expectedCode: string) {
+function doTest(startCode: string, structure: AsyncableNodeStructure, expectedCode: string) {
     const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
     fillAsyncableNodeFromStructure(firstChild, structure);
     expect(firstChild.getText()).to.equal(expectedCode);

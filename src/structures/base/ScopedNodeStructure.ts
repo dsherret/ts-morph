@@ -1,5 +1,5 @@
 ﻿import {Scope} from "./../../compiler";
 
-export interface ScopeableStructure {
+export interface ScopedNodeStructure {
     scope?: Scope;
 }

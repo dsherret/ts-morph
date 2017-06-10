@@ -1,4 +1,8 @@
-﻿import {NamedStructure, TypedStructure, QuestionTokenableStructure, StaticableStructure} from "./../base";
+﻿import {NamedStructure, TypedNodeStructure, QuestionTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, DocumentationableNodeStructure,
+    ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure} from "./../base";
 
-export interface PropertyDeclarationStructure extends NamedStructure, TypedStructure, QuestionTokenableStructure, StaticableStructure {
+export interface PropertyDeclarationStructure
+    extends NamedStructure, TypedNodeStructure, QuestionTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, DocumentationableNodeStructure,
+        ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure
+{
 }

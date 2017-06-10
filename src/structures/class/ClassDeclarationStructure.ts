@@ -1,10 +1,13 @@
-﻿import {NamedStructure} from "./../base";
+﻿import {NamedStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure,
+    DocumentationableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "./../base";
 import {PropertyDeclarationStructure} from "./PropertyDeclarationStructure";
 import {MethodDeclarationStructure} from "./MethodDeclarationStructure";
 import {ConstructorDeclarationStructure} from "./ConstructorDeclarationStructure";
 
-// todo: implement this
-export interface ClassDeclarationStructure extends NamedStructure, ClassDeclarationSpecificStructure {
+export interface ClassDeclarationStructure
+    extends NamedStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure,
+        TypeParameteredNodeStructure, DocumentationableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure
+{
 }
 
 export interface ClassDeclarationSpecificStructure {

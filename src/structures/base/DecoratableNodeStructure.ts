@@ -1,5 +1,5 @@
 ﻿import {DecoratorStructure} from "./../decorator";
 
-export interface DecoratableStructure {
+export interface DecoratableNodeStructure {
     decorators?: DecoratorStructure[];
 }

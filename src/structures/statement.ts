@@ -1,1 +1,1 @@
-﻿export * from "./statement/StatementedStructure";
+﻿export * from "./statement/StatementedNodeStructure";
