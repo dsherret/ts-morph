@@ -23,10 +23,10 @@ const sourceFile = ast.getOrAddSourceFileFromFilePath("path/to/file.ts");
 
 ### By structure
 
-You can create source files based on a structure:
+You can create source files based on an object that looks like the AST of a source file:
 
 ```typescript
-const sourceFile = ast.addSourceFileFromStructure("path/to/MyFile.ts", {
+const sourceFile = ast.addSourceFileFromStructure("path/to/myStructureFile.ts", {
     enums: [{
         name: "MyEnum",
         members: [{
@@ -54,12 +54,16 @@ class MyClass {
 
 ### By string
 
-Adding source files by text to the AST will act like any other file that exists on the file system, but they will not be saved to the disk unless you ask it to be.
-
 ```typescript
 const fileText = "enum MyEnum {\n}\n";
 const sourceFile = ast.addSourceFileFromText("path/to/myNewFile.ts", fileText);
+```
 
+### Note
+
+Adding source files to the AST from a structure or text will act like any other source file, but they will not be saved to the disk unless you ask it to be.
+
+```typescript
 // save it to the disk if you wish:
 sourceFile.save(); // or saveSync();
 ```

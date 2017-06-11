@@ -57,6 +57,8 @@ const code = diagnostic.getCode(); // returns: number
 
 #### Source
 
+todo: I don't know what this is, but it's available to get from the diagnostic.
+
 ```typescript
 const source = diagnostic.getSource(); // returns: string | undefined
 ```
