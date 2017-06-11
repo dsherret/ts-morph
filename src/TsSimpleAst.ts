@@ -2,9 +2,11 @@
 import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
+import {SourceFileStructure} from "./structures";
 import {CompilerOptionsResolver, FileUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
+import {fillSourceFileFromStructure} from "./manipulation/fillClassFunctions";
 
 export interface Options {
     tsConfigFilePath?: string;
@@ -74,6 +76,18 @@ export class TsSimpleAst {
      */
     addSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
         return this.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
+    }
+
+    /**
+     * Adds a source file from a structure.
+     * @param filePath - File path for the source file.
+     * @param structure - Structure that represents the source file.
+     * @throws - InvalidOperationError if a source file already exists at the provided file path.
+     */
+    addSourceFileFromStructure(filePath: string, structure: SourceFileStructure): compiler.SourceFile {
+        const sourceFile = this.compilerFactory.addSourceFileFromText(filePath, "");
+        fillSourceFileFromStructure(sourceFile, structure);
+        return sourceFile;
     }
 
     /**

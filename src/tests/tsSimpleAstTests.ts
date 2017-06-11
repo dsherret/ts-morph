@@ -73,6 +73,27 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.addSourceFileFromStructure), () => {
+        it("should throw an exception if creating a source file at an existing path", () => {
+            const ast = new TsSimpleAst();
+            ast.addSourceFileFromText("file.ts", "");
+            expect(() => {
+                ast.addSourceFileFromStructure("file.ts", {});
+            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+        });
+
+        it("should add a source file based on a structure", () => {
+            // basic test
+            const ast = new TsSimpleAst();
+            const sourceFile = ast.addSourceFileFromStructure("MyFile.ts", {
+                enums: [{
+                    name: "MyEnum"
+                }]
+            });
+            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n}\n");
+        });
+    });
+
     describe("mixing real files with virtual files", () => {
         const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
         const ast = new TsSimpleAst();
