@@ -44,7 +44,6 @@ const sourceFile = ast.addSourceFileFromStructure("path/to/MyFile.ts", {
 The above would create a source file with the following text:
 
 ```typescript
-// path/to/MyFile.ts
 enum MyEnum {
     member
 }
