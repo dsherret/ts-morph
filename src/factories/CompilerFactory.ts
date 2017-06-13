@@ -149,10 +149,12 @@ export class CompilerFactory {
                 return this.getGetAccessorDeclaration(compilerNode as ts.GetAccessorDeclaration, sourceFile);
             case ts.SyntaxKind.HeritageClause:
                 return this.getHeritageClause(compilerNode as ts.HeritageClause, sourceFile);
-            case ts.SyntaxKind.InterfaceDeclaration:
-                return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration, sourceFile);
             case ts.SyntaxKind.Identifier:
                 return this.getIdentifier(compilerNode as ts.Identifier, sourceFile);
+            case ts.SyntaxKind.ImportDeclaration:
+                return this.getImportDeclaration(compilerNode as ts.ImportDeclaration, sourceFile);
+            case ts.SyntaxKind.InterfaceDeclaration:
+                return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration, sourceFile);
             case ts.SyntaxKind.MethodDeclaration:
                 return this.getMethodDeclaration(compilerNode as ts.MethodDeclaration, sourceFile);
             case ts.SyntaxKind.MethodSignature:
@@ -420,6 +422,15 @@ export class CompilerFactory {
      */
     getIdentifier(identifier: ts.Identifier, sourceFile: compiler.SourceFile): compiler.Identifier {
         return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this, identifier, sourceFile));
+    }
+
+    /**
+     * Gets a wrapped import declaration from a compiler import declaration.
+     * @param importDeclaration - Compiler import declaration.
+     * @param sourceFile - Source file for the node.
+     */
+    getImportDeclaration(importDeclaration: ts.ImportDeclaration, sourceFile: compiler.SourceFile): compiler.ImportDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this, importDeclaration, sourceFile));
     }
 
     /**

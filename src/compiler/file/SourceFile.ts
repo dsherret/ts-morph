@@ -6,6 +6,7 @@ import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {Diagnostic} from "./../tools";
+import {ImportDeclaration} from "./ImportDeclaration";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -67,6 +68,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isDeclarationFile() {
         return this.node.isDeclarationFile;
+    }
+
+    /**
+     * Get the file's import declarations.
+     */
+    getImportDeclarations(): ImportDeclaration[] {
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
     }
 
     /**

@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {SourceFile} from "./../../../compiler";
+import {SourceFile, ImportDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
@@ -93,6 +93,14 @@ describe(nameof(SourceFile), () => {
             const ast = new TsSimpleAst();
             const sourceFile = ast.addSourceFileFromText("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getImportDeclarations), () => {
+        it("should get the import declarations", () => {
+            const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
+            expect(sourceFile.getImportDeclarations().length).to.equal(2);
+            expect(sourceFile.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
         });
     });
 

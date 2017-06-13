@@ -131,9 +131,40 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
-    getFirstChild(condition: (node: Node) => boolean) {
+    getFirstChild(condition?: (node: Node) => boolean) {
         for (const child of this.getChildren()) {
-            if (condition(child))
+            if (condition == null || condition(child))
+                return child;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the last child by syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getLastChildByKindOrThrow(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChildByKind(kind);
+        if (lastChild == null)
+            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return lastChild;
+    }
+
+    /**
+     * Gets the last child by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getLastChildByKind(kind: ts.SyntaxKind) {
+        return this.getLastChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the last child by a condition.
+     * @param condition - Condition.
+     */
+    getLastChild(condition?: (node: Node) => boolean) {
+        for (const child of this.getChildren().reverse()) {
+            if (condition == null || condition(child))
                 return child;
         }
         return undefined;
