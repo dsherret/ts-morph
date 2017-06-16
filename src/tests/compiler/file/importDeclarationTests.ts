@@ -169,11 +169,11 @@ describe(nameof(ImportDeclaration), () => {
             const namedImports = firstChild.getNamedImports();
             expect(namedImports.length).to.equal(expected.length);
             for (let i = 0; i < namedImports.length; i++) {
-                expect(namedImports[i].getIdentifier().getText()).to.equal(expected[i].name);
+                expect(namedImports[i].getName().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
-                    expect(namedImports[i].getAliasIdentifier()).to.equal(undefined);
+                    expect(namedImports[i].getAlias()).to.equal(undefined);
                 else
-                    expect(namedImports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
+                    expect(namedImports[i].getAlias()!.getText()).to.equal(expected[i].alias);
             }
         }
 

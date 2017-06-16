@@ -110,8 +110,11 @@ export class LanguageService {
     }
 
     renameNode(node: Node, newName: string) {
-        const renameReplaces = this.findRenameReplaces(node);
-        for (const renameReplace of renameReplaces) {
+        this.renameReplaces(this.findRenameReplaces(node), newName);
+    }
+
+    renameReplaces(replaces: SourceFileReplace[], newName: string) {
+        for (const renameReplace of replaces) {
             let difference = 0;
             for (const textSpan of renameReplace.textSpans) {
                 textSpan.start -= difference;

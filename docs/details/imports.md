@@ -43,7 +43,7 @@ Set it:
 importDeclaration.setDefaultImport("MyClass");
 ```
 
-#### Setting Example
+#### Example
 
 Given the file:
 
@@ -68,18 +68,42 @@ import NewName from "./file";
 const instance = new NewName();
 ```
 
-### Get namespace import
+### Namespace import
+
+Get it:
 
 ```typescript
 const namespaceImport = importDeclaration.getNamespaceImport(); // returns: Identifier | undefined
 ```
 
-### Get named imports
+Set it:
 
 ```typescript
-const namedImports = importDeclaration.getNamedImports();
-
-// then get the information about the named import:
-namedImports[0].getIdentifier();
-namedImports[0].getAliasIdentifier();
+importDeclaration.setNamespaceImport("newName");
 ```
+
+_Note:_ Setting the namespace import for an existing namespace import will rename any uses of the namespace import in the current file.
+
+### Named imports
+
+```typescript
+const namedImports = importDeclaration.getNamedImports(); // returns: ImportSpecifier
+```
+
+#### Import specifier
+
+Getting or setting the name:
+
+```typescript
+namedImport.getName(); // returns: Identifier
+namedImport.setName("NewName");
+```
+
+Getting or setting the alias:
+
+```typescript
+namedImport.getAlias(); // returns: Identifier | undefined
+namedImport.setAlias("NewAliasName");
+```
+
+_Note:_ Setting the name or alias will rename any uses of the identifier in the current file to the new value.
