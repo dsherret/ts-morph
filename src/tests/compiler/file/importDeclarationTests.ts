@@ -101,6 +101,33 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportDeclaration>(n => n.setNamespaceImport), () => {
+        function doTest(text: string, newNamespaceImport: string, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.setNamespaceImport(newNamespaceImport);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should rename when exists", () => {
+            doTest(`import * as identifier from './file'; const t = identifier;`, "newName", `import * as newName from './file'; const t = newName;`);
+        });
+
+        it("should set the namespace import when importing for side effects", () => {
+            doTest(`import './file';`, "identifier", `import * as identifier from './file';`);
+        });
+
+        it("should throw an error when a named import exists", () => {
+            expect(() => {
+                const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(`import {named} from './file';`);
+                firstChild.setNamespaceImport("identifier");
+            }).to.throw();
+        });
+
+        it("should set the namespace import when a default import exists", () => {
+            doTest(`import name from './file';`, "identifier", `import name, * as identifier from './file';`);
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.getNamespaceImport), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);

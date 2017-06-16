@@ -71,12 +71,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Get the file's import declarations.
-     * @param condition - Condition to filter the imports by.
+     * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the import by.
      */
-    getImports(condition?: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration[] {
-        const imports = this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
-        return condition == null ? imports : imports.filter(i => condition(i));
+    getImport(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
+        return this.getImports().find(condition);
+    }
+
+    /**
+     * Get the file's import declarations.
+     */
+    getImports(): ImportDeclaration[] {
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
     }
 
     /**
@@ -94,11 +100,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the compiler diagnostics.
-     * @param program - Optional program.
      */
     getDiagnostics(): Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getLanguageService().getProgram().getCompilerProgram(), this.getCompilerNode());
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getProgram().getCompilerProgram(), this.getCompilerNode());
         return compilerDiagnostics.map(d => this.factory.getDiagnostic(d));
     }
 

@@ -61,6 +61,32 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     }
 
     /**
+     * Sets the namespace import.
+     * @param text - Text to set as the namespace import.
+     * @throws - InvalidOperationError if a named import exists.
+     */
+    setNamespaceImport(text: string) {
+        const namespaceImport = this.getNamespaceImport();
+        if (namespaceImport != null) {
+            namespaceImport.rename(text);
+            return this;
+        }
+
+        if (this.getNamedImports().length > 0)
+            throw new errors.InvalidOperationError("Cannot add a namespace import to an import declaration that has named imports.");
+
+        const defaultImport = this.getDefaultImport();
+        if (defaultImport != null) {
+            insertStraight(this.getSourceFile(), defaultImport.getEnd(), this.getImportClause(), `, * as ${text}`);
+            return this;
+        }
+
+        const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
+        insertStraight(this.getSourceFile(), importKeyword.getEnd(), this, ` * as ${text} from`);
+        return this;
+    }
+
+    /**
      * Gets the namespace import, if it exists.
      */
     getNamespaceImport() {

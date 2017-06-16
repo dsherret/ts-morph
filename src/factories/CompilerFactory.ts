@@ -30,10 +30,17 @@ export class CompilerFactory {
     }
 
     /**
+     * Convenience method to get the program.
+     */
+    getProgram() {
+        return this.languageService.getProgram();
+    }
+
+    /**
      * Convenience method to get the type checker.
      */
     getTypeChecker() {
-        return this.languageService.getProgram().getTypeChecker();
+        return this.getProgram().getTypeChecker();
     }
 
     /**

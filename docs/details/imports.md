@@ -9,8 +9,8 @@ Imports of a source file can be retrieved by calling:
 ```typescript
 // get them all
 const imports = sourceFile.getImports();
-// or filter by a condition
-const importsWithDefaultImport = sourceFile.getImports(i => i.getDefaultImport() != null);
+// or get the first one that matches a condition
+const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() != null);
 ```
 
 ### Module specifier
@@ -60,7 +60,7 @@ const importDeclaration = sourceFile.getImports()[0];
 importDeclaration.setDefaultImport("NewName");
 ````
 
-Will rename the default import and all its usages in the file:
+Will rename the default import and all its usages:
 
 ```typescript
 import NewName from "./file";
