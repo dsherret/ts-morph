@@ -265,6 +265,22 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the variable declaration.
      */
     getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
+
+    /**
+     * @internal
+     */
+    _insertMainChildren<T extends Node, TStructure = {}>(
+        index: number,
+        childCodes: string[],
+        structures: TStructure[],
+        expectedSyntaxKind: ts.SyntaxKind,
+        withEachChild?: (child: T, index: number) => void,
+        opts?: {
+            previousBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean,
+            separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean,
+            nextBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean
+        }
+    ): T[];
 }
 
 export function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T {
@@ -520,12 +536,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
 
-        private _insertMainChildren<T extends Node, TStructure = {}>(
+        // todo: make this passed an object
+        _insertMainChildren<T extends Node, TStructure = {}>(
             index: number,
             childCodes: string[],
             structures: TStructure[],
             expectedSyntaxKind: ts.SyntaxKind,
-            withEachChild: (child: T, index: number) => void,
+            withEachChild?: ((child: T, index: number) => void),
             opts: {
                 previousBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean,
                 separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean,
@@ -541,8 +558,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const finalChildCodes: string[] = [];
             for (let i = 0; i < childCodes.length; i++) {
                 using(this.factory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
-                    const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
-                    withEachChild(tempSyntaxList.getChildren()[0] as T, i);
+                    if (withEachChild != null) {
+                        const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
+                        withEachChild(tempSyntaxList.getChildren()[0] as T, i);
+                    }
                     finalChildCodes.push(tempSourceFile.getFullText());
                 });
             }

@@ -13,6 +13,8 @@ const imports = sourceFile.getImports();
 const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() != null);
 ```
 
+Or inserted via the `addImport`, `addImports`, `insertImport`, and `insertImports` methods on [`SourceFile`](source-files).
+
 ### Module specifier
 
 Get it:

@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {removeNodes} from "./../../manipulation";
+import {ImportDeclarationStructure} from "./../../structures";
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
@@ -68,6 +69,80 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isDeclarationFile() {
         return this.node.isDeclarationFile;
+    }
+
+    /**
+     * Add an import.
+     * @param structure - Structure that represents the import.
+     */
+    addImport(structure: ImportDeclarationStructure) {
+        return this.addImports([structure])[0];
+    }
+
+    /**
+     * Add imports.
+     * @param structures - Structures that represent the imports.
+     */
+    addImports(structures: ImportDeclarationStructure[]) {
+        const imports = this.getImports();
+        const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
+        return this.insertImports(insertIndex, structures);
+    }
+
+    /**
+     * Insert an import.
+     * @param index - Index to insert at.
+     * @param structure - Structure that represents the import.
+     */
+    insertImport(index: number, structure: ImportDeclarationStructure) {
+        return this.insertImports(index, [structure])[0];
+    }
+
+    /**
+     * Insert imports into a file.
+     * @param index - Index to insert at.
+     * @param structures - Structures that represent the imports to insert.
+     */
+    insertImports(index: number, structures: ImportDeclarationStructure[]) {
+        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const indentationText = this.getChildIndentationText();
+        const texts = structures.map(structure => {
+            const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
+            let code = `${indentationText}import`;
+            // validation
+            if (hasNamedImport && structure.namespaceImport != null)
+                throw new errors.InvalidOperationError("An import declaration cannot have both a namespace import and a named import.");
+            // default import
+            if (structure.defaultImport != null) {
+                code += ` ${structure.defaultImport}`;
+                if (hasNamedImport || structure.namespaceImport != null)
+                    code += ",";
+            }
+            // namespace import
+            if (structure.namespaceImport != null)
+                code += ` * as ${structure.namespaceImport}`;
+            // named imports
+            if (structure.namedImports != null && structure.namedImports.length > 0) {
+                const namedImportsCode = structure.namedImports.map(n => {
+                    let namedImportCode = n.name;
+                    if (n.alias != null)
+                        namedImportCode += ` as ${n.alias}`;
+                    return namedImportCode;
+                }).join(", ");
+                code += ` {${namedImportsCode}}`;
+            }
+            // from keyword
+            if (structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null)
+                code += " from";
+            code += ` "${structure.moduleSpecifier}";`;
+            return code;
+        });
+
+        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ImportDeclaration, undefined, {
+            previousBlanklineWhen: previousMember => !(previousMember instanceof ImportDeclaration),
+            nextBlanklineWhen: nextMember => !(nextMember instanceof ImportDeclaration),
+            separatorNewlineWhen: () => false
+        });
     }
 
     /**

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {SourceFile, ImportDeclaration} from "./../../../compiler";
+import {ImportDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
@@ -93,6 +94,117 @@ describe(nameof(SourceFile), () => {
             const ast = new TsSimpleAst();
             const sourceFile = ast.addSourceFileFromText("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertImports), () => {
+        function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertImports(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of imports", () => {
+            doTest("", 0, [
+                { moduleSpecifier: "./test" },
+                { defaultImport: "identifier", moduleSpecifier: "./test" },
+                { defaultImport: "identifier", namespaceImport: "name", moduleSpecifier: "./test" },
+                { defaultImport: "identifier", namedImports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedImports: [{ name: "name" }], moduleSpecifier: "./test" },
+                { namespaceImport: "name", moduleSpecifier: "./test" }
+            ], [
+                `import "./test";`,
+                `import identifier from "./test";`,
+                `import identifier, * as name from "./test";`,
+                `import identifier, {name, name as alias} from "./test";`,
+                `import {name} from "./test";`,
+                `import * as name from "./test";`
+            ].join("\n") + "\n");
+        });
+
+        it("should throw when specifying a namespace import and named imports", () => {
+            const {sourceFile} = getInfoFromText("");
+
+            expect(() => {
+                sourceFile.insertImports(0, [{ namespaceImport: "name", namedImports: [{ name: "name" }], moduleSpecifier: "file" }]);
+            }).to.throw();
+        });
+
+        it("should insert at the beginning", () => {
+            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `import "./test";\n\nexport class Class {}\n`);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`import "./file1";\nimport "./file3";\n`, 1, [{ moduleSpecifier: "./file2" }], `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nimport "./test";\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertImport), () => {
+        function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertImport(index, structure);
+            expect(result).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`import "./file1";\nimport "./file3";\n`, 1, { moduleSpecifier: "./file2" }, `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertImport), () => {
+        function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertImport(index, structure);
+            expect(result).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`import "./file1";\nimport "./file3";\n`, 1, { moduleSpecifier: "./file2" }, `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addImport), () => {
+        function doTest(startCode: string, structure: ImportDeclarationStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addImport(structure);
+            expect(result).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add at the last import if one exists", () => {
+            doTest(`import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file3" },
+                `import "./file1";\nimport "./file2";\nimport "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the start if no imports exists", () => {
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
+                `import "./file";\n\nexport class MyClass {}\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addImports), () => {
+        function doTest(startCode: string, structures: ImportDeclarationStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addImports(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add at the last import if one exists", () => {
+            doTest(`import "./file1";\n\nexport class MyClass {}\n`, [{ moduleSpecifier: "./file2" }, { moduleSpecifier: "./file3" }],
+                `import "./file1";\nimport "./file2";\nimport "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the start if no imports exists", () => {
+            doTest(`export class MyClass {}\n`, [{ moduleSpecifier: "./file1" }, { moduleSpecifier: "./file2" }],
+                `import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`);
         });
     });
 
