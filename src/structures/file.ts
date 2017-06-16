@@ -1,1 +1,2 @@
-﻿export * from "./file/SourceFileStructure";
+﻿export * from "./file/ImportSpecifierStructure";
+export * from "./file/SourceFileStructure";

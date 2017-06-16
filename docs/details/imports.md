@@ -86,8 +86,19 @@ _Note:_ Setting the namespace import for an existing namespace import will renam
 
 ### Named imports
 
+Getting a named import:
+
 ```typescript
 const namedImports = importDeclaration.getNamedImports(); // returns: ImportSpecifier
+```
+
+Adding or inserting named imports can be done via the `addNamedImport`, `addNamedImports`, `insertNamedImport`, or `insertNamedImports` methods.
+
+```typescript
+const namedImport = importDeclaration.addNamedImport({
+    name: "MyClass",
+    alias: "MyAliasName" // alias is optional
+});
 ```
 
 #### Import specifier

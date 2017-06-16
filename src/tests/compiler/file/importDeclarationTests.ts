@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration} from "./../../../compiler";
+import {ImportSpecifierStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {
@@ -199,6 +200,70 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should not get anything when importing for the side effects", () => {
             doTest(`import "./test";`, []);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
+        function doTest(text: string, index: number, structures: ImportSpecifierStructure[], expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.insertNamedImports(index, structures);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should insert named imports when importing for the side effects", () => {
+            doTest(`import "./test";`, 0, [{ name: "name", alias: "alias" }], `import {name as alias} from "./test";`);
+        });
+
+        it("should insert named imports when a default import exists", () => {
+            doTest(`import Default from "./test";`, 0, [{ name: "name" }, { name: "name2" }], `import Default, {name, name2} from "./test";`);
+        });
+
+        it("should insert named imports at the start", () => {
+            doTest(`import {name3} from "./test";`, 0, [{ name: "name1" }, { name: "name2" }], `import {name1, name2, name3} from "./test";`);
+        });
+
+        it("should insert named imports at the end", () => {
+            doTest(`import {name1} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3} from "./test";`);
+        });
+
+        it("should insert named imports in the middle", () => {
+            doTest(`import {name1, name4} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3, name4} from "./test";`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.insertNamedImport), () => {
+        function doTest(text: string, index: number, structure: ImportSpecifierStructure, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.insertNamedImport(index, structure);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should insert at the specified index", () => {
+            doTest(`import {name1, name3} from "./test";`, 1, { name: "name2" }, `import {name1, name2, name3} from "./test";`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.addNamedImport), () => {
+        function doTest(text: string, structure: ImportSpecifierStructure, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.addNamedImport(structure);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should add at the end", () => {
+            doTest(`import {name1, name2} from "./test";`, { name: "name3" }, `import {name1, name2, name3} from "./test";`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.addNamedImports), () => {
+        function doTest(text: string, structures: ImportSpecifierStructure[], expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.addNamedImports(structures);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should add named imports at the end", () => {
+            doTest(`import {name1} from "./test";`, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3} from "./test";`);
         });
     });
 });
