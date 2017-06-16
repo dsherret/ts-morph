@@ -96,11 +96,11 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getImportDeclarations), () => {
+    describe(nameof<SourceFile>(n => n.getImports), () => {
         it("should get the import declarations", () => {
             const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImportDeclarations().length).to.equal(2);
-            expect(sourceFile.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getImports().length).to.equal(2);
+            expect(sourceFile.getImports()[0]).to.be.instanceOf(ImportDeclaration);
         });
     });
 

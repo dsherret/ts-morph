@@ -57,10 +57,10 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
-    describe(nameof<ImportDeclaration>(n => n.getNamespaceImportIdentifier), () => {
+    describe(nameof<ImportDeclaration>(n => n.getNamespaceImport), () => {
         function doTest(text: string, expectedName: string | undefined) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
-            const identifier = firstChild.getNamespaceImportIdentifier();
+            const identifier = firstChild.getNamespaceImport();
             if (expectedName == null)
                 expect(identifier).to.be.undefined;
             else
@@ -75,7 +75,7 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import defaultImport, * as name from "./test";`, "name");
         });
 
-        it("should not get the default import when a defualt and named import exist", () => {
+        it("should not get the default import when a default and named import exist", () => {
             doTest(`import defaultImport, {name as any} from "./test";`, undefined);
         });
 
@@ -89,6 +89,45 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should not get the default import when importing for the side effects", () => {
             doTest(`import "./test";`, undefined);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getNamedImports), () => {
+        function doTest(text: string, expected: { name: string; alias?: string; }[]) {
+            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const namedImports = firstChild.getNamedImports();
+            expect(namedImports.length).to.equal(expected.length);
+            for (let i = 0; i < namedImports.length; i++) {
+                expect(namedImports[i].getIdentifier().getText()).to.equal(expected[i].name);
+                if (expected[i].alias == null)
+                    expect(namedImports[i].getAliasIdentifier()).to.equal(undefined);
+                else
+                    expect(namedImports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
+            }
+        }
+
+        it("should get the named imports", () => {
+            doTest(`import {name, name2, name3 as name4} from "./test";`, [{ name: "name" }, { name: "name2" }, { name: "name3", alias: "name4" }]);
+        });
+
+        it("should get the named import when a default and named import exist", () => {
+            doTest(`import defaultImport, {name as any} from "./test";`, [{ name: "name", alias: "any" }]);
+        });
+
+        it("should not get anything when only a namespace import exists", () => {
+            doTest(`import * as name from "./test";`, []);
+        });
+
+        it("should not get anything when a a namespace import and a default import exists", () => {
+            doTest(`import defaultImport, * as name from "./test";`, []);
+        });
+
+        it("should not get anything when a default import exists", () => {
+            doTest(`import defaultImport from "./test";`, []);
+        });
+
+        it("should not get anything when importing for the side effects", () => {
+            doTest(`import "./test";`, []);
         });
     });
 });

@@ -72,9 +72,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Get the file's import declarations.
+     * @param condition - Condition to filter the imports by.
      */
-    getImportDeclarations(): ImportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
+    getImports(condition?: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration[] {
+        const imports = this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
+        return condition == null ? imports : imports.filter(i => condition(i));
     }
 
     /**

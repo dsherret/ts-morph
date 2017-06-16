@@ -153,6 +153,8 @@ export class CompilerFactory {
                 return this.getIdentifier(compilerNode as ts.Identifier, sourceFile);
             case ts.SyntaxKind.ImportDeclaration:
                 return this.getImportDeclaration(compilerNode as ts.ImportDeclaration, sourceFile);
+            case ts.SyntaxKind.ImportSpecifier:
+                return this.getImportSpecifier(compilerNode as ts.ImportSpecifier, sourceFile);
             case ts.SyntaxKind.InterfaceDeclaration:
                 return this.getInterfaceDeclaration(compilerNode as ts.InterfaceDeclaration, sourceFile);
             case ts.SyntaxKind.MethodDeclaration:
@@ -431,6 +433,15 @@ export class CompilerFactory {
      */
     getImportDeclaration(importDeclaration: ts.ImportDeclaration, sourceFile: compiler.SourceFile): compiler.ImportDeclaration {
         return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this, importDeclaration, sourceFile));
+    }
+
+    /**
+     * Gets a wrapped import specifier from a compiler import specifier.
+     * @param importSpecifier - Compiler import specifier.
+     * @param sourceFile - Source file for the node.
+     */
+    getImportSpecifier(importSpecifier: ts.ImportSpecifier, sourceFile: compiler.SourceFile): compiler.ImportSpecifier {
+        return this.nodeCache.getOrCreate<compiler.ImportSpecifier>(importSpecifier, () => new compiler.ImportSpecifier(this, importSpecifier, sourceFile));
     }
 
     /**

@@ -1,9 +1,8 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
 import {Node, Identifier} from "./../common";
+import {ImportSpecifier} from "./ImportSpecifier";
 
-export const ImportDeclarationBase = Node;
-export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
+export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     /**
      * Gets the module specifier.
      */
@@ -27,19 +26,32 @@ export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaratio
     }
 
     /**
-     * Gets the namespace import identifier, if it exists.
+     * Gets the namespace import, if it exists.
      */
-    getNamespaceImportIdentifier() {
+    getNamespaceImport() {
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
-        const firstChild = importClause.getFirstChildByKind(ts.SyntaxKind.NamespaceImport);
-        if (firstChild == null)
+        const namespaceImport = importClause.getFirstChildByKind(ts.SyntaxKind.NamespaceImport);
+        if (namespaceImport == null)
             return undefined;
-        return firstChild.getFirstChildByKind(ts.SyntaxKind.Identifier) as Identifier | undefined;
+        return namespaceImport.getFirstChildByKind(ts.SyntaxKind.Identifier) as Identifier | undefined;
+    }
+
+    /**
+     * Gets the named imports.
+     */
+    getNamedImports(): ImportSpecifier[] {
+        const importClause = this.getImportClause();
+        if (importClause == null)
+            return [];
+        const namedImports = importClause.getFirstChildByKind(ts.SyntaxKind.NamedImports);
+        if (namedImports == null)
+            return [];
+        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ImportSpecifier) as ImportSpecifier[];
     }
 
     private getImportClause() {
-        return this.getFirstChildByKind(ts.SyntaxKind.ImportClause);
+        return this.getFirstChildByKind(ts.SyntaxKind.ImportClause) as Node<ts.ImportClause>;
     }
 }

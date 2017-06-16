@@ -74,3 +74,14 @@ sourceFile.removeDefaultExport();
 ```
 
 Note: This is safe to call even when there is no default export.
+
+
+### Get imports
+
+Use:
+
+```typescript
+const imports = sourceFile.getImports();
+```
+
+Read more about [Import Declarations](imports).

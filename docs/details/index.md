@@ -15,6 +15,7 @@ Find out more information about:
 * [Decorators](decorators)
 * [Enums](enums)
 * [Functions](functions)
+* [Imports](imports)
 * [Interfaces](interfaces)
 * [Namespaces](namespaces)
 * [Parameters](parameters)
