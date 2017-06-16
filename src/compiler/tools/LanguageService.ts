@@ -27,6 +27,7 @@ export class LanguageService {
     constructor(private readonly fileSystem: FileSystemHost, private readonly compilerOptions: ts.CompilerOptions) {
         // I don't know what I'm doing for some of this...
         let version = 0;
+        const fileExists = (path: string) => this.compilerFactory.containsSourceFileAtPath(path) || fileSystem.fileExists(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => compilerOptions,
             getNewLine: () => this.getNewLine(),
@@ -35,6 +36,8 @@ export class LanguageService {
                 return (version++).toString();
             },
             getScriptSnapshot: fileName => {
+                if (!fileExists(fileName))
+                    return undefined;
                 return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => fileSystem.getCurrentDirectory(),
@@ -45,7 +48,7 @@ export class LanguageService {
                     return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
                 return this.fileSystem.readFile(path, encoding);
             },
-            fileExists: path => this.compilerFactory.containsSourceFileAtPath(path) || fileSystem.fileExists(path),
+            fileExists,
             directoryExists: dirName => this.compilerFactory.containsFileInDirectory(dirName) || this.fileSystem.directoryExists(dirName)
         };
 

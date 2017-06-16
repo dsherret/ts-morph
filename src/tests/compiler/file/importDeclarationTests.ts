@@ -3,6 +3,26 @@ import {ImportDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {
+    describe(nameof<ImportDeclaration>(n => n.setModuleSpecifier), () => {
+        function doTest(text: string, newModuleSpecifier: string, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.setModuleSpecifier(newModuleSpecifier);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should set the module specifier when using single quotes", () => {
+            doTest(`import test from './test';`, "./new-test", `import test from './new-test';`);
+        });
+
+        it("should set the module specifier when using double quotes", () => {
+            doTest(`import test from "./test";`, "./new-test", `import test from "./new-test";`);
+        });
+
+        it("should set the module specifier when it's empty", () => {
+            doTest(`import test from "";`, "./new-test", `import test from "./new-test";`);
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
@@ -19,6 +39,30 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should get the module specifier when importing for side effects", () => {
             doTest(`import "./test"`, "./test");
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.setDefaultImport), () => {
+        function doTest(text: string, newDefaultImport: string, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.setDefaultImport(newDefaultImport);
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should rename when exists", () => {
+            doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = newName;`);
+        });
+
+        it("should set the default import when importing for side effects", () => {
+            doTest(`import './file';`, "identifier", `import identifier from './file';`);
+        });
+
+        it("should set the default import when named import exists", () => {
+            doTest(`import {named} from './file';`, "identifier", `import identifier, {named} from './file';`);
+        });
+
+        it("should set the default import when namespace import exists", () => {
+            doTest(`import * as name from './file';`, "identifier", `import identifier, * as name from './file';`);
         });
     });
 

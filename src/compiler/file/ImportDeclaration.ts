@@ -1,8 +1,20 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
+import {replaceStraight, insertStraight} from "./../../manipulation";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
 
 export class ImportDeclaration extends Node<ts.ImportDeclaration> {
+    /**
+     * Sets the import specifier.
+     * @param text - Text to set as the import specifier.
+     */
+    setModuleSpecifier(text: string) {
+        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
+        replaceStraight(this.getSourceFile(), stringLiteral.getStart() + 1, stringLiteral.getWidth() - 2, text);
+        return this;
+    }
+
     /**
      * Gets the module specifier.
      */
@@ -10,6 +22,29 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
         const text = stringLiteral.getText();
         return text.substring(1, text.length - 1);
+    }
+
+    /**
+     * Sets the default import.
+     * @param text - Text to set as the default import.
+     */
+    setDefaultImport(text: string) {
+        const defaultImport = this.getDefaultImport();
+        if (defaultImport != null) {
+            defaultImport.rename(text);
+            return this;
+        }
+
+        const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
+        const importClause = this.getImportClause();
+        if (importClause == null) {
+            insertStraight(this.getSourceFile(), importKeyword.getEnd(), this, ` ${text} from`);
+            return this;
+        }
+
+        // a namespace import or named import must exist... insert it beforehand
+        insertStraight(this.getSourceFile(), importKeyword.getEnd(), importClause, ` ${text},`);
+        return this;
     }
 
     /**
