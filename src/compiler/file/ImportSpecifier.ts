@@ -4,13 +4,19 @@ import {insertStraight, replaceStraight, removeNodes} from "./../../manipulation
 
 export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**
-     * Sets the identifier being imported. Only renames in the current file.
+     * Sets the identifier being imported.
      * @param name - Name being imported.
      */
     setName(name: string) {
-        const languageService = this.factory.getLanguageService();
-        const renameReplaces = languageService.findRenameReplaces(this.getName()).filter(r => r.sourceFile === this.sourceFile);
-        languageService.renameReplaces(renameReplaces, name);
+        const nameIdentifier = this.getName();
+        if (nameIdentifier.getText() === name)
+            return this;
+
+        this.factory.getLanguageService().renameReplaces([{
+            sourceFile: this.sourceFile,
+            textSpans: [{ start: nameIdentifier.getStart(), length: nameIdentifier.getWidth() }]
+        }], name);
+
         return this;
     }
 
@@ -26,20 +32,14 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * @param alias - Alias to set.
      */
     setAlias(alias: string) {
-        const aliasIdentifier = this.getAlias();
-        if (aliasIdentifier != null)
-            aliasIdentifier.rename(alias);
-        else {
-            const languageService = this.factory.getLanguageService();
-            const nameNode = this.getName();
-            const replaces = languageService.findRenameReplaces(nameNode).filter(r => r.sourceFile === this.sourceFile);
-            replaces.forEach(r => {
-                // exclude renaming the name
-                r.textSpans = r.textSpans.filter(s => !nameNode.containsRange(s.start, s.start + s.length));
-            });
-            languageService.renameReplaces(replaces, alias);
-            insertStraight({ insertPos: this.getName().getEnd(), parent: this, newCode: ` as ${alias}` });
+        let aliasIdentifier = this.getAlias();
+        if (aliasIdentifier == null) {
+            // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
+            const nameIdentifier = this.getName();
+            insertStraight({ insertPos: nameIdentifier.getEnd(), parent: this, newCode: ` as ${nameIdentifier.getText()}` });
+            aliasIdentifier = this.getAlias()!;
         }
+        aliasIdentifier.rename(alias);
         return this;
     }
 

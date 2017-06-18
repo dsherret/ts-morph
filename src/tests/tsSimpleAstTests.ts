@@ -88,9 +88,11 @@ describe(nameof(TsSimpleAst), () => {
             const sourceFile = ast.addSourceFileFromStructure("MyFile.ts", {
                 enums: [{
                     name: "MyEnum"
-                }]
+                }],
+                imports: [{ moduleSpecifier: "./test" }],
+                exports: [{ moduleSpecifier: "./test" }]
             });
-            expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n}\n");
+            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nexport * from "./test";\n\nenum MyEnum {\n}\n`);
         });
     });
 

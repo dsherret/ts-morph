@@ -2,7 +2,9 @@
 import {Node} from "./Node";
 
 export class Identifier extends Node<ts.Identifier> {
-    // todo: remove
+    /**
+     * Gets the text for the identifier.
+     */
     getText() {
         return this.node.text;
     }

@@ -17,6 +17,18 @@ export interface TextSpan {
     length: number;
 }
 
+export interface ReferenceEntry {
+    textSpan: TextSpan;
+    isWriteAccess: boolean;
+    isDefinition: boolean;
+    isInString: boolean;
+}
+
+export interface SourceFileReferenceEntry {
+    sourceFile: SourceFile;
+    references: ReferenceEntry[];
+}
+
 export class LanguageService {
     private readonly languageService: ts.LanguageService;
     private readonly sourceFiles: SourceFile[] = [];
@@ -110,6 +122,8 @@ export class LanguageService {
     }
 
     renameNode(node: Node, newName: string) {
+        if (node.getText() === newName)
+            return;
         this.renameReplaces(this.findRenameReplaces(node), newName);
     }
 
@@ -129,15 +143,15 @@ export class LanguageService {
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
         const renameLocations = this.languageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
 
-        renameLocations.forEach(l => {
-            const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(l.fileName)!;
+        for (const location of renameLocations) {
+            const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(location.fileName)!;
             const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(replaceSourceFile, () => []);
             // todo: ensure this is sorted
             textSpans.push({
-                start: l.textSpan.start,
-                length: l.textSpan.length
+                start: location.textSpan.start,
+                length: location.textSpan.length
             });
-        });
+        }
 
         const replaces: SourceFileReplace[] = [];
 
@@ -149,6 +163,41 @@ export class LanguageService {
         }
 
         return replaces;
+    }
+
+    /**
+     * Gets the references at a specified node.
+     * @param node - Node to get the references for.
+     */
+    getReferencesAtNode(node: Node) {
+        const references = this.languageService.getReferencesAtPosition(node.getSourceFile().getFilePath(), node.getStart());
+        const referencesBySourceFile = new KeyValueCache<SourceFile, ReferenceEntry[]>();
+
+        for (const reference of references) {
+            const referenceSourceFile = this.compilerFactory.getSourceFileFromFilePath(reference.fileName)!;
+            const currentRefs = referencesBySourceFile.getOrCreate<ReferenceEntry[]>(referenceSourceFile, () => []);
+            // todo: ensure this is sorted
+            currentRefs.push({
+                isDefinition: reference.isDefinition,
+                isInString: reference.isInString || false,
+                isWriteAccess: reference.isWriteAccess,
+                textSpan: {
+                    start: reference.textSpan.start,
+                    length: reference.textSpan.length
+                }
+            });
+        }
+
+        const referenceEntries: SourceFileReferenceEntry[] = [];
+
+        for (const entry of referencesBySourceFile.getEntries()) {
+            referenceEntries.push({
+                sourceFile: entry[0],
+                references: entry[1]
+            });
+        }
+
+        return referenceEntries;
     }
 
     addSourceFile(sourceFile: SourceFile) {

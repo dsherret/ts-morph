@@ -119,4 +119,4 @@ namedImport.getAlias(); // returns: Identifier | undefined
 namedImport.setAlias("NewAliasName");
 ```
 
-_Note:_ Setting the name or alias will rename any uses of the identifier in the current file to the new value.
+_Note:_ Setting the alias will rename any uses of the alias or identifier in the current file to the new value.

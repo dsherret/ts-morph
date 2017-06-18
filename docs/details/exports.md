@@ -82,9 +82,21 @@ Get the named exports from an export declaration:
 const namedExports = exportDeclaration.getNamedExports();
 ```
 
-Then get information about a single named export:
+#### Export specifier
+
+Getting or setting the name:
 
 ```typescript
-namedExport.getName();  // returns: Identifier
-namedExport.getAlias(); // returns: Identifier | undefined
+namedExport.getName(); // returns: Identifier
+namedImport.setName("NewName");
 ```
+
+Getting or setting the alias:
+
+```typescript
+namedImport.getAlias(); // returns: Identifier | undefined
+namedImport.setAlias("NewAliasName");
+```
+
+_Note:_ Setting the alias will rename any uses of the alias or identifier to the new value.
+
