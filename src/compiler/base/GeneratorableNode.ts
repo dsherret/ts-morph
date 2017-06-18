@@ -42,7 +42,11 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             if (asteriskToken != null)
                 removeNodes([asteriskToken], { removePrecedingSpaces: false });
             else
-                insertStraight(this.getSourceFile(), getAsteriskInsertPosition(this), this, "*");
+                insertStraight({
+                    insertPos: getAsteriskInsertPosition(this),
+                    parent: this,
+                    newCode: "*"
+                });
 
             return this;
         }

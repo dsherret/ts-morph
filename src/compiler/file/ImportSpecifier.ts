@@ -38,7 +38,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
                 r.textSpans = r.textSpans.filter(s => !nameNode.containsRange(s.start, s.start + s.length));
             });
             languageService.renameReplaces(replaces, alias);
-            insertStraight(this.getSourceFile(), this.getName().getEnd(), this, ` as ${alias}`);
+            insertStraight({ insertPos: this.getName().getEnd(), parent: this, newCode: ` as ${alias}` });
         }
         return this;
     }

@@ -3,16 +3,24 @@ import {Node, SourceFile} from "./../compiler";
 import {ArrayUtils} from "./../utils";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
+export interface InsertStraightOptions {
+    insertPos: number;
+    parent: Node;
+    newCode: string;
+}
+
 /**
  * Simple insert where the new nodes are well defined.
  */
-export function insertStraight(sourceFile: SourceFile, insertPos: number, parent: Node, newText: string) {
+export function insertStraight(options: InsertStraightOptions) {
+    const {insertPos, parent, newCode} = options;
+    const sourceFile = parent.getSourceFile();
     const compilerFactory = sourceFile.factory;
     const currentText = sourceFile.getFullText();
-    const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
+    const newFileText = currentText.substring(0, insertPos) + newCode + currentText.substring(insertPos);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
     const allChildrenIterator = ArrayUtils.getIterator([sourceFile, ...Array.from(sourceFile.getAllChildren())]);
-    const endPos = insertPos + newText.length;
+    const endPos = insertPos + newCode.length;
 
     handleNode(tempSourceFile);
 

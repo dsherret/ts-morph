@@ -40,7 +40,11 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
             if (value) {
                 const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken);
-                insertStraight(this.getSourceFile(), colonNode.getStart(), this, "?");
+                insertStraight({
+                    insertPos: colonNode.getStart(),
+                    parent: this,
+                    newCode: "?"
+                });
             }
             else
                 removeNodes([questionTokenNode]);

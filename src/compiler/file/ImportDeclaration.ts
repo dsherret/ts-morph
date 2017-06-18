@@ -5,27 +5,10 @@ import {replaceStraight, insertStraight, verifyAndGetIndex, insertIntoCommaSepar
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
+import {ModuleSpecifiedNode} from "./base";
 
-export class ImportDeclaration extends Node<ts.ImportDeclaration> {
-    /**
-     * Sets the import specifier.
-     * @param text - Text to set as the import specifier.
-     */
-    setModuleSpecifier(text: string) {
-        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
-        replaceStraight(this.getSourceFile(), stringLiteral.getStart() + 1, stringLiteral.getWidth() - 2, text);
-        return this;
-    }
-
-    /**
-     * Gets the module specifier.
-     */
-    getModuleSpecifier() {
-        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
-        const text = stringLiteral.getText();
-        return text.substring(1, text.length - 1);
-    }
-
+export const ImportDeclarationBase = ModuleSpecifiedNode(Node);
+export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
     /**
      * Sets the default import.
      * @param text - Text to set as the default import.
@@ -40,12 +23,20 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
         const importClause = this.getImportClause();
         if (importClause == null) {
-            insertStraight(this.getSourceFile(), importKeyword.getEnd(), this, ` ${text} from`);
+            insertStraight({
+                insertPos: importKeyword.getEnd(),
+                parent: this,
+                newCode: ` ${text} from`
+            });
             return this;
         }
 
         // a namespace import or named import must exist... insert it beforehand
-        insertStraight(this.getSourceFile(), importKeyword.getEnd(), importClause, ` ${text},`);
+        insertStraight({
+            insertPos: importKeyword.getEnd(),
+            parent: importClause,
+            newCode: ` ${text},`
+        });
         return this;
     }
 
@@ -79,12 +70,12 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            insertStraight(this.getSourceFile(), defaultImport.getEnd(), this.getImportClause(), `, * as ${text}`);
+            insertStraight({ insertPos: defaultImport.getEnd(), parent: this.getImportClause(), newCode: `, * as ${text}` });
             return this;
         }
 
         const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
-        insertStraight(this.getSourceFile(), importKeyword.getEnd(), this, ` * as ${text} from`);
+        insertStraight({ insertPos: importKeyword.getEnd(), parent: this, newCode: ` * as ${text} from` });
         return this;
     }
 
@@ -148,12 +139,12 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
             const importClause = this.getImportClause();
             if (importClause == null) {
                 const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
-                insertStraight(this.getSourceFile(), importKeyword.getEnd(), this, ` {${codes.join(", ")}} from`);
+                insertStraight({ insertPos: importKeyword.getEnd(), parent: this, newCode: ` {${codes.join(", ")}} from` });
             }
             else if (this.getNamespaceImport() != null)
                 throw new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
             else
-                insertStraight(this.getSourceFile(), this.getDefaultImport()!.getEnd(), importClause, `, {${codes.join(", ")}}`);
+                insertStraight({ insertPos: this.getDefaultImport()!.getEnd(), parent: importClause, newCode: `, {${codes.join(", ")}}` });
         }
         else {
             insertIntoCommaSeparatedNodes(this.getSourceFile(), namedImports, index, codes);

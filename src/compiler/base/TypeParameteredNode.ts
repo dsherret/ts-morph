@@ -67,7 +67,11 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             if (typeParameters.length === 0) {
                 const insertPos = getNamedNode(this).getNameNode().getEnd();
-                insertStraight(this.getSourceFile(), insertPos, this, `<${typeParamCodes.join(", ")}>`);
+                insertStraight({
+                    insertPos,
+                    parent: this,
+                    newCode: `<${typeParamCodes.join(", ")}>`
+                });
             }
             else {
                 insertIntoCommaSeparatedNodes(this.getSourceFile(), typeParameters, index, typeParamCodes);
