@@ -45,7 +45,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Asynchronously saves this file with any changes.
      */
-    save(callback?: (err: NodeJS.ErrnoException) => void) {
+    save(callback?: (err: Error) => void) {
         // todo: use a promise
         this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText(), callback);
     }

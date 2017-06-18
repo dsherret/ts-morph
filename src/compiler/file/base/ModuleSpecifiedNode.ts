@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {Constructor} from "./../../../Constructor";
 import {Node} from "./../../common";
 import {replaceStraight} from "./../../../manipulation";
 

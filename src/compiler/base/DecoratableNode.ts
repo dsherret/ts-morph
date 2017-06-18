@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {Constructor} from "./../../Constructor";
 import {DecoratorStructure} from "./../../structures";
 import {getEndIndexFromArray, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";

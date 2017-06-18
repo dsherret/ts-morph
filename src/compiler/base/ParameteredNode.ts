@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";

@@ -10,6 +10,7 @@ export class DiagnosticMessageChain {
     /** @internal */
     diagnosticMessageChain: ts.DiagnosticMessageChain;
 
+    /** @internal */
     constructor(
         factory: CompilerFactory,
         diagnosticMessageChain: ts.DiagnosticMessageChain

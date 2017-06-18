@@ -12,6 +12,7 @@ export class Diagnostic {
     /** @internal */
     diagnostic: ts.Diagnostic;
 
+    /** @internal */
     constructor(
         factory: CompilerFactory,
         diagnostic: ts.Diagnostic
