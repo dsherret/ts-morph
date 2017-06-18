@@ -184,6 +184,24 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
     }
 
+    /**
+     * Gets the previous sibling if it matches the specified kind.
+     * @param kind - Kind to check.
+     */
+    getPreviousSiblingIfKind(kind: ts.SyntaxKind) {
+        const previousSibling = this.getPreviousSibling();
+        return previousSibling != null && previousSibling.getKind() === kind ? previousSibling : undefined;
+    }
+
+    /**
+     * Gets the next sibling if it matches the specified kind.
+     * @param kind - Kind to check.
+     */
+    getNextSiblingIfKind(kind: ts.SyntaxKind) {
+        const nextSibling = this.getNextSibling();
+        return nextSibling != null && nextSibling.getKind() === kind ? nextSibling : undefined;
+    }
+
     getPreviousSibling() {
         let previousSibling: Node | undefined;
 

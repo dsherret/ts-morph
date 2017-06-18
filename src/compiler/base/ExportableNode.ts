@@ -119,7 +119,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             else {
                 const exportKeyword = this.getExportKeyword();
                 if (exportKeyword != null)
-                    removeNodes(this.getSourceFile(), [exportKeyword]);
+                    removeNodes([exportKeyword]);
             }
 
             return this;

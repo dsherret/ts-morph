@@ -43,7 +43,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 insertStraight(this.getSourceFile(), colonNode.getStart(), this, "?");
             }
             else
-                removeNodes(this.getSourceFile(), [questionTokenNode]);
+                removeNodes([questionTokenNode]);
 
             return this;
         }

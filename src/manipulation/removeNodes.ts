@@ -9,11 +9,12 @@ export interface RemoveNodesOptions {
     removePrecedingSpaces?: boolean;
 }
 
-export function removeNodes(sourceFile: SourceFile, nodes: (Node | undefined)[], opts: RemoveNodesOptions = {}) {
+export function removeNodes(nodes: (Node | undefined)[], opts: RemoveNodesOptions = {}) {
     const nonNullNodes = nodes.filter(n => n != null) as Node[];
     if (nonNullNodes.length === 0 || nonNullNodes[0].getPos() === nonNullNodes[nonNullNodes.length - 1].getEnd())
         return;
     ensureNodePositionsContiguous(nonNullNodes);
+    const sourceFile = nonNullNodes[0].getSourceFile();
 
     // get the start and end position
     const {removePrecedingSpaces = true} = opts;

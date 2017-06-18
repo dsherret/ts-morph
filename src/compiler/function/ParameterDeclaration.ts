@@ -32,7 +32,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         if (value)
             insertStraight(this.getSourceFile(), this.getNameNodeOrThrow().getStart(), this, "...");
         else
-            removeNodes(this.getSourceFile(), [this.getDotDotDotToken()!], { removePrecedingSpaces: false });
+            removeNodes([this.getDotDotDotToken()!], { removePrecedingSpaces: false });
 
         return this;
     }

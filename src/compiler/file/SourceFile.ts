@@ -193,11 +193,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         const declaration = defaultExportSymbol.getDeclarations()[0];
         if (declaration.node.kind === ts.SyntaxKind.ExportAssignment)
-            removeNodes(this, [declaration]);
+            removeNodes([declaration]);
         else if (declaration.isModifierableNode()) {
             const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
             const defaultKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
-            removeNodes(this, [exportKeyword, defaultKeyword]);
+            removeNodes([exportKeyword, defaultKeyword]);
         }
 
         return this;

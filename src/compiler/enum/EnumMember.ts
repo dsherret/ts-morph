@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
 import {removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
-import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode, FollowingCommableNode} from "./../base";
+import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode} from "./../base";
 
-export const EnumMemberBase = FollowingCommableNode(DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node))));
+export const EnumMemberBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Gets the constant value of the enum.
@@ -13,9 +13,9 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     }
 
     /**
-     * Removes this enum member and returns the parent.
+     * Removes this enum member.
      */
     remove() {
-        removeNodes(this.getSourceFile(), [this, this.getFollowingComma()]);
+        removeNodes([this, this.getNextSiblingIfKind(ts.SyntaxKind.CommaToken)]);
     }
 }

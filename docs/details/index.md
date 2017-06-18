@@ -35,7 +35,6 @@ Common:
 * [Ambient](ambient)
 * [Async](async)
 * [Exports](exports)
-* [Following Comma](following-comma)
 * [Generators](generators)
 * [JS Docs](documentation)
 * [Modifiers](modifiers)

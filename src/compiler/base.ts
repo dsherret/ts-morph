@@ -8,7 +8,6 @@ export * from "./base/DecoratableNode";
 export * from "./base/DocumentationableNode";
 export * from "./base/ExportableNode";
 export * from "./base/ExtendsClauseableNode";
-export * from "./base/FollowingCommableNode";
 export * from "./base/GeneratorableNode";
 export * from "./base/HeritageClauseableNode";
 export * from "./base/ImplementsClauseableNode";

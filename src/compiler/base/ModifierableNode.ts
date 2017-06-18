@@ -75,7 +75,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (!hasModifier)
                 this.addModifier(text);
             else
-                removeNodes(this.getSourceFile(), [this.getModifiers().find(m => m.getText() === text)]);
+                removeNodes([this.getModifiers().find(m => m.getText() === text)]);
 
             return this;
         }

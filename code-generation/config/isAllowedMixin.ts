@@ -8,7 +8,6 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "DeclarationNamedNode":
         case "BindingNamedNode":
         case "HeritageClauseableNode":
-        case "FollowingCommableNode":
         case "BodiedNode":
         case "BodyableNode":
             return false;

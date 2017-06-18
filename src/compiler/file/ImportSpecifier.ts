@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node, Identifier} from "./../common";
-import {insertStraight, replaceStraight} from "./../../manipulation";
+import {insertStraight, replaceStraight, removeNodes} from "./../../manipulation";
 
 export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**
