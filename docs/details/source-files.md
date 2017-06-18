@@ -76,7 +76,7 @@ sourceFile.removeDefaultExport();
 Note: This is safe to call even when there is no default export.
 
 
-### Imports
+### Import Declarations
 
 Get:
 
@@ -94,3 +94,22 @@ const importDeclaration = sourceFile.addImport({
 ```
 
 Read more about [Import Declarations](imports).
+
+### Export Declarations
+
+Get:
+
+```typescript
+const exports = sourceFile.getExports();
+```
+
+Add or insert use `insertExport`, `insertExports`, `addExport`, or `addExports`:
+
+```typescript
+const importDeclaration = sourceFile.addExport({
+    defaultImport: "MyClass",
+    moduleSpecifier: "./file"
+});
+```
+
+Read more about [Export Declarations](exports).

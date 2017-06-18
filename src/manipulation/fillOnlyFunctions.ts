@@ -1,6 +1,13 @@
 ﻿import * as compiler from "./../compiler";
 import * as structures from "./../structures";
 
+export function fillOnlySourceFileFromStructure(node: compiler.SourceFile, structure: structures.SourceFileSpecificStructure) {
+    if (structure.imports != null)
+        node.addImports(structure.imports);
+    if (structure.exports != null)
+        node.addExports(structure.exports);
+}
+
 export function fillOnlyClassDeclarationFromStructure(node: compiler.ClassDeclaration, structure: structures.ClassDeclarationSpecificStructure) {
     if (structure.extends != null)
         node.setExtends(structure.extends);

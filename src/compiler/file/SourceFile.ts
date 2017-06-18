@@ -2,12 +2,13 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {removeNodes} from "./../../manipulation";
-import {ImportDeclarationStructure} from "./../../structures";
+import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../structures";
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {Diagnostic} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
+import {ExportDeclaration} from "./ExportDeclaration";
 
 export const SourceFileBase = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -158,6 +159,90 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getImports(): ImportDeclaration[] {
         return this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
+    }
+
+    /**
+     * Add an export.
+     * @param structure - Structure that represents the export.
+     */
+    addExport(structure: ExportDeclarationStructure) {
+        return this.addExports([structure])[0];
+    }
+
+    /**
+     * Add exports.
+     * @param structures - Structures that represent the exports.
+     */
+    addExports(structures: ExportDeclarationStructure[]) {
+        let insertIndex = 0;
+        const exports = this.getExports();
+        if (exports.length === 0) {
+            const imports = this.getImports();
+            insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
+        }
+        else {
+            insertIndex = exports[exports.length - 1].getChildIndex() + 1;
+        }
+
+        return this.insertExports(insertIndex, structures);
+    }
+
+    /**
+     * Insert an export.
+     * @param index - Index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExport(index: number, structure: ExportDeclarationStructure) {
+        return this.insertExports(index, [structure])[0];
+    }
+
+    /**
+     * Insert exports into a file.
+     * @param index - Index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExports(index: number, structures: ExportDeclarationStructure[]) {
+        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const indentationText = this.getChildIndentationText();
+        const texts = structures.map(structure => {
+            const hasNamedImport = structure.namedExports != null && structure.namedExports.length > 0;
+            let code = `${indentationText}export`;
+            if (structure.namedExports != null && structure.namedExports.length > 0) {
+                const namedExportsCode = structure.namedExports.map(n => {
+                    let namedExportCode = n.name;
+                    if (n.alias != null)
+                        namedExportCode += ` as ${n.alias}`;
+                    return namedExportCode;
+                }).join(", ");
+                code += ` {${namedExportsCode}}`;
+            }
+            else {
+                code += " *";
+            }
+            code += ` from "${structure.moduleSpecifier}";`;
+            return code;
+        });
+
+        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ExportDeclaration, undefined, {
+            previousBlanklineWhen: previousMember => !(previousMember instanceof ExportDeclaration),
+            nextBlanklineWhen: nextMember => !(nextMember instanceof ExportDeclaration),
+            separatorNewlineWhen: () => false
+        });
+    }
+
+    /**
+     * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the export by.
+     */
+    getExport(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined {
+        return this.getExports().find(condition);
+    }
+
+    /**
+     * Get the file's export declarations.
+     */
+    getExports(): ExportDeclaration[] {
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ExportDeclaration>(ts.SyntaxKind.ExportDeclaration);
     }
 
     /**

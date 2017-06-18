@@ -58,6 +58,7 @@ export function fillEnumMemberFromStructure(node: compiler.EnumMember, structure
 
 export function fillSourceFileFromStructure(node: compiler.SourceFile, structure: structures.SourceFileStructure) {
     fillFuncs.fillStatementedNodeFromStructure(node, structure);
+    fillOnlyFuncs.fillOnlySourceFileFromStructure(node, structure);
 }
 
 export function fillFunctionDeclarationFromStructure(node: compiler.FunctionDeclaration, structure: structures.FunctionDeclarationStructure) {

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {SourceFile, ImportDeclaration} from "./../../../compiler";
-import {ImportDeclarationStructure} from "./../../../structures";
+import {SourceFile, ImportDeclaration, ExportDeclaration} from "./../../../compiler";
+import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
@@ -157,19 +157,6 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertImport), () => {
-        function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.insertImport(index, structure);
-            expect(result).to.be.instanceOf(ImportDeclaration);
-            expect(sourceFile.getText()).to.equal(expectedCode);
-        }
-
-        it("should insert at the specified position", () => {
-            doTest(`import "./file1";\nimport "./file3";\n`, 1, { moduleSpecifier: "./file2" }, `import "./file1";\nimport "./file2";\nimport "./file3";\n`);
-        });
-    });
-
     describe(nameof<SourceFile>(n => n.addImport), () => {
         function doTest(startCode: string, structure: ImportDeclarationStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
@@ -220,6 +207,105 @@ describe(nameof(SourceFile), () => {
         it("should get the import declaration", () => {
             const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
             expect(sourceFile.getImport(i => i.getDefaultImport() != null)!.getText()).to.equal("import myImport from 'test';");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertExports), () => {
+        function doTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertExports(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of exports", () => {
+            doTest("", 0, [
+                { moduleSpecifier: "./test" },
+                { namedExports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" }
+            ], [
+                `export * from "./test";`,
+                `export {name, name as alias} from "./test";`
+            ].join("\n") + "\n");
+        });
+
+        it("should insert at the beginning", () => {
+            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `export * from "./test";\n\nexport class Class {}\n`);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`export * from "./file1";\nexport * from "./file3";\n`, 1, [{ moduleSpecifier: "./file2" }],
+                `export * from "./file1";\nexport * from "./file2";\nexport * from "./file3";\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ moduleSpecifier: "./test" }], `export class Class {}\n\nexport * from "./test";\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertExport), () => {
+        function doTest(startCode: string, index: number, structure: ExportDeclarationStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertExport(index, structure);
+            expect(result).to.be.instanceOf(ExportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`export * from "./file1";\nexport * from "./file3";\n`, 1, { moduleSpecifier: "./file2" },
+                `export * from "./file1";\nexport * from "./file2";\nexport * from "./file3";\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addExport), () => {
+        function doTest(startCode: string, structure: ExportDeclarationStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addExport(structure);
+            expect(result).to.be.instanceOf(ExportDeclaration);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add at the last export", () => {
+            doTest(`export * from "./file1";\nimport "./file3";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file2" },
+                `export * from "./file1";\nexport * from "./file2";\n\nimport "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the last import if one exists and no exports exist", () => {
+            doTest(`import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file3" },
+                `import "./file1";\nimport "./file2";\n\nexport * from "./file3";\n\nexport class MyClass {}\n`);
+        });
+
+        it("should add at the start if no imports or exports exists", () => {
+            doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
+                `export * from "./file";\n\nexport class MyClass {}\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addExports), () => {
+        function doTest(startCode: string, structures: ExportDeclarationStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addExports(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple", () => {
+            doTest(`export class MyClass {}\n`, [{ moduleSpecifier: "./file1" }, { moduleSpecifier: "./file2" }],
+                `export * from "./file1";\nexport * from "./file2";\n\nexport class MyClass {}\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExports), () => {
+        it("should get the export declarations", () => {
+            const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
+            expect(sourceFile.getExports().length).to.equal(2);
+            expect(sourceFile.getExports()[0]).to.be.instanceOf(ExportDeclaration);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExport), () => {
+        it("should get the export declaration", () => {
+            const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
+            expect(sourceFile.getExport(e => e.isNamespaceExport())!.getText()).to.equal("export * from 'test';");
         });
     });
 

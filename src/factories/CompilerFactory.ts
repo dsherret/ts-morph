@@ -148,6 +148,10 @@ export class CompilerFactory {
                 return this.getEnumDeclaration(compilerNode as ts.EnumDeclaration, sourceFile);
             case ts.SyntaxKind.EnumMember:
                 return this.getEnumMember(compilerNode as ts.EnumMember, sourceFile);
+            case ts.SyntaxKind.ExportDeclaration:
+                return this.getExportDeclaration(compilerNode as ts.ExportDeclaration, sourceFile);
+            case ts.SyntaxKind.ExportSpecifier:
+                return this.getExportSpecifier(compilerNode as ts.ExportSpecifier, sourceFile);
             case ts.SyntaxKind.ExpressionWithTypeArguments:
                 return this.getExpressionWithTypeArguments(compilerNode as ts.ExpressionWithTypeArguments, sourceFile);
             case ts.SyntaxKind.FunctionDeclaration:
@@ -250,6 +254,24 @@ export class CompilerFactory {
      */
     getEnumMember(enumMemberDeclaration: ts.EnumMember, sourceFile: compiler.SourceFile): compiler.EnumMember {
         return this.nodeCache.getOrCreate<compiler.EnumMember>(enumMemberDeclaration, () => new compiler.EnumMember(this, enumMemberDeclaration, sourceFile));
+    }
+
+    /**
+     * Gets a wrapped export declaration from a compiler object.
+     * @param declaration - Export declaration compiler object.
+     * @param sourceFile - Source file for the node.
+     */
+    getExportDeclaration(declaration: ts.ExportDeclaration, sourceFile: compiler.SourceFile): compiler.ExportDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ExportDeclaration>(declaration, () => new compiler.ExportDeclaration(this, declaration, sourceFile));
+    }
+
+    /**
+     * Gets a wrapped export specifier from a compiler object.
+     * @param specifier - Export specifier compiler object.
+     * @param sourceFile - Source file for the node.
+     */
+    getExportSpecifier(specifier: ts.ExportSpecifier, sourceFile: compiler.SourceFile): compiler.ExportSpecifier {
+        return this.nodeCache.getOrCreate<compiler.ExportSpecifier>(specifier, () => new compiler.ExportSpecifier(this, specifier, sourceFile));
     }
 
     /**
