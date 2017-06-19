@@ -271,8 +271,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      */
     getChildSyntaxList(): Node | undefined {
         let node: Node = this;
-        if (this.isBodyableNode() || this.isBodiedNode())
-            node = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
+        if (this.isBodyableNode() || this.isBodiedNode()) {
+            do {
+                node = node.isBodyableNode() ? node.getBodyOrThrow() : node.getBody();
+            } while ((node.isBodyableNode() || node.isBodiedNode()) && (node.node as ts.Block).statements == null);
+        }
 
         if (node.isSourceFile() || this.isBodyableNode() || this.isBodiedNode())
             return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList);
