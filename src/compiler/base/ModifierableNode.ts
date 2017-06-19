@@ -45,7 +45,7 @@ export interface ModifierableNode {
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
     return class extends Base implements ModifierableNode {
         getModifiers() {
-            return this.node.modifiers == null ? [] : this.node.modifiers.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile));
+            return this.compilerNode.modifiers == null ? [] : this.compilerNode.modifiers.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile));
         }
 
         getFirstModifierByKind(kind: ts.SyntaxKind) {

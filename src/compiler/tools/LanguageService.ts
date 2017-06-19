@@ -30,11 +30,18 @@ export interface SourceFileReferenceEntry {
 }
 
 export class LanguageService {
-    private readonly languageService: ts.LanguageService;
+    private readonly _compilerLanguageService: ts.LanguageService;
     private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
     private compilerFactory: CompilerFactory;
     private program: Program;
+
+    /**
+     * Gets the compiler language service.
+     */
+    get compilerLanguageService() {
+        return this._compilerLanguageService;
+    }
 
     constructor(private readonly fileSystem: FileSystemHost, private readonly compilerOptions: ts.CompilerOptions) {
         // I don't know what I'm doing for some of this...
@@ -66,7 +73,7 @@ export class LanguageService {
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
-                return this.compilerFactory.getSourceFileFromFilePath(fileName).getCompilerNode();
+                return this.compilerFactory.getSourceFileFromFilePath(fileName).compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
@@ -87,17 +94,13 @@ export class LanguageService {
             getEnvironmentVariable: (name: string) => process.env[name]
         };
 
-        this.languageService = ts.createLanguageService(languageServiceHost);
+        this._compilerLanguageService = ts.createLanguageService(languageServiceHost);
     }
 
     /** @internal */
     resetProgram() {
         if (this.program != null)
             this.program.reset(this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
-    }
-
-    getCompilerLanguageService() {
-        return this.languageService;
     }
 
     /**
@@ -141,7 +144,7 @@ export class LanguageService {
     findRenameReplaces(node: Node): SourceFileReplace[] {
         const sourceFile = node.getSourceFile();
         const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
-        const renameLocations = this.languageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
+        const renameLocations = this.compilerLanguageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
 
         for (const location of renameLocations) {
             const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(location.fileName)!;
@@ -170,7 +173,7 @@ export class LanguageService {
      * @param node - Node to get the references for.
      */
     getReferencesAtNode(node: Node) {
-        const references = this.languageService.getReferencesAtPosition(node.getSourceFile().getFilePath(), node.getStart());
+        const references = this.compilerLanguageService.getReferencesAtPosition(node.getSourceFile().getFilePath(), node.getStart());
         const referencesBySourceFile = new KeyValueCache<SourceFile, ReferenceEntry[]>();
 
         for (const reference of references) {

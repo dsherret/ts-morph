@@ -16,9 +16,18 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
-    node: NodeType;
+    private _compilerNode: NodeType | undefined;
     /** @internal */
     sourceFile: SourceFile;
+
+    /**
+     * Gets the underlying compiler node.
+     */
+    get compilerNode(): NodeType {
+        if (this._compilerNode == null)
+            throw new errors.InvalidOperationError("Attempted to get information from a node that was removed from the AST.");
+        return this._compilerNode;
+    }
 
     /**
      * Initializes a new instance.
@@ -32,7 +41,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         sourceFile: SourceFile
     ) {
         this.factory = factory;
-        this.node = node;
+        this._compilerNode = node;
         this.sourceFile = sourceFile;
     }
 
@@ -45,6 +54,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
 
         this.factory.removeNodeFromCache(this);
+        this._compilerNode = undefined;
     }
 
     /**
@@ -59,31 +69,24 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /**
-     * Gets the underlying compiler node.
-     */
-    getCompilerNode() {
-        return this.node;
-    }
-
-    /**
      * Gets the syntax kind.
      */
     getKind() {
-        return this.node.kind;
+        return this.compilerNode.kind;
     }
 
     /**
      * Gets the syntax kind name.
      */
     getKindName() {
-        return ts.SyntaxKind[this.node.kind];
+        return ts.SyntaxKind[this.compilerNode.kind];
     }
 
     /**
      * Gets the compiler symbol.
      */
     getSymbol(): Symbol | undefined {
-        const boundSymbol = (this.node as any).symbol as ts.Symbol | undefined;
+        const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
             return this.factory.getSymbol(boundSymbol);
 
@@ -92,7 +95,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
 
-        const nameNode = (this.node as any).name as ts.Node | undefined;
+        const nameNode = (this.compilerNode as any).name as ts.Node | undefined;
         if (nameNode != null)
             return this.factory.getNodeFromCompilerNode(nameNode, this.sourceFile).getSymbol();
 
@@ -176,8 +179,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @param offset - Offset.
      */
     offsetPositions(offset: number) {
-        this.node.pos += offset;
-        this.node.end += offset;
+        this.compilerNode.pos += offset;
+        this.compilerNode.end += offset;
 
         for (const child of this.getChildren()) {
             child.offsetPositions(offset);
@@ -244,14 +247,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     getChildren(): Node[] {
-        return this.node.getChildren().map(n => this.factory.getNodeFromCompilerNode(n, this.sourceFile));
+        return this.compilerNode.getChildren().map(n => this.factory.getNodeFromCompilerNode(n, this.sourceFile));
     }
 
     /**
      * @internal
      */
     *getChildrenIterator(): IterableIterator<Node> {
-        for (const compilerChild of this.node.getChildren(this.sourceFile.getCompilerNode())) {
+        for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
             yield this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
         }
     }
@@ -274,7 +277,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         if (node.isBodyableNode() || node.isBodiedNode()) {
             do {
                 node = node.isBodyableNode() ? node.getBodyOrThrow() : node.getBody();
-            } while ((node.isBodyableNode() || node.isBodiedNode()) && (node.node as ts.Block).statements == null);
+            } while ((node.isBodyableNode() || node.isBodiedNode()) && (node.compilerNode as ts.Block).statements == null);
         }
 
         if (node.isSourceFile() || this.isBodyableNode() || this.isBodiedNode())
@@ -300,7 +303,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     *getAllChildren(): IterableIterator<Node> {
-        for (const compilerChild of this.node.getChildren(this.sourceFile.getCompilerNode())) {
+        for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
             const child = this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
             yield child;
 
@@ -313,60 +316,70 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * Gets the child count.
      */
     getChildCount() {
-        return this.node.getChildCount(this.sourceFile.getCompilerNode());
+        return this.compilerNode.getChildCount(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the start position with leading trivia.
      */
     getPos() {
-        return this.node.pos;
+        return this.compilerNode.pos;
     }
 
     /**
      * Gets the end position.
      */
     getEnd() {
-        return this.node.end;
+        return this.compilerNode.end;
+    }
+
+    /**
+     * Gets the start without trivia.
+     */
+    getStart() {
+        return this.compilerNode.getStart(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the width of the node (length without trivia).
      */
     getWidth() {
-        return this.node.getWidth(this.sourceFile.getCompilerNode());
+        return this.compilerNode.getWidth(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the full width of the node (length with trivia).
      */
     getFullWidth() {
-        return this.node.getFullWidth();
+        return this.compilerNode.getFullWidth();
     }
 
     /**
      * Gets the text without leading trivia.
      */
     getText() {
-        return this.node.getText(this.sourceFile.getCompilerNode());
+        return this.compilerNode.getText(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the full text with leading trivia.
      */
     getFullText() {
-        return this.node.getFullText(this.sourceFile.getCompilerNode());
+        return this.compilerNode.getFullText(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the combined modifier flags.
      */
     getCombinedModifierFlags() {
-        return ts.getCombinedModifierFlags(this.node);
+        return ts.getCombinedModifierFlags(this.compilerNode);
     }
 
+    /**
+     * @internal
+     */
     replaceCompilerNode(compilerNode: NodeType) {
-        this.node = compilerNode;
+        this._compilerNode = compilerNode;
     }
 
     /**
@@ -387,16 +400,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
     }
 
-    getTopParent() {
-        let currentParent = this as Node;
-        for (const parent of this.getParents()) {
-            currentParent = parent;
-        }
-        return currentParent;
-    }
-
+    /**
+     * Get the node's parent.
+     */
     getParent() {
-        return (this.node.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.node.parent, this.sourceFile);
+        return (this.compilerNode.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.compilerNode.parent, this.sourceFile);
     }
 
     /**
@@ -409,7 +417,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         return parentNode;
     }
 
+    /**
+     * @internal
+     */
     appendNewLineSeparatorIfNecessary() {
+        // todo: consider removing this method
         const text = this.getFullText();
         if (this.isSourceFile()) {
             const hasText = text.length > 0;
@@ -420,12 +432,20 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
             this.ensureLastChildNewLine();
     }
 
+    /**
+     * @internal
+     */
     ensureLastChildNewLine() {
+        // todo: consider removing this method
         if (!this.isLastChildTextNewLine())
             this.appendChildNewLine();
     }
 
+    /**
+     * @internal
+     */
     isLastChildTextNewLine(): boolean {
+        // todo: consider removing this method
         const text = this.getFullText();
         /* istanbul ignore else */
         if (this.isSourceFile())
@@ -439,11 +459,15 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
             throw this.getNotImplementedError();
     }
 
+    /**
+     * @internal
+     */
     appendChildNewLine() {
+        // todo: consider removing this method
         const newLineText = this.factory.getLanguageService().getNewLine();
         if (this.isSourceFile()) {
-            this.sourceFile.node.text += newLineText;
-            this.sourceFile.node.end += newLineText.length;
+            this.sourceFile.compilerNode.text += newLineText;
+            this.sourceFile.compilerNode.end += newLineText.length;
         }
         else {
             const indentationText = this.getIndentationText();
@@ -457,7 +481,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * Gets the last token of this node. Usually this is a close brace.
      */
     getLastToken() {
-        const lastToken = this.node.getLastToken(this.sourceFile.getCompilerNode());
+        const lastToken = this.compilerNode.getLastToken(this.sourceFile.compilerNode);
         /* istanbul ignore if */
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
@@ -524,7 +548,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isSourceFile(): this is SourceFile {
-        return this.node.kind === ts.SyntaxKind.SourceFile;
+        return this.compilerNode.kind === ts.SyntaxKind.SourceFile;
     }
 
     /**
@@ -532,7 +556,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isConstructorDeclaration(): this is ConstructorDeclaration {
-        return this.node.kind === ts.SyntaxKind.Constructor;
+        return this.compilerNode.kind === ts.SyntaxKind.Constructor;
     }
 
     /**
@@ -540,7 +564,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isFunctionDeclaration(): this is FunctionDeclaration {
-        return this.node.kind === ts.SyntaxKind.FunctionDeclaration;
+        return this.compilerNode.kind === ts.SyntaxKind.FunctionDeclaration;
     }
 
     /**
@@ -548,7 +572,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isInterfaceDeclaration(): this is InterfaceDeclaration {
-        return this.node.kind === ts.SyntaxKind.InterfaceDeclaration;
+        return this.compilerNode.kind === ts.SyntaxKind.InterfaceDeclaration;
     }
 
     /**
@@ -556,7 +580,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isNamespaceDeclaration(): this is NamespaceDeclaration {
-        return this.node.kind === ts.SyntaxKind.ModuleDeclaration;
+        return this.compilerNode.kind === ts.SyntaxKind.ModuleDeclaration;
     }
 
     /**
@@ -564,7 +588,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isTypeAliasDeclaration(): this is TypeAliasDeclaration {
-        return this.node.kind === ts.SyntaxKind.TypeAliasDeclaration;
+        return this.compilerNode.kind === ts.SyntaxKind.TypeAliasDeclaration;
     }
 
     /**
@@ -580,7 +604,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      * @internal
      */
     isMethodDeclaration(): this is MethodDeclaration {
-        return this.node.kind === ts.SyntaxKind.MethodDeclaration;
+        return this.compilerNode.kind === ts.SyntaxKind.MethodDeclaration;
     }
 
     /* Mixin type guards (overridden in mixins to set to true) */
@@ -667,12 +691,5 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
         }
 
         return 0;
-    }
-
-    /**
-     * Gets the start without trivia.
-     */
-    getStart() {
-        return this.node.getStart(this.sourceFile.getCompilerNode());
     }
 }

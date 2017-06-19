@@ -8,11 +8,15 @@ import {Signature} from "./../common/Signature";
 export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */
     protected readonly factory: CompilerFactory;
-    // this only public because the typescript compiler has a bug that's demonstrated when making it protected
-    // this should never be accessed outside the class
-    // todo: see if a bug is logged in the compiler for this
     /** @internal */
-    public readonly type: TType;
+    private readonly _compilerType: TType;
+
+    /**
+     * Gets the underlying compiler type.
+     */
+    get compilerType() {
+        return this._compilerType;
+    }
 
     /**
      * Initializes a new instance of Type.
@@ -22,14 +26,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     constructor(factory: CompilerFactory, type: TType) {
         this.factory = factory;
-        this.type = type;
-    }
-
-    /**
-     * Gets the underlying compiler type.
-     */
-    getCompilerType() {
-        return this.type;
+        this._compilerType = type;
     }
 
     /**
@@ -45,14 +42,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the alias symbol if it exists.
      */
     getAliasSymbol(): Symbol | undefined {
-        return this.type.aliasSymbol == null ? undefined : this.factory.getSymbol(this.type.aliasSymbol);
+        return this.compilerType.aliasSymbol == null ? undefined : this.factory.getSymbol(this.compilerType.aliasSymbol);
     }
 
     /**
      * Gets the alias type arguments.
      */
     getAliasTypeArguments(): Type[] {
-        const aliasTypeArgs = this.type.aliasTypeArguments || [];
+        const aliasTypeArgs = this.compilerType.aliasTypeArguments || [];
         return aliasTypeArgs.map(t => this.factory.getType(t));
     }
 
@@ -67,7 +64,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the base types.
      */
     getBaseTypes() {
-        const baseTypes = this.type.getBaseTypes() || [];
+        const baseTypes = this.compilerType.getBaseTypes() || [];
         return baseTypes.map(t => this.factory.getType(t));
     }
 
@@ -75,21 +72,21 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the call signatures.
      */
     getCallSignatures(): Signature[] {
-        return this.type.getCallSignatures().map(s => this.factory.getSignature(s));
+        return this.compilerType.getCallSignatures().map(s => this.factory.getSignature(s));
     }
 
     /**
      * Gets the construct signatures.
      */
     getConstructSignatures(): Signature[] {
-        return this.type.getConstructSignatures().map(s => this.factory.getSignature(s));
+        return this.compilerType.getConstructSignatures().map(s => this.factory.getSignature(s));
     }
 
     /**
      * Gets the properties of the type.
      */
     getProperties(): Symbol[] {
-        return this.type.getProperties().map(s => this.factory.getSymbol(s));
+        return this.compilerType.getProperties().map(s => this.factory.getSymbol(s));
     }
 
     /**
@@ -107,7 +104,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the apparent properties of the type.
      */
     getApparentProperties(): Symbol[] {
-        return this.type.getApparentProperties().map(s => this.factory.getSymbol(s));
+        return this.compilerType.getApparentProperties().map(s => this.factory.getSymbol(s));
     }
 
     /**
@@ -125,14 +122,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the non-nullable type.
      */
     getNonNullableType(): Type {
-        return this.factory.getType(this.type.getNonNullableType());
+        return this.factory.getType(this.compilerType.getNonNullableType());
     }
 
     /**
      * Gets the number index type.
      */
     getNumberIndexType(): Type | undefined {
-        const numberIndexType = this.type.getNumberIndexType();
+        const numberIndexType = this.compilerType.getNumberIndexType();
         return numberIndexType == null ? undefined : this.factory.getType(numberIndexType);
     }
 
@@ -140,7 +137,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the string index type.
      */
     getStringIndexType(): Type | undefined {
-        const stringIndexType = this.type.getStringIndexType();
+        const stringIndexType = this.compilerType.getStringIndexType();
         return stringIndexType == null ? undefined : this.factory.getType(stringIndexType);
     }
 
@@ -151,7 +148,7 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isUnionType())
             return [];
 
-        return this.type.types.map(t => this.factory.getType(t));
+        return this.compilerType.types.map(t => this.factory.getType(t));
     }
 
     /**
@@ -161,14 +158,14 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isIntersectionType())
             return [];
 
-        return this.type.types.map(t => this.factory.getType(t));
+        return this.compilerType.types.map(t => this.factory.getType(t));
     }
 
     /**
      * Gets the symbol of the type.
      */
     getSymbol(): Symbol | undefined {
-        const tsSymbol = this.type.getSymbol();
+        const tsSymbol = this.compilerType.getSymbol();
         return tsSymbol == null ? undefined : this.factory.getSymbol(tsSymbol);
     }
 
@@ -183,14 +180,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a boolean type.
      */
     isBooleanType() {
-        return (this.type.flags & ts.TypeFlags.Boolean) !== 0;
+        return (this.compilerType.flags & ts.TypeFlags.Boolean) !== 0;
     }
 
     /**
      * Gets if this is an enum type.
      */
     isEnumType(): this is Type<ts.EnumType> {
-        return (this.type.flags & ts.TypeFlags.Enum) !== 0;
+        return (this.compilerType.flags & ts.TypeFlags.Enum) !== 0;
     }
 
     /**
@@ -204,28 +201,28 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an intersection type.
      */
     isIntersectionType(): this is Type<ts.UnionOrIntersectionType> {
-        return (this.type.flags & ts.TypeFlags.Intersection) !== 0;
+        return (this.compilerType.flags & ts.TypeFlags.Intersection) !== 0;
     }
 
     /**
      * Gets if this is an object type.
      */
     isObjectType(): this is Type<ts.ObjectType> {
-        return (this.type.flags & ts.TypeFlags.Object) !== 0;
+        return (this.compilerType.flags & ts.TypeFlags.Object) !== 0;
     }
 
     /**
      * Gets if this is a union type.
      */
     isUnionType(): this is Type<ts.UnionOrIntersectionType> {
-        return (this.type.flags & ts.TypeFlags.Union) !== 0;
+        return (this.compilerType.flags & ts.TypeFlags.Union) !== 0;
     }
 
     /**
      * Gets the type flags.
      */
     getFlags(): ts.TypeFlags {
-        return this.type.flags;
+        return this.compilerType.flags;
     }
 
     /**
@@ -235,6 +232,6 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isObjectType())
             return 0;
 
-        return this.type.objectFlags || 0;
+        return this.compilerType.objectFlags || 0;
     }
 }

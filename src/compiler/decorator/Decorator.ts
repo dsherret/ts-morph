@@ -11,17 +11,17 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         function getNameFromExpression(expression: ts.LeftHandSideExpression) {
             if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
                 const propAccess = expression as ts.PropertyAccessExpression;
-                return propAccess.name.getText(sourceFile.node);
+                return propAccess.name.getText(sourceFile.compilerNode);
             }
-            return expression.getText(sourceFile.node);
+            return expression.getText(sourceFile.compilerNode);
         }
 
         if (this.isDecoratorFactory()) {
-            const callExpression = this.node.expression as ts.CallExpression;
+            const callExpression = this.compilerNode.expression as ts.CallExpression;
             return getNameFromExpression(callExpression.expression);
         }
 
-        return getNameFromExpression(this.node.expression);
+        return getNameFromExpression(this.compilerNode.expression);
     }
 
     /**
@@ -30,18 +30,18 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     getFullName() {
         const sourceFile = this.getSourceFile();
         if (this.isDecoratorFactory()) {
-            const callExpression = this.node.expression as ts.CallExpression;
-            return callExpression.expression.getText(sourceFile.node);
+            const callExpression = this.compilerNode.expression as ts.CallExpression;
+            return callExpression.expression.getText(sourceFile.compilerNode);
         }
 
-        return this.node.expression.getText(sourceFile.node);
+        return this.compilerNode.expression.getText(sourceFile.compilerNode);
     }
 
     /**
      * Gets if the decorator is a decorator factory.
      */
     isDecoratorFactory() {
-        return this.node.expression.kind === ts.SyntaxKind.CallExpression;
+        return this.compilerNode.expression.kind === ts.SyntaxKind.CallExpression;
     }
 
     /**
@@ -51,6 +51,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.factory.getNodeFromCompilerNode(this.node.expression, this.sourceFile) as Node<ts.CallExpression>;
+        return this.factory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.CallExpression>;
     }
 }

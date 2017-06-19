@@ -48,19 +48,19 @@ export function removeNodes(nodes: (Node | undefined)[], opts: RemoveNodesOption
 
         for (const currentChild of currentNode.getChildrenIterator()) {
             if (nonNullNodes.indexOf(currentChild) >= 0) {
-                sourceFile.factory.removeNodeFromCache(currentChild);
+                currentChild.dispose();
                 continue;
             }
 
             const newChild = newChildren[newChildIndex];
             if (newChild == null) {
-                sourceFile.factory.removeNodeFromCache(currentChild);
+                currentChild.dispose();
                 continue;
             }
 
             const isSyntaxListDisappearing = currentChild.getKind() === ts.SyntaxKind.SyntaxList && newChild.getKind() !== ts.SyntaxKind.SyntaxList;
             if (isSyntaxListDisappearing) {
-                sourceFile.factory.removeNodeFromCache(currentChild);
+                currentChild.dispose();
                 continue;
             }
 
@@ -68,7 +68,7 @@ export function removeNodes(nodes: (Node | undefined)[], opts: RemoveNodesOption
             newChildIndex++;
         }
 
-        sourceFile.factory.replaceCompilerNode(currentNode, newNode.getCompilerNode());
+        sourceFile.factory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }
 

@@ -25,11 +25,13 @@ export interface QuestionTokenableNode {
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
     return class extends Base implements QuestionTokenableNode {
         hasQuestionToken() {
-            return this.node.questionToken != null;
+            return this.compilerNode.questionToken != null;
         }
 
         getQuestionTokenNode(): Node<ts.QuestionToken> | undefined {
-            return this.node.questionToken == null ? undefined : (this.factory.getNodeFromCompilerNode(this.node.questionToken, this.sourceFile) as Node<ts.QuestionToken>);
+            if (this.compilerNode.questionToken == null)
+                return undefined;
+            return this.factory.getNodeFromCompilerNode(this.compilerNode.questionToken, this.sourceFile) as Node<ts.QuestionToken>;
         }
 
         setIsOptional(value: boolean) {

@@ -547,7 +547,7 @@ export class CompilerFactory {
      * @param newNode - New node to use.
      */
     replaceCompilerNode(oldNode: ts.Node | compiler.Node, newNode: ts.Node) {
-        const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.getCompilerNode() : oldNode;
+        const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.compilerNode : oldNode;
         const node = oldNode instanceof compiler.Node ? oldNode : this.nodeCache.get(oldNode);
 
         this.nodeCache.replaceKey(nodeToReplace, newNode);
@@ -561,7 +561,7 @@ export class CompilerFactory {
      * @param node - Node to remove.
      */
     removeNodeFromCache(node: compiler.Node) {
-        const compilerNode = node.getCompilerNode();
+        const compilerNode = node.compilerNode;
         this.nodeCache.removeByKey(compilerNode);
 
         if (compilerNode.kind === ts.SyntaxKind.SourceFile) {

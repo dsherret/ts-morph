@@ -49,7 +49,7 @@ need to access the information about it by getting the call expression's underly
 if (!decorators.isDecoratorFactory())
     return;
 
-const callExpression = decorator.getCallExpression()!.getCompilerNode();
+const callExpression = decorator.getCallExpression()!.compilerNode;
 for (const arg of callExpression.arguments) {
     // use arg here
 }

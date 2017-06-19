@@ -10,7 +10,15 @@ import {Type} from "./../type";
 export class TypeChecker {
     /** @internal */
     private readonly factory: CompilerFactory;
-    private typeChecker: ts.TypeChecker;
+    /** @internal */
+    private _compilerTypeChecker: ts.TypeChecker;
+
+    /**
+     * Gets the compiler's TypeChecker.
+     */
+    get compilerTypeChecker() {
+        return this._compilerTypeChecker;
+    }
 
     /** @internal */
     constructor(factory: CompilerFactory) {
@@ -22,14 +30,7 @@ export class TypeChecker {
      * @internal
      */
     reset(typeChecker: ts.TypeChecker) {
-        this.typeChecker = typeChecker;
-    }
-
-    /**
-     * Gets the compiler's TypeChecker.
-     */
-    getCompilerTypeChecker() {
-        return this.typeChecker;
+        this._compilerTypeChecker = typeChecker;
     }
 
     /**
@@ -37,7 +38,7 @@ export class TypeChecker {
      * @param type - Type to get the apparent type of.
      */
     getApparentType(type: Type) {
-        return this.factory.getType(this.typeChecker.getApparentType(type.getCompilerType()));
+        return this.factory.getType(this.compilerTypeChecker.getApparentType(type.compilerType));
     }
 
     /**
@@ -45,7 +46,7 @@ export class TypeChecker {
      * @param node - Node to get the constant value from.
      */
     getConstantValue(node: EnumMember) {
-        return this.typeChecker.getConstantValue(node.getCompilerNode());
+        return this.compilerTypeChecker.getConstantValue(node.compilerNode);
     }
 
     /**
@@ -53,7 +54,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the fully qualified name of.
      */
     getFullyQualifiedName(symbol: Symbol) {
-        return this.typeChecker.getFullyQualifiedName(symbol.getCompilerSymbol());
+        return this.compilerTypeChecker.getFullyQualifiedName(symbol.compilerSymbol);
     }
 
     /**
@@ -61,7 +62,7 @@ export class TypeChecker {
      * @param node - Node to get the type for.
      */
     getTypeAtLocation(node: Node): Type {
-        return this.factory.getType(this.typeChecker.getTypeAtLocation(node.getCompilerNode()));
+        return this.factory.getType(this.compilerTypeChecker.getTypeAtLocation(node.compilerNode));
     }
 
     /**
@@ -69,7 +70,7 @@ export class TypeChecker {
      * @param expression - Expression.
      */
     getContextualType(expression: Expression): Type | undefined {
-        const contextualType = this.typeChecker.getContextualType(expression.getCompilerNode());
+        const contextualType = this.compilerTypeChecker.getContextualType(expression.compilerNode);
         return contextualType == null ? undefined : this.factory.getType(contextualType);
     }
 
@@ -79,7 +80,7 @@ export class TypeChecker {
      * @param node - Location to get the type for.
      */
     getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type {
-        return this.factory.getType(this.typeChecker.getTypeOfSymbolAtLocation(symbol.getCompilerSymbol(), node.getCompilerNode()));
+        return this.factory.getType(this.compilerTypeChecker.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
     }
 
     /**
@@ -87,7 +88,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the type for.
      */
     getDeclaredTypeOfSymbol(symbol: Symbol): Type {
-        return this.factory.getType(this.typeChecker.getDeclaredTypeOfSymbol(symbol.getCompilerSymbol()));
+        return this.factory.getType(this.compilerTypeChecker.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
     }
 
     /**
@@ -95,7 +96,7 @@ export class TypeChecker {
      * @param node - Node to get the symbol for.
      */
     getSymbolAtLocation(node: Node): Symbol | undefined {
-        const compilerSymbol = this.typeChecker.getSymbolAtLocation(node.getCompilerNode());
+        const compilerSymbol = this.compilerTypeChecker.getSymbolAtLocation(node.compilerNode);
         return compilerSymbol == null ? undefined : this.factory.getSymbol(compilerSymbol);
     }
 
@@ -107,7 +108,7 @@ export class TypeChecker {
         if (!symbol.hasFlags(ts.SymbolFlags.Alias))
             return undefined;
 
-        const tsAliasSymbol = this.typeChecker.getAliasedSymbol(symbol.getCompilerSymbol());
+        const tsAliasSymbol = this.compilerTypeChecker.getAliasedSymbol(symbol.compilerSymbol);
         return tsAliasSymbol == null ? undefined : this.factory.getSymbol(tsAliasSymbol);
     }
 
@@ -116,7 +117,7 @@ export class TypeChecker {
      * @param type - Type.
      */
     getPropertiesOfType(type: Type) {
-        return this.typeChecker.getPropertiesOfType(type.getCompilerType()).map(p => this.factory.getSymbol(p));
+        return this.compilerTypeChecker.getPropertiesOfType(type.compilerType).map(p => this.factory.getSymbol(p));
     }
 
     /**
@@ -129,8 +130,8 @@ export class TypeChecker {
         if (typeFormatFlags == null)
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
-        const compilerNode = enclosingNode == null ? undefined : enclosingNode.getCompilerNode();
-        return this.typeChecker.typeToString(type.getCompilerType(), compilerNode, typeFormatFlags);
+        const compilerNode = enclosingNode == null ? undefined : enclosingNode.compilerNode;
+        return this.compilerTypeChecker.typeToString(type.compilerType, compilerNode, typeFormatFlags);
     }
 
     /**
@@ -138,7 +139,7 @@ export class TypeChecker {
      * @param signature - Signature to get the return type of.
      */
     getReturnTypeOfSignature(signature: Signature): Type {
-        return this.factory.getType(this.typeChecker.getReturnTypeOfSignature(signature.getCompilerSignature()));
+        return this.factory.getType(this.compilerTypeChecker.getReturnTypeOfSignature(signature.compilerSignature));
     }
 
     /**
@@ -146,7 +147,7 @@ export class TypeChecker {
      * @param node - Node to get the signature from.
      */
     getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature {
-        return this.factory.getSignature(this.typeChecker.getSignatureFromDeclaration(node.getCompilerNode()));
+        return this.factory.getSignature(this.compilerTypeChecker.getSignatureFromDeclaration(node.compilerNode));
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {

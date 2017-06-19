@@ -40,17 +40,17 @@ export interface DecoratableNode {
 export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T {
     return class extends Base implements DecoratableNode {
         getDecorators(): Decorator[] {
-            if (this.node.decorators == null)
+            if (this.compilerNode.decorators == null)
                 return [];
-            return this.node.decorators.map(d => this.factory.getDecorator(d, this.sourceFile));
+            return this.compilerNode.decorators.map(d => this.factory.getDecorator(d, this.sourceFile));
         }
 
         addDecorator(structure: DecoratorStructure) {
-            return this.insertDecorator(getEndIndexFromArray(this.node.decorators), structure);
+            return this.insertDecorator(getEndIndexFromArray(this.compilerNode.decorators), structure);
         }
 
         addDecorators(structures: DecoratorStructure[]) {
-            return this.insertDecorators(getEndIndexFromArray(this.node.decorators), structures);
+            return this.insertDecorators(getEndIndexFromArray(this.compilerNode.decorators), structures);
         }
 
         insertDecorator(index: number, structure: DecoratorStructure) {

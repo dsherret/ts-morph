@@ -5,7 +5,7 @@ export class Signature {
     /** @internal */
     private readonly factory: CompilerFactory;
     /** @internal */
-    private readonly signature: ts.Signature;
+    private readonly _compilerSignature: ts.Signature;
 
     /**
      * Initializes a new instance of Signature.
@@ -15,13 +15,13 @@ export class Signature {
      */
     constructor(factory: CompilerFactory, signature: ts.Signature) {
         this.factory = factory;
-        this.signature = signature;
+        this._compilerSignature = signature;
     }
 
     /**
      * Gets the underlying compiler signature.
      */
-    getCompilerSignature() {
-        return this.signature;
+    get compilerSignature() {
+        return this._compilerSignature;
     }
 }

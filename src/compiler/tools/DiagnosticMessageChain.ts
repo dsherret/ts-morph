@@ -8,7 +8,14 @@ export class DiagnosticMessageChain {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
-    diagnosticMessageChain: ts.DiagnosticMessageChain;
+    readonly _compilerDiagnosticMessageChain: ts.DiagnosticMessageChain;
+
+    /**
+     * Gets the underlying compiler object.
+     */
+    get compilerDiagnosticMessageChain(): ts.DiagnosticMessageChain {
+        return this._compilerDiagnosticMessageChain;
+    }
 
     /** @internal */
     constructor(
@@ -16,21 +23,21 @@ export class DiagnosticMessageChain {
         diagnosticMessageChain: ts.DiagnosticMessageChain
     ) {
         this.factory = factory;
-        this.diagnosticMessageChain = diagnosticMessageChain;
+        this._compilerDiagnosticMessageChain = diagnosticMessageChain;
     }
 
     /**
      * Gets the message text.
      */
     getMessageText() {
-        return this.diagnosticMessageChain.messageText;
+        return this.compilerDiagnosticMessageChain.messageText;
     }
 
     /**
      * Gets th enext diagnostic message chain in the chain.
      */
     getNext(): DiagnosticMessageChain | undefined {
-        const next = this.diagnosticMessageChain.next;
+        const next = this.compilerDiagnosticMessageChain.next;
         if (next == null)
             return undefined;
 
@@ -41,20 +48,13 @@ export class DiagnosticMessageChain {
      * Gets the code of the diagnostic message chain.
      */
     getCode() {
-        return this.diagnosticMessageChain.code;
+        return this.compilerDiagnosticMessageChain.code;
     }
 
     /**
      * Gets the category of the diagnostic message chain.
      */
     getCategory(): ts.DiagnosticCategory {
-        return this.diagnosticMessageChain.category;
-    }
-
-    /**
-     * Gets the underlying compiler object.
-     */
-    getCompilerDiagnosticMessageChain(): ts.DiagnosticMessageChain {
-        return this.diagnosticMessageChain;
+        return this.compilerDiagnosticMessageChain.category;
     }
 }

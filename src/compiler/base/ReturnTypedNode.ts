@@ -33,7 +33,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         getReturnTypeNode() {
-            return this.node.type == null ? undefined : this.factory.getTypeNode(this.node.type, this.sourceFile);
+            return this.compilerNode.type == null ? undefined : this.factory.getTypeNode(this.compilerNode.type, this.sourceFile);
         }
 
         setReturnType(text: string) {

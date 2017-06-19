@@ -16,7 +16,7 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
     const removedNodes: Node[] = [];
 
     handleNode(sourceFile, tempSourceFile);
-    removedNodes.forEach(n => compilerFactory.removeNodeFromCache(n));
+    removedNodes.forEach(n => n.dispose());
 
     function handleNode(currentNode: Node, newNode: Node) {
         /* istanbul ignore if */
@@ -45,6 +45,6 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
             handleNode(currentNodeChild, newNodeChild);
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }

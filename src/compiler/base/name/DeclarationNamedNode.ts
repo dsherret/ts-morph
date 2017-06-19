@@ -38,7 +38,7 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
         }
 
         getNameNode() {
-            const compilerNameNode = this.node.name;
+            const compilerNameNode = this.compilerNode.name;
 
             if (compilerNameNode == null)
                 return undefined;

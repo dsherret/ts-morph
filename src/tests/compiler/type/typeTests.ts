@@ -9,10 +9,10 @@ describe(nameof(Type), () => {
         return {...result, firstType: result.firstChild.getDeclarationList().getDeclarations()[0].getType()};
     }
 
-    describe(nameof<Type>(t => t.getCompilerType), () => {
+    describe(nameof<Type>(t => t.compilerType), () => {
         it("should get the compiler type", () => {
             const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.getCompilerType().flags).to.equal(ts.TypeFlags.String);
+            expect(firstType.compilerType.flags).to.equal(ts.TypeFlags.String);
         });
     });
 

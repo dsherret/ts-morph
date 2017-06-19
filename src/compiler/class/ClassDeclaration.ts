@@ -30,14 +30,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
         const heritageClauses = this.getHeritageClauses();
-        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
             const extendsClauseStart = extendsClause.getStart();
             replaceStraight(this.getSourceFile(), extendsClauseStart, extendsClause.getEnd() - extendsClauseStart, `extends ${text}`);
             return this;
         }
 
-        const implementsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
+        const implementsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ImplementsKeyword);
         let insertPos: number;
         if (implementsClause != null)
             insertPos = implementsClause.getStart();
@@ -62,7 +62,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getExtends(): ExpressionWithTypeArguments | undefined {
         const heritageClauses = this.getHeritageClauses();
-        const extendsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause == null)
             return undefined;
 
@@ -75,7 +75,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structure - Structure of the constructor.
      */
     addConstructor(structure: ConstructorDeclarationStructure = {}) {
-        return this.insertConstructor(getEndIndexFromArray(this.node.members), structure);
+        return this.insertConstructor(getEndIndexFromArray(this.compilerNode.members), structure);
     }
 
     /**
@@ -110,7 +110,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the constructor declaration or undefined if none exists.
      */
     getConstructor() {
-        const constructorMember = this.node.members.find(m => m.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration | undefined;
+        const constructorMember = this.compilerNode.members.find(m => m.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration | undefined;
         return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember, this.sourceFile);
     }
 
@@ -127,7 +127,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     addProperties(structures: PropertyDeclarationStructure[]) {
-        return this.insertProperties(getEndIndexFromArray(this.node.members), structures);
+        return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
     }
 
     /**
@@ -205,7 +205,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the methods.
      */
     addMethods(structures: MethodDeclarationStructure[]) {
-        return this.insertMethods(getEndIndexFromArray(this.node.members), structures);
+        return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
     }
 
     /**
@@ -288,7 +288,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance and static members.
      */
     getAllMembers() {
-        return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        return this.compilerNode.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
     }
 }
 

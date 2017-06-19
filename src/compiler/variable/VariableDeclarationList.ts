@@ -8,14 +8,14 @@ export class VariableDeclarationList extends Node<ts.VariableDeclarationList> {
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.node.declarations.map(d => this.factory.getVariableDeclaration(d, this.sourceFile));
+        return this.compilerNode.declarations.map(d => this.factory.getVariableDeclaration(d, this.sourceFile));
     }
 
     /**
      * Gets the variable declaration type.
      */
     getDeclarationType(): VariableDeclarationType {
-        const nodeFlags = this.node.flags;
+        const nodeFlags = this.compilerNode.flags;
 
         if (nodeFlags & ts.NodeFlags.Let)
             return VariableDeclarationType.Let;

@@ -7,7 +7,14 @@ export class Symbol {
     /** @internal */
     private readonly factory: CompilerFactory;
     /** @internal */
-    private readonly symbol: ts.Symbol;
+    private readonly _compilerSymbol: ts.Symbol;
+
+    /**
+     * Gets the underlying compiler symbol.
+     */
+    get compilerSymbol(): ts.Symbol {
+        return this._compilerSymbol;
+    }
 
     /**
      * Initializes a new instance of Symbol.
@@ -17,21 +24,14 @@ export class Symbol {
      */
     constructor(factory: CompilerFactory, symbol: ts.Symbol) {
         this.factory = factory;
-        this.symbol = symbol;
-    }
-
-    /**
-     * Gets the underlying compiler symbol.
-     */
-    getCompilerSymbol() {
-        return this.symbol;
+        this._compilerSymbol = symbol;
     }
 
     /**
      * Gets the symbol name.
      */
     getName() {
-        return this.symbol.getName();
+        return this.compilerSymbol.getName();
     }
 
     /**
@@ -45,7 +45,7 @@ export class Symbol {
      * Gets the symbol flags.
      */
     getFlags(): ts.SymbolFlags {
-        return this.symbol.getFlags();
+        return this.compilerSymbol.getFlags();
     }
 
     /**
@@ -53,7 +53,7 @@ export class Symbol {
      * @param flags - Flags to check if the symbol has.
      */
     hasFlags(flags: ts.SymbolFlags) {
-        return (this.symbol.flags & flags) === flags;
+        return (this.compilerSymbol.flags & flags) === flags;
     }
 
     /**
@@ -63,14 +63,14 @@ export class Symbol {
     equals(symbol: Symbol | undefined) {
         if (symbol == null)
             return false;
-        return this.symbol === symbol.symbol;
+        return this.compilerSymbol === symbol.compilerSymbol;
     }
 
     /**
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return this.symbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
+        return this.compilerSymbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
     }
 
     /**
@@ -78,10 +78,10 @@ export class Symbol {
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined {
-        if (this.symbol.exports == null)
+        if (this.compilerSymbol.exports == null)
             return undefined;
 
-        const tsSymbol = this.symbol.exports!.get(name);
+        const tsSymbol = this.compilerSymbol.exports!.get(name);
         return tsSymbol == null ? undefined : this.factory.getSymbol(tsSymbol);
     }
 

@@ -14,7 +14,7 @@ export interface PropertyNamedNode {
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
     return class extends Base implements PropertyNamedNode {
         getNameNode() {
-            const compilerNameNode = this.node.name;
+            const compilerNameNode = this.compilerNode.name;
 
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:

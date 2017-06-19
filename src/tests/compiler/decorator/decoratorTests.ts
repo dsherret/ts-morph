@@ -78,7 +78,7 @@ describe(nameof(Decorator), () => {
 
         it("should get the compiler call expression when a decorator factory", () => {
             const {firstDecorator} = getFirstDecorator("@decorator('str', 4)\nclass Identifier {}");
-            expect(firstDecorator.getCallExpression()!.getCompilerNode().arguments.length).to.equal(2);
+            expect(firstDecorator.getCallExpression()!.compilerNode.arguments.length).to.equal(2);
         });
     });
 });

@@ -28,7 +28,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param structures - Structures representing the construct signatures.
      */
     addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]) {
-        return this.insertConstructSignatures(getEndIndexFromArray(this.node.members), structures);
+        return this.insertConstructSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
     }
 
     /**
@@ -74,7 +74,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface method signatures.
      */
     getConstructSignatures(): ConstructSignatureDeclaration[] {
-        return this.node.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
+        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
             .map(m => this.factory.getConstructSignatureDeclaration(m as ts.ConstructSignatureDeclaration, this.sourceFile));
     }
 
@@ -91,7 +91,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param structures - Structures representing the methods.
      */
     addMethods(structures: MethodSignatureStructure[]) {
-        return this.insertMethods(getEndIndexFromArray(this.node.members), structures);
+        return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
     }
 
     /**
@@ -142,7 +142,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface method signatures.
      */
     getMethods(): MethodSignature[] {
-        return this.node.members.filter(m => m.kind === ts.SyntaxKind.MethodSignature)
+        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.MethodSignature)
             .map(m => this.factory.getMethodSignature(m as ts.MethodSignature, this.sourceFile));
     }
 
@@ -159,7 +159,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param structures - Structures representing the properties.
      */
     addProperties(structures: PropertySignatureStructure[]) {
-        return this.insertProperties(getEndIndexFromArray(this.node.members), structures);
+        return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
     }
 
     /**
@@ -208,7 +208,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface property signatures.
      */
     getProperties(): PropertySignature[] {
-        return this.node.members.filter(m => m.kind === ts.SyntaxKind.PropertySignature)
+        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.PropertySignature)
             .map(m => this.factory.getPropertySignature(m as ts.PropertySignature, this.sourceFile));
     }
 
@@ -216,6 +216,6 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets all members.
      */
     getAllMembers(): InterfaceMemberTypes[] {
-        return this.node.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];
+        return this.compilerNode.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];
     }
 }

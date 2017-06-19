@@ -4,11 +4,18 @@ import {Node, EnumDeclaration, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
-    describe(nameof<Node<any>>(n => n.getCompilerNode), () => {
+    describe(nameof<Node<any>>(n => n.compilerNode), () => {
         it("should get the underlying compiler node", () => {
             const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
             // just compare that the texts are the same
-            expect(sourceFile.getFullText()).to.equal(sourceFile.getCompilerNode().getFullText());
+            expect(sourceFile.getFullText()).to.equal(sourceFile.compilerNode.getFullText());
+        });
+
+        it("should throw an error when using a removed node", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member }\n");
+            const member = firstChild.getMembers()[0];
+            member.remove();
+            expect(() => member.compilerNode).to.throw();
         });
     });
 

@@ -11,7 +11,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets if this namespace has a namespace keyword.
      */
     hasNamespaceKeyword() {
-        return (this.node.flags & ts.NodeFlags.Namespace) === ts.NodeFlags.Namespace;
+        return (this.compilerNode.flags & ts.NodeFlags.Namespace) === ts.NodeFlags.Namespace;
     }
 
     /**

@@ -21,7 +21,7 @@ const returnType = functionDeclaration.getReturnType();
 The underlying compiler type can be accessed via:
 
 ```typescript
-const compilerType = type.getCompilerType();
+const compilerType = type.compilerType;
 ```
 
 ### Apparent type

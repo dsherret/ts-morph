@@ -15,7 +15,7 @@ export interface HeritageClauseableNode {
 export function HeritageClauseableNode<T extends Constructor<HeritageClauseableNodeExtensionType>>(Base: T): Constructor<HeritageClauseableNode> & T {
     return class extends Base implements HeritageClauseableNode {
         getHeritageClauses(): HeritageClause[] {
-            const heritageClauses = this.node.heritageClauses;
+            const heritageClauses = this.compilerNode.heritageClauses;
             if (heritageClauses == null)
                 return [];
             return heritageClauses.map(c => this.factory.getHeritageClause(c, this.sourceFile));

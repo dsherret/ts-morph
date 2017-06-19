@@ -6,7 +6,7 @@ export class Identifier extends Node<ts.Identifier> {
      * Gets the text for the identifier.
      */
     getText() {
-        return this.node.text;
+        return this.compilerNode.text;
     }
 
     /**

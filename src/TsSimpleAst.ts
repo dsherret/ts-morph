@@ -118,7 +118,7 @@ export class TsSimpleAst {
      */
     getDiagnostics(): compiler.Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerFactory.getProgram().getCompilerProgram());
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerFactory.getProgram().compilerProgram);
         return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
     }
 

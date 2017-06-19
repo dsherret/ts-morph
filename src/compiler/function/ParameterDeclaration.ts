@@ -11,14 +11,14 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      * Gets the dot dot dot token (...) for a rest parameter.
      */
     getDotDotDotToken() {
-        return this.node.dotDotDotToken == null ? undefined : this.factory.getNodeFromCompilerNode(this.node.dotDotDotToken, this.sourceFile);
+        return this.compilerNode.dotDotDotToken == null ? undefined : this.factory.getNodeFromCompilerNode(this.compilerNode.dotDotDotToken, this.sourceFile);
     }
 
     /**
      * Gets if it's a rest parameter.
      */
     isRestParameter() {
-        return this.node.dotDotDotToken != null;
+        return this.compilerNode.dotDotDotToken != null;
     }
 
     /**
@@ -41,6 +41,6 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      * Gets if it's optional.
      */
     isOptional() {
-        return this.node.questionToken != null || this.isRestParameter() || this.hasInitializer();
+        return this.compilerNode.questionToken != null || this.isRestParameter() || this.hasInitializer();
     }
 }

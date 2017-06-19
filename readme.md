@@ -53,5 +53,5 @@ sourceFile.getFullText(); // returns: "enum NewName {\n    myNewMember\n}\nlet m
 sourceFile.save();        // save it to MyFile.ts
 
 // get underlying compiler node from the typescript AST from any node
-const sourceFileNode = sourceFile.getCompilerNode();
+const sourceFileCompilerNode = sourceFile.node;
 ```

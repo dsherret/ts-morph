@@ -42,7 +42,7 @@ export interface TypeParameteredNode {
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
     return class extends Base implements TypeParameteredNode {
         getTypeParameters() {
-            const typeParameters = (this.node.typeParameters || []) as ts.TypeParameterDeclaration[]; // why do I need this assert?
+            const typeParameters = (this.compilerNode.typeParameters || []) as ts.TypeParameterDeclaration[]; // why do I need this assert?
             return typeParameters.map(t => this.factory.getTypeParameterDeclaration(t, this.sourceFile));
         }
 
@@ -51,7 +51,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
         }
 
         addTypeParameters(structures: TypeParameterDeclarationStructure[]) {
-            return this.insertTypeParameters(getEndIndexFromArray(this.node.typeParameters), structures);
+            return this.insertTypeParameters(getEndIndexFromArray(this.compilerNode.typeParameters), structures);
         }
 
         insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure) {

@@ -9,6 +9,6 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * Gets the declaration list of variables.
      */
     getDeclarationList(): VariableDeclarationList {
-        return this.factory.getVariableDeclarationList(this.node.declarationList, this.sourceFile);
+        return this.factory.getVariableDeclarationList(this.compilerNode.declarationList, this.sourceFile);
     }
 }

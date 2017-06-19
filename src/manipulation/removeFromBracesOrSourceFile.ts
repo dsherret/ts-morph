@@ -43,7 +43,7 @@ export function removeFromBracesOrSourceFile(opts: RemoveFromBracesOrSourceFileO
                 handleNode(currentNodeChildren.next().value, newNodeChild);
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 
     function handleSyntaxList(currentNode: Node, newNode: Node) {
@@ -60,7 +60,7 @@ export function removeFromBracesOrSourceFile(opts: RemoveFromBracesOrSourceFileO
             i++;
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }
 

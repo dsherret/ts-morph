@@ -54,6 +54,6 @@ export function insertStraight(options: InsertStraightOptions) {
             handleNode(newNodeChild);
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }

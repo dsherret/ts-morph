@@ -16,7 +16,7 @@ export interface BindingNamedNode {
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
     return class extends Base implements BindingNamedNode {
         getNameNode() {
-            const compilerNameNode = this.node.name;
+            const compilerNameNode = this.compilerNode.name;
 
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:

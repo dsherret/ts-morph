@@ -30,6 +30,6 @@ export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: numb
             currentNodeChildIteratorResult = currentNodeChildren.next();
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }

@@ -49,12 +49,12 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             if (docCommentNodes.length === 0)
                 return undefined;
 
-            const texts = docCommentNodes.map(n => (n.getCompilerNode().comment || "").trim());
+            const texts = docCommentNodes.map(n => (n.compilerNode.comment || "").trim());
             return texts.filter(t => t.length > 0).join(this.factory.getLanguageService().getNewLine());
         }
 
         getDocumentationCommentNodes(): JSDoc[] {
-            const nodes = (this.node as any).jsDoc as ts.JSDoc[] || [];
+            const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
             return nodes.map(n => this.factory.getJSDoc(n, this.sourceFile));
         }
 
@@ -63,7 +63,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
         }
 
         addDocs(structures: JSDocStructure[]) {
-            return this.insertDocs(getEndIndexFromArray((this.node as any).jsDoc), structures);
+            return this.insertDocs(getEndIndexFromArray((this.compilerNode as any).jsDoc), structures);
         }
 
         insertDoc(index: number, structure: JSDocStructure) {

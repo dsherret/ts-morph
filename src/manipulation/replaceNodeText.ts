@@ -15,7 +15,7 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
 
     function replaceForNode(node: Node) {
         const currentStart = node.getStart();
-        const compilerNode = node.getCompilerNode();
+        const compilerNode = node.compilerNode;
 
         // do the children first so that the underlying _children array is filled in based on the source file
         for (const child of node.getChildren()) {

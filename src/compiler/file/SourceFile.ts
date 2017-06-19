@@ -30,7 +30,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the file path.
      */
     getFilePath() {
-        return this.node.fileName;
+        return this.compilerNode.fileName;
     }
 
     /**
@@ -62,14 +62,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencedFiles() {
         const dirName = FileUtils.getDirName(this.getFilePath());
-        return (this.node.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
+        return (this.compilerNode.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
     }
 
     /**
      * Gets if this is a declaration file.
      */
     isDeclarationFile() {
-        return this.node.isDeclarationFile;
+        return this.compilerNode.isDeclarationFile;
     }
 
     /**
@@ -263,7 +263,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDiagnostics(): Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getProgram().getCompilerProgram(), this.getCompilerNode());
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getProgram().compilerProgram, this.compilerNode);
         return compilerDiagnostics.map(d => this.factory.getDiagnostic(d));
     }
 
@@ -277,7 +277,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
 
         const declaration = defaultExportSymbol.getDeclarations()[0];
-        if (declaration.node.kind === ts.SyntaxKind.ExportAssignment)
+        if (declaration.compilerNode.kind === ts.SyntaxKind.ExportAssignment)
             removeNodes([declaration]);
         else if (declaration.isModifierableNode()) {
             const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);

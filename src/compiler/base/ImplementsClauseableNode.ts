@@ -39,7 +39,7 @@ export interface ImplementsClauseableNode {
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
     return class extends Base implements ImplementsClauseableNode {
         getImplements(heritageClauses: HeritageClause[] = this.getHeritageClauses()): ExpressionWithTypeArguments[] {
-            const implementsClause = heritageClauses.find(c => c.node.token === ts.SyntaxKind.ImplementsKeyword);
+            const implementsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 

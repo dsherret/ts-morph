@@ -38,7 +38,7 @@ export interface ExtendsClauseableNode {
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
         getExtends(): ExpressionWithTypeArguments[] {
-            const extendsClause = this.getHeritageClauses().find(c => c.node.token === ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = this.getHeritageClauses().find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 

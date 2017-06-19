@@ -25,11 +25,11 @@ export interface GeneratorableNode {
 export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensionType>>(Base: T): Constructor<GeneratorableNode> & T {
     return class extends Base implements GeneratorableNode {
         isGenerator() {
-            return this.node.asteriskToken != null;
+            return this.compilerNode.asteriskToken != null;
         }
 
         getAsteriskToken(): Node<ts.AsteriskToken> | undefined {
-            const asteriskToken = this.node.asteriskToken;
+            const asteriskToken = this.compilerNode.asteriskToken;
             return asteriskToken == null ? undefined : (this.factory.getNodeFromCompilerNode(asteriskToken, this.sourceFile) as Node<ts.AsteriskToken>);
         }
 
@@ -59,10 +59,10 @@ function getAsteriskInsertPosition(node: Node) {
         return node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword).getEnd();
     }
 
-    const nameNode = (node.node as any).name as ts.Node | undefined;
+    const nameNode = (node.compilerNode as any).name as ts.Node | undefined;
     /* istanbul ignore if */
     if (nameNode == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 
-    return nameNode.getStart(node.sourceFile.getCompilerNode());
+    return nameNode.getStart(node.sourceFile.compilerNode);
 }

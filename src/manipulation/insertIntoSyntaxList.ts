@@ -41,7 +41,7 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
                 handleNode(currentNodeChildren.next().value, newNodeChild);
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 
     function handleSyntaxList(currentNode: Node, newNode: Node) {
@@ -59,6 +59,6 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
             i++;
         }
 
-        compilerFactory.replaceCompilerNode(currentNode, newNode.node);
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }

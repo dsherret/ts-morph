@@ -7,14 +7,14 @@ export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeA
      * Gets the expression node.
      */
     getExpression(): Node<ts.LeftHandSideExpression> {
-        return this.factory.getNodeFromCompilerNode(this.node.expression, this.sourceFile) as Node<ts.LeftHandSideExpression>;
+        return this.factory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.LeftHandSideExpression>;
     }
 
     /**
      * Gets the type arguments.
      */
     getTypeArguments(): TypeNode[] {
-        const typeArguments = this.node.typeArguments;
+        const typeArguments = this.compilerNode.typeArguments;
         if (typeArguments == null)
             return [];
 

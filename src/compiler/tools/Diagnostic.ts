@@ -10,7 +10,14 @@ export class Diagnostic {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
-    diagnostic: ts.Diagnostic;
+    readonly _compilerDiagnostic: ts.Diagnostic;
+
+    /**
+     * Gets the underlying compiler diagnostic.
+     */
+    get compilerDiagnostic(): ts.Diagnostic {
+        return this._compilerDiagnostic;
+    }
 
     /** @internal */
     constructor(
@@ -18,21 +25,21 @@ export class Diagnostic {
         diagnostic: ts.Diagnostic
     ) {
         this.factory = factory;
-        this.diagnostic = diagnostic;
+        this._compilerDiagnostic = diagnostic;
     }
 
     /**
      * Gets the source file.
      */
     getSourceFile(): SourceFile {
-        return this.factory.getSourceFile(this.diagnostic.file);
+        return this.factory.getSourceFile(this.compilerDiagnostic.file);
     }
 
     /**
      * Gets the message text.
      */
     getMessageText(): string | DiagnosticMessageChain {
-        const messageText = this.diagnostic.messageText;
+        const messageText = this._compilerDiagnostic.messageText;
         if (typeof messageText === "string")
             return messageText;
 
@@ -43,41 +50,34 @@ export class Diagnostic {
      * Gets the start.
      */
     getStart() {
-        return this.diagnostic.start;
+        return this.compilerDiagnostic.start;
     }
 
     /**
      * Gets the length.
      */
     getLength() {
-        return this.diagnostic.length;
+        return this.compilerDiagnostic.length;
     }
 
     /**
      * Gets the diagnostic category.
      */
     getCategory(): ts.DiagnosticCategory {
-        return this.diagnostic.category;
+        return this.compilerDiagnostic.category;
     }
 
     /**
      * Gets the code of the diagnostic.
      */
     getCode() {
-        return this.diagnostic.code;
+        return this.compilerDiagnostic.code;
     }
 
     /**
      * Gets the source.
      */
     getSource() {
-        return this.diagnostic.source;
-    }
-
-    /**
-     * Gets the underlying compiler diagnostic.
-     */
-    getCompilerDiagnostic(): ts.Diagnostic {
-        return this.diagnostic;
+        return this.compilerDiagnostic.source;
     }
 }

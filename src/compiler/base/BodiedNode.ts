@@ -23,7 +23,7 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
         }
 
         getBody() {
-            const body = (this.node as any).body as ts.Node;
+            const body = (this.compilerNode as any).body as ts.Node;
             if (body == null)
                 throw new errors.InvalidOperationError("Bodied node should have a body.");
 

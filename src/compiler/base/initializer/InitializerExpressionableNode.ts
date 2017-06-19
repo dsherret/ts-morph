@@ -37,11 +37,11 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
         }
 
         hasInitializer() {
-            return this.node.initializer != null;
+            return this.compilerNode.initializer != null;
         }
 
         getInitializer() {
-            return this.node.initializer == null ? undefined : this.factory.getExpression(this.node.initializer, this.sourceFile);
+            return this.compilerNode.initializer == null ? undefined : this.factory.getExpression(this.compilerNode.initializer, this.sourceFile);
         }
 
         removeInitializer() {
