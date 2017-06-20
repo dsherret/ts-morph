@@ -8,7 +8,7 @@ export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyN
 export interface PropertyNamedNode {
     getNameNode(): Identifier;
     getName(): string;
-    setName(text: string): this;
+    rename(text: string): this;
 }
 
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
@@ -29,7 +29,7 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
             return this.getNameNode().getText();
         }
 
-        setName(text: string) {
+        rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
             this.getNameNode().rename(text);
             return this;

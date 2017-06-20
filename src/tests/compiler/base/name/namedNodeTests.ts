@@ -3,15 +3,15 @@ import {EnumDeclaration, NamedNode, Identifier} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(NamedNode), () => {
-    describe(nameof<NamedNode>(n => n.setName), () => {
+    describe(nameof<NamedNode>(n => n.rename), () => {
         function throwTest(text: any) {
             const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
-            expect(() => firstChild.setName(text)).to.throw();
+            expect(() => firstChild.rename(text)).to.throw();
         }
 
         it("should set the name and rename any referenced nodes", () => {
             const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
-            firstChild.setName("MyNewEnum");
+            firstChild.rename("MyNewEnum");
             expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyNewEnum;");
         });
 

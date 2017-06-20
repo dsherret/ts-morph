@@ -17,10 +17,10 @@ export interface NamedNode {
      */
     getName(): string;
     /**
-     * Sets the name.
+     * Renames the name.
      * @param newName - New name.
      */
-    setName(newName: string): this;
+    rename(newName: string): this;
 }
 
 export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
@@ -33,7 +33,7 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
             return this.getNameNode().getText();
         }
 
-        setName(newName: string) {
+        rename(newName: string) {
             if (newName === this.getName())
                 return this;
 

@@ -9,15 +9,15 @@ function getInfoFromTextWithFirstMember(text = "enum MyEnum { myMember }") {
 }
 
 describe(nameof(PropertyNamedNode), () => {
-    describe(nameof<PropertyNamedNode>(n => n.setName), () => {
+    describe(nameof<PropertyNamedNode>(n => n.rename), () => {
         function throwTest(text: any) {
             const {firstEnumMember} = getInfoFromTextWithFirstMember();
-            expect(() => firstEnumMember.setName(text)).to.throw();
+            expect(() => firstEnumMember.rename(text)).to.throw();
         }
 
         it("should set the name and rename any referenced nodes", () => {
             const {firstEnumMember, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum { myMember }\nlet myEnumMember = MyEnum.myMember;");
-            firstEnumMember.setName("myNewMember");
+            firstEnumMember.rename("myNewMember");
             expect(sourceFile.getFullText()).to.equal("enum MyEnum { myNewMember }\nlet myEnumMember = MyEnum.myNewMember;");
         });
 

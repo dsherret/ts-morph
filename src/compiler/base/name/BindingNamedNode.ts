@@ -10,7 +10,11 @@ export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.Bin
 export interface BindingNamedNode {
     getNameNode(): Identifier;
     getName(): string;
-    setName(text: string): this;
+    /**
+     * Renames the name.
+     * @param text - New name.
+     */
+    rename(text: string): this;
 }
 
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
@@ -31,7 +35,7 @@ export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtension
             return this.getNameNode().getText();
         }
 
-        setName(text: string) {
+        rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
             this.getNameNode().rename(text);
             return this;

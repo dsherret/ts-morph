@@ -22,10 +22,10 @@ export interface DeclarationNamedNode {
      */
     getName(): string | undefined;
     /**
-     * Sets the name.
+     * Renames the name.
      * @param text - Text to set as the name.
      */
-    setName(text: string): this;
+    rename(text: string): this;
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
@@ -57,7 +57,7 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
             return nameNode == null ? undefined : nameNode.getText();
         }
 
-        setName(text: string) {
+        rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
             const nameNode = this.getNameNode();
 

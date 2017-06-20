@@ -18,10 +18,10 @@ Renaming can be done as follows:
 
 ```typescript
 const myEnum = sourceFile.getEnum("MyEnum")!;
-myEnum.setName("NewEnum");
+myEnum.rename("NewEnum");
 ```
 
-Which will rename `MyEnum` to `NewEnum` across _all_ files.
+Which will rename all usages of `MyEnum` to `NewEnum` across _all_ files.
 
 So the file above would now contain the following code:
 

@@ -61,13 +61,13 @@ describe(nameof(TsSimpleAst), () => {
             const ast = new TsSimpleAst();
             const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
-            enumDef.setName("NewName");
+            enumDef.rename("NewName");
             const addedEnum = sourceFile.addEnum({
                 name: "MyNewEnum"
             });
-            addedEnum.setName("MyOtherNewName");
+            addedEnum.rename("MyOtherNewName");
             const enumMember = enumDef.getMembers()[0];
-            enumMember.setName("myNewMemberName");
+            enumMember.rename("myNewMemberName");
             expect(enumMember.getValue()).to.equal(0);
             expect(sourceFile.getFullText()).to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\n\nenum MyOtherNewName {\n}\n");
         });
