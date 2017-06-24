@@ -62,7 +62,7 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
             const nameNode = this.getNameNode();
 
             if (nameNode == null)
-                throw this.getNotImplementedError();
+                throw errors.getNotImplementedForSyntaxKindError(this.getKind());
 
             nameNode.rename(text);
             return this;

@@ -52,7 +52,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
 
             /* istanbul ignore if */
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
-                throw this.getNotImplementedError();
+                throw errors.getNotImplementedForSyntaxKindError(this.getKind());
 
             removeNodes([previousSibling, initializer]);
             return this;

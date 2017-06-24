@@ -124,6 +124,7 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.removeSourceFile(sourceFile)).to.equal(true);
             expect(ast.removeSourceFile(sourceFile)).to.equal(false);
             expect(ast.getSourceFiles().length).to.equal(0);
+            expect(() => sourceFile.getChildCount()).to.throw(); // should be disposed
         });
     });
 });

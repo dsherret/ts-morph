@@ -4,7 +4,7 @@ import {Node, EnumDeclaration, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
-    describe(nameof<Node<any>>(n => n.compilerNode), () => {
+    describe(nameof<Node>(n => n.compilerNode), () => {
         it("should get the underlying compiler node", () => {
             const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
             // just compare that the texts are the same
@@ -19,21 +19,21 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getKind), () => {
+    describe(nameof<Node>(n => n.getKind), () => {
         it("should return the syntax kind", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {}");
             expect(firstChild.getKind()).to.equal(ts.SyntaxKind.EnumDeclaration);
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getKindName), () => {
+    describe(nameof<Node>(n => n.getKindName), () => {
         it("should return the syntax kind name", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {}");
             expect(firstChild.getKindName()).to.equal("EnumDeclaration");
         });
     });
 
-    describe(nameof<Node<any>>(n => n.containsRange), () => {
+    describe(nameof<Node>(n => n.containsRange), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
         it("should contain the range when equal to the pos and end", () => {
             expect(firstChild.containsRange(firstChild.getPos(), firstChild.getEnd())).to.be.true;
@@ -52,7 +52,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.offsetPositions), () => {
+    describe(nameof<Node>(n => n.offsetPositions), () => {
         const {sourceFile} = getInfoFromText("enum MyEnum {}");
         const allNodes = [sourceFile, ...Array.from(sourceFile.getAllChildren())];
 
@@ -68,7 +68,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getFirstChildByKind), () => {
+    describe(nameof<Node>(n => n.getFirstChildByKind), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node of the specified syntax kind", () => {
@@ -80,7 +80,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.isSourceFile), () => {
+    describe(nameof<Node>(n => n.isSourceFile), () => {
         const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
         it("should return true for the source file", () => {
             expect(sourceFile.isSourceFile()).to.be.true;
@@ -91,15 +91,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getNotImplementedError), () => {
-        it("should return the not implemented error", () => {
-            const {firstChild} = getInfoFromText("enum MyEnum {}");
-            const error = firstChild.getNotImplementedError();
-            expect(error.message).to.equal("Not implemented feature for syntax kind 'EnumDeclaration'.");
-        });
-    });
-
-    describe(nameof<Node<any>>(n => n.getIndentationText), () => {
+    describe(nameof<Node>(n => n.getIndentationText), () => {
         it("should return a blank string when it's at the start of the file", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {\n}\n");
             expect(firstChild.getIndentationText()).to.equal("");
@@ -126,7 +118,7 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getStartLinePos), () => {
+    describe(nameof<Node>(n => n.getStartLinePos), () => {
         it("should return the start of the file when it's on the first line", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {\n}\n");
             expect(firstChild.getStartLinePos()).to.equal(0);
@@ -149,14 +141,14 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getStart), () => {
+    describe(nameof<Node>(n => n.getStart), () => {
         it("should return the pos without trivia", () => {
             const {firstChild} = getInfoFromText("\n  \t  /* comment */ //comment  \r\n  \t enum MyEnum {\n}\n");
             expect(firstChild.getStart()).to.equal(37);
         });
     });
 
-    describe(nameof<Node<any>>(n => n.getCombinedModifierFlags), () => {
+    describe(nameof<Node>(n => n.getCombinedModifierFlags), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should get the combined modifier flags", () => {
             expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);

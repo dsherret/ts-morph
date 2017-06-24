@@ -498,7 +498,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
             return /\n\s*\}$/.test(bodyText);
         }
         else
-            throw this.getNotImplementedError();
+            throw errors.getNotImplementedForSyntaxKindError(this.getKind());
     }
 
     /**
@@ -539,6 +539,16 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /**
+     * Gets the parent if it's a syntax list or throws an error otherwise.
+     */
+    getParentSyntaxListOrThrow() {
+        const parentSyntaxList = this.getParentSyntaxList();
+        if (parentSyntaxList == null)
+            throw new errors.InvalidOperationError("The parent must be a SyntaxList in order to get the required parent syntax list.");
+        return parentSyntaxList;
+    }
+
+    /**
      * Gets the parent if it's a syntax list.
      */
     getParentSyntaxList() {
@@ -573,16 +583,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
         /* istanbul ignore next */
         throw new errors.NotImplementedError("For some reason the child's parent did not contain the child.");
-    }
-
-    /**
-     * Gets the parent if it's a syntax list or throws an error otherwise.
-     */
-    getParentSyntaxListOrThrow() {
-        const parentSyntaxList = this.getParentSyntaxList();
-        if (parentSyntaxList == null)
-            throw new errors.InvalidOperationError("The parent must be a SyntaxList in order to get the required parent syntax list.");
-        return parentSyntaxList;
     }
 
     /**
@@ -673,14 +673,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /* End mixin type guards */
-
-    /**
-     * Gets an error to throw when a feature is not implemented for this node.
-     * @internal
-     */
-    getNotImplementedError() {
-        return errors.getNotImplementedForSyntaxKindError(this.getKind());
-    }
 
     /**
      * Gets the indentation text.
