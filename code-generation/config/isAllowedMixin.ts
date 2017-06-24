@@ -10,7 +10,7 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "HeritageClauseableNode":
         case "BodiedNode":
         case "BodyableNode":
-        case "StatementedChildNode":
+        case "NamespaceChildableNode":
             return false;
         default:
             return true;
