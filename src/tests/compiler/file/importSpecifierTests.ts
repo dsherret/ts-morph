@@ -13,13 +13,24 @@ describe(nameof(ImportSpecifier), () => {
             expect(otherSourceFile.getText()).to.equal("export class name {}\nexport class newName {}");
         });
 
-        it("should rename only the identifier when an alias already exists", () => {
+        it("should set only the identifier when an alias already exists", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>("import {name as alias} from './file'; const t = alias;");
             const namedImport = firstChild.getNamedImports()[0];
             const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}\nexport class newName {}");
             namedImport.setName("newName");
             expect(sourceFile.getText()).to.equal("import {newName as alias} from './file'; const t = alias;");
             expect(otherSourceFile.getText()).to.equal("export class name {}\nexport class newName {}");
+        });
+    });
+
+    describe(nameof<ImportSpecifier>(n => n.renameName), () => {
+        it("should rename what's being imported", () => {
+            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
+            const namedImport = firstChild.getNamedImports()[0];
+            const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}");
+            namedImport.renameName("newName");
+            expect(sourceFile.getText()).to.equal("import {newName} from './file'; const t = newName;");
+            expect(otherSourceFile.getText()).to.equal("export class newName {}");
         });
     });
 
@@ -86,6 +97,14 @@ describe(nameof(ImportSpecifier), () => {
 
         it("should get the alias when there is a default keyword", () => {
             doTest(`import {default as alias} from "./test";`, "alias");
+        });
+    });
+
+    describe(nameof<ImportSpecifier>(n => n.getImportDeclaration), () => {
+        it("should get the parent import declaration", () => {
+            const {firstChild} = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
+            const namedImport = firstChild.getNamedImports()[0];
+            expect(namedImport.getImportDeclaration()).to.equal(firstChild);
         });
     });
 });

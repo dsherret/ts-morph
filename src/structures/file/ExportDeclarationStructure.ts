@@ -2,5 +2,5 @@
 
 export interface ExportDeclarationStructure {
     namedExports?: ExportSpecifierStructure[];
-    moduleSpecifier: string;
+    moduleSpecifier?: string;
 }

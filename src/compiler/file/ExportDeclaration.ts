@@ -5,10 +5,48 @@ import {replaceStraight, insertStraight, verifyAndGetIndex, insertIntoCommaSepar
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportSpecifier} from "./ExportSpecifier";
-import {ModuleSpecifiedNode} from "./base";
 
-export const ExportDeclarationBase = ModuleSpecifiedNode(Node);
-export class ExportDeclaration extends ExportDeclarationBase<ts.ExportDeclaration> {
+export class ExportDeclaration extends Node<ts.ExportDeclaration> {
+    /**
+     * Sets the import specifier.
+     * @param text - Text to set as the import specifier.
+     */
+    setModuleSpecifier(text: string) {
+        const stringLiteral = this.getLastChildByKind(ts.SyntaxKind.StringLiteral);
+
+        if (stringLiteral == null) {
+            const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
+            const stringChar = this.factory.getLanguageService().getStringChar();
+            insertStraight({
+                insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
+                newCode: ` from ${stringChar}${text}${stringChar}`,
+                parent: this
+            });
+        }
+        else
+            replaceStraight(this.getSourceFile(), stringLiteral.getStart() + 1, stringLiteral.getWidth() - 2, text);
+
+        return this;
+    }
+
+    /**
+     * Gets the module specifier or undefined if it doesn't exist.
+     */
+    getModuleSpecifier() {
+        const stringLiteral = this.getLastChildByKind(ts.SyntaxKind.StringLiteral);
+        if (stringLiteral == null)
+            return undefined;
+        const text = stringLiteral.getText();
+        return text.substring(1, text.length - 1);
+    }
+
+    /**
+     * Gets if the module specifier exists
+     */
+    hasModuleSpecifier() {
+        return this.getLastChildByKind(ts.SyntaxKind.StringLiteral) != null;
+    }
+
     /**
      * Gets if this export declaration is a namespace export.
      */

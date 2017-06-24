@@ -48,6 +48,28 @@ describe(nameof(ExportSpecifier), () => {
             exportsFile.getExports()[0].getNamedExports()[0].setName("MyNewName");
             expect(exportsFile.getFullText()).to.equal(`export {MyNewName as MyAlias} from "./MyClass";\n`);
         });
+
+        it("should rename in current file if exporting from current file", () => {
+            const ast = new TsSimpleAst();
+            const myClassFile = ast.addSourceFileFromStructure("MyClass.ts", {
+                classes: [{ name: "MyClass" }],
+                exports: [{ namedExports: [{ name: "MyClass" }]}]
+            });
+            myClassFile.getExports()[0].getNamedExports()[0].setName("Identifier");
+            expect(myClassFile.getFullText()).to.equal(`class MyClass {\n}\n\nexport {Identifier};\n`);
+        });
+    });
+
+    describe(nameof<ExportSpecifier>(n => n.renameName), () => {
+        it("should rename in current file if exporting from current file", () => {
+            const ast = new TsSimpleAst();
+            const myClassFile = ast.addSourceFileFromStructure("MyClass.ts", {
+                classes: [{ name: "MyClass" }],
+                exports: [{ namedExports: [{ name: "MyClass" }]}]
+            });
+            myClassFile.getExports()[0].getNamedExports()[0].renameName("Identifier");
+            expect(myClassFile.getFullText()).to.equal(`class Identifier {\n}\n\nexport {Identifier};\n`);
+        });
     });
 
     describe(nameof<ExportSpecifier>(n => n.getAlias), () => {
@@ -101,6 +123,14 @@ describe(nameof(ExportSpecifier), () => {
             expect(myClassFile.getFullText()).to.equal(`export class MyClass {\n}\n`);
             expect(exportsFile.getFullText()).to.equal(`export {MyClass as MyNewAlias} from "./MyClass";\n`);
             expect(mainFile.getFullText()).to.equal(`import {MyNewAlias} from "./Exports";\n\nconst t = MyNewAlias;\n`);
+        });
+    });
+
+    describe(nameof<ExportSpecifier>(n => n.getExportDeclaration), () => {
+        it("should get the parent export declaration", () => {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(`export {name} from "./test";`);
+            const namedExport = firstChild.getNamedExports()[0];
+            expect(namedExport.getExportDeclaration()).to.equal(firstChild);
         });
     });
 });

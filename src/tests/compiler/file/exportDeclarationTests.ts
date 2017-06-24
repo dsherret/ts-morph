@@ -52,10 +52,18 @@ describe(nameof(ExportDeclaration), () => {
         it("should set the module specifier when it's empty", () => {
             doTest(`export * from "";`, "./new-test", `export * from "./new-test";`);
         });
+
+        it("should set the module specifier when it doesn't exist", () => {
+            doTest(`export {test};`, "./new-test", `export {test} from "./new-test";`);
+        });
+
+        it("should set the module specifier when it doesn't exist and there's no semi-colon", () => {
+            doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
+        });
     });
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifier), () => {
-        function doTest(text: string, expected: string) {
+        function doTest(text: string, expected: string | undefined) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getModuleSpecifier()).to.equal(expected);
         }
@@ -66,6 +74,29 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should get the module specifier when using double quotes", () => {
             doTest(`export {name} from "./test"`, "./test");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest(`export {name}`, undefined);
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.hasModuleSpecifier), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.hasModuleSpecifier()).to.equal(expected);
+        }
+
+        it("should have a module specifier when using single quotes", () => {
+            doTest("export * from './test'", true);
+        });
+
+        it("should have a module specifier when using double quotes", () => {
+            doTest(`export {name} from "./test"`, true);
+        });
+
+        it("should not have a module specifier when one doesn't exist", () => {
+            doTest(`export {name}`, false);
         });
     });
 

@@ -174,17 +174,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param structures - Structures that represent the exports.
      */
     addExports(structures: ExportDeclarationStructure[]) {
-        let insertIndex = 0;
-        const exports = this.getExports();
-        if (exports.length === 0) {
-            const imports = this.getImports();
-            insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
-        }
-        else {
-            insertIndex = exports[exports.length - 1].getChildIndex() + 1;
-        }
-
-        return this.insertExports(insertIndex, structures);
+        // always insert at end of file because of export {Identifier}; statements
+        return this.insertExports(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
 
     /**
@@ -203,9 +194,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     insertExports(index: number, structures: ExportDeclarationStructure[]) {
         const newLineChar = this.factory.getLanguageService().getNewLine();
+        const stringChar = this.factory.getLanguageService().getStringChar();
         const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
-            const hasNamedImport = structure.namedExports != null && structure.namedExports.length > 0;
+            const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
             let code = `${indentationText}export`;
             if (structure.namedExports != null && structure.namedExports.length > 0) {
                 const namedExportsCode = structure.namedExports.map(n => {
@@ -216,10 +208,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 }).join(", ");
                 code += ` {${namedExportsCode}}`;
             }
-            else {
+            else if (!hasModuleSpecifier)
+                code += " {}";
+            else
                 code += " *";
-            }
-            code += ` from "${structure.moduleSpecifier}";`;
+
+            if (hasModuleSpecifier)
+                code += ` from ${stringChar}${structure.moduleSpecifier}${stringChar}`;
+
+            code += `;`;
             return code;
         });
 

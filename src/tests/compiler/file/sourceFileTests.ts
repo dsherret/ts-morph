@@ -221,10 +221,14 @@ describe(nameof(SourceFile), () => {
         it("should insert the different kinds of exports", () => {
             doTest("", 0, [
                 { moduleSpecifier: "./test" },
-                { namedExports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" }
+                { namedExports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedExports: [{ name: "name" }] },
+                { }
             ], [
                 `export * from "./test";`,
-                `export {name, name as alias} from "./test";`
+                `export {name, name as alias} from "./test";`,
+                `export {name};`,
+                `export {};`
             ].join("\n") + "\n");
         });
 
@@ -264,19 +268,9 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
-        it("should add at the last export", () => {
-            doTest(`export * from "./file1";\nimport "./file3";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file2" },
-                `export * from "./file1";\nexport * from "./file2";\n\nimport "./file3";\n\nexport class MyClass {}\n`);
-        });
-
-        it("should add at the last import if one exists and no exports exist", () => {
-            doTest(`import "./file1";\nimport "./file2";\n\nexport class MyClass {}\n`, { moduleSpecifier: "./file3" },
-                `import "./file1";\nimport "./file2";\n\nexport * from "./file3";\n\nexport class MyClass {}\n`);
-        });
-
-        it("should add at the start if no imports or exports exists", () => {
+        it("should always add at the end of the file", () => {
             doTest(`export class MyClass {}\n`, { moduleSpecifier: "./file" },
-                `export * from "./file";\n\nexport class MyClass {}\n`);
+                `export class MyClass {}\n\nexport * from "./file";\n`);
         });
     });
 
@@ -290,7 +284,7 @@ describe(nameof(SourceFile), () => {
 
         it("should add multiple", () => {
             doTest(`export class MyClass {}\n`, [{ moduleSpecifier: "./file1" }, { moduleSpecifier: "./file2" }],
-                `export * from "./file1";\nexport * from "./file2";\n\nexport class MyClass {}\n`);
+                `export class MyClass {}\n\nexport * from "./file1";\nexport * from "./file2";\n`);
         });
     });
 

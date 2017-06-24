@@ -47,6 +47,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
 
     /**
      * Releases the node from the cache and ast.
+     * @internal
      */
     dispose() {
         for (const child of this.getChildren()) {
@@ -131,6 +132,15 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     }
 
     /**
+     * Gets the first child if it matches the specified syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildIfKind(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChild();
+        return firstChild != null && firstChild.getKind() === kind ? firstChild : undefined;
+    }
+
+    /**
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
@@ -159,6 +169,15 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
      */
     getLastChildByKind(kind: ts.SyntaxKind) {
         return this.getLastChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the last child if it matches the specified syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getLastChildIfKind(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChild();
+        return lastChild != null && lastChild.getKind() === kind ? lastChild : undefined;
     }
 
     /**
@@ -413,8 +432,31 @@ export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
     getParentOrThrow() {
         const parentNode = this.getParent();
         if (parentNode == null)
-            throw new Error("A parent is required to do this operation.");
+            throw new errors.InvalidOperationError("A parent is required to do this operation.");
         return parentNode;
+    }
+
+    /**
+     * Gets the first parent by syntax kind or throws if not found.
+     * @param kind - Syntax kind.
+     */
+    getFirstParentByKindOrThrow(kind: ts.SyntaxKind) {
+        const parentNode = this.getFirstParentByKind(kind);
+        if (parentNode == null)
+            throw new errors.InvalidOperationError(`A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return parentNode;
+    }
+
+    /**
+     * Get the first parent by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstParentByKind(kind: ts.SyntaxKind) {
+        for (const parent of this.getParents()) {
+            if (parent.getKind() === kind)
+                return parent;
+        }
+        return undefined;
     }
 
     /**

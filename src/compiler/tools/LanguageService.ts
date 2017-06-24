@@ -224,6 +224,10 @@ export class LanguageService {
         }
     }
 
+    getStringChar() {
+        return `"`; // todo: make this configurable
+    }
+
     getOneIndentationLevelText() {
         return "    ";
     }

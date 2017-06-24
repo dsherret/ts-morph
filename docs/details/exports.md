@@ -59,6 +59,7 @@ Export declarations look like this:
 ```typescript
 export * from "./some-file";
 export {MyClass} from "./other-file";
+export {MyClass};
 ```
 
 You can get the export declarations by calling:
@@ -72,6 +73,10 @@ const exportDeclaration = sourceFile.getExport(d => d.hasNamedExports());
 exportDeclaration.hasNamedExports();
 // or if it's a namespace export
 exportDeclaration.isNamespaceExport();
+// get/set the module specifier
+exportDeclaration.getModuleSpecifier(); // returns: string | undefined
+exportDeclaration.setModuleSpecifier("./new-file");
+exportDeclaration.hasModuleSpecifier(); // returns: boolean
 ```
 
 ### Named Exports
@@ -84,19 +89,25 @@ const namedExports = exportDeclaration.getNamedExports();
 
 #### Export specifier
 
-Getting or setting the name:
+##### Name
 
 ```typescript
 namedExport.getName(); // returns: Identifier
-namedImport.setName("NewName");
+namedExport.setName("NewName");
+namedExport.renameName("NewName");
 ```
 
-Getting or setting the alias:
+##### Alias
 
 ```typescript
-namedImport.getAlias(); // returns: Identifier | undefined
-namedImport.setAlias("NewAliasName");
+namedExport.getAlias(); // returns: Identifier | undefined
+namedExport.setAlias("NewAliasName");
 ```
 
 _Note:_ Setting the alias will rename any uses of the alias or identifier to the new value.
 
+##### Parent export declaration
+
+```typescript
+namedExport.getExportDeclaration(); // returns: ExportDeclaration
+```

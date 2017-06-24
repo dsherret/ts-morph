@@ -5,10 +5,27 @@ import {replaceStraight, insertStraight, verifyAndGetIndex, insertIntoCommaSepar
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
-import {ModuleSpecifiedNode} from "./base";
 
-export const ImportDeclarationBase = ModuleSpecifiedNode(Node);
-export class ImportDeclaration extends ImportDeclarationBase<ts.ImportDeclaration> {
+export class ImportDeclaration extends Node<ts.ImportDeclaration> {
+    /**
+     * Sets the import specifier.
+     * @param text - Text to set as the import specifier.
+     */
+    setModuleSpecifier(text: string) {
+        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
+        replaceStraight(this.getSourceFile(), stringLiteral.getStart() + 1, stringLiteral.getWidth() - 2, text);
+        return this;
+    }
+
+    /**
+     * Gets the module specifier.
+     */
+    getModuleSpecifier() {
+        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
+        const text = stringLiteral.getText();
+        return text.substring(1, text.length - 1);
+    }
+
     /**
      * Sets the default import.
      * @param text - Text to set as the default import.

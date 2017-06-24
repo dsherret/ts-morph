@@ -92,7 +92,7 @@ describe(nameof(TsSimpleAst), () => {
                 imports: [{ moduleSpecifier: "./test" }],
                 exports: [{ moduleSpecifier: "./test" }]
             });
-            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nexport * from "./test";\n\nenum MyEnum {\n}\n`);
+            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nexport * from "./test";\n`);
         });
     });
 

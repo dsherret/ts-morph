@@ -64,19 +64,14 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (this.hasInitializer())
                 this.removeInitializer();
 
+            const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
+
             insertStraight({
-                insertPos: getInsertPos(this),
+                insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
                 newCode: ` = ${text}`
             });
             return this;
         }
     };
-}
-
-function getInsertPos(node: Node) {
-    const lastChild = node.getLastChild();
-    if (lastChild != null && lastChild.getKind() === ts.SyntaxKind.SemicolonToken)
-        return lastChild.getPos();
-    return node.getEnd();
 }

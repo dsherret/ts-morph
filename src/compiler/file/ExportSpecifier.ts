@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
-import {Node, Identifier} from "./../common";
 import {insertStraight, replaceStraight, removeNodes} from "./../../manipulation";
+import {Node, Identifier} from "./../common";
+import {ExportDeclaration} from "./ExportDeclaration";
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     /**
@@ -16,6 +17,14 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             textSpans: [{ start: nameIdentifier.getStart(), length: nameIdentifier.getWidth() }]
         }], name);
 
+        return this;
+    }
+
+    /**
+     * Renames the name of what's being exported.
+     */
+    renameName(name: string) {
+        this.getName().rename(name);
         return this;
     }
 
@@ -53,5 +62,12 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         if (aliasIdentifier == null || !(aliasIdentifier instanceof Identifier))
             return undefined;
         return aliasIdentifier;
+    }
+
+    /**
+     * Gets the export declaration associated with this export specifier.
+     */
+    getExportDeclaration() {
+        return this.getFirstParentByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
     }
 }

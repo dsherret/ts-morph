@@ -105,14 +105,15 @@ const namedImport = importDeclaration.addNamedImport({
 
 #### Import specifier
 
-Getting or setting the name:
+##### Name
 
 ```typescript
 namedImport.getName(); // returns: Identifier
 namedImport.setName("NewName");
+namedImport.renameName("NewName");
 ```
 
-Getting or setting the alias:
+##### Alias
 
 ```typescript
 namedImport.getAlias(); // returns: Identifier | undefined
@@ -120,3 +121,9 @@ namedImport.setAlias("NewAliasName");
 ```
 
 _Note:_ Setting the alias will rename any uses of the alias or identifier in the current file to the new value.
+
+##### Parent import declaration
+
+```typescript
+namedImport.getImportDeclaration(); // returns: ImportDeclaration
+```
