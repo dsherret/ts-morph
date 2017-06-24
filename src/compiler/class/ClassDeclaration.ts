@@ -9,6 +9,7 @@ import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, Documentat
 import {AbstractableNode} from "./base";
 import {SourceFile} from "./../file";
 import {ExpressionWithTypeArguments} from "./../type";
+import {NamespaceChildableNode} from "./../namespace";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
@@ -19,7 +20,7 @@ export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | 
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
+    NamespaceChildableNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
 ))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**

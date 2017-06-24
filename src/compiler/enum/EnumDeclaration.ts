@@ -4,10 +4,11 @@ import {insertIntoSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
+import {NamespaceChildableNode} from "./../namespace";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {EnumMember} from "./EnumMember";
 
-export const EnumDeclarationBase = DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node)))));
+export const EnumDeclarationBase = NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Adds a member to the enum.

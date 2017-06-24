@@ -4,8 +4,9 @@ import {Logger} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode} from "./../base";
 import {StatementedNode} from "./../statement";
+import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
-export const NamespaceDeclarationBase = StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(BodiedNode(NamedNode(Node)))))));
+export const NamespaceDeclarationBase = NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(BodiedNode(NamedNode(Node))))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Gets if this namespace has a namespace keyword.

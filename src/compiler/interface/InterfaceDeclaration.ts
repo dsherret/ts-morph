@@ -5,6 +5,7 @@ import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, Proper
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
+import {NamespaceChildableNode} from "./../namespace";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
@@ -12,7 +13,7 @@ import {PropertySignature} from "./PropertySignature";
 export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration;
 
 export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(
-    ExportableNode(ModifierableNode(NamedNode(Node)))
+    NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
