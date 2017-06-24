@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {EnumDeclaration, InitializerExpressionableNode, Expression} from "./../../../../compiler";
+import {EnumDeclaration, InitializerExpressionableNode, Expression, ClassDeclaration, PropertyDeclaration} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(InitializerExpressionableNode), () => {
@@ -112,6 +112,32 @@ describe(nameof(InitializerExpressionableNode), () => {
             it("should set the initializer", () => {
                 member.setInitializer("5");
                 expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5\n}\n");
+            });
+        });
+
+
+        describe("class property", () => {
+            function doClassPropTest(text: string, newInitializer: string, expected: string) {
+                const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+                const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+                prop.setInitializer(newInitializer);
+                expect(firstChild.getFullText()).to.equal(expected);
+            }
+
+            it("should set a new initializer", () => {
+                doClassPropTest("class Identifier { prop; }", "2", "class Identifier { prop = 2; }");
+            });
+
+            it("should replace initializer", () => {
+                doClassPropTest("class Identifier { prop = '2'; }", "2", "class Identifier { prop = 2; }");
+            });
+
+            it("should set initializer when there's an inline comment", () => {
+                doClassPropTest("class Identifier { prop/*comment*/; }", "2", "class Identifier { prop = 2/*comment*/; }");
+            });
+
+            it("should set initializer when there's a comment after and no semi-colon", () => {
+                doClassPropTest("class Identifier { prop/*comment*/ }", "2", "class Identifier { prop = 2/*comment*/ }");
             });
         });
     });

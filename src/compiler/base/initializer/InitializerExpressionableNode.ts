@@ -65,11 +65,18 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
                 this.removeInitializer();
 
             insertStraight({
-                insertPos: this.getEnd(),
+                insertPos: getInsertPos(this),
                 parent: this,
                 newCode: ` = ${text}`
             });
             return this;
         }
     };
+}
+
+function getInsertPos(node: InitializerExpressionableNode & Node) {
+    const lastChild = node.getLastChild();
+    if (lastChild != null && lastChild.getKind() === ts.SyntaxKind.SemicolonToken)
+        return lastChild.getPos();
+    return node.getEnd();
 }
