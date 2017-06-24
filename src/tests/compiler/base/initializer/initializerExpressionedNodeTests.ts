@@ -115,7 +115,6 @@ describe(nameof(InitializerExpressionableNode), () => {
             });
         });
 
-
         describe("class property", () => {
             function doClassPropTest(text: string, newInitializer: string, expected: string) {
                 const {firstChild} = getInfoFromText<ClassDeclaration>(text);
