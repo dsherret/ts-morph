@@ -22,7 +22,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     setName(newName: string) {
         // todo: implement
-        throw new errors.NotImplementedError("Setting the namespace name is not implemented.")
+        throw new errors.NotImplementedError("Setting the namespace name is not implemented.");
     }
 
     /**
