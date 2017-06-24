@@ -74,7 +74,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
     };
 }
 
-function getInsertPos(node: InitializerExpressionableNode & Node) {
+function getInsertPos(node: Node) {
     const lastChild = node.getLastChild();
     if (lastChild != null && lastChild.getKind() === ts.SyntaxKind.SemicolonToken)
         return lastChild.getPos();
