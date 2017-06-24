@@ -67,7 +67,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
-                const insertPos = getNamedNode(this).getNameNode().getEnd();
+                const insertPos = getNamedNode(this).getNameIdentifier().getEnd();
                 insertStraight({
                     insertPos,
                     parent: this,
@@ -94,7 +94,7 @@ function getNamedNode(node: TypeParameteredNode) {
     const namedNode = node as any as NamedNode;
 
     /* istanbul ignore if */
-    if (namedNode.getNameNode == null)
+    if (namedNode.getNameIdentifier == null)
         throw new errors.NotImplementedError("Not implemented scenario. Type parameters can only be added to a node with a name.");
 
     return namedNode;

@@ -46,9 +46,9 @@ describe(nameof(PropertyNamedNode), () => {
         });
     });
 
-    describe(nameof<PropertyNamedNode>(n => n.getNameNode), () => {
+    describe(nameof<PropertyNamedNode>(n => n.getNameIdentifier), () => {
         const {firstEnumMember} = getInfoFromTextWithFirstMember();
-        const nameNode = firstEnumMember.getNameNode();
+        const nameNode = firstEnumMember.getNameIdentifier();
 
         it("should have correct text", () => {
             expect(nameNode.getText()).to.equal("myMember");

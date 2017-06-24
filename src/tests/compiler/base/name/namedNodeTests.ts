@@ -40,9 +40,9 @@ describe(nameof(NamedNode), () => {
         });
     });
 
-    describe(nameof<NamedNode>(n => n.getNameNode), () => {
+    describe(nameof<NamedNode>(n => n.getNameIdentifier), () => {
         const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
-        const nameNode = firstChild.getNameNode();
+        const nameNode = firstChild.getNameIdentifier();
 
         it("should have correct text", () => {
             expect(nameNode.getText()).to.equal("MyEnum");

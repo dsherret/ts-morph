@@ -111,7 +111,7 @@ describe(nameof(TsSimpleAst), () => {
 
         it("should rename an identifier appropriately", () => {
             const interfaceFile = ast.getSourceFile("testInterfaces.ts")!;
-            interfaceFile.getInterfaces()[0].getProperties()[0].getNameNode().rename("newName");
+            interfaceFile.getInterfaces()[0].getProperties()[0].getNameIdentifier().rename("newName");
             const variableFile = ast.getSourceFile("variableTestFile.ts")!;
             expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });

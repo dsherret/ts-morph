@@ -11,7 +11,7 @@ export interface NamedNode {
     /**
      * Gets the name node.
      */
-    getNameNode(): Identifier;
+    getNameIdentifier(): Identifier;
     /**
      * Gets the name.
      */
@@ -25,12 +25,12 @@ export interface NamedNode {
 
 export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
     return class extends Base implements NamedNode {
-        getNameNode() {
+        getNameIdentifier() {
             return this.factory.getIdentifier(this.compilerNode.name, this.sourceFile);
         }
 
         getName() {
-            return this.getNameNode().getText();
+            return this.getNameIdentifier().getText();
         }
 
         rename(newName: string) {
@@ -38,7 +38,7 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
                 return this;
 
             errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
-            this.getNameNode().rename(newName);
+            this.getNameIdentifier().rename(newName);
             return this;
         }
     };

@@ -13,7 +13,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the full name of the namespace.
      */
     getName() {
-        return this.getNameNodes().map(n => n.getText()).join(".");
+        return this.getNameIdentifiers().map(n => n.getText()).join(".");
     }
 
     /**
@@ -30,9 +30,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * @param newName - New name.
      */
     rename(newName: string) {
-        const nameNodes = this.getNameNodes();
+        const nameNodes = this.getNameIdentifiers();
         if (nameNodes.length > 1)
-            throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`);
+            throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameIdentifiers)}()`);
         if (newName.indexOf(".") >= 0)
             throw new errors.NotSupportedError(`Cannot rename a namespace name to a name containing a period.`);
         nameNodes[0].rename(newName);
@@ -40,9 +40,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /**
-     * Gets the name nodes.
+     * Gets the name identifiers.
      */
-    getNameNodes() {
+    getNameIdentifiers() {
         const nodes: Identifier[] = [];
         let current: Node<ts.NamespaceDeclaration> | undefined = this;
         do {

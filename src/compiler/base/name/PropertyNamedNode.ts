@@ -6,14 +6,14 @@ import {Node, Identifier} from "./../../common";
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
 export interface PropertyNamedNode {
-    getNameNode(): Identifier;
+    getNameIdentifier(): Identifier;
     getName(): string;
     rename(text: string): this;
 }
 
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
     return class extends Base implements PropertyNamedNode {
-        getNameNode() {
+        getNameIdentifier() {
             const compilerNameNode = this.compilerNode.name;
 
             switch (compilerNameNode.kind) {
@@ -26,12 +26,12 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
         }
 
         getName() {
-            return this.getNameNode().getText();
+            return this.getNameIdentifier().getText();
         }
 
         rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            this.getNameNode().rename(text);
+            this.getNameIdentifier().rename(text);
             return this;
         }
     };

@@ -8,7 +8,7 @@ import {Node, Identifier} from "./../../common";
 export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.BindingName; }>;
 
 export interface BindingNamedNode {
-    getNameNode(): Identifier;
+    getNameIdentifier(): Identifier;
     getName(): string;
     /**
      * Renames the name.
@@ -19,7 +19,7 @@ export interface BindingNamedNode {
 
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
     return class extends Base implements BindingNamedNode {
-        getNameNode() {
+        getNameIdentifier() {
             const compilerNameNode = this.compilerNode.name;
 
             switch (compilerNameNode.kind) {
@@ -32,12 +32,12 @@ export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtension
         }
 
         getName() {
-            return this.getNameNode().getText();
+            return this.getNameIdentifier().getText();
         }
 
         rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            this.getNameNode().rename(text);
+            this.getNameIdentifier().rename(text);
             return this;
         }
     };
