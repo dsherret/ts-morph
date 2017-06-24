@@ -55,7 +55,11 @@ TODO: Not yet supported.
 
 ### Remove
 
-TODO: Not yet supported.
+You can remove a source file from the AST by calling:
+
+```typescript
+ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
+```
 
 ### Get default export symbol
 

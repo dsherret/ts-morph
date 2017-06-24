@@ -89,6 +89,8 @@ const namedExports = exportDeclaration.getNamedExports();
 
 #### Export specifier
 
+Export specifiers are the individual named exports.
+
 ##### Name
 
 ```typescript

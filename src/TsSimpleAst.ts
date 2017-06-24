@@ -114,6 +114,15 @@ export class TsSimpleAst {
     }
 
     /**
+     * Removes a source file from the AST.
+     * @param sourceFile - Source file to remove.
+     * @returns True if removed.
+     */
+    removeSourceFile(sourceFile: compiler.SourceFile) {
+        return this.languageService.removeSourceFile(sourceFile);
+    }
+
+    /**
      * Gets the compiler diagnostics.
      */
     getDiagnostics(): compiler.Diagnostic[] {

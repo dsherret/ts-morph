@@ -208,6 +208,16 @@ export class LanguageService {
         this.resetProgram();
     }
 
+    removeSourceFile(sourceFile: SourceFile) {
+        const index = this.sourceFiles.indexOf(sourceFile);
+        if (index === -1)
+            return false;
+
+        this.sourceFiles.splice(index, 1);
+        this.resetProgram();
+        return true;
+    }
+
     getScriptTarget() {
         return this.compilerOptions.target!;
     }

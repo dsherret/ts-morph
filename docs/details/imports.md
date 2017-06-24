@@ -105,6 +105,8 @@ const namedImport = importDeclaration.addNamedImport({
 
 #### Import specifier
 
+Import specifiers are the individual named imports.
+
 ##### Name
 
 ```typescript

@@ -36,4 +36,4 @@ const ast = new Ast({
 });
 ```
 
-**Next step:** [Adding SourceFiles](adding-sourcefiles)
+**Next step:** [Adding SourceFiles](adding-source-files)

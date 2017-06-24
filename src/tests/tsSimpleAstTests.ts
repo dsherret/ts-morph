@@ -116,4 +116,14 @@ describe(nameof(TsSimpleAst), () => {
             expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });
     });
+
+    describe(nameof<TsSimpleAst>(ast => ast.removeSourceFile), () => {
+        it("should remove the source file", () => {
+            const ast = new TsSimpleAst();
+            const sourceFile = ast.addSourceFileFromText("myFile.ts", ``);
+            expect(ast.removeSourceFile(sourceFile)).to.equal(true);
+            expect(ast.removeSourceFile(sourceFile)).to.equal(false);
+            expect(ast.getSourceFiles().length).to.equal(0);
+        });
+    });
 });
