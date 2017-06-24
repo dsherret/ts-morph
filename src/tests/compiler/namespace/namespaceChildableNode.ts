@@ -23,5 +23,10 @@ describe(nameof(NamespaceChildableNode), () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.MyOtherNamespace { const v; }");
             expect(firstChild.getVariableStatements()[0].getParentNamespace()).to.equal(firstChild);
         });
+
+        it("should return undefined when not in a namespace", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.MyOtherNamespace { }");
+            expect(firstChild.getParentNamespace()).to.equal(undefined);
+        });
     });
 });
