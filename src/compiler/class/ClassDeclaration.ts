@@ -8,6 +8,7 @@ import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, Documentat
     ImplementsClauseableNode} from "./../base";
 import {AbstractableNode} from "./base";
 import {SourceFile} from "./../file";
+import {ParameterDeclaration} from "./../function";
 import {ExpressionWithTypeArguments} from "./../type";
 import {NamespaceChildableNode} from "./../namespace";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
@@ -16,8 +17,11 @@ import {PropertyDeclaration} from "./PropertyDeclaration";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
-export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
-export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
+export type ClassInstancePropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration;
+export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
+export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ParameterDeclaration;
 
 export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
     NamespaceChildableNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
@@ -179,17 +183,17 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the class instance property declarations.
      */
-    getInstanceProperties(): ClassPropertyTypes[] {
+    getInstanceProperties(): ClassInstancePropertyTypes[] {
         return this.getInstanceMembers()
-            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+            .filter(m => isClassPropertyType(m)) as ClassInstancePropertyTypes[];
     }
 
     /**
      * Gets the class instance property declarations.
      */
-    getStaticProperties(): ClassPropertyTypes[] {
+    getStaticProperties(): ClassStaticPropertyTypes[] {
         return this.getStaticMembers()
-            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+            .filter(m => isClassPropertyType(m)) as ClassStaticPropertyTypes[];
     }
 
     /**
@@ -274,24 +278,36 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !m.isStatic());
+        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && (m instanceof ParameterDeclaration || !m.isStatic())) as ClassInstanceMemberTypes[];
     }
 
     /**
      * Gets the static members.
      */
     getStaticMembers() {
-        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && m.isStatic());
+        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
     }
 
     /**
-     * Gets the instance and static members.
+     * Gets the constructors, methods, properties, and class parameter properties.
      */
     getAllMembers() {
-        return this.compilerNode.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const members = this.compilerNode.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const ctors = members.filter(c => c.isConstructorDeclaration() && c.getBody() != null) as ConstructorDeclaration[];
+        for (const ctor of ctors) {
+            // insert after the constructor
+            let insertIndex = members.indexOf(ctor) + 1;
+            for (const param of ctor.getParameters()) {
+                if (param.getScope() != null) {
+                    members.splice(insertIndex, 0, param);
+                    insertIndex++;
+                }
+            }
+        }
+        return members;
     }
 }
 
-function isClassPropertyType(m: Node): m is ClassPropertyTypes {
-    return m instanceof PropertyDeclaration || m instanceof SetAccessorDeclaration || m instanceof GetAccessorDeclaration;
+function isClassPropertyType(m: Node) {
+    return m instanceof PropertyDeclaration || m instanceof SetAccessorDeclaration || m instanceof GetAccessorDeclaration || m instanceof ParameterDeclaration;
 }

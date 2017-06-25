@@ -1,12 +1,12 @@
 ﻿import {expect} from "chai";
-import {StaticableNode, ClassDeclaration} from "./../../../compiler";
+import {StaticableNode, ClassDeclaration, PropertyDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StaticableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("class MyClass { static prop: string; prop2: string; }");
     const classDec = mainSourceFile.getClasses()[0];
     const staticProp = classDec.getStaticProperties()[0];
-    const instanceProp = classDec.getInstanceProperties()[0];
+    const instanceProp = classDec.getInstanceProperties()[0] as PropertyDeclaration;
 
     describe(nameof<StaticableNode>(n => n.isStatic), () => {
         it("should be static when static", () => {
@@ -31,7 +31,7 @@ describe(nameof(StaticableNode), () => {
     describe(nameof<StaticableNode>(n => n.setIsStatic), () => {
         it("should set as static when not static", () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");
-            firstChild.getInstanceProperties()[0].setIsStatic(true);
+            (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsStatic(true);
             expect(sourceFile.getText()).to.equal("class MyClass { static prop: string; }");
         });
 

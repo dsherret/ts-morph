@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
-    ConstructorDeclaration} from "./../../../compiler";
+    ConstructorDeclaration, ParameterDeclaration} from "./../../../compiler";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -178,24 +178,31 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         describe("has properties", () => {
-            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\ninstanceProp: string;\nprop2: number;method1() {}\n" +
+            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
+                "constructor(param: string, public param2: string) {}\n" +
+                "instanceProp: string;\nprop2: number;method1() {}\n" +
                 "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
-                expect(firstChild.getInstanceProperties().length).to.equal(4);
+                expect(firstChild.getInstanceProperties().length).to.equal(5);
+            });
+
+            it("should get a property of the right instance of for the parameter", () => {
+                expect(firstChild.getInstanceProperties()[0]).to.be.instanceOf(ParameterDeclaration);
+                expect(firstChild.getInstanceProperties()[0].getName()).to.equal("param2");
             });
 
             it("should get a property of the right instance of", () => {
-                expect(firstChild.getInstanceProperties()[0]).to.be.instanceOf(PropertyDeclaration);
+                expect(firstChild.getInstanceProperties()[1]).to.be.instanceOf(PropertyDeclaration);
             });
 
             it("should get a property of the right instance of for the get accessor", () => {
-                expect(firstChild.getInstanceProperties()[2]).to.be.instanceOf(GetAccessorDeclaration);
+                expect(firstChild.getInstanceProperties()[3]).to.be.instanceOf(GetAccessorDeclaration);
             });
 
             it("should get a property of the right instance of for the set accessor", () => {
-                expect(firstChild.getInstanceProperties()[3]).to.be.instanceOf(SetAccessorDeclaration);
+                expect(firstChild.getInstanceProperties()[4]).to.be.instanceOf(SetAccessorDeclaration);
             });
         });
     });
@@ -209,7 +216,7 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         describe("has static properties", () => {
-            const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
+            const code = "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
                 "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
@@ -334,14 +341,16 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getInstanceMembers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n");
+        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
+            "prop2: number;method1() {}\n}\n");
         it("should get the right number of instance members", () => {
-            expect(firstChild.getInstanceMembers().length).to.equal(3);
+            expect(firstChild.getInstanceMembers().length).to.equal(4);
         });
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStaticMembers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n}\n");
+        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
+            "prop2: number;method1() {}\n}\n");
         it("should get the right number of static members", () => {
             expect(firstChild.getStaticMembers().length).to.equal(2);
         });
