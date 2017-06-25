@@ -9,7 +9,7 @@ Class declarations can be retrieved from source files, namespaces, or function b
 ```typescript
 const classes = sourceFile.getClasses();
 const class1 = sourceFile.getClass("Class1");
-const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructor() !== undefined);
+const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().length > 0);
 ```
 
 ### Add/Insert
@@ -55,10 +55,10 @@ classDeclaration.insertImplements(1, ["Named", "Aged"]);
 
 ### Constructor
 
-If one exists, it can be retrieved via `getConstructor`:
+Constructors can be retreived via `getConstructors` (returns overloads and implementation):
 
 ```typescript
-const ctor = classDeclaration.getConstructor();
+const constructors = classDeclaration.getConstructors();
 ```
 
 Add or insert a constructor by calling `addConstructor()` or `insertConstructor()` respectively.

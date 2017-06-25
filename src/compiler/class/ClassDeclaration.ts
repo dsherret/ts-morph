@@ -85,9 +85,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
-        const currentCtor = this.getConstructor();
-        if (currentCtor != null)
-            currentCtor.remove();
+        for (const c of this.getConstructors()) {
+            c.remove();
+        }
 
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.factory.getLanguageService().getNewLine();
@@ -108,11 +108,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the constructor declaration or undefined if none exists.
+     * Gets the constructor declarations.
      */
-    getConstructor() {
-        const constructorMember = this.compilerNode.members.find(m => m.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration | undefined;
-        return constructorMember == null ? undefined : this.factory.getConstructorDeclaration(constructorMember, this.sourceFile);
+    getConstructors() {
+        return this.getAllMembers().filter(m => m.isConstructorDeclaration()) as ConstructorDeclaration[];
     }
 
     /**

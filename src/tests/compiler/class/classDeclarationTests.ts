@@ -82,15 +82,23 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getConstructor), () => {
+    describe(nameof<ClassDeclaration>(d => d.getConstructors), () => {
         it("should return undefined when no constructor exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
-            expect(firstChild.getConstructor()).to.be.undefined;
+            expect(firstChild.getConstructors().length).to.equal(0);
         });
 
         it("should return the constructor when it exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor() { } }");
-            expect(firstChild.getConstructor()!.getText()).to.equal("constructor() { }");
+            expect(firstChild.getConstructors()[0]!.getText()).to.equal("constructor() { }");
+        });
+
+        it("should return the constructor overload when it exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor(str: string);constructor(str: any) { } }");
+            const constructors = firstChild.getConstructors();
+            expect(constructors.length).to.equal(2);
+            expect(constructors[0]!.getText()).to.equal("constructor(str: string);");
+            expect(constructors[1]!.getText()).to.equal("constructor(str: any) { }");
         });
     });
 
