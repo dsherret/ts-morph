@@ -37,6 +37,14 @@ Or set a parameter as a rest parameter:
 parameter.setIsRestParameter(true);
 ```
 
+### Parameter Property
+
+Constructor parameters may be properties when they have a scope and/or are readonly. You can tell if one is by calling:
+
+```typescript
+const isParameterProperty = parameter.isParameterProperty(); // returns: boolean
+```
+
 ### Optional
 
 A parameter can be optional if it is marked so with a question mark, is a rest parameter, or has an initializer.

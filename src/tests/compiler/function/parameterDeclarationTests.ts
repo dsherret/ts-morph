@@ -40,6 +40,26 @@ describe(nameof(ParameterDeclaration), () => {
         });
     });
 
+    describe(nameof<ParameterDeclaration>(d => d.isParameterProperty), () => {
+        function doTest(startCode: string, isParameterProperty: boolean) {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            const firstParam = firstChild.getParameters()[0];
+            expect(firstParam.isParameterProperty()).to.be.equal(isParameterProperty);
+        }
+
+        it("should be parameter property when has a scope", () => {
+            doTest("function func(public param: any){}", true);
+        });
+
+        it("should be parameter property when is readonly", () => {
+            doTest("function func(readonly param: any){}", true);
+        });
+
+        it("should not be parameter property when not readonly or having a scope", () => {
+            doTest("function func(param: any){}", false);
+        });
+    });
+
     describe(nameof<ParameterDeclaration>(d => d.isOptional), () => {
         function doTest(startCode: string, isOptional: boolean) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);

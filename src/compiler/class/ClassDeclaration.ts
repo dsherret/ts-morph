@@ -298,7 +298,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             // insert after the constructor
             let insertIndex = members.indexOf(ctor) + 1;
             for (const param of ctor.getParameters()) {
-                if (param.getScope() != null) {
+                if (param.isParameterProperty()) {
                     members.splice(insertIndex, 0, param);
                     insertIndex++;
                 }

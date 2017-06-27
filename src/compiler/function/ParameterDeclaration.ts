@@ -22,6 +22,13 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     }
 
     /**
+     * Gets if this is a parameter property.
+     */
+    isParameterProperty() {
+        return this.getScope() != null || this.isReadonly();
+    }
+
+    /**
      * Sets if it's a rest parameter.
      * @param value - Sets if it's a rest parameter or not.
      */

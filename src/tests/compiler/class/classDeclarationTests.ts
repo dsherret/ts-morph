@@ -179,30 +179,35 @@ describe(nameof(ClassDeclaration), () => {
 
         describe("has properties", () => {
             const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
-                "constructor(param: string, public param2: string) {}\n" +
+                "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
                 "instanceProp: string;\nprop2: number;method1() {}\n" +
                 "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
-                expect(firstChild.getInstanceProperties().length).to.equal(5);
+                expect(firstChild.getInstanceProperties().length).to.equal(6);
             });
 
-            it("should get a property of the right instance of for the parameter", () => {
+            it("should get a property of the right instance of for parameter with a scope", () => {
                 expect(firstChild.getInstanceProperties()[0]).to.be.instanceOf(ParameterDeclaration);
                 expect(firstChild.getInstanceProperties()[0].getName()).to.equal("param2");
             });
 
+            it("should get a property of the right instance of for parameter with readonly keyword", () => {
+                expect(firstChild.getInstanceProperties()[1]).to.be.instanceOf(ParameterDeclaration);
+                expect(firstChild.getInstanceProperties()[1].getName()).to.equal("param3");
+            });
+
             it("should get a property of the right instance of", () => {
-                expect(firstChild.getInstanceProperties()[1]).to.be.instanceOf(PropertyDeclaration);
+                expect(firstChild.getInstanceProperties()[2]).to.be.instanceOf(PropertyDeclaration);
             });
 
             it("should get a property of the right instance of for the get accessor", () => {
-                expect(firstChild.getInstanceProperties()[3]).to.be.instanceOf(GetAccessorDeclaration);
+                expect(firstChild.getInstanceProperties()[4]).to.be.instanceOf(GetAccessorDeclaration);
             });
 
             it("should get a property of the right instance of for the set accessor", () => {
-                expect(firstChild.getInstanceProperties()[4]).to.be.instanceOf(SetAccessorDeclaration);
+                expect(firstChild.getInstanceProperties()[5]).to.be.instanceOf(SetAccessorDeclaration);
             });
         });
     });
