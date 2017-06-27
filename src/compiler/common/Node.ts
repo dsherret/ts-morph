@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {replaceNodeText} from "./../../manipulation";
-import {IDisposable} from "./../../utils";
+import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -12,7 +12,7 @@ import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./Symbol";
 
-export class Node<NodeType extends ts.Node = ts.Node> implements IDisposable {
+export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /** @internal */
     readonly factory: CompilerFactory;
     /** @internal */
