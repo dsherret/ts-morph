@@ -31,8 +31,9 @@ export class Diagnostic {
     /**
      * Gets the source file.
      */
-    getSourceFile(): SourceFile {
-        return this.factory.getSourceFile(this.compilerDiagnostic.file);
+    getSourceFile(): SourceFile | undefined {
+        const file = this.compilerDiagnostic.file;
+        return file == null ? undefined : this.factory.getSourceFile(file);
     }
 
     /**

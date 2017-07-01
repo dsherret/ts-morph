@@ -28,7 +28,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
             const typeChecker = this.factory.getTypeChecker();
-            const signature = typeChecker.getSignatureFromNode(this);
+            const signature = typeChecker.getSignatureFromNode(this)!; // should always return a signature
             return typeChecker.getReturnTypeOfSignature(signature);
         }
 

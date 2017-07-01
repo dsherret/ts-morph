@@ -2,8 +2,8 @@
 import {Node, SourceFile, LanguageService} from "./../compiler";
 import {verifyAndGetIndex} from "./verifyAndGetIndex";
 import {getEndIndexFromArray} from "./getEndIndexFromArray";
-import {insertIntoBracesOrSourceFile} from "./insertIntoBracesOrSourceFile";
-import {fillAndGetChildren} from "./fillAndGetChildren";
+import {insertIntoBracesOrSourceFile, InsertIntoBracesOrSourceFileOptions} from "./insertIntoBracesOrSourceFile";
+import {fillAndGetChildren, FillAndGetChildrenOptions} from "./fillAndGetChildren";
 
 export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
     getChildren: () => Node[];
@@ -40,11 +40,11 @@ export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends
         languageService,
         separator: languageService.getNewLine(),
         index
-    });
+    } as InsertIntoBracesOrSourceFileOptions<TStructure>);
 
     return fillAndGetChildren<TNode, TStructure>({
         ...opts,
         allChildren: opts.getChildren(),
         index
-    });
+    } as FillAndGetChildrenOptions<TNode, TStructure>);
 }

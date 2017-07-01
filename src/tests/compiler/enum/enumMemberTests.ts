@@ -10,15 +10,41 @@ function getInfoFromTextWithFirstMember(text: string) {
 
 describe(nameof(EnumMember), () => {
     describe(nameof<EnumMember>(d => d.getValue), () => {
-        const {firstChild} = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
-        const members = firstChild.getMembers();
+        describe("number enum", () => {
+            const {firstChild} = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
+            const members = firstChild.getMembers();
 
-        it("should get the correct value for members with an initializer", () => {
-            expect(members[0].getValue()).to.equal(4);
+            it("should get the correct value for members with an initializer", () => {
+                expect(members[0].getValue()).to.equal(4);
+            });
+
+            it("should get the correct value for members without an initializer", () => {
+                expect(members[1].getValue()).to.equal(5);
+            });
         });
 
-        it("should get the correct value for members without an initializer", () => {
-            expect(members[1].getValue()).to.equal(5);
+        describe("string enum", () => {
+            const {firstEnumMember} = getInfoFromTextWithFirstMember("enum MyEnum {member = 'str'}");
+
+            it("should get the correct value for member", () => {
+                expect(firstEnumMember.getValue()).to.equal("str");
+            });
+        });
+    });
+
+    describe(nameof<EnumMember>(d => d.setValue), () => {
+        function doTest(text: string, value: string | number, expected: string) {
+            const {firstChild, firstEnumMember} = getInfoFromTextWithFirstMember(text);
+            firstEnumMember.setValue(value);
+            expect(firstChild.getText()).to.equal(expected);
+        }
+
+        it("should set the value to a string", () => {
+            doTest("enum MyEnum { member }", "str", `enum MyEnum { member = "str" }`);
+        });
+
+        it("should set the value for to a number", () => {
+            doTest("enum MyEnum { member }", 5, `enum MyEnum { member = 5 }`);
         });
     });
 

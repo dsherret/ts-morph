@@ -6,7 +6,7 @@ import {Node, Identifier} from "./../../common";
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
 
-export type DeclarationNamedNodeExtensionType = Node<ts.Declaration>;
+export type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
 
 export interface DeclarationNamedNode {
     /**

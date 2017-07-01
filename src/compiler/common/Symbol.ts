@@ -70,7 +70,8 @@ export class Symbol {
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return this.compilerSymbol.getDeclarations().map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
+        // todo: is it important that this might return undefined in ts 2.4?
+        return (this.compilerSymbol.getDeclarations() || []).map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
     }
 
     /**

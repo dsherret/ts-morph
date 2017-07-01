@@ -146,8 +146,9 @@ export class TypeChecker {
      * Gets a signature from a node.
      * @param node - Node to get the signature from.
      */
-    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature {
-        return this.factory.getSignature(this.compilerTypeChecker.getSignatureFromDeclaration(node.compilerNode));
+    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
+        const signature = this.compilerTypeChecker.getSignatureFromDeclaration(node.compilerNode);
+        return signature == null ? undefined : this.factory.getSignature(signature);
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {

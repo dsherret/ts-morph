@@ -13,6 +13,24 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     }
 
     /**
+     * Sets the enum value.
+     * @param value - Enum value.
+     */
+    setValue(value: string | number) {
+        let text: string;
+        if (typeof value === "string") {
+            const stringChar = this.factory.getLanguageService().getStringChar();
+            text = stringChar + value + stringChar;
+        }
+        else {
+            text = value.toString();
+        }
+
+        this.setInitializer(text);
+        return this;
+    }
+
+    /**
      * Removes this enum member.
      */
     remove() {

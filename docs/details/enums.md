@@ -80,12 +80,24 @@ enumDeclaration.setIsConstEnum(false);
 const member = enumDeclaration.getMember("member");
 ```
 
-### Get the value
+### Value
 
 The value can be retrieved whether it is implicitly or explicitly defined:
 
 ```typescript
-member.getValue(); // returns: number
+member.getValue(); // returns: string | number
+```
+
+It can also be set to a number:
+
+```typescript
+member.setValue(5);
+```
+
+Or a string:
+
+```typescript
+member.setValue("string value");
 ```
 
 ### Remove a Member

@@ -27,7 +27,7 @@ const message = diagnostic.getMessageText();
 Source file the diagnostic occurs in:
 
 ```typescript
-const sourceFile = diagnostic.getSourceFile();
+const sourceFile = diagnostic.getSourceFile(); // returns: SourceFile | undefined
 ```
 
 #### Start & length
