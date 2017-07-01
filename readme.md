@@ -42,7 +42,7 @@ enumDeclaration.hasExportKeyword(); // returns: false
 enumDeclaration.isDefaultExport();  // returns: true
 
 // manipulate ast
-enumDeclaration.setName("NewName");
+enumDeclaration.rename("NewName");
 enumDeclaration.addMember({
     name: "myNewMember"
 });
