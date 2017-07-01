@@ -88,8 +88,11 @@ export class CompilerFactory {
             Logger.log(`Loading file: ${absoluteFilePath}`);
             sourceFile = this.addSourceFileFromText(absoluteFilePath, this.fileSystem.readFile(absoluteFilePath));
 
-            if (sourceFile != null)
-                sourceFile.getReferencedFiles(); // fill referenced files
+            if (sourceFile != null) {
+                // ensure these are added to the ast
+                sourceFile.getReferencedFiles();
+                sourceFile.getTypeReferenceDirectives();
+            }
         }
 
         return sourceFile;

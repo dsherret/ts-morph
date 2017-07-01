@@ -22,12 +22,20 @@ Use:
 sourceFile.isDeclarationFile(); // returns: boolean
 ```
 
-### Get referenced files
+### Referenced files
 
 This returns any files that are referenced via `/// <reference path="..." />` statements:
 
 ```typescript
 const referencedFiles = sourceFile.getReferencedFiles();
+```
+
+### Type reference directives
+
+This returns any files that are referenced via `/// <reference types="..." />` statements:
+
+```typescript
+const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 ```
 
 ### Save to file system
