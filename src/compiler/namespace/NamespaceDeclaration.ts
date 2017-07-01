@@ -17,12 +17,18 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /**
-     * Sets the name without renaming.
+     * Sets the name without renaming references.
      * @param newName - New full namespace name.
      */
     setName(newName: string) {
-        // todo: implement
-        throw new errors.NotImplementedError("Setting the namespace name is not implemented.");
+        const nameNodes = this.getNameIdentifiers();
+        const openIssueText = `Please open an issue if you really need this and I'll up the priority.`;
+        if (nameNodes.length > 1)
+            throw new errors.NotImplementedError(`Not implemented to set a namespace name that uses dot notation. ${openIssueText}`);
+        if (newName.indexOf(".") >= 0)
+            throw new errors.NotImplementedError(`Not implemented to set a namespace name to a name containing a period. ${openIssueText}`);
+        replaceNodeText(this.sourceFile, nameNodes[0].getStart(), nameNodes[0].getEnd(), newName);
+        return this;
     }
 
     /**

@@ -53,9 +53,20 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.setName), () => {
-        it("should throw an exception because it's not implemented", () => {
+        it("should throw an exception when using dot notation because it's not implemented", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
+            expect(() => firstChild.setName("NewName.NewName")).to.throw(errors.NotImplementedError);
+        });
+
+        it("should throw an exception when setting a namepsace name that already uses dot notation because it's not implemented", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.Name {}");
             expect(() => firstChild.setName("NewName")).to.throw(errors.NotImplementedError);
+        });
+
+        it("should set the name when not using dot notation", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace {}");
+            firstChild.setName("NewName");
+            expect(firstChild.getText()).to.equal("namespace NewName {}");
         });
     });
 
