@@ -3,4 +3,4 @@ node_js:
     - "6.1"
 before_script:
     - gulp tslint
-    - npm run check-structures-match
+    - npm run code-verification

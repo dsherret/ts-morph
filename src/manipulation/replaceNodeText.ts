@@ -2,7 +2,6 @@
 
 /**
  * Replaces text in a source file. Good for renaming identifiers. Not good for creating new nodes!
- * @internal
  * @param sourceFile - Source file to replace in.
  * @param replaceStart - Start of where to replace.
  * @param replaceEnd - End of where to replace.

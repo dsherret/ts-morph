@@ -12,11 +12,15 @@ var p = require("./package.json");
 var tsNameOf = require("ts-nameof");
 var merge = require("merge2");
 
+var unusedDefinitionsFilter = filter([
+    "**", "!*/factories/CompilerFactory.d.ts", "!*/factories.d.ts", "!*/tests/**/*.d.ts",
+    "!*/manipulation.d.ts", "!*/manipulation/**/*.d.ts"
+]);
+
 gulp.task("typescript", ["clean-scripts"], function() {
     var tsProject = ts.createProject("tsconfig.json", {
         typescript: require("typescript")
     });
-    var unusedDefinitionsFilter = filter(["**", "!*/factories/CompilerFactory.d.ts", "!*/factories.d.ts", "!*/tests/**/*.d.ts"])
 
     var tsResult = gulp.src(["./src/**/*.ts"])
         .pipe(sourcemaps.init())
@@ -24,14 +28,14 @@ gulp.task("typescript", ["clean-scripts"], function() {
         .pipe(ts(tsProject));
 
     return merge([
-            tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist')),
-            tsResult.js.pipe(replace(/(}\)\()(.*\|\|.*;)/g, '$1/* istanbul ignore next */$2'))
-                .pipe(replace(/(var __extends = \(this && this.__extends\))/g, '$1/* istanbul ignore next */'))
-                .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))
-                // ignore empty constructors (for mixins and static classes)
-                .pipe(replace(/(function [A-Za-z]+\(\) {[\s\n\t]+})/g, '/* istanbul ignore next */ $1'))
-                .pipe(sourcemaps.write("./"))
-                .pipe(gulp.dest("./dist"))
+        tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist')),
+        tsResult.js.pipe(replace(/(}\)\()(.*\|\|.*;)/g, '$1/* istanbul ignore next */$2'))
+            .pipe(replace(/(var __extends = \(this && this.__extends\))/g, '$1/* istanbul ignore next */'))
+            .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))
+            // ignore empty constructors (for mixins and static classes)
+            .pipe(replace(/(function [A-Za-z]+\(\) {[\s\n\t]+})/g, '/* istanbul ignore next */ $1'))
+            .pipe(sourcemaps.write("./"))
+            .pipe(gulp.dest("./dist"))
     ]);
 });
 
@@ -72,10 +76,14 @@ gulp.task("code-generate", ["clean-code-generation"], function (cb) {
         typescript: require("typescript")
     });
 
-    return gulp.src(["./{src,code-generation}/**/*.ts"])
-        //.pipe(tsNameOf())
-        .pipe(ts(tsProject))
-        .pipe(gulp.dest("./dist-cg"));
+    var tsResult = gulp.src(["./{src,code-generation}/**/*.ts"])
+        .pipe(tsNameOf())
+        .pipe(ts(tsProject));
+
+    return merge([
+        tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist-cg')),
+        tsResult.js.pipe(gulp.dest("./dist-cg"))
+    ]);
 });
 
 gulp.task("default", ["tslint", "typescript"]);
