@@ -127,4 +127,15 @@ describe(nameof(TsSimpleAst), () => {
             expect(() => sourceFile.getChildCount()).to.throw(); // should be disposed
         });
     });
+
+    describe("manipulating then getting something from the type checker", () => {
+        it("should not error after manipulation", () => {
+            const ast = new TsSimpleAst();
+            const sourceFile = ast.addSourceFileFromText("myFile.ts", `function myFunction(param: string) {}`);
+            const param = sourceFile.getFunctions()[0].getParameters()[0];
+            expect(param.getType().getText()).to.equal("string");
+            param.setType("number");
+            expect(param.getType().getText()).to.equal("number");
+        });
+    });
 });

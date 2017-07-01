@@ -32,7 +32,7 @@ export class Program {
      * @internal
      */
     reset(rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
-        this._compilerProgram = ts.createProgram(rootNames, compilerOptions, host);
+        this._compilerProgram = ts.createProgram(rootNames, compilerOptions, host, this._compilerProgram);
         this.typeChecker.reset(this._compilerProgram.getTypeChecker());
     }
 
