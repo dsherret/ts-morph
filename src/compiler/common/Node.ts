@@ -399,10 +399,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     replaceCompilerNode(compilerNode: NodeType) {
         this._compilerNode = compilerNode;
-
-        // make sure the program has the latest source file
-        if (compilerNode.kind === ts.SyntaxKind.SourceFile)
-            this.factory.resetProgram();
     }
 
     /**

@@ -43,6 +43,7 @@ describe(nameof(TsSimpleAst), () => {
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
             expect(sourceFiles[0].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file1.ts"));
+            expect(sourceFiles[0].isSaved()).to.be.true; // should be saved because it was read from the disk
             expect(sourceFiles[1].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file2.ts"));
         });
     });
@@ -54,6 +55,12 @@ describe(nameof(TsSimpleAst), () => {
             expect(() => {
                 ast.addSourceFileFromText("file.ts", "");
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+        });
+
+        it("should mark the source file as having not been saved", () => {
+            const ast = new TsSimpleAst();
+            const sourceFile = ast.addSourceFileFromText("file.ts", "");
+            expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("", () => {
@@ -80,6 +87,12 @@ describe(nameof(TsSimpleAst), () => {
             expect(() => {
                 ast.addSourceFileFromStructure("file.ts", {});
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+        });
+
+        it("should mark the source file as having not been saved", () => {
+            const ast = new TsSimpleAst();
+            const sourceFile = ast.addSourceFileFromStructure("file.ts", {});
+            expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("should add a source file based on a structure", () => {

@@ -14,6 +14,9 @@ import {ExportDeclaration} from "./ExportDeclaration";
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
 export const SourceFileBase: Constructor<StatementedNode> & typeof Node = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
+    /** @internal */
+    private _isSaved = false;
+
     /**
      * Initializes a new instance.
      * @internal
@@ -24,8 +27,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         factory: CompilerFactory,
         node: ts.SourceFile
     ) {
-        super(factory, node, undefined as any); // hack :(
+        // start hack :(
+        super(factory, node, undefined as any);
         this.sourceFile = this;
+        // end hack
+    }
+
+    /**
+     * @internal
+     */
+    replaceCompilerNode(compilerNode: ts.SourceFile) {
+        super.replaceCompilerNode(compilerNode);
+        this.factory.resetProgram(); // make sure the program has the latest source file
+        this._isSaved = true;
     }
 
     /**
@@ -48,7 +62,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Asynchronously saves this file with any changes.
      */
     save() {
-        return this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText());
+        return this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText()).then(() => {
+            this._isSaved = true;
+        });
     }
 
     /**
@@ -56,6 +72,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     saveSync() {
         this.factory.getFileSystemHost().writeFileSync(this.getFilePath(), this.getFullText());
+        this._isSaved = true;
     }
 
     /**
@@ -81,6 +98,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isDeclarationFile() {
         return this.compilerNode.isDeclarationFile;
+    }
+
+    /**
+     * Gets if this source file has been saved or if the latest changes have been saved.
+     */
+    isSaved() {
+        return this._isSaved;
+    }
+
+    /**
+     * Sets if this source file has been saved.
+     * @internal
+     */
+    setIsSaved(value: boolean) {
+        this._isSaved = value;
     }
 
     /**

@@ -20,6 +20,10 @@ describe(nameof(SourceFile), () => {
         });
 
         describe("relative source file", () => {
+            it("should not be saved", () => {
+                expect(relativeSourceFile.isSaved()).to.be.false;
+            });
+
             it("should have have the same text", () => {
                 expect(relativeSourceFile.getFullText()).to.equal(fileText);
             });
@@ -30,6 +34,10 @@ describe(nameof(SourceFile), () => {
         });
 
         describe("absolute source file", () => {
+            it("should not be saved", () => {
+                expect(absoluteSourceFile.isSaved()).to.be.false;
+            });
+
             it("should have have the same text", () => {
                 expect(absoluteSourceFile.getFullText()).to.equal(fileText);
             });
@@ -47,7 +55,10 @@ describe(nameof(SourceFile), () => {
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
         it("should save the file", done => {
+            expect(sourceFile.isSaved()).to.be.false;
+
             sourceFile.save().then(() => {
+                expect(sourceFile.isSaved()).to.be.true;
                 const args = host.getWrittenFileArguments();
                 expect(args[0]).to.equal(filePath);
                 expect(args[1]).to.equal(fileText);
@@ -64,7 +75,10 @@ describe(nameof(SourceFile), () => {
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
         it("should save the file", () => {
+            expect(sourceFile.isSaved()).to.be.false;
+
             sourceFile.saveSync();
+            expect(sourceFile.isSaved()).to.be.true;
             const args = host.getWrittenFileArguments();
             expect(args[0]).to.equal(filePath);
             expect(args[1]).to.equal(fileText);

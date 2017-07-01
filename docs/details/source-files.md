@@ -43,9 +43,11 @@ const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 You can save a source file to the file system using one of the following commands:
 
 ```typescript
-sourceFile.save(err => {}); // callback is optional
+sourceFile.save(); // returns a promise
 sourceFile.saveSync();
 ```
+
+You can also check if the source file hasn't been saved to the disk by checking `sourceFile.isSaved();`.
 
 ### Copy
 

@@ -65,7 +65,7 @@ export class CompilerFactory {
     }
 
     /**
-     * Creates a temporary source file that won't be cached or added to the language service.
+     * Creates a temporary source file that won't be added to the language service.
      * @param sourceText - Text to create the source file with.
      * @param filePath - File path to use.
      * @returns Wrapped source file.
@@ -87,6 +87,7 @@ export class CompilerFactory {
         if (sourceFile == null) {
             Logger.log(`Loading file: ${absoluteFilePath}`);
             sourceFile = this.addSourceFileFromText(absoluteFilePath, this.fileSystem.readFile(absoluteFilePath));
+            sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
 
             if (sourceFile != null) {
                 // ensure these are added to the ast
