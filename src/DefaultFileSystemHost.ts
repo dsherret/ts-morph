@@ -11,8 +11,15 @@ export class DefaultFileSystemHost implements FileSystemHost {
         return fs.readFileSync(filePath, encoding);
     }
 
-    writeFile(filePath: string, fileText: string, callback?: (err: NodeJS.ErrnoException) => void) {
-        fs.writeFile(filePath, fileText, callback);
+    writeFile(filePath: string, fileText: string) {
+        return new Promise<void>((resolve, reject) => {
+            fs.writeFile(filePath, fileText, err => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            });
+        });
     }
 
     writeFileSync(filePath: string, fileText: string) {

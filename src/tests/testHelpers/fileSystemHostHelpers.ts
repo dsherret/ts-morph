@@ -8,10 +8,11 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
     let writtenFileArgs: any[];
     return {
         readFile: filePath => files.find(f => f.filePath === filePath)!.text,
-        writeFile: (filePath, fileText, callback) => {
-            writtenFileArgs = [filePath, fileText, callback];
-            if (callback)
-                (callback as any)();
+        writeFile: (filePath, fileText) => {
+            writtenFileArgs = [filePath, fileText];
+            return new Promise((resolve, reject) => {
+                resolve();
+            });
         },
         writeFileSync: (filePath, fileText) => {
             writtenFileArgs = [filePath, fileText];

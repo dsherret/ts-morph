@@ -47,11 +47,11 @@ describe(nameof(SourceFile), () => {
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
         it("should save the file", done => {
-            sourceFile.save(() => {
+            sourceFile.save().then(() => {
                 const args = host.getWrittenFileArguments();
                 expect(args[0]).to.equal(filePath);
                 expect(args[1]).to.equal(fileText);
-                expect(args.length).to.equal(3); // 3rd is callback
+                expect(args.length).to.equal(2);
                 done();
             });
         });

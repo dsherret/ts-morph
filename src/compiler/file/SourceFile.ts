@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {CompilerFactory} from "./../../factories";
 import {removeNodes} from "./../../manipulation";
+import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../structures";
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
@@ -10,7 +11,8 @@ import {Diagnostic} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 
-export const SourceFileBase = StatementedNode(Node);
+// todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
+export const SourceFileBase: Constructor<StatementedNode> & typeof Node = StatementedNode(Node);
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Initializes a new instance.
@@ -45,9 +47,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Asynchronously saves this file with any changes.
      */
-    save(callback?: (err: Error) => void) {
-        // todo: use a promise
-        this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText(), callback);
+    save() {
+        return this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText());
     }
 
     /**
