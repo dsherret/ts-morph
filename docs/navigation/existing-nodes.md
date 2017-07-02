@@ -12,12 +12,22 @@ You can do that by using the `createWrappedNode` function:
 import * as ts from "typescript";
 import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
 
-// ... other code that creates a ts.Node ...
+// some code that creates a class declaration (could be any kind of ts.Node)
+const classNode: ts.ClassDeclaration = ...; 
 
+// create and use a wrapped node
 const classDec = createWrappedNode(classNode) as ClassDeclaration;
 const firstProperty = classDec.getProperties()[0];
 
-// ... do stuff here ...
+// ... do more stuff here ...
 ```
+
+### No TypeChecker, Program, or Language Service
+
+This is a lightweight way to navigate a node, but there are certian functionalities you can't use since there is no language service, type checker, or program.
+For example, getting the type of a node will not work because that requires a type checker.
+
+For now, you can always get the underlying compiler node from a wrapped node and use that with your existing compiler objects (ex. TypeChecker),
+but in the future [#42](https://github.com/dsherret/ts-simple-ast/issues/42) is being worked on.
 
 **Next step:** [Manipulating the AST](../manipulation/index)

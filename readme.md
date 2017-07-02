@@ -75,10 +75,12 @@ Or navigate existing compiler nodes created outside this library:
 import * as ts from "typescript";
 import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
 
-// ... other code that creates a ts.Node ...
+// some code that creates a class declaration (could be any kind of ts.Node)
+const classNode: ts.ClassDeclaration = ...; 
 
+// create and use a wrapped node
 const classDec = createWrappedNode(classNode) as ClassDeclaration;
 const firstProperty = classDec.getProperties()[0];
 
-// ... do stuff here ...
+// ... do more stuff here ...
 ```
