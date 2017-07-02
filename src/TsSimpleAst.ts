@@ -9,8 +9,12 @@ import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 import {fillSourceFileFromStructure} from "./manipulation/fillClassFunctions";
 
 export interface Options {
-    tsConfigFilePath?: string;
+    /** Compiler options */
     compilerOptions?: ts.CompilerOptions;
+    /** File path to the tsconfig.json file */
+    tsConfigFilePath?: string;
+    /** Whether the source files from the specified tsConfigFilePath should be included */
+    // addFilesFromTsConfig?: boolean; // todo: uncomment when implementing #7
 }
 
 /**
@@ -30,9 +34,14 @@ export class TsSimpleAst {
     constructor(options: Options = {}, private fileSystem: FileSystemHost = new DefaultFileSystemHost()) {
         if (options.tsConfigFilePath != null && options.compilerOptions != null)
             throw new errors.InvalidOperationError(`Cannot set both ${nameof(options.tsConfigFilePath)} and ${nameof(options.compilerOptions)}.`);
+        /*
+        // todo: uncomment when implementing #7
+        if (options.addFilesFromTsConfig != null && options.tsConfigFilePath == null)
+            throw new errors.InvalidOperationError(`Must specify a ${nameof(options.tsConfigFilePath)} when specifying ${nameof(options.addFilesFromTsConfig)}.`);
+        */
 
-        const compilerOptionsResolver = new CompilerOptionsResolver(fileSystem);
-        this.compilerOptions = compilerOptionsResolver.getCompilerOptions(options);
+        const compilerOptionsResolver = new CompilerOptionsResolver(fileSystem, options);
+        this.compilerOptions = compilerOptionsResolver.getCompilerOptions();
 
         this.languageService = new compiler.LanguageService(fileSystem, this.compilerOptions);
         this.compilerFactory = new factories.CompilerFactory(fileSystem, this.languageService);

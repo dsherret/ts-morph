@@ -6,7 +6,7 @@ import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
 
 describe(nameof(TsSimpleAst), () => {
-    describe(`constructor`, () => {
+    describe("constructor", () => {
         it("should throw an exception if providing both a tsconfig.json and compiler options.", () => {
             expect(() => {
                 // tslint:disable-next-line
@@ -16,6 +16,19 @@ describe(nameof(TsSimpleAst), () => {
                 });
             }).to.throw(errors.InvalidOperationError, "Cannot set both tsConfigFilePath and compilerOptions.");
         });
+
+        /*
+        // todo: uncomment when implementing #7
+        it("should include the source files by default when providing a tsconfig.json", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([
+                { filePath: "file1.ts", text: "" },
+                { filePath: "file2.ts", text: "" },
+                { filePath: "tsconfig.json", text: `{ "compilerOptions": {} }` }
+            ]);
+            const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json" }, fileSystem);
+            expect(ast.getSourceFiles().length).to.equal(2);
+        });
+        */
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFileFromFilePath), () => {

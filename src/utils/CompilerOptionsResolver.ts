@@ -11,30 +11,43 @@ export class CompilerOptionsResolver {
      * Initializes a new instance.
      * @param fileSystem - Host for reading files.
      */
-    constructor(private readonly fileSystem: FileSystemHost) {
+    constructor(private readonly fileSystem: FileSystemHost, private readonly options: { compilerOptions?: ts.CompilerOptions; tsConfigFilePath?: string; }) {
     }
 
     /**
      * Get the compiler options.
      * @param options - The passed in compiler options or the tsconfig.json file path.
      */
-    getCompilerOptions(options: { compilerOptions?: ts.CompilerOptions; tsConfigFilePath?: string; }) {
+    getCompilerOptions() {
         let compilerOptions: ts.CompilerOptions;
 
-        if (options.compilerOptions != null)
-            compilerOptions = {...options.compilerOptions};
-        else if (options.tsConfigFilePath != null)
-            compilerOptions = this.getCompilerOptionsFromTsConfig(options.tsConfigFilePath);
-        else {
-            const foundTsConfigFilePath = ts.findConfigFile(this.fileSystem.getCurrentDirectory(), fileName => this.fileSystem.fileExists(fileName));
-            if (foundTsConfigFilePath != null && foundTsConfigFilePath.length > 0)
-                compilerOptions = this.getCompilerOptionsFromTsConfig(foundTsConfigFilePath);
-            else
-                compilerOptions = this.getTsCompilerOptionDefaults();
-        }
+        if (this.options.compilerOptions != null)
+            compilerOptions = {...this.options.compilerOptions};
+        else if (this.options.tsConfigFilePath != null)
+            compilerOptions = this.getCompilerOptionsFromTsConfig(this.options.tsConfigFilePath);
+        else
+            compilerOptions = {};
 
         return compilerOptions;
     }
+
+    /*
+    // very rough and not thought out inefficient method (should cache the compiler options)... will use this when implementing #7
+    getFilePathsFromTsConfig() {
+        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(this.options.tsConfigFilePath!, FileUtils.getCurrentDirectory());
+        this.verifyFileExists(absoluteFilePath);
+        const text = this.fileSystem.readFile(absoluteFilePath);
+        const json = ts.parseConfigFileTextToJson(absoluteFilePath, text, true);
+        const host: ts.ParseConfigHost = {
+            useCaseSensitiveFileNames: true,
+            readDirectory: (rootDir, extensions, excludes, includes) => ts.sys.readDirectory(rootDir, extensions, excludes, includes),
+            fileExists: path => this.fileSystem.fileExists(path),
+            readFile: path => this.fileSystem.readFile(path)
+        };
+        const result = ts.parseJsonConfigFileContent(json, host, FileUtils.getCurrentDirectory());
+        return result.fileNames;
+    }
+    */
 
     private getCompilerOptionsFromTsConfig(filePath: string) {
         const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
@@ -51,21 +64,6 @@ export class CompilerOptionsResolver {
             throw new Error(this.getErrorMessage(settings.errors));
 
         return settings.options;
-    }
-
-    private getTsCompilerOptionDefaults() {
-        return {
-            allowJs: true,
-            experimentalDecorators: true,
-            moduleResolution: ts.ModuleResolutionKind.NodeJs,
-            noImplicitAny: false,
-            noLib: false,
-            strictNullChecks: false,
-            suppressExcessPropertyErrors: true,
-            suppressImplicitAnyIndexErrors: true,
-            target: ts.ScriptTarget.Latest,
-            types: []
-        };
     }
 
     private getErrorMessage(errors: ts.Diagnostic[]) {
