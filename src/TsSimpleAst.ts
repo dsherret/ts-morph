@@ -91,6 +91,15 @@ export class TsSimpleAst {
     }
 
     /**
+     * Removes a source file from the AST.
+     * @param sourceFile - Source file to remove.
+     * @returns True if removed.
+     */
+    removeSourceFile(sourceFile: compiler.SourceFile) {
+        return this.languageService.removeSourceFile(sourceFile);
+    }
+
+    /**
      * Gets a source file by a file name, file path, or search function. Returns undefined if none exists.
      * @param fileName - File name or path that the path could end with or equal.
      * @param searchFunction - Search function.
@@ -114,12 +123,27 @@ export class TsSimpleAst {
     }
 
     /**
-     * Removes a source file from the AST.
-     * @param sourceFile - Source file to remove.
-     * @returns True if removed.
+     * Saves all the unsaved source files.
      */
-    removeSourceFile(sourceFile: compiler.SourceFile) {
-        return this.languageService.removeSourceFile(sourceFile);
+    saveUnsavedSourceFiles() {
+        return Promise.all(this.getUnsavedSourceFiles().map(f => f.save()));
+    }
+
+    /**
+     * Saves all the unsaved source files synchronously.
+     *
+     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
+     */
+    saveUnsavedSourceFilesSync() {
+        // sidenote: I wish I could do something like in c# where I do this all asynchronously then
+        // wait synchronously on the task. It would not be as bad as this is performance wise. Maybe there
+        // is a way, but people just shouldn't be using this method unless they're really lazy.
+        for (const file of this.getUnsavedSourceFiles())
+            file.saveSync();
+    }
+
+    private getUnsavedSourceFiles() {
+        return this.getSourceFiles().filter(f => !f.isSaved());
     }
 
     /**

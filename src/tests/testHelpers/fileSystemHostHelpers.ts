@@ -1,24 +1,31 @@
 ﻿import {FileSystemHost} from "./../../FileSystemHost";
 import {FileUtils} from "./../../utils";
 
-export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[]): FileSystemHost & { getWrittenFileArguments: () => any[]; } {
+export interface CustomFileSystemProps {
+    getWrittenFileArguments(): any[];
+    getSyncWriteLog(): string[];
+    getWriteLog(): string[];
+}
+
+export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[]): FileSystemHost & CustomFileSystemProps {
     files.forEach(file => {
         file.filePath = FileUtils.getStandardizedAbsolutePath(file.filePath);
     });
     let writtenFileArgs: any[];
+    const writeLog: string[] = [];
+    const syncWriteLog: string[] = [];
     return {
         readFile: filePath => files.find(f => f.filePath === filePath)!.text,
         writeFile: (filePath, fileText) => {
             writtenFileArgs = [filePath, fileText];
             return new Promise((resolve, reject) => {
+                writeLog.push(filePath);
                 resolve();
             });
         },
         writeFileSync: (filePath, fileText) => {
             writtenFileArgs = [filePath, fileText];
-        },
-        getWrittenFileArguments: () => {
-            return writtenFileArgs;
+            syncWriteLog.push(filePath);
         },
         fileExists: filePath => {
             filePath = FileUtils.getStandardizedAbsolutePath(filePath);
@@ -26,6 +33,9 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         },
         getCurrentDirectory: () => FileUtils.getCurrentDirectory(),
         directoryExists: dirName => true,
-        glob: patterns => [] as string[]
+        glob: patterns => [] as string[],
+        getWrittenFileArguments: () => writtenFileArgs,
+        getSyncWriteLog: () => [...syncWriteLog],
+        getWriteLog: () => [...writeLog]
     };
 }

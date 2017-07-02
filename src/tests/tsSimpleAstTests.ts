@@ -141,6 +141,37 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.saveUnsavedSourceFiles), () => {
+        it("should save all the unsaved source files asynchronously", done => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            ast.addSourceFileFromText("file1.ts", "").saveSync();
+            ast.addSourceFileFromText("file2.ts", "");
+            ast.addSourceFileFromText("file3.ts", "");
+            ast.saveUnsavedSourceFiles().then(() => {
+                expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
+                expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
+                expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
+                done();
+            });
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.saveUnsavedSourceFilesSync), () => {
+        it("should save all the unsaved source files synchronously", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            ast.addSourceFileFromText("file1.ts", "").saveSync();
+            ast.addSourceFileFromText("file2.ts", "");
+            ast.addSourceFileFromText("file3.ts", "");
+            ast.saveUnsavedSourceFilesSync();
+
+            expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
+            expect(fileSystem.getWriteLog().length).to.equal(0);
+            expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+        });
+    });
+
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
             const ast = new TsSimpleAst();

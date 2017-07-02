@@ -22,32 +22,24 @@ Use:
 sourceFile.isDeclarationFile(); // returns: boolean
 ```
 
-### Referenced files
-
-This returns any files that are referenced via `/// <reference path="..." />` statements:
-
-```typescript
-const referencedFiles = sourceFile.getReferencedFiles();
-```
-
-### Type reference directives
-
-This returns any files that are referenced via `/// <reference types="..." />` statements:
-
-```typescript
-const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
-```
-
-### Save to file system
+### Saving
 
 You can save a source file to the file system using one of the following commands:
 
 ```typescript
-sourceFile.save(); // returns a promise
+sourceFile.save(); // returns: Promise
 sourceFile.saveSync();
 ```
 
-You can also check if the source file hasn't been saved to the disk by checking `sourceFile.isSaved();`.
+### Unsaved files
+
+There is a `sourceFile.isSaved()` method that will tell you if the file is saved or not, but it might be easier
+to call one of the following methods on the main AST object in order to save unsaved source files:
+
+```typescript
+ast.saveUnsavedSourceFiles(); // returns: Promise
+ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are a lot of files to save
+```
 
 ### Copy
 
@@ -69,6 +61,22 @@ You can remove a source file from the AST by calling:
 
 ```typescript
 ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
+```
+
+### Referenced files
+
+This returns any files that are referenced via `/// <reference path="..." />` statements:
+
+```typescript
+const referencedFiles = sourceFile.getReferencedFiles();
+```
+
+### Type reference directives
+
+This returns any files that are referenced via `/// <reference types="..." />` statements:
+
+```typescript
+const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 ```
 
 ### Get default export symbol
