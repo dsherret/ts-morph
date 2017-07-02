@@ -4,9 +4,9 @@ title: Navigating Existing Nodes
 
 ## Navigating Existing Nodes
 
-Sometimes you might want to easily navigate an existing compiler node created elsewhere.
+Sometimes you might want to easily navigate an existing compiler node created outside this library.
 
-You can do that using this library by using the `createWrappedNode` function:
+You can do that by using the `createWrappedNode` function:
 
 ```typescript
 import * as ts from "typescript";

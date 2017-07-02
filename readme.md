@@ -69,7 +69,7 @@ sourceFile.save();        // save it to MyFile.ts
 const sourceFileCompilerNode = sourceFile.node;
 ```
 
-Or navigate existing compiler nodes you already have:
+Or navigate existing compiler nodes created outside this library:
 
 ```typescript
 import * as ts from "typescript";
