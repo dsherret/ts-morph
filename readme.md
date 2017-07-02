@@ -68,3 +68,17 @@ sourceFile.save();        // save it to MyFile.ts
 // get underlying compiler node from the typescript AST from any node
 const sourceFileCompilerNode = sourceFile.node;
 ```
+
+Or navigate existing compiler nodes you already have:
+
+```typescript
+import * as ts from "typescript";
+import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
+
+// ... other code that creates a ts.Node ...
+
+const classDec = createWrappedNode(classNode) as ClassDeclaration;
+const firstProperty = classDec.getProperties()[0];
+
+// ... do stuff here ...
+```

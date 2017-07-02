@@ -5,14 +5,17 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(n => n.getDecorators), () => {
+        function doTest(text: string, expectedLength: number) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+            expect(firstChild.getDecorators().length).to.equal(expectedLength);
+        }
+
         it("should return an empty array for no decorators", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
-            expect(firstChild.getDecorators().length).to.equal(0);
+            doTest("class Identifier {}", 0);
         });
 
         it("should get the decorators when they exist", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("@decorator\n@decorator2()\n@decorator3('str')\nclass Identifier {}");
-            expect(firstChild.getDecorators().length).to.equal(3);
+            doTest("@decorator\n@decorator2()\n@decorator3('str')\nclass Identifier {}", 3);
         });
     });
 

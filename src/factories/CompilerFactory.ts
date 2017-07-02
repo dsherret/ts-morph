@@ -3,6 +3,7 @@ import * as compiler from "./../compiler";
 import * as errors from "./../errors";
 import {FileSystemHost} from "./../FileSystemHost";
 import {KeyValueCache, Logger, FileUtils} from "./../utils";
+import {createWrappedNode} from "./../createWrappedNode";
 
 /**
  * Factory for creating compiler wrappers.
@@ -12,14 +13,34 @@ export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
     private readonly normalizedDirectories = new Set<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
+    private readonly _languageService: compiler.LanguageService | undefined;
 
     /**
      * Initializes a new instance of CompilerFactory.
      * @param fileSystem - Host for reading files.
      * @param languageService - Language service.
      */
-    constructor(private readonly fileSystem: FileSystemHost, private readonly languageService: compiler.LanguageService) {
-        languageService.setCompilerFactory(this);
+    constructor(private readonly fileSystem: FileSystemHost, languageService: compiler.LanguageService | undefined) {
+        this._languageService = languageService;
+        if (languageService != null)
+            languageService.setCompilerFactory(this);
+    }
+
+    private get languageService() {
+        if (this._languageService == null) {
+            throw new errors.InvalidOperationError("A language service is required for this operation. " +
+                "This might occur when manipulating or getting type information from a node that was not added " +
+                `to a TsSimpleAst object and created via ${nameof(createWrappedNode)}. ` +
+                "Please submit a bug report if you don't believe a language service should be required for this operation.");
+        }
+        return this._languageService;
+    }
+
+    /**
+     * Gets if this factory has a language service.
+     */
+    hasLanguageService() {
+        return this._languageService != null;
     }
 
     /**
@@ -439,7 +460,9 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
             const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-            this.languageService.addSourceFile(sourceFile);
+
+            if (this.hasLanguageService())
+                this.languageService.addSourceFile(sourceFile);
 
             // add to list of directories
             const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirName(sourceFile.getFilePath()));

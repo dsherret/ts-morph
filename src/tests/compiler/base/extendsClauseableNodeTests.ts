@@ -4,16 +4,18 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExtendsClauseableNode), () => {
     describe(nameof<ExtendsClauseableNode>(n => n.getExtends), () => {
-        it("should return an empty array when they don't exist", () => {
-            const {firstChild} = getInfoFromText<InterfaceDeclaration>("export interface Identifier {}");
+        function doTest(text: string, expectedLength: number) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(text);
             const extendsExpressions = firstChild.getExtends();
-            expect(extendsExpressions.length).to.equal(0);
+            expect(extendsExpressions.length).to.equal(expectedLength);
+        }
+
+        it("should return an empty array when they don't exist", () => {
+            doTest("export interface Identifier {}", 0);
         });
 
         it("should get all the extends expressions when they exist", () => {
-            const {firstChild} = getInfoFromText<InterfaceDeclaration>("export interface Identifier extends Base, Base2 {}");
-            const extendsExpressions = firstChild.getExtends();
-            expect(extendsExpressions.length).to.equal(2);
+            doTest("export interface Identifier extends Base, Base2 {}", 2);
         });
     });
 

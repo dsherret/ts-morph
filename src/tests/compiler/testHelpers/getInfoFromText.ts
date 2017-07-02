@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {createWrappedNode} from "./../../../createWrappedNode";
 import {DefaultFileSystemHost} from "./../../../DefaultFileSystemHost";
 import {FileSystemHost} from "./../../../FileSystemHost";
 import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
@@ -15,10 +16,16 @@ defaultHost.readFile = filePath => {
     return fileMap.get(filePath)!;
 };
 
-/**
- * @internal
- */
-export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: { isDefinitionFile?: boolean; filePath?: string; host?: FileSystemHost; disableErrorCheck?: boolean }) {
+/** @internal */
+export interface GetInfoFromTextOptions {
+    isDefinitionFile?: boolean;
+    filePath?: string;
+    host?: FileSystemHost;
+    disableErrorCheck?: boolean;
+}
+
+/** @internal */
+export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, filePath = undefined, host = defaultHost, disableErrorCheck = false} = opts || {};
     const tsSimpleAst = new TsSimpleAst({ compilerOptions: { target: ts.ScriptTarget.ES2017 }}, host);
@@ -31,7 +38,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: {
         ensureNoCompileErrorsInSourceFile(sourceFile);
     */
 
-    return { tsSimpleAst, sourceFile, firstChild };
+    return {tsSimpleAst, sourceFile, firstChild};
 }
 
 function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile) {
