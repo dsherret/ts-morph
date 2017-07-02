@@ -44,9 +44,7 @@ ast.addSourceFile("misc.ts", {
     enums: [{
         name: "MyEnum",
         isExported: true,
-        members: [{
-            name: "member"
-        }]
+        members: [{ name: "member" }]
     }]
 });
 
