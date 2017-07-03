@@ -59,6 +59,7 @@
                                 <a class="nav-link" href="{{ "/manipulation" | prepend: site.baseurl }}">Manipulation</a>
                                 {% if page.dir == '/manipulation/' %}
                                 <ul>
+                                    <li class="{% if page.path == 'manipulation/settings.md' %}active{% endif %}"><a href="{{ "/manipulation/settings" | prepend: site.baseurl }}">Settings</a></li>
                                     <li class="{% if page.path == 'manipulation/renaming.md' %}active{% endif %}"><a href="{{ "/manipulation/renaming" | prepend: site.baseurl }}">Renaming</a></li>
                                     <li class="{% if page.path == 'manipulation/removing.md' %}active{% endif %}"><a href="{{ "/manipulation/removing" | prepend: site.baseurl }}">Removing</a></li>
                                 </ul>
