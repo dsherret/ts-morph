@@ -25,7 +25,7 @@ const ast = new TsSimpleAst({
 });
 ```
 
-You can provide only a partial of these settings:
+You may only provide a partial of these settings if you wish:
 
 ```typescript
 const ast = new TsSimpleAst({
