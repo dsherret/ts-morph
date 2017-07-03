@@ -11,7 +11,7 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
     const difference = newText.length - (replaceEnd - replaceStart);
 
     replaceForNode(sourceFile);
-    sourceFile.factory.resetProgram();
+    sourceFile.global.resetProgram();
 
     function replaceForNode(node: Node) {
         const currentStart = node.getStart();

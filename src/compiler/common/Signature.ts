@@ -1,20 +1,20 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 
 export class Signature {
     /** @internal */
-    private readonly factory: CompilerFactory;
+    private readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerSignature: ts.Signature;
 
     /**
      * Initializes a new instance of Signature.
      * @internal
-     * @param factory - Compiler factory.
+     * @param global - GlobalContainer.
      * @param signature - Compiler signature.
      */
-    constructor(factory: CompilerFactory, signature: ts.Signature) {
-        this.factory = factory;
+    constructor(global: GlobalContainer, signature: ts.Signature) {
+        this.global = global;
         this._compilerSignature = signature;
     }
 

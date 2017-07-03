@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
-import {FileSystemHost} from "./../../FileSystemHost";
-import {CompilerFactory} from "./../../factories";
-import {replaceNodeText} from "./../../manipulation";
+import {GlobalContainer} from "./../../GlobalContainer";
+import {replaceNodeText, ManipulationSettingsContainer} from "./../../manipulation";
 import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
@@ -33,8 +32,9 @@ export class LanguageService {
     private readonly _compilerLanguageService: ts.LanguageService;
     private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
-    private compilerFactory: CompilerFactory;
     private program: Program;
+    /** @internal */
+    private global: GlobalContainer;
 
     /**
      * Gets the compiler language service.
@@ -43,13 +43,15 @@ export class LanguageService {
         return this._compilerLanguageService;
     }
 
-    constructor(private readonly fileSystem: FileSystemHost, private readonly compilerOptions: ts.CompilerOptions) {
+    constructor(global: GlobalContainer) {
+        this.global = global;
+
         // I don't know what I'm doing for some of this...
         let version = 0;
-        const fileExists = (path: string) => this.compilerFactory.containsSourceFileAtPath(path) || fileSystem.fileExists(path);
+        const fileExists = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystem.fileExists(path);
         const languageServiceHost: ts.LanguageServiceHost = {
-            getCompilationSettings: () => compilerOptions,
-            getNewLine: () => this.getNewLine(),
+            getCompilationSettings: () => global.compilerOptions,
+            getNewLine: () => global.manipulationSettings.getNewLineKind(),
             getScriptFileNames: () => this.sourceFiles.map(s => s.getFilePath()),
             getScriptVersion: fileName => {
                 return (version++).toString();
@@ -57,23 +59,23 @@ export class LanguageService {
             getScriptSnapshot: fileName => {
                 if (!fileExists(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
+                return ts.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
-            getCurrentDirectory: () => fileSystem.getCurrentDirectory(),
-            getDefaultLibFileName: options => ts.getDefaultLibFilePath(compilerOptions),
+            getCurrentDirectory: () => global.fileSystem.getCurrentDirectory(),
+            getDefaultLibFileName: options => ts.getDefaultLibFilePath(global.compilerOptions),
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
-                if (this.compilerFactory.containsSourceFileAtPath(path))
-                    return this.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
-                return this.fileSystem.readFile(path, encoding);
+                if (this.global.compilerFactory.containsSourceFileAtPath(path))
+                    return this.global.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
+                return this.global.fileSystem.readFile(path, encoding);
             },
             fileExists,
-            directoryExists: dirName => this.compilerFactory.containsFileInDirectory(dirName) || this.fileSystem.directoryExists(dirName)
+            directoryExists: dirName => this.global.compilerFactory.containsFileInDirectory(dirName) || this.global.fileSystem.directoryExists(dirName)
         };
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
-                return this.compilerFactory.getSourceFileFromFilePath(fileName).compilerNode;
+                return this.global.compilerFactory.getSourceFileFromFilePath(fileName).compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
@@ -97,10 +99,13 @@ export class LanguageService {
         this._compilerLanguageService = ts.createLanguageService(languageServiceHost);
     }
 
-    /** @internal */
+    /**
+     * Resets the program. This should be done whenever any modifications happen.
+     * @internal
+     */
     resetProgram() {
         if (this.program != null)
-            this.program.reset(this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
+            this.program.reset(this.getSourceFiles().map(s => s.getFilePath()), this.compilerHost);
     }
 
     /**
@@ -108,20 +113,8 @@ export class LanguageService {
      */
     getProgram() {
         if (this.program == null)
-            this.program = new Program(this.compilerFactory, this.getSourceFiles().map(s => s.getFilePath()), this.compilerOptions, this.compilerHost);
+            this.program = new Program(this.global, this.getSourceFiles().map(s => s.getFilePath()), this.compilerHost);
         return this.program;
-    }
-
-    /**
-     * Sets the compiler factory. Needed because of a circular reference.
-     * @internal
-     * @param compilerFactory - Compiler factory.
-     */
-    setCompilerFactory(compilerFactory: CompilerFactory) {
-        if (this.compilerFactory != null)
-            throw new Error("Cannot set compiler factory more than once.");
-
-        this.compilerFactory = compilerFactory;
     }
 
     renameNode(node: Node, newName: string) {
@@ -147,7 +140,7 @@ export class LanguageService {
         const renameLocations = this.compilerLanguageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
 
         for (const location of renameLocations) {
-            const replaceSourceFile = this.compilerFactory.getSourceFileFromFilePath(location.fileName)!;
+            const replaceSourceFile = this.global.compilerFactory.getSourceFileFromFilePath(location.fileName)!;
             const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(replaceSourceFile, () => []);
             // todo: ensure this is sorted
             textSpans.push({
@@ -177,7 +170,7 @@ export class LanguageService {
         const referencesBySourceFile = new KeyValueCache<SourceFile, ReferenceEntry[]>();
 
         for (const reference of references) {
-            const referenceSourceFile = this.compilerFactory.getSourceFileFromFilePath(reference.fileName)!;
+            const referenceSourceFile = this.global.compilerFactory.getSourceFileFromFilePath(reference.fileName)!;
             const currentRefs = referencesBySourceFile.getOrCreate<ReferenceEntry[]>(referenceSourceFile, () => []);
             // todo: ensure this is sorted
             currentRefs.push({
@@ -217,30 +210,6 @@ export class LanguageService {
         this.resetProgram();
         sourceFile.dispose(); // todo: don't dispose, just remove the language service for this node
         return true;
-    }
-
-    getScriptTarget() {
-        return this.compilerOptions.target!;
-    }
-
-    getNewLine() {
-        switch (this.compilerOptions.newLine) {
-            case undefined:
-            case ts.NewLineKind.LineFeed:
-                return "\n";
-            case ts.NewLineKind.CarriageReturnLineFeed:
-                return "\r\n";
-            default:
-                throw new Error("Not implemented new line kind.");
-        }
-    }
-
-    getStringChar() {
-        return `"`; // todo: make this configurable
-    }
-
-    getOneIndentationLevelText() {
-        return "    ";
     }
 
     getSourceFiles() {

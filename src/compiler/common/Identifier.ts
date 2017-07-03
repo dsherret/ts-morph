@@ -14,6 +14,6 @@ export class Identifier extends Node<ts.Identifier> {
      * @param newName - New name of the identifier.
      */
     rename(newName: string) {
-        this.factory.getLanguageService().renameNode(this, newName);
+        this.global.languageService.renameNode(this, newName);
     }
 }

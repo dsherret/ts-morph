@@ -18,7 +18,7 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
             const heritageClauses = this.compilerNode.heritageClauses;
             if (heritageClauses == null)
                 return [];
-            return heritageClauses.map(c => this.factory.getHeritageClause(c, this.sourceFile));
+            return heritageClauses.map(c => this.global.compilerFactory.getHeritageClause(c, this.sourceFile));
         }
     };
 }

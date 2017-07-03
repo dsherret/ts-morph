@@ -35,7 +35,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
 
         getBody() {
             const body = (this.compilerNode as any).body as ts.Node;
-            return body == null ? undefined : this.factory.getNodeFromCompilerNode(body, this.sourceFile);
+            return body == null ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(body, this.sourceFile);
         }
     };
 }

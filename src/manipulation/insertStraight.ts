@@ -19,7 +19,7 @@ export interface InsertStraightOptions {
 export function insertStraight(options: InsertStraightOptions) {
     const {insertPos, parent, newCode, replacing} = options;
     const sourceFile = parent.getSourceFile();
-    const compilerFactory = sourceFile.factory;
+    const compilerFactory = sourceFile.global.compilerFactory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newCode + currentText.substring(replacing != null ? insertPos + replacing.length : insertPos);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());

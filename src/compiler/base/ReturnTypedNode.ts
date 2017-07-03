@@ -27,13 +27,13 @@ export interface ReturnTypedNode {
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
-            const typeChecker = this.factory.getTypeChecker();
+            const typeChecker = this.global.typeChecker;
             const signature = typeChecker.getSignatureFromNode(this)!; // should always return a signature
             return typeChecker.getReturnTypeOfSignature(signature);
         }
 
         getReturnTypeNode() {
-            return this.compilerNode.type == null ? undefined : this.factory.getTypeNode(this.compilerNode.type, this.sourceFile);
+            return this.compilerNode.type == null ? undefined : this.global.compilerFactory.getTypeNode(this.compilerNode.type, this.sourceFile);
         }
 
         setReturnType(text: string) {

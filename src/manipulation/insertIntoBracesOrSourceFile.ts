@@ -6,7 +6,6 @@ import {insertIntoSyntaxList} from "./insertIntoSyntaxList";
 import {isBlankLineAtPos} from "./isBlankLineAtPos";
 
 export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
-    languageService: LanguageService;
     sourceFile: SourceFile;
     parent: Node;
     children: Node[];
@@ -23,9 +22,10 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
  * Used to insert non-comma separated nodes into braces or a source file.
  */
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
-    const {languageService, sourceFile, parent, index, childCodes, separator, children} = opts;
+    const {sourceFile, parent, index, childCodes, separator, children} = opts;
 
     const insertPos = getInsertPosition(index, parent, children);
+    const newLineChar = sourceFile.global.manipulationSettings.getNewLineKind();
 
     let code = "";
 
@@ -33,7 +33,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         if (i > 0) {
             code += separator;
             if (opts.separatorNewlineWhen != null && opts.separatorNewlineWhen(opts.structures![i - 1], opts.structures![i]))
-                code += languageService.getNewLine();
+                code += newLineChar;
         }
         code += childCodes[i];
     }
@@ -41,7 +41,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     if (index !== 0)
         code = separator + code;
     else if (insertPos !== 0)
-        code = languageService.getNewLine() + code;
+        code = newLineChar + code;
     else if (sourceFile.getFullWidth() > 0)
         code = code + separator;
 
@@ -49,7 +49,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         const previousMember: Node | undefined = children[index - 1];
         const firstStructure = opts.structures![0];
         if (previousMember != null && opts.previousBlanklineWhen(previousMember, firstStructure))
-            code = languageService.getNewLine() + code;
+            code = newLineChar + code;
     }
 
     if (opts.nextBlanklineWhen != null) {
@@ -57,7 +57,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         const lastStructure = opts.structures![opts.structures!.length - 1];
         if (nextMember != null && opts.nextBlanklineWhen(nextMember, lastStructure)) {
             if (!isBlankLineAtPos(sourceFile, insertPos))
-                code = code + languageService.getNewLine();
+                code = code + newLineChar;
         }
     }
 

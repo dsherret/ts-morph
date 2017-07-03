@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./errors";
 import {SourceFile, Node} from "./compiler";
-import {CompilerFactory} from "./factories";
+import {GlobalContainer} from "./GlobalContainer";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 
 /**
@@ -18,7 +18,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, sourceFi
     else
         wrappedSourceFile = getWrappedSourceFile(sourceFile);
 
-    return wrappedSourceFile.factory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;
+    return wrappedSourceFile.global.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;
 }
 
 function getSourceFileFromNode(node: ts.Node) {
@@ -38,9 +38,9 @@ function getSourceFileFromNode(node: ts.Node) {
 }
 
 function getWrappedSourceFile(sourceFile: ts.SourceFile) {
-    return getFactory().getSourceFile(sourceFile);
+    return getGlobalContainer().compilerFactory.getSourceFile(sourceFile);
 }
 
-function getFactory() {
-    return new CompilerFactory(new DefaultFileSystemHost(), undefined);
+function getGlobalContainer() {
+    return new GlobalContainer(new DefaultFileSystemHost(), {}, false);
 }

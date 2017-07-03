@@ -42,7 +42,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
         getDecorators(): Decorator[] {
             if (this.compilerNode.decorators == null)
                 return [];
-            return this.compilerNode.decorators.map(d => this.factory.getDecorator(d, this.sourceFile));
+            return this.compilerNode.decorators.map(d => this.global.compilerFactory.getDecorator(d, this.sourceFile));
         }
 
         addDecorator(structure: DecoratorStructure) {
@@ -63,7 +63,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
 
             const decoratorLines = getDecoratorLines(structures);
             const decorators = this.getDecorators();
-            const newLineText = this.factory.getLanguageService().getNewLine();
+            const newLineText = this.global.manipulationSettings.getNewLineKind();
             index = verifyAndGetIndex(index, decorators.length);
 
             if (decorators.length === 0) {

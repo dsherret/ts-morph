@@ -9,7 +9,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Gets the constant value of the enum.
      */
     getValue() {
-        return this.factory.getTypeChecker().getConstantValue(this);
+        return this.global.typeChecker.getConstantValue(this);
     }
 
     /**
@@ -19,7 +19,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     setValue(value: string | number) {
         let text: string;
         if (typeof value === "string") {
-            const stringChar = this.factory.getLanguageService().getStringChar();
+            const stringChar = this.global.manipulationSettings.getStringChar();
             text = stringChar + value + stringChar;
         }
         else {

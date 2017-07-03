@@ -12,7 +12,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         if (nameIdentifier.getText() === name)
             return this;
 
-        this.factory.getLanguageService().renameReplaces([{
+        this.global.languageService.renameReplaces([{
             sourceFile: this.sourceFile,
             textSpans: [{ start: nameIdentifier.getStart(), length: nameIdentifier.getWidth() }]
         }], name);

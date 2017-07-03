@@ -50,12 +50,12 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
                 return undefined;
 
             const texts = docCommentNodes.map(n => (n.compilerNode.comment || "").trim());
-            return texts.filter(t => t.length > 0).join(this.factory.getLanguageService().getNewLine());
+            return texts.filter(t => t.length > 0).join(this.global.manipulationSettings.getNewLineKind());
         }
 
         getDocumentationCommentNodes(): JSDoc[] {
             const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
-            return nodes.map(n => this.factory.getJSDoc(n, this.sourceFile));
+            return nodes.map(n => this.global.compilerFactory.getJSDoc(n, this.sourceFile));
         }
 
         addDoc(structure: JSDocStructure) {
@@ -75,7 +75,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
                 return [];
 
             const indentationText = this.getIndentationText();
-            const newLineText = this.factory.getLanguageService().getNewLine();
+            const newLineText = this.global.manipulationSettings.getNewLineKind();
             const code = `${getDocumentationCode(structures, indentationText, newLineText)}${newLineText}${indentationText}`;
             const nodes = this.getDocumentationCommentNodes();
             index = verifyAndGetIndex(index, nodes.length);

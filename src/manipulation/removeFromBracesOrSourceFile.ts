@@ -11,7 +11,7 @@ export interface RemoveFromBracesOrSourceFileOptions {
 export function removeFromBracesOrSourceFile(opts: RemoveFromBracesOrSourceFileOptions) {
     const {node} = opts;
     const sourceFile = node.getSourceFile();
-    const compilerFactory = sourceFile.factory;
+    const compilerFactory = sourceFile.global.compilerFactory;
     const syntaxList = node.getParentSyntaxListOrThrow();
     const syntaxListParent = syntaxList.getParent();
     const currentText = sourceFile.getFullText();

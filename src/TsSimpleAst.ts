@@ -7,12 +7,16 @@ import {CompilerOptionsResolver, FileUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 import {fillSourceFileFromStructure} from "./manipulation/fillClassFunctions";
+import {ManipulationSettings, ManipulationSettingsContainer} from "./manipulation/ManipulationSettings";
+import {GlobalContainer} from "./GlobalContainer";
 
 export interface Options {
     /** Compiler options */
     compilerOptions?: ts.CompilerOptions;
     /** File path to the tsconfig.json file */
     tsConfigFilePath?: string;
+    /** Manipulation settings */
+    manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether the source files from the specified tsConfigFilePath should be included */
     // addFilesFromTsConfig?: boolean; // todo: uncomment when implementing #7
 }
@@ -21,10 +25,8 @@ export interface Options {
  * Compiler wrapper.
  */
 export class TsSimpleAst {
-    private readonly compilerOptions: ts.CompilerOptions;
-    private readonly languageService: compiler.LanguageService;
     /** @internal */
-    private readonly compilerFactory: factories.CompilerFactory;
+    private readonly global: GlobalContainer;
 
     /**
      * Initializes a new instance.
@@ -41,10 +43,14 @@ export class TsSimpleAst {
         */
 
         const compilerOptionsResolver = new CompilerOptionsResolver(fileSystem, options);
-        this.compilerOptions = compilerOptionsResolver.getCompilerOptions();
+        this.global = new GlobalContainer(fileSystem, compilerOptionsResolver.getCompilerOptions(), true);
+        if (options.manipulationSettings != null)
+            this.global.manipulationSettings.set(options.manipulationSettings);
+    }
 
-        this.languageService = new compiler.LanguageService(fileSystem, this.compilerOptions);
-        this.compilerFactory = new factories.CompilerFactory(fileSystem, this.languageService);
+    /** Gets the manipulation settings. */
+    get manipulationSettings(): ManipulationSettingsContainer {
+        return this.global.manipulationSettings;
     }
 
     /**
@@ -74,7 +80,7 @@ export class TsSimpleAst {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (!this.fileSystem.fileExists(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);
-        return this.compilerFactory.getSourceFileFromFilePath(absoluteFilePath);
+        return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath);
     }
 
     /**
@@ -84,7 +90,7 @@ export class TsSimpleAst {
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
     addSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
-        return this.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
+        return this.global.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
     }
 
     /**
@@ -94,7 +100,7 @@ export class TsSimpleAst {
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
     addSourceFileFromStructure(filePath: string, structure: SourceFileStructure): compiler.SourceFile {
-        const sourceFile = this.compilerFactory.addSourceFileFromText(filePath, "");
+        const sourceFile = this.global.compilerFactory.addSourceFileFromText(filePath, "");
         fillSourceFileFromStructure(sourceFile, structure);
         return sourceFile;
     }
@@ -105,7 +111,7 @@ export class TsSimpleAst {
      * @returns True if removed.
      */
     removeSourceFile(sourceFile: compiler.SourceFile) {
-        return this.languageService.removeSourceFile(sourceFile);
+        return this.global.languageService.removeSourceFile(sourceFile);
     }
 
     /**
@@ -128,7 +134,7 @@ export class TsSimpleAst {
      * Gets all the source files contained in the compiler wrapper.
      */
     getSourceFiles(): compiler.SourceFile[] {
-        return this.languageService.getSourceFiles();
+        return this.global.languageService.getSourceFiles();
     }
 
     /**
@@ -160,14 +166,14 @@ export class TsSimpleAst {
      */
     getDiagnostics(): compiler.Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerFactory.getProgram().compilerProgram);
-        return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerProgram);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 
     /**
      * Gets a language service.
      */
     getLanguageService(): compiler.LanguageService {
-        return this.compilerFactory.getLanguageService();
+        return this.global.languageService;
     }
 }

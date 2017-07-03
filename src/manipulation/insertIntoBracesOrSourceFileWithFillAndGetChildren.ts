@@ -30,15 +30,13 @@ export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends
     if (opts.structures.length === 0)
         return [];
 
-    const languageService = opts.sourceFile.factory.getLanguageService();
     const startChildren = opts.getChildren();
     const index =  verifyAndGetIndex(opts.index, startChildren.length);
 
     insertIntoBracesOrSourceFile({
         ...opts,
         children: startChildren,
-        languageService,
-        separator: languageService.getNewLine(),
+        separator: opts.sourceFile.global.manipulationSettings.getNewLineKind(),
         index
     } as InsertIntoBracesOrSourceFileOptions<TStructure>);
 

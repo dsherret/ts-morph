@@ -16,7 +16,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
-            const stringChar = this.factory.getLanguageService().getStringChar();
+            const stringChar = this.global.manipulationSettings.getStringChar();
             insertStraight({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 newCode: ` from ${stringChar}${text}${stringChar}`,

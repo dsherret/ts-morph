@@ -301,7 +301,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertClasses(index: number, structures: structures.ClassDeclarationStructure[]): classes.ClassDeclaration[] {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
@@ -336,7 +336,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertEnums(index: number, structures: structures.EnumDeclarationStructure[]) {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
@@ -371,7 +371,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertFunctions(index: number, structures: structures.FunctionDeclarationStructure[]) {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
@@ -406,7 +406,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertInterfaces(index: number, structures: structures.InterfaceDeclarationStructure[]) {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
@@ -441,7 +441,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertNamespaces(index: number, structures: structures.NamespaceDeclarationStructure[]) {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => {
                 return `${indentationText}${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} {${newLineChar}${indentationText}}`;
@@ -478,7 +478,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertTypeAliases(index: number, structures: structures.TypeAliasDeclarationStructure[]) {
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => {
                 return `${indentationText}type ${structure.name} = ${structure.type};`;
@@ -552,13 +552,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         ) {
             const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
-            const newLineChar = this.factory.getLanguageService().getNewLine();
+            const newLineChar = this.global.manipulationSettings.getNewLineKind();
             index = verifyAndGetIndex(index, mainChildren.length);
 
             // insert into a temp file
             const finalChildCodes: string[] = [];
             for (let i = 0; i < childCodes.length; i++) {
-                using(this.factory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
+                using(this.global.compilerFactory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
                     if (withEachChild != null) {
                         const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
                         withEachChild(tempSyntaxList.getChildren()[0] as T, i);
@@ -570,7 +570,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             // insert
             const doBlankLine = () => true;
             insertIntoBracesOrSourceFile<TStructure>({
-                languageService: this.factory.getLanguageService(),
                 sourceFile: this.getSourceFile(),
                 parent: this as any as Node,
                 children: mainChildren,

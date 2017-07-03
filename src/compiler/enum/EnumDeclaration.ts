@@ -51,7 +51,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         const previousMemberComma = previousMember == null ? undefined : previousMember.getNextSiblingIfKind(ts.SyntaxKind.CommaToken);
         const nextMember: EnumMember | undefined = members[index];
         const indentationText = this.getChildIndentationText();
-        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
         const syntaxList = this.getChildSyntaxListOrThrow();
         const syntaxListChildren = syntaxList.getChildren();
         const insertChildIndex = previousMember == null ? 0 : syntaxListChildren.indexOf(previousMemberComma || previousMember) + 1;

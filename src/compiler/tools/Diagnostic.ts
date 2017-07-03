@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {SourceFile} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
 
 /**
@@ -8,7 +8,7 @@ import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
  */
 export class Diagnostic {
     /** @internal */
-    readonly factory: CompilerFactory;
+    readonly global: GlobalContainer;
     /** @internal */
     readonly _compilerDiagnostic: ts.Diagnostic;
 
@@ -21,10 +21,10 @@ export class Diagnostic {
 
     /** @internal */
     constructor(
-        factory: CompilerFactory,
+        global: GlobalContainer,
         diagnostic: ts.Diagnostic
     ) {
-        this.factory = factory;
+        this.global = global;
         this._compilerDiagnostic = diagnostic;
     }
 
@@ -33,7 +33,7 @@ export class Diagnostic {
      */
     getSourceFile(): SourceFile | undefined {
         const file = this.compilerDiagnostic.file;
-        return file == null ? undefined : this.factory.getSourceFile(file);
+        return file == null ? undefined : this.global.compilerFactory.getSourceFile(file);
     }
 
     /**
@@ -44,7 +44,7 @@ export class Diagnostic {
         if (typeof messageText === "string")
             return messageText;
 
-        return this.factory.getDiagnosticMessageChain(messageText);
+        return this.global.compilerFactory.getDiagnosticMessageChain(messageText);
     }
 
     /**

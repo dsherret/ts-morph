@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as compiler from "./../compiler";
 import * as errors from "./../errors";
-import {FileSystemHost} from "./../FileSystemHost";
-import {KeyValueCache, Logger, FileUtils} from "./../utils";
+import {KeyValueCache, Logger, FileUtils, EventContainer} from "./../utils";
+import {GlobalContainer} from "./../GlobalContainer";
 import {createWrappedNode} from "./../createWrappedNode";
 
 /**
@@ -13,62 +13,21 @@ export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
     private readonly normalizedDirectories = new Set<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
-    private readonly _languageService: compiler.LanguageService | undefined;
+    private readonly sourceFileAddedEventContainer = new EventContainer<{ addedSourceFile: compiler.SourceFile; }>();
 
     /**
      * Initializes a new instance of CompilerFactory.
-     * @param fileSystem - Host for reading files.
-     * @param languageService - Language service.
+     * @param global - Global container.
      */
-    constructor(private readonly fileSystem: FileSystemHost, languageService: compiler.LanguageService | undefined) {
-        this._languageService = languageService;
-        if (languageService != null)
-            languageService.setCompilerFactory(this);
-    }
-
-    private get languageService() {
-        if (this._languageService == null) {
-            throw new errors.InvalidOperationError("A language service is required for this operation. " +
-                "This might occur when manipulating or getting type information from a node that was not added " +
-                `to a TsSimpleAst object and created via ${nameof(createWrappedNode)}. ` +
-                "Please submit a bug report if you don't believe a language service should be required for this operation.");
-        }
-        return this._languageService;
+    constructor(private readonly global: GlobalContainer) {
     }
 
     /**
-     * Gets if this factory has a language service.
+     * Occurs when a source file is added to the cache.
+     * @param subscription - Subscripton.
      */
-    hasLanguageService() {
-        return this._languageService != null;
-    }
-
-    /**
-     * Convenience method to get the language service.
-     */
-    getLanguageService() {
-        return this.languageService;
-    }
-
-    /**
-     * Convenience method to get the program.
-     */
-    getProgram() {
-        return this.languageService.getProgram();
-    }
-
-    /**
-     * Convenience method to get the type checker.
-     */
-    getTypeChecker() {
-        return this.getProgram().getTypeChecker();
-    }
-
-    /**
-     * Convenience method to get the file system host.
-     */
-    getFileSystemHost() {
-        return this.fileSystem;
+    onSourceFileAdded(subscription: (arg: { addedSourceFile: compiler.SourceFile; }) => void) {
+        this.sourceFileAddedEventContainer.subscribe(subscription);
     }
 
     /**
@@ -81,7 +40,7 @@ export class CompilerFactory {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (this.containsSourceFileAtPath(absoluteFilePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${absoluteFilePath}`);
-        const compilerSourceFile = ts.createSourceFile(absoluteFilePath, sourceText, this.languageService.getScriptTarget(), true);
+        const compilerSourceFile = ts.createSourceFile(absoluteFilePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
 
@@ -92,8 +51,8 @@ export class CompilerFactory {
      * @returns Wrapped source file.
      */
     createTempSourceFileFromText(sourceText: string, filePath = "tsSimpleAstTempFile.ts") {
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.getLanguageService().getScriptTarget(), true);
-        const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+        const sourceFile = new compiler.SourceFile(this.global, compilerSourceFile);
         this.nodeCache.set(compilerSourceFile, sourceFile);
         return sourceFile;
     }
@@ -107,7 +66,7 @@ export class CompilerFactory {
         let sourceFile = this.sourceFileCacheByFilePath.get(absoluteFilePath);
         if (sourceFile == null) {
             Logger.log(`Loading file: ${absoluteFilePath}`);
-            sourceFile = this.addSourceFileFromText(absoluteFilePath, this.fileSystem.readFile(absoluteFilePath));
+            sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFile(absoluteFilePath));
             sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
 
             if (sourceFile != null) {
@@ -222,7 +181,7 @@ export class CompilerFactory {
             case ts.SyntaxKind.JSDocComment:
                 return this.getJSDoc(compilerNode as ts.JSDoc, sourceFile);
             default:
-                return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new compiler.Node(this, compilerNode, sourceFile));
+                return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new compiler.Node(this.global, compilerNode, sourceFile));
         }
     }
 
@@ -232,7 +191,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getClassDeclaration(classDeclaration: ts.ClassDeclaration, sourceFile: compiler.SourceFile): compiler.ClassDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ClassDeclaration>(classDeclaration, () => new compiler.ClassDeclaration(this, classDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ClassDeclaration>(classDeclaration, () => new compiler.ClassDeclaration(this.global, classDeclaration, sourceFile));
     }
 
     /**
@@ -241,7 +200,8 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration, () => new compiler.ConstructorDeclaration(this, constructorDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration,
+            () => new compiler.ConstructorDeclaration(this.global, constructorDeclaration, sourceFile));
     }
 
     /**
@@ -251,7 +211,7 @@ export class CompilerFactory {
      */
     getConstructSignatureDeclaration(constructSignature: ts.ConstructSignatureDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructSignatureDeclaration {
         return this.nodeCache.getOrCreate<compiler.ConstructSignatureDeclaration>(constructSignature,
-            () => new compiler.ConstructSignatureDeclaration(this, constructSignature, sourceFile));
+            () => new compiler.ConstructSignatureDeclaration(this.global, constructSignature, sourceFile));
     }
 
     /**
@@ -260,7 +220,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getDecorator(decorator: ts.Decorator, sourceFile: compiler.SourceFile): compiler.Decorator {
-        return this.nodeCache.getOrCreate<compiler.Decorator>(decorator, () => new compiler.Decorator(this, decorator, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.Decorator>(decorator, () => new compiler.Decorator(this.global, decorator, sourceFile));
     }
 
     /**
@@ -269,7 +229,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getEnumDeclaration(enumDeclaration: ts.EnumDeclaration, sourceFile: compiler.SourceFile): compiler.EnumDeclaration {
-        return this.nodeCache.getOrCreate<compiler.EnumDeclaration>(enumDeclaration, () => new compiler.EnumDeclaration(this, enumDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.EnumDeclaration>(enumDeclaration, () => new compiler.EnumDeclaration(this.global, enumDeclaration, sourceFile));
     }
 
     /**
@@ -278,7 +238,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getEnumMember(enumMemberDeclaration: ts.EnumMember, sourceFile: compiler.SourceFile): compiler.EnumMember {
-        return this.nodeCache.getOrCreate<compiler.EnumMember>(enumMemberDeclaration, () => new compiler.EnumMember(this, enumMemberDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.EnumMember>(enumMemberDeclaration, () => new compiler.EnumMember(this.global, enumMemberDeclaration, sourceFile));
     }
 
     /**
@@ -287,7 +247,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getExportDeclaration(declaration: ts.ExportDeclaration, sourceFile: compiler.SourceFile): compiler.ExportDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ExportDeclaration>(declaration, () => new compiler.ExportDeclaration(this, declaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ExportDeclaration>(declaration, () => new compiler.ExportDeclaration(this.global, declaration, sourceFile));
     }
 
     /**
@@ -296,7 +256,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getExportSpecifier(specifier: ts.ExportSpecifier, sourceFile: compiler.SourceFile): compiler.ExportSpecifier {
-        return this.nodeCache.getOrCreate<compiler.ExportSpecifier>(specifier, () => new compiler.ExportSpecifier(this, specifier, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ExportSpecifier>(specifier, () => new compiler.ExportSpecifier(this.global, specifier, sourceFile));
     }
 
     /**
@@ -305,7 +265,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getExpressionWithTypeArguments(node: ts.ExpressionWithTypeArguments, sourceFile: compiler.SourceFile): compiler.ExpressionWithTypeArguments {
-        return this.nodeCache.getOrCreate<compiler.ExpressionWithTypeArguments>(node, () => new compiler.ExpressionWithTypeArguments(this, node, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ExpressionWithTypeArguments>(node, () => new compiler.ExpressionWithTypeArguments(this.global, node, sourceFile));
     }
 
     /**
@@ -314,7 +274,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getFunctionDeclaration(functionDeclaration: ts.FunctionDeclaration, sourceFile: compiler.SourceFile): compiler.FunctionDeclaration {
-        return this.nodeCache.getOrCreate<compiler.FunctionDeclaration>(functionDeclaration, () => new compiler.FunctionDeclaration(this, functionDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.FunctionDeclaration>(functionDeclaration, () => new compiler.FunctionDeclaration(this.global, functionDeclaration, sourceFile));
     }
 
     /**
@@ -323,7 +283,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getGetAccessorDeclaration(getAccessor: ts.GetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.GetAccessorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this, getAccessor, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this.global, getAccessor, sourceFile));
     }
 
     /**
@@ -332,7 +292,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getHeritageClause(heritageClause: ts.HeritageClause, sourceFile: compiler.SourceFile): compiler.HeritageClause {
-        return this.nodeCache.getOrCreate<compiler.HeritageClause>(heritageClause, () => new compiler.HeritageClause(this, heritageClause, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.HeritageClause>(heritageClause, () => new compiler.HeritageClause(this.global, heritageClause, sourceFile));
     }
 
     /**
@@ -341,7 +301,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration, sourceFile: compiler.SourceFile): compiler.InterfaceDeclaration {
-        return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this, interfaceDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this.global, interfaceDeclaration, sourceFile));
     }
 
     /**
@@ -350,7 +310,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getMethodDeclaration(methodDeclaration: ts.MethodDeclaration, sourceFile: compiler.SourceFile): compiler.MethodDeclaration {
-        return this.nodeCache.getOrCreate<compiler.MethodDeclaration>(methodDeclaration, () => new compiler.MethodDeclaration(this, methodDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.MethodDeclaration>(methodDeclaration, () => new compiler.MethodDeclaration(this.global, methodDeclaration, sourceFile));
     }
 
     /**
@@ -359,7 +319,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getMethodSignature(methodSignature: ts.MethodSignature, sourceFile: compiler.SourceFile): compiler.MethodSignature {
-        return this.nodeCache.getOrCreate<compiler.MethodSignature>(methodSignature, () => new compiler.MethodSignature(this, methodSignature, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.MethodSignature>(methodSignature, () => new compiler.MethodSignature(this.global, methodSignature, sourceFile));
     }
 
     /**
@@ -368,7 +328,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration, sourceFile: compiler.SourceFile): compiler.NamespaceDeclaration {
-        return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this, namespaceDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this.global, namespaceDeclaration, sourceFile));
     }
 
     /**
@@ -377,7 +337,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getParameterDeclaration(parameterDeclaration: ts.ParameterDeclaration, sourceFile: compiler.SourceFile): compiler.ParameterDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this, parameterDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this.global, parameterDeclaration, sourceFile));
     }
 
     /**
@@ -386,7 +346,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getPropertyDeclaration(propertyDeclaration: ts.PropertyDeclaration, sourceFile: compiler.SourceFile): compiler.PropertyDeclaration {
-        return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this, propertyDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this.global, propertyDeclaration, sourceFile));
     }
 
     /**
@@ -395,7 +355,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getPropertySignature(propertySignature: ts.PropertySignature, sourceFile: compiler.SourceFile): compiler.PropertySignature {
-        return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this, propertySignature, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this.global, propertySignature, sourceFile));
     }
 
     /**
@@ -404,7 +364,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getSetAccessorDeclaration(setAccessor: ts.SetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.SetAccessorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.SetAccessorDeclaration>(setAccessor, () => new compiler.SetAccessorDeclaration(this, setAccessor, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.SetAccessorDeclaration>(setAccessor, () => new compiler.SetAccessorDeclaration(this.global, setAccessor, sourceFile));
     }
 
     /**
@@ -413,7 +373,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getTypeAliasDeclaration(typeAliasDeclaration: ts.TypeAliasDeclaration, sourceFile: compiler.SourceFile): compiler.TypeAliasDeclaration {
-        return this.nodeCache.getOrCreate<compiler.TypeAliasDeclaration>(typeAliasDeclaration, () => new compiler.TypeAliasDeclaration(this, typeAliasDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.TypeAliasDeclaration>(typeAliasDeclaration, () => new compiler.TypeAliasDeclaration(this.global, typeAliasDeclaration, sourceFile));
     }
 
     /**
@@ -422,7 +382,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getVariableDeclarationList(declarationList: ts.VariableDeclarationList, sourceFile: compiler.SourceFile): compiler.VariableDeclarationList {
-        return this.nodeCache.getOrCreate<compiler.VariableDeclarationList>(declarationList, () => new compiler.VariableDeclarationList(this, declarationList, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.VariableDeclarationList>(declarationList, () => new compiler.VariableDeclarationList(this.global, declarationList, sourceFile));
     }
 
     /**
@@ -431,7 +391,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getVariableStatement(statement: ts.VariableStatement, sourceFile: compiler.SourceFile): compiler.VariableStatement {
-        return this.nodeCache.getOrCreate<compiler.VariableStatement>(statement, () => new compiler.VariableStatement(this, statement, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.VariableStatement>(statement, () => new compiler.VariableStatement(this.global, statement, sourceFile));
     }
 
     /**
@@ -440,7 +400,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getVariableDeclaration(declaration: ts.VariableDeclaration, sourceFile: compiler.SourceFile): compiler.VariableDeclaration {
-        return this.nodeCache.getOrCreate<compiler.VariableDeclaration>(declaration, () => new compiler.VariableDeclaration(this, declaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.VariableDeclaration>(declaration, () => new compiler.VariableDeclaration(this.global, declaration, sourceFile));
     }
 
     /**
@@ -449,7 +409,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getJSDoc(declaration: ts.JSDoc, sourceFile: compiler.SourceFile): compiler.JSDoc {
-        return this.nodeCache.getOrCreate<compiler.JSDoc>(declaration, () => new compiler.JSDoc(this, declaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.JSDoc>(declaration, () => new compiler.JSDoc(this.global, declaration, sourceFile));
     }
 
     /**
@@ -458,16 +418,18 @@ export class CompilerFactory {
      */
     getSourceFile(compilerSourceFile: ts.SourceFile): compiler.SourceFile {
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
-            const sourceFile = new compiler.SourceFile(this, compilerSourceFile);
+            const sourceFile = new compiler.SourceFile(this.global, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-
-            if (this.hasLanguageService())
-                this.languageService.addSourceFile(sourceFile);
 
             // add to list of directories
             const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirName(sourceFile.getFilePath()));
             if (!this.normalizedDirectories.has(normalizedDir))
                 this.normalizedDirectories.add(normalizedDir);
+
+            // fire the event
+            this.sourceFileAddedEventContainer.fire({
+                addedSourceFile: sourceFile
+            });
 
             return sourceFile;
         });
@@ -479,7 +441,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getIdentifier(identifier: ts.Identifier, sourceFile: compiler.SourceFile): compiler.Identifier {
-        return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this, identifier, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this.global, identifier, sourceFile));
     }
 
     /**
@@ -488,7 +450,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getImportDeclaration(importDeclaration: ts.ImportDeclaration, sourceFile: compiler.SourceFile): compiler.ImportDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this, importDeclaration, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this.global, importDeclaration, sourceFile));
     }
 
     /**
@@ -497,7 +459,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getImportSpecifier(importSpecifier: ts.ImportSpecifier, sourceFile: compiler.SourceFile): compiler.ImportSpecifier {
-        return this.nodeCache.getOrCreate<compiler.ImportSpecifier>(importSpecifier, () => new compiler.ImportSpecifier(this, importSpecifier, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.ImportSpecifier>(importSpecifier, () => new compiler.ImportSpecifier(this.global, importSpecifier, sourceFile));
     }
 
     /**
@@ -506,7 +468,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getExpression(expression: ts.Expression, sourceFile: compiler.SourceFile): compiler.Expression {
-        return this.nodeCache.getOrCreate<compiler.Expression>(expression, () => new compiler.Expression(this, expression, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.Expression>(expression, () => new compiler.Expression(this.global, expression, sourceFile));
     }
 
     /**
@@ -515,7 +477,7 @@ export class CompilerFactory {
      * @param sourceFile - Source file for the node.
      */
     getTypeNode(typeNode: ts.TypeNode, sourceFile: compiler.SourceFile): compiler.TypeNode {
-        return this.nodeCache.getOrCreate<compiler.TypeNode>(typeNode, () => new compiler.TypeNode(this, typeNode, sourceFile));
+        return this.nodeCache.getOrCreate<compiler.TypeNode>(typeNode, () => new compiler.TypeNode(this.global, typeNode, sourceFile));
     }
 
     /**
@@ -525,7 +487,7 @@ export class CompilerFactory {
      */
     getTypeParameterDeclaration(typeParameterDeclaration: ts.TypeParameterDeclaration, sourceFile: compiler.SourceFile): compiler.TypeParameterDeclaration {
         return this.nodeCache.getOrCreate<compiler.TypeParameterDeclaration>(typeParameterDeclaration,
-            () => new compiler.TypeParameterDeclaration(this, typeParameterDeclaration, sourceFile));
+            () => new compiler.TypeParameterDeclaration(this.global, typeParameterDeclaration, sourceFile));
     }
 
     /**
@@ -533,7 +495,7 @@ export class CompilerFactory {
      * @param type - Compiler type.
      */
     getType(type: ts.Type): compiler.Type {
-        return new compiler.Type(this, type);
+        return new compiler.Type(this.global, type);
     }
 
     /**
@@ -541,7 +503,7 @@ export class CompilerFactory {
      * @param signature - Compiler signature.
      */
     getSignature(signature: ts.Signature): compiler.Signature {
-        return new compiler.Signature(this, signature);
+        return new compiler.Signature(this.global, signature);
     }
 
     /**
@@ -549,7 +511,7 @@ export class CompilerFactory {
      * @param symbol - Compiler symbol.
      */
     getSymbol(symbol: ts.Symbol): compiler.Symbol {
-        return new compiler.Symbol(this, symbol);
+        return new compiler.Symbol(this.global, symbol);
     }
 
     /**
@@ -557,7 +519,7 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic.
      */
     getDiagnostic(diagnostic: ts.Diagnostic): compiler.Diagnostic {
-        return new compiler.Diagnostic(this, diagnostic);
+        return new compiler.Diagnostic(this.global, diagnostic);
     }
 
     /**
@@ -565,7 +527,7 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic message chain.
      */
     getDiagnosticMessageChain(diagnosticMessageChain: ts.DiagnosticMessageChain): compiler.DiagnosticMessageChain {
-        return new compiler.DiagnosticMessageChain(this, diagnosticMessageChain);
+        return new compiler.DiagnosticMessageChain(this.global, diagnosticMessageChain);
     }
 
     /**
@@ -595,12 +557,5 @@ export class CompilerFactory {
             const sourceFile = compilerNode as ts.SourceFile;
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
         }
-    }
-
-    /**
-     * Resets the program. This should be done after any modifications happen.
-     */
-    resetProgram() {
-        this.languageService.resetProgram();
     }
 }

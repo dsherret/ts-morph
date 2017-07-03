@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {removeNodes} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../structures";
@@ -20,15 +20,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Initializes a new instance.
      * @internal
-     * @param factory - Compiler factory.
+     * @param global - Global container.
      * @param node - Underlying node.
      */
     constructor(
-        factory: CompilerFactory,
+        global: GlobalContainer,
         node: ts.SourceFile
     ) {
         // start hack :(
-        super(factory, node, undefined as any);
+        super(global, node, undefined as any);
         this.sourceFile = this;
         // end hack
     }
@@ -38,7 +38,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     replaceCompilerNode(compilerNode: ts.SourceFile) {
         super.replaceCompilerNode(compilerNode);
-        this.factory.resetProgram(); // make sure the program has the latest source file
+        this.global.resetProgram(); // make sure the program has the latest source file
         this._isSaved = true;
     }
 
@@ -55,14 +55,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     copy(filePath: string): SourceFile {
         const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirName(this.getFilePath()));
-        return this.factory.addSourceFileFromText(absoluteFilePath, this.getFullText());
+        return this.global.compilerFactory.addSourceFileFromText(absoluteFilePath, this.getFullText());
     }
 
     /**
      * Asynchronously saves this file with any changes.
      */
     save() {
-        return this.factory.getFileSystemHost().writeFile(this.getFilePath(), this.getFullText()).then(() => {
+        return this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText()).then(() => {
             this._isSaved = true;
         });
     }
@@ -71,7 +71,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        this.factory.getFileSystemHost().writeFileSync(this.getFilePath(), this.getFullText());
+        this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
 
@@ -81,7 +81,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getReferencedFiles() {
         // todo: add tests
         const dirName = FileUtils.getDirName(this.getFilePath());
-        return (this.compilerNode.referencedFiles || []).map(f => this.factory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
+        return (this.compilerNode.referencedFiles || []).map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
     }
 
     /**
@@ -90,7 +90,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getTypeReferenceDirectives() {
         // todo: add tests
         const dirName = FileUtils.getDirName(this.getFilePath());
-        return (this.compilerNode.typeReferenceDirectives || []).map(f => this.factory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
+        return (this.compilerNode.typeReferenceDirectives || []).map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
     }
 
     /**
@@ -148,7 +148,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param structures - Structures that represent the imports to insert.
      */
     insertImports(index: number, structures: ImportDeclarationStructure[]) {
-        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
         const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
             const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
@@ -236,8 +236,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param structures - Structures that represent the exports to insert.
      */
     insertExports(index: number, structures: ExportDeclarationStructure[]) {
-        const newLineChar = this.factory.getLanguageService().getNewLine();
-        const stringChar = this.factory.getLanguageService().getStringChar();
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
+        const stringChar = this.global.manipulationSettings.getStringChar();
         const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
             const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
@@ -303,8 +303,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDiagnostics(): Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.factory.getProgram().compilerProgram, this.compilerNode);
-        return compilerDiagnostics.map(d => this.factory.getDiagnostic(d));
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerProgram, this.compilerNode);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 
     /**

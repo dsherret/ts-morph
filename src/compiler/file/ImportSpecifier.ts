@@ -13,7 +13,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (nameIdentifier.getText() === name)
             return this;
 
-        this.factory.getLanguageService().renameReplaces([{
+        this.global.languageService.renameReplaces([{
             sourceFile: this.sourceFile,
             textSpans: [{ start: nameIdentifier.getStart(), length: nameIdentifier.getWidth() }]
         }], name);

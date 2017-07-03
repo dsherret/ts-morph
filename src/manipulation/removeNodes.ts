@@ -34,7 +34,7 @@ export function removeNodes(nodes: (Node | undefined)[], opts: RemoveNodesOption
 
     // remove the nodes
     const newFileText = currentText.substring(0, removeRangeStart) + currentText.substring(removeRangeEnd);
-    const tempSourceFile = sourceFile.factory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
 
     handleNode(sourceFile, tempSourceFile);
 
@@ -68,7 +68,7 @@ export function removeNodes(nodes: (Node | undefined)[], opts: RemoveNodesOption
             newChildIndex++;
         }
 
-        sourceFile.factory.replaceCompilerNode(currentNode, newNode.compilerNode);
+        sourceFile.global.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }
 

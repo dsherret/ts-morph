@@ -42,7 +42,7 @@ export interface ParameteredNode {
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
     return class extends Base implements ParameteredNode {
         getParameters() {
-            return this.compilerNode.parameters.map(p => this.factory.getParameterDeclaration(p, this.sourceFile));
+            return this.compilerNode.parameters.map(p => this.global.compilerFactory.getParameterDeclaration(p, this.sourceFile));
         }
 
         addParameter(structure: ParameterDeclarationStructure) {

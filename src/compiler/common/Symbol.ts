@@ -1,11 +1,11 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {Node} from "./../common";
 import {Type} from "./../type";
 
 export class Symbol {
     /** @internal */
-    private readonly factory: CompilerFactory;
+    private readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerSymbol: ts.Symbol;
 
@@ -19,11 +19,11 @@ export class Symbol {
     /**
      * Initializes a new instance of Symbol.
      * @internal
-     * @param factory - Compiler factory.
+     * @param global - Global container.
      * @param symbol - Compiler symbol.
      */
-    constructor(factory: CompilerFactory, symbol: ts.Symbol) {
-        this.factory = factory;
+    constructor(global: GlobalContainer, symbol: ts.Symbol) {
+        this.global = global;
         this._compilerSymbol = symbol;
     }
 
@@ -38,7 +38,7 @@ export class Symbol {
      * Gets the aliased symbol.
      */
     getAliasedSymbol(): Symbol | undefined {
-        return this.factory.getTypeChecker().getAliasedSymbol(this);
+        return this.global.typeChecker.getAliasedSymbol(this);
     }
 
     /**
@@ -71,7 +71,7 @@ export class Symbol {
      */
     getDeclarations(): Node[] {
         // todo: is it important that this might return undefined in ts 2.4?
-        return (this.compilerSymbol.getDeclarations() || []).map(d => this.factory.getNodeFromCompilerNode(d, this.factory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.getDeclarations() || []).map(d => this.global.compilerFactory.getNodeFromCompilerNode(d, this.global.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**
@@ -83,14 +83,14 @@ export class Symbol {
             return undefined;
 
         const tsSymbol = this.compilerSymbol.exports!.get(name);
-        return tsSymbol == null ? undefined : this.factory.getSymbol(tsSymbol);
+        return tsSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsSymbol);
     }
 
     /**
      * Gets the declared type of the symbol.
      */
     getDeclaredType(): Type {
-        return this.factory.getTypeChecker().getDeclaredTypeOfSymbol(this);
+        return this.global.typeChecker.getDeclaredTypeOfSymbol(this);
     }
 
     /**
@@ -98,13 +98,13 @@ export class Symbol {
      * @param node - Location to get the type at for this symbol.
      */
     getTypeAtLocation(node: Node) {
-        return this.factory.getTypeChecker().getTypeOfSymbolAtLocation(this, node);
+        return this.global.typeChecker.getTypeOfSymbolAtLocation(this, node);
     }
 
     /**
      * Gets the fully qualified name.
      */
     getFullyQualifiedName() {
-        return this.factory.getTypeChecker().getFullyQualifiedName(this);
+        return this.global.typeChecker.getFullyQualifiedName(this);
     }
 }

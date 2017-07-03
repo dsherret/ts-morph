@@ -1,12 +1,12 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 
 /**
  * Diagnostic message chain.
  */
 export class DiagnosticMessageChain {
     /** @internal */
-    readonly factory: CompilerFactory;
+    readonly global: GlobalContainer;
     /** @internal */
     readonly _compilerDiagnosticMessageChain: ts.DiagnosticMessageChain;
 
@@ -19,10 +19,10 @@ export class DiagnosticMessageChain {
 
     /** @internal */
     constructor(
-        factory: CompilerFactory,
+        global: GlobalContainer,
         diagnosticMessageChain: ts.DiagnosticMessageChain
     ) {
-        this.factory = factory;
+        this.global = global;
         this._compilerDiagnosticMessageChain = diagnosticMessageChain;
     }
 
@@ -41,7 +41,7 @@ export class DiagnosticMessageChain {
         if (next == null)
             return undefined;
 
-        return this.factory.getDiagnosticMessageChain(next);
+        return this.global.compilerFactory.getDiagnosticMessageChain(next);
     }
 
     /**

@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
 
 /**
@@ -7,7 +7,7 @@ import {TypeChecker} from "./TypeChecker";
  */
 export class Program {
     /** @internal */
-    private readonly factory: CompilerFactory;
+    private readonly global: GlobalContainer;
     /** @internal */
     private readonly typeChecker: TypeChecker;
     /** @internal */
@@ -21,18 +21,18 @@ export class Program {
     }
 
     /** @internal */
-    constructor(factory: CompilerFactory, rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
-        this.factory = factory;
-        this.typeChecker = new TypeChecker(this.factory);
-        this.reset(rootNames, compilerOptions, host);
+    constructor(global: GlobalContainer, rootNames: string[], host: ts.CompilerHost) {
+        this.global = global;
+        this.typeChecker = new TypeChecker(this.global);
+        this.reset(rootNames, host);
     }
 
     /**
      * Resets the program.
      * @internal
      */
-    reset(rootNames: string[], compilerOptions: ts.CompilerOptions, host: ts.CompilerHost) {
-        this._compilerProgram = ts.createProgram(rootNames, compilerOptions, host, this._compilerProgram);
+    reset(rootNames: string[], host: ts.CompilerHost) {
+        this._compilerProgram = ts.createProgram(rootNames, this.global.compilerOptions, host, this._compilerProgram);
         this.typeChecker.reset(this._compilerProgram.getTypeChecker());
     }
 

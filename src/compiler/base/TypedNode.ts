@@ -27,11 +27,11 @@ export interface TypedNode {
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
         getType() {
-            return this.factory.getTypeChecker().getTypeAtLocation(this);
+            return this.global.typeChecker.getTypeAtLocation(this);
         }
 
         getTypeNode() {
-            return this.compilerNode.type == null ? undefined : this.factory.getTypeNode(this.compilerNode.type, this.sourceFile);
+            return this.compilerNode.type == null ? undefined : this.global.compilerFactory.getTypeNode(this.compilerNode.type, this.sourceFile);
         }
 
         setType(text: string) {

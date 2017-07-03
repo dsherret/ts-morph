@@ -51,6 +51,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.factory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.CallExpression>;
+        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.CallExpression>;
     }
 }

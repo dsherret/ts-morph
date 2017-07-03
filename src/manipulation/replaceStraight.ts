@@ -8,7 +8,7 @@ import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
  * Replace insert where the new and old nodes are well defined.
  */
 export function replaceStraight(sourceFile: SourceFile, replacePos: number, replaceLength: number, newText: string) {
-    const compilerFactory = sourceFile.factory;
+    const compilerFactory = sourceFile.global.compilerFactory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, replacePos) + newText + currentText.substring(replacePos + replaceLength);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());

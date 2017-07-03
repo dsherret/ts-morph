@@ -4,7 +4,7 @@ import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
 export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: number, newText: string) {
-    const compilerFactory = sourceFile.factory;
+    const compilerFactory = sourceFile.global.compilerFactory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());

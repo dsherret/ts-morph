@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {getSymbolByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
@@ -7,7 +7,7 @@ import {Signature} from "./../common/Signature";
 
 export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */
-    protected readonly factory: CompilerFactory;
+    protected readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerType: TType;
 
@@ -21,11 +21,11 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Initializes a new instance of Type.
      * @internal
-     * @param factory - Compiler factory.
+     * @param global - Global container.
      * @param type - Compiler type.
      */
-    constructor(factory: CompilerFactory, type: TType) {
-        this.factory = factory;
+    constructor(global: GlobalContainer, type: TType) {
+        this.global = global;
         this._compilerType = type;
     }
 
@@ -35,14 +35,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      * @param typeFormatFlags - Format flags for the type text.
      */
     getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags) {
-        return this.factory.getTypeChecker().getTypeText(this, enclosingNode, typeFormatFlags);
+        return this.global.typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
     }
 
     /**
      * Gets the alias symbol if it exists.
      */
     getAliasSymbol(): Symbol | undefined {
-        return this.compilerType.aliasSymbol == null ? undefined : this.factory.getSymbol(this.compilerType.aliasSymbol);
+        return this.compilerType.aliasSymbol == null ? undefined : this.global.compilerFactory.getSymbol(this.compilerType.aliasSymbol);
     }
 
     /**
@@ -50,14 +50,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getAliasTypeArguments(): Type[] {
         const aliasTypeArgs = this.compilerType.aliasTypeArguments || [];
-        return aliasTypeArgs.map(t => this.factory.getType(t));
+        return aliasTypeArgs.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
      * Gets the apparent type.
      */
     getApparentType() {
-        return this.factory.getTypeChecker().getApparentType(this);
+        return this.global.typeChecker.getApparentType(this);
     }
 
     /**
@@ -65,28 +65,28 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getBaseTypes() {
         const baseTypes = this.compilerType.getBaseTypes() || [];
-        return baseTypes.map(t => this.factory.getType(t));
+        return baseTypes.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
      * Gets the call signatures.
      */
     getCallSignatures(): Signature[] {
-        return this.compilerType.getCallSignatures().map(s => this.factory.getSignature(s));
+        return this.compilerType.getCallSignatures().map(s => this.global.compilerFactory.getSignature(s));
     }
 
     /**
      * Gets the construct signatures.
      */
     getConstructSignatures(): Signature[] {
-        return this.compilerType.getConstructSignatures().map(s => this.factory.getSignature(s));
+        return this.compilerType.getConstructSignatures().map(s => this.global.compilerFactory.getSignature(s));
     }
 
     /**
      * Gets the properties of the type.
      */
     getProperties(): Symbol[] {
-        return this.compilerType.getProperties().map(s => this.factory.getSymbol(s));
+        return this.compilerType.getProperties().map(s => this.global.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -104,7 +104,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the apparent properties of the type.
      */
     getApparentProperties(): Symbol[] {
-        return this.compilerType.getApparentProperties().map(s => this.factory.getSymbol(s));
+        return this.compilerType.getApparentProperties().map(s => this.global.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -122,7 +122,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the non-nullable type.
      */
     getNonNullableType(): Type {
-        return this.factory.getType(this.compilerType.getNonNullableType());
+        return this.global.compilerFactory.getType(this.compilerType.getNonNullableType());
     }
 
     /**
@@ -130,7 +130,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getNumberIndexType(): Type | undefined {
         const numberIndexType = this.compilerType.getNumberIndexType();
-        return numberIndexType == null ? undefined : this.factory.getType(numberIndexType);
+        return numberIndexType == null ? undefined : this.global.compilerFactory.getType(numberIndexType);
     }
 
     /**
@@ -138,7 +138,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getStringIndexType(): Type | undefined {
         const stringIndexType = this.compilerType.getStringIndexType();
-        return stringIndexType == null ? undefined : this.factory.getType(stringIndexType);
+        return stringIndexType == null ? undefined : this.global.compilerFactory.getType(stringIndexType);
     }
 
     /**
@@ -148,7 +148,7 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isUnionType())
             return [];
 
-        return this.compilerType.types.map(t => this.factory.getType(t));
+        return this.compilerType.types.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
@@ -158,7 +158,7 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isIntersectionType())
             return [];
 
-        return this.compilerType.types.map(t => this.factory.getType(t));
+        return this.compilerType.types.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
@@ -166,7 +166,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getSymbol(): Symbol | undefined {
         const tsSymbol = this.compilerType.getSymbol();
-        return tsSymbol == null ? undefined : this.factory.getSymbol(tsSymbol);
+        return tsSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsSymbol);
     }
 
     /**

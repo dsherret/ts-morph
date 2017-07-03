@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {CompilerFactory} from "./../../factories";
+import {GlobalContainer} from "./../../GlobalContainer";
 import {replaceNodeText} from "./../../manipulation";
 import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
@@ -14,7 +14,7 @@ import {Symbol} from "./Symbol";
 
 export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /** @internal */
-    readonly factory: CompilerFactory;
+    readonly global: GlobalContainer;
     /** @internal */
     private _compilerNode: NodeType | undefined;
     /** @internal */
@@ -32,15 +32,16 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /**
      * Initializes a new instance.
      * @internal
-     * @param factory - Compiler factory.
+     * @param global - Global container.
      * @param node - Underlying node.
+     * @param sourceFile - Source file for the node.
      */
     constructor(
-        factory: CompilerFactory,
+        global: GlobalContainer,
         node: NodeType,
         sourceFile: SourceFile
     ) {
-        this.factory = factory;
+        this.global = global;
         this._compilerNode = node;
         this.sourceFile = sourceFile;
     }
@@ -54,7 +55,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
             child.dispose();
         }
 
-        this.factory.removeNodeFromCache(this);
+        this.global.compilerFactory.removeNodeFromCache(this);
         this._compilerNode = undefined;
     }
 
@@ -89,16 +90,16 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     getSymbol(): Symbol | undefined {
         const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
-            return this.factory.getSymbol(boundSymbol);
+            return this.global.compilerFactory.getSymbol(boundSymbol);
 
-        const typeChecker = this.factory.getTypeChecker();
+        const typeChecker = this.global.typeChecker;
         const typeCheckerSymbol = typeChecker.getSymbolAtLocation(this);
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
 
         const nameNode = (this.compilerNode as any).name as ts.Node | undefined;
         if (nameNode != null)
-            return this.factory.getNodeFromCompilerNode(nameNode, this.sourceFile).getSymbol();
+            return this.global.compilerFactory.getNodeFromCompilerNode(nameNode, this.sourceFile).getSymbol();
 
         return undefined;
     }
@@ -266,7 +267,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     getChildren(): Node[] {
-        return this.compilerNode.getChildren().map(n => this.factory.getNodeFromCompilerNode(n, this.sourceFile));
+        return this.compilerNode.getChildren().map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile));
     }
 
     /**
@@ -274,7 +275,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     *getChildrenIterator(): IterableIterator<Node> {
         for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
-            yield this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
+            yield this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
         }
     }
 
@@ -323,7 +324,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
 
     *getAllChildren(): IterableIterator<Node> {
         for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
-            const child = this.factory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
+            const child = this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
             yield child;
 
             for (const childChild of child.getAllChildren())
@@ -423,7 +424,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Get the node's parent.
      */
     getParent() {
-        return (this.compilerNode.parent == null) ? undefined : this.factory.getNodeFromCompilerNode(this.compilerNode.parent, this.sourceFile);
+        return (this.compilerNode.parent == null) ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.parent, this.sourceFile);
     }
 
     /**
@@ -506,7 +507,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     appendChildNewLine() {
         // todo: consider removing this method
-        const newLineText = this.factory.getLanguageService().getNewLine();
+        const newLineText = this.global.manipulationSettings.getNewLineKind();
         if (this.isSourceFile()) {
             this.sourceFile.compilerNode.text += newLineText;
             this.sourceFile.compilerNode.end += newLineText.length;
@@ -528,7 +529,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
 
-        return this.factory.getNodeFromCompilerNode(lastToken, this.sourceFile);
+        return this.global.compilerFactory.getNodeFromCompilerNode(lastToken, this.sourceFile);
     }
 
     /**
@@ -707,8 +708,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         if (this.isSourceFile())
             return "";
 
-        const oneIndentationLevelText = this.factory.getLanguageService().getOneIndentationLevelText();
-        return this.getIndentationText() + oneIndentationLevelText;
+        return this.getIndentationText() + this.global.manipulationSettings.getIndentationText();
     }
 
     /**

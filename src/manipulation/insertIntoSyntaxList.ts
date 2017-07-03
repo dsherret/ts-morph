@@ -20,7 +20,7 @@ export function insertIntoSyntaxList(sourceFile: SourceFile, insertPos: number, 
     if (childIndex < 0 || childIndex > syntaxListChildren.length)
         throw new errors.ArgumentError(nameof(childIndex), `Range is 0 to ${syntaxListChildren.length}, but ${childIndex} was provided.`);
 
-    const compilerFactory = sourceFile.factory;
+    const compilerFactory = sourceFile.global.compilerFactory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());

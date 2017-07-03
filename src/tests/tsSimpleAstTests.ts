@@ -1,6 +1,7 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
 import {TsSimpleAst} from "./../TsSimpleAst";
+import {IndentationText} from "./../manipulation";
 import {FileUtils} from "./../utils";
 import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
@@ -29,6 +30,16 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.getSourceFiles().length).to.equal(2);
         });
         */
+
+        it("should set the manipulation settings if provided", () => {
+            const ast = new TsSimpleAst({
+                manipulationSettings: {
+                    indentationText: IndentationText.EightSpaces
+                }
+            });
+
+            expect(ast.manipulationSettings.getIndentationText()).to.equal(IndentationText.EightSpaces);
+        });
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFileFromFilePath), () => {

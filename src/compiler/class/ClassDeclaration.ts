@@ -94,7 +94,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         const indentationText = this.getChildIndentationText();
-        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
         const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
@@ -228,7 +228,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
-        const newLineChar = this.factory.getLanguageService().getNewLine();
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
 
         // create code
         const codes: string[] = [];
@@ -292,7 +292,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the constructors, methods, properties, and class parameter properties.
      */
     getAllMembers() {
-        const members = this.compilerNode.members.map(m => this.factory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
         const ctors = members.filter(c => c.isConstructorDeclaration() && c.getBody() != null) as ConstructorDeclaration[];
         for (const ctor of ctors) {
             // insert after the constructor
