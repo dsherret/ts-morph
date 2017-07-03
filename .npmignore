@@ -3,6 +3,7 @@
 /coverage
 /.vscode
 /code-generation
+/dist-cg
 /src
 *.js.map
 /obj

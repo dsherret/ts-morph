@@ -9,7 +9,6 @@ export * from "./manipulation/insertIntoBracesOrSourceFile";
 export * from "./manipulation/insertIntoBracesOrSourceFileWithFillAndGetChildren";
 export * from "./manipulation/insertStraight";
 export * from "./manipulation/isBlankLineAtPos";
-export * from "./manipulation/ManipulationSettings";
 export * from "./manipulation/replaceStraight";
 export * from "./manipulation/removeNodes";
 export * from "./manipulation/removeFromBracesOrSourceFile";

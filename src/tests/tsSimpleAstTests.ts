@@ -1,7 +1,7 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
 import {TsSimpleAst} from "./../TsSimpleAst";
-import {IndentationText} from "./../manipulation";
+import {IndentationText} from "./../ManipulationSettings";
 import {FileUtils} from "./../utils";
 import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";

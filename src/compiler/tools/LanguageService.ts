@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {replaceNodeText, ManipulationSettingsContainer} from "./../../manipulation";
+import {replaceNodeText} from "./../../manipulation";
 import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
@@ -43,6 +43,7 @@ export class LanguageService {
         return this._compilerLanguageService;
     }
 
+    /** @internal */
     constructor(global: GlobalContainer) {
         this.global = global;
 
@@ -197,6 +198,7 @@ export class LanguageService {
     }
 
     addSourceFile(sourceFile: SourceFile) {
+        // todo: these source files should be strictly stored in the factory cache
         this.sourceFiles.push(sourceFile);
         this.resetProgram();
     }

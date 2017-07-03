@@ -7,7 +7,7 @@ import {CompilerOptionsResolver, FileUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 import {fillSourceFileFromStructure} from "./manipulation/fillClassFunctions";
-import {ManipulationSettings, ManipulationSettingsContainer} from "./manipulation/ManipulationSettings";
+import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
 
 export interface Options {

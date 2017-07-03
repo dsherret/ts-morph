@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./errors";
-import {ManipulationSettingsContainer} from "./manipulation";
 import {CompilerFactory} from "./factories";
 import {LanguageService} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
+import {ManipulationSettingsContainer} from "./ManipulationSettings";
 import {FileSystemHost} from "./FileSystemHost";
 
 /**
