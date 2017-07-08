@@ -88,11 +88,12 @@ describe(nameof(StatementedNode), () => {
     });
 
     describe(nameof<StatementedNode>(n => n.getFunctions), () => {
-        const {sourceFile} = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
+        const {sourceFile} = getInfoFromText("function Identifier1();function Identifier1() {}\nfunction Identifier2() {}" +
+            "declare function Identifier3(); declare function Identifier3();");
         const functions = sourceFile.getFunctions();
 
         it("should have the expected number of functions", () => {
-            expect(functions.length).to.equal(2);
+            expect(functions.length).to.equal(4);
         });
 
         it("should have correct type", () => {

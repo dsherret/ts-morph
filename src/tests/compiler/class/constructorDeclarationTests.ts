@@ -6,7 +6,7 @@ describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(d => d.remove), () => {
         function doTest(startCode: string, expectedCode: string) {
             const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
-            firstChild.getConstructors().forEach(c => c.remove());
+            firstChild.getConstructors()[0].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
@@ -33,6 +33,13 @@ describe(nameof(ConstructorDeclaration), () => {
         it("should remove when there are overloads", () => {
             doTest("class MyClass {\n    constructor();constructor() {\n    }\n}",
                 "class MyClass {\n}");
+        });
+
+        it("should only remove the overload when calling remove on the overload", () => {
+            const startCode = "class MyClass {\n    constructor();\n    constructor() {\n    }\n}";
+            const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            firstChild.getConstructors()[0].getOverloads()[0].remove();
+            expect(sourceFile.getFullText()).to.equal("class MyClass {\n    constructor() {\n    }\n}");
         });
     });
 });

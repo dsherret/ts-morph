@@ -2,6 +2,7 @@
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure} from "./../../structures";
+import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
@@ -69,6 +70,14 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             expectedKind: ts.SyntaxKind.ConstructSignature,
             fillFunction: fillClassFuncs.fillConstructSignatureDeclarationFromStructure
         });
+    }
+
+    /**
+     * Gets the first construct signature by a find function.
+     * @param findFunction - Function to find the construct signature by.
+     */
+    getConstructSignature(findFunction: (member: ConstructSignatureDeclaration) => boolean): ConstructSignatureDeclaration | undefined {
+        return this.getConstructSignatures().find(findFunction);
     }
 
     /**
@@ -140,6 +149,20 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     }
 
     /**
+     * Gets the first method by name.
+     * @param name - Name.
+     */
+    getMethod(name: string): MethodSignature | undefined;
+    /**
+     * Gets the first method by a find function.
+     * @param findFunction - Function to find the method by.
+     */
+    getMethod(findFunction: (member: MethodSignature) => boolean): MethodSignature | undefined;
+    getMethod(nameOrFindFunction: string | ((member: MethodSignature) => boolean)): MethodSignature | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getMethods(), nameOrFindFunction);
+    }
+
+    /**
      * Gets the interface method signatures.
      */
     getMethods(): MethodSignature[] {
@@ -203,6 +226,20 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             expectedKind: ts.SyntaxKind.PropertySignature,
             fillFunction: fillClassFuncs.fillPropertySignatureFromStructure
         });
+    }
+
+    /**
+     * Gets the first property by name.
+     * @param name - Name.
+     */
+    getProperty(name: string): PropertySignature | undefined;
+    /**
+     * Gets the first property by a find function.
+     * @param findFunction - Function to find the property by.
+     */
+    getProperty(findFunction: (member: PropertySignature) => boolean): PropertySignature | undefined;
+    getProperty(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
     }
 
     /**

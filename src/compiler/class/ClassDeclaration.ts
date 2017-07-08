@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -181,11 +182,39 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the first instance property by name.
+     * @param name - Name.
+     */
+    getInstanceProperty(name: string): ClassInstancePropertyTypes | undefined;
+    /**
+     * Gets the first instance property by a find function.
+     * @param findFunction - Function to find an instance property by.
+     */
+    getInstanceProperty(findFunction: (prop: ClassInstancePropertyTypes) => boolean): ClassInstancePropertyTypes | undefined;
+    getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getInstanceProperties(), nameOrFindFunction);
+    }
+
+    /**
      * Gets the class instance property declarations.
      */
     getInstanceProperties(): ClassInstancePropertyTypes[] {
         return this.getInstanceMembers()
             .filter(m => isClassPropertyType(m)) as ClassInstancePropertyTypes[];
+    }
+
+    /**
+     * Gets the first static property by name.
+     * @param name - Name.
+     */
+    getStaticProperty(name: string): ClassStaticPropertyTypes | undefined;
+    /**
+     * Gets the first static property by a find function.
+     * @param findFunction - Function to find a static property by.
+     */
+    getStaticProperty(findFunction: (prop: ClassStaticPropertyTypes) => boolean): ClassStaticPropertyTypes | undefined;
+    getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getStaticProperties(), nameOrFindFunction);
     }
 
     /**
@@ -261,10 +290,38 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the first instance method by name.
+     * @param name - Name.
+     */
+    getInstanceMethod(name: string): MethodDeclaration | undefined;
+    /**
+     * Gets the first instance method by a find function.
+     * @param findFunction - Function to find an instance method by.
+     */
+    getInstanceMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getInstanceMethods(), nameOrFindFunction);
+    }
+
+    /**
      * Gets the class instance method declarations.
      */
     getInstanceMethods(): MethodDeclaration[] {
         return this.getInstanceMembers().filter(m => m instanceof MethodDeclaration) as MethodDeclaration[];
+    }
+
+    /**
+     * Gets the first static method by name.
+     * @param name - Name.
+     */
+    getStaticMethod(name: string): MethodDeclaration | undefined;
+    /**
+     * Gets the first static method by a find function.
+     * @param findFunction - Function to find a static method by.
+     */
+    getStaticMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getStaticMethods(), nameOrFindFunction);
     }
 
     /**
@@ -275,10 +332,38 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the first instance member by name.
+     * @param name - Name.
+     */
+    getInstanceMember(name: string): ClassInstanceMemberTypes | undefined;
+    /**
+     * Gets the first instance member by a find function.
+     * @param findFunction - Function to find the instance member by.
+     */
+    getInstanceMember(findFunction: (member: ClassInstanceMemberTypes) => boolean): ClassInstanceMemberTypes | undefined;
+    getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getInstanceMembers(), nameOrFindFunction);
+    }
+
+    /**
      * Gets the instance members.
      */
     getInstanceMembers() {
         return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && (m instanceof ParameterDeclaration || !m.isStatic())) as ClassInstanceMemberTypes[];
+    }
+
+    /**
+     * Gets the first static member by name.
+     * @param name - Name.
+     */
+    getStaticMember(name: string): ClassStaticMemberTypes | undefined;
+    /**
+     * Gets the first static member by a find function.
+     * @param findFunction - Function to find an static method by.
+     */
+    getStaticMember(findFunction: (member: ClassStaticMemberTypes) => boolean): ClassStaticMemberTypes | undefined;
+    getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getStaticMembers(), nameOrFindFunction);
     }
 
     /**
@@ -293,8 +378,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getAllMembers() {
         const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
-        const ctors = members.filter(c => c.isConstructorDeclaration() && c.getBody() != null) as ConstructorDeclaration[];
-        for (const ctor of ctors) {
+        const implementationCtors = members.filter(c => c.isConstructorDeclaration() && c.isImplementation()) as ConstructorDeclaration[];
+        for (const ctor of implementationCtors) {
             // insert after the constructor
             let insertIndex = members.indexOf(ctor) + 1;
             for (const param of ctor.getParameters()) {
@@ -304,7 +389,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 }
             }
         }
-        return members;
+
+        // filter out the method declarations or constructor declarations without a body if not ambient
+        return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
     }
 }
 

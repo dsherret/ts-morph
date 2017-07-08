@@ -94,6 +94,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the source file language variant.
+     */
+    getLanguageVariant() {
+        return this.compilerNode.languageVariant;
+    }
+
+    /**
      * Gets if this is a declaration file.
      */
     isDeclarationFile() {

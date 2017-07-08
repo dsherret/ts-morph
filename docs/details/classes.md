@@ -55,7 +55,8 @@ classDeclaration.insertImplements(1, ["Named", "Aged"]);
 
 ### Constructor
 
-Constructors can be retreived via `getConstructors` (returns overloads and implementation):
+Constructors can be retreived via `getConstructors`. This returns all the constructors in an ambient context, but will only return the
+implementation constructor otherwise.
 
 ```typescript
 const constructors = classDeclaration.getConstructors();
@@ -64,21 +65,25 @@ const constructors = classDeclaration.getConstructors();
 Add or insert a constructor by calling `addConstructor()` or `insertConstructor()` respectively.
 
 ```typescript
-const ctor = classDeclaration.addConstructor();
+const ctor = classDeclaration.addConstructor({ /* options like parameters may go here */ });
 ```
 
 ### Methods
 
-Get the instance methods using `getInstanceMethods()`:
+Get instance methods:
 
 ```typescript
 const instanceMethods = classDeclaration.getInstanceMethods();
+const myMethod = classDeclaration.getInstanceMethod("myMethod");
+const firstMethodWith2Params = classDeclaration.getInstanceMethod(m => m.getParameters().length === 2);
 ```
 
-Get the static methods using `getStaticMethods()`:
+Get the static methods:
 
 ```typescript
 const staticMethods = classDeclaration.getStaticMethods();
+const myStaticMethod = classDeclaration.getStaticMethod("myMethod");
+const firstStaticMethodWith2Params = classDeclaration.getStaticMethod(m => m.getParameters().length === 2);
 ```
 
 Add or insert methods by using `insertMethods()`, `insertMethod`, `addMethod`, or `addMethods`:
@@ -89,16 +94,20 @@ const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", re
 
 ### Properties
 
-Get the instance properties using `getInstanceProperties()`:
+Get the instance properties:
 
 ```typescript
 const instanceProperties = classDeclaration.getInstanceProperties();
+const myProperty = classDeclaration.getInstanceProperty("myProperty");
+const myStringProperty = classDeclaration.getInstanceProperty(m => m.getType().getText() === "string");
 ```
 
-Get the static properties using `getStaticProperties()`:
+Get the static properties:
 
 ```typescript
 const staticProperties = classDeclaration.getStaticProperties();
+const myStaticProperty = classDeclaration.getStaticProperty("myStaticProperty");
+const myStaticStringProperty = classDeclaration.getStaticProperty(m => m.getType().getText() === "string");
 ```
 
 Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:

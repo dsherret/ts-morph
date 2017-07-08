@@ -35,6 +35,7 @@ Use:
 
 ```typescript
 const constructSignatures = interfaceDeclaration.getConstructSignatures();
+const constructSignature = interfaceDeclaration.getConstructSignature(c => c.getParameters().length > 2);
 ```
 
 To add or insert use `addConstructSignature()`, `addConstructSignatures()`, `insertConstructSignature`, or `insertConstructSignatures()`:
@@ -49,6 +50,8 @@ Use:
 
 ```typescript
 const methodSignatures = interfaceDeclaration.getMethods();
+const myMethod = interfaceDeclaration.getMethod("myMethod");
+const firstMethodWith4Params = interfaceDeclaration.getMethod(m => m.getParameters().length === 4);
 ```
 
 To add or insert use `addMethod()`, `addMethods()`, `insertMethod`, or `insertMethods()`:
@@ -63,6 +66,8 @@ Use:
 
 ```typescript
 const properties = interfaceDeclaration.getProperties();
+const myProperty = interfaceDeclaration.getProperty("myProperty");
+const firstStringProperty = interfaceDeclaration.getProperty(p => p.getType().getText() === "string");
 ```
 
 To add or insert use `addProperty()`, `addProperties()`, `insertProperty`, or `insertProperties()`:

@@ -382,7 +382,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): functions.FunctionDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration);
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration)
+                .filter(f => f.isAmbient() || f.isImplementation());
         }
 
         getFunction(name: string): functions.FunctionDeclaration | undefined;

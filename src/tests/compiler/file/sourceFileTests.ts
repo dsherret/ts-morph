@@ -1,4 +1,5 @@
 ﻿import {expect} from "chai";
+import * as ts from "typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration} from "./../../../compiler";
 import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -353,6 +354,18 @@ describe(nameof(SourceFile), () => {
             const {sourceFile} = getInfoFromText("namespace Identifier {}\nclass Identifier {}\nexport default Identifier;\n");
             sourceFile.removeDefaultExport();
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {}\nclass Identifier {}\n");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getLanguageVariant), () => {
+        it("should return standard when in a ts file", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(sourceFile.getLanguageVariant()).to.equal(ts.LanguageVariant.Standard);
+        });
+
+        it("should return jsx when in a tsx file", () => {
+            const {sourceFile} = getInfoFromText("", { filePath: "file.tsx" });
+            expect(sourceFile.getLanguageVariant()).to.equal(ts.LanguageVariant.JSX);
         });
     });
 });

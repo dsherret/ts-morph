@@ -11,6 +11,7 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "BodiedNode":
         case "BodyableNode":
         case "NamespaceChildableNode":
+        case "OverloadableNode":
             return false;
         default:
             return true;

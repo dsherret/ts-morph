@@ -4,9 +4,10 @@ import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableN
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./../namespace";
 import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
+import {OverloadableNode} from "./OverloadableNode";
 
-export const FunctionDeclarationBase = AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
+export const FunctionDeclarationBase = OverloadableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
     NamespaceChildableNode(ExportableNode(ModifierableNode(BodyableNode(NamedNode(Node)))))
-)))));
+))))));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
 }

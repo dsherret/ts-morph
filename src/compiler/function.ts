@@ -2,3 +2,4 @@
 export * from "./function/FunctionLikeDeclaration";
 export * from "./function/ParameterDeclaration";
 export * from "./function/SignaturedDeclaration";
+export * from "./function/OverloadableNode";
