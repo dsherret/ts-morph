@@ -134,3 +134,12 @@ export function fillSignaturedDeclarationFromStructure(node: compiler.Signatured
     fillFuncs.fillReturnTypedNodeFromStructure(node, structure);
     fillFuncs.fillTypeParameteredNodeFromStructure(node, structure);
 }
+
+export function fillFunctionDeclarationOverloadFromStructure(node: compiler.FunctionDeclaration, structure: structures.FunctionDeclarationOverloadStructure) {
+    fillSignaturedDeclarationFromStructure(node, structure);
+    fillFuncs.fillDocumentationableNodeFromStructure(node, structure);
+    fillFuncs.fillAsyncableNodeFromStructure(node, structure);
+    fillFuncs.fillGeneratorableNodeFromStructure(node, structure);
+    fillFuncs.fillAmbientableNodeFromStructure(node, structure);
+    fillFuncs.fillExportableNodeFromStructure(node, structure);
+}

@@ -42,6 +42,13 @@ export class Symbol {
     }
 
     /**
+     * Gets if the symbol is an alias.
+     */
+    isAlias() {
+        return (this.getFlags() & ts.SymbolFlags.Alias) === ts.SymbolFlags.Alias;
+    }
+
+    /**
      * Gets the symbol flags.
      */
     getFlags(): ts.SymbolFlags {
@@ -71,7 +78,7 @@ export class Symbol {
      */
     getDeclarations(): Node[] {
         // todo: is it important that this might return undefined in ts 2.4?
-        return (this.compilerSymbol.getDeclarations() || []).map(d => this.global.compilerFactory.getNodeFromCompilerNode(d, this.global.compilerFactory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.declarations || []).map(d => this.global.compilerFactory.getNodeFromCompilerNode(d, this.global.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**

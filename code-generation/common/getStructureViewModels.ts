@@ -1,6 +1,7 @@
-﻿import {InterfaceViewModel} from "./../view-models";
+﻿import * as ts from "typescript";
+import {InterfaceViewModel} from "./../view-models";
 import TsSimpleAst from "./../../src/main";
-import {ClassDeclaration} from "./../../src/main";
+import {ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
 
 export function* getStructureViewModels(ast: TsSimpleAst): IterableIterator<InterfaceViewModel> {
     const diagnostics = ast.getDiagnostics().map(m => m.getMessageText());
@@ -11,10 +12,19 @@ export function* getStructureViewModels(ast: TsSimpleAst): IterableIterator<Inte
     const interfaces = compilerSourceFiles.map(f => f.getInterfaces()).reduce((a, b) => a.concat(b), []);
 
     for (const i of interfaces) {
-        yield {
-            name: i.getName(),
-            extends: i.getExtends().map(e => e.getExpression().getSymbol()!.getName()),
-            path: i.getSourceFile().getFilePath()
-        };
+        yield getInterfaceViewModel(i);
     }
+}
+
+function getInterfaceViewModel(interfaceDec: InterfaceDeclaration): InterfaceViewModel {
+    return {
+        name: interfaceDec.getName(),
+        extends: interfaceDec.getExtends()
+            .map(e => {
+                const symbol = e.getExpression().getSymbol()!;
+                return symbol.isAlias() ? symbol.getAliasedSymbol() : symbol;
+            })
+            .map(s => getInterfaceViewModel(s!.getDeclarations()[0] as InterfaceDeclaration)),
+        path: interfaceDec.getSourceFile().getFilePath()
+    };
 }
