@@ -40,7 +40,7 @@ describe(nameof(Memoize), () => {
 
     it("should throw when using memoize on a set accessor", () => {
         expect(() => {
-            class MyClass {
+            class OtherClass {
                 private value: string;
                 @Memoize
                 set test(value: string) {

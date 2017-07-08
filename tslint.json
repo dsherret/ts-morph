@@ -42,6 +42,7 @@
         "no-console": [ false ],
         "prefer-conditional-expression": false,
         "no-empty-interface": false,
-        "no-object-literal-type-assertion": false
+        "no-object-literal-type-assertion": false,
+        "no-this-assignment": false
     }
 }
