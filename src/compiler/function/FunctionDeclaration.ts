@@ -58,7 +58,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const newChildren = parent._insertMainChildren<FunctionDeclaration>(mainIndex, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
             fillClassFuncs.fillFunctionDeclarationOverloadFromStructure(child, structures[i]);
         }, {
-            previousBlanklineWhen: () => index == 0,
+            previousBlanklineWhen: () => index === 0,
             nextBlanklineWhen: () => false,
             separatorNewlineWhen: () => false
         });
