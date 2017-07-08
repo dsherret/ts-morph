@@ -108,7 +108,7 @@ export class CompilerFactory {
                 throw new errors.NotImplementedError("Could not find node source file.");
             currentNode = currentNode.parent;
         }
-        return this.getSourceFile(compilerNode as ts.SourceFile);
+        return this.getSourceFile(currentNode as ts.SourceFile);
     }
 
     /**
