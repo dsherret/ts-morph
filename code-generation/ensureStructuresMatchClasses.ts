@@ -1,11 +1,11 @@
-﻿import {getAst, getClassViewModels, getStructureViewModels, getMixinOfMixins} from "./common";
+﻿import {getAst, getClassViewModels, getStructureViewModels, getMixinsOfMixins} from "./common";
 import {ClassViewModel, MixinViewModel, InterfaceViewModel} from "./view-models";
 import {isAllowedMixin, isAllowedClass} from "./config";
 
 const ast = getAst();
 const classVMs = Array.from(getClassViewModels(ast));
 const structureVMs = Array.from(getStructureViewModels(ast));
-const mixinsOfMixins = getMixinOfMixins(classVMs);
+const mixinsOfMixins = getMixinsOfMixins(classVMs);
 const problems: string[] = [];
 
 for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.filter(m => m.mixins.length > 0)]) {

@@ -1,6 +1,6 @@
 ﻿import {MixinViewModel, ClassViewModel, MixinableViewModel} from "./../view-models";
 
-export function getMixinOfMixins(classVMs: ClassViewModel[]) {
+export function getMixinsOfMixins(classVMs: ClassViewModel[]) {
     const result: MixinViewModel[] = [];
 
     function handleMixinable(mixinable: MixinableViewModel) {

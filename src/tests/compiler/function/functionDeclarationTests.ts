@@ -17,6 +17,11 @@ describe(nameof(FunctionDeclaration), () => {
                 "function identifier(): number;\nfunction identifier();\nfunction identifier() {}\n");
         });
 
+        it("should insert with the ambientable and exportable nodes the same as the implementation signature unless overwritten", () => {
+            doTest("declare async function* identifier(param: string): string {}\n", 0, [{ returnType: "number", hasDeclareKeyword: false }, {}],
+                "function identifier(): number;\ndeclare function identifier();\ndeclare async function* identifier(param: string): string {}\n");
+        });
+
         it("should be able to insert at start when another overload exists", () => {
             doTest("function identifier();\nfunction identifier() {}\n", 0, [{ returnType: "string" }],
                 "function identifier(): string;\nfunction identifier();\nfunction identifier() {}\n");

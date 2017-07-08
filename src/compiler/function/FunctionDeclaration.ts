@@ -3,6 +3,7 @@ import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure} from "./../../structures";
 import {verifyAndGetIndex} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
+import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode} from "./../base";
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./../namespace";
@@ -54,6 +55,11 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const texts = structures.map(structure => `${indentationText}function ${thisName}();`);
         const firstIndex = overloads.length > 0 ? overloads[0].getChildIndex() : this.getChildIndex();
         const mainIndex = firstIndex + index;
+        const thisStructure = getStructureFuncs.fromFunctionDeclarationOverload(this.getImplementation() || this);
+
+        for (let i = 0; i < structures.length; i++) {
+            structures[i] = {...thisStructure, ...structures[i]};
+        }
 
         const newChildren = parent._insertMainChildren<FunctionDeclaration>(mainIndex, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
             fillClassFuncs.fillFunctionDeclarationOverloadFromStructure(child, structures[i]);

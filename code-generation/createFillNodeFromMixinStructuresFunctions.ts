@@ -1,7 +1,7 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {ClassViewModel, MixinViewModel, MixinableViewModel, FillOnlyFunctionViewModel, InterfaceViewModel} from "./view-models";
 import {isAllowedClass, isAllowedMixin} from "./config";
-import {getMixinOfMixins} from "./common";
+import {getMixinsOfMixins} from "./common";
 
 export interface Options {
     classVMs: ClassViewModel[];
@@ -14,9 +14,9 @@ export function createFillNodeFromMixinStructuresFunctions(opts: Options) {
     classVMs.forEach(c => removeNotAllowedMixins(c));
 
     const writer = new CodeBlockWriter();
-    const mixinsOfMixins = getMixinOfMixins(classVMs);
+    const mixinsOfMixins = getMixinsOfMixins(classVMs);
 
-    writer.writeLine("/* ts-lint:disable */");
+    writer.writeLine("/* tslint:disable */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
     writer.writeLine(`import * as compiler from "./../compiler";`);
     writer.writeLine(`import * as structures from "./../structures";`);

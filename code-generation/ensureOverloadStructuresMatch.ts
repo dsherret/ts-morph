@@ -1,4 +1,4 @@
-﻿import {getAst, getStructureViewModels} from "./common";
+﻿import {getAst, getStructureViewModels, getFlattenedExtensions} from "./common";
 import {InterfaceViewModel} from "./view-models";
 import {isOverloadStructure} from "./config";
 
@@ -34,17 +34,6 @@ for (const overloadVM of overloadVMs) {
 if (problems.length > 0) {
     console.log(problems);
     throw new Error("Overload structure did not match main structure!");
-}
-
-function getFlattenedExtensions(vm: InterfaceViewModel) {
-    const extensions: InterfaceViewModel[] = [];
-    for (const ext of vm.extends) {
-        const flattenedExts = getFlattenedExtensions(ext);
-        for (const flattenedExt of flattenedExts)
-            extensions.push(flattenedExt);
-        extensions.push(ext);
-    }
-    return extensions;
 }
 
 function isAllowedStructure(vm: InterfaceViewModel) {
