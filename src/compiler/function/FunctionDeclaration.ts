@@ -8,7 +8,7 @@ import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableN
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./../namespace";
 import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
-import {OverloadableNode} from "./OverloadableNode";
+import {OverloadableNode, insertOverloads} from "./OverloadableNode";
 
 export const FunctionDeclarationBase = OverloadableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
     NamespaceChildableNode(ExportableNode(ModifierableNode(BodyableNode(NamedNode(Node)))))
@@ -45,30 +45,18 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * @param structure - Structures of the overloads.
      */
     insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]) {
-        const overloads = this.getOverloads();
-        const overloadsCount = overloads.length;
-        index = verifyAndGetIndex(index, overloadsCount);
-
-        const parent = this.getParentOrThrow() as any as StatementedNode;
         const indentationText = this.getIndentationText();
         const thisName = this.getName();
-        const texts = structures.map(structure => `${indentationText}function ${thisName}();`);
-        const firstIndex = overloads.length > 0 ? overloads[0].getChildIndex() : this.getChildIndex();
-        const mainIndex = firstIndex + index;
-        const thisStructure = getStructureFuncs.fromFunctionDeclarationOverload(this.getImplementation() || this);
+        const childCodes = structures.map(structure => `${indentationText}function ${thisName}();`);
 
-        for (let i = 0; i < structures.length; i++) {
-            structures[i] = {...thisStructure, ...structures[i]};
-        }
-
-        const newChildren = parent._insertMainChildren<FunctionDeclaration>(mainIndex, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
-            fillClassFuncs.fillFunctionDeclarationOverloadFromStructure(child, structures[i]);
-        }, {
-            previousBlanklineWhen: () => index === 0,
-            nextBlanklineWhen: () => false,
-            separatorNewlineWhen: () => false
+        return insertOverloads({
+            node: this,
+            index,
+            structures,
+            childCodes,
+            getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
+            fillNodeFromStructure: fillClassFuncs.fillFunctionDeclarationOverloadFromStructure,
+            expectedSyntaxKind: ts.SyntaxKind.FunctionDeclaration
         });
-
-        return newChildren;
     }
 }

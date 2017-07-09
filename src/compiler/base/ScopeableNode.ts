@@ -16,6 +16,10 @@ export interface ScopeableNode {
      * @param scope - Scope to set to.
      */
     setScope(scope: Scope | undefined): this;
+    /**
+     * Gets if the node has a scope keyword.
+     */
+    hasScopeKeyword(): boolean;
 }
 
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
@@ -27,6 +31,10 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
         setScope(scope: Scope | undefined) {
             setScopeForNode(this, scope);
             return this;
+        }
+
+        hasScopeKeyword() {
+            return this.getScope() != null;
         }
     };
 }
@@ -55,7 +63,7 @@ export function getScopeForNode(node: Node) {
  * @param scope - Scope to be set to.
  */
 export function setScopeForNode(node: Node & ModifierableNode, scope: Scope | undefined) {
-    node.toggleModifier("public", scope === Scope.Public); // always be implicit with scope
+    node.toggleModifier("public", scope === Scope.Public); // always be explicit with scope
     node.toggleModifier("protected", scope === Scope.Protected);
     node.toggleModifier("private", scope === Scope.Private);
 }

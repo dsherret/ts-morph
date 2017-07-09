@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {BodyableNode, NamedNode} from "./../base";
@@ -6,6 +7,9 @@ import {Node} from "./../common";
 
 export type OverloadableNodeExtensionType = Node & BodyableNode;
 
+/**
+ * Node that supports overloads.
+ */
 export interface OverloadableNode {
     /**
      * Gets all the overloads associated with this node.
@@ -63,4 +67,59 @@ function getNameIfNamedNode(node: Node) {
     if (nodeAsNamedNode.getName instanceof Function)
         return nodeAsNamedNode.getName();
     return undefined;
+}
+
+/**
+ * @internal
+ */
+export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, TStructure> {
+    node: TNode;
+    index: number;
+    structures: TStructure[];
+    childCodes: string[];
+    getThisStructure: (node: TNode) => TStructure;
+    fillNodeFromStructure: (node: TNode, structure: TStructure) => void;
+    expectedSyntaxKind: ts.SyntaxKind;
+}
+
+/**
+ * @internal
+ */
+export function insertOverloads<TNode extends OverloadableNode & Node, TStructure>(opts: InsertOverloadsOptions<TNode, TStructure>): TNode[] {
+    if (opts.structures.length === 0)
+        return [];
+
+    const overloads = opts.node.getOverloads();
+    const overloadsCount = overloads.length;
+    const parentSyntaxList = opts.node.getParentSyntaxListOrThrow();
+    const firstIndex = overloads.length > 0 ? overloads[0].getChildIndex() : opts.node.getChildIndex();
+    const index = verifyAndGetIndex(opts.index, overloadsCount);
+    const mainIndex = firstIndex + index;
+
+    const thisStructure = opts.getThisStructure(opts.node.getImplementation() || opts.node);
+    const structures = opts.structures;
+
+    for (let i = 0; i < structures.length; i++) {
+        structures[i] = Object.assign(Object.assign({}, thisStructure), structures[i]);
+        // structures[i] = {...thisStructure, ...structures[i]}; // not supported by TS as of 2.4.1
+    }
+
+    insertIntoBracesOrSourceFile<TStructure>({
+        sourceFile: opts.node.getSourceFile(),
+        parent: opts.node.getParentOrThrow(),
+        children: parentSyntaxList.getChildren(),
+        index: mainIndex,
+        childCodes: opts.childCodes,
+        structures,
+        separator: opts.node.global.manipulationSettings.getNewLineKind(),
+        previousBlanklineWhen: () => index === 0,
+        separatorNewlineWhen: () => false,
+        nextBlanklineWhen: () => false
+    });
+
+    const children = getRangeFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
+    children.forEach((child, i) => {
+        opts.fillNodeFromStructure(child, structures[i]);
+    });
+    return children;
 }

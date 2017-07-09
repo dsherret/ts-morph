@@ -38,3 +38,21 @@ export function fromReturnTypedNode(node: compiler.ReturnTypedNode): MakeRequire
         returnType: returnTypeNode == null ? undefined : returnTypeNode.getText()
     };
 }
+
+export function fromStaticableNode(node: compiler.StaticableNode): MakeRequired<structures.StaticableNodeStructure> {
+    return {
+        isStatic: node.isStatic()
+    };
+}
+
+export function fromScopeableNode(node: compiler.ScopeableNode): MakeRequired<structures.ScopeableNodeStructure> {
+    return {
+        scope: node.getScope()
+    };
+}
+
+export function fromScopedNode(node: compiler.ScopedNode): MakeRequired<structures.ScopedNodeStructure> {
+    return {
+        scope: node.hasScopeKeyword() ? node.getScope() : undefined
+    };
+}

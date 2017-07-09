@@ -44,6 +44,8 @@ function writeBody(writer: CodeBlockWriter, vm: InterfaceViewModel, extendsStruc
 function shouldCreateForStructure(structure: InterfaceViewModel) {
     switch (structure.name) {
         case "FunctionDeclarationOverloadStructure":
+        case "MethodDeclarationOverloadStructure":
+        case "ConstructorDeclarationOverloadStructure":
             return true;
         default:
             return false;
@@ -60,6 +62,33 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
             case "ReturnTypedNodeStructure":
             case "GeneratorableNodeStructure":
             case "AsyncableNodeStructure":
+                return false;
+            default:
+                return true;
+        }
+    }
+    else if (structure.name === "MethodDeclarationOverloadStructure") {
+        switch (extendsStructure.name) {
+            case "ParameteredNodeStructure":
+            case "TypeParameteredNodeStructure":
+            case "DocumentationableNodeStructure":
+            case "SignaturedDeclarationStructure":
+            case "ReturnTypedNodeStructure":
+            case "GeneratorableNodeStructure":
+            case "AsyncableNodeStructure":
+            case "DecoratableNodeStructure":
+                return false;
+            default:
+                return true;
+        }
+    }
+    else if (structure.name === "ConstructorDeclarationOverloadStructure") {
+        switch (extendsStructure.name) {
+            case "ParameteredNodeStructure":
+            case "TypeParameteredNodeStructure":
+            case "DocumentationableNodeStructure":
+            case "SignaturedDeclarationStructure":
+            case "ReturnTypedNodeStructure":
                 return false;
             default:
                 return true;

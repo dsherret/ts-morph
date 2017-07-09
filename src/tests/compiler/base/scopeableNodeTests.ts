@@ -30,6 +30,18 @@ describe(nameof(ScopeableNode), () => {
         });
     });
 
+    describe(nameof<ScopeableNode>(d => d.hasScopeKeyword), () => {
+        it("should not have one when there's no scope", () => {
+            const {firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");
+            expect(firstParam.hasScopeKeyword()).to.be.false;
+        });
+
+        it("should have one when there is a scope", () => {
+            const {firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
+            expect(firstParam.hasScopeKeyword()).to.be.true;
+        });
+    });
+
     describe(nameof<ScopeableNode>(d => d.setScope), () => {
         it("should set to public when set to public", () => {
             const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(param: string) {} }");

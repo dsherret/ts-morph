@@ -39,3 +39,18 @@ export function fillOnlyNamespaceDeclarationFromStructure(node: compiler.Namespa
     if (structure.hasModuleKeyword != null)
         node.setHasModuleKeyword(structure.hasModuleKeyword);
 }
+
+export function fillOnlyFunctionDeclarationFromStructure(node: compiler.FunctionDeclaration, structure: structures.FunctionDeclarationSpecificStructure) {
+    if (structure.overloads != null && structure.overloads.length > 0)
+        node.addOverloads(structure.overloads);
+}
+
+export function fillOnlyConstructorDeclarationFromStructure(node: compiler.ConstructorDeclaration, structure: structures.ConstructorDeclarationSpecificStructure) {
+    if (structure.overloads != null && structure.overloads.length > 0)
+        node.addOverloads(structure.overloads);
+}
+
+export function fillOnlyMethodDeclarationFromStructure(node: compiler.MethodDeclaration, structure: structures.MethodDeclarationSpecificStructure) {
+    if (structure.overloads != null && structure.overloads.length > 0)
+        node.addOverloads(structure.overloads);
+}

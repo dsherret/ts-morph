@@ -30,6 +30,18 @@ describe(nameof(ScopedNode), () => {
         });
     });
 
+    describe(nameof<ScopedNode>(d => d.hasScopeKeyword), () => {
+        it("should not have a scope keyword when there isn't one", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\nprop: string;}\n");
+            expect(firstProperty.hasScopeKeyword()).to.be.false;
+        });
+
+        it("should have a scope keyword when there is one", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class Identifier {\npublic prop: string;}\n");
+            expect(firstProperty.hasScopeKeyword()).to.be.true;
+        });
+    });
+
     describe(nameof<ScopedNode>(d => d.setScope), () => {
         it("should clear the scope keyword if set to public", () => {
             const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { private prop: string; }");

@@ -43,6 +43,7 @@
         "prefer-conditional-expression": false,
         "no-empty-interface": false,
         "no-object-literal-type-assertion": false,
-        "no-this-assignment": false
+        "no-this-assignment": false,
+        "prefer-object-spread": false
     }
 }

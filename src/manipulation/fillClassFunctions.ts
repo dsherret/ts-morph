@@ -20,6 +20,7 @@ export function fillClassDeclarationFromStructure(node: compiler.ClassDeclaratio
 export function fillConstructorDeclarationFromStructure(node: compiler.ConstructorDeclaration, structure: structures.ConstructorDeclarationStructure) {
     fillFuncs.fillScopedNodeFromStructure(node, structure);
     fillFunctionLikeDeclarationFromStructure(node, structure);
+    fillOnlyFuncs.fillOnlyConstructorDeclarationFromStructure(node, structure);
 }
 
 export function fillMethodDeclarationFromStructure(node: compiler.MethodDeclaration, structure: structures.MethodDeclarationStructure) {
@@ -30,6 +31,7 @@ export function fillMethodDeclarationFromStructure(node: compiler.MethodDeclarat
     fillFuncs.fillAsyncableNodeFromStructure(node, structure);
     fillFuncs.fillGeneratorableNodeFromStructure(node, structure);
     fillFunctionLikeDeclarationFromStructure(node, structure);
+    fillOnlyFuncs.fillOnlyMethodDeclarationFromStructure(node, structure);
 }
 
 export function fillPropertyDeclarationFromStructure(node: compiler.PropertyDeclaration, structure: structures.PropertyDeclarationStructure) {
@@ -68,6 +70,7 @@ export function fillFunctionDeclarationFromStructure(node: compiler.FunctionDecl
     fillFuncs.fillStatementedNodeFromStructure(node, structure);
     fillFuncs.fillAmbientableNodeFromStructure(node, structure);
     fillFuncs.fillExportableNodeFromStructure(node, structure);
+    fillOnlyFuncs.fillOnlyFunctionDeclarationFromStructure(node, structure);
 }
 
 export function fillParameterDeclarationFromStructure(node: compiler.ParameterDeclaration, structure: structures.ParameterDeclarationStructure) {
@@ -133,6 +136,23 @@ export function fillSignaturedDeclarationFromStructure(node: compiler.Signatured
     fillFuncs.fillParameteredNodeFromStructure(node, structure);
     fillFuncs.fillReturnTypedNodeFromStructure(node, structure);
     fillFuncs.fillTypeParameteredNodeFromStructure(node, structure);
+}
+
+export function fillConstructorDeclarationOverloadFromStructure(node: compiler.ConstructorDeclaration, structure: structures.ConstructorDeclarationOverloadStructure) {
+    fillFuncs.fillScopedNodeFromStructure(node, structure);
+    fillSignaturedDeclarationFromStructure(node, structure);
+    fillFuncs.fillDocumentationableNodeFromStructure(node, structure);
+}
+
+export function fillMethodDeclarationOverloadFromStructure(node: compiler.MethodDeclaration, structure: structures.MethodDeclarationOverloadStructure) {
+    fillFuncs.fillStaticableNodeFromStructure(node, structure);
+    fillFuncs.fillDecoratableNodeFromStructure(node, structure);
+    fillFuncs.fillAbstractableNodeFromStructure(node, structure);
+    fillFuncs.fillScopedNodeFromStructure(node, structure);
+    fillFuncs.fillAsyncableNodeFromStructure(node, structure);
+    fillFuncs.fillGeneratorableNodeFromStructure(node, structure);
+    fillSignaturedDeclarationFromStructure(node, structure);
+    fillFuncs.fillDocumentationableNodeFromStructure(node, structure);
 }
 
 export function fillFunctionDeclarationOverloadFromStructure(node: compiler.FunctionDeclaration, structure: structures.FunctionDeclarationOverloadStructure) {

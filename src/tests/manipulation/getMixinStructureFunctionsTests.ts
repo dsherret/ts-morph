@@ -101,3 +101,48 @@ describe(nameof(getMixinStructureFuncs.fromReturnTypedNode), () => {
         doTest("function identifier() {}", { returnType: undefined });
     });
 });
+
+describe(nameof(getMixinStructureFuncs.fromStaticableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.StaticableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromStaticableNode(firstChild.getAllMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when is static", () => {
+        doTest("class Identifier { static method() {} }", { isStatic: true });
+    });
+
+    it("should get when not static", () => {
+        doTest("class Identifier { method() {} }", { isStatic: false });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromScopedNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ScopedNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromScopedNode(firstChild.getAllMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when has scope", () => {
+        doTest("class Identifier { private method() {} }", { scope: compiler.Scope.Private });
+    });
+
+    it("should get when scope is not defined", () => {
+        doTest("class Identifier { method() {} }", { scope: undefined });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromScopeableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ScopeableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromScopeableNode(firstChild.getConstructors()[0].getParameters()[0])).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when has scope", () => {
+        doTest("class Identifier { constructor(private param: string) {} }", { scope: compiler.Scope.Private });
+    });
+
+    it("should get when scope is not defined", () => {
+        doTest("class Identifier { constructor(param: string) {} }", { scope: undefined });
+    });
+});
