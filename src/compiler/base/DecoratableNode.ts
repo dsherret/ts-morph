@@ -2,6 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure} from "./../../structures";
 import {getEndIndexFromArray, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
+import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Decorator} from "./../decorator/Decorator";
@@ -61,37 +62,59 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
+            const isParameterDecorator = this.getKind() === ts.SyntaxKind.Parameter;
             const decoratorLines = getDecoratorLines(structures);
             const decorators = this.getDecorators();
             const newLineText = this.global.manipulationSettings.getNewLineKind();
             index = verifyAndGetIndex(index, decorators.length);
 
+            let indentationText: string;
+            let insertPos: number;
             if (decorators.length === 0) {
-                const indentationText = this.getIndentationText();
-                const decoratorCode = prependIndentationText(decoratorLines, indentationText).join(newLineText) + newLineText;
-                insertCreatingSyntaxList(this.getSourceFile(), this.getStart() - indentationText.length, decoratorCode);
+                indentationText = this.getIndentationText();
+                insertPos = this.getStart();
             }
             else {
                 const nextDecorator = decorators[index];
                 if (nextDecorator == null) {
                     const previousDecorator = decorators[index - 1];
-                    const indentationText = previousDecorator.getIndentationText();
-                    const decoratorCode = newLineText + prependIndentationText(decoratorLines, indentationText).join(newLineText);
-                    insertIntoSyntaxList(this.getSourceFile(), previousDecorator.getEnd(), decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
+                    indentationText = previousDecorator.getIndentationText();
+                    insertPos = getNextNonWhitespacePos(this.getSourceFile().getFullText(), previousDecorator.getEnd());
                 }
                 else {
-                    const indentationText = nextDecorator.getIndentationText();
-                    let decoratorCode = decoratorLines[0] + newLineText;
-                    if (decoratorLines.length > 1)
-                        decoratorCode += prependIndentationText(decoratorLines.slice(1), indentationText).join(newLineText) + newLineText;
-                    decoratorCode += indentationText;
-                    insertIntoSyntaxList(this.getSourceFile(), nextDecorator.getStart(), decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
+                    indentationText = nextDecorator.getIndentationText();
+                    insertPos = nextDecorator.getStart();
                 }
             }
+
+            const decoratorCode = isParameterDecorator
+                ? getDecoratorCodeOnSameLine({ decoratorLines })
+                : getDecoratorCodeWithNewLines({ decoratorLines, newLineText, indentationText });
+
+            if (decorators.length === 0)
+                insertCreatingSyntaxList(this.getSourceFile(), this.getStart(), decoratorCode);
+            else
+                insertIntoSyntaxList(this.getSourceFile(), insertPos, decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
 
             return this.getDecorators().slice(index, index + structures.length);
         }
     };
+}
+
+function getDecoratorCodeOnSameLine(opts: { decoratorLines: string[]; }) {
+    return opts.decoratorLines.join(" ") + " ";
+}
+
+function getDecoratorCodeWithNewLines(opts: { decoratorLines: string[]; newLineText: string; indentationText: string; }) {
+    const {decoratorLines, newLineText, indentationText} = opts;
+    let result = "";
+    decoratorLines.forEach((l, i) => {
+        if (i > 0)
+            result += indentationText;
+        result += l + newLineText;
+    });
+    result += indentationText;
+    return result;
 }
 
 function getDecoratorLines(structures: DecoratorStructure[]) {
