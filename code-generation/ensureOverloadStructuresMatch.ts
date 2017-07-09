@@ -42,7 +42,10 @@ function isAllowedStructure(vm: InterfaceViewModel) {
         case "FunctionLikeDeclarationStructure":
         case "StatementedNodeStructure":
             return false;
-        default:
-            return true;
     }
+
+    if (vm.name.indexOf("SpecificStructure") > 0)
+        return false;
+
+    return true;
 }
