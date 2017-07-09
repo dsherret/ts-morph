@@ -56,3 +56,49 @@ export function fromScopedNode(node: compiler.ScopedNode): MakeRequired<structur
         scope: node.hasScopeKeyword() ? node.getScope() : undefined
     };
 }
+
+export function fromExtendsClauseableNode(node: compiler.ExtendsClauseableNode): MakeRequired<structures.ExtendsClauseableNodeStructure> {
+    const exts = node.getExtends();
+    return {
+        extends: exts.length === 0 ? undefined : exts.map(e => e.getText())
+    };
+}
+
+export function fromImplementsClauseableNode(node: compiler.ImplementsClauseableNode): MakeRequired<structures.ImplementsClauseableNodeStructure> {
+    const implementsNodes = node.getImplements();
+    return {
+        implements: implementsNodes.length === 0 ? undefined : implementsNodes.map(e => e.getText())
+    };
+}
+
+export function fromQuestionTokenableNode(node: compiler.QuestionTokenableNode): MakeRequired<structures.QuestionTokenableNodeStructure> {
+    return {
+        hasQuestionToken: node.hasQuestionToken()
+    };
+}
+
+export function fromReadonlyableNode(node: compiler.ReadonlyableNode): MakeRequired<structures.ReadonlyableNodeStructure> {
+    return {
+        isReadonly: node.isReadonly()
+    };
+}
+
+export function fromTypedNode(node: compiler.TypedNode): MakeRequired<structures.TypedNodeStructure> {
+    const typeNode = node.getTypeNode();
+    return {
+        type: typeNode == null ? undefined : typeNode.getText()
+    };
+}
+
+export function fromInitializerExpressionableNode(node: compiler.InitializerExpressionableNode): MakeRequired<structures.InitializerExpressionableNodeStructure> {
+    const initializer = node.getInitializer();
+    return {
+        initializer: initializer == null ? undefined : initializer.getText()
+    };
+}
+
+export function fromNamedNode(node: compiler.NamedNode): MakeRequired<structures.NamedStructure> {
+    return {
+        name: node.getName()
+    };
+}

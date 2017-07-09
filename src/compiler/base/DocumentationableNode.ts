@@ -15,7 +15,7 @@ export interface DocumentationableNode {
      */
     getDocumentationComment(): string | undefined;
     /**
-     * Gets the documentation comment nodes or undefined if none exists.
+     * Gets the documentation comment nodes.
      */
     getDocumentationCommentNodes(): Node<ts.JSDoc>[];
     /**

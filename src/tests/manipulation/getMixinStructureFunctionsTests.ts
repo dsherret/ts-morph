@@ -146,3 +146,104 @@ describe(nameof(getMixinStructureFuncs.fromScopeableNode), () => {
         doTest("class Identifier { constructor(param: string) {} }", { scope: undefined });
     });
 });
+
+describe(nameof(getMixinStructureFuncs.fromExtendsClauseableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ExtendsClauseableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.InterfaceDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromExtendsClauseableNode(firstChild)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get no extends", () => {
+        doTest("interface Identifier {}", { extends: undefined });
+    });
+
+    it("should get when has extends", () => {
+        doTest("interface Identifier extends First, Second<Third> { }", { extends: ["First", "Second<Third>"] });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromImplementsClauseableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ImplementsClauseableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromImplementsClauseableNode(firstChild)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get no implements", () => {
+        doTest("class Identifier {}", { implements: undefined });
+    });
+
+    it("should get when has implements", () => {
+        doTest("class Identifier implements First, Second<Third> { }", { implements: ["First", "Second<Third>"] });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromQuestionTokenableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.QuestionTokenableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromQuestionTokenableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when has question token", () => {
+        doTest("class Identifier { prop?: string; }", { hasQuestionToken: true });
+    });
+
+    it("should get when not has question token", () => {
+        doTest("class Identifier { prop: string; }", { hasQuestionToken: false });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromReadonlyableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ReadonlyableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromReadonlyableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when is readonly", () => {
+        doTest("class Identifier { readonly prop: string; }", { isReadonly: true });
+    });
+
+    it("should get when not readonly", () => {
+        doTest("class Identifier { prop: string; }", { isReadonly: false });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.TypedNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromTypedNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when has a type", () => {
+        doTest("class Identifier { prop: string; }", { type: "string" });
+    });
+
+    it("should get when not has a type", () => {
+        doTest("class Identifier { prop; }", { type: undefined });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.InitializerExpressionableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when has a an initailizer", () => {
+        doTest("class Identifier { prop = 'some value'; }", { initializer: "'some value'" });
+    });
+
+    it("should get when not has an initailizer", () => {
+        doTest("class Identifier { prop; }", { initializer: undefined });
+    });
+});
+
+describe(nameof(getMixinStructureFuncs.fromNamedNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.NamedStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        expect(getMixinStructureFuncs.fromNamedNode(firstChild)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get the name", () => {
+        doTest("class Identifier { }", { name: "Identifier" });
+    });
+});
