@@ -18,19 +18,6 @@ describe(nameof(TsSimpleAst), () => {
             }).to.throw(errors.InvalidOperationError, "Cannot set both tsConfigFilePath and compilerOptions.");
         });
 
-        /*
-        // todo: uncomment when implementing #7
-        it("should include the source files by default when providing a tsconfig.json", () => {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([
-                { filePath: "file1.ts", text: "" },
-                { filePath: "file2.ts", text: "" },
-                { filePath: "tsconfig.json", text: `{ "compilerOptions": {} }` }
-            ]);
-            const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json" }, fileSystem);
-            expect(ast.getSourceFiles().length).to.equal(2);
-        });
-        */
-
         it("should set the manipulation settings if provided", () => {
             const ast = new TsSimpleAst({
                 manipulationSettings: {

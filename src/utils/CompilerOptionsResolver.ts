@@ -31,24 +31,6 @@ export class CompilerOptionsResolver {
         return compilerOptions;
     }
 
-    /*
-    // very rough and not thought out inefficient method (should cache the compiler options)... will use this when implementing #7
-    getFilePathsFromTsConfig() {
-        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(this.options.tsConfigFilePath!, FileUtils.getCurrentDirectory());
-        this.verifyFileExists(absoluteFilePath);
-        const text = this.fileSystem.readFile(absoluteFilePath);
-        const json = ts.parseConfigFileTextToJson(absoluteFilePath, text, true);
-        const host: ts.ParseConfigHost = {
-            useCaseSensitiveFileNames: true,
-            readDirectory: (rootDir, extensions, excludes, includes) => ts.sys.readDirectory(rootDir, extensions, excludes, includes),
-            fileExists: path => this.fileSystem.fileExists(path),
-            readFile: path => this.fileSystem.readFile(path)
-        };
-        const result = ts.parseJsonConfigFileContent(json, host, FileUtils.getCurrentDirectory());
-        return result.fileNames;
-    }
-    */
-
     private getCompilerOptionsFromTsConfig(filePath: string) {
         const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
         this.verifyFileExists(absoluteFilePath);
