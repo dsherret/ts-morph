@@ -51,6 +51,32 @@ describe("helpers", () => {
         });
     });
 
+    describe(nameof(errors.throwIfOutOfRange), () => {
+        it("should not throw when inside the bounds", () => {
+            expect(() => errors.throwIfOutOfRange(5, [1, 10], "arg")).to.not.throw();
+        });
+
+        it("should throw when outside the inclusive lower bound", () => {
+            expect(() => errors.throwIfOutOfRange(0, [1, 10], "arg")).to.throw();
+        });
+
+        it("should not throw when inside the inclusive lower bound", () => {
+            expect(() => errors.throwIfOutOfRange(1, [1, 10], "arg")).to.not.throw();
+        });
+
+        it("should throw when outside the inclusive upper bound", () => {
+            expect(() => errors.throwIfOutOfRange(11, [1, 10], "arg")).to.throw();
+        });
+
+        it("should not throw when inside the inclusive upper bound", () => {
+            expect(() => errors.throwIfOutOfRange(10, [1, 10], "arg")).to.not.throw();
+        });
+
+        it("should throw when outside the range, but not the message range", () => {
+            expect(() => errors.throwIfOutOfRange(21, [1, 10], "arg", [20, 22])).to.throw();
+        });
+    });
+
     describe(nameof(errors.getNotImplementedForSyntaxKindError), () => {
         const result = errors.getNotImplementedForSyntaxKindError(ts.SyntaxKind.EnumDeclaration);
 

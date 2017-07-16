@@ -2,6 +2,7 @@
 import {Node} from "./../compiler";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
+import {ArgumentOutOfRangeError} from "./ArgumentOutOfRangeError";
 import {NotImplementedError} from "./NotImplementedError";
 
 /**
@@ -36,6 +37,18 @@ export function throwIfNotStringOrWhitespace(value: string, argName: string) {
 export function throwIfNotSyntaxKind(node: Node, syntaxKind: ts.SyntaxKind, message?: string) {
     if (node.getKind() !== syntaxKind)
         throw new NotImplementedError(message || `Expected node to be syntax kind ${ts.SyntaxKind[syntaxKind]}, but was ${node.getKindName()}.`);
+}
+
+/**
+ * Throws an ArgumentOutOfRangeError if an argument's value is out of a range.
+ * @param value - Value.
+ * @param range - Range.
+ * @param argName - Argument name.
+ */
+export function throwIfOutOfRange(value: number, range: [number, number], argName: string, messageRange?: [number, number]) {
+    messageRange = messageRange || range;
+    if (value < range[0] || value > range[1])
+        throw new ArgumentOutOfRangeError(argName, value, messageRange);
 }
 
 /**
