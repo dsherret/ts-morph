@@ -13,15 +13,6 @@ TypeScript compiler wrapper. Provides a simple way to navigate and manipulate th
 * Most AST navigation is implemented, but still some missing. This library can be used to help you easily navigate the TypeScript compiler's AST.
 * Code manipulation/generation is making steady progress and is somewhat useable at this point. There's still lots to do.
 
-## Simple Layer
-
-*ts-simple-ast* adds a layer over the compiler while still providing access to the underlying TypeScript compiler AST.
-
-1. Simple Layer - Provides a simple way for navigating and manipulating the AST.
-2. Compiler Layer - TypeScript compiler objects.
-
-Changes made in the simple layer will be made to the underlying compiler layer.
-
 ## Documentation
 
 Work in progress: https://dsherret.github.io/ts-simple-ast/
