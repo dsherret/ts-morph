@@ -164,7 +164,7 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
                 insertStraight({ insertPos: this.getDefaultImport()!.getEnd(), parent: importClause, newCode: `, {${codes.join(", ")}}` });
         }
         else {
-            insertIntoCommaSeparatedNodes(this.getSourceFile(), namedImports, index, codes);
+            insertIntoCommaSeparatedNodes({ currentNodes: namedImports, insertIndex: index, newTexts: codes });
         }
 
         return this.getNamedImports().slice(index, index + structures.length);

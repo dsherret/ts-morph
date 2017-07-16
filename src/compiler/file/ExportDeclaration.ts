@@ -117,7 +117,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
             });
         }
         else {
-            insertIntoCommaSeparatedNodes(this.getSourceFile(), namedExports, index, codes);
+            insertIntoCommaSeparatedNodes({ currentNodes: namedExports, insertIndex: index, newTexts: codes });
         }
 
         return this.getNamedExports().slice(index, index + structures.length);

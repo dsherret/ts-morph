@@ -75,7 +75,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 });
             }
             else {
-                insertIntoCommaSeparatedNodes(this.getSourceFile(), typeParameters, index, typeParamCodes);
+                insertIntoCommaSeparatedNodes({ currentNodes: typeParameters, insertIndex: index, newTexts: typeParamCodes });
             }
 
             return this.getTypeParameters().slice(index, index + structures.length);

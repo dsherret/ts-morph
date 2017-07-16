@@ -90,7 +90,13 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             insertPos = previousMember.getNextSiblingIfKind(ts.SyntaxKind.CommaToken)!.getEnd();
 
         // insert
-        insertIntoSyntaxList(this.getSourceFile(), insertPos, code, syntaxList, insertChildIndex, numberChildren);
+        insertIntoSyntaxList({
+            insertPos,
+            newText: code,
+            syntaxList,
+            childIndex: insertChildIndex,
+            insertItemsCount: numberChildren
+        });
 
         // get the members
         const newMembers = this.getMembers().slice(index, index + structures.length);

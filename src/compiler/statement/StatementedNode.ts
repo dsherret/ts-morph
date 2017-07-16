@@ -572,7 +572,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             // insert
             const doBlankLine = () => true;
             insertIntoBracesOrSourceFile<TStructure>({
-                sourceFile: this.getSourceFile(),
                 parent: this as any as Node,
                 children: mainChildren,
                 index,

@@ -1,4 +1,5 @@
-﻿export * from "./utils/ArrayUtils";
+﻿export * from "./utils/AdvancedIterator";
+export * from "./utils/ArrayUtils";
 export * from "./utils/CompilerOptionsResolver";
 export * from "./utils/decorators";
 export * from "./utils/EventContainer";

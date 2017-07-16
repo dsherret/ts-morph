@@ -64,7 +64,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(this.getSourceFile(), extendsTypes, index, texts);
+                insertIntoCommaSeparatedNodes({ currentNodes: extendsTypes, insertIndex: index, newTexts: texts });
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
@@ -75,7 +75,11 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             if (!isLastSpace)
                 insertText = " " + insertText;
 
-            insertCreatingSyntaxList(this.getSourceFile(), openBraceStart, insertText);
+            insertCreatingSyntaxList({
+                sourceFile: this.getSourceFile(),
+                insertPos: openBraceStart,
+                newText: insertText
+            });
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
         }
     };

@@ -51,14 +51,24 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken).getStart();
 
         const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
-        let insertText = `extends ${text} `;
+        let newText = `extends ${text} `;
         if (!isLastSpace)
-            insertText = " " + insertText;
+            newText = " " + newText;
 
         if (implementsClause == null)
-            insertCreatingSyntaxList(this.getSourceFile(), insertPos, insertText);
+            insertCreatingSyntaxList({
+                sourceFile: this.getSourceFile(),
+                insertPos,
+                newText
+            });
         else
-            insertIntoSyntaxList(this.getSourceFile(), insertPos, insertText, implementsClause.getParentSyntaxListOrThrow(), 0, 1);
+            insertIntoSyntaxList({
+                insertPos,
+                newText,
+                syntaxList: implementsClause.getParentSyntaxListOrThrow(),
+                childIndex: 0,
+                insertItemsCount: 1
+            });
 
         return this;
     }

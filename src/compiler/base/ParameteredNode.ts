@@ -70,10 +70,16 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 if (syntaxList == null || syntaxList.getKind() !== ts.SyntaxKind.SyntaxList)
                     throw new errors.NotImplementedError("Expected to find a syntax list after the open parens");
 
-                insertIntoSyntaxList(this.getSourceFile(), syntaxList.getPos(), parameterCodes.join(", "), syntaxList, 0, structures.length * 2 - 1);
+                insertIntoSyntaxList({
+                    insertPos: syntaxList.getPos(),
+                    newText: parameterCodes.join(", "),
+                    syntaxList,
+                    childIndex: 0,
+                    insertItemsCount: structures.length * 2 - 1
+                });
             }
             else {
-                insertIntoCommaSeparatedNodes(this.getSourceFile(), parameters, index, parameterCodes);
+                insertIntoCommaSeparatedNodes({ currentNodes: parameters, insertIndex: index, newTexts: parameterCodes });
             }
 
             const newParameters = this.getParameters().slice(index, index + structures.length);

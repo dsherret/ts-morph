@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import Ast from "./../../main";
-import {isBlankLineAtPos} from "./../../manipulation";
+import Ast from "./../../../main";
+import {isBlankLineAtPos} from "./../../../manipulation/textChecks";
 
 describe(nameof(isBlankLineAtPos), () => {
     function doTest(fileText: string, pos: number, expected: boolean) {

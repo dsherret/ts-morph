@@ -105,22 +105,28 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
             // insert setup
             let startPos: number;
-            let insertText: string;
+            let newText: string;
             const isFirstModifier = insertPos === this.getStart();
             if (isFirstModifier) {
-                insertText = text + " ";
+                newText = text + " ";
                 startPos = insertPos;
             }
             else {
-                insertText = " " + text;
+                newText = " " + text;
                 startPos = insertPos + 1;
             }
 
             // insert
             if (modifiers.length === 0)
-                insertCreatingSyntaxList(this.getSourceFile(), insertPos, insertText);
+                insertCreatingSyntaxList({ sourceFile: this.getSourceFile(), insertPos, newText });
             else
-                insertIntoSyntaxList(this.getSourceFile(), insertPos, insertText, modifiers[0].getParentSyntaxListOrThrow(), insertIndex, 1);
+                insertIntoSyntaxList({
+                    insertPos,
+                    newText,
+                    syntaxList: modifiers[0].getParentSyntaxListOrThrow(),
+                    childIndex: insertIndex,
+                    insertItemsCount: 1
+                });
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
         }

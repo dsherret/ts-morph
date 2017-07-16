@@ -66,7 +66,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes(this.getSourceFile(), implementsTypes, index, texts);
+                insertIntoCommaSeparatedNodes({ currentNodes: implementsTypes, insertIndex: index, newTexts: texts });
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
@@ -79,9 +79,19 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
             // assumes there can only be another extends heritage clause
             if (heritageClauses.length === 0)
-                insertCreatingSyntaxList(this.getSourceFile(), openBraceStart, insertText);
+                insertCreatingSyntaxList({
+                    sourceFile: this.getSourceFile(),
+                    insertPos: openBraceStart,
+                    newText: insertText
+                });
             else
-                insertIntoSyntaxList(this.getSourceFile(), openBraceStart, insertText, heritageClauses[0].getParentSyntaxListOrThrow(), 1, 1);
+                insertIntoSyntaxList({
+                    insertPos: openBraceStart,
+                    newText: insertText,
+                    syntaxList: heritageClauses[0].getParentSyntaxListOrThrow(),
+                    childIndex: 1,
+                    insertItemsCount: 1
+                });
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
         }

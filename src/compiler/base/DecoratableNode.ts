@@ -92,9 +92,19 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 : getDecoratorCodeWithNewLines({ decoratorLines, newLineText, indentationText });
 
             if (decorators.length === 0)
-                insertCreatingSyntaxList(this.getSourceFile(), this.getStart(), decoratorCode);
+                insertCreatingSyntaxList({
+                    sourceFile: this.getSourceFile(),
+                    insertPos: this.getStart(),
+                    newText: decoratorCode
+                });
             else
-                insertIntoSyntaxList(this.getSourceFile(), insertPos, decoratorCode, decorators[0].getParentSyntaxListOrThrow(), index, structures.length);
+                insertIntoSyntaxList({
+                    insertPos,
+                    newText: decoratorCode,
+                    syntaxList: decorators[0].getParentSyntaxListOrThrow(),
+                    childIndex: index,
+                    insertItemsCount: structures.length
+                });
 
             return this.getDecorators().slice(index, index + structures.length);
         }

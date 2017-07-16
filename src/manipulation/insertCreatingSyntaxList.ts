@@ -3,7 +3,14 @@ import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
-export function insertCreatingSyntaxList(sourceFile: SourceFile, insertPos: number, newText: string) {
+export interface InsertCreatingSyntaxListOptions {
+    sourceFile: SourceFile;
+    insertPos: number;
+    newText: string;
+}
+
+export function insertCreatingSyntaxList(opts: InsertCreatingSyntaxListOptions) {
+    const {sourceFile, insertPos, newText} = opts;
     const compilerFactory = sourceFile.global.compilerFactory;
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);

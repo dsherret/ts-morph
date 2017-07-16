@@ -105,7 +105,6 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     }
 
     insertIntoBracesOrSourceFile<TStructure>({
-        sourceFile: opts.node.getSourceFile(),
         parent: opts.node.getParentOrThrow(),
         children: parentSyntaxList.getChildren(),
         index: mainIndex,
