@@ -60,9 +60,9 @@ describe(nameof(AdvancedIterator), () => {
             expect(iterator.current).to.equal(1);
         });
 
-        it("should throw at the end of an iterator", () => {
+        it("should get the current at the end of an iterator", () => {
             const iterator = getIteratedIterator();
-            expect(() => iterator.current).to.throw();
+            expect(iterator.current).to.equal(9);
         });
     });
 
@@ -91,6 +91,25 @@ describe(nameof(AdvancedIterator), () => {
             iterator.next();
             iterator.next();
             expect(iterator.previous).to.equal(1);
+        });
+    });
+
+    describe(nameof<AdvancedIterator<any>>(i => i.peek), () => {
+        it("should peek the value if called before anything else", () => {
+            const iterator = new AdvancedIterator(getNumIterator());
+            expect(iterator.peek).to.equal(0);
+        });
+
+        it("should not advance the iterator if called multiple times", () => {
+            const iterator = new AdvancedIterator(getNumIterator());
+            iterator.next();
+            expect(iterator.peek).to.equal(1);
+            expect(iterator.peek).to.equal(1);
+        });
+
+        it("should throw at the end of an iterator", () => {
+            const iterator = getIteratedIterator();
+            expect(() => iterator.peek).to.throw();
         });
     });
 

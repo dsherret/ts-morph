@@ -80,7 +80,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             // assumes there can only be another extends heritage clause
             if (heritageClauses.length === 0)
                 insertCreatingSyntaxList({
-                    sourceFile: this.getSourceFile(),
+                    parent: this,
                     insertPos: openBraceStart,
                     newText: insertText
                 });

@@ -17,15 +17,19 @@ export class AdvancedIterator<T> {
     get current() {
         if (this.nextCount === 0)
             throw new errors.InvalidOperationError("Cannot get the current when the iterator has not been advanced.");
-        if (this.done)
-            throw new errors.InvalidOperationError("Cannot get the current at the end of the iterator.");
-        return this.buffer[this.bufferIndex];
+        return this.buffer[this.bufferIndex]!;
     }
 
     get previous() {
         if (this.nextCount <= 1)
             throw new errors.InvalidOperationError("Cannot get the previous when the iterator has not advanced enough.");
-        return this.buffer[(this.bufferIndex + this.buffer.length - 1) % this.buffer.length];
+        return this.buffer[(this.bufferIndex + this.buffer.length - 1) % this.buffer.length]!;
+    }
+
+    get peek() {
+        if (this.isDone)
+            throw new errors.InvalidOperationError("Cannot peek at the end of the iterator.");
+        return this.buffer[(this.bufferIndex + 1) % this.buffer.length]!;
     }
 
     next() {

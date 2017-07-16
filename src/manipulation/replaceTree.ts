@@ -7,7 +7,8 @@ import {areNodesEqual} from "./areNodesEqual";
 export interface ReplaceTreeOptions {
     replacementSourceFile: SourceFile;
     parent: Node;
-    childIndex: number;
+    isFirstChild?: (currentNode: Node, newNode: Node) => boolean;
+    childIndex?: number;
     childCount: number;
 }
 
@@ -17,13 +18,21 @@ export interface ReplaceTreeOptions {
 export function replaceTree(opts: ReplaceTreeOptions) {
     const {replacementSourceFile, parent: changingParent, childIndex, childCount} = opts;
     const sourceFile = changingParent.getSourceFile();
-    const changingParentChildren = changingParent.getChildren();
-    const changingParentParent = changingParent.getParent();
+    const changingParentParent = changingParent.getParentSyntaxList() || changingParent.getParentOrThrow();
     const compilerFactory = sourceFile.global.compilerFactory;
+    let {isFirstChild} = opts;
 
-    errors.throwIfOutOfRange(childIndex, [0, changingParentChildren.length], nameof.full(opts.childIndex));
-    if (childCount < 0)
-        errors.throwIfOutOfRange(childIndex + childCount, [0, changingParentChildren.length], nameof.full(opts.childCount), [-childIndex, 0]);
+    if (childIndex != null) {
+        const changingParentChildren = changingParent.getChildren();
+        errors.throwIfOutOfRange(childIndex, [0, changingParentChildren.length], nameof.full(opts.childIndex));
+        if (childCount < 0)
+            errors.throwIfOutOfRange(childIndex + childCount, [0, changingParentChildren.length], nameof.full(opts.childCount), [-childIndex, 0]);
+        let i = 0;
+        isFirstChild = () => i++ === childIndex;
+    }
+    else if (isFirstChild == null) {
+        throw new errors.InvalidOperationError(`Must provide a ${isFirstChild} if not providing a ${childIndex}`);
+    }
 
     handleNode(sourceFile, replacementSourceFile);
 
@@ -51,14 +60,11 @@ export function replaceTree(opts: ReplaceTreeOptions) {
         const newNodeChildren = new AdvancedIterator(newNode.getChildrenIterator());
         let count = childCount;
 
-        if (childIndex > 0) {
-            let i = 0;
-            while (i < childIndex) {
-                handleNode(currentNodeChildren.next(), newNodeChildren.next());
-                i++;
-            }
-        }
+        // get the first child
+        while (!currentNodeChildren.done && !newNodeChildren.done && !isFirstChild!(currentNodeChildren.peek, newNodeChildren.peek))
+            handleNode(currentNodeChildren.next(), newNodeChildren.next());
 
+        // add or remove the items
         if (count > 0) {
             while (count > 0) {
                 newNodeChildren.next().setSourceFile(sourceFile);
@@ -72,16 +78,15 @@ export function replaceTree(opts: ReplaceTreeOptions) {
             }
         }
 
-        handleRemaining();
-        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
-
-        function handleRemaining() {
-            while (!currentNodeChildren.done) {
-                handleNode(currentNodeChildren.next(), newNodeChildren.next());
-            }
-
-            if (!newNodeChildren.done)
-                throw new Error("Error replacing tree: Should not have more children left over."); // todo: better error message
+        // handle the rest
+        while (!currentNodeChildren.done) {
+            handleNode(currentNodeChildren.next(), newNodeChildren.next());
         }
+
+        // ensure the new children iterator is done too
+        if (!newNodeChildren.done)
+            throw new Error("Error replacing tree: Should not have more children left over."); // todo: better error message
+
+        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 }

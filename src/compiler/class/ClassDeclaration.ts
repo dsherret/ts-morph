@@ -57,7 +57,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         if (implementsClause == null)
             insertCreatingSyntaxList({
-                sourceFile: this.getSourceFile(),
+                parent: this,
                 insertPos,
                 newText
             });

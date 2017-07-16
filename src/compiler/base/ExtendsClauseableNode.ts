@@ -76,7 +76,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 insertText = " " + insertText;
 
             insertCreatingSyntaxList({
-                sourceFile: this.getSourceFile(),
+                parent: this,
                 insertPos: openBraceStart,
                 newText: insertText
             });

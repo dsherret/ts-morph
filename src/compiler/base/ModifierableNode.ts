@@ -118,7 +118,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
             // insert
             if (modifiers.length === 0)
-                insertCreatingSyntaxList({ sourceFile: this.getSourceFile(), insertPos, newText });
+                insertCreatingSyntaxList({ parent: this, insertPos, newText });
             else
                 insertIntoSyntaxList({
                     insertPos,

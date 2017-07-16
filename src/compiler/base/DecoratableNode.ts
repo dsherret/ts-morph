@@ -93,7 +93,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
 
             if (decorators.length === 0)
                 insertCreatingSyntaxList({
-                    sourceFile: this.getSourceFile(),
+                    parent: this,
                     insertPos: this.getStart(),
                     newText: decoratorCode
                 });

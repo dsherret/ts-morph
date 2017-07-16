@@ -2,41 +2,25 @@
 import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
+import {replaceTree} from "./replaceTree";
 
 export interface InsertCreatingSyntaxListOptions {
-    sourceFile: SourceFile;
+    parent: Node;
     insertPos: number;
     newText: string;
 }
 
 export function insertCreatingSyntaxList(opts: InsertCreatingSyntaxListOptions) {
-    const {sourceFile, insertPos, newText} = opts;
-    const compilerFactory = sourceFile.global.compilerFactory;
+    const {parent, insertPos, newText} = opts;
+    const sourceFile = parent.getSourceFile();
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
-    const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
 
-    handleNode(sourceFile, tempSourceFile);
-
-    function handleNode(currentNode: Node, newNode: Node) {
-        /* istanbul ignore if */
-        if (currentNode.getKind() !== newNode.getKind())
-            throw new errors.InvalidOperationError(getInsertErrorMessageText("Error creating syntax list!", currentNode, newNode));
-
-        const currentNodeChildren = currentNode.getChildrenIterator();
-        const newNodeChildren = newNode.getChildrenIterator();
-        let currentNodeChildIteratorResult = currentNodeChildren.next();
-
-        for (const newNodeChild of newNodeChildren) {
-            if (newNodeChild.getKind() === ts.SyntaxKind.SyntaxList && currentNodeChildIteratorResult.value.getKind() !== ts.SyntaxKind.SyntaxList) {
-                newNodeChild.setSourceFile(sourceFile);
-                continue;
-            }
-
-            handleNode(currentNodeChildIteratorResult.value, newNodeChild);
-            currentNodeChildIteratorResult = currentNodeChildren.next();
-        }
-
-        compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
-    }
+    replaceTree({
+        parent,
+        childCount: 1,
+        replacementSourceFile: tempSourceFile,
+        isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && currentNode.getKind() !== ts.SyntaxKind.SyntaxList
+    });
 }
