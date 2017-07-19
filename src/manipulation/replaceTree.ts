@@ -1,14 +1,59 @@
-﻿import * as errors from "./../errors";
+﻿import * as ts from "typescript";
+import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {AdvancedIterator} from "./../utils";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 import {areNodesEqual} from "./areNodesEqual";
 
+export interface ReplaceTreeCreatingSyntaxListOptions {
+    replacementSourceFile: SourceFile;
+    parent: Node;
+}
+
+/**
+ * Replaces with tree that creates a syntax list.
+ */
+export function replaceTreeCreatingSyntaxList(opts: ReplaceTreeCreatingSyntaxListOptions) {
+    const {parent, replacementSourceFile} = opts;
+    replaceTree({
+        parent,
+        childCount: 1,
+        replacementSourceFile,
+        isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && currentNode.getKind() !== ts.SyntaxKind.SyntaxList
+    });
+}
+
+export interface ReplaceTreeWithChildIndexOptions {
+    replacementSourceFile: SourceFile;
+    parent: Node;
+    childIndex: number;
+    childCount: number;
+}
+
+/**
+ * Replaces with tree based on the child index from the parent.
+ */
+export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
+    const {replacementSourceFile, parent, childIndex, childCount} = opts;
+    const parentChildren = parent.getChildren();
+    errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
+    if (childCount < 0)
+        errors.throwIfOutOfRange(childIndex + childCount, [0, parentChildren.length], nameof.full(opts.childCount), [-childIndex, 0]);
+    let i = 0;
+    const isFirstChild = () => i++ === childIndex;
+
+    replaceTree({
+        replacementSourceFile,
+        parent,
+        isFirstChild,
+        childCount
+    });
+}
+
 export interface ReplaceTreeOptions {
     replacementSourceFile: SourceFile;
     parent: Node;
-    isFirstChild?: (currentNode: Node, newNode: Node) => boolean;
-    childIndex?: number;
+    isFirstChild: (currentNode: Node, newNode: Node) => boolean;
     childCount: number;
 }
 
@@ -16,23 +61,10 @@ export interface ReplaceTreeOptions {
  * Replaces the tree with a new one.
  */
 export function replaceTree(opts: ReplaceTreeOptions) {
-    const {replacementSourceFile, parent: changingParent, childIndex, childCount} = opts;
+    const {replacementSourceFile, parent: changingParent, isFirstChild, childCount} = opts;
     const sourceFile = changingParent.getSourceFile();
     const changingParentParent = changingParent.getParentSyntaxList() || changingParent.getParentOrThrow();
     const compilerFactory = sourceFile.global.compilerFactory;
-    let {isFirstChild} = opts;
-
-    if (childIndex != null) {
-        const changingParentChildren = changingParent.getChildren();
-        errors.throwIfOutOfRange(childIndex, [0, changingParentChildren.length], nameof.full(opts.childIndex));
-        if (childCount < 0)
-            errors.throwIfOutOfRange(childIndex + childCount, [0, changingParentChildren.length], nameof.full(opts.childCount), [-childIndex, 0]);
-        let i = 0;
-        isFirstChild = () => i++ === childIndex;
-    }
-    else if (isFirstChild == null) {
-        throw new errors.InvalidOperationError(`Must provide a ${isFirstChild} if not providing a ${childIndex}`);
-    }
 
     handleNode(sourceFile, replacementSourceFile);
 
@@ -61,7 +93,7 @@ export function replaceTree(opts: ReplaceTreeOptions) {
         let count = childCount;
 
         // get the first child
-        while (!currentNodeChildren.done && !newNodeChildren.done && !isFirstChild!(currentNodeChildren.peek, newNodeChildren.peek))
+        while (!currentNodeChildren.done && !newNodeChildren.done && !isFirstChild(currentNodeChildren.peek, newNodeChildren.peek))
             handleNode(currentNodeChildren.next(), newNodeChildren.next());
 
         // add or remove the items

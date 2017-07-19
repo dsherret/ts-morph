@@ -1,8 +1,7 @@
-﻿import * as ts from "typescript";
-import * as errors from "./../errors";
+﻿import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
-import {replaceTree} from "./replaceTree";
+import {replaceTreeCreatingSyntaxList} from "./replaceTree";
 
 export interface InsertCreatingSyntaxListOptions {
     parent: Node;
@@ -17,10 +16,8 @@ export function insertCreatingSyntaxList(opts: InsertCreatingSyntaxListOptions) 
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
     const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
 
-    replaceTree({
+    replaceTreeCreatingSyntaxList({
         parent,
-        childCount: 1,
-        replacementSourceFile: tempSourceFile,
-        isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && currentNode.getKind() !== ts.SyntaxKind.SyntaxList
+        replacementSourceFile: tempSourceFile
     });
 }

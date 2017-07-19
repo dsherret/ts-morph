@@ -3,7 +3,7 @@ import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 import {insertStraight} from "./insertStraight";
 import {areNodesEqual} from "./areNodesEqual";
-import {replaceTree} from "./replaceTree";
+import {replaceTreeWithChildIndex} from "./replaceTree";
 
 export interface InsertIntoSyntaxListOptions {
     insertPos: number;
@@ -24,7 +24,7 @@ export function insertIntoSyntaxList(opts: InsertIntoSyntaxListOptions) {
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos);
     const tempSourceFile = compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
 
-    replaceTree({
+    replaceTreeWithChildIndex({
         replacementSourceFile: tempSourceFile,
         parent: syntaxList,
         childIndex,
