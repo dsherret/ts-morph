@@ -24,10 +24,11 @@ declare const num = 1;
 
 ### Emitting a single file
 
-Call `.emit()` on source files:
+Call `.emit()` on the source file:
 
 ```typescript
-ast.getSourceFile("MyFile.ts").emit();
+const sourceFile = ast.getSourceFile("MyFile.ts")!;
+sourceFile.emit();
 ```
 
 ### Emitting only declaration files (.d.ts)
