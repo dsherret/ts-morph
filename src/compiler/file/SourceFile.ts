@@ -7,7 +7,7 @@ import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../st
 import {ArrayUtils, FileUtils} from "./../../utils";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
-import {Diagnostic} from "./../tools";
+import {Diagnostic, EmitResult} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 
@@ -333,5 +333,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         }
 
         return this;
+    }
+
+    /**
+     * Emits the source file.
+     */
+    emit(options?: { emitOnlyDtsFiles?: boolean; }): EmitResult {
+        return this.global.program.emit({ targetSourceFile: this, ...options });
     }
 }

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration} from "./../../../compiler";
+import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
 import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -368,6 +368,22 @@ describe(nameof(SourceFile), () => {
         it("should return jsx when in a tsx file", () => {
             const {sourceFile} = getInfoFromText("", { filePath: "file.tsx" });
             expect(sourceFile.getLanguageVariant()).to.equal(ts.LanguageVariant.JSX);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.emit), () => {
+        it("should emit the source file", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+            const sourceFile = ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
+            ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
+            const result = sourceFile.emit();
+
+            expect(result).to.be.instanceof(EmitResult);
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+            expect(writeLog.length).to.equal(1);
         });
     });
 });

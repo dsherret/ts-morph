@@ -8,6 +8,9 @@ import {EmitResult} from "./EmitResult";
  * Options for emitting.
  */
 export interface EmitOptions {
+    // warning: When updating these emit options, also update the options in SourceFile
+    // todo: better way of doing this
+
     /**
      * Optional source file to only emit.
      */
