@@ -60,10 +60,11 @@ describe(nameof(SourceFile), () => {
 
             sourceFile.save().then(() => {
                 expect(sourceFile.isSaved()).to.be.true;
-                const args = host.getWrittenFileArguments();
-                expect(args[0]).to.equal(filePath);
-                expect(args[1]).to.equal(fileText);
-                expect(args.length).to.equal(2);
+                const writeLog = host.getWriteLog();
+                const entry = writeLog[0];
+                expect(entry.filePath).to.equal(filePath);
+                expect(entry.fileText).to.equal(fileText);
+                expect(writeLog.length).to.equal(1);
                 done();
             });
         });
@@ -80,10 +81,11 @@ describe(nameof(SourceFile), () => {
 
             sourceFile.saveSync();
             expect(sourceFile.isSaved()).to.be.true;
-            const args = host.getWrittenFileArguments();
-            expect(args[0]).to.equal(filePath);
-            expect(args[1]).to.equal(fileText);
-            expect(args.length).to.equal(2);
+            const writeLog = host.getSyncWriteLog();
+            const entry = writeLog[0];
+            expect(entry.filePath).to.equal(filePath);
+            expect(entry.fileText).to.equal(fileText);
+            expect(writeLog.length).to.equal(1);
         });
     });
 

@@ -1,6 +1,22 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
+import {SourceFile} from "./../file";
+import {EmitResult} from "./EmitResult";
+
+/**
+ * Options for emitting.
+ */
+export interface EmitOptions {
+    /**
+     * Optional source file to only emit.
+     */
+    targetSourceFile?: SourceFile;
+    /**
+     * Whether only .d.ts files should be emitted.
+     */
+    emitOnlyDtsFiles?: boolean;
+}
 
 /**
  * Wrapper around Program.
@@ -41,5 +57,17 @@ export class Program {
      */
     getTypeChecker() {
         return this.typeChecker;
+    }
+
+    /**
+     * Emits the TypeScript files to the specified target.
+     */
+    emit(options: EmitOptions = {}) {
+        const targetSourceFile = options != null && options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
+        const cancellationToken = undefined; // todo: expose this
+        const emitOnlyDtsFiles = options != null && options.emitOnlyDtsFiles != null ? options.emitOnlyDtsFiles : undefined;
+        const customTransformers = undefined; // todo: expose this
+        const emitResult = this.compilerProgram.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
+        return new EmitResult(this.global, emitResult);
     }
 }

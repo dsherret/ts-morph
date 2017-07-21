@@ -65,6 +65,9 @@
                                 </ul>
                                 {% endif %}
                             </li>
+                            <li class="nav-item{% if page.dir == '/emitting/' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/emitting" | prepend: site.baseurl }}">Emitting</a>
+                            </li>
                             <li class="{% if page.path == 'details/index.md' %}active{% endif %}">
                                 <a class="nav-link" href="{{ "/details/index" | prepend: site.baseurl }}">Details</a>
                                 {% if page.dir == '/details/' %}

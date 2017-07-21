@@ -169,4 +169,12 @@ export class TsSimpleAst {
     getLanguageService(): compiler.LanguageService {
         return this.global.languageService;
     }
+
+    /**
+     * Emits all the source files.
+     * @param emitOptions - Optional emit options.
+     */
+    emit(emitOptions: compiler.EmitOptions = {}): compiler.EmitResult {
+        return this.global.program.emit(emitOptions);
+    }
 }

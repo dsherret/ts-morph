@@ -81,8 +81,8 @@ export class LanguageService {
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: ts.CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
-            writeFile: () => {
-                console.log("ATTEMPT TO WRITE FILE");
+            writeFile: (fileName, data, writeByteOrderMark, onError, sourceFiles) => {
+                this.global.fileSystem.writeFileSync(fileName, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
             getDirectories: (path: string) => {

@@ -1,5 +1,7 @@
 ﻿import * as path from "path";
+import * as ts from "typescript";
 import {expect} from "chai";
+import {EmitResult} from "./../compiler";
 import {TsSimpleAst} from "./../TsSimpleAst";
 import {IndentationText} from "./../ManipulationSettings";
 import {FileUtils} from "./../utils";
@@ -180,6 +182,51 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(fileSystem.getWriteLog().length).to.equal(0);
             expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.emit), () => {
+        function setup(compilerOptions: ts.CompilerOptions) {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions }, fileSystem);
+            ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
+            ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
+            return {fileSystem, ast};
+        }
+
+        it("should emit multiple files when not specifying any options", () => {
+            const {ast, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            const result = ast.emit();
+            expect(result).to.be.instanceof(EmitResult);
+
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+            expect(writeLog[1].filePath).to.equal("dist/file2.js");
+            expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
+            expect(writeLog.length).to.equal(2);
+        });
+
+        it("should emit the source file when specified", () => {
+            const {ast, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            ast.emit({ targetSourceFile: ast.getSourceFile("file1.ts") });
+
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
+            expect(writeLog.length).to.equal(1);
+        });
+
+        it("should only emit the declaration file when specified", () => {
+            const {ast, fileSystem} = setup({ noLib: true, outDir: "dist", declaration: true });
+            ast.emit({ emitOnlyDtsFiles: true });
+
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(writeLog[0].filePath).to.equal("dist/file1.d.ts");
+            expect(writeLog[0].fileText).to.equal("declare const num1 = 1;\n");
+            expect(writeLog[1].filePath).to.equal("dist/file2.d.ts");
+            expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
+            expect(writeLog.length).to.equal(2);
         });
     });
 
