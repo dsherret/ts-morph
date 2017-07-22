@@ -340,6 +340,38 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the child at the provided position, or undefined if not found.
+     * @param pos - Position to search for.
+     */
+    getChildAtPos(pos: number): Node | undefined {
+        if (pos < this.getPos() || pos >= this.getEnd())
+            return undefined;
+
+        for (const child of this.getChildrenIterator()) {
+            if (pos >= child.getPos() && pos < child.getEnd())
+                return child;
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Gets the most specific descendant at the provided position, or undefined if not found.
+     * @param pos - Position to search for.
+     */
+    getDescendantAtPos(pos: number): Node | undefined {
+        let node: Node | undefined = undefined;
+
+        while (true) {
+            const nextNode: Node | undefined = (node || this).getChildAtPos(pos);
+            if (nextNode == null)
+                return node;
+            else
+                node = nextNode;
+        }
+    }
+
+    /**
      * Gets the start position with leading trivia.
      */
     getPos() {

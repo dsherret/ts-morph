@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {Node, EnumDeclaration, ClassDeclaration} from "./../../../compiler";
+import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -77,6 +77,53 @@ describe(nameof(Node), () => {
 
         it("should return null when the specified syntax kind doesn't exist", () => {
             expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getChildAtPos), () => {
+        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
+        const syntaxList = sourceFile.getChildSyntaxList()!;
+        const variableStatement = firstChild.getVariableStatements()[0];
+
+        it("should return undefined when providing a value less than the node pos", () => {
+            expect(syntaxList.getChildAtPos(sourceFile.getPos() - 1)).to.be.undefined;
+        });
+
+        it("should return undefined when providing a value equal to the end", () => {
+            expect(syntaxList.getChildAtPos(sourceFile.getEnd())).to.be.undefined;
+        });
+
+        it("should return the child at the specified position", () => {
+            expect(syntaxList.getChildAtPos(1)!.getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
+        });
+
+        it("should return only a child and not a descendant", () => {
+            expect(syntaxList.getChildAtPos(variableStatement.getPos())!.getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getDescendantAtPos), () => {
+        const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
+        const variableStatement = firstChild.getVariableStatements()[0];
+
+        it("should return undefined when providing a value less than the pos", () => {
+            expect(sourceFile.getDescendantAtPos(sourceFile.getPos() - 1)).to.be.undefined;
+        });
+
+        it("should return undefined when providing a value equal to the end", () => {
+            expect(sourceFile.getDescendantAtPos(sourceFile.getEnd())).to.be.undefined;
+        });
+
+        it("should return the descendant at the specified position", () => {
+            expect(sourceFile.getDescendantAtPos(1)!.getKind()).to.equal(ts.SyntaxKind.FunctionKeyword);
+        });
+
+        it("should return a very descendant descendant", () => {
+            expect(sourceFile.getDescendantAtPos(variableStatement.getPos())!.getKind()).to.equal(ts.SyntaxKind.ConstKeyword);
+        });
+
+        it("should return a the node at the specified pos when specifying a space", () => {
+            expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(ts.SyntaxKind.FirstPunctuation);
         });
     });
 
