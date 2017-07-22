@@ -93,5 +93,3 @@ Call `.getNext()`:
 ```typescript
 const next = dmc.getNext(); // returns: DiagnosticMessageChain | undefined
 ```
-
-**Next step:** [Navigating the AST](../navigation/index)

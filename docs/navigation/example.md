@@ -48,5 +48,3 @@ personInterface.isDefaultExport(); // returns true
 personInterface.getName();         // returns "Person"
 personInterface.getProperties();   // returns the properties
 ```
-
-**Next step:** [Underlying Compiler Nodes](compiler-nodes)

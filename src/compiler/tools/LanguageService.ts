@@ -1,35 +1,15 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {replaceNodeText} from "./../../manipulation";
+import * as errors from "./../../errors";
 import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
-
-export interface SourceFileReplace {
-    sourceFile: SourceFile;
-    textSpans: TextSpan[];
-}
-
-export interface TextSpan {
-    start: number;
-    length: number;
-}
-
-export interface ReferenceEntry {
-    textSpan: TextSpan;
-    isWriteAccess: boolean;
-    isDefinition: boolean;
-    isInString: boolean;
-}
-
-export interface SourceFileReferenceEntry {
-    sourceFile: SourceFile;
-    references: ReferenceEntry[];
-}
+import {ReferencedSymbol, RenameLocation} from "./results";
 
 export class LanguageService {
-    private readonly _compilerLanguageService: ts.LanguageService;
+    private readonly _compilerObject: ts.LanguageService;
     private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
     private program: Program;
@@ -39,8 +19,8 @@ export class LanguageService {
     /**
      * Gets the compiler language service.
      */
-    get compilerLanguageService() {
-        return this._compilerLanguageService;
+    get compilerObject() {
+        return this._compilerObject;
     }
 
     /** @internal */
@@ -76,7 +56,7 @@ export class LanguageService {
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
-                return this.global.compilerFactory.getSourceFileFromFilePath(fileName).compilerNode;
+                return this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
@@ -97,7 +77,7 @@ export class LanguageService {
             getEnvironmentVariable: (name: string) => process.env[name]
         };
 
-        this._compilerLanguageService = ts.createLanguageService(languageServiceHost);
+        this._compilerObject = ts.createLanguageService(languageServiceHost);
     }
 
     /**
@@ -119,82 +99,53 @@ export class LanguageService {
     }
 
     renameNode(node: Node, newName: string) {
+        errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
+
         if (node.getText() === newName)
             return;
-        this.renameReplaces(this.findRenameReplaces(node), newName);
+        this.renameLocations(this.findRenameLocations(node), newName);
     }
 
-    renameReplaces(replaces: SourceFileReplace[], newName: string) {
-        for (const renameReplace of replaces) {
+    renameLocations(renameLocations: RenameLocation[], newName: string) {
+        const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
+        for (const renameLocation of renameLocations) {
+            const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
+            locations.push(renameLocation);
+        }
+
+        for (const [sourceFile, locations] of renameLocationsBySourceFile.getEntries()) {
             let difference = 0;
-            for (const textSpan of renameReplace.textSpans) {
-                textSpan.start -= difference;
-                replaceNodeText(renameReplace.sourceFile, textSpan.start, textSpan.start + textSpan.length, newName);
-                difference += textSpan.length - newName.length;
+            for (const textSpan of locations.map(l => l.getTextSpan())) {
+                let start = textSpan.getStart();
+                start -= difference;
+                replaceNodeText(sourceFile, start, start + textSpan.getLength(), newName);
+                difference += textSpan.getLength() - newName.length;
             }
         }
     }
 
-    findRenameReplaces(node: Node): SourceFileReplace[] {
-        const sourceFile = node.getSourceFile();
-        const textSpansBySourceFile = new KeyValueCache<SourceFile, TextSpan[]>();
-        const renameLocations = this.compilerLanguageService.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
-
-        for (const location of renameLocations) {
-            const replaceSourceFile = this.global.compilerFactory.getSourceFileFromFilePath(location.fileName)!;
-            const textSpans = textSpansBySourceFile.getOrCreate<TextSpan[]>(replaceSourceFile, () => []);
-            // todo: ensure this is sorted
-            textSpans.push({
-                start: location.textSpan.start,
-                length: location.textSpan.length
-            });
-        }
-
-        const replaces: SourceFileReplace[] = [];
-
-        for (const entry of textSpansBySourceFile.getEntries()) {
-            replaces.push({
-                sourceFile: entry[0],
-                textSpans: entry[1]
-            });
-        }
-
-        return replaces;
+    /**
+     * Finds references based on the specified node.
+     * @param sourceFile - Source file.
+     * @param node - Node to find references for.
+     */
+    findReferences(sourceFile: SourceFile, node: Node): ReferencedSymbol[];
+    /**
+     * Finds references based on the specified position.
+     * @param sourceFile - Source file.
+     * @param pos - Position to find the reference at.
+     */
+    findReferences(sourceFile: SourceFile, pos: number): ReferencedSymbol[];
+    findReferences(sourceFile: SourceFile, posOrNode: Node | number) {
+        const pos = typeof posOrNode === "number" ? posOrNode : posOrNode.getStart();
+        const results = this.compilerObject.findReferences(sourceFile.getFilePath(), pos) || [];
+        return results.map(s => new ReferencedSymbol(this.global, s));
     }
 
-    /**
-     * Gets the references at a specified node.
-     * @param node - Node to get the references for.
-     */
-    getReferencesAtNode(node: Node) {
-        const references = this.compilerLanguageService.getReferencesAtPosition(node.getSourceFile().getFilePath(), node.getStart());
-        const referencesBySourceFile = new KeyValueCache<SourceFile, ReferenceEntry[]>();
-
-        for (const reference of references) {
-            const referenceSourceFile = this.global.compilerFactory.getSourceFileFromFilePath(reference.fileName)!;
-            const currentRefs = referencesBySourceFile.getOrCreate<ReferenceEntry[]>(referenceSourceFile, () => []);
-            // todo: ensure this is sorted
-            currentRefs.push({
-                isDefinition: reference.isDefinition,
-                isInString: reference.isInString || false,
-                isWriteAccess: reference.isWriteAccess,
-                textSpan: {
-                    start: reference.textSpan.start,
-                    length: reference.textSpan.length
-                }
-            });
-        }
-
-        const referenceEntries: SourceFileReferenceEntry[] = [];
-
-        for (const entry of referencesBySourceFile.getEntries()) {
-            referenceEntries.push({
-                sourceFile: entry[0],
-                references: entry[1]
-            });
-        }
-
-        return referenceEntries;
+    findRenameLocations(node: Node): RenameLocation[] {
+        const sourceFile = node.getSourceFile();
+        const renameLocations = this.compilerObject.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
+        return renameLocations.map(l => new RenameLocation(this.global, l));
     }
 
     addSourceFile(sourceFile: SourceFile) {

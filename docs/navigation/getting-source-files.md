@@ -27,5 +27,3 @@ Will return the first source file that matches the provided condition:
 ```typescript
 const fileWithFiveClasses = ast.getSourceFile(f => f.getClasses().length === 5);
 ```
-
-**Next step:** [Example - Navigating Within SourceFiles](example)

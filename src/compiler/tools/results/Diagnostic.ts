@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
-import {SourceFile} from "./../../compiler";
-import {GlobalContainer} from "./../../GlobalContainer";
+import {SourceFile} from "./../../../compiler";
+import {GlobalContainer} from "./../../../GlobalContainer";
 import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
 
 /**
@@ -10,29 +10,26 @@ export class Diagnostic {
     /** @internal */
     readonly global: GlobalContainer;
     /** @internal */
-    readonly _compilerDiagnostic: ts.Diagnostic;
+    readonly _compilerObject: ts.Diagnostic;
+
+    /** @internal */
+    constructor(global: GlobalContainer, compilerObject: ts.Diagnostic) {
+        this.global = global;
+        this._compilerObject = compilerObject;
+    }
 
     /**
      * Gets the underlying compiler diagnostic.
      */
-    get compilerDiagnostic(): ts.Diagnostic {
-        return this._compilerDiagnostic;
-    }
-
-    /** @internal */
-    constructor(
-        global: GlobalContainer,
-        diagnostic: ts.Diagnostic
-    ) {
-        this.global = global;
-        this._compilerDiagnostic = diagnostic;
+    get compilerObject(): ts.Diagnostic {
+        return this._compilerObject;
     }
 
     /**
      * Gets the source file.
      */
     getSourceFile(): SourceFile | undefined {
-        const file = this.compilerDiagnostic.file;
+        const file = this.compilerObject.file;
         return file == null ? undefined : this.global.compilerFactory.getSourceFile(file);
     }
 
@@ -40,7 +37,7 @@ export class Diagnostic {
      * Gets the message text.
      */
     getMessageText(): string | DiagnosticMessageChain {
-        const messageText = this._compilerDiagnostic.messageText;
+        const messageText = this._compilerObject.messageText;
         if (typeof messageText === "string")
             return messageText;
 
@@ -51,34 +48,34 @@ export class Diagnostic {
      * Gets the start.
      */
     getStart() {
-        return this.compilerDiagnostic.start;
+        return this.compilerObject.start;
     }
 
     /**
      * Gets the length.
      */
     getLength() {
-        return this.compilerDiagnostic.length;
+        return this.compilerObject.length;
     }
 
     /**
      * Gets the diagnostic category.
      */
     getCategory(): ts.DiagnosticCategory {
-        return this.compilerDiagnostic.category;
+        return this.compilerObject.category;
     }
 
     /**
      * Gets the code of the diagnostic.
      */
     getCode() {
-        return this.compilerDiagnostic.code;
+        return this.compilerObject.code;
     }
 
     /**
      * Gets the source.
      */
     getSource() {
-        return this.compilerDiagnostic.source;
+        return this.compilerObject.source;
     }
 }

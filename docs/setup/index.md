@@ -35,5 +35,3 @@ const ast = new Ast({
     tsConfigFilePath: "path/to/tsconfig.json"
 });
 ```
-
-**Next step:** [Adding SourceFiles](adding-source-files)

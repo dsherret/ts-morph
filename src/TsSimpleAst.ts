@@ -73,7 +73,7 @@ export class TsSimpleAst {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (!this.fileSystem.fileExists(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);
-        return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath);
+        return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath)!;
     }
 
     /**
@@ -159,7 +159,7 @@ export class TsSimpleAst {
      */
     getDiagnostics(): compiler.Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerProgram);
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerObject);
         return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 

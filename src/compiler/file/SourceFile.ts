@@ -81,7 +81,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getReferencedFiles() {
         // todo: add tests
         const dirName = FileUtils.getDirName(this.getFilePath());
-        return (this.compilerNode.referencedFiles || []).map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
+        return (this.compilerNode.referencedFiles || [])
+            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)))
+            .filter(f => f != null) as SourceFile[];
     }
 
     /**
@@ -90,7 +92,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getTypeReferenceDirectives() {
         // todo: add tests
         const dirName = FileUtils.getDirName(this.getFilePath());
-        return (this.compilerNode.typeReferenceDirectives || []).map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)));
+        return (this.compilerNode.typeReferenceDirectives || [])
+            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)))
+            .filter(f => f != null) as SourceFile[];
     }
 
     /**
@@ -310,7 +314,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDiagnostics(): Diagnostic[] {
         // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerProgram, this.compilerNode);
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerObject, this.compilerNode);
         return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 

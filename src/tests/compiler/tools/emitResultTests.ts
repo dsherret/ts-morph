@@ -12,7 +12,7 @@ describe(nameof(EmitResult), () => {
         ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
         ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
         const result = ast.emit();
-        expect(result.compilerEmitResult).to.not.be.undefined;
+        expect(result.compilerObject).to.not.be.undefined;
         expect(result.getEmitSkipped()).to.be.false;
         expect(result.getDiagnostics().length).to.equal(0);
     });

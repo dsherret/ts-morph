@@ -61,13 +61,15 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    getSourceFileFromFilePath(filePath: string): compiler.SourceFile {
+    getSourceFileFromFilePath(filePath: string): compiler.SourceFile | undefined {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(absoluteFilePath);
         if (sourceFile == null) {
-            Logger.log(`Loading file: ${absoluteFilePath}`);
-            sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFile(absoluteFilePath));
-            sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
+            if (this.global.fileSystem.fileExists(absoluteFilePath)) {
+                Logger.log(`Loading file: ${absoluteFilePath}`);
+                sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFile(absoluteFilePath));
+                sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
+            }
 
             if (sourceFile != null) {
                 // ensure these are added to the ast

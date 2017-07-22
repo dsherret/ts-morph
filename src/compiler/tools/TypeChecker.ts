@@ -11,14 +11,7 @@ export class TypeChecker {
     /** @internal */
     private readonly global: GlobalContainer;
     /** @internal */
-    private _compilerTypeChecker: ts.TypeChecker;
-
-    /**
-     * Gets the compiler's TypeChecker.
-     */
-    get compilerTypeChecker() {
-        return this._compilerTypeChecker;
-    }
+    private _compilerObject: ts.TypeChecker;
 
     /** @internal */
     constructor(global: GlobalContainer) {
@@ -26,11 +19,18 @@ export class TypeChecker {
     }
 
     /**
+     * Gets the compiler's TypeChecker.
+     */
+    get compilerObject() {
+        return this._compilerObject;
+    }
+
+    /**
      * Resets the type checker.
      * @internal
      */
     reset(typeChecker: ts.TypeChecker) {
-        this._compilerTypeChecker = typeChecker;
+        this._compilerObject = typeChecker;
     }
 
     /**
@@ -38,7 +38,7 @@ export class TypeChecker {
      * @param type - Type to get the apparent type of.
      */
     getApparentType(type: Type) {
-        return this.global.compilerFactory.getType(this.compilerTypeChecker.getApparentType(type.compilerType));
+        return this.global.compilerFactory.getType(this.compilerObject.getApparentType(type.compilerType));
     }
 
     /**
@@ -46,7 +46,7 @@ export class TypeChecker {
      * @param node - Node to get the constant value from.
      */
     getConstantValue(node: EnumMember) {
-        return this.compilerTypeChecker.getConstantValue(node.compilerNode);
+        return this.compilerObject.getConstantValue(node.compilerNode);
     }
 
     /**
@@ -54,7 +54,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the fully qualified name of.
      */
     getFullyQualifiedName(symbol: Symbol) {
-        return this.compilerTypeChecker.getFullyQualifiedName(symbol.compilerSymbol);
+        return this.compilerObject.getFullyQualifiedName(symbol.compilerSymbol);
     }
 
     /**
@@ -62,7 +62,7 @@ export class TypeChecker {
      * @param node - Node to get the type for.
      */
     getTypeAtLocation(node: Node): Type {
-        return this.global.compilerFactory.getType(this.compilerTypeChecker.getTypeAtLocation(node.compilerNode));
+        return this.global.compilerFactory.getType(this.compilerObject.getTypeAtLocation(node.compilerNode));
     }
 
     /**
@@ -70,7 +70,7 @@ export class TypeChecker {
      * @param expression - Expression.
      */
     getContextualType(expression: Expression): Type | undefined {
-        const contextualType = this.compilerTypeChecker.getContextualType(expression.compilerNode);
+        const contextualType = this.compilerObject.getContextualType(expression.compilerNode);
         return contextualType == null ? undefined : this.global.compilerFactory.getType(contextualType);
     }
 
@@ -80,7 +80,7 @@ export class TypeChecker {
      * @param node - Location to get the type for.
      */
     getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type {
-        return this.global.compilerFactory.getType(this.compilerTypeChecker.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
+        return this.global.compilerFactory.getType(this.compilerObject.getTypeOfSymbolAtLocation(symbol.compilerSymbol, node.compilerNode));
     }
 
     /**
@@ -88,7 +88,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the type for.
      */
     getDeclaredTypeOfSymbol(symbol: Symbol): Type {
-        return this.global.compilerFactory.getType(this.compilerTypeChecker.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
+        return this.global.compilerFactory.getType(this.compilerObject.getDeclaredTypeOfSymbol(symbol.compilerSymbol));
     }
 
     /**
@@ -96,7 +96,7 @@ export class TypeChecker {
      * @param node - Node to get the symbol for.
      */
     getSymbolAtLocation(node: Node): Symbol | undefined {
-        const compilerSymbol = this.compilerTypeChecker.getSymbolAtLocation(node.compilerNode);
+        const compilerSymbol = this.compilerObject.getSymbolAtLocation(node.compilerNode);
         return compilerSymbol == null ? undefined : this.global.compilerFactory.getSymbol(compilerSymbol);
     }
 
@@ -108,7 +108,7 @@ export class TypeChecker {
         if (!symbol.hasFlags(ts.SymbolFlags.Alias))
             return undefined;
 
-        const tsAliasSymbol = this.compilerTypeChecker.getAliasedSymbol(symbol.compilerSymbol);
+        const tsAliasSymbol = this.compilerObject.getAliasedSymbol(symbol.compilerSymbol);
         return tsAliasSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsAliasSymbol);
     }
 
@@ -117,7 +117,7 @@ export class TypeChecker {
      * @param type - Type.
      */
     getPropertiesOfType(type: Type) {
-        return this.compilerTypeChecker.getPropertiesOfType(type.compilerType).map(p => this.global.compilerFactory.getSymbol(p));
+        return this.compilerObject.getPropertiesOfType(type.compilerType).map(p => this.global.compilerFactory.getSymbol(p));
     }
 
     /**
@@ -131,7 +131,7 @@ export class TypeChecker {
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
         const compilerNode = enclosingNode == null ? undefined : enclosingNode.compilerNode;
-        return this.compilerTypeChecker.typeToString(type.compilerType, compilerNode, typeFormatFlags);
+        return this.compilerObject.typeToString(type.compilerType, compilerNode, typeFormatFlags);
     }
 
     /**
@@ -139,7 +139,7 @@ export class TypeChecker {
      * @param signature - Signature to get the return type of.
      */
     getReturnTypeOfSignature(signature: Signature): Type {
-        return this.global.compilerFactory.getType(this.compilerTypeChecker.getReturnTypeOfSignature(signature.compilerSignature));
+        return this.global.compilerFactory.getType(this.compilerObject.getReturnTypeOfSignature(signature.compilerSignature));
     }
 
     /**
@@ -147,7 +147,7 @@ export class TypeChecker {
      * @param node - Node to get the signature from.
      */
     getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
-        const signature = this.compilerTypeChecker.getSignatureFromDeclaration(node.compilerNode);
+        const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
         return signature == null ? undefined : this.global.compilerFactory.getSignature(signature);
     }
 

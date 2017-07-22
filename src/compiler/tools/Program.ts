@@ -2,7 +2,7 @@
 import {GlobalContainer} from "./../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
 import {SourceFile} from "./../file";
-import {EmitResult} from "./EmitResult";
+import {EmitResult} from "./results";
 
 /**
  * Options for emitting.
@@ -30,14 +30,7 @@ export class Program {
     /** @internal */
     private readonly typeChecker: TypeChecker;
     /** @internal */
-    private _compilerProgram: ts.Program;
-
-    /**
-     * Gets the underlying compiler program.
-     */
-    get compilerProgram() {
-        return this._compilerProgram;
-    }
+    private _compilerObject: ts.Program;
 
     /** @internal */
     constructor(global: GlobalContainer, rootNames: string[], host: ts.CompilerHost) {
@@ -47,12 +40,19 @@ export class Program {
     }
 
     /**
+     * Gets the underlying compiler program.
+     */
+    get compilerObject() {
+        return this._compilerObject;
+    }
+
+    /**
      * Resets the program.
      * @internal
      */
     reset(rootNames: string[], host: ts.CompilerHost) {
-        this._compilerProgram = ts.createProgram(rootNames, this.global.compilerOptions, host, this._compilerProgram);
-        this.typeChecker.reset(this._compilerProgram.getTypeChecker());
+        this._compilerObject = ts.createProgram(rootNames, this.global.compilerOptions, host, this._compilerObject);
+        this.typeChecker.reset(this._compilerObject.getTypeChecker());
     }
 
     /**
@@ -70,7 +70,7 @@ export class Program {
         const cancellationToken = undefined; // todo: expose this
         const emitOnlyDtsFiles = options != null && options.emitOnlyDtsFiles != null ? options.emitOnlyDtsFiles : undefined;
         const customTransformers = undefined; // todo: expose this
-        const emitResult = this.compilerProgram.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
+        const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
         return new EmitResult(this.global, emitResult);
     }
 }

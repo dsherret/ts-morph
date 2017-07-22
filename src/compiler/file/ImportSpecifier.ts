@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {insertStraight, replaceStraight, removeNodes} from "./../../manipulation";
+import {insertStraight, replaceStraight, removeNodes, replaceNodeText} from "./../../manipulation";
 import {Node, Identifier} from "./../common";
 import {ImportDeclaration} from "./ImportDeclaration";
 
@@ -13,10 +13,8 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (nameIdentifier.getText() === name)
             return this;
 
-        this.global.languageService.renameReplaces([{
-            sourceFile: this.sourceFile,
-            textSpans: [{ start: nameIdentifier.getStart(), length: nameIdentifier.getWidth() }]
-        }], name);
+        const start = nameIdentifier.getStart();
+        replaceNodeText(this.sourceFile, start, start + nameIdentifier.getWidth(), name);
 
         return this;
     }

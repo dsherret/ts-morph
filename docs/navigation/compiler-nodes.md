@@ -14,5 +14,3 @@ const compilerNode = personInterface.compilerNode;
 
 **Warning:** When manipulating the AST via this library, the underlying TypeScript AST tree is regenerated each time. For this reason, it's important not
 to hold on to TypeScript compiler nodes between manipulations or you could end up working with out of date information.
-
-**Next step:** [Navigating Existing Nodes](existing-nodes)

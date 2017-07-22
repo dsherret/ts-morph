@@ -67,5 +67,3 @@ Adding source files to the AST from a structure or text will act like any other 
 // save it to the disk if you wish:
 sourceFile.save(); // or saveSync();
 ```
-
-**Next step:** [Diagnostics](diagnostics)

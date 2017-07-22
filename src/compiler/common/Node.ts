@@ -360,7 +360,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param pos - Position to search for.
      */
     getDescendantAtPos(pos: number): Node | undefined {
-        let node: Node | undefined = undefined;
+        let node: Node | undefined;
 
         while (true) {
             const nextNode: Node | undefined = (node || this).getChildAtPos(pos);

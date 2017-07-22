@@ -29,5 +29,3 @@ For example, getting the type of a node will not work because that requires a ty
 
 For now, you can always get the underlying compiler node from a wrapped node and use that with your existing compiler objects (ex. TypeChecker),
 but in the future [#42](https://github.com/dsherret/ts-simple-ast/issues/42) is being worked on.
-
-**Next step:** [Manipulating the AST](../manipulation/index)

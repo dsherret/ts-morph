@@ -19,10 +19,6 @@ npm install --save-dev typescript@2.2.2
 npm install --save-dev ts-simple-ast
 ```
 
-## Documentation Progress (Updated: 16 June 2017)
+## Documentation Progress (Updated: 22 July 2017)
 
 I've been still slowly updating the documentation. I'm keeping it up to date with any new features, but some existing features don't have documentation.
-
-This should be up to speed in about two months.
-
-**Next step:** [Setup](setup/index)

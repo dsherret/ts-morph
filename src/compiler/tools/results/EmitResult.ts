@@ -1,41 +1,45 @@
 ﻿import * as ts from "typescript";
 import {Diagnostic} from "./Diagnostic";
-import {GlobalContainer} from "./../../GlobalContainer";
+import {GlobalContainer} from "./../../../GlobalContainer";
+import {Memoize} from "./../../../utils";
 
 /**
  * Result of an emit.
  */
 export class EmitResult {
+    /** @internal */
     private readonly global: GlobalContainer;
-    private readonly _compilerEmitResult: ts.EmitResult;
-
-    /**
-     * TypeScript compiler emit result.
-     */
-    get compilerEmitResult() {
-        return this._compilerEmitResult;
-    }
+    /** @internal */
+    private readonly _compilerObject: ts.EmitResult;
 
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, emitResult: ts.EmitResult) {
+    constructor(global: GlobalContainer, compilerObject: ts.EmitResult) {
         this.global = global;
-        this._compilerEmitResult = emitResult;
+        this._compilerObject = compilerObject;
+    }
+
+    /**
+     * TypeScript compiler emit result.
+     */
+    get compilerObject() {
+        return this._compilerObject;
     }
 
     /**
      * If the emit was skipped.
      */
     getEmitSkipped() {
-        return this.compilerEmitResult.emitSkipped;
+        return this.compilerObject.emitSkipped;
     }
 
     /**
      * Contains declaration emit diagnostics.
      */
+    @Memoize
     getDiagnostics() {
-        return this.compilerEmitResult.diagnostics.map(d => new Diagnostic(this.global, d));
+        return this.compilerObject.diagnostics.map(d => new Diagnostic(this.global, d));
     }
 
     /*
