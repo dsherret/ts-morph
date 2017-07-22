@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {FunctionDeclaration} from "./../../../compiler";
-import {FunctionDeclarationOverloadStructure} from "./../../../structures";
+import {FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
@@ -77,6 +77,25 @@ describe(nameof(FunctionDeclaration), () => {
         it("should add at the end", () => {
             doTest("function identifier();\nfunction identifier() {}\n", { returnType: "number" },
                 "function identifier();\nfunction identifier(): number;\nfunction identifier() {}\n");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
+        function doTest(startingCode: string, structure: FunctionDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("function identifier() {\n}", {}, "function identifier() {\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<FunctionDeclarationSpecificStructure> = {
+                overloads: [{ returnType: "string" }]
+            };
+            doTest("function identifier() {\n}", structure, "function identifier(): string;\nfunction identifier() {\n}");
         });
     });
 });

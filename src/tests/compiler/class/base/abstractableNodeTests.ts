@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {AbstractableNode, ClassDeclaration} from "./../../../../compiler";
+import {AbstractableNodeStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(AbstractableNode), () => {
@@ -38,6 +39,26 @@ describe(nameof(AbstractableNode), () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
             firstChild.setIsAbstract(false);
             expect(firstChild.getText()).to.equal("class Identifier {}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.fill), () => {
+        function doTest(startingCode: string, structure: AbstractableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class MyClass {}", {}, "class MyClass {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything and the node has everything set", () => {
+            doTest("abstract class MyClass {}", {}, "abstract class MyClass {}");
+        });
+
+        it("should modify when setting as abstract", () => {
+            doTest("class MyClass {}", { isAbstract: true }, "abstract class MyClass {}");
         });
     });
 });

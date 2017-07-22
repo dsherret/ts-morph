@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {AsyncableNode, FunctionDeclaration} from "./../../../compiler";
+import {AsyncableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(AsyncableNode), () => {
@@ -42,6 +43,38 @@ describe(nameof(AsyncableNode), () => {
 
         it("should set as not async when async", () => {
             doTest("async function Identifier() {}", false, "function Identifier() {}");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(n => n.fill), () => {
+        function doTest(startCode: string, structure: AsyncableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when false and setting true", () => {
+            doTest("function myFunction() {}", { isAsync: true }, "async function myFunction() {}");
+        });
+
+        it("should modify when true and setting false", () => {
+            doTest("async function myFunction() {}", { isAsync: false }, "function myFunction() {}");
+        });
+
+        it("should not modify when false and setting false", () => {
+            doTest("function myFunction() {}", { isAsync: false }, "function myFunction() {}");
+        });
+
+        it("should not modify when true and setting true", () => {
+            doTest("async function myFunction() {}", { isAsync: true }, "async function myFunction() {}");
+        });
+
+        it("should not modify when false and no property provided", () => {
+            doTest("function myFunction() {}", {}, "function myFunction() {}");
+        });
+
+        it("should not modify when true and no property provided", () => {
+            doTest("async function myFunction() {}", {}, "async function myFunction() {}");
         });
     });
 });

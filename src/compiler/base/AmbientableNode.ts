@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import {AmbientableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
 
@@ -54,6 +56,15 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
 
         toggleDeclareKeyword(value?: boolean) {
             this.toggleModifier("declare", value);
+            return this;
+        }
+
+        fill(structure: Partial<AmbientableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.hasDeclareKeyword != null)
+                this.toggleDeclareKeyword(structure.hasDeclareKeyword);
+
             return this;
         }
     };

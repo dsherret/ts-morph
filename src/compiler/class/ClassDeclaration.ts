@@ -3,7 +3,7 @@ import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode} from "./../base";
@@ -12,6 +12,7 @@ import {SourceFile} from "./../file";
 import {ParameterDeclaration} from "./../function";
 import {ExpressionWithTypeArguments} from "./../type";
 import {NamespaceChildableNode} from "./../namespace";
+import {callBaseFill} from "./../callBaseFill";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";
@@ -28,6 +29,25 @@ export const ClassDeclarationBase = ImplementsClauseableNode(HeritageClauseableN
     NamespaceChildableNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
 ))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<ClassDeclarationStructure>) {
+        callBaseFill(ClassDeclarationBase.prototype, this, structure);
+
+        if (structure.extends != null)
+            this.setExtends(structure.extends);
+        if (structure.ctor != null)
+            this.addConstructor(structure.ctor);
+        if (structure.properties != null)
+            this.addProperties(structure.properties);
+        if (structure.methods != null)
+            this.addMethods(structure.methods);
+
+        return this;
+    }
+
     /**
      * Sets the extends expression.
      * @param text - Text to set as the extends expression.

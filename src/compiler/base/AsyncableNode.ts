@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import {AsyncableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
 
@@ -33,6 +35,15 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
 
         setIsAsync(value: boolean) {
             this.toggleModifier("async", value);
+            return this;
+        }
+
+        fill(structure: AsyncableNodeStructure) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.isAsync != null)
+                this.setIsAsync(structure.isAsync);
+
             return this;
         }
     };

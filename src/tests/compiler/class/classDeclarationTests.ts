@@ -1,10 +1,32 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
     ConstructorDeclaration, ParameterDeclaration} from "./../../../compiler";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure} from "./../../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
+    describe(nameof<ClassDeclaration>(c => c.fill), () => {
+        function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier {\n}", {}, "class Identifier {\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
+                extends: "Other",
+                ctor: {},
+                properties: [{ name: "p" }],
+                methods: [{ name: "m" }]
+            };
+            doTest("class Identifier {\n}", structure, "class Identifier extends Other {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getExtends), () => {
         it("should return undefined when no extends clause exists", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");

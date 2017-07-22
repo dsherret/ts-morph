@@ -1,12 +1,13 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {FunctionDeclarationOverloadStructure} from "./../../structures";
+import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
 import {verifyAndGetIndex} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode} from "./../base";
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./../namespace";
+import {callBaseFill} from "./../callBaseFill";
 import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
 import {OverloadableNode, insertOverloads} from "./OverloadableNode";
 
@@ -14,6 +15,19 @@ export const FunctionDeclarationBase = OverloadableNode(AsyncableNode(Generatora
     NamespaceChildableNode(ExportableNode(ModifierableNode(BodyableNode(NamedNode(Node)))))
 ))))));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<FunctionDeclarationStructure>) {
+        callBaseFill(FunctionDeclarationBase.prototype, this, structure);
+
+        if (structure.overloads != null && structure.overloads.length > 0)
+            this.addOverloads(structure.overloads);
+
+        return this;
+    }
+
     /**
      * Adds a function overload.
      * @param structure - Structure of the overload.
