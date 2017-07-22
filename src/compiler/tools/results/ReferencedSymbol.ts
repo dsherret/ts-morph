@@ -12,6 +12,8 @@ export class ReferencedSymbol {
     protected readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerObject: ts.ReferencedSymbol;
+    /** @internal */
+    private readonly references: ReferenceEntry[];
 
     /**
      * @internal
@@ -19,6 +21,10 @@ export class ReferencedSymbol {
     constructor(global: GlobalContainer, compilerObject: ts.ReferencedSymbol) {
         this.global = global;
         this._compilerObject = compilerObject;
+
+        // it's important to store the references so that the nodes referenced inside will point
+        // to the right node in case the user does manipulation between getting this object and getting the references
+        this.references = this.compilerObject.references.map(r => new ReferenceEntry(global, r));
     }
 
     /**
@@ -39,8 +45,7 @@ export class ReferencedSymbol {
     /**
      * Gets the references.
      */
-    @Memoize
     getReferences() {
-        return this.compilerObject.references.map(r => new ReferenceEntry(this.global, r));
+        return this.references;
     }
 }

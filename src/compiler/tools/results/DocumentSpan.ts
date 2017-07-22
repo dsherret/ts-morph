@@ -12,6 +12,8 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     protected readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerObject: TCompilerObject;
+    /** @internal */
+    private readonly node: Node;
 
     /**
      * @internal
@@ -19,6 +21,9 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     constructor(global: GlobalContainer, compilerObject: TCompilerObject) {
         this.global = global;
         this._compilerObject = compilerObject;
+
+        // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
+        this.node = this.getSourceFile().getDescendantAtPos(this.getTextSpan().getStart())!;
     }
 
     /**
@@ -46,7 +51,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     /**
      * Gets the node at the start of the text span.
      */
-    getNode(): Node {
-        return this.getSourceFile().getDescendantAtPos(this.getTextSpan().getStart())!;
+    getNode() {
+        return this.node;
     }
 }
