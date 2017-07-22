@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
+import {InitializerExpressionableNodeStructure} from "./../../../structures";
+import {callBaseFill} from "./../../callBaseFill";
 import {insertStraight, removeNodes} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
 
@@ -71,6 +73,15 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
                 parent: this,
                 newCode: ` = ${text}`
             });
+            return this;
+        }
+
+        fill(structure: InitializerExpressionableNodeStructure) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.initializer != null)
+                this.setInitializer(structure.initializer);
+
             return this;
         }
     };

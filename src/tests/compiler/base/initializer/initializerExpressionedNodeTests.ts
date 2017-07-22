@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {EnumDeclaration, InitializerExpressionableNode, Expression, ClassDeclaration, PropertyDeclaration} from "./../../../../compiler";
+import {InitializerExpressionableNodeStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(InitializerExpressionableNode), () => {
@@ -138,6 +139,23 @@ describe(nameof(InitializerExpressionableNode), () => {
             it("should set initializer when there's a comment after and no semi-colon", () => {
                 doClassPropTest("class Identifier { prop/*comment*/ }", "2", "class Identifier { prop = 2/*comment*/ }");
             });
+        });
+    });
+
+    describe(nameof<InitializerExpressionableNode>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+            firstProperty.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("class Identifier { prop }", { initializer: "4" }, "class Identifier { prop = 4 }");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier { prop = 4 }", { }, "class Identifier { prop = 4 }");
         });
     });
 });
