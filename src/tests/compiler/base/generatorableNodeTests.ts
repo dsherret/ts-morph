@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {GeneratorableNode, FunctionDeclaration, ClassDeclaration} from "./../../../compiler";
+import {GeneratorableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(GeneratorableNode), () => {
@@ -62,6 +63,26 @@ describe(nameof(GeneratorableNode), () => {
                 method.setIsGenerator(false);
                 expect(sourceFile.getText()).to.equal("class Identifier { public identifier() { } }");
             });
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
+        function doTest(startCode: string, structure: GeneratorableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("function myFunction() {}", {}, "function myFunction() {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything and the node has everything set", () => {
+            doTest("function* myFunction() {}", {}, "function* myFunction() {}");
+        });
+
+        it("should modify when setting as async", () => {
+            doTest("function myFunction() {}", { isGenerator: true }, "function* myFunction() {}");
         });
     });
 });

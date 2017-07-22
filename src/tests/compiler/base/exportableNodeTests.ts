@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
-import {ExportableNode, ClassDeclaration, NamespaceDeclaration} from "./../../../compiler";
+import {ExportableNode, ClassDeclaration, NamespaceDeclaration, FunctionDeclaration} from "./../../../compiler";
+import {ExportableNodeStructure} from "./../../../structures";
 import * as errors from "./../../../errors";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -206,6 +207,34 @@ describe(nameof(ExportableNode), () => {
             it("should remove it as a default export if one and exported in a separate statement", () => {
                 doTest("class Identifier {}\nexport default Identifier;", false, "class Identifier {}");
             });
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(f => f.fill), () => {
+        function doTest(startingCode: string, structure: ExportableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("function myFunction() {}", {}, "function myFunction() {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything and the node has everything set", () => {
+            doTest("export default function myFunction() {}", {}, "export default function myFunction() {}");
+        });
+
+        it("should modify when setting as export", () => {
+            doTest("function myFunction() {}", { isExported: true }, "export function myFunction() {}");
+        });
+
+        it("should modify when setting as default export", () => {
+            doTest("function myFunction() {}", { isDefaultExport: true }, "export default function myFunction() {}");
+        });
+
+        it("should be default export when setting as default export and exported", () => {
+            doTest("function myFunction() {}", { isDefaultExport: true, isExported: true }, "export default function myFunction() {}");
         });
     });
 });

@@ -2,6 +2,8 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {removeNodes} from "./../../manipulation";
+import {ExportableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
 
@@ -122,6 +124,17 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 if (exportKeyword != null)
                     removeNodes([exportKeyword]);
             }
+
+            return this;
+        }
+
+        fill(structure: ExportableNodeStructure) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.isExported != null)
+                this.setIsExported(structure.isExported);
+            if (structure.isDefaultExport != null)
+                this.setIsDefaultExport(structure.isDefaultExport);
 
             return this;
         }

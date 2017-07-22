@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
+import {GeneratorableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {insertStraight, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 
@@ -48,6 +50,15 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
                     parent: this,
                     newCode: "*"
                 });
+
+            return this;
+        }
+
+        fill(structure: GeneratorableNodeStructure) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.isGenerator != null)
+                this.setIsGenerator(structure.isGenerator);
 
             return this;
         }
