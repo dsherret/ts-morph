@@ -4,7 +4,6 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -307,7 +306,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
-                fillClassFuncs.fillClassDeclarationFromStructure(child, structures[i]);
+                child.fill(structures[i]);
             });
 
             return newChildren;
@@ -342,7 +341,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
-                fillClassFuncs.fillEnumDeclarationFromStructure(child, structures[i]);
+                child.fill(structures[i]);
             });
 
             return newChildren;
@@ -377,7 +376,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
-                fillClassFuncs.fillFunctionDeclarationFromStructure(child, structures[i]);
+                child.fill(structures[i]);
             });
 
             return newChildren;
@@ -413,7 +412,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
             const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
-                fillClassFuncs.fillInterfaceDeclarationFromStructure(child, structures[i]);
+                child.fill(structures[i]);
             });
 
             return newChildren;
@@ -450,7 +449,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return `${indentationText}${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} {${newLineChar}${indentationText}}`;
             });
             const newChildren = this._insertMainChildren<namespaces.NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
-                fillClassFuncs.fillNamespaceDeclarationFromStructure(child, structures[i]);
+                child.fill(structures[i]);
             });
 
             return newChildren;
@@ -488,7 +487,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             });
             const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, TypeAliasDeclarationStructure>(
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
-                    fillClassFuncs.fillTypeAliasDeclarationFromStructure(child, structures[i]);
+                    child.fill(structures[i]);
                 }, {
                     previousBlanklineWhen: previousMember => !previousMember.isTypeAliasDeclaration(),
                     separatorNewlineWhen: () => false,

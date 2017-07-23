@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {EnumDeclaration, EnumMember} from "./../../../compiler";
+import {EnumMemberSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
@@ -71,6 +72,25 @@ describe(nameof(EnumMember), () => {
             const {firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2,\n  member3\n}\n");
             firstChild.getMembers()[1].remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member1 = 2,\n  member3\n}\n");
+        });
+    });
+
+    describe(nameof<EnumMember>(d => d.fill), () => {
+        function doTest(code: string, structure: Partial<EnumMemberSpecificStructure>, expectedCode: string) {
+            const {firstEnumMember, sourceFile} = getInfoFromTextWithFirstMember(code);
+            firstEnumMember.fill(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not change anything when nothing was specified", () => {
+            doTest("enum Identifier { member }", {}, "enum Identifier { member }");
+        });
+
+        it("should change when specifying", () => {
+            const structure: MakeRequired<EnumMemberSpecificStructure> = {
+                value: 5
+            };
+            doTest("enum Identifier { member }", structure, "enum Identifier { member = 5 }");
         });
     });
 });

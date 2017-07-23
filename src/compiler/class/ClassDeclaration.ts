@@ -2,7 +2,6 @@
 import * as errors from "./../../errors";
 import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
@@ -138,7 +137,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: () => true,
             nextBlanklineWhen: () => true,
             expectedKind: ts.SyntaxKind.Constructor,
-            fillFunction: fillClassFuncs.fillConstructorDeclarationFromStructure
+            fillFunction: (node, struct) => node.fill(struct)
         })[0];
     }
 
@@ -207,7 +206,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
             nextBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
             expectedKind: ts.SyntaxKind.PropertyDeclaration,
-            fillFunction: fillClassFuncs.fillPropertyDeclarationFromStructure
+            fillFunction: (node, structure) => node.fill(structure)
         });
     }
 
@@ -315,7 +314,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             nextBlanklineWhen: () => true,
             separatorNewlineWhen: () => true,
             expectedKind: ts.SyntaxKind.MethodDeclaration,
-            fillFunction: fillClassFuncs.fillMethodDeclarationFromStructure
+            fillFunction: (node, structure) => node.fill(structure)
         });
     }
 

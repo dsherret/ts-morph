@@ -1,5 +1,8 @@
 ﻿import {NamedStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure} from "./../base";
 
-export interface EnumMemberStructure extends NamedStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure {
-    value?: number;
+export interface EnumMemberStructure extends EnumMemberSpecificStructure, NamedStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure {
+}
+
+export interface EnumMemberSpecificStructure {
+    value?: number | string;
 }

@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {removeFromBracesOrSourceFile} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -63,7 +62,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromConstructorDeclarationOverload,
-            fillNodeFromStructure: fillClassFuncs.fillConstructorDeclarationOverloadFromStructure,
+            fillNodeFromStructure: (node, structure) => node.fill(structure),
             expectedSyntaxKind: ts.SyntaxKind.Constructor
         });
     }

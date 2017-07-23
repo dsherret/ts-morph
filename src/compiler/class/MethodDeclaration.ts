@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {MethodDeclarationOverloadStructure, MethodDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -66,7 +65,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromMethodDeclarationOverload,
-            fillNodeFromStructure: fillClassFuncs.fillMethodDeclarationOverloadFromStructure,
+            fillNodeFromStructure: (node, structure) => node.fill(structure),
             expectedSyntaxKind: ts.SyntaxKind.MethodDeclaration
         });
     }

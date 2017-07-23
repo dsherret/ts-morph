@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -86,7 +85,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             childCodes: codes,
             structures,
             expectedKind: ts.SyntaxKind.ConstructSignature,
-            fillFunction: fillClassFuncs.fillConstructSignatureDeclarationFromStructure
+            fillFunction: (node, structure) => node.fill(structure)
         });
     }
 
@@ -162,7 +161,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             childCodes: codes,
             structures,
             expectedKind: ts.SyntaxKind.MethodSignature,
-            fillFunction: fillClassFuncs.fillMethodSignatureFromStructure
+            fillFunction: (node, structure) => node.fill(structure)
         });
     }
 
@@ -242,7 +241,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             childCodes: codes,
             structures,
             expectedKind: ts.SyntaxKind.PropertySignature,
-            fillFunction: fillClassFuncs.fillPropertySignatureFromStructure
+            fillFunction: (node, structure) => node.fill(structure)
         });
     }
 

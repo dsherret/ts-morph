@@ -2,7 +2,6 @@
 import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
 import {verifyAndGetIndex} from "./../../manipulation";
-import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode} from "./../base";
 import {StatementedNode} from "./../statement";
@@ -69,7 +68,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             structures,
             childCodes,
             getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
-            fillNodeFromStructure: fillClassFuncs.fillFunctionDeclarationOverloadFromStructure,
+            fillNodeFromStructure: (node, structure) => node.fill(structure),
             expectedSyntaxKind: ts.SyntaxKind.FunctionDeclaration
         });
     }
