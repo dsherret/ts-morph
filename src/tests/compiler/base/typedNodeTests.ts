@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration} from "./../../../compiler";
+import {TypedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypedNode), () => {
@@ -139,6 +140,22 @@ describe(nameof(TypedNode), () => {
                 declaration.setType("number");
                 expect(firstChild.getText()).to.equal(`var var1, var2: number, var3;`);
             });
+        });
+    });
+
+    describe(nameof<TypeAliasDeclaration>(t => t.fill), () => {
+        function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("type myAlias = string;", { type: "number" }, "type myAlias = number;");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("type myAlias = string;", {}, "type myAlias = string;");
         });
     });
 });

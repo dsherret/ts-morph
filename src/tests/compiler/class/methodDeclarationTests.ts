@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {MethodDeclaration, ClassDeclaration} from "./../../../compiler";
-import {MethodDeclarationOverloadStructure} from "./../../../structures";
+import {MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
@@ -81,6 +81,26 @@ describe(nameof(MethodDeclaration), () => {
         it("should be able to add an overload", () => {
             doTest("class Identifier {\n  identifier();\n  identifier() {}\n }", { returnType: "string" },
                 "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier() {}\n }");
+        });
+    });
+
+    describe(nameof<MethodDeclaration>(m => m.fill), () => {
+        function doTest(startingCode: string, structure: MethodDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const method = firstChild.getInstanceMethods()[0];
+            method.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class identifier {\n  method() {}\n}", {}, "class identifier {\n  method() {}\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
+                overloads: [{ parameters: [{ name: "param" }] }]
+            };
+            doTest("class identifier {\n  method() {}\n}", structure, "class identifier {\n  method(param);\n  method() {}\n}");
         });
     });
 });

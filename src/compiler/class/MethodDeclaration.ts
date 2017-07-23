@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
-import {MethodDeclarationOverloadStructure} from "./../../structures";
+import {MethodDeclarationOverloadStructure, MethodDeclarationStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, ScopedNode, DecoratableNode, BodyableNode} from "./../base";
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
@@ -11,6 +12,19 @@ export const MethodDeclarationBase = OverloadableNode(DecoratableNode(Abstractab
     FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node)))
 )))))));
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<MethodDeclarationStructure>) {
+        callBaseFill(MethodDeclarationBase.prototype, this, structure);
+
+        if (structure.overloads != null && structure.overloads.length > 0)
+            this.addOverloads(structure.overloads);
+
+        return this;
+    }
+
     /**
      * Add a method overload.
      * @param structure - Structure to add.

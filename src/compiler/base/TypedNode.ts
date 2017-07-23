@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import {TypedNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
 import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
@@ -62,6 +64,15 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
             // insert new type
             replaceStraight(this.getSourceFile(), insertPosition, replaceLength, insertText);
+
+            return this;
+        }
+
+        fill(structure: Partial<TypedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.type != null)
+                this.setType(structure.type);
 
             return this;
         }
