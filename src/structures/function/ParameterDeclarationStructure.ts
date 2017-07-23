@@ -3,7 +3,10 @@
 
 export interface ParameterDeclarationStructure
     extends NamedStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure,
-        InitializerExpressionableNodeStructure
+        InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure
 {
+}
+
+export interface ParameterDeclarationSpecificStructure {
     isRestParameter?: boolean;
 }

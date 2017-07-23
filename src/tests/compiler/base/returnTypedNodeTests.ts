@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ReturnTypedNode, FunctionDeclaration} from "./../../../compiler";
+import {ReturnTypedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {
@@ -50,6 +51,22 @@ describe(nameof(ReturnTypedNode), () => {
             const {firstChild} = getInfoFromText<FunctionDeclaration>("declare function identifier(): number;");
             firstChild.setReturnType("string");
             expect(firstChild.getText()).to.equal("declare function identifier(): string;");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: ReturnTypedNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("function Identifier() {}", { returnType: "number" }, "function Identifier(): number {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("function Identifier() {}", { }, "function Identifier() {}");
         });
     });
 });

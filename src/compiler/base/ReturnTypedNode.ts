@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import {ReturnTypedNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
 import {replaceStraight} from "./../../manipulation";
 import {Node} from "./../common";
@@ -51,6 +53,15 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             // insert new type
             const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken);
             replaceStraight(this.getSourceFile(), closeParenToken.getEnd(), replaceLength, `: ${text}`);
+
+            return this;
+        }
+
+        fill(structure: Partial<ReturnTypedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.returnType != null)
+                this.setReturnType(structure.returnType);
 
             return this;
         }

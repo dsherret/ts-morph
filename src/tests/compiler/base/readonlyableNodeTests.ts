@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, ReadonlyableNode, PropertyDeclaration} from "./../../../compiler";
+import {ReadonlyableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ReadonlyableNode), () => {
@@ -43,6 +44,26 @@ describe(nameof(ReadonlyableNode), () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { readonly prop: string; }");
             (firstChild.getInstanceProperties()[0] as PropertyDeclaration).setIsReadonly(false);
             expect(sourceFile.getText()).to.equal("class MyClass { prop: string; }");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+        function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            firstProperty.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify when not set and structure empty", () => {
+            doTest("class MyClass { prop: string; }", {}, "class MyClass { prop: string; }");
+        });
+
+        it("should not modify when set and structure empty", () => {
+            doTest("class MyClass { readonly prop: string; }", {}, "class MyClass { readonly prop: string; }");
+        });
+
+        it("should modify when setting true", () => {
+            doTest("class MyClass { prop: string; }", { isReadonly: true }, "class MyClass { readonly prop: string; }");
         });
     });
 });

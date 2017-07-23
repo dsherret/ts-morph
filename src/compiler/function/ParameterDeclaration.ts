@@ -1,12 +1,27 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
 import {insertStraight, removeNodes} from "./../../manipulation";
+import {ParameterDeclarationStructure} from "./../../structures";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
+import {callBaseFill} from "./../callBaseFill";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
 )))));
 export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<ParameterDeclarationStructure>) {
+        callBaseFill(ParameterDeclarationBase.prototype, this, structure);
+
+        if (structure.isRestParameter != null)
+            this.setIsRestParameter(structure.isRestParameter);
+
+        return this;
+    }
+
     /**
      * Gets the dot dot dot token (...) for a rest parameter.
      */

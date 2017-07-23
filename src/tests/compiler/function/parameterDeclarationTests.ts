@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ParameterDeclaration, FunctionDeclaration} from "./../../../compiler";
+import {ParameterDeclarationStructure, ParameterDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ParameterDeclaration), () => {
@@ -81,6 +82,26 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should not be a optional otherwise", () => {
             doTest("function func(param: string){}", false);
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(d => d.fill), () => {
+        function doTest(startCode: string, structure: Partial<ParameterDeclarationStructure>, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const firstParam = firstChild.getParameters()[0];
+            firstParam.fill(structure);
+            expect(sourceFile.getFullText()).to.be.equal(expectedCode);
+        }
+
+        it("should not modify when not changing", () => {
+            doTest("function func(param: string) {}", {}, "function func(param: string) {}");
+        });
+
+        it("should modify when setting", () => {
+            const structure: MakeRequired<ParameterDeclarationSpecificStructure> = {
+                isRestParameter: true
+            };
+            doTest("function func(param: string) {}", structure, "function func(...param: string) {}");
         });
     });
 });

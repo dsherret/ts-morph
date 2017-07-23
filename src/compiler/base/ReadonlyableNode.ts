@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import {ReadonlyableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
 
@@ -33,6 +35,15 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
 
         setIsReadonly(value: boolean) {
             this.toggleModifier("readonly", value);
+            return this;
+        }
+
+        fill(structure: Partial<ReadonlyableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.isReadonly != null)
+                this.setIsReadonly(structure.isReadonly);
+
             return this;
         }
     };

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ScopedNode, ClassDeclaration, PropertyDeclaration, Scope} from "./../../../compiler";
+import {ScopedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ScopedNode), () => {
@@ -71,6 +72,26 @@ describe(nameof(ScopedNode), () => {
             const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { prop: string; }");
             firstProperty.setScope(Scope.Private);
             expect(firstChild.getText()).to.be.equal("class Identifier { private prop: string; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(p => p.fill), () => {
+        function doTest(startCode: string, structure: ScopedNodeStructure, expectedCode: string) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            firstProperty.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify when not set and structure empty", () => {
+            doTest("class MyClass { prop: string; }", {}, "class MyClass { prop: string; }");
+        });
+
+        it("should not modify when set and structure empty", () => {
+            doTest("class MyClass { public prop: string; }", {}, "class MyClass { public prop: string; }");
+        });
+
+        it("should modify when setting", () => {
+            doTest("class MyClass { prop: string; }", { scope: Scope.Protected }, "class MyClass { protected prop: string; }");
         });
     });
 });

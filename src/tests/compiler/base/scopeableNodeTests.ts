@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
-import {ScopeableNode, ClassDeclaration, Scope} from "./../../../compiler";
+import {ScopeableNode, ClassDeclaration, ParameterDeclaration, Scope} from "./../../../compiler";
+import {ScopeableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ScopeableNode), () => {
@@ -65,6 +66,26 @@ describe(nameof(ScopeableNode), () => {
             const {firstChild, firstParam} = getFirstParameter("class Identifier { constructor(public param: string) {} }");
             firstParam.setScope(undefined);
             expect(firstChild.getText()).to.be.equal("class Identifier { constructor(param: string) {} }");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(p => p.fill), () => {
+        function doTest(startCode: string, structure: ScopeableNodeStructure, expectedCode: string) {
+            const {firstParam, sourceFile} = getFirstParameter(startCode);
+            firstParam.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify when not set and structure empty", () => {
+            doTest("class MyClass { constructor(param: string) {} }", {}, "class MyClass { constructor(param: string) {} }");
+        });
+
+        it("should not modify when set and structure empty", () => {
+            doTest("class MyClass { constructor(public param: string) {} }", {}, "class MyClass { constructor(public param: string) {} }");
+        });
+
+        it("should modify when setting", () => {
+            doTest("class MyClass { constructor(param: string) {} }", { scope: Scope.Protected }, "class MyClass { constructor(protected param: string) {} }");
         });
     });
 });
