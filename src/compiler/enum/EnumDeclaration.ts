@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
-import {EnumMemberStructure} from "./../../structures";
+import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
 import {insertIntoSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamespaceChildableNode} from "./../namespace";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
@@ -10,6 +11,21 @@ import {EnumMember} from "./EnumMember";
 
 export const EnumDeclarationBase = NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<EnumDeclarationStructure>) {
+        callBaseFill(EnumDeclarationBase.prototype, this, structure);
+
+        if (structure.isConst != null)
+            this.setIsConstEnum(structure.isConst);
+        if (structure.members != null && structure.members.length > 0)
+            this.addMembers(structure.members);
+
+        return this;
+    }
+
     /**
      * Adds a member to the enum.
      * @param structure - Structure of the enum.

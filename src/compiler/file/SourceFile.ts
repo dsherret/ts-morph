@@ -3,8 +3,9 @@ import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {removeNodes} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
-import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../structures";
+import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
 import {ArrayUtils, FileUtils} from "./../../utils";
+import {callBaseFill} from "./../callBaseFill";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {Diagnostic, EmitResult} from "./../tools";
@@ -31,6 +32,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         super(global, node, undefined as any);
         this.sourceFile = this;
         // end hack
+    }
+
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<SourceFileStructure>) {
+        callBaseFill(SourceFileBase.prototype, this, structure);
+
+        if (structure.imports != null)
+            this.addImports(structure.imports);
+        if (structure.exports != null)
+            this.addExports(structure.exports);
+
+        return this;
     }
 
     /**

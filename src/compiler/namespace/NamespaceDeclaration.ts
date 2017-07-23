@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {replaceNodeText} from "./../../manipulation";
+import {NamespaceDeclarationStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Logger} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode} from "./../base";
@@ -9,6 +11,19 @@ import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
 export const NamespaceDeclarationBase = NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(BodiedNode(NamedNode(Node))))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<NamespaceDeclarationStructure>) {
+        callBaseFill(NamespaceDeclarationBase.prototype, this, structure);
+
+        if (structure.hasModuleKeyword != null)
+            this.setHasModuleKeyword(structure.hasModuleKeyword);
+
+        return this;
+    }
+
     /**
      * Gets the full name of the namespace.
      */

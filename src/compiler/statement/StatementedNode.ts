@@ -2,10 +2,11 @@ import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    EnumDeclarationStructure, NamespaceDeclarationStructure} from "./../../structures";
+    EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
 import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
 import * as classes from "./../class";
@@ -537,6 +538,25 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
+        }
+
+        fill(structure: Partial<StatementedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.classes != null && structure.classes.length > 0)
+                this.addClasses(structure.classes);
+            if (structure.enums != null && structure.enums.length > 0)
+                this.addEnums(structure.enums);
+            if (structure.functions != null && structure.functions.length > 0)
+                this.addFunctions(structure.functions);
+            if (structure.interfaces != null && structure.interfaces.length > 0)
+                this.addInterfaces(structure.interfaces);
+            if (structure.namespaces != null && structure.namespaces.length > 0)
+                this.addNamespaces(structure.namespaces);
+            if (structure.typeAliases != null && structure.typeAliases.length > 0)
+                this.addTypeAliases(structure.typeAliases);
+
+            return this;
         }
 
         // todo: make this passed an object

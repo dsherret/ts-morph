@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
-import {ImportDeclarationStructure, ExportDeclarationStructure} from "./../../../structures";
+import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
@@ -384,6 +384,26 @@ describe(nameof(SourceFile), () => {
             expect(writeLog[0].filePath).to.equal("dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: SourceFileSpecificStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startingCode);
+            sourceFile.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("", {}, "");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<SourceFileSpecificStructure> = {
+                imports: [{ moduleSpecifier: "module" }],
+                exports: [{ moduleSpecifier: "export-module" }]
+            };
+            doTest("", structure, `import "module";\n\nexport * from "export-module";\n`);
         });
     });
 });

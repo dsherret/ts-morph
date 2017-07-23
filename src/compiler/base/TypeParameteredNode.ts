@@ -2,7 +2,9 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight} from "./../../manipulation";
+import {TypeParameteredNodeStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
+import {callBaseFill} from "./../callBaseFill";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
 import {TypeParameterDeclaration} from "./../type/TypeParameterDeclaration";
@@ -79,6 +81,15 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             }
 
             return this.getTypeParameters().slice(index, index + structures.length);
+        }
+
+        fill(structure: Partial<TypeParameteredNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.typeParameters != null && structure.typeParameters.length > 0)
+                this.addTypeParameters(structure.typeParameters);
+
+            return this;
         }
     };
 }

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, ConstructorDeclaration} from "./../../../compiler";
-import {ConstructorDeclarationOverloadStructure} from "./../../../structures";
+import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
@@ -121,6 +121,26 @@ describe(nameof(ConstructorDeclaration), () => {
             const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].getOverloads()[0].remove();
             expect(sourceFile.getFullText()).to.equal("class MyClass {\n    constructor() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ConstructorDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const ctor = firstChild.getConstructors()[0];
+            ctor.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class identifier {\n  constructor() {}\n}", {}, "class identifier {\n  constructor() {}\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
+                overloads: [{ parameters: [{ name: "param" }] }]
+            };
+            doTest("class identifier {\n  constructor() {}\n}", structure, "class identifier {\n  constructor(param);\n  constructor() {}\n}");
         });
     });
 });

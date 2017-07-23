@@ -2,13 +2,27 @@
 import {removeFromBracesOrSourceFile} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
-import {ConstructorDeclarationOverloadStructure} from "./../../structures";
+import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ScopedNode, BodyableNode} from "./../base";
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
 
 export const ConstructorDeclarationBase = OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))));
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<ConstructorDeclarationStructure>) {
+        callBaseFill(ConstructorDeclarationBase.prototype, this, structure);
+
+        if (structure.overloads != null && structure.overloads.length > 0)
+            this.addOverloads(structure.overloads);
+
+        return this;
+    }
+
     /**
      * Add a constructor overload.
      * @param structure - Structure to add.

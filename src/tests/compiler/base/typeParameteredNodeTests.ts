@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {TypeParameterDeclarationStructure} from "./../../../structures";
-import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration} from "./../../../compiler";
+import {TypeParameterDeclarationStructure, TypeParameteredNodeStructure} from "./../../../structures";
+import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
@@ -99,6 +99,22 @@ describe(nameof(TypeParameteredNode), () => {
 
         it("should do nothing if empty array", () => {
             doTest("function identifier() {}", 0, [], "function identifier() {}");
+        });
+    });
+
+    describe(nameof<TypeAliasDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: TypeParameteredNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("type myAlias = string;", { typeParameters: [{ name: "T" }] }, "type myAlias<T> = string;");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("type myAlias = string;", {}, "type myAlias = string;");
         });
     });
 });

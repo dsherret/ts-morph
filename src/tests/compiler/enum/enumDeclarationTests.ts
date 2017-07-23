@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {EnumDeclaration, EnumMember} from "./../../../compiler";
-import {EnumMemberStructure} from "./../../../structures";
+import {EnumMemberStructure, EnumDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -141,6 +141,28 @@ describe(nameof(EnumDeclaration), () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             firstChild.setIsConstEnum(true);
             expect(firstChild.getText()).to.equal("const enum MyEnum {}");
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: EnumDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("enum Identifier {\n}", {}, "enum Identifier {\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<EnumDeclarationSpecificStructure> = {
+                isConst: true,
+                members: [{
+                    name: "member"
+                }]
+            };
+            doTest("enum Identifier {\n}", structure, "const enum Identifier {\n    member\n}");
         });
     });
 });

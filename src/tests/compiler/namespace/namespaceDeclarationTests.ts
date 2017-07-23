@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {NamespaceDeclaration} from "./../../../compiler";
+import {NamespaceDeclarationSpecificStructure} from "./../../../structures";
 import * as errors from "./../../../errors";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -138,6 +139,24 @@ describe(nameof(NamespaceDeclaration), () => {
             firstChild.setHasModuleKeyword(false);
             expect(sourceFile.getText()).equals("namespace Identifier {}");
         });
+    });
 
+    describe(nameof<NamespaceDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: NamespaceDeclarationSpecificStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("namespace Identifier {\n}", {}, "namespace Identifier {\n}");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<NamespaceDeclarationSpecificStructure> = {
+                hasModuleKeyword: true
+            };
+            doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
+        });
     });
 });
