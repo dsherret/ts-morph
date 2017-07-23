@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as errors from "./../../../errors";
 import {ImplementsClauseableNode, ClassDeclaration} from "./../../../compiler";
+import {ImplementsClauseableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ImplementsClauseableNode), () => {
@@ -87,6 +88,30 @@ describe(nameof(ImplementsClauseableNode), () => {
 
         it("should insert multiple implements at a position", () => {
             doTest("class Identifier implements Base, Base1 {}", 1, ["Base2", "Base3"], "class Identifier implements Base, Base2, Base3, Base1 {}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting one", () => {
+            doTest("class MyClass {}", { implements: ["Test"] }, "class MyClass implements Test {}");
+        });
+
+        it("should modify when setting two", () => {
+            doTest("class MyClass {}", { implements: ["Test", "Test2"] }, "class MyClass implements Test, Test2 {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class MyClass {}", {}, "class MyClass {}");
+        });
+
+        it("should not modify anything if the structure has an empty array", () => {
+            doTest("class MyClass {}", { implements: [] }, "class MyClass {}");
         });
     });
 });

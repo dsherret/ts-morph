@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {DocumentationableNode, VariableStatement, FunctionDeclaration, Node} from "./../../../compiler";
-import {JSDocStructure} from "./../../../structures";
+import {DocumentationableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
+import {JSDocStructure, DocumentationableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(DocumentationableNode), () => {
@@ -142,6 +142,22 @@ describe(nameof(DocumentationableNode), () => {
         it("should add at the end", () => {
             doTest("/**\n * Desc1\n */\nfunction identifier() {}", { description: "Desc2" },
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\nfunction identifier() {}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: DocumentationableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("class Identifier {}", { docs: [{ description: "Desc1" }, { description: "Desc2" }] }, "/**\n * Desc1\n */\n/**\n * Desc2\n */\nclass Identifier {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier {}", {}, "class Identifier {}");
         });
     });
 });

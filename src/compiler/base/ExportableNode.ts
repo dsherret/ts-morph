@@ -128,7 +128,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return this;
         }
 
-        fill(structure: ExportableNodeStructure) {
+        fill(structure: Partial<ExportableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.isExported != null)

@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {insertStraight, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
-import {JSDocStructure} from "./../../structures";
+import {JSDocStructure, DocumentationableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {JSDoc} from "./../doc/JSDoc";
@@ -88,6 +89,15 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             });
 
             return this.getDocumentationCommentNodes().slice(index, index + structures.length);
+        }
+
+        fill(structure: Partial<DocumentationableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.docs != null && structure.docs.length > 0)
+                this.addDocs(structure.docs);
+
+            return this;
         }
     };
 }

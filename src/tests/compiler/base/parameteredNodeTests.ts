@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ParameteredNode, FunctionDeclaration, ParameterDeclaration} from "./../../../compiler";
-import {ParameterDeclarationStructure} from "./../../../structures";
+import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ParameteredNode), () => {
@@ -87,6 +87,22 @@ describe(nameof(ParameteredNode), () => {
 
         it("should insert in the middle", () => {
             doTest("function identifier(param1, param3) {}", 1, [{ name: "param2" }], "function identifier(param1, param2, param3) {}");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: ParameteredNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("function identifier() {}", { parameters: [{ name: "param" }] }, "function identifier(param) {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("function identifier() {}", {}, "function identifier() {}");
         });
     });
 });

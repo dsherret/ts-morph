@@ -38,7 +38,7 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
             return this;
         }
 
-        fill(structure: AsyncableNodeStructure) {
+        fill(structure: Partial<AsyncableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.isAsync != null)

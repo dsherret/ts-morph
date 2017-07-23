@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {DecoratorStructure} from "./../../../structures";
+import {DecoratorStructure, DecoratableNodeStructure} from "./../../../structures";
 import {DecoratableNode, Decorator, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -145,4 +145,21 @@ describe(nameof(DecoratableNode), () => {
             doTest("@dec\nclass MyClass {}", [{ name: "dec2" }, { name: "dec3" }], "@dec\n@dec2\n@dec3\nclass MyClass {}");
         });
     });
+
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: DecoratableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("class Identifier {}", { decorators: [{ name: "dec1" }, { name: "dec2" }] }, "@dec1\n@dec2\nclass Identifier {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier {}", {}, "class Identifier {}");
+        });
+    });
+
 });

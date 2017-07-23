@@ -2,6 +2,8 @@
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
+import {ExtendsClauseableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
@@ -81,6 +83,15 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 newText: insertText
             });
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
+        }
+
+        fill(structure: Partial<ExtendsClauseableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.extends != null && structure.extends.length > 0)
+                this.addExtends(structure.extends);
+
+            return this;
         }
     };
 }

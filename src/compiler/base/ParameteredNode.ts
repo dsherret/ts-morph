@@ -3,7 +3,8 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
-import {ParameterDeclarationStructure} from "./../../structures";
+import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
@@ -85,6 +86,15 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             const newParameters = this.getParameters().slice(index, index + structures.length);
             newParameters.forEach((p, i) => fillClassFuncs.fillParameterDeclarationFromStructure(p, structures[i]));
             return newParameters;
+        }
+
+        fill(structure: Partial<ParameteredNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.parameters != null && structure.parameters.length > 0)
+                this.addParameters(structure.parameters);
+
+            return this;
         }
     };
 }

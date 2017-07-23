@@ -76,7 +76,7 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             return this;
         }
 
-        fill(structure: InitializerExpressionableNodeStructure) {
+        fill(structure: Partial<InitializerExpressionableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.initializer != null)

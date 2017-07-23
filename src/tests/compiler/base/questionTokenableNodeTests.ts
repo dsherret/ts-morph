@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, PropertyDeclaration, QuestionTokenableNode} from "./../../../compiler";
+import {QuestionTokenableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(QuestionTokenableNode), () => {
@@ -49,6 +50,26 @@ describe(nameof(QuestionTokenableNode), () => {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
             firstProperty.setIsOptional(false);
             expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(p => p.fill), () => {
+        function doTest(startCode: string, structure: QuestionTokenableNodeStructure, expectedCode: string) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            firstProperty.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should not modify when not set and structure empty", () => {
+            doTest("class Identifier { prop: string; }", {}, "class Identifier { prop: string; }");
+        });
+
+        it("should not modify when set and structure empty", () => {
+            doTest("class Identifier { prop?: string; }", {}, "class Identifier { prop?: string; }");
+        });
+
+        it("should modify when setting true", () => {
+            doTest("class Identifier { prop: string; }", { hasQuestionToken: true }, "class Identifier { prop?: string; }");
         });
     });
 });

@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
-import {DecoratorStructure} from "./../../structures";
+import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {getEndIndexFromArray, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
@@ -107,6 +108,15 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 });
 
             return this.getDecorators().slice(index, index + structures.length);
+        }
+
+        fill(structure: Partial<DecoratableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.decorators != null && structure.decorators.length > 0)
+                this.addDecorators(structure.decorators);
+
+            return this;
         }
     };
 }

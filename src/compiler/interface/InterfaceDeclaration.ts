@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import * as fillClassFuncs from "./../../manipulation/fillClassFunctions";
-import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure} from "./../../structures";
+import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode} from "./../base";
@@ -17,6 +18,23 @@ export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseable
     NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<InterfaceDeclarationStructure>) {
+        callBaseFill(InterfaceDeclarationBase.prototype, this, structure);
+
+        if (structure.constructSignatures != null)
+            this.addConstructSignatures(structure.constructSignatures);
+        if (structure.properties != null)
+            this.addProperties(structure.properties);
+        if (structure.methods != null)
+            this.addMethods(structure.methods);
+
+        return this;
+    }
+
     /**
      * Add construct signature.
      * @param structure - Structure representing the construct signature.

@@ -2,6 +2,8 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertStraight, removeNodes} from "./../../manipulation";
+import {QuestionTokenableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 
 export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken; }>;
@@ -51,6 +53,15 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             }
             else
                 removeNodes([questionTokenNode]);
+
+            return this;
+        }
+
+        fill(structure: Partial<QuestionTokenableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.hasQuestionToken != null)
+                this.setIsOptional(structure.hasQuestionToken);
 
             return this;
         }

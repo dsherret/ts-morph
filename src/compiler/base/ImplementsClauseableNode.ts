@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList} from "./../../manipulation";
+import {ImplementsClauseableNodeStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {HeritageClause} from "./../general";
@@ -94,6 +96,15 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 });
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
+        }
+
+        fill(structure: Partial<ImplementsClauseableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.implements != null && structure.implements.length > 0)
+                this.addImplements(structure.implements);
+
+            return this;
         }
     };
 }

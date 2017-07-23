@@ -54,7 +54,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             return this;
         }
 
-        fill(structure: GeneratorableNodeStructure) {
+        fill(structure: Partial<GeneratorableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.isGenerator != null)

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ExtendsClauseableNode, InterfaceDeclaration} from "./../../../compiler";
+import {ExtendsClauseableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExtendsClauseableNode), () => {
@@ -82,6 +83,30 @@ describe(nameof(ExtendsClauseableNode), () => {
 
         it("should insert multiple extends at a position", () => {
             doTest("interface Identifier extends Base, Base1 {}", 1, ["Base2", "Base3"], "interface Identifier extends Base, Base2, Base3, Base1 {}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, structure: ExtendsClauseableNodeStructure, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting one", () => {
+            doTest("interface MyClass {}", { extends: ["Test"] }, "interface MyClass extends Test {}");
+        });
+
+        it("should modify when setting two", () => {
+            doTest("interface MyClass {}", { extends: ["Test", "Test2"] }, "interface MyClass extends Test, Test2 {}");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("interface MyClass {}", {}, "interface MyClass {}");
+        });
+
+        it("should not modify anything if the structure has an empty array", () => {
+            doTest("interface MyClass {}", { extends: [] }, "interface MyClass {}");
         });
     });
 });
