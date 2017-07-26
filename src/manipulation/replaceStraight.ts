@@ -15,13 +15,14 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
     const endPos = replacePos + newText.length;
     const removedNodes: Node[] = [];
 
+    // todo: use replaceTree function
     handleNode(sourceFile, tempSourceFile);
     removedNodes.forEach(n => n.dispose());
 
     function handleNode(currentNode: Node, newNode: Node) {
         /* istanbul ignore if */
         if (currentNode.getKind() !== newNode.getKind())
-            throw new errors.InvalidOperationError(getInsertErrorMessageText("Error inserting straight.", currentNode, newNode));
+            throw new errors.InvalidOperationError(getInsertErrorMessageText("Error replacing straight.", currentNode, newNode));
 
         const currentNodeChildren = currentNode.getChildrenIterator();
         let currentNodeChild: Node | undefined;
@@ -39,8 +40,7 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
                 currentNodeChild = currentNodeChildren.next().value;
                 currentNodeChildStart = currentNodeChild.getStart();
             }
-            while (currentNodeChild.getKind() === ts.SyntaxKind.TypeReference ||
-                replaceLength > 0 && currentNodeChildStart >= replacePos && currentNodeChildStart < replacePos + replaceLength);
+            while (replaceLength > 0 && currentNodeChildStart >= replacePos && currentNodeChildStart < replacePos + replaceLength);
 
             handleNode(currentNodeChild, newNodeChild);
         }
