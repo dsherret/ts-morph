@@ -20,6 +20,7 @@ export function getNewCode<TNode extends Node, TStructure>(opts: GetNewCodeOptio
     const newLineChar = parent.global.manipulationSettings.getNewLineKind();
     const formatting = getFormattingBySyntaxKind(opts.syntaxKind, {
         parent,
+        children,
         previousMember: children[index - 1],
         nextMember: children[index],
         firstStructure: structures[0],

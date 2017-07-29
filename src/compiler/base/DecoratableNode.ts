@@ -2,7 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertCreatingSyntaxList, insertIntoSyntaxList, getNewCode} from "./../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -83,20 +83,14 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 indentationText: this.getIndentationText()
             });
 
-            if (decorators.length === 0)
-                insertCreatingSyntaxList({
-                    parent: this,
-                    insertPos: this.getStart(),
-                    newText: decoratorCode
-                });
-            else
-                insertIntoSyntaxList({
-                    insertPos,
-                    newText: decoratorCode,
-                    syntaxList: decorators[0].getParentSyntaxListOrThrow(),
-                    childIndex: index,
-                    insertItemsCount: structures.length
-                });
+            insertIntoCreatableSyntaxList({
+                parent: this,
+                insertPos,
+                childIndex: index,
+                insertItemsCount: structures.length,
+                newText: decoratorCode,
+                syntaxList: decorators.length === 0 ? undefined : decorators[0].getParentSyntaxListOrThrow()
+            });
 
             return this.getDecorators().slice(index, index + structures.length);
         }

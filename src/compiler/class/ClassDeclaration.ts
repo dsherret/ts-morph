@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -74,20 +74,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (!isLastSpace)
             newText = " " + newText;
 
-        if (implementsClause == null)
-            insertCreatingSyntaxList({
-                parent: this,
-                insertPos,
-                newText
-            });
-        else
-            insertIntoSyntaxList({
-                insertPos,
-                newText,
-                syntaxList: implementsClause.getParentSyntaxListOrThrow(),
-                childIndex: 0,
-                insertItemsCount: 1
-            });
+        insertIntoCreatableSyntaxList({
+            parent: this,
+            insertPos,
+            newText,
+            syntaxList: implementsClause == null ? undefined : implementsClause.getParentSyntaxListOrThrow(),
+            childIndex: 0,
+            insertItemsCount: 1
+        });
 
         return this;
     }

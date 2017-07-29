@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertCreatingSyntaxList, insertIntoSyntaxList, removeNodes} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
 
 export type ModiferableNodeExtensionType = Node;
@@ -117,16 +117,14 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             }
 
             // insert
-            if (modifiers.length === 0)
-                insertCreatingSyntaxList({ parent: this, insertPos, newText });
-            else
-                insertIntoSyntaxList({
-                    insertPos,
-                    newText,
-                    syntaxList: modifiers[0].getParentSyntaxListOrThrow(),
-                    childIndex: insertIndex,
-                    insertItemsCount: 1
-                });
+            insertIntoCreatableSyntaxList({
+                parent: this,
+                insertPos,
+                newText,
+                syntaxList: modifiers.length === 0 ? undefined : modifiers[0].getParentSyntaxListOrThrow(),
+                childIndex: insertIndex,
+                insertItemsCount: 1
+            });
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
         }

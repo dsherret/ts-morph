@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
-import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertCreatingSyntaxList} from "./../../manipulation";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {ExtendsClauseableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -77,11 +77,15 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             if (!isLastSpace)
                 insertText = " " + insertText;
 
-            insertCreatingSyntaxList({
+            insertIntoCreatableSyntaxList({
                 parent: this,
                 insertPos: openBraceStart,
-                newText: insertText
+                newText: insertText,
+                syntaxList: undefined,
+                childIndex: index,
+                insertItemsCount: length
             });
+
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
         }
 

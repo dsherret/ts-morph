@@ -30,7 +30,7 @@ export class DecoratorFormatting extends Formatting<Decorator, DecoratorStructur
     }
 
     private areDecoratorsOnSameLine() {
-        const currentDecorators = (this.parent as any as DecoratableNode).getDecorators();
+        const currentDecorators = this.children;
         if (currentDecorators.length <= 1)
             return this.parent.getKind() === ts.SyntaxKind.Parameter;
 

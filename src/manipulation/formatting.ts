@@ -13,6 +13,7 @@ const formattingBySyntaxKind: { [name: number]: Constructor<Formatting<Node, {}>
 
 export interface GetFormattingBySyntaxKindOptions {
     parent: Node;
+    children: Node[];
     previousMember: Node | undefined;
     nextMember: Node | undefined;
     firstStructure: any;
@@ -25,5 +26,5 @@ export function getFormattingBySyntaxKind(kind: ts.SyntaxKind, opts: GetFormatti
     if (formatting == null)
         throw new errors.NotImplementedError(`Could not find formatting for ${ts.SyntaxKind[kind]}.`);
 
-    return new formatting(opts.parent, opts.previousMember, opts.nextMember, opts.firstStructure, opts.lastStructure);
+    return new formatting(opts.parent, opts.children, opts.previousMember, opts.nextMember, opts.firstStructure, opts.lastStructure);
 }

@@ -4,6 +4,7 @@ import {Node} from "./../../compiler";
 export abstract class Formatting<TNode extends Node, TStructure> {
     constructor(
         protected parent: Node,
+        protected children: Node[],
         protected previousMember: TNode | undefined,
         protected nextMember: TNode | undefined,
         protected firstStructure: TStructure | undefined,
