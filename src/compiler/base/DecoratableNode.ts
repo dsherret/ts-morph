@@ -2,7 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode, FormattingKind} from "./../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -68,7 +68,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             index = verifyAndGetIndex(index, decorators.length);
             const formattingKind = getDecoratorFormattingKind(this, decorators);
             const previousDecorator = decorators[index - 1];
-            const decoratorCode = getNewCode({
+            const decoratorCode = getNewInsertCode({
                 structures,
                 newCodes: decoratorLines,
                 parent: this,

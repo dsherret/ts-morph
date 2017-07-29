@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
 import * as errors from "./../../errors";
-import {FormattingKind} from "./../formatting";
+import {FormattingKind, getFormattingKindText} from "./../formatting";
 
-export interface GetNewCodeOptions<TNode extends Node, TStructure> {
+export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {
     structures: TStructure[];
     newCodes: string[];
     parent: Node;
@@ -13,10 +13,10 @@ export interface GetNewCodeOptions<TNode extends Node, TStructure> {
     nextFormattingKind: FormattingKind;
 }
 
-export function getNewCode<TNode extends Node, TStructure>(opts: GetNewCodeOptions<TNode, TStructure>) {
+export function getNewInsertCode<TNode extends Node, TStructure>(opts: GetNewInsertCodeOptions<TNode, TStructure>) {
     const {structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind} = opts;
     const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
-    const newLineChar = parent.global.manipulationSettings.getNewLineKind();
+    const newLineKind = parent.global.manipulationSettings.getNewLineKind();
 
     return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);
 
@@ -31,24 +31,9 @@ export function getNewCode<TNode extends Node, TStructure>(opts: GetNewCodeOptio
     }
 
     function getFormattingKindTextWithIndent(formattingKind: FormattingKind) {
-        let code = getFormattingKindText(formattingKind);
+        let code = getFormattingKindText(formattingKind, { newLineKind });
         if (formattingKind === FormattingKind.Newline || formattingKind === FormattingKind.Blankline)
             code += indentationText;
         return code;
-    }
-
-    function getFormattingKindText(formattingKind: FormattingKind) {
-        switch (formattingKind) {
-            case FormattingKind.Space:
-                return " ";
-            case FormattingKind.Newline:
-                return newLineChar;
-            case FormattingKind.Blankline:
-                return newLineChar + newLineChar;
-            case FormattingKind.None:
-                return "";
-            default:
-                throw new errors.NotImplementedError(`Not implemented formatting kind: ${formattingKind}`);
-        }
     }
 }

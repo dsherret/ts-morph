@@ -1,1 +1,1 @@
-﻿export * from "./code/getNewCode";
+﻿export * from "./code/getNewInsertCode";
