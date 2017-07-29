@@ -2,7 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode, getInsertFormatting} from "./../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode, FormattingKind} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -66,25 +66,21 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             const decoratorLines = getDecoratorLines(structures);
             const decorators = this.getDecorators();
             index = verifyAndGetIndex(index, decorators.length);
-
-            const formatting = getInsertFormatting(ts.SyntaxKind.Decorator, {
-                parent: this,
-                children: decorators,
-                structures,
-                index
-            });
-
+            const formattingKind = getDecoratorFormattingKind(this, decorators);
+            const previousDecorator = decorators[index - 1];
             const decoratorCode = getNewCode({
                 structures,
                 newCodes: decoratorLines,
                 parent: this,
                 indentationText: this.getIndentationText(),
-                formatting
+                getSeparator: () => formattingKind,
+                previousFormattingKind: previousDecorator == null ? FormattingKind.None : formattingKind,
+                nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None
             });
 
             insertIntoCreatableSyntaxList({
                 parent: this,
-                insertPos: formatting.getInsertPos(),
+                insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
                 childIndex: index,
                 insertItemsCount: structures.length,
                 newText: decoratorCode,
@@ -116,6 +112,20 @@ function getDecoratorLines(structures: DecoratorStructure[]) {
     return lines;
 }
 
-function prependIndentationText(lines: string[], indentationText: string) {
-    return lines.map(l => indentationText + l);
+function getDecoratorFormattingKind(parent: DecoratableNode & Node, currentDecorators: Node[]) {
+    const sameLine = areDecoratorsOnSameLine(parent, currentDecorators);
+    return sameLine ? FormattingKind.Space : FormattingKind.Newline;
+}
+
+function areDecoratorsOnSameLine(parent: DecoratableNode & Node, currentDecorators: Node[]) {
+    if (currentDecorators.length <= 1)
+        return parent.getKind() === ts.SyntaxKind.Parameter;
+
+    const startLinePos = currentDecorators[0].getStartLinePos();
+    for (let i = 1; i < currentDecorators.length; i++) {
+        if (currentDecorators[i].getStartLinePos() !== startLinePos)
+            return false;
+    }
+
+    return true;
 }

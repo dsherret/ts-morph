@@ -1,39 +1,33 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
 import * as errors from "./../../errors";
-import {InsertFormatting, FormattingKind} from "./../formatting";
+import {FormattingKind} from "./../formatting";
 
 export interface GetNewCodeOptions<TNode extends Node, TStructure> {
     structures: TStructure[];
     newCodes: string[];
     parent: Node;
     indentationText?: string;
-    formatting: InsertFormatting;
+    getSeparator(structure: TStructure, nextStructure: TStructure): FormattingKind;
+    previousFormattingKind: FormattingKind;
+    nextFormattingKind: FormattingKind;
 }
 
 export function getNewCode<TNode extends Node, TStructure>(opts: GetNewCodeOptions<TNode, TStructure>) {
-    const {structures, newCodes, parent, formatting} = opts;
+    const {structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind} = opts;
     const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
     const newLineChar = parent.global.manipulationSettings.getNewLineKind();
 
-    return getPrefixCode() + getChildCode() + getSuffixCode();
-
-    function getPrefixCode() {
-        return getFormattingKindTextWithIndent(formatting.getPrevious());
-    }
+    return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);
 
     function getChildCode() {
         let code = newCodes[0];
         for (let i = 1; i < newCodes.length; i++) {
-            const formattingKind = formatting.getSeparator(structures[i - 1], structures[i]);
+            const formattingKind = getSeparator(structures[i - 1], structures[i]);
             code += getFormattingKindTextWithIndent(formattingKind);
             code += newCodes[i];
         }
         return code;
-    }
-
-    function getSuffixCode() {
-        return getFormattingKindTextWithIndent(formatting.getNext());
     }
 
     function getFormattingKindTextWithIndent(formattingKind: FormattingKind) {
