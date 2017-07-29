@@ -1,7 +1,7 @@
 ﻿import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
-import {replaceTreeCreatingSyntaxList} from "./replaceTree";
+import {replaceTreeCreatingSyntaxList} from "./tree";
 
 export interface InsertCreatingSyntaxListOptions {
     parent: Node;

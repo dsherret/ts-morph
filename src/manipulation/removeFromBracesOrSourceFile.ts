@@ -1,7 +1,7 @@
 ﻿import * as errors from "./../errors";
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
-import {areNodesEqual} from "./areNodesEqual";
+import {areNodesEqual} from "./tree";
 import {getPosAfterPreviousNonBlankLine, getPosAtNextNonBlankLine} from "./textSeek";
 
 export interface RemoveFromBracesOrSourceFileOptions {

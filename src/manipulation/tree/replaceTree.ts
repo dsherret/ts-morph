@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../errors";
-import {Node, SourceFile} from "./../compiler";
-import {AdvancedIterator} from "./../utils";
-import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
+import * as errors from "./../../errors";
+import {Node, SourceFile} from "./../../compiler";
+import {AdvancedIterator} from "./../../utils";
+import {getInsertErrorMessageText} from "./../getInsertErrorMessageText";
 import {areNodesEqual} from "./areNodesEqual";
 
 export interface ReplaceTreeCreatingSyntaxListOptions {

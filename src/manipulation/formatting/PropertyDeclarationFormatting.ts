@@ -4,24 +4,26 @@ import {PropertyDeclarationStructure} from "./../../structures";
 import {Formatting, FormattingKind} from "./Formatting";
 
 export class PropertyDeclarationFormatting extends Formatting<PropertyDeclaration, PropertyDeclarationStructure> {
-    constructor() {
-        super(ts.SyntaxKind.PropertyDeclaration);
+    getPrevious() {
+        return this.getFormattingForSurroundingMember(this.previousMember);
     }
 
-    getPrevious(member: PropertyDeclaration | PropertyDeclarationStructure, surroundingMember: PropertyDeclaration) {
-        const indentationText = surroundingMember.getIndentationText();
-        if (surroundingMember.isBodyableNode() && surroundingMember.getBody() != null)
-            return FormattingKind.Blankline;
-        if (surroundingMember.isBodiedNode())
-            return FormattingKind.Blankline;
+    getSeparator(structure: PropertyDeclarationStructure, nextStructure: PropertyDeclarationStructure) {
         return FormattingKind.Newline;
     }
 
-    getSeparator(parent: Node, structure: PropertyDeclarationStructure, nextStructure: PropertyDeclarationStructure) {
-        return FormattingKind.Newline;
+    getNext() {
+        return this.getFormattingForSurroundingMember(this.nextMember);
     }
 
-    getNext(member: PropertyDeclaration | PropertyDeclarationStructure, surroundingMember: PropertyDeclaration) {
-        return this.getPrevious(member, surroundingMember);
+    private getFormattingForSurroundingMember(member: Node | undefined) {
+        if (member == null)
+            return FormattingKind.None;
+        if (member.isBodyableNode() && member.getBody() != null)
+            return FormattingKind.Blankline;
+        if (member.isBodiedNode())
+            return FormattingKind.Blankline;
+
+        return FormattingKind.Newline;
     }
 }

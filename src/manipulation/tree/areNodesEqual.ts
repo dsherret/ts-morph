@@ -1,4 +1,4 @@
-﻿import {Node} from "./../compiler";
+﻿import {Node} from "./../../compiler";
 
 export function areNodesEqual(a: Node | undefined, b: Node | undefined) {
     if (a == null && b == null)

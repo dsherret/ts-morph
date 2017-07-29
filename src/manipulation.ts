@@ -1,4 +1,6 @@
-﻿export * from "./manipulation/fillAndGetChildren";
+﻿export * from "./manipulation/formatting";
+export * from "./manipulation/code";
+export * from "./manipulation/fillAndGetChildren";
 export * from "./manipulation/getNodeOrNodesToReturn";
 export * from "./manipulation/getEndIndexFromArray";
 export * from "./manipulation/getRangeFromArray";

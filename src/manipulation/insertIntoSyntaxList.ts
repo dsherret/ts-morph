@@ -2,8 +2,7 @@
 import {Node, SourceFile} from "./../compiler";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 import {insertStraight} from "./insertStraight";
-import {areNodesEqual} from "./areNodesEqual";
-import {replaceTreeWithChildIndex} from "./replaceTree";
+import {replaceTreeWithChildIndex} from "./tree";
 
 export interface InsertIntoSyntaxListOptions {
     insertPos: number;

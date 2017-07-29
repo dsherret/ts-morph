@@ -2,16 +2,18 @@
 import {Node} from "./../../compiler";
 
 export abstract class Formatting<TNode extends Node, TStructure> {
-    protected constructor(private readonly kind: ts.SyntaxKind) {
+    constructor(
+        protected parent: Node,
+        protected previousMember: TNode | undefined,
+        protected nextMember: TNode | undefined,
+        protected firstStructure: TStructure | undefined,
+        protected lastStructure: TStructure | undefined
+    ) {
     }
 
-    getKind() {
-        return this.kind;
-    }
-
-    abstract getPrevious(member: TNode | TStructure, surroundingMember: TNode): FormattingKind;
-    abstract getSeparator(parent: Node, structure: TStructure, nextStructure: TStructure): FormattingKind;
-    abstract getNext(member: TNode | TStructure, surroundingMember: TNode): FormattingKind;
+    abstract getPrevious(): FormattingKind;
+    abstract getSeparator(structure: TStructure, nextStructure: TStructure): FormattingKind;
+    abstract getNext(): FormattingKind;
 }
 
 export enum FormattingKind {

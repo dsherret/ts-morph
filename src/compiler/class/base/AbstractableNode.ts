@@ -4,6 +4,7 @@ import {Constructor} from "./../../../Constructor";
 import {Node} from "./../../common";
 import {ModifierableNode} from "./../../base";
 import {callBaseFill} from "./../../callBaseFill";
+import {callBaseGetStructure} from "./../../callBaseGetStructure";
 
 export type AbstractableNodeExtensionType = Node & ModifierableNode;
 
@@ -45,6 +46,12 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
                 this.setIsAbstract(structure.isAbstract);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<AbstractableNodeStructure>(Base.prototype, this, {
+                isAbstract: this.getIsAbstract()
+            });
         }
     };
 }

@@ -63,7 +63,7 @@ describe(nameof(DecoratableNode), () => {
             it("should insert when the decorators are on the same line", () => {
                 doTest(
                     "    @dec @dec3\n    class MyClass {}", 1, [{ name: "dec2" }],
-                    "    @dec @dec2\n    @dec3\n    class MyClass {}" // for now...
+                    "    @dec @dec2 @dec3\n    class MyClass {}"
                 );
             });
 
@@ -161,5 +161,4 @@ describe(nameof(DecoratableNode), () => {
             doTest("class Identifier {}", {}, "class Identifier {}");
         });
     });
-
 });
