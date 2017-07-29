@@ -15,3 +15,4 @@ export * from "./manipulation/removeNodes";
 export * from "./manipulation/removeFromBracesOrSourceFile";
 export * from "./manipulation/replaceNodeText";
 export * from "./manipulation/verifyAndGetIndex";
+export * from "./manipulation/removal";

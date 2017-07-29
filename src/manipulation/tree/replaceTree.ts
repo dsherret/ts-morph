@@ -38,7 +38,7 @@ export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions
     const parentChildren = parent.getChildren();
     errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
     if (childCount < 0)
-        errors.throwIfOutOfRange(childIndex + childCount, [0, parentChildren.length], nameof.full(opts.childCount), [-childIndex, 0]);
+        errors.throwIfOutOfRange(childCount, [childIndex - parentChildren.length, 0], nameof.full(opts.childCount));
     let i = 0;
     const isFirstChild = () => i++ === childIndex;
 

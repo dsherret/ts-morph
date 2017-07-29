@@ -24,4 +24,46 @@ describe(nameof(PropertyDeclaration), () => {
             doTest("class Identifier { prop: string; }", { type: "number" }, "class Identifier { prop: number; }");
         });
     });
+
+    describe(nameof<PropertyDeclaration>(n => n.remove), () => {
+        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            (firstChild.getInstanceProperty(nameToRemove)! as PropertyDeclaration).remove();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it's the only property", () => {
+            doTest("class Identifier {\n    prop: string;\n}", "prop", "class Identifier {\n}");
+        });
+
+        it("should remove when it's the first property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop",
+                "class Identifier {\n    prop2: string;\n}");
+        });
+
+        it("should remove when it's the middle property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n    prop3: string;\n}", "prop2",
+                "class Identifier {\n    prop: string;\n    prop3: string;\n}");
+        });
+
+        it("should remove when it's the last property", () => {
+            doTest("class Identifier {\n    prop: string;\n    prop2: string;\n}", "prop2",
+                "class Identifier {\n    prop: string;\n}");
+        });
+
+        it("should remove when it's beside a method with a body", () => {
+            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "prop",
+                "class Identifier {\n    method(){}\n}");
+        });
+
+        it("should remove when it's inside two methods", () => {
+            doTest("class Identifier {\n    method(){}\n\n    prop: string;\n\n    method2() {}\n}", "prop",
+                "class Identifier {\n    method(){}\n\n    method2() {}\n}");
+        });
+
+        it("should remove when it's in an ambient class", () => {
+            doTest("declare class Identifier {\n    method(): void;\n\n    prop: string;\n\n    method2(): void;\n}", "prop",
+                "declare class Identifier {\n    method(): void;\n    method2(): void;\n}");
+        });
+    });
 });

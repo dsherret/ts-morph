@@ -1,9 +1,12 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {PropertyDeclarationStructure} from "./../../structures";
+import {removeClassMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, DocumentationableNode, StaticableNode,
     ModifierableNode, ScopedNode, DecoratableNode} from "./../base";
+import {ClassDeclaration} from "./ClassDeclaration";
 import {AbstractableNode} from "./base";
 
 export const PropertyDeclarationBase = DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(DocumentationableNode(ReadonlyableNode(QuestionTokenableNode(
@@ -18,5 +21,20 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
         callBaseFill(PropertyDeclarationBase.prototype, this, structure);
 
         return this;
+    }
+
+    /**
+     * Removes the property.
+     */
+    remove() {
+        const parent = this.getParentOrThrow();
+
+        switch (parent.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+                removeClassMember(parent as any as ClassDeclaration, this);
+                break;
+            default:
+                throw new errors.NotImplementedError(`Not implemented parent syntax kind: ${parent.getKindName()}`);
+        }
     }
 }

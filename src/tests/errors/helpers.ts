@@ -71,10 +71,6 @@ describe("helpers", () => {
         it("should not throw when inside the inclusive upper bound", () => {
             expect(() => errors.throwIfOutOfRange(10, [1, 10], "arg")).to.not.throw();
         });
-
-        it("should throw when outside the range, but not the message range", () => {
-            expect(() => errors.throwIfOutOfRange(21, [1, 10], "arg", [20, 22])).to.throw();
-        });
     });
 
     describe(nameof(errors.getNotImplementedForSyntaxKindError), () => {

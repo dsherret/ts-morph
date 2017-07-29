@@ -40,15 +40,14 @@ export function throwIfNotSyntaxKind(node: Node, syntaxKind: ts.SyntaxKind, mess
 }
 
 /**
- * Throws an ArgumentOutOfRangeError if an argument's value is out of a range.
+ * Throws an ArgumentOutOfRangeError if an argument's value is out of an inclusive range.
  * @param value - Value.
  * @param range - Range.
  * @param argName - Argument name.
  */
-export function throwIfOutOfRange(value: number, range: [number, number], argName: string, messageRange?: [number, number]) {
-    messageRange = messageRange || range;
+export function throwIfOutOfRange(value: number, range: [number, number], argName: string) {
     if (value < range[0] || value > range[1])
-        throw new ArgumentOutOfRangeError(argName, value, messageRange);
+        throw new ArgumentOutOfRangeError(argName, value, range);
 }
 
 /**

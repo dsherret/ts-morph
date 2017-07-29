@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
-import {Node} from "./../../compiler";
+import {Node} from "./../../../compiler";
+import {FormattingKind} from "./../FormattingKind";
 
-export abstract class Formatting<TNode extends Node, TStructure> {
+export abstract class InsertFormatting<TNode extends Node = Node, TStructure = any> {
     constructor(
         protected parent: Node,
         protected children: Node[],
@@ -12,14 +13,8 @@ export abstract class Formatting<TNode extends Node, TStructure> {
     ) {
     }
 
+    abstract getInsertPos(): number;
     abstract getPrevious(): FormattingKind;
     abstract getSeparator(structure: TStructure, nextStructure: TStructure): FormattingKind;
     abstract getNext(): FormattingKind;
-}
-
-export enum FormattingKind {
-    Newline,
-    Blankline,
-    Space,
-    None
 }

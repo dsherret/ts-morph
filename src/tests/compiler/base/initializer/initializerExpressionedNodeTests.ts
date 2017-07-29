@@ -142,7 +142,7 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
     });
 
-    describe(nameof<InitializerExpressionableNode>(n => n.fill), () => {
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;

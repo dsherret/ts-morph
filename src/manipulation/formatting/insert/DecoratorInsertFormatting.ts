@@ -1,10 +1,17 @@
 ﻿import * as ts from "typescript";
-import {Node, Decorator, DecoratableNode} from "./../../compiler";
-import {Memoize} from "./../../utils";
-import {DecoratorStructure} from "./../../structures";
-import {Formatting, FormattingKind} from "./Formatting";
+import {Node, Decorator, DecoratableNode} from "./../../../compiler";
+import {Memoize} from "./../../../utils";
+import {DecoratorStructure} from "./../../../structures";
+import {FormattingKind} from "./../FormattingKind";
+import {InsertFormatting} from "./InsertFormatting";
 
-export class DecoratorFormatting extends Formatting<Decorator, DecoratorStructure> {
+export class DecoratorInsertFormatting extends InsertFormatting<Decorator, DecoratorStructure> {
+    getInsertPos() {
+        if (this.previousMember != null)
+            return this.previousMember.getEnd();
+        return this.parent.getStart();
+    }
+
     getPrevious() {
         if (this.previousMember == null)
             return FormattingKind.None;

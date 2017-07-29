@@ -1,31 +1,20 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
 import * as errors from "./../../errors";
-import {Formatting, FormattingKind} from "./../formatting/Formatting";
-import {getFormattingBySyntaxKind} from "./../formatting";
+import {InsertFormatting, FormattingKind} from "./../formatting";
 
 export interface GetNewCodeOptions<TNode extends Node, TStructure> {
     structures: TStructure[];
     newCodes: string[];
     parent: Node;
-    children: TNode[];
-    index: number;
-    syntaxKind: ts.SyntaxKind;
     indentationText?: string;
+    formatting: InsertFormatting;
 }
 
 export function getNewCode<TNode extends Node, TStructure>(opts: GetNewCodeOptions<TNode, TStructure>) {
-    const {structures, newCodes, children, index, parent} = opts;
+    const {structures, newCodes, parent, formatting} = opts;
     const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
     const newLineChar = parent.global.manipulationSettings.getNewLineKind();
-    const formatting = getFormattingBySyntaxKind(opts.syntaxKind, {
-        parent,
-        children,
-        previousMember: children[index - 1],
-        nextMember: children[index],
-        firstStructure: structures[0],
-        lastStructure: structures[structures.length - 1]
-    });
 
     return getPrefixCode() + getChildCode() + getSuffixCode();
 

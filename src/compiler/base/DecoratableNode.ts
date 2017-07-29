@@ -2,7 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode} from "./../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewCode, getInsertFormatting} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -67,25 +67,24 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             const decorators = this.getDecorators();
             index = verifyAndGetIndex(index, decorators.length);
 
-            let insertPos: number;
-            if (decorators.length === 0 || index === 0)
-                insertPos = this.getStart();
-            else
-                insertPos = decorators[index - 1].getEnd();
+            const formatting = getInsertFormatting(ts.SyntaxKind.Decorator, {
+                parent: this,
+                children: decorators,
+                structures,
+                index
+            });
 
             const decoratorCode = getNewCode({
                 structures,
                 newCodes: decoratorLines,
-                children: decorators,
                 parent: this,
-                index,
-                syntaxKind: ts.SyntaxKind.Decorator,
-                indentationText: this.getIndentationText()
+                indentationText: this.getIndentationText(),
+                formatting
             });
 
             insertIntoCreatableSyntaxList({
                 parent: this,
-                insertPos,
+                insertPos: formatting.getInsertPos(),
                 childIndex: index,
                 insertItemsCount: structures.length,
                 newText: decoratorCode,
