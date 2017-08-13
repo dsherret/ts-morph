@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, insertIntoSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, insertIntoCreatableSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
@@ -70,7 +70,8 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 if (syntaxList == null || syntaxList.getKind() !== ts.SyntaxKind.SyntaxList)
                     throw new errors.NotImplementedError("Expected to find a syntax list after the open parens");
 
-                insertIntoSyntaxList({
+                insertIntoCreatableSyntaxList({
+                    parent: this,
                     insertPos: syntaxList.getPos(),
                     newText: parameterCodes.join(", "),
                     syntaxList,
@@ -79,7 +80,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 });
             }
             else {
-                insertIntoCommaSeparatedNodes({ currentNodes: parameters, insertIndex: index, newTexts: parameterCodes });
+                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: parameters, insertIndex: index, newTexts: parameterCodes });
             }
 
             const newParameters = this.getParameters().slice(index, index + structures.length);

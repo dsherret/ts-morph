@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {insertStraight, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeNodes} from "./../../manipulation";
 import {ParameterDeclarationStructure} from "./../../structures";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
 import {callBaseFill} from "./../callBaseFill";
@@ -51,8 +51,16 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         if (this.isRestParameter() === value)
             return this;
 
-        if (value)
-            insertStraight({ insertPos: this.getNameIdentifierOrThrow().getStart(), parent: this, newCode: "..." });
+        if (value) {
+            const nameIdentifier = this.getNameIdentifierOrThrow();
+            insertIntoParent({
+                insertPos: nameIdentifier.getStart(),
+                childIndex: nameIdentifier.getChildIndex(),
+                insertItemsCount: 1,
+                parent: this,
+                newText: "..."
+            });
+        }
         else
             removeNodes([this.getDotDotDotToken()!], { removePrecedingSpaces: false });
 

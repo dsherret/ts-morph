@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertStraight, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeNodes} from "./../../manipulation";
 import {QuestionTokenableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -45,10 +45,12 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
             if (value) {
                 const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken);
-                insertStraight({
+                insertIntoParent({
                     insertPos: colonNode.getStart(),
+                    childIndex: colonNode.getChildIndex(),
+                    insertItemsCount: 1,
                     parent: this,
-                    newCode: "?"
+                    newText: "?"
                 });
             }
             else

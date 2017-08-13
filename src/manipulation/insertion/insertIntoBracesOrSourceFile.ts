@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../errors";
-import {SourceFile, Node, LanguageService} from "./../compiler";
-import {verifyAndGetIndex} from "./verifyAndGetIndex";
-import {insertIntoSyntaxList} from "./insertIntoSyntaxList";
-import {isBlankLineAtPos} from "./textChecks";
+import * as errors from "./../../errors";
+import {SourceFile, Node, LanguageService} from "./../../compiler";
+import {verifyAndGetIndex} from "./../verifyAndGetIndex";
+import {isBlankLineAtPos} from "./../textChecks";
+import {insertIntoCreatableSyntaxList} from "./insertIntoCreatableSyntaxList";
 
 export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     parent: Node;
@@ -61,7 +61,8 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         }
     }
 
-    insertIntoSyntaxList({
+    insertIntoCreatableSyntaxList({
+        parent,
         insertPos,
         newText,
         syntaxList: parent.getChildSyntaxListOrThrow(),

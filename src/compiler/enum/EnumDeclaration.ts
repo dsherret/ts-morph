@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
-import {insertIntoSyntaxList, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -105,7 +105,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             insertPos = previousMember.getNextSiblingIfKind(ts.SyntaxKind.CommaToken)!.getEnd();
 
         // insert
-        insertIntoSyntaxList({
+        insertIntoCreatableSyntaxList({
+            parent: this,
             insertPos,
             newText: code,
             syntaxList,

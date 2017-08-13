@@ -3,7 +3,7 @@ import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {InitializerExpressionableNodeStructure} from "./../../../structures";
 import {callBaseFill} from "./../../callBaseFill";
-import {insertStraight, removeNodes} from "./../../../manipulation";
+import {insertIntoParent, removeNodes} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
 
 export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
@@ -68,10 +68,12 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
 
             const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
 
-            insertStraight({
+            insertIntoParent({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
+                childIndex: semiColonToken != null ? semiColonToken.getChildIndex() : this.getChildCount(),
+                insertItemsCount: 2,
                 parent: this,
-                newCode: ` = ${text}`
+                newText: ` = ${text}`
             });
             return this;
         }

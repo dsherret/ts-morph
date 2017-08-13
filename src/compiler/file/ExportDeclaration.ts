@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {replaceStraight, insertStraight, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {replaceStraight, insertStraight, insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportSpecifier} from "./ExportSpecifier";
@@ -17,10 +17,12 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
             const stringChar = this.global.manipulationSettings.getStringChar();
-            insertStraight({
+            insertIntoParent({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
-                newCode: ` from ${stringChar}${text}${stringChar}`,
-                parent: this
+                childIndex: semiColonToken != null ? semiColonToken.getChildIndex() : this.getChildCount(),
+                insertItemsCount: 2, // FromKeyword, StringLiteral
+                parent: this,
+                newText: ` from ${stringChar}${text}${stringChar}`
             });
         }
         else
@@ -117,7 +119,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
             });
         }
         else {
-            insertIntoCommaSeparatedNodes({ currentNodes: namedExports, insertIndex: index, newTexts: codes });
+            insertIntoCommaSeparatedNodes({ parent: this, currentNodes: namedExports, insertIndex: index, newTexts: codes });
         }
 
         return this.getNamedExports().slice(index, index + structures.length);

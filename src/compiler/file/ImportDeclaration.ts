@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {replaceStraight, insertStraight, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {replaceStraight, insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
@@ -40,19 +40,23 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
         const importClause = this.getImportClause();
         if (importClause == null) {
-            insertStraight({
+            insertIntoParent({
                 insertPos: importKeyword.getEnd(),
+                childIndex: importKeyword.getChildIndex() + 1,
+                insertItemsCount: 2, // ImportClause, FromKeyword
                 parent: this,
-                newCode: ` ${text} from`
+                newText: ` ${text} from`
             });
             return this;
         }
 
         // a namespace import or named import must exist... insert it beforehand
-        insertStraight({
+        insertIntoParent({
             insertPos: importKeyword.getEnd(),
+            childIndex: 0,
+            insertItemsCount: 2, // Identifier, CommaToken
             parent: importClause,
-            newCode: ` ${text},`
+            newText: ` ${text},`
         });
         return this;
     }
@@ -87,12 +91,24 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            insertStraight({ insertPos: defaultImport.getEnd(), parent: this.getImportClause(), newCode: `, * as ${text}` });
+            insertIntoParent({
+                insertPos: defaultImport.getEnd(),
+                childIndex: defaultImport.getChildIndex() + 1,
+                insertItemsCount: 2, // CommaToken, NamespaceImport
+                parent: this.getImportClause(),
+                newText: `, * as ${text}`
+            });
             return this;
         }
 
         const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
-        insertStraight({ insertPos: importKeyword.getEnd(), parent: this, newCode: ` * as ${text} from` });
+        insertIntoParent({
+            insertPos: importKeyword.getEnd(),
+            childIndex: importKeyword.getChildIndex() + 1,
+            insertItemsCount: 2, // ImportClause, FromKeyword
+            parent: this,
+            newText: ` * as ${text} from`
+        });
         return this;
     }
 
@@ -156,15 +172,29 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
             const importClause = this.getImportClause();
             if (importClause == null) {
                 const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
-                insertStraight({ insertPos: importKeyword.getEnd(), parent: this, newCode: ` {${codes.join(", ")}} from` });
+                insertIntoParent({
+                    insertPos: importKeyword.getEnd(),
+                    childIndex: importKeyword.getChildIndex() + 1,
+                    insertItemsCount: 2, // NamedImports, FromKeyword
+                    parent: this,
+                    newText: ` {${codes.join(", ")}} from`
+                });
             }
             else if (this.getNamespaceImport() != null)
                 throw new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
-            else
-                insertStraight({ insertPos: this.getDefaultImport()!.getEnd(), parent: importClause, newCode: `, {${codes.join(", ")}}` });
+            else {
+                const defaultImport = this.getDefaultImport()!;
+                insertIntoParent({
+                    insertPos: defaultImport.getEnd(),
+                    childIndex: defaultImport.getChildIndex() + 1,
+                    insertItemsCount: 2, // CommaToken, NamedImports
+                    parent: importClause,
+                    newText: `, {${codes.join(", ")}}`
+                });
+            }
         }
         else {
-            insertIntoCommaSeparatedNodes({ currentNodes: namedImports, insertIndex: index, newTexts: codes });
+            insertIntoCommaSeparatedNodes({ parent: this, currentNodes: namedImports, insertIndex: index, newTexts: codes });
         }
 
         return this.getNamedImports().slice(index, index + structures.length);

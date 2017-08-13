@@ -1,7 +1,7 @@
-﻿import * as errors from "./../errors";
-import {Node, SourceFile} from "./../compiler";
-import {ArrayUtils} from "./../utils";
-import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
+﻿import * as errors from "./../../errors";
+import {Node, SourceFile} from "./../../compiler";
+import {ArrayUtils} from "./../../utils";
+import {getInsertErrorMessageText} from "./../getInsertErrorMessageText";
 
 export interface InsertStraightOptions {
     insertPos: number;
@@ -12,6 +12,8 @@ export interface InsertStraightOptions {
     parent: Node;
     newCode: string;
 }
+
+// todo: remove
 
 /**
  * Simple insert where the new nodes are well defined.

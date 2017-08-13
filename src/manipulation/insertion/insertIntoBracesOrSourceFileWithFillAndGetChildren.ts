@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
-import {Node, SourceFile, LanguageService} from "./../compiler";
-import {verifyAndGetIndex} from "./verifyAndGetIndex";
-import {getEndIndexFromArray} from "./getEndIndexFromArray";
+import {Node, SourceFile, LanguageService} from "./../../compiler";
+import {verifyAndGetIndex} from "./../verifyAndGetIndex";
+import {getEndIndexFromArray} from "./../getEndIndexFromArray";
+import {fillAndGetChildren, FillAndGetChildrenOptions} from "./../fillAndGetChildren";
 import {insertIntoBracesOrSourceFile, InsertIntoBracesOrSourceFileOptions} from "./insertIntoBracesOrSourceFile";
-import {fillAndGetChildren, FillAndGetChildrenOptions} from "./fillAndGetChildren";
 
 export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
     getChildren: () => Node[];

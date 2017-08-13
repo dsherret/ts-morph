@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {insertStraight, replaceStraight, removeNodes, replaceNodeText} from "./../../manipulation";
+import {insertIntoParent, replaceStraight, removeNodes, replaceNodeText} from "./../../manipulation";
 import {Node, Identifier} from "./../common";
 import {ImportDeclaration} from "./ImportDeclaration";
 
@@ -44,7 +44,13 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
             const nameIdentifier = this.getName();
-            insertStraight({ insertPos: nameIdentifier.getEnd(), parent: this, newCode: ` as ${nameIdentifier.getText()}` });
+            insertIntoParent({
+                insertPos: nameIdentifier.getEnd(),
+                childIndex: nameIdentifier.getChildIndex() + 1,
+                insertItemsCount: 2, // AsKeyword, Identifier
+                parent: this,
+                newText: ` as ${nameIdentifier.getText()}`
+            });
             aliasIdentifier = this.getAlias()!;
         }
         aliasIdentifier.rename(alias);

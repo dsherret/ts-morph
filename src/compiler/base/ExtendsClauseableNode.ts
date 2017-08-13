@@ -66,7 +66,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes({ currentNodes: extendsTypes, insertIndex: index, newTexts: texts });
+                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: extendsTypes, insertIndex: index, newTexts: texts });
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 

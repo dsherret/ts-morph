@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
-import {insertStraight, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {JSDocStructure, DocumentationableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
@@ -82,10 +82,12 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             index = verifyAndGetIndex(index, nodes.length);
 
             const insertPos = index === nodes.length ? this.getStart() : nodes[index].getStart();
-            insertStraight({
+            insertIntoParent({
                 insertPos,
                 parent: this,
-                newCode: code
+                newText: code,
+                childIndex: nodes.length > 0 ? nodes[0].getChildIndex() + index : 0,
+                insertItemsCount: structures.length
             });
 
             return this.getDocumentationCommentNodes().slice(index, index + structures.length);

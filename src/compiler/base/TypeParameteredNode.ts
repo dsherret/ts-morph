@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParent} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -68,15 +68,17 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
-                const insertPos = getNamedNode(this).getNameIdentifier().getEnd();
-                insertStraight({
-                    insertPos,
+                const nameIdentifier = getNamedNode(this).getNameIdentifier();
+                insertIntoParent({
+                    insertPos: nameIdentifier.getEnd(),
+                    childIndex: nameIdentifier.getChildIndex() + 1,
+                    insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
                     parent: this,
-                    newCode: `<${typeParamCodes.join(", ")}>`
+                    newText: `<${typeParamCodes.join(", ")}>`
                 });
             }
             else {
-                insertIntoCommaSeparatedNodes({ currentNodes: typeParameters, insertIndex: index, newTexts: typeParamCodes });
+                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: typeParameters, insertIndex: index, newTexts: typeParamCodes });
             }
 
             return this.getTypeParameters().slice(index, index + structures.length);

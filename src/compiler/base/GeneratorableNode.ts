@@ -3,8 +3,9 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {GeneratorableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {insertStraight, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeNodes} from "./../../manipulation";
 import {Node} from "./../common";
+import {NamedNode} from "./../base";
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 
@@ -44,12 +45,16 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 
             if (asteriskToken != null)
                 removeNodes([asteriskToken], { removePrecedingSpaces: false });
-            else
-                insertStraight({
-                    insertPos: getAsteriskInsertPosition(this),
+            else {
+                const info = getAsteriskInsertInfo(this);
+                insertIntoParent({
+                    insertPos: info.pos,
+                    childIndex: info.childIndex,
+                    insertItemsCount: 1,
                     parent: this,
-                    newCode: "*"
+                    newText: "*"
                 });
+            }
 
             return this;
         }
@@ -65,15 +70,24 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
     };
 }
 
-function getAsteriskInsertPosition(node: Node) {
+function getAsteriskInsertInfo(node: Node) {
     if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
-        return node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword).getEnd();
+        const functionKeyword = node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword);
+        return {
+            pos: functionKeyword.getEnd(),
+            childIndex: functionKeyword.getChildIndex() + 1
+        };
     }
 
-    const nameNode = (node.compilerNode as any).name as ts.Node | undefined;
+    const namedNode = node as any as NamedNode;
+
     /* istanbul ignore if */
-    if (nameNode == null)
+    if (namedNode.getName == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 
-    return nameNode.getStart(node.sourceFile.compilerNode);
+    const identifier = namedNode.getNameIdentifier();
+    return {
+        pos: identifier.getStart(),
+        childIndex: identifier.getChildIndex()
+    };
 }
