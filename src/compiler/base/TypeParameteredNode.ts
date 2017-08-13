@@ -2,13 +2,12 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertStraight} from "./../../manipulation";
-import {TypeParameteredNodeStructure} from "./../../structures";
+import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
 import {TypeParameterDeclaration} from "./../type/TypeParameterDeclaration";
-import {TypeParameterDeclarationStructure} from "./../../structures";
 
 export type TypeParameteredNodeExtensionType = Node<ts.Node & { typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>; }>;
 

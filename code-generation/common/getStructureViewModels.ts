@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {InterfaceViewModel} from "./../view-models";
-import TsSimpleAst from "./../../src/main";
-import {ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
+import TsSimpleAst, {ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
 
 export function* getStructureViewModels(ast: TsSimpleAst): IterableIterator<InterfaceViewModel> {
     const diagnostics = ast.getDiagnostics().map(m => m.getMessageText());
