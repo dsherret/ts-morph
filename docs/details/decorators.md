@@ -57,4 +57,13 @@ for (const arg of callExpression.arguments) {
 
 ### Add/Insert decorators
 
-Decorators can be added or inserted by calling `addDecorator()
+Decorators can be added or inserted by calling `addDecorator(decorator)`, `addDecorators(decorators)`, `insertDecorator(index, decorator)`, or `insertDecorators(index, decorators)`.
+
+For example:
+
+```typescript
+classDeclaration.addDecorator({
+    name: "MyDecorator",
+    arguments: ["3", `"some string"`]
+});
+```
