@@ -133,7 +133,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
-            getChildren: () => this.getAllMembers(),
+            getChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -202,7 +202,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
-            getChildren: () => this.getAllMembers(),
+            getChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -309,7 +309,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
-            getChildren: () => this.getAllMembers(),
+            getChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -411,7 +411,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the constructors, methods, properties, and class parameter properties.
      */
     getAllMembers() {
-        const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const members = this.getBodyMembers();
         const implementationCtors = members.filter(c => c.isConstructorDeclaration() && c.isImplementation()) as ConstructorDeclaration[];
         for (const ctor of implementationCtors) {
             // insert after the constructor
@@ -426,6 +426,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         // filter out the method declarations or constructor declarations without a body if not ambient
         return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
+    }
+
+    private getBodyMembers() {
+        return this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
     }
 }
 
