@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, replaceStraight, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -57,8 +57,19 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const heritageClauses = this.getHeritageClauses();
         const extendsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
-            const extendsClauseStart = extendsClause.getStart();
-            replaceStraight(this.getSourceFile(), extendsClauseStart, extendsClause.getEnd() - extendsClauseStart, `extends ${text}`);
+            const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList);
+            const childSyntaxListStart = childSyntaxList.getStart();
+            insertIntoParent({
+                parent: extendsClause,
+                childIndex: childSyntaxList.getChildIndex(),
+                insertItemsCount: 1,
+                newText: text,
+                insertPos: childSyntaxListStart,
+                replacing: {
+                    length: childSyntaxList.getEnd() - childSyntaxListStart,
+                    nodes: [childSyntaxList]
+                }
+            });
             return this;
         }
 

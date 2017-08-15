@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {ReturnTypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {replaceStraight} from "./../../manipulation";
+import {insertIntoParent} from "./../../manipulation";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
@@ -52,7 +52,17 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
 
             // insert new type
             const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken);
-            replaceStraight(this.getSourceFile(), closeParenToken.getEnd(), replaceLength, `: ${text}`);
+            insertIntoParent({
+                parent: this,
+                childIndex: colonToken != null ? colonToken.getChildIndex() + 1 : closeParenToken.getChildIndex() + 1,
+                insertItemsCount: colonToken != null ? 1 : 2,
+                insertPos: colonToken != null ? colonToken.getEnd() : closeParenToken.getEnd(),
+                newText: colonToken != null ? ` ${text}` : `: ${text}`,
+                replacing: {
+                    length: returnTypeNode == null ? 0 : returnTypeNode.getFullWidth(),
+                    nodes: returnTypeNode == null ? [] : [returnTypeNode]
+                }
+            });
 
             return this;
         }

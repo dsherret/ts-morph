@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {TypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {replaceStraight} from "./../../manipulation";
+import {insertIntoParent} from "./../../manipulation";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
@@ -44,26 +44,38 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             // remove previous type
             const separatorSyntaxKind = getSeparatorSyntaxKindForNode(this);
             const separatorNode = this.getFirstChildByKind(separatorSyntaxKind);
-            const replaceLength = typeNode == null ? 0 : typeNode.getWidth();
 
-            let insertPosition: number;
-            let insertText = "";
+            let insertPos: number;
+            let childIndex: number;
+            let insertItemsCount: number;
+            let newText: string;
 
-            if (separatorNode == null)
-                insertText += separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ";
-
-            if (typeNode == null) {
+            if (separatorNode == null) {
                 const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier);
-                insertPosition = identifier.getEnd();
+                childIndex = identifier.getChildIndex() + 1;
+                insertPos = identifier.getEnd();
+                insertItemsCount = 2;
+                newText = (separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ") + text;
             }
             else {
-                insertPosition = typeNode.getStart();
+                childIndex = separatorNode.getChildIndex() + 1;
+                insertPos = typeNode!.getStart();
+                insertItemsCount = 1;
+                newText = text;
             }
 
-            insertText += text;
-
             // insert new type
-            replaceStraight(this.getSourceFile(), insertPosition, replaceLength, insertText);
+            insertIntoParent({
+                parent: this,
+                childIndex,
+                insertItemsCount,
+                insertPos,
+                newText,
+                replacing: {
+                    length: typeNode == null ? 0 : typeNode.getWidth(),
+                    nodes: typeNode == null ? [] : [typeNode]
+                }
+            });
 
             return this;
         }

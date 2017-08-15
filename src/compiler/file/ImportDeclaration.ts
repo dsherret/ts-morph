@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {replaceStraight, insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
@@ -13,7 +13,17 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
      */
     setModuleSpecifier(text: string) {
         const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
-        replaceStraight(this.getSourceFile(), stringLiteral.getStart() + 1, stringLiteral.getWidth() - 2, text);
+        insertIntoParent({
+            parent: this,
+            newText: text,
+            insertPos: stringLiteral.getStart() + 1,
+            childIndex: stringLiteral.getChildIndex(),
+            insertItemsCount: 1,
+            replacing: {
+                length: stringLiteral.getWidth() - 2,
+                nodes: [stringLiteral]
+            }
+        });
         return this;
     }
 
