@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {replaceStraight, insertStraight, insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {replaceStraight, insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportSpecifier} from "./ExportSpecifier";
@@ -108,10 +108,12 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
 
         if (namedExports.length === 0) {
             const asteriskToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.AsteriskToken);
-            insertStraight({
+            insertIntoParent({
                 insertPos: asteriskToken.getStart(),
                 parent: this,
-                newCode: `{${codes.join(", ")}}`,
+                newText: `{${codes.join(", ")}}`,
+                childIndex: asteriskToken.getChildIndex(),
+                insertItemsCount: 1,
                 replacing: {
                     nodes: [asteriskToken],
                     length: 1

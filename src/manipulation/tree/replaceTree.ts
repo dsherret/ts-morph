@@ -28,13 +28,14 @@ export interface ReplaceTreeWithChildIndexOptions {
     parent: Node;
     childIndex: number;
     childCount: number;
+    replacingNodes?: Node[];
 }
 
 /**
  * Replaces with tree based on the child index from the parent.
  */
 export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
-    const {replacementSourceFile, parent, childIndex, childCount} = opts;
+    const {replacementSourceFile, parent, childIndex, childCount, replacingNodes} = opts;
     const parentChildren = parent.getChildren();
     errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
     if (childCount < 0)
@@ -46,7 +47,8 @@ export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions
         replacementSourceFile,
         parent,
         isFirstChild,
-        childCount
+        childCount,
+        replacingNodes
     });
 }
 
@@ -55,6 +57,7 @@ export interface ReplaceTreeOptions {
     parent: Node;
     isFirstChild: (currentNode: Node, newNode: Node) => boolean;
     childCount: number;
+    replacingNodes?: Node[];
 }
 
 /**
@@ -65,6 +68,7 @@ export function replaceTree(opts: ReplaceTreeOptions) {
     const sourceFile = changingParent.getSourceFile();
     const changingParentParent = changingParent.getParentSyntaxList() || changingParent.getParentOrThrow();
     const compilerFactory = sourceFile.global.compilerFactory;
+    const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
 
     handleNode(sourceFile, replacementSourceFile);
 
@@ -96,6 +100,10 @@ export function replaceTree(opts: ReplaceTreeOptions) {
         while (!currentNodeChildren.done && !newNodeChildren.done && !isFirstChild(currentNodeChildren.peek, newNodeChildren.peek))
             handleNode(currentNodeChildren.next(), newNodeChildren.next());
 
+        // try replacing any nodes
+        while (!currentNodeChildren.done && tryReplaceNode(currentNodeChildren.peek))
+            currentNodeChildren.next();
+
         // add or remove the items
         if (count > 0) {
             while (count > 0) {
@@ -120,5 +128,19 @@ export function replaceTree(opts: ReplaceTreeOptions) {
             throw new Error("Error replacing tree: Should not have more children left over."); // todo: better error message
 
         compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+    }
+
+    function tryReplaceNode(currentNode: Node) {
+        if (replacingNodes == null || replacingNodes.length === 0)
+            return false;
+
+        const index = replacingNodes.indexOf(currentNode);
+        if (index === -1)
+            return false;
+
+        replacingNodes.splice(index, 1);
+        currentNode.dispose();
+
+        return true;
     }
 }

@@ -8,6 +8,10 @@ export interface InsertIntoParentOptions {
     parent: Node;
     childIndex: number;
     insertItemsCount: number;
+    replacing?: {
+        length: number;
+        nodes: Node[];
+    };
 }
 
 export function insertIntoParent(opts: InsertIntoParentOptions) {
@@ -15,13 +19,15 @@ export function insertIntoParent(opts: InsertIntoParentOptions) {
     const tempSourceFile = getNewReplacementSourceFile({
         sourceFile: parent.getSourceFile(),
         insertPos,
-        newText
+        newText,
+        replacingLength: opts.replacing == null ? undefined : opts.replacing.length
     });
 
     replaceTreeWithChildIndex({
         parent,
         childCount: insertItemsCount,
         childIndex,
-        replacementSourceFile: tempSourceFile
+        replacementSourceFile: tempSourceFile,
+        replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes
     });
 }

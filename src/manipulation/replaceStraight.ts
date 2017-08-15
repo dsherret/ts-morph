@@ -4,6 +4,8 @@ import {Node, SourceFile} from "./../compiler";
 import {ArrayUtils} from "./../utils";
 import {getInsertErrorMessageText} from "./getInsertErrorMessageText";
 
+// todo: remove
+
 /**
  * Replace insert where the new and old nodes are well defined.
  */
@@ -15,7 +17,6 @@ export function replaceStraight(sourceFile: SourceFile, replacePos: number, repl
     const endPos = replacePos + newText.length;
     const removedNodes: Node[] = [];
 
-    // todo: use replaceTree function
     handleNode(sourceFile, tempSourceFile);
     removedNodes.forEach(n => n.dispose());
 
