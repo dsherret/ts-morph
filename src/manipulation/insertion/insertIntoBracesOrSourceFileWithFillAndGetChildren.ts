@@ -6,7 +6,7 @@ import {fillAndGetChildren, FillAndGetChildrenOptions} from "./../fillAndGetChil
 import {insertIntoBracesOrSourceFile, InsertIntoBracesOrSourceFileOptions} from "./insertIntoBracesOrSourceFile";
 
 export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
-    getChildren: () => Node[];
+    getIndexedChildren: () => Node[];
     // for child functions
     sourceFile: SourceFile;
     expectedKind: ts.SyntaxKind;
@@ -30,19 +30,29 @@ export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends
     if (opts.structures.length === 0)
         return [];
 
-    const startChildren = opts.getChildren();
-    const index =  verifyAndGetIndex(opts.index, startChildren.length);
+    const startChildren = opts.getIndexedChildren();
+    const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
+    const index = verifyAndGetIndex(opts.index, startChildren.length);
+    const childIndex = getChildIndex();
 
     insertIntoBracesOrSourceFile({
         ...opts,
-        children: startChildren,
+        children: parentSyntaxList.getChildren(),
         separator: opts.sourceFile.global.manipulationSettings.getNewLineKind(),
-        index
+        index: childIndex
     } as InsertIntoBracesOrSourceFileOptions<TStructure>);
 
     return fillAndGetChildren<TNode, TStructure>({
         ...opts,
-        allChildren: opts.getChildren(),
+        allChildren: opts.getIndexedChildren(),
         index
     } as FillAndGetChildrenOptions<TNode, TStructure>);
+
+    function getChildIndex() {
+        if (index === 0)
+            return 0;
+
+        // get the previous member in order to get the implementation signature + 1
+        return startChildren[index - 1].getChildIndex() + 1;
+    }
 }

@@ -78,7 +78,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         }
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
-            getChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -154,7 +154,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodSignature, MethodSignatureStructure>({
-            getChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -234,7 +234,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         }
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertySignature, PropertySignatureStructure>({
-            getChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getAllMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,

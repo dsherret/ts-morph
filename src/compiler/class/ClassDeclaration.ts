@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -115,7 +115,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structure - Structure of the constructor.
      */
     addConstructor(structure: ConstructorDeclarationStructure = {}) {
-        return this.insertConstructor(getEndIndexFromArray(this.compilerNode.members), structure);
+        return this.insertConstructor(getEndIndexFromArray(this.getBodyMembers()), structure);
     }
 
     /**
@@ -133,7 +133,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
-            getChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -166,7 +166,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     addProperties(structures: PropertyDeclarationStructure[]) {
-        return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
+        return this.insertProperties(getEndIndexFromArray(this.getBodyMembers()), structures);
     }
 
     /**
@@ -202,7 +202,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
-            getChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -272,7 +272,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the methods.
      */
     addMethods(structures: MethodDeclarationStructure[]) {
-        return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
+        return this.insertMethods(getEndIndexFromArray(this.getBodyMembers()), structures);
     }
 
     /**
@@ -309,7 +309,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
-            getChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getBodyMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -424,12 +424,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             }
         }
 
-        // filter out the method declarations or constructor declarations without a body if not ambient
-        return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
+        return members;
     }
 
     private getBodyMembers() {
-        return this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+
+        // filter out the method declarations or constructor declarations without a body if not ambient
+        return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
     }
 }
 

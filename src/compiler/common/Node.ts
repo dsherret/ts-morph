@@ -322,12 +322,22 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         return this.getChildren().filter(c => c.getKind() === kind) as T[];
     }
 
-    *getAllChildren(): IterableIterator<Node> {
-        for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
-            const child = this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
+    /**
+     * Gets the node's descendants.
+     */
+    getDescendants(): Node[] {
+        return Array.from(this.getDescendantsIterator());
+    }
+
+    /**
+     * Gets the node's descendants as an iterator.
+     * @internal
+     */
+    *getDescendantsIterator(): IterableIterator<Node> {
+        for (const child of this.getChildrenIterator()) {
             yield child;
 
-            for (const childChild of child.getAllChildren())
+            for (const childChild of child.getDescendants())
                 yield childChild;
         }
     }

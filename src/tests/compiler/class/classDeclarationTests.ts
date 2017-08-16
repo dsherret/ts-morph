@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
-    ConstructorDeclaration, ParameterDeclaration} from "./../../../compiler";
+    ConstructorDeclaration, ParameterDeclaration, Scope} from "./../../../compiler";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -82,6 +82,11 @@ describe(nameof(ClassDeclaration), () => {
 
         it("should insert when none exists", () => {
             doTest("class c {\n}", 0, {}, "class c {\n    constructor() {\n    }\n}");
+        });
+
+        it("should remove the previous when one exists", () => {
+            doTest("class c {\n    constructor() {\n    }\n}", 0, { scope: Scope.Private},
+                "class c {\n    private constructor() {\n    }\n}");
         });
 
         it("should insert multiple into other members", () => {
@@ -523,6 +528,65 @@ describe(nameof(ClassDeclaration), () => {
                 "prop: string;\nprop2: number;method1(str);method1();\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getAllMembers().length).to.equal(9);
+        });
+    });
+
+    describe("inserting members", () => {
+        it("should insert methods and properties in the correct location when constructor parameters and overload signatures exist", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(`
+class c {
+    constructor();
+    constructor(public param: string) {}
+
+    myMethod(): void;
+    myMethod(): void {
+    }
+}
+`);
+            firstChild.insertProperty(1, { name: "prop2" });
+            firstChild.insertMethod(1, { name: "method" });
+            firstChild.insertProperty(0, { name: "prop1" });
+            expect(sourceFile.getFullText()).to.equal(`
+class c {
+    prop1;
+
+    constructor();
+    constructor(public param: string) {}
+
+    method() {
+    }
+
+    prop2;
+
+    myMethod(): void;
+    myMethod(): void {
+    }
+}
+`);
+        });
+
+        it("should insert a constructor in the correct location when constructor parameters and overload signatures exist", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(`
+class c {
+    constructor();
+    constructor(public param: string) {}
+
+    myMethod(): void;
+    myMethod(): void {
+    }
+}
+`);
+            firstChild.insertConstructor(1, { }); // todo: should this be 2? A little iffy because it removes the previous constructor before inserting
+            expect(sourceFile.getFullText()).to.equal(`
+class c {
+    myMethod(): void;
+    myMethod(): void {
+    }
+
+    constructor() {
+    }
+}
+`);
         });
     });
 });

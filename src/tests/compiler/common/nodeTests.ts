@@ -54,7 +54,7 @@ describe(nameof(Node), () => {
 
     describe(nameof<Node>(n => n.offsetPositions), () => {
         const {sourceFile} = getInfoFromText("enum MyEnum {}");
-        const allNodes = [sourceFile, ...Array.from(sourceFile.getAllChildren())];
+        const allNodes = [sourceFile, ...sourceFile.getDescendants()];
 
         // easiest to just compare the sum of the positions
         const originalStartPosSum = allNodes.map(n => n.getPos()).reduce((a, b) => a + b, 0);

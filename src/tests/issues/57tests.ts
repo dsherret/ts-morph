@@ -10,7 +10,7 @@ export class Class {
 `;
 
 describe("tests for issue #57", () => {
-    const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+    const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
 
     it("should add the property", () => {
         firstChild.addProperty({
@@ -18,5 +18,13 @@ describe("tests for issue #57", () => {
             name: "prop",
             type: "string"
         });
+        expect(sourceFile.getFullText()).to.equal(`
+export class Class {
+    constructor(private param: Class) {
+    }
+
+    static prop: string;
+}
+`);
     });
 });
