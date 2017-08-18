@@ -1,5 +1,7 @@
 ﻿import * as ts from "typescript";
-import {removeFromBracesOrSourceFile} from "./../../manipulation";
+import * as errors from "./../../errors";
+import {ClassDeclaration} from "./../../compiler";
+import {removeOverloadableClassMember} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -71,14 +73,6 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Remove the constructor.
      */
     remove() {
-        const nodesToRemove: Node[] = [this];
-        if (this.isImplementation())
-            nodesToRemove.push(...this.getOverloads());
-
-        for (const nodeToRemove of nodesToRemove) {
-            removeFromBracesOrSourceFile({
-                node: nodeToRemove
-            });
-        }
+        removeOverloadableClassMember(this.getParentOrThrow() as ClassDeclaration, this);
     }
 }

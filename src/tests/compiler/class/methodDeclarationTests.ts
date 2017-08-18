@@ -103,4 +103,72 @@ describe(nameof(MethodDeclaration), () => {
             doTest("class identifier {\n  method() {}\n}", structure, "class identifier {\n  method(param);\n  method() {}\n}");
         });
     });
+
+    describe(nameof<MethodDeclaration>(m => m.remove), () => {
+        describe("no overload", () => {
+            function doTest(code: string, nameToRemove: string, expectedCode: string) {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+                firstChild.getInstanceMethod(nameToRemove)!.remove();
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should remove when it's the only method", () => {
+                doTest("class Identifier {\n    method() {}\n}", "method", "class Identifier {\n}");
+            });
+
+            it("should remove when it's the first method", () => {
+                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method",
+                    "class Identifier {\n    method2() {}\n}");
+            });
+
+            it("should remove when it's the middle method", () => {
+                doTest("class Identifier {\n    method1(){}\n\n    method2(){}\n\n    method3() {}\n}", "method2",
+                    "class Identifier {\n    method1(){}\n\n    method3() {}\n}");
+            });
+
+            it("should remove when it's the last method", () => {
+                doTest("class Identifier {\n    method() {}\n\n    method2() {}\n}", "method2",
+                    "class Identifier {\n    method() {}\n}");
+            });
+
+            it("should remove when it's beside a property ", () => {
+                doTest("class Identifier {\n    method(){}\n\n    prop: string;\n}", "method",
+                    "class Identifier {\n    prop: string;\n}");
+            });
+
+            it("should remove when it's in an ambient class", () => {
+                doTest("declare class Identifier {\n    method(): void;\n\n    prop: string;\n\n    method2(): void;\n}", "method",
+                    "declare class Identifier {\n    prop: string;\n\n    method2(): void;\n}");
+            });
+        });
+
+        describe("overloads", () => {
+            function doTest(code: string, nameToRemove: string, index: number, expectedCode: string) {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+                const method = firstChild.getInstanceMethod(nameToRemove)!;
+                [...method.getOverloads(), method][index].remove();
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should remove when surrounded by other members", () => {
+                doTest("class Identifier {\n    prop: string;\n\nmethod(str): void;\n    method(param) {}\n\nprop2: string;\n}", "method", 1,
+                    "class Identifier {\n    prop: string;\nprop2: string;\n}");
+            });
+
+            it("should remove the method and all its overloads when calling on the body", () => {
+                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 1,
+                    "class Identifier {\n}");
+            });
+
+            it("should remove only the specified overload", () => {
+                doTest("class Identifier {\n    method(str): void;\n    method(param) {}\n}", "method", 0,
+                    "class Identifier {\n    method(param) {}\n}");
+            });
+
+            it("should remove only the specified signature when it's in an ambient class", () => {
+                doTest("declare class Identifier {\n    method(): void;\n    method(): void;\n}", "method", 1,
+                    "declare class Identifier {\n    method(): void;\n}");
+            });
+        });
+    });
 });

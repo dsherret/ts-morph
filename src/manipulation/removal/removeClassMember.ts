@@ -1,22 +1,33 @@
-﻿import {Node, ClassDeclaration} from "./../../compiler";
+﻿import {Node, ClassDeclaration, OverloadableNode} from "./../../compiler";
 import {getClassMemberFormatting, FormattingKind} from "./../formatting";
 import {getPosAtNextNonBlankLine} from "./../textSeek";
 import {replaceTreeWithChildIndex} from "./../tree";
 
+export function removeOverloadableClassMember(parent: ClassDeclaration, classMember: Node & OverloadableNode) {
+    if (classMember.isOverload())
+        removeClassMember(parent, classMember);
+    else
+        removeClassMembers(parent, [...classMember.getOverloads(), classMember]);
+}
+
 export function removeClassMember(parent: ClassDeclaration, classMember: Node) {
+    removeClassMembers(parent, [classMember]);
+}
+
+export function removeClassMembers(parent: ClassDeclaration, classMembers: Node[]) {
     const sourceFile = parent.getSourceFile();
     const fullText = sourceFile.getFullText();
     const newLineKind = sourceFile.global.manipulationSettings.getNewLineKind();
-    const previousSibling = classMember.getPreviousSibling();
-    const nextSibling = classMember.getNextSibling();
+    const previousSibling = classMembers[0].getPreviousSibling();
+    const nextSibling = classMembers[classMembers.length - 1].getNextSibling();
     const newText = getPrefix() + getSpacing() + getSuffix();
     const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, sourceFile.getFilePath());
 
     replaceTreeWithChildIndex({
         replacementSourceFile: tempSourceFile,
-        parent: classMember.getParentSyntaxListOrThrow(),
-        childIndex: classMember.getChildIndex(),
-        childCount: -1
+        parent: classMembers[0].getParentSyntaxListOrThrow(),
+        childIndex: classMembers[0].getChildIndex(),
+        childCount: -1 * classMembers.length
     });
 
     function getPrefix() {
@@ -39,10 +50,10 @@ export function removeClassMember(parent: ClassDeclaration, classMember: Node) {
     }
 
     function getRemovalPos() {
-        return previousSibling == null ? classMember.getPos() : previousSibling.getEnd();
+        return previousSibling == null ? classMembers[0].getPos() : previousSibling.getEnd();
     }
 
     function getRemovalEnd() {
-        return nextSibling == null ? getPosAtNextNonBlankLine(fullText, classMember.getEnd()) : nextSibling.getStartLinePos();
+        return nextSibling == null ? getPosAtNextNonBlankLine(fullText, classMembers[classMembers.length - 1].getEnd()) : nextSibling.getStartLinePos();
     }
 }

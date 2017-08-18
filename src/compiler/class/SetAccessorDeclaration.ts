@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {removeClassMember} from "./../../manipulation";
 import {Node} from "./../common";
 import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
@@ -23,5 +24,12 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
         }
 
         return undefined;
+    }
+
+    /**
+     * Removes the set accessor.
+     */
+    remove() {
+        removeClassMember(this.getParentOrThrow() as ClassDeclaration, this);
     }
 }

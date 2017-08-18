@@ -1,11 +1,14 @@
 ﻿import * as ts from "typescript";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
+import * as errors from "./../../errors";
+import {removeOverloadableClassMember} from "./../../manipulation";
 import {MethodDeclarationOverloadStructure, MethodDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, ScopedNode, DecoratableNode, BodyableNode} from "./../base";
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
 import {AbstractableNode} from "./base";
+import {ClassDeclaration} from "./ClassDeclaration";
 
 export const MethodDeclarationBase = OverloadableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node)))
@@ -68,5 +71,12 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             fillNodeFromStructure: (node, structure) => node.fill(structure),
             expectedSyntaxKind: ts.SyntaxKind.MethodDeclaration
         });
+    }
+
+    /**
+     * Removes the method.
+     */
+    remove() {
+        removeOverloadableClassMember(this.getParentOrThrow() as ClassDeclaration, this);
     }
 }

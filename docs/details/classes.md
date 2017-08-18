@@ -92,14 +92,23 @@ Add or insert methods by using `insertMethods()`, `insertMethod`, `addMethod`, o
 const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", returnType: "string" });
 ```
 
+Remove a method:
+
+```typescript
+method.remove();
+```
+
 ### Properties
+
+Properties searched for can be of type `PropertyDeclaration`, `GetAccessorDeclaration`, `SetAccessorDeclaration`, or `ParameterDeclaration` (constructor parameter properties).
 
 Get the instance properties:
 
 ```typescript
 const instanceProperties = classDeclaration.getInstanceProperties();
 const myProperty = classDeclaration.getInstanceProperty("myProperty");
-const myStringProperty = classDeclaration.getInstanceProperty(m => m.getType().getText() === "string");
+const myStringProperty = classDeclaration.getInstanceProperty(p =>
+    p instanceof PropertyDeclaration && p.getType().getText() === "string");
 ```
 
 Get the static properties:
@@ -107,13 +116,20 @@ Get the static properties:
 ```typescript
 const staticProperties = classDeclaration.getStaticProperties();
 const myStaticProperty = classDeclaration.getStaticProperty("myStaticProperty");
-const myStaticStringProperty = classDeclaration.getStaticProperty(m => m.getType().getText() === "string");
+const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
+    p instanceof PropertyDeclaration && p.getType().getText() === "string");
 ```
 
 Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:
 
 ```typescript
 const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
+```
+
+Remove a property:
+
+```typescript
+property.remove();
 ```
 
 ### Get members

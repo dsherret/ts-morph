@@ -23,4 +23,36 @@ describe(nameof(GetAccessorDeclaration), () => {
             expect(getAccessor.getSetAccessor()!.getText()).to.equal("set identifier(val: string) {}");
         });
     });
+
+    describe(nameof<GetAccessorDeclaration>(n => n.remove), () => {
+        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            (firstChild.getInstanceProperty(nameToRemove)! as GetAccessorDeclaration).remove();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it's the only member", () => {
+            doTest("class Identifier {\n    get prop(): string { return ''; }\n}", "prop", "class Identifier {\n}");
+        });
+
+        it("should not remove the set accessor", () => {
+            doTest("class Identifier {\n    get prop(): string { return ''; }\n\n    set prop(val: string) {}\n}", "prop",
+                "class Identifier {\n    set prop(val: string) {}\n}");
+        });
+
+        it("should remove when it's the first member", () => {
+            doTest("class Identifier {\n    get prop(): string {}\n\n    get prop2(): string {}\n}", "prop",
+                "class Identifier {\n    get prop2(): string {}\n}");
+        });
+
+        it("should remove when it's the middle member", () => {
+            doTest("class Identifier {\n    get prop(): string {}\n\n    get prop2(): string {}\n\n    get prop3(): string {}\n}", "prop2",
+                "class Identifier {\n    get prop(): string {}\n\n    get prop3(): string {}\n}");
+        });
+
+        it("should remove when it's the last member", () => {
+            doTest("class Identifier {\n    prop: string;\n    get prop2(): string {}\n}", "prop2",
+                "class Identifier {\n    prop: string;\n}");
+        });
+    });
 });
