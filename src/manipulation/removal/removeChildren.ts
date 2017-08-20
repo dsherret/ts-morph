@@ -1,15 +1,15 @@
 ﻿import {Node} from "./../../compiler";
-import {FormattingKind, getFormattingKindText} from "./../formatting";
-import {getPosAtNextNonBlankLine, getPreviousMatchingPos, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "./../textSeek";
+import {getPreviousMatchingPos, getNextMatchingPos} from "./../textSeek";
 import {replaceTreeWithChildIndex} from "./../tree";
 
-export interface RemoveChildrenOptions<TNode extends Node> {
+export interface RemoveChildrenOptions {
     children: Node[];
     removePrecedingSpaces?: boolean;
+    removeFollowingSpaces?: boolean;
 }
 
-export function removeChildren<TNode extends Node>(opts: RemoveChildrenOptions<TNode>) {
-    const {children, removePrecedingSpaces = false} = opts;
+export function removeChildren(opts: RemoveChildrenOptions) {
+    const {children, removePrecedingSpaces = false, removeFollowingSpaces = false} = opts;
     if (children.length === 0)
         return;
 
@@ -35,10 +35,15 @@ export function removeChildren<TNode extends Node>(opts: RemoveChildrenOptions<T
 
     function getRemovalPos() {
         const pos = children[0].getStart();
-        return removePrecedingSpaces ? getPreviousMatchingPos(fullText, pos, char => char !== " " && char !== "\t") : pos;
+        return removePrecedingSpaces ? getPreviousMatchingPos(fullText, pos, charNotSpaceOrTab) : pos;
     }
 
     function getRemovalEnd() {
-        return children[children.length - 1].getEnd();
+        const end = children[children.length - 1].getEnd();
+        return removeFollowingSpaces ? getNextMatchingPos(fullText, end, charNotSpaceOrTab) : end;
+    }
+
+    function charNotSpaceOrTab(char: string) {
+        return char !== " " && char !== "\t";
     }
 }

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {insertIntoParent, removeChildren} from "./../../manipulation";
+import {insertIntoParent, removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {ParameterDeclarationStructure} from "./../../structures";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
 import {callBaseFill} from "./../callBaseFill";
@@ -72,5 +72,12 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      */
     isOptional() {
         return this.compilerNode.questionToken != null || this.isRestParameter() || this.hasInitializer();
+    }
+
+    /**
+     * Remove this parameter.
+     */
+    remove() {
+        removeCommaSeparatedChild(this);
     }
 }

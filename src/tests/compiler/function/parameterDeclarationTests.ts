@@ -104,4 +104,28 @@ describe(nameof(ParameterDeclaration), () => {
             doTest("function func(param: string) {}", structure, "function func(...param: string) {}");
         });
     });
+
+    describe(nameof<ParameterDeclaration>(d => d.remove), () => {
+        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
+            firstChild.getParameters().find(p => p.getName() === nameToRemove)!.remove();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it's the only parameter", () => {
+            doTest("function identifier(param) {}", "param", "function identifier() {}");
+        });
+
+        it("should remove when it's the first parameter", () => {
+            doTest("function identifier(param: string, param2) {}", "param", "function identifier(param2) {}");
+        });
+
+        it("should remove when it's the last parameter", () => {
+            doTest("function identifier(param: string, param2?: string = '') {}", "param2", "function identifier(param: string) {}");
+        });
+
+        it("should remove when it's the middle parameter", () => {
+            doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
+        });
+    });
 });
