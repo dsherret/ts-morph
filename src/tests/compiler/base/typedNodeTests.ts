@@ -39,62 +39,60 @@ describe(nameof(TypedNode), () => {
 
     describe(nameof<TypedNode>(n => n.setType), () => {
         describe("class properties", () => {
-            it("should set when implicit, with a semi-colon, and initializer", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>(`class Identifier { prop = ""; }`);
+            function doTest(startText: string, type: string, expectedText: string) {
+                const {firstChild} = getInfoFromText<ClassDeclaration>(startText);
                 const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
-                prop.setType("any");
-                expect(firstChild.getText()).to.equal(`class Identifier { prop: any = ""; }`);
+                prop.setType(type);
+                expect(firstChild.getText()).to.equal(expectedText);
+            }
+
+            it("should set when implicit, with a semi-colon, and initializer", () => {
+                doTest(`class Identifier { prop = ""; }`, "any", `class Identifier { prop: any = ""; }`);
             });
 
             it("should set when explicit, with a semi-colon, no initializer", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }");
-                const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
-                prop.setType("number");
-                expect(firstChild.getText()).to.equal("class Identifier { prop: number; }");
+                doTest("class Identifier { prop: string; }", "number", "class Identifier { prop: number; }");
             });
 
             it("should set when explicit, without a semi-colon, no initializer", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string }");
-                const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
-                prop.setType("number");
-                expect(firstChild.getText()).to.equal("class Identifier { prop: number }");
+                doTest("class Identifier { prop: string }", "number", "class Identifier { prop: number }");
             });
 
             it("should set when explicit, with a semi-colon, with initializer", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>(`class Identifier { prop: string = ""; }`);
-                const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
-                prop.setType("any");
-                expect(firstChild.getText()).to.equal(`class Identifier { prop: any = ""; }`);
+                doTest(`class Identifier { prop: string = ""; }`, "any", `class Identifier { prop: any = ""; }`);
+            });
+
+            it("should remove when the type is empty", () => {
+                doTest(`class Identifier { prop: string = ""; }`, "", `class Identifier { prop = ""; }`);
             });
         });
 
         describe("function parameters", () => {
-            it("should set when implicit", () => {
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(`function Identifier(param) {}`);
+            function doTest(startText: string, type: string, expectedText: string) {
+                const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
                 const param = firstChild.getParameters()[0];
-                param.setType("number");
-                expect(firstChild.getText()).to.equal(`function Identifier(param: number) {}`);
+                param.setType(type);
+                expect(firstChild.getText()).to.equal(expectedText);
+            }
+
+            it("should set when implicit", () => {
+                doTest(`function Identifier(param) {}`, "number", `function Identifier(param: number) {}`);
             });
 
             it("should set when implicit and multiple parameters", () => {
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(`function Identifier(param, param2) {}`);
-                const param = firstChild.getParameters()[0];
-                param.setType("number");
-                expect(firstChild.getText()).to.equal(`function Identifier(param: number, param2) {}`);
+                doTest(`function Identifier(param, param2) {}`, "number", `function Identifier(param: number, param2) {}`);
             });
 
             it("should set when explicit", () => {
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(`function Identifier(param: string) {}`);
-                const param = firstChild.getParameters()[0];
-                param.setType("number");
-                expect(firstChild.getText()).to.equal(`function Identifier(param: number) {}`);
+                doTest(`function Identifier(param: string) {}`, "number", `function Identifier(param: number) {}`);
             });
 
             it("should set when explicit and with an initializer", () => {
-                const {firstChild} = getInfoFromText<FunctionDeclaration>(`function Identifier(param: string = "") {}`);
-                const param = firstChild.getParameters()[0];
-                param.setType("any");
-                expect(firstChild.getText()).to.equal(`function Identifier(param: any = "") {}`);
+                doTest(`function Identifier(param: string = "") {}`, "any", `function Identifier(param: any = "") {}`);
+            });
+
+            it("should remove when the type is empty", () => {
+                doTest(`function Identifier(param: string = "") {}`, "", `function Identifier(param = "") {}`);
             });
         });
 
@@ -116,25 +114,23 @@ describe(nameof(TypedNode), () => {
         });
 
         describe("variable declaration", () => {
-            it("should set when no type exists", () => {
-                const {firstChild} = getInfoFromText<VariableStatement>(`var identifier;`);
+            function doTest(startText: string, type: string, expectedText: string) {
+                const {firstChild} = getInfoFromText<VariableStatement>(expectedText);
                 const declaration = firstChild.getDeclarationList().getDeclarations()[0];
-                declaration.setType("number");
-                expect(firstChild.getText()).to.equal(`var identifier: number;`);
+                declaration.setType(type);
+                expect(firstChild.getText()).to.equal(expectedText);
+            }
+
+            it("should set when no type exists", () => {
+                doTest(`var identifier;`, "number", `var identifier: number;`);
             });
 
             it("should set when type exists", () => {
-                const {firstChild} = getInfoFromText<VariableStatement>(`var identifier: string;`);
-                const declaration = firstChild.getDeclarationList().getDeclarations()[0];
-                declaration.setType("number");
-                expect(firstChild.getText()).to.equal(`var identifier: number;`);
+                doTest(`var identifier: string;`, "number", `var identifier: number;`);
             });
 
             it("should set when type exists and initializer", () => {
-                const {firstChild} = getInfoFromText<VariableStatement>(`var identifier: string = "";`);
-                const declaration = firstChild.getDeclarationList().getDeclarations()[0];
-                declaration.setType("number");
-                expect(firstChild.getText()).to.equal(`var identifier: number = "";`);
+                doTest(`var identifier: string = "";`, "number", `var identifier: number = "";`);
             });
 
             it("should set for other declaration in list", () => {
@@ -142,6 +138,10 @@ describe(nameof(TypedNode), () => {
                 const declaration = firstChild.getDeclarationList().getDeclarations()[1];
                 declaration.setType("number");
                 expect(firstChild.getText()).to.equal(`var var1, var2: number, var3;`);
+            });
+
+            it("should remove when the type is empty", () => {
+                doTest(`var identifier: string = "";`, "", `var identifier = "";`);
             });
         });
     });
@@ -159,6 +159,23 @@ describe(nameof(TypedNode), () => {
 
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("type myAlias = string;", {}, "type myAlias = string;");
+        });
+    });
+
+    describe(nameof<TypedNode>(n => n.removeType), () => {
+        function doTest(startText: string, expectedText: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startText);
+            const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+            prop.removeType();
+            expect(firstChild.getText()).to.equal(expectedText);
+        }
+
+        it("should remove when exists", () => {
+            doTest(`class Identifier { prop: string = ""; }`, `class Identifier { prop = ""; }`);
+        });
+
+        it("should do nothing when not exists", () => {
+            doTest(`class Identifier { prop = ""; }`, `class Identifier { prop = ""; }`);
         });
     });
 });

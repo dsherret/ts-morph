@@ -85,8 +85,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             const returnTypeNode = this.getReturnTypeNode();
             if (returnTypeNode == null)
                 return this;
-            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
 
+            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
             removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
         }

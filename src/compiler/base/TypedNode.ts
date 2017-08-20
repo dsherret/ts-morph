@@ -3,7 +3,8 @@ import {Constructor} from "./../../Constructor";
 import {TypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {insertIntoParent} from "./../../manipulation";
+import {insertIntoParent, removeChildren} from "./../../manipulation";
+import {StringUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
@@ -24,6 +25,10 @@ export interface TypedNode {
      * @param text - Text to set the type to.
      */
     setType(text: string): this;
+    /**
+     * Removes the type.
+     */
+    removeType(): this;
 }
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
@@ -37,6 +42,9 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         setType(text: string) {
+            if (StringUtils.isNullOrWhitespace(text))
+                return this.removeType();
+
             const typeNode = this.getTypeNode();
             if (typeNode != null && typeNode.getText() === text)
                 return this;
@@ -86,6 +94,16 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             if (structure.type != null)
                 this.setType(structure.type);
 
+            return this;
+        }
+
+        removeType() {
+            const typeNode = this.getTypeNode();
+            if (typeNode == null)
+                return this;
+
+            const separatorToken = typeNode.getPreviousSiblingIfKindOrThrow(getSeparatorSyntaxKindForNode(this));
+            removeChildren({ children: [separatorToken, typeNode], removePrecedingSpaces: true });
             return this;
         }
     };
