@@ -3,7 +3,8 @@ import {Constructor} from "./../../Constructor";
 import {ReturnTypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {insertIntoParent} from "./../../manipulation";
+import {insertIntoParent, removeChildren} from "./../../manipulation";
+import {StringUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
 import {TypeNode} from "./../type/TypeNode";
@@ -24,6 +25,10 @@ export interface ReturnTypedNode {
      * @param text - Text to set as the type.
      */
     setReturnType(text: string): this;
+    /**
+     * Removes the return type.
+     */
+    removeReturnType(): this;
 }
 
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
@@ -39,15 +44,15 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         setReturnType(text: string) {
+            if (StringUtils.isNullOrWhitespace(text))
+                return this.removeReturnType();
+
             const returnTypeNode = this.getReturnTypeNode();
             if (returnTypeNode != null && returnTypeNode.getText() === text)
                 return this;
 
             // get replace length of previous return type
-            const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSibling();
-            /* istanbul ignore if */
-            if (colonToken != null && colonToken.getKind() !== ts.SyntaxKind.ColonToken)
-                throw new errors.NotImplementedError("Expected a colon token to be the previous sibling of a return type.");
+            const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
             const replaceLength = colonToken == null ? 0 : returnTypeNode!.getEnd() - colonToken.getPos();
 
             // insert new type
@@ -73,6 +78,16 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);
 
+            return this;
+        }
+
+        removeReturnType() {
+            const returnTypeNode = this.getReturnTypeNode();
+            if (returnTypeNode == null)
+                return this;
+            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
+
+            removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
         }
     };

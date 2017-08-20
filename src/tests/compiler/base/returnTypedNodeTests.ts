@@ -29,28 +29,46 @@ describe(nameof(ReturnTypedNode), () => {
     });
 
     describe(nameof<ReturnTypedNode>(n => n.setReturnType), () => {
+        function doTest(startText: string, returnType: string, expectedText: string) {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            firstChild.setReturnType(returnType);
+            expect(firstChild.getText()).to.equal(expectedText);
+        }
+
         it("should set the return type when none exists", () => {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>("function identifier() {}");
-            firstChild.setReturnType("string");
-            expect(firstChild.getText()).to.equal("function identifier(): string {}");
+            doTest("function identifier() {}", "string", "function identifier(): string {}");
         });
 
         it("should set the return type when one already exists", () => {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>("function identifier(): number {}");
-            firstChild.setReturnType("string");
-            expect(firstChild.getText()).to.equal("function identifier(): string {}");
+            doTest("function identifier(): number {}", "string", "function identifier(): string {}");
         });
 
         it("should set the return type for an ambient declaration with no return type", () => {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>("declare function identifier();");
-            firstChild.setReturnType("string");
-            expect(firstChild.getText()).to.equal("declare function identifier(): string;");
+            doTest("declare function identifier();", "string", "declare function identifier(): string;");
         });
 
         it("should set the return type for an ambient declaration", () => {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>("declare function identifier(): number;");
-            firstChild.setReturnType("string");
-            expect(firstChild.getText()).to.equal("declare function identifier(): string;");
+            doTest("declare function identifier(): number;", "string", "declare function identifier(): string;");
+        });
+
+        it("should remove the type when it's empty", () => {
+            doTest("function identifier(): string {}", "", "function identifier() {}");
+        });
+    });
+
+    describe(nameof<ReturnTypedNode>(n => n.removeReturnType), () => {
+        function doTest(startText: string, expectedText: string) {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            firstChild.removeReturnType();
+            expect(firstChild.getText()).to.equal(expectedText);
+        }
+
+        it("should remove the type", () => {
+            doTest("function identifier(): string {}", "function identifier() {}");
+        });
+
+        it("should not throw an error when the return type is already null", () => {
+            doTest("function identifier() {}", "function identifier() {}");
         });
     });
 

@@ -208,6 +208,28 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the previous sibiling if it matches the specified kind, or throws.
+     * @param kind - Kind to check.
+     */
+    getPreviousSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
+        const previousSibling = this.getPreviousSiblingIfKind(kind);
+        if (previousSibling == null)
+            throw new errors.InvalidOperationError(`A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+        return previousSibling;
+    }
+
+    /**
+     * Gets the next sibiling if it matches the specified kind, or throws.
+     * @param kind - Kind to check.
+     */
+    getNextSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
+        const nextSibling = this.getNextSiblingIfKind(kind);
+        if (nextSibling == null)
+            throw new errors.InvalidOperationError(`A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+        return nextSibling;
+    }
+
+    /**
      * Gets the previous sibling if it matches the specified kind.
      * @param kind - Kind to check.
      */
