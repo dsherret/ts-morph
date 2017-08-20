@@ -1,5 +1,4 @@
-﻿import * as ts from "typescript";
-import {Node, ClassDeclaration} from "./../../compiler";
+﻿import {Node, ClassDeclaration} from "./../../compiler";
 import {FormattingKind} from "./FormattingKind";
 
 export function getClassMemberFormatting(parent: ClassDeclaration, member: Node) {

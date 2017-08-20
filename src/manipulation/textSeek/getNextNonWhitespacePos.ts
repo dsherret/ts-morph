@@ -1,11 +1,5 @@
-﻿export function getNextNonWhitespacePos(text: string, pos: number) {
-    while (pos < text.length) {
-        const char = text[pos];
-        if (char === " " || char === "\t" || char === "\r" || char === "\n")
-            pos++;
-        else
-            break;
-    }
+﻿import {getNextMatchingPos} from "./getNextMatchingPos";
 
-    return pos;
+export function getNextNonWhitespacePos(text: string, pos: number) {
+    return getNextMatchingPos(text, pos, char => char !== " " && char !== "\t" && char !== "\r" && char !== "\n");
 }

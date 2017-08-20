@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoParent, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeChildren} from "./../../manipulation";
 import {QuestionTokenableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -53,8 +53,9 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                     newText: "?"
                 });
             }
-            else
-                removeNodes([questionTokenNode]);
+            else {
+                removeChildren({ children: [questionTokenNode!] });
+            }
 
             return this;
         }

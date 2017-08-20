@@ -44,6 +44,12 @@ To add or insert use `addConstructSignature()`, `addConstructSignatures()`, `ins
 const constructSignature = interfaceDeclaration.addConstructSignature({ returnType: "SomeClass" });
 ```
 
+Remove a construct signature:
+
+```typescript
+constructSignature.remove();
+```
+
 ### Method signatures
 
 Use:
@@ -60,6 +66,12 @@ To add or insert use `addMethod()`, `addMethods()`, `insertMethod`, or `insertMe
 const methodSignature = interfaceDeclaration.insertMethod(1, { name: "newMethod", returnType: "boolean" });
 ```
 
+Remove a method signature:
+
+```typescript
+methodSignature.remove();
+```
+
 ### Properties
 
 Use:
@@ -74,4 +86,10 @@ To add or insert use `addProperty()`, `addProperties()`, `insertProperty`, or `i
 
 ```typescript
 const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
+```
+
+Remove a property signature:
+
+```typescript
+propertySignature.remove();
 ```

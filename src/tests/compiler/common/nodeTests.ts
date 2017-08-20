@@ -201,4 +201,30 @@ describe(nameof(Node), () => {
             expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);
         });
     });
+
+    describe(nameof<Node>(n => n.getParentIfKind), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
+        const child = firstChild.getInstanceProperty("prop")!;
+
+        it("should get the parent when it's the right kind", () => {
+            expect(child.getParentIfKind(ts.SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+        });
+
+        it("should not get the parent when it's not the right kind", () => {
+            expect(child.getParentIfKind(ts.SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentIfKindOrThrow), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
+        const child = firstChild.getInstanceProperty("prop")!;
+
+        it("should get the parent when it's the right kind", () => {
+            expect(child.getParentIfKindOrThrow(ts.SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+        });
+
+        it("should throw when it's not the right kind", () => {
+            expect(() => child.getParentIfKindOrThrow(ts.SyntaxKind.InterfaceDeclaration)).to.throw();
+        });
+    });
 });

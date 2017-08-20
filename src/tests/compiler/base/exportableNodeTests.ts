@@ -114,7 +114,7 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should remove any existing default export and make the specified class the default export when using a default export statement", () => {
-                doTest("class Identifier {}\nclass Identifier2 {}\nexport default Identifier2;", true, "export default class Identifier {}\nclass Identifier2 {}");
+                doTest("class Identifier {}\nclass Identifier2 {}\nexport default Identifier2;\n", true, "export default class Identifier {}\nclass Identifier2 {}\n");
             });
 
             it("should do nothing if already the default export", () => {
@@ -179,7 +179,7 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should remove it as a default export if one and exported in a separate statement", () => {
-                doTest("class Identifier {}\nexport default Identifier;", true, "export class Identifier {}");
+                doTest("class Identifier {}\nexport default Identifier;\n", true, "export class Identifier {}\n");
             });
         });
 
@@ -190,6 +190,10 @@ describe(nameof(ExportableNode), () => {
 
             it("should remove the export keyword if exported", () => {
                 doTest("export class Identifier {}", false, "class Identifier {}");
+            });
+
+            it("should remove the export keyword if exported and has another modifier", () => {
+                doTest("export abstract class Identifier {}", false, "abstract class Identifier {}");
             });
 
             it("should do nothing if already not exported from a namespace", () => {
@@ -205,7 +209,7 @@ describe(nameof(ExportableNode), () => {
             });
 
             it("should remove it as a default export if one and exported in a separate statement", () => {
-                doTest("class Identifier {}\nexport default Identifier;", false, "class Identifier {}");
+                doTest("class Identifier {}\nexport default Identifier;\n", false, "class Identifier {}\n");
             });
         });
     });

@@ -5,8 +5,6 @@ export * from "./manipulation/getNodeOrNodesToReturn";
 export * from "./manipulation/getEndIndexFromArray";
 export * from "./manipulation/getRangeFromArray";
 export * from "./manipulation/insertion";
-export * from "./manipulation/removeNodes";
-export * from "./manipulation/removeFromBracesOrSourceFile";
 export * from "./manipulation/replaceNodeText";
 export * from "./manipulation/verifyAndGetIndex";
 export * from "./manipulation/removal";

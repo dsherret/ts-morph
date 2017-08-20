@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {GeneratorableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {insertIntoParent, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode} from "./../base";
 
@@ -43,9 +43,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
             if (isSet === value)
                 return this;
 
-            if (asteriskToken != null)
-                removeNodes([asteriskToken], { removePrecedingSpaces: false });
-            else {
+            if (asteriskToken == null) {
                 const info = getAsteriskInsertInfo(this);
                 insertIntoParent({
                     insertPos: info.pos,
@@ -53,6 +51,12 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
                     insertItemsCount: 1,
                     parent: this,
                     newText: "*"
+                });
+            }
+            else {
+                removeChildrenWithFormatting({
+                    children: [asteriskToken],
+                    getSiblingFormatting: () => FormattingKind.Space
                 });
             }
 

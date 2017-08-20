@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
-import {insertIntoParent, removeNodes} from "./../../manipulation";
+import {insertIntoParent, removeChildren} from "./../../manipulation";
 import {ParameterDeclarationStructure} from "./../../structures";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
 import {callBaseFill} from "./../callBaseFill";
@@ -62,7 +62,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
             });
         }
         else
-            removeNodes([this.getDotDotDotToken()!], { removePrecedingSpaces: false });
+            removeChildren({ children: [this.getDotDotDotToken()!] });
 
         return this;
     }

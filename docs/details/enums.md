@@ -100,7 +100,7 @@ Or a string:
 member.setValue("string value");
 ```
 
-### Remove a Member
+### Removing
 
 Call `remove()` on it:
 

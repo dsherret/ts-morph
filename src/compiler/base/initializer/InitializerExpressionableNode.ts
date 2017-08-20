@@ -3,7 +3,7 @@ import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {InitializerExpressionableNodeStructure} from "./../../../structures";
 import {callBaseFill} from "./../../callBaseFill";
-import {insertIntoParent, removeNodes} from "./../../../manipulation";
+import {insertIntoParent, removeChildren} from "./../../../manipulation";
 import {Node, Expression} from "./../../common";
 
 export type InitializerExpressionedExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
@@ -56,7 +56,10 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
             if (previousSibling == null || previousSibling.getKind() !== ts.SyntaxKind.FirstAssignment)
                 throw errors.getNotImplementedForSyntaxKindError(this.getKind());
 
-            removeNodes([previousSibling, initializer]);
+            removeChildren({
+                children: [previousSibling, initializer],
+                removePrecedingSpaces: true
+            });
             return this;
         }
 

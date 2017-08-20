@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {removeInterfaceMember} from "./../../manipulation";
 import {PropertySignatureStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -16,5 +17,12 @@ export class PropertySignature extends PropertySignatureBase<ts.PropertySignatur
         callBaseFill(PropertySignatureBase.prototype, this, structure);
 
         return this;
+    }
+
+    /**
+     * Removes this property signature.
+     */
+    remove() {
+        removeInterfaceMember(this);
     }
 }

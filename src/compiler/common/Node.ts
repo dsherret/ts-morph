@@ -480,6 +480,24 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the parent if it's a certain syntax kind.
+     */
+    getParentIfKind(kind: ts.SyntaxKind) {
+        const parentNode = this.getParent();
+        return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind of throws.
+     */
+    getParentIfKindOrThrow(kind: ts.SyntaxKind) {
+        const parentNode = this.getParentIfKind(kind);
+        if (parentNode == null)
+            throw new errors.InvalidOperationError(`A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return parentNode;
+    }
+
+    /**
      * Gets the first parent by syntax kind or throws if not found.
      * @param kind - Syntax kind.
      */
@@ -587,7 +605,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     getParentSyntaxListOrThrow() {
         const parentSyntaxList = this.getParentSyntaxList();
         if (parentSyntaxList == null)
-            throw new errors.InvalidOperationError("The parent must be a SyntaxList in order to get the required parent syntax list.");
+            throw new errors.InvalidOperationError("Expected the parent to be a syntax list.");
         return parentSyntaxList;
     }
 
@@ -761,11 +779,31 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         const startPos = this.getStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
-            const currentChar = sourceFileText.substr(i, 1);
+            const currentChar = sourceFileText[i];
             if (currentChar === "\n")
                 return i + 1;
         }
 
         return 0;
+    }
+
+    /**
+     * Gets if this is the first node on the current line.
+     */
+    isFirstNodeOnLine() {
+        const sourceFileText = this.sourceFile.getFullText();
+        const startPos = this.getStart();
+
+        for (let i = startPos - 1; i >= 0; i--) {
+            const currentChar = sourceFileText[i];
+            if (currentChar === " " || currentChar === "\t")
+                continue;
+            if (currentChar === "\n")
+                return true;
+
+            return false;
+        }
+
+        return false;
     }
 }

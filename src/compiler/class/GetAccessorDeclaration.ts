@@ -14,9 +14,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      * Gets the corresponding set accessor if one exists.
      */
     getSetAccessor(): SetAccessorDeclaration | undefined {
-        const parent = this.getParentOrThrow() as ClassDeclaration;
-        errors.throwIfNotSyntaxKind(parent, ts.SyntaxKind.ClassDeclaration, "Expected the parent to be a class declaration");
-
+        const parent = this.getParentIfKindOrThrow(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration;
         const thisName = this.getName();
         for (const prop of parent.getInstanceProperties()) {
             if (prop.getName() === thisName && prop.getKind() === ts.SyntaxKind.SetAccessor)
@@ -30,6 +28,6 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      * Removes the get accessor.
      */
     remove() {
-        removeClassMember(this.getParentOrThrow() as ClassDeclaration, this);
+        removeClassMember(this);
     }
 }

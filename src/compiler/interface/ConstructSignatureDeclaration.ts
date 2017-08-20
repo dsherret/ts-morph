@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {ConstructSignatureDeclarationStructure} from "./../../structures";
+import {removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {DocumentationableNode} from "./../base";
@@ -15,5 +16,12 @@ export class ConstructSignatureDeclaration extends ConstructSignatureDeclaration
         callBaseFill(ConstructSignatureDeclarationBase.prototype, this, structure);
 
         return this;
+    }
+
+    /**
+     * Removes this construct signature.
+     */
+    remove() {
+        removeInterfaceMember(this);
     }
 }

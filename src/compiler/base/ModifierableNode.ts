@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, removeNodes} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
 import {Node} from "./../common";
 
 export type ModiferableNodeExtensionType = Node;
@@ -40,6 +40,13 @@ export interface ModifierableNode {
      * @internal
      */
     addModifier(text: ModifierTexts): Node<ts.Modifier>;
+    /**
+     * Removes a modifier based on the specified text.
+     * @param text - Modifier text to remove.
+     * @returns If the modifier was removed
+     * @internal
+     */
+    removeModifier(text: ModifierTexts): boolean;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
@@ -67,16 +74,13 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         toggleModifier(text: ModifierTexts, value?: boolean) {
-            const hasModifier = this.hasModifier(text);
             if (value == null)
-                value = !hasModifier;
-            if (hasModifier === value)
-                return this;
+                value = !this.hasModifier(text);
 
-            if (!hasModifier)
+            if (value)
                 this.addModifier(text);
             else
-                removeNodes([this.getModifiers().find(m => m.getText() === text)]);
+                this.removeModifier(text);
 
             return this;
         }
@@ -127,6 +131,18 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             });
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
+        }
+
+        removeModifier(text: ModifierTexts) {
+            const modifier = this.getModifiers().find(m => m.getText() === text);
+            if (modifier == null)
+                return false;
+
+            removeChildrenWithFormattingFromCollapsibleSyntaxList({
+                children: [modifier],
+                getSiblingFormatting: () => FormattingKind.Space
+            });
+            return true;
         }
     };
 }

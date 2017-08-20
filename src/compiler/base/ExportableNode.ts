@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {removeNodes} from "./../../manipulation";
+import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {ExportableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -115,15 +115,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (this.getParentOrThrow().isSourceFile())
                 this.setIsDefaultExport(false);
 
-            if (value) {
-                if (!this.hasExportKeyword())
-                    this.addModifier("export");
-            }
-            else {
-                const exportKeyword = this.getExportKeyword();
-                if (exportKeyword != null)
-                    removeNodes([exportKeyword]);
-            }
+            this.toggleModifier("export", value);
 
             return this;
         }

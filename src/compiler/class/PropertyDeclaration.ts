@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {PropertyDeclarationStructure} from "./../../structures";
-import {removeClassMember} from "./../../manipulation";
+import {removeClassMember, removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, DocumentationableNode, StaticableNode,
@@ -31,7 +31,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
 
         switch (parent.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
-                removeClassMember(parent as any as ClassDeclaration, this);
+                removeClassMember(this);
                 break;
             default:
                 throw new errors.NotImplementedError(`Not implemented parent syntax kind: ${parent.getKindName()}`);

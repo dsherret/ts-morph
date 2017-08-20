@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {removeNodes} from "./../../manipulation";
+import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
 import {ArrayUtils, FileUtils} from "./../../utils";
@@ -345,11 +345,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         const declaration = defaultExportSymbol.getDeclarations()[0];
         if (declaration.compilerNode.kind === ts.SyntaxKind.ExportAssignment)
-            removeNodes([declaration]);
+            removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
         else if (declaration.isModifierableNode()) {
-            const exportKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
-            const defaultKeyword = declaration.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
-            removeNodes([exportKeyword, defaultKeyword]);
+            declaration.toggleModifier("default", false);
+            declaration.toggleModifier("export", false);
         }
 
         return this;

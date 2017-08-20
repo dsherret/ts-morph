@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {insertIntoParent, removeNodes, replaceNodeText} from "./../../manipulation";
+import {insertIntoParent, replaceNodeText} from "./../../manipulation";
 import {Node, Identifier} from "./../common";
 import {ImportDeclaration} from "./ImportDeclaration";
 

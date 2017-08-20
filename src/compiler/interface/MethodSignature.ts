@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {MethodSignatureStructure} from "./../../structures";
+import {removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, QuestionTokenableNode, DocumentationableNode} from "./../base";
@@ -15,5 +16,12 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
         callBaseFill(MethodSignatureBase.prototype, this, structure);
 
         return this;
+    }
+
+    /**
+     * Removes this method signature.
+     */
+    remove() {
+        removeInterfaceMember(this);
     }
 }

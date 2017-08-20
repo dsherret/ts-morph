@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {ClassDeclaration} from "./../../compiler";
 import {removeOverloadableClassMember} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
@@ -73,6 +72,6 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Remove the constructor.
      */
     remove() {
-        removeOverloadableClassMember(this.getParentOrThrow() as ClassDeclaration, this);
+        removeOverloadableClassMember(this);
     }
 }

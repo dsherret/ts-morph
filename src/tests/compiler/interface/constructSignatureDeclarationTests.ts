@@ -24,4 +24,36 @@ describe(nameof(ConstructSignatureDeclaration), () => {
             doTest("interface Identifier { new(): any; }", { returnType: "string" }, "interface Identifier { new(): string; }");
         });
     });
+
+    describe(nameof<ConstructSignatureDeclaration>(n => n.remove), () => {
+        function doTest(code: string, indexToRemove: number, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
+            firstChild.getConstructSignatures()[indexToRemove].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it's the only member", () => {
+            doTest("interface Identifier {\n    new(): string;\n}", 0, "interface Identifier {\n}");
+        });
+
+        it("should remove when it's the first member", () => {
+            doTest("interface Identifier {\n    new(): string;\n    prop: string;\n    new(): string;\n}", 0,
+                "interface Identifier {\n    prop: string;\n    new(): string;\n}");
+        });
+
+        it("should remove when it's the middle member", () => {
+            doTest("interface Identifier {\n    new(): string;\n    new(): number;\n    new(): Date;\n}", 1,
+                "interface Identifier {\n    new(): string;\n    new(): Date;\n}");
+        });
+
+        it("should remove when it's the last member", () => {
+            doTest("interface Identifier {\n    new(): string;\n    new(): number;\n}", 1,
+                "interface Identifier {\n    new(): string;\n}");
+        });
+
+        it("should only remove the new signature specified", () => {
+            doTest("interface Identifier {\n    new(): string;\n    new(param: number): string;\n    new(t: string): string;\n}", 1,
+                "interface Identifier {\n    new(): string;\n    new(t: string): string;\n}");
+        });
+    });
 });
