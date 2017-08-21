@@ -187,6 +187,15 @@ type.isUnionType();
 
 If you see something that doesn't exist here and should (there's a lot missing), then please log an issue or submit a pull request.
 
+### Removing a Type
+
+You can remove a type or a return type from a node:
+
+```typescript
+propertyDeclaration.removeType();
+functionDeclaration.removeReturnType();
+```
+
 ### TODO
 
 Not implemented. Getting...

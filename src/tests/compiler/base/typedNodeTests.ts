@@ -111,6 +111,11 @@ describe(nameof(TypedNode), () => {
                 firstChild.setType("number");
                 expect(firstChild.getText()).to.equal(`type Identifier = number;`);
             });
+
+            it("should throw an error when providing nothing", () => {
+                const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
+                expect(() => firstChild.setType("")).to.throw();
+            });
         });
 
         describe("variable declaration", () => {
@@ -176,6 +181,11 @@ describe(nameof(TypedNode), () => {
 
         it("should do nothing when not exists", () => {
             doTest(`class Identifier { prop = ""; }`, `class Identifier { prop = ""; }`);
+        });
+
+        it("should throw an error when removing a type alias", () => {
+            const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
+            expect(() => firstChild.removeType()).to.throw();
         });
     });
 });

@@ -8,10 +8,14 @@
 
 TypeScript compiler wrapper. Provides a simple way to navigate and manipulate the TypeScript AST.
 
-## Library Development - Progress Update (03 July 2017)
+## Library Development - Progress Update (20 August 2017)
 
 * Most AST navigation is implemented, but still some missing. This library can be used to help you easily navigate the TypeScript compiler's AST.
 * Code manipulation/generation is making steady progress and is somewhat useable at this point. There's still lots to do.
+
+High priority:
+
+* [#47 - Removing nodes](https://github.com/dsherret/ts-simple-ast/issues/47) - Nodes that can be removed are documented.
 
 ## Documentation
 

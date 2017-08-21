@@ -23,6 +23,14 @@ const parameter = functionDeclaration.insertParameter(1, {
 });
 ```
 
+### Removing
+
+You can remove a parameter by calling `.remove()` on it:
+
+```typescript
+parameter.remove();
+```
+
 ### Rest parameter
 
 You can tell if a parameter is a rest parameter:

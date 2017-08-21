@@ -98,6 +98,9 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         removeType() {
+            if (this.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
+                throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof<TypedNode>(t => t.setType)} instead.`);
+
             const typeNode = this.getTypeNode();
             if (typeNode == null)
                 return this;
