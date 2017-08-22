@@ -250,7 +250,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     getPreviousSibling() {
         let previousSibling: Node | undefined;
 
-        for (const sibling of this.getSiblingsBefore()) {
+        for (const sibling of this.getPreviousSiblings()) {
             previousSibling = sibling;
         }
 
@@ -258,11 +258,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     getNextSibling() {
-        const nextResult = this.getSiblingsAfter().next();
+        const nextResult = this.getNextSiblings().next();
         return nextResult.done ? undefined : nextResult.value;
     }
 
-    *getSiblingsBefore() {
+    *getPreviousSiblings() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
 
         for (const child of parent.getChildrenIterator()) {
@@ -273,7 +273,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
     }
 
-    *getSiblingsAfter() {
+    *getNextSiblings() {
         // todo: optimize
         let foundChild = false;
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();

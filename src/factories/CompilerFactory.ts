@@ -119,9 +119,12 @@ export class CompilerFactory {
      * @param node - Node to get the wrapped object from.
      */
     getNodeFromCompilerNode(compilerNode: ts.Node, sourceFile: compiler.SourceFile): compiler.Node {
+        // todo: investigate if it would be worth it to change this to use a map
         switch (compilerNode.kind) {
             case ts.SyntaxKind.SourceFile:
                 return this.getSourceFile(compilerNode as ts.SourceFile);
+            case ts.SyntaxKind.CallExpression:
+                return this.getCallExpression(compilerNode as ts.CallExpression, sourceFile);
             case ts.SyntaxKind.ClassDeclaration:
                 return this.getClassDeclaration(compilerNode as ts.ClassDeclaration, sourceFile);
             case ts.SyntaxKind.Constructor:
@@ -185,6 +188,15 @@ export class CompilerFactory {
             default:
                 return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new compiler.Node(this.global, compilerNode, sourceFile));
         }
+    }
+
+    /**
+     * Gets a wrapped call expression from a compiler object.
+     * @param node - Call expression compiler object.
+     * @param sourceFile - Source file for the node.
+     */
+    getCallExpression(node: ts.CallExpression, sourceFile: compiler.SourceFile): compiler.CallExpression {
+        return this.nodeCache.getOrCreate<compiler.CallExpression>(node, () => new compiler.CallExpression(this.global, node, sourceFile));
     }
 
     /**

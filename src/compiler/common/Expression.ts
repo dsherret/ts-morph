@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
-import {Node} from "./Node";
+import {removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {Type} from "./../type";
+import {Node} from "./Node";
 
 export class Expression extends Node<ts.Expression> {
     /**
@@ -8,5 +9,18 @@ export class Expression extends Node<ts.Expression> {
      */
     getContextualType(): Type | undefined {
         return this.global.typeChecker.getContextualType(this);
+    }
+
+    /**
+     * Removes the expression.
+     */
+    remove() {
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const isCommaSeparatedChild = parent.getPreviousSiblingIfKind(ts.SyntaxKind.OpenParenToken) != null;
+
+        if (isCommaSeparatedChild)
+            removeCommaSeparatedChild(this);
+        else
+            removeChildren({ children: [this] });
     }
 }

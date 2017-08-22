@@ -39,20 +39,26 @@ decorator.isDecoratorFactory(); // returns: boolean
 
 ### Arguments
 
-Decorators with parenthesis are call expressions.
-
-Call expressions are currently not implemented in this library, so you will
-need to access the information about it by getting the call expression's underlying compiler node:
+Get the decorator's arguments by calling `.getArguments()`:
 
 ```typescript
-// must be a decorator factory, otherwise getCallExpression will return undefined
-if (!decorators.isDecoratorFactory())
-    return;
+const args = decorator.getArguments(); // returns: Expression[]
+```
 
-const callExpression = decorator.getCallExpression()!.compilerNode;
-for (const arg of callExpression.arguments) {
-    // use arg here
-}
+### Type arguments
+
+Get the decorator's type arguments by calling `.getTypeArguments()`:
+
+```typescript
+const typeArgs = decorator.getTypeArguments(); // returns: TypeNode[]
+```
+
+### Call expression
+
+Decorator factories are call expressions. You can get the call expression by calling:
+
+```typescript
+const callExpression = decorator.getCallExpression(); // returns: CallExpression | undefined
 ```
 
 ### Add/Insert decorators
@@ -66,4 +72,12 @@ classDeclaration.addDecorator({
     name: "MyDecorator",
     arguments: ["3", `"some string"`]
 });
+```
+
+### Remove decorators
+
+Call `.remove()` on them:
+
+```typescript
+decorator.remove();
 ```

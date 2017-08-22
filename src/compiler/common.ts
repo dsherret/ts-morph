@@ -1,4 +1,5 @@
-﻿export * from "./common/Declaration";
+﻿export * from "./common/NamedDeclaration";
+export * from "./common/CallExpression";
 export * from "./common/Expression";
 export * from "./common/Identifier";
 export * from "./common/Node";

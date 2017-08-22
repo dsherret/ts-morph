@@ -1,6 +1,7 @@
 ﻿export * from "./base/name";
 export * from "./base/initializer";
 export * from "./base/AmbientableNode";
+export * from "./base/ArgumentedNode";
 export * from "./base/AsyncableNode";
 export * from "./base/BodyableNode";
 export * from "./base/BodiedNode";
@@ -19,5 +20,6 @@ export * from "./base/ReturnTypedNode";
 export * from "./base/ScopeableNode";
 export * from "./base/ScopedNode";
 export * from "./base/StaticableNode";
+export * from "./base/TypeArgumentedNode";
 export * from "./base/TypedNode";
 export * from "./base/TypeParameteredNode";
