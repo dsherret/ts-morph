@@ -406,4 +406,43 @@ describe(nameof(SourceFile), () => {
             doTest("", structure, `import "module";\n\nexport * from "export-module";\n`);
         });
     });
+
+    describe(nameof<SourceFile>(n => n.formatText), () => {
+        function doTest(startingCode: string, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startingCode);
+            sourceFile.formatText();
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should format the text when it contains different spacing", () => {
+            doTest("class     MyClass{}", "class MyClass {\n}\n");
+        });
+
+        it("should format the text when it contains multiple semi colons", () => {
+            doTest("var myTest: string;;;;", "var myTest: string;\n;\n;\n;\n");
+        });
+
+        it("should format the text when it contains syntax errors", () => {
+            // wow, it's impressive it does this
+            doTest("function myTest(}{{{{}}) {}", "function myTest({}, {}, {}, {}) { }\n");
+        });
+
+        it("should format the text in the documentation as described", () => {
+            doTest(`var myVariable     :      string |    number;
+function myFunction(param    : MyClass){
+return "";
+}
+`, `var myVariable: string | number;
+function myFunction(param: MyClass) {
+    return "";
+}
+`);
+        });
+
+        it("should dispose of any previous descendants", () => {
+            const {sourceFile, firstChild} = getInfoFromText("function test {}");
+            sourceFile.formatText();
+            expect(() => firstChild.compilerNode).to.throw();
+        });
+    });
 });

@@ -135,3 +135,35 @@ const importDeclaration = sourceFile.addExport({
 ```
 
 Read more about [Export Declarations](exports).
+
+### Formatting Text
+
+Sometimes you might encounter code that looks terrible. For example:
+
+```typescript
+// BadlyFormattedFile.ts
+var myVariable     :      string |    number;
+function myFunction(param    : MyClass){
+return "";
+}
+```
+
+You can automatically format the text of this file by calling format text on it:
+
+```typescript
+sourceFile.formatText();
+```
+
+This will run the source file's text through the TypeScript compiler's printer, which will change the source file to contain the following text:
+
+```typescript
+// BadlyFormattedFile.ts
+var myVariable: string | number;
+function myFunction(param: MyClass) {
+    return "";
+}
+```
+
+<aside class="warning">
+WARNING: If you use this method, all previously navigated descendants in the source file will be disposed because the TypeScript compiler could possibly shift nodes around. This shouldn't be an issue because usually this method will be called first or right before saving.
+</aside>

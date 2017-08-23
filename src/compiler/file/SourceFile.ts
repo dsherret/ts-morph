@@ -4,7 +4,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ArrayUtils, FileUtils} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
@@ -359,5 +359,21 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     emit(options?: { emitOnlyDtsFiles?: boolean; }): EmitResult {
         return this.global.program.emit({ targetSourceFile: this, ...options });
+    }
+
+    /**
+     * Formats the source file text using the internal typescript printer.
+     *
+     * WARNING: This will dispose any previously navigated child nodes.
+     */
+    formatText(opts: { removeComments?: boolean } = {}) {
+        const printer = ts.createPrinter({
+            newLine: newLineKindToTs(this.global.manipulationSettings.getNewLineKind()),
+            removeComments: opts.removeComments || false
+        });
+        const newText = printer.printFile(this.compilerNode);
+        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(newText, this.getFilePath());
+        this.getChildren().forEach(d => d.dispose()); // this will dispose all the descendants
+        this.replaceCompilerNode(replacementSourceFile.compilerNode);
     }
 }

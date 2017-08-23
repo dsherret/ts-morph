@@ -88,6 +88,10 @@ export function replaceTree(opts: ReplaceTreeOptions) {
                 handleNode(currentNodeChild, newNodeChild);
         }
 
+        /* istanbul ignore if */
+        if (!newNodeChildren.next().done)
+            throw new Error("Error replacing tree: Should not have new children left over."); // todo: better error message
+
         compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }
 
