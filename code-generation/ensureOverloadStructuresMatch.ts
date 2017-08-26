@@ -40,6 +40,8 @@ function isAllowedStructure(vm: InterfaceViewModel) {
     switch (vm.name) {
         case "NamedStructure":
         case "FunctionLikeDeclarationStructure":
+        case "BodiedNodeStructure":
+        case "BodyableNodeStructure":
         case "StatementedNodeStructure":
             return false;
     }

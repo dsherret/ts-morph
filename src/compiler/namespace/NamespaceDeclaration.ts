@@ -9,7 +9,7 @@ import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, Documentat
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
-export const NamespaceDeclarationBase = NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(BodiedNode(NamedNode(Node))))))));
+export const NamespaceDeclarationBase = BodiedNode(NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Fills the node from a structure.

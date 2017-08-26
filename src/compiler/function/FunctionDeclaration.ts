@@ -10,8 +10,8 @@ import {callBaseFill} from "./../callBaseFill";
 import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
 import {OverloadableNode, insertOverloads} from "./OverloadableNode";
 
-export const FunctionDeclarationBase = OverloadableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
-    NamespaceChildableNode(ExportableNode(ModifierableNode(BodyableNode(NamedNode(Node)))))
+export const FunctionDeclarationBase = OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
+    NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))
 ))))));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**

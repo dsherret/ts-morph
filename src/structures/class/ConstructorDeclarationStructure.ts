@@ -1,7 +1,9 @@
-﻿import {ScopedNodeStructure, DocumentationableNodeStructure} from "./../base";
+﻿import {ScopedNodeStructure, DocumentationableNodeStructure, BodyableNodeStructure} from "./../base";
 import {FunctionLikeDeclarationStructure, SignaturedDeclarationStructure} from "./../function";
 
-export interface ConstructorDeclarationStructure extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure {
+export interface ConstructorDeclarationStructure
+    extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
+{
 }
 
 export interface ConstructorDeclarationSpecificStructure {

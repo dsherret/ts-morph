@@ -1,10 +1,10 @@
 ﻿import {NamedStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure,
-    AsyncableNodeStructure, GeneratorableNodeStructure, DocumentationableNodeStructure} from "./../base";
+    AsyncableNodeStructure, GeneratorableNodeStructure, DocumentationableNodeStructure, BodyableNodeStructure} from "./../base";
 import {FunctionLikeDeclarationStructure, SignaturedDeclarationStructure} from "./../function";
 
 export interface MethodDeclarationStructure
     extends MethodDeclarationSpecificStructure, NamedStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure,
-        ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure
+        ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure
 {
 }
 

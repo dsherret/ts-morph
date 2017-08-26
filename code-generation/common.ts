@@ -1,5 +1,4 @@
 ﻿export * from "./common/getClassViewModels";
-export * from "./common/getFillOnlyFunctionViewModels";
 export * from "./common/getMixinViewModels";
 export * from "./common/getMixinsOfMixins";
 export * from "./common/getStructureViewModels";

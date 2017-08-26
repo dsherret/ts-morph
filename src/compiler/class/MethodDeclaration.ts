@@ -9,8 +9,8 @@ import {PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, Sco
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
 import {AbstractableNode} from "./base";
 
-export const MethodDeclarationBase = OverloadableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(AsyncableNode(GeneratorableNode(
-    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node)))
+export const MethodDeclarationBase = OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(AsyncableNode(GeneratorableNode(
+    FunctionLikeDeclaration(PropertyNamedNode(Node)))
 )))))));
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**

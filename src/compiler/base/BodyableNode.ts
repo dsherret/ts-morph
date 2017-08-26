@@ -1,13 +1,17 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
+import {BodyableNodeStructure} from "./../../structures";
 import {Node} from "./../common";
+import {callBaseFill} from "./../callBaseFill";
+import {setBodyTextForNode} from "./BodiedNode";
 
 export type BodyableNodeExtensionType = Node<ts.Node>;
 
 export interface BodyableNode {
     /**
      * Gets if this is a bodyable node.
+     * @internal
      */
     isBodyableNode(): this is BodyableNode;
     /**
@@ -18,6 +22,10 @@ export interface BodyableNode {
      * Gets the body if it exists.
      */
     getBody(): Node | undefined;
+    /**
+     * Sets the body text. A body is required to do this operation.
+     */
+    setBodyText(text: string): this;
 }
 
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
@@ -36,6 +44,21 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         getBody() {
             const body = (this.compilerNode as any).body as ts.Node;
             return body == null ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(body, this.sourceFile);
+        }
+
+        setBodyText(text: string) {
+            const body = this.getBodyOrThrow();
+            setBodyTextForNode(body, text);
+            return this;
+        }
+
+        fill(structure: Partial<BodyableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.bodyText != null)
+                this.setBodyText(structure.bodyText);
+
+            return this;
         }
     };
 }

@@ -46,3 +46,11 @@ From the overloads, you can get the implementation by calling:
 ```typescript
 const implementation = overload.getImplementation();
 ```
+
+### Set body text
+
+The body text can be set via the `.setBodyText()` method:
+
+```typescript
+functionDeclaration.setBodyText("const myNumber = 5;");
+```

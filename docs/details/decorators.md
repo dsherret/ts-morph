@@ -53,6 +53,12 @@ Get the decorator's type arguments by calling `.getTypeArguments()`:
 const typeArgs = decorator.getTypeArguments(); // returns: TypeNode[]
 ```
 
+And remove them by calling `.remove()` on the individual type argument:
+
+```typescript
+typeArgs[0].remove();
+```
+
 ### Call expression
 
 Decorator factories are call expressions. You can get the call expression by calling:

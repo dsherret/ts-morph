@@ -133,6 +133,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the first child if it matches the specified syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildIfKindOrThrow(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChildIfKind(kind);
+        if (firstChild == null)
+            throw new errors.InvalidOperationError(`A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return firstChild;
+    }
+
+    /**
      * Gets the first child if it matches the specified syntax kind.
      * @param kind - Syntax kind.
      */
@@ -170,6 +181,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     getLastChildByKind(kind: ts.SyntaxKind) {
         return this.getLastChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the last child if it matches the specified syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getLastChildIfKindOrThrow(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChildIfKind(kind);
+        if (lastChild == null)
+            throw new errors.InvalidOperationError(`A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return lastChild;
     }
 
     /**
