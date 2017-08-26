@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
-import {NamedNode} from "./../base";
+import {removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
+import {NamedNode, TypeParameteredNode} from "./../base";
 import {Node} from "./../common";
 import {TypeNode} from "./TypeNode";
 
@@ -10,5 +11,28 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getConstraintNode(): TypeNode | undefined {
         return this.compilerNode.constraint == null ? undefined : this.global.compilerFactory.getTypeNode(this.compilerNode.constraint, this.sourceFile);
+    }
+
+    /**
+     * Removes this type parameter.
+     */
+    remove() {
+        const parentSyntaxList = this.getParentSyntaxListOrThrow();
+        const typeParameters = parentSyntaxList.getChildrenOfKind(ts.SyntaxKind.TypeParameter);
+
+        if (typeParameters.length === 1)
+            removeAllTypeParameters();
+        else
+            removeCommaSeparatedChild(this);
+
+        function removeAllTypeParameters() {
+            const children = [
+                parentSyntaxList.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.FirstBinaryOperator),
+                parentSyntaxList,
+                parentSyntaxList.getNextSiblingIfKindOrThrow(ts.SyntaxKind.GreaterThanToken)
+            ];
+
+            removeChildren({ children });
+        }
     }
 }
