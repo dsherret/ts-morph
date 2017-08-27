@@ -23,7 +23,21 @@ sourceFile.removeText([sourceFile.getPos(), sourceFile.getEnd()]);
 
 These methods are also available on any node that has a body (functions, classes, enums, etc.)
 
-<aside class="warning">
-**WARNING:** If you use these methods, all previously navigated descendants of the node will be disposed and not be available for use (an exception will be thrown
+
+#### **Warning**
+
+If you use these methods, all previously navigated descendants of the node will be disposed and not be available for use (an exception will be thrown
 if you try to use them). You will have to renavigate to those nodes.
-</aside>
+
+For example:
+
+```typescript
+let classDeclaration = sourceFile.addClass({ name: "MyClass" });
+sourceFile.insertText(0, "// some comment\n");
+
+// this will throw...
+classDeclaration.getInstanceProperties();
+
+// you'll need to get the reference again:
+classDeclaration = sourceFile.getClass("MyClass")!;
+```
