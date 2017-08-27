@@ -14,7 +14,7 @@ import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
-export const SourceFileBase: Constructor<StatementedNode & TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
+export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;

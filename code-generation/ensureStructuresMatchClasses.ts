@@ -26,7 +26,7 @@ for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.
         const mixin = vm.mixins.find(m => m.name === declarationName);
 
         if (mixin == null)
-            problems.push(`${structureVM.name} has ${structureExtend}, but it shouldn't.`);
+            problems.push(`${structureVM.name} has ${structureExtend.name}, but it shouldn't.`);
     }
 }
 

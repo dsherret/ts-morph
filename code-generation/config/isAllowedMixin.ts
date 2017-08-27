@@ -10,6 +10,7 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "HeritageClauseableNode":
         case "NamespaceChildableNode":
         case "OverloadableNode":
+        case "TextInsertableNode":
             return false;
         default:
             return true;
