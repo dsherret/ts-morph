@@ -2,13 +2,15 @@
 import * as errors from "./../../errors";
 import {removeClassMember} from "./../../manipulation";
 import {Node} from "./../common";
-import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode} from "./../base";
+import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode, TextInsertableNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
 import {AbstractableNode} from "./base";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {ClassDeclaration} from "./ClassDeclaration";
 
-export const SetAccessorDeclarationBase = DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(FunctionLikeDeclaration(BodiedNode(PropertyNamedNode(Node)))))));
+export const SetAccessorDeclarationBase = TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
+    BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
+))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
      * Gets the corresponding get accessor if one exists.

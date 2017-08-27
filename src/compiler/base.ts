@@ -20,6 +20,7 @@ export * from "./base/ReturnTypedNode";
 export * from "./base/ScopeableNode";
 export * from "./base/ScopedNode";
 export * from "./base/StaticableNode";
+export * from "./base/TextInsertableNode";
 export * from "./base/TypeArgumentedNode";
 export * from "./base/TypedNode";
 export * from "./base/TypeParameteredNode";

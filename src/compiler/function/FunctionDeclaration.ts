@@ -3,16 +3,16 @@ import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
 import {verifyAndGetIndex} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
-import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode} from "./../base";
+import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode, TextInsertableNode} from "./../base";
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./../namespace";
 import {callBaseFill} from "./../callBaseFill";
 import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
 import {OverloadableNode, insertOverloads} from "./OverloadableNode";
 
-export const FunctionDeclarationBase = OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(AmbientableNode(
-    NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))
-))))));
+export const FunctionDeclarationBase = TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(StatementedNode(
+    AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))
+)))))));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
      * Fills the node from a structure.

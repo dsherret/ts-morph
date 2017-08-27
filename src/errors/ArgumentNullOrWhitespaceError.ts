@@ -1,7 +1,7 @@
-﻿import {BaseError} from "./BaseError";
+﻿import {ArgumentError} from "./ArgumentError";
 
-export class ArgumentNullOrWhitespaceError extends BaseError {
+export class ArgumentNullOrWhitespaceError extends ArgumentError {
     constructor(public readonly argName: string) {
-        super(`Argument '${argName}' was null or whitespace.`);
+        super(argName, "Was null or whitespace.");
     }
 }

@@ -6,7 +6,8 @@ import {getInfoFromText} from "./../compiler/testHelpers";
 describe("helpers", () => {
     describe(nameof(errors.throwIfNotType), () => {
         it("should throw when not the same type", () => {
-            expect(() => errors.throwIfNotType(4, "string", "argName")).to.throw(errors.ArgumentTypeError, "Argument 'argName' expects type 'string', but was 'number'.");
+            expect(() => errors.throwIfNotType(4, "string", "argName")).to.throw(errors.ArgumentTypeError,
+                "Argument Error (argName): Expected type 'string', but was 'number'.");
         });
 
         it("should not throw when the same type", () => {
@@ -16,15 +17,18 @@ describe("helpers", () => {
 
     describe(nameof(errors.throwIfNotStringOrWhitespace), () => {
         it("should throw when not a string", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(4 as any, "argName")).to.throw(errors.ArgumentTypeError, "Argument 'argName' expects type 'string', but was 'number'.");
+            expect(() => errors.throwIfNotStringOrWhitespace(4 as any, "argName")).to.throw(errors.ArgumentTypeError,
+                "Argument Error (argName): Expected type 'string', but was 'number'.");
         });
 
         it("should throw when null", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(null as any, "argName")).to.throw(errors.ArgumentTypeError, "Argument 'argName' expects type 'string', but was 'object'.");
+            expect(() => errors.throwIfNotStringOrWhitespace(null as any, "argName")).to.throw(errors.ArgumentTypeError,
+                "Argument Error (argName): Expected type 'string', but was 'object'.");
         });
 
         it("should throw when whitespace string", () => {
-            expect(() => errors.throwIfNotStringOrWhitespace(" ", "argName")).to.throw(errors.ArgumentNullOrWhitespaceError, "Argument 'argName' was null or whitespace.");
+            expect(() => errors.throwIfNotStringOrWhitespace(" ", "argName")).to.throw(errors.ArgumentNullOrWhitespaceError,
+                "Argument Error (argName): Was null or whitespace.");
         });
 
         it("should throw when string that's not a whitespace string", () => {
@@ -70,6 +74,20 @@ describe("helpers", () => {
 
         it("should not throw when inside the inclusive upper bound", () => {
             expect(() => errors.throwIfOutOfRange(10, [1, 10], "arg")).to.not.throw();
+        });
+    });
+
+    describe(nameof(errors.throwIfNegative), () => {
+        it("should throw when negative", () => {
+            expect(() => errors.throwIfNegative(-1, "arg")).to.throw();
+        });
+
+        it("should not throw when positive", () => {
+            expect(() => errors.throwIfNegative(1, "arg")).to.not.throw();
+        });
+
+        it("should not throw when 0", () => {
+            expect(() => errors.throwIfNegative(0, "arg")).to.not.throw();
         });
     });
 

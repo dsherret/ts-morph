@@ -1,7 +1,7 @@
-﻿import {BaseError} from "./BaseError";
+﻿import {ArgumentError} from "./ArgumentError";
 
-export class ArgumentTypeError extends BaseError {
+export class ArgumentTypeError extends ArgumentError {
     constructor(public readonly argName: string, public readonly expectedType: string, public readonly actualType: string) {
-        super(`Argument '${argName}' expects type '${expectedType}', but was '${actualType}'.`);
+        super(argName, `Expected type '${expectedType}', but was '${actualType}'.`);
     }
 }

@@ -5,10 +5,10 @@ import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {ScopedNode, BodyableNode} from "./../base";
+import {ScopedNode, BodyableNode, TextInsertableNode} from "./../base";
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
 
-export const ConstructorDeclarationBase = OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))));
+export const ConstructorDeclarationBase = TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node)))));
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
      * Fills the node from a structure.

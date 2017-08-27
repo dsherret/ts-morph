@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../compiler";
+import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
 import {ArgumentOutOfRangeError} from "./ArgumentOutOfRangeError";
@@ -56,4 +57,14 @@ export function throwIfOutOfRange(value: number, range: [number, number], argNam
  */
 export function getNotImplementedForSyntaxKindError(syntaxKind: ts.SyntaxKind) {
     return new NotImplementedError(`Not implemented feature for syntax kind '${ts.SyntaxKind[syntaxKind]}'.`);
+}
+
+/**
+ * Throws an Argument
+ * @param value
+ * @param argName
+ */
+export function throwIfNegative(value: number, argName: string) {
+    if (value < 0)
+        throw new ArgumentError(argName, "Expected a non-negative value.");
 }

@@ -5,7 +5,7 @@ import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
-    ExtendsClauseableNode} from "./../base";
+    ExtendsClauseableNode, TextInsertableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
@@ -13,9 +13,9 @@ import {PropertySignature} from "./PropertySignature";
 
 export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration;
 
-export const InterfaceDeclarationBase = ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(
+export const InterfaceDeclarationBase = TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(DocumentationableNode(AmbientableNode(
     NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))
-)))));
+))))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
      * Fills the node from a structure.

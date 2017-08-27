@@ -3,12 +3,12 @@ import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures"
 import {insertIntoCreatableSyntaxList, verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode} from "./../base";
 import {Node} from "./../common";
 import {NamespaceChildableNode} from "./../namespace";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {EnumMember} from "./EnumMember";
 
-export const EnumDeclarationBase = NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))));
+export const EnumDeclarationBase = TextInsertableNode(NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Fills the node from a structure.

@@ -5,11 +5,13 @@ import {NamespaceDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Logger} from "./../../utils";
 import {Node, Identifier} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode, TextInsertableNode} from "./../base";
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
-export const NamespaceDeclarationBase = BodiedNode(NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))));
+export const NamespaceDeclarationBase = TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(
+    ExportableNode(ModifierableNode(NamedNode(Node)))
+))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
      * Fills the node from a structure.

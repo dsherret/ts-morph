@@ -6,6 +6,7 @@ import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
 import {ArrayUtils, FileUtils, newLineKindToTs} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
+import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
 import {Diagnostic, EmitResult} from "./../tools";
@@ -13,7 +14,7 @@ import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
-export const SourceFileBase: Constructor<StatementedNode> & typeof Node = StatementedNode(Node);
+export const SourceFileBase: Constructor<StatementedNode & TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;
@@ -364,7 +365,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Formats the source file text using the internal typescript printer.
      *
-     * WARNING: This will dispose any previously navigated child nodes.
+     * WARNING: This will dispose any previously navigated descendant nodes.
      */
     formatText(opts: { removeComments?: boolean } = {}) {
         const printer = ts.createPrinter({

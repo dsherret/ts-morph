@@ -70,7 +70,7 @@ export function setBodyTextForNode(body: Node, text: string) {
 
     // ideally this wouldn't replace the existing syntax list
     insertIntoParent({
-        insertPos: childSyntaxList.getPos(),
+        insertPos: openBrace.getEnd(),
         childIndex: childSyntaxList.getChildIndex(),
         insertItemsCount: 1,
         newText,

@@ -18,6 +18,11 @@ $primary-color: #292b2c;
     }
 }
 
+aside.warning {
+    border: 1px dashed #bd4147;
+    padding: 10px;
+}
+
 nav {
     padding-top: 10px;
     line-height: 1.4rem;

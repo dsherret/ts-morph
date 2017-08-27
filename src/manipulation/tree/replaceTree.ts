@@ -66,11 +66,14 @@ export interface ReplaceTreeOptions {
 export function replaceTree(opts: ReplaceTreeOptions) {
     const {replacementSourceFile, parent: changingParent, isFirstChild, childCount} = opts;
     const sourceFile = changingParent.getSourceFile();
-    const changingParentParent = changingParent.getParentSyntaxList() || changingParent.getParentOrThrow();
     const compilerFactory = sourceFile.global.compilerFactory;
     const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
+    const changingParentParent = changingParent.getParentSyntaxList() || changingParent.getParent();
 
-    handleNode(sourceFile, replacementSourceFile);
+    if (changingParent === sourceFile)
+        handleChangingParent(sourceFile, replacementSourceFile);
+    else
+        handleNode(sourceFile, replacementSourceFile);
 
     function handleNode(currentNode: Node, newNode: Node) {
         /* istanbul ignore if */
