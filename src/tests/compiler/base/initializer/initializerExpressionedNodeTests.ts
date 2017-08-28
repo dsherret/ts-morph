@@ -5,31 +5,29 @@ import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(InitializerExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {
-        const {firstChild} = getInfoFromText<EnumDeclaration>(text);
-        return firstChild.getMembers()[0];
-    }
-
-    function getMemberWithInitializer() {
-        return getEnumMemberFromText("enum MyEnum {\n    myMember = 4\n}\n");
-    }
-
-    function getMemberWithoutInitializer() {
-        return getEnumMemberFromText("enum MyEnum {\n    myMember\n}\n");
+        const result = getInfoFromText<EnumDeclaration>(text);
+        return { member: result.firstChild.getMembers()[0], ...result };
     }
 
     describe(nameof<InitializerExpressionableNode>(n => n.hasInitializer), () => {
+        function doTest(code: string, expectedResult: boolean) {
+            const {member} = getEnumMemberFromText(code);
+            expect(member.hasInitializer()).to.equal(expectedResult);
+        }
+
         it("should have an initializer when it does", () => {
-            expect(getMemberWithInitializer().hasInitializer()).to.be.true;
+            doTest("enum MyEnum { myMember = 4 }", true);
         });
 
         it("should not have an initializer when it doesn't", () => {
-            expect(getMemberWithoutInitializer().hasInitializer()).to.be.false;
+            doTest("enum MyEnum { myMember }", false);
         });
     });
 
     describe(nameof<InitializerExpressionableNode>(n => n.getInitializer), () => {
         describe("having initializer", () => {
-            const initializer = getMemberWithInitializer().getInitializer()!;
+            const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
+            const initializer = member.getInitializer()!;
 
             it("should have correct text", () => {
                 expect(initializer.getText()).to.equal("4");
@@ -42,77 +40,67 @@ describe(nameof(InitializerExpressionableNode), () => {
 
         describe("not having initializer", () => {
             it("should be undefined", () => {
-                expect(getMemberWithoutInitializer().getInitializer()).to.be.undefined;
+                const {member} = getEnumMemberFromText("enum MyEnum { myMember }");
+                expect(member.getInitializer()).to.be.undefined;
             });
         });
     });
 
     describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
-        describe("having initializer", () => {
-            const member = getMemberWithInitializer();
-            const sourceFile = member.getSourceFile();
-            it("should remove the initializer", () => {
-                member.removeInitializer();
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember\n}\n");
-            });
+        function doTest(startCode: string, expectedCode: string) {
+            const {member, sourceFile} = getEnumMemberFromText(startCode);
+            member.removeInitializer();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove when it has an initializer", () => {
+            doTest("enum MyEnum { myMember = 5 }", "enum MyEnum { myMember }");
         });
 
-        describe("not having initializer", () => {
-            const member = getMemberWithoutInitializer();
-            const sourceFile = member.getSourceFile();
-            it("should not remove the initializer because there isn't on", () => {
-                member.removeInitializer();
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember\n}\n");
-            });
+        it("should do nothing when it doesn't have an initializer", () => {
+            doTest("enum MyEnum { myMember }", "enum MyEnum { myMember }");
         });
     });
 
     describe(nameof<InitializerExpressionableNode>(n => n.setInitializer), () => {
-        function doThrowTest(initializerText: any) {
-            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
-            expect(() => member.setInitializer(initializerText)).to.throw();
-        }
+        describe("enum member", () => {
+            function doThrowTest(initializerText: any) {
+                const {member} = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
+                expect(() => member.setInitializer(initializerText)).to.throw();
+            }
 
-        describe("having initializer", () => {
-            const member = getMemberWithInitializer();
-            const sourceFile = member.getSourceFile();
-            it("should set the new initializer", () => {
-                member.setInitializer("5");
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5\n}\n");
+            function doEnumMemberTest(startCode: string, initializer: string, expectedCode: string) {
+                const {member, sourceFile} = getEnumMemberFromText(startCode);
+                member.setInitializer(initializer);
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should set the new initializer when it has one already", () => {
+                doEnumMemberTest("enum MyEnum {\n    myMember = 4\n}\n", "5", "enum MyEnum {\n    myMember = 5\n}\n");
             });
-        });
 
-        describe("having initializer with comma", () => {
-            const member = getEnumMemberFromText("enum MyEnum {\n    myMember = 4,\n}\n");
-            const sourceFile = member.getSourceFile();
-            it("should set the new initializer", () => {
-                member.setInitializer("5");
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5,\n}\n");
+            it("should set the new initializer when it has one and there's a comma", () => {
+                doEnumMemberTest("enum MyEnum {\n    myMember = 4,\n}\n", "5", "enum MyEnum {\n    myMember = 5,\n}\n");
             });
-        });
 
-        describe("having initializer and setting to empty string", () => {
-            doThrowTest("");
-        });
+            describe("having initializer and setting to empty string", () => {
+                doThrowTest("");
+            });
 
-        describe("having initializer and setting to whitespace string", () => {
-            doThrowTest("    ");
-        });
+            describe("having initializer and setting to whitespace string", () => {
+                doThrowTest("    ");
+            });
 
-        describe("having initializer and setting to null", () => {
-            doThrowTest(null);
-        });
+            describe("having initializer and setting to null", () => {
+                doThrowTest(null);
+            });
 
-        describe("having initializer and setting to a different type", () => {
-            doThrowTest(1);
-        });
+            describe("having initializer and setting to a different type", () => {
+                doThrowTest(1);
+            });
 
-        describe("not having initializer", () => {
-            const member = getMemberWithoutInitializer();
-            const sourceFile = member.getSourceFile();
-            it("should set the initializer", () => {
-                member.setInitializer("5");
-                expect(sourceFile.getFullText()).to.equal("enum MyEnum {\n    myMember = 5\n}\n");
+            it("should set the initializer when it doens't have one", () => {
+                doEnumMemberTest("enum MyEnum {\n    myMember\n}\n", "5", "enum MyEnum {\n    myMember = 5\n}\n");
             });
         });
 
@@ -130,6 +118,10 @@ describe(nameof(InitializerExpressionableNode), () => {
 
             it("should replace initializer", () => {
                 doClassPropTest("class Identifier { prop = '2'; }", "2", "class Identifier { prop = 2; }");
+            });
+
+            it("should replace initializer that is an object", () => {
+                doClassPropTest("class Identifier { prop = { something: ''; }; }", "{}", "class Identifier { prop = {}; }");
             });
 
             it("should set initializer when there's an inline comment", () => {
