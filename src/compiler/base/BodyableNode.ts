@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {BodyableNodeStructure} from "./../../structures";
 import {Node} from "./../common";
 import {callBaseFill} from "./../callBaseFill";
-import {setBodyTextForNode} from "./BodiedNode";
+import {setBodyTextForNode} from "./helpers/setBodyTextForNode";
 
 export type BodyableNodeExtensionType = Node<ts.Node>;
 
