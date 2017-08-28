@@ -106,6 +106,24 @@ describe(nameof(Decorator), () => {
         });
     });
 
+    describe(nameof<Decorator>(n => n.removeTypeArgument), () => {
+        function doRemoveTypeArgTest(code: string, argIndexToRemove: number, expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            firstChild.getDecorators()[0].removeTypeArgument(argIndexToRemove);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should throw when not a call expression", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("@decorator\nclass MyClass {}");
+            expect(() => firstChild.getDecorators()[0].getCallExpression()!.removeTypeArgument(0)).to.throw();
+        });
+
+        it("should remove when the only type argument", () => {
+            doRemoveTypeArgTest("@decorator<MyClass>(arg1, arg2)\nclass MyClass {}", 0,
+                "@decorator(arg1, arg2)\nclass MyClass {}");
+        });
+    });
+
     describe(nameof<Decorator>(d => d.remove), () => {
         describe("class decorators", () => {
             function doTest(code: string, index: number, expectedText: string) {

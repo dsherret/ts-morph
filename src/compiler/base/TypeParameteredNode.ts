@@ -44,7 +44,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
     return class extends Base implements TypeParameteredNode {
         getTypeParameters() {
             const typeParameters = (this.compilerNode.typeParameters || []) as ts.TypeParameterDeclaration[]; // why do I need this assert?
-            return typeParameters.map(t => this.global.compilerFactory.getTypeParameterDeclaration(t, this.sourceFile));
+            return typeParameters.map(t => this.global.compilerFactory.getNodeFromCompilerNode(t, this.sourceFile) as TypeParameterDeclaration);
         }
 
         addTypeParameter(structure: TypeParameterDeclarationStructure) {

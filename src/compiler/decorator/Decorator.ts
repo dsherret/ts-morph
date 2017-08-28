@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
 import {Node, CallExpression, Expression} from "./../common";
 import {TypeNode} from "./../type";
@@ -52,7 +53,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.global.compilerFactory.getCallExpression(this.compilerNode.expression as ts.CallExpression, this.sourceFile) as CallExpression;
+        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression as ts.CallExpression, this.sourceFile) as CallExpression;
     }
 
     /**
@@ -69,6 +70,24 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     getTypeArguments(): TypeNode[] {
         const callExpression = this.getCallExpression();
         return callExpression == null ? [] : callExpression.getTypeArguments();
+    }
+
+    /**
+     * Removes a type argument.
+     * @param typeArg - Type argument to remove.
+     */
+    removeTypeArgument(typeArg: Node): void;
+    /**
+     * Removes a type argument.
+     * @param index - Index to remove.
+     */
+    removeTypeArgument(index: number): void;
+    removeTypeArgument(typeArgOrIndex: Node | number) {
+        const callExpression = this.getCallExpression();
+        if (callExpression == null)
+            throw new errors.InvalidOperationError("Cannot remove a type argument from a decorator that has no type arguments.");
+
+        callExpression.removeTypeArgument(typeArgOrIndex);
     }
 
     /**

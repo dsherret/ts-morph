@@ -123,6 +123,8 @@ export class CompilerFactory {
         switch (compilerNode.kind) {
             case ts.SyntaxKind.SourceFile:
                 return this.getSourceFile(compilerNode as ts.SourceFile);
+            case ts.SyntaxKind.ArrayLiteralExpression:
+                return this.getArrayLiteralExpression(compilerNode as ts.ArrayLiteralExpression, sourceFile);
             case ts.SyntaxKind.CallExpression:
                 return this.getCallExpression(compilerNode as ts.CallExpression, sourceFile);
             case ts.SyntaxKind.ClassDeclaration:
@@ -191,242 +193,6 @@ export class CompilerFactory {
     }
 
     /**
-     * Gets a wrapped call expression from a compiler object.
-     * @param node - Call expression compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getCallExpression(node: ts.CallExpression, sourceFile: compiler.SourceFile): compiler.CallExpression {
-        return this.nodeCache.getOrCreate<compiler.CallExpression>(node, () => new compiler.CallExpression(this.global, node, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped class declaration from a compiler object.
-     * @param classDeclaration - Class declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getClassDeclaration(classDeclaration: ts.ClassDeclaration, sourceFile: compiler.SourceFile): compiler.ClassDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ClassDeclaration>(classDeclaration, () => new compiler.ClassDeclaration(this.global, classDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped class constructor declaration from a compiler object.
-     * @param constructorDeclaration - Constructor declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration,
-            () => new compiler.ConstructorDeclaration(this.global, constructorDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped construct signature declaration from a compiler object.
-     * @param constructSignature - Construct signature compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getConstructSignatureDeclaration(constructSignature: ts.ConstructSignatureDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructSignatureDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ConstructSignatureDeclaration>(constructSignature,
-            () => new compiler.ConstructSignatureDeclaration(this.global, constructSignature, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped decorator from a compiler object.
-     * @param decorator - Decorator compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getDecorator(decorator: ts.Decorator, sourceFile: compiler.SourceFile): compiler.Decorator {
-        return this.nodeCache.getOrCreate<compiler.Decorator>(decorator, () => new compiler.Decorator(this.global, decorator, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped enum declaration from a compiler object.
-     * @param enumDeclaration - Enum declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getEnumDeclaration(enumDeclaration: ts.EnumDeclaration, sourceFile: compiler.SourceFile): compiler.EnumDeclaration {
-        return this.nodeCache.getOrCreate<compiler.EnumDeclaration>(enumDeclaration, () => new compiler.EnumDeclaration(this.global, enumDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped enum member declaration from a compiler object.
-     * @param enumMemberDeclaration - Enum member declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getEnumMember(enumMemberDeclaration: ts.EnumMember, sourceFile: compiler.SourceFile): compiler.EnumMember {
-        return this.nodeCache.getOrCreate<compiler.EnumMember>(enumMemberDeclaration, () => new compiler.EnumMember(this.global, enumMemberDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped export declaration from a compiler object.
-     * @param declaration - Export declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getExportDeclaration(declaration: ts.ExportDeclaration, sourceFile: compiler.SourceFile): compiler.ExportDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ExportDeclaration>(declaration, () => new compiler.ExportDeclaration(this.global, declaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped export specifier from a compiler object.
-     * @param specifier - Export specifier compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getExportSpecifier(specifier: ts.ExportSpecifier, sourceFile: compiler.SourceFile): compiler.ExportSpecifier {
-        return this.nodeCache.getOrCreate<compiler.ExportSpecifier>(specifier, () => new compiler.ExportSpecifier(this.global, specifier, sourceFile));
-    }
-
-    /**
-     * Gets an expression with type arguments from a compiler object.
-     * @param expressionWithTypeArguments - Expression with type arguments compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getExpressionWithTypeArguments(node: ts.ExpressionWithTypeArguments, sourceFile: compiler.SourceFile): compiler.ExpressionWithTypeArguments {
-        return this.nodeCache.getOrCreate<compiler.ExpressionWithTypeArguments>(node, () => new compiler.ExpressionWithTypeArguments(this.global, node, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped function declaration from a compiler object.
-     * @param functionDeclaration - Function declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getFunctionDeclaration(functionDeclaration: ts.FunctionDeclaration, sourceFile: compiler.SourceFile): compiler.FunctionDeclaration {
-        return this.nodeCache.getOrCreate<compiler.FunctionDeclaration>(functionDeclaration, () => new compiler.FunctionDeclaration(this.global, functionDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped get accessor declaration from a compiler object.
-     * @param propertySignature - Get accessor declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getGetAccessorDeclaration(getAccessor: ts.GetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.GetAccessorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this.global, getAccessor, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped heritage clause from a compiler object.
-     * @param heritageClause - Heritage clause compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getHeritageClause(heritageClause: ts.HeritageClause, sourceFile: compiler.SourceFile): compiler.HeritageClause {
-        return this.nodeCache.getOrCreate<compiler.HeritageClause>(heritageClause, () => new compiler.HeritageClause(this.global, heritageClause, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped interface declaration from a compiler object.
-     * @param interfaceDeclaration - Interface declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration, sourceFile: compiler.SourceFile): compiler.InterfaceDeclaration {
-        return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this.global, interfaceDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped class method declaration from a compiler object.
-     * @param methodDeclaration - Method declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getMethodDeclaration(methodDeclaration: ts.MethodDeclaration, sourceFile: compiler.SourceFile): compiler.MethodDeclaration {
-        return this.nodeCache.getOrCreate<compiler.MethodDeclaration>(methodDeclaration, () => new compiler.MethodDeclaration(this.global, methodDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped method signature from a compiler object.
-     * @param methodSignature - Method signature compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getMethodSignature(methodSignature: ts.MethodSignature, sourceFile: compiler.SourceFile): compiler.MethodSignature {
-        return this.nodeCache.getOrCreate<compiler.MethodSignature>(methodSignature, () => new compiler.MethodSignature(this.global, methodSignature, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped namespace declaration from a compiler object.
-     * @param namespaceDeclaration - Namespace declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration, sourceFile: compiler.SourceFile): compiler.NamespaceDeclaration {
-        return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this.global, namespaceDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped parameter declaration from a compiler object.
-     * @param parameterDeclaration - Parameter declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getParameterDeclaration(parameterDeclaration: ts.ParameterDeclaration, sourceFile: compiler.SourceFile): compiler.ParameterDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this.global, parameterDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped class property declaration from a compiler object.
-     * @param propertyDeclaration - Property declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getPropertyDeclaration(propertyDeclaration: ts.PropertyDeclaration, sourceFile: compiler.SourceFile): compiler.PropertyDeclaration {
-        return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this.global, propertyDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped property signature from a compiler object.
-     * @param propertySignature - Property signature compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getPropertySignature(propertySignature: ts.PropertySignature, sourceFile: compiler.SourceFile): compiler.PropertySignature {
-        return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this.global, propertySignature, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped set accessor declaration from a compiler object.
-     * @param propertySignature - Get accessor declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getSetAccessorDeclaration(setAccessor: ts.SetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.SetAccessorDeclaration {
-        return this.nodeCache.getOrCreate<compiler.SetAccessorDeclaration>(setAccessor, () => new compiler.SetAccessorDeclaration(this.global, setAccessor, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped type alias declaration from a compiler object.
-     * @param typeAliasDeclaration - TypeAlias declaration compiler object.
-     * @param sourceFile - Source file for the node.
-     */
-    getTypeAliasDeclaration(typeAliasDeclaration: ts.TypeAliasDeclaration, sourceFile: compiler.SourceFile): compiler.TypeAliasDeclaration {
-        return this.nodeCache.getOrCreate<compiler.TypeAliasDeclaration>(typeAliasDeclaration, () => new compiler.TypeAliasDeclaration(this.global, typeAliasDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped variable declaration list from a compiler object.
-     * @param declarationList - Compiler variable declaration list.
-     * @param sourceFile - Source file for the node.
-     */
-    getVariableDeclarationList(declarationList: ts.VariableDeclarationList, sourceFile: compiler.SourceFile): compiler.VariableDeclarationList {
-        return this.nodeCache.getOrCreate<compiler.VariableDeclarationList>(declarationList, () => new compiler.VariableDeclarationList(this.global, declarationList, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped variable statement from a compiler object.
-     * @param variableStatement - Compiler variable statement.
-     * @param sourceFile - Source file for the node.
-     */
-    getVariableStatement(statement: ts.VariableStatement, sourceFile: compiler.SourceFile): compiler.VariableStatement {
-        return this.nodeCache.getOrCreate<compiler.VariableStatement>(statement, () => new compiler.VariableStatement(this.global, statement, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped variable declaration from a compiler object.
-     * @param declaration - Compiler variable declaration.
-     * @param sourceFile - Source file for the node.
-     */
-    getVariableDeclaration(declaration: ts.VariableDeclaration, sourceFile: compiler.SourceFile): compiler.VariableDeclaration {
-        return this.nodeCache.getOrCreate<compiler.VariableDeclaration>(declaration, () => new compiler.VariableDeclaration(this.global, declaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped JS doc declaration from a compiler object.
-     * @param declaration - Compiler JS doc declaration.
-     * @param sourceFile - Source file for the node.
-     */
-    getJSDoc(declaration: ts.JSDoc, sourceFile: compiler.SourceFile): compiler.JSDoc {
-        return this.nodeCache.getOrCreate<compiler.JSDoc>(declaration, () => new compiler.JSDoc(this.global, declaration, sourceFile));
-    }
-
-    /**
      * Gets a wrapped source file from a compiler source file.
      * @param sourceFile - Compiler source file.
      */
@@ -447,61 +213,6 @@ export class CompilerFactory {
 
             return sourceFile;
         });
-    }
-
-    /**
-     * Gets a wrapped identifier from a compiler identifier.
-     * @param identifier - Compiler identifier.
-     * @param sourceFile - Source file for the node.
-     */
-    getIdentifier(identifier: ts.Identifier, sourceFile: compiler.SourceFile): compiler.Identifier {
-        return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this.global, identifier, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped import declaration from a compiler import declaration.
-     * @param importDeclaration - Compiler import declaration.
-     * @param sourceFile - Source file for the node.
-     */
-    getImportDeclaration(importDeclaration: ts.ImportDeclaration, sourceFile: compiler.SourceFile): compiler.ImportDeclaration {
-        return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this.global, importDeclaration, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped import specifier from a compiler import specifier.
-     * @param importSpecifier - Compiler import specifier.
-     * @param sourceFile - Source file for the node.
-     */
-    getImportSpecifier(importSpecifier: ts.ImportSpecifier, sourceFile: compiler.SourceFile): compiler.ImportSpecifier {
-        return this.nodeCache.getOrCreate<compiler.ImportSpecifier>(importSpecifier, () => new compiler.ImportSpecifier(this.global, importSpecifier, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped expression from a compiler expression.
-     * @param expression - Compiler expression.
-     * @param sourceFile - Source file for the node.
-     */
-    getExpression(expression: ts.Expression, sourceFile: compiler.SourceFile): compiler.Expression {
-        return this.nodeCache.getOrCreate<compiler.Expression>(expression, () => new compiler.Expression(this.global, expression, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped type node from a compiler type node.
-     * @param typeNode - Compiler type node.
-     * @param sourceFile - Source file for the node.
-     */
-    getTypeNode(typeNode: ts.TypeNode, sourceFile: compiler.SourceFile): compiler.TypeNode {
-        return this.nodeCache.getOrCreate<compiler.TypeNode>(typeNode, () => new compiler.TypeNode(this.global, typeNode, sourceFile));
-    }
-
-    /**
-     * Gets a wrapped type parameter declaration from a compiler type parameter declaration.
-     * @param typeParameterDeclaration - Compiler type parameter declaration.
-     * @param sourceFile - Source file for the node.
-     */
-    getTypeParameterDeclaration(typeParameterDeclaration: ts.TypeParameterDeclaration, sourceFile: compiler.SourceFile): compiler.TypeParameterDeclaration {
-        return this.nodeCache.getOrCreate<compiler.TypeParameterDeclaration>(typeParameterDeclaration,
-            () => new compiler.TypeParameterDeclaration(this.global, typeParameterDeclaration, sourceFile));
     }
 
     /**
@@ -571,5 +282,140 @@ export class CompilerFactory {
             const sourceFile = compilerNode as ts.SourceFile;
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
         }
+    }
+
+    private getArrayLiteralExpression(node: ts.ArrayLiteralExpression, sourceFile: compiler.SourceFile): compiler.ArrayLiteralExpression {
+        return this.nodeCache.getOrCreate<compiler.ArrayLiteralExpression>(node, () => new compiler.ArrayLiteralExpression(this.global, node, sourceFile));
+    }
+
+    private getCallExpression(node: ts.CallExpression, sourceFile: compiler.SourceFile): compiler.CallExpression {
+        return this.nodeCache.getOrCreate<compiler.CallExpression>(node, () => new compiler.CallExpression(this.global, node, sourceFile));
+    }
+
+    private getClassDeclaration(classDeclaration: ts.ClassDeclaration, sourceFile: compiler.SourceFile): compiler.ClassDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ClassDeclaration>(classDeclaration, () => new compiler.ClassDeclaration(this.global, classDeclaration, sourceFile));
+    }
+
+    private getConstructorDeclaration(constructorDeclaration: ts.ConstructorDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ConstructorDeclaration>(constructorDeclaration,
+            () => new compiler.ConstructorDeclaration(this.global, constructorDeclaration, sourceFile));
+    }
+
+    private getConstructSignatureDeclaration(constructSignature: ts.ConstructSignatureDeclaration, sourceFile: compiler.SourceFile): compiler.ConstructSignatureDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ConstructSignatureDeclaration>(constructSignature,
+            () => new compiler.ConstructSignatureDeclaration(this.global, constructSignature, sourceFile));
+    }
+
+    private getDecorator(decorator: ts.Decorator, sourceFile: compiler.SourceFile): compiler.Decorator {
+        return this.nodeCache.getOrCreate<compiler.Decorator>(decorator, () => new compiler.Decorator(this.global, decorator, sourceFile));
+    }
+
+    private getEnumDeclaration(enumDeclaration: ts.EnumDeclaration, sourceFile: compiler.SourceFile): compiler.EnumDeclaration {
+        return this.nodeCache.getOrCreate<compiler.EnumDeclaration>(enumDeclaration, () => new compiler.EnumDeclaration(this.global, enumDeclaration, sourceFile));
+    }
+
+    private getEnumMember(enumMemberDeclaration: ts.EnumMember, sourceFile: compiler.SourceFile): compiler.EnumMember {
+        return this.nodeCache.getOrCreate<compiler.EnumMember>(enumMemberDeclaration, () => new compiler.EnumMember(this.global, enumMemberDeclaration, sourceFile));
+    }
+
+    private getExportDeclaration(declaration: ts.ExportDeclaration, sourceFile: compiler.SourceFile): compiler.ExportDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ExportDeclaration>(declaration, () => new compiler.ExportDeclaration(this.global, declaration, sourceFile));
+    }
+
+    private getExportSpecifier(specifier: ts.ExportSpecifier, sourceFile: compiler.SourceFile): compiler.ExportSpecifier {
+        return this.nodeCache.getOrCreate<compiler.ExportSpecifier>(specifier, () => new compiler.ExportSpecifier(this.global, specifier, sourceFile));
+    }
+
+    private getExpressionWithTypeArguments(node: ts.ExpressionWithTypeArguments, sourceFile: compiler.SourceFile): compiler.ExpressionWithTypeArguments {
+        return this.nodeCache.getOrCreate<compiler.ExpressionWithTypeArguments>(node, () => new compiler.ExpressionWithTypeArguments(this.global, node, sourceFile));
+    }
+
+    private getFunctionDeclaration(functionDeclaration: ts.FunctionDeclaration, sourceFile: compiler.SourceFile): compiler.FunctionDeclaration {
+        return this.nodeCache.getOrCreate<compiler.FunctionDeclaration>(functionDeclaration, () => new compiler.FunctionDeclaration(this.global, functionDeclaration, sourceFile));
+    }
+
+    private getGetAccessorDeclaration(getAccessor: ts.GetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.GetAccessorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.GetAccessorDeclaration>(getAccessor, () => new compiler.GetAccessorDeclaration(this.global, getAccessor, sourceFile));
+    }
+
+    private getHeritageClause(heritageClause: ts.HeritageClause, sourceFile: compiler.SourceFile): compiler.HeritageClause {
+        return this.nodeCache.getOrCreate<compiler.HeritageClause>(heritageClause, () => new compiler.HeritageClause(this.global, heritageClause, sourceFile));
+    }
+
+    private getInterfaceDeclaration(interfaceDeclaration: ts.InterfaceDeclaration, sourceFile: compiler.SourceFile): compiler.InterfaceDeclaration {
+        return this.nodeCache.getOrCreate<compiler.InterfaceDeclaration>(interfaceDeclaration, () => new compiler.InterfaceDeclaration(this.global, interfaceDeclaration, sourceFile));
+    }
+
+    private getMethodDeclaration(methodDeclaration: ts.MethodDeclaration, sourceFile: compiler.SourceFile): compiler.MethodDeclaration {
+        return this.nodeCache.getOrCreate<compiler.MethodDeclaration>(methodDeclaration, () => new compiler.MethodDeclaration(this.global, methodDeclaration, sourceFile));
+    }
+
+    private getMethodSignature(methodSignature: ts.MethodSignature, sourceFile: compiler.SourceFile): compiler.MethodSignature {
+        return this.nodeCache.getOrCreate<compiler.MethodSignature>(methodSignature, () => new compiler.MethodSignature(this.global, methodSignature, sourceFile));
+    }
+
+    private getNamespaceDeclaration(namespaceDeclaration: ts.NamespaceDeclaration, sourceFile: compiler.SourceFile): compiler.NamespaceDeclaration {
+        return this.nodeCache.getOrCreate<compiler.NamespaceDeclaration>(namespaceDeclaration, () => new compiler.NamespaceDeclaration(this.global, namespaceDeclaration, sourceFile));
+    }
+
+    private getParameterDeclaration(parameterDeclaration: ts.ParameterDeclaration, sourceFile: compiler.SourceFile): compiler.ParameterDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ParameterDeclaration>(parameterDeclaration, () => new compiler.ParameterDeclaration(this.global, parameterDeclaration, sourceFile));
+    }
+
+    private getPropertyDeclaration(propertyDeclaration: ts.PropertyDeclaration, sourceFile: compiler.SourceFile): compiler.PropertyDeclaration {
+        return this.nodeCache.getOrCreate<compiler.PropertyDeclaration>(propertyDeclaration, () => new compiler.PropertyDeclaration(this.global, propertyDeclaration, sourceFile));
+    }
+
+    private getPropertySignature(propertySignature: ts.PropertySignature, sourceFile: compiler.SourceFile): compiler.PropertySignature {
+        return this.nodeCache.getOrCreate<compiler.PropertySignature>(propertySignature, () => new compiler.PropertySignature(this.global, propertySignature, sourceFile));
+    }
+
+    private getSetAccessorDeclaration(setAccessor: ts.SetAccessorDeclaration, sourceFile: compiler.SourceFile): compiler.SetAccessorDeclaration {
+        return this.nodeCache.getOrCreate<compiler.SetAccessorDeclaration>(setAccessor, () => new compiler.SetAccessorDeclaration(this.global, setAccessor, sourceFile));
+    }
+
+    private getTypeAliasDeclaration(typeAliasDeclaration: ts.TypeAliasDeclaration, sourceFile: compiler.SourceFile): compiler.TypeAliasDeclaration {
+        return this.nodeCache.getOrCreate<compiler.TypeAliasDeclaration>(typeAliasDeclaration, () => new compiler.TypeAliasDeclaration(this.global, typeAliasDeclaration, sourceFile));
+    }
+
+    private getVariableDeclarationList(declarationList: ts.VariableDeclarationList, sourceFile: compiler.SourceFile): compiler.VariableDeclarationList {
+        return this.nodeCache.getOrCreate<compiler.VariableDeclarationList>(declarationList, () => new compiler.VariableDeclarationList(this.global, declarationList, sourceFile));
+    }
+
+    private getVariableStatement(statement: ts.VariableStatement, sourceFile: compiler.SourceFile): compiler.VariableStatement {
+        return this.nodeCache.getOrCreate<compiler.VariableStatement>(statement, () => new compiler.VariableStatement(this.global, statement, sourceFile));
+    }
+
+    private getVariableDeclaration(declaration: ts.VariableDeclaration, sourceFile: compiler.SourceFile): compiler.VariableDeclaration {
+        return this.nodeCache.getOrCreate<compiler.VariableDeclaration>(declaration, () => new compiler.VariableDeclaration(this.global, declaration, sourceFile));
+    }
+
+    private getJSDoc(declaration: ts.JSDoc, sourceFile: compiler.SourceFile): compiler.JSDoc {
+        return this.nodeCache.getOrCreate<compiler.JSDoc>(declaration, () => new compiler.JSDoc(this.global, declaration, sourceFile));
+    }
+
+    private getIdentifier(identifier: ts.Identifier, sourceFile: compiler.SourceFile): compiler.Identifier {
+        return this.nodeCache.getOrCreate<compiler.Identifier>(identifier, () => new compiler.Identifier(this.global, identifier, sourceFile));
+    }
+
+    private getImportDeclaration(importDeclaration: ts.ImportDeclaration, sourceFile: compiler.SourceFile): compiler.ImportDeclaration {
+        return this.nodeCache.getOrCreate<compiler.ImportDeclaration>(importDeclaration, () => new compiler.ImportDeclaration(this.global, importDeclaration, sourceFile));
+    }
+
+    private getImportSpecifier(importSpecifier: ts.ImportSpecifier, sourceFile: compiler.SourceFile): compiler.ImportSpecifier {
+        return this.nodeCache.getOrCreate<compiler.ImportSpecifier>(importSpecifier, () => new compiler.ImportSpecifier(this.global, importSpecifier, sourceFile));
+    }
+
+    private getExpression(expression: ts.Expression, sourceFile: compiler.SourceFile): compiler.Expression {
+        return this.nodeCache.getOrCreate<compiler.Expression>(expression, () => new compiler.Expression(this.global, expression, sourceFile));
+    }
+
+    private getTypeNode(typeNode: ts.TypeNode, sourceFile: compiler.SourceFile): compiler.TypeNode {
+        return this.nodeCache.getOrCreate<compiler.TypeNode>(typeNode, () => new compiler.TypeNode(this.global, typeNode, sourceFile));
+    }
+
+    private getTypeParameterDeclaration(typeParameterDeclaration: ts.TypeParameterDeclaration, sourceFile: compiler.SourceFile): compiler.TypeParameterDeclaration {
+        return this.nodeCache.getOrCreate<compiler.TypeParameterDeclaration>(typeParameterDeclaration,
+            () => new compiler.TypeParameterDeclaration(this.global, typeParameterDeclaration, sourceFile));
     }
 }

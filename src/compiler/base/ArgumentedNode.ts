@@ -14,7 +14,7 @@ export interface ArgumentedNode {
 export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType>>(Base: T): Constructor<ArgumentedNode> & T {
     return class extends Base implements ArgumentedNode {
         getArguments() {
-            return this.compilerNode.arguments.map(a => this.global.compilerFactory.getExpression(a, this.sourceFile));
+            return this.compilerNode.arguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile)) as Expression[];
         }
     };
 }

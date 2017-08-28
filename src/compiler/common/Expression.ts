@@ -3,7 +3,7 @@ import {removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {Type} from "./../type";
 import {Node} from "./Node";
 
-export class Expression extends Node<ts.Expression> {
+export class Expression<T extends ts.Expression = ts.Expression> extends Node<T> {
     /**
      * Gets the contextual type of the expression.
      */

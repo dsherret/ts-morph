@@ -53,10 +53,13 @@ Get the decorator's type arguments by calling `.getTypeArguments()`:
 const typeArgs = decorator.getTypeArguments(); // returns: TypeNode[]
 ```
 
-And remove them by calling `.remove()` on the individual type argument:
+And remove them by calling `.removeTypeArgument()`:
 
 ```typescript
-typeArgs[0].remove();
+// specify the index
+decorator.removeTypeArgument(0);
+// or specify the type argument
+decorator.removeTypeArgument(typeArgs[0]);
 ```
 
 ### Call expression

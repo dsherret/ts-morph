@@ -43,7 +43,8 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
         }
 
         getInitializer() {
-            return this.compilerNode.initializer == null ? undefined : this.global.compilerFactory.getExpression(this.compilerNode.initializer, this.sourceFile);
+            return this.compilerNode.initializer == null ? undefined :
+                (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.initializer, this.sourceFile) as Expression);
         }
 
         removeInitializer() {

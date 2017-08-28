@@ -18,6 +18,6 @@ export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeA
         if (typeArguments == null)
             return [];
 
-        return typeArguments.map(a => this.global.compilerFactory.getTypeNode(a, this.sourceFile));
+        return typeArguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile) as TypeNode);
     }
 }

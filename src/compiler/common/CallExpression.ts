@@ -9,6 +9,6 @@ export class CallExpression extends CallExpressionBase<ts.CallExpression> {
      * Gets the call expression's expression.
      */
     getExpression() {
-        return this.global.compilerFactory.getExpression(this.compilerNode.expression, this.sourceFile);
+        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression;
     }
 }

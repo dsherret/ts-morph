@@ -10,7 +10,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      * Gets the constraint node.
      */
     getConstraintNode(): TypeNode | undefined {
-        return this.compilerNode.constraint == null ? undefined : this.global.compilerFactory.getTypeNode(this.compilerNode.constraint, this.sourceFile);
+        return this.compilerNode.constraint == null ? undefined : (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.constraint, this.sourceFile) as TypeNode);
     }
 
     /**

@@ -56,7 +56,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
 
         getDocumentationCommentNodes(): JSDoc[] {
             const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
-            return nodes.map(n => this.global.compilerFactory.getJSDoc(n, this.sourceFile));
+            return nodes.map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile) as JSDoc);
         }
 
         addDoc(structure: JSDocStructure) {

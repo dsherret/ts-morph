@@ -38,7 +38,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         getTypeNode() {
-            return this.compilerNode.type == null ? undefined : this.global.compilerFactory.getTypeNode(this.compilerNode.type, this.sourceFile);
+            return this.compilerNode.type == null ? undefined : (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.type, this.sourceFile) as TypeNode);
         }
 
         setType(text: string) {
