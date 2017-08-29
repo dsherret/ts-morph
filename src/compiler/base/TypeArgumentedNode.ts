@@ -44,10 +44,10 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             const typeArguments = this.getTypeArguments();
             if (typeArguments.length === 0)
                 throw new errors.InvalidOperationError("Cannot remove a type argument when none exist.");
-
             const typeArgToRemove = typeof typeArgOrIndex === "number" ? getTypeArgFromIndex(typeArgOrIndex) : typeArgOrIndex;
-            const childSyntaxList = typeArguments[0].getParentSyntaxListOrThrow();
-            if (typeArguments.length === 1)
+
+            if (typeArguments.length === 1) {
+                const childSyntaxList = typeArguments[0].getParentSyntaxListOrThrow();
                 removeChildren({
                     children: [
                         childSyntaxList.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.FirstBinaryOperator),
@@ -55,6 +55,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                         childSyntaxList.getNextSiblingIfKindOrThrow(ts.SyntaxKind.GreaterThanToken)
                     ]
                 });
+            }
             else
                 removeCommaSeparatedChild(typeArgToRemove);
 
