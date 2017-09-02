@@ -14,8 +14,6 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
     replaceForNode(sourceFile);
     sourceFile.global.resetProgram();
 
-    // todo: in TS2.5.2, can the source file text just be replaced? (faster)
-
     function replaceForNode(node: Node) {
         const currentStart = node.getStart();
         const compilerNode = node.compilerNode;

@@ -4,6 +4,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
+import * as ambientCompiler from "./../../compiler";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
@@ -113,45 +114,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the first child by syntax kind or throws an error if not found.
-     * @param kind - Syntax kind.
-     */
-    getFirstChildByKindOrThrow(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChildByKind(kind);
-        if (firstChild == null)
-            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return firstChild;
-    }
-
-    /**
-     * Gets the first child by syntax kind.
-     * @param kind - Syntax kind.
-     */
-    getFirstChildByKind(kind: ts.SyntaxKind) {
-        return this.getFirstChild(child => child.getKind() === kind);
-    }
-
-    /**
-     * Gets the first child if it matches the specified syntax kind or throws an error if not found.
-     * @param kind - Syntax kind.
-     */
-    getFirstChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChildIfKind(kind);
-        if (firstChild == null)
-            throw new errors.InvalidOperationError(`A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return firstChild;
-    }
-
-    /**
-     * Gets the first child if it matches the specified syntax kind.
-     * @param kind - Syntax kind.
-     */
-    getFirstChildIfKind(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChild();
-        return firstChild != null && firstChild.getKind() === kind ? firstChild : undefined;
-    }
-
-    /**
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
@@ -161,45 +123,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
                 return child;
         }
         return undefined;
-    }
-
-    /**
-     * Gets the last child by syntax kind or throws an error if not found.
-     * @param kind - Syntax kind.
-     */
-    getLastChildByKindOrThrow(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChildByKind(kind);
-        if (lastChild == null)
-            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return lastChild;
-    }
-
-    /**
-     * Gets the last child by syntax kind.
-     * @param kind - Syntax kind.
-     */
-    getLastChildByKind(kind: ts.SyntaxKind) {
-        return this.getLastChild(child => child.getKind() === kind);
-    }
-
-    /**
-     * Gets the last child if it matches the specified syntax kind or throws an error if not found.
-     * @param kind - Syntax kind.
-     */
-    getLastChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChildIfKind(kind);
-        if (lastChild == null)
-            throw new errors.InvalidOperationError(`A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return lastChild;
-    }
-
-    /**
-     * Gets the last child if it matches the specified syntax kind.
-     * @param kind - Syntax kind.
-     */
-    getLastChildIfKind(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChild();
-        return lastChild != null && lastChild.getKind() === kind ? lastChild : undefined;
     }
 
     /**
@@ -226,46 +149,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         for (const child of this.getChildren()) {
             child.offsetPositions(offset);
         }
-    }
-
-    /**
-     * Gets the previous sibiling if it matches the specified kind, or throws.
-     * @param kind - Kind to check.
-     */
-    getPreviousSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        const previousSibling = this.getPreviousSiblingIfKind(kind);
-        if (previousSibling == null)
-            throw new errors.InvalidOperationError(`A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
-        return previousSibling;
-    }
-
-    /**
-     * Gets the next sibiling if it matches the specified kind, or throws.
-     * @param kind - Kind to check.
-     */
-    getNextSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        const nextSibling = this.getNextSiblingIfKind(kind);
-        if (nextSibling == null)
-            throw new errors.InvalidOperationError(`A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
-        return nextSibling;
-    }
-
-    /**
-     * Gets the previous sibling if it matches the specified kind.
-     * @param kind - Kind to check.
-     */
-    getPreviousSiblingIfKind(kind: ts.SyntaxKind) {
-        const previousSibling = this.getPreviousSibling();
-        return previousSibling != null && previousSibling.getKind() === kind ? previousSibling : undefined;
-    }
-
-    /**
-     * Gets the next sibling if it matches the specified kind.
-     * @param kind - Kind to check.
-     */
-    getNextSiblingIfKind(kind: ts.SyntaxKind) {
-        const nextSibling = this.getNextSibling();
-        return nextSibling != null && nextSibling.getKind() === kind ? nextSibling : undefined;
     }
 
     getPreviousSibling() {
@@ -309,6 +192,9 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
     }
 
+    /**
+     * Gets the children of the node.
+     */
     getChildren(): Node[] {
         return this.compilerNode.getChildren().map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile));
     }
@@ -355,14 +241,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
 
         return undefined;
-    }
-
-    /**
-     * Gets the children based on a kind.
-     * @param kind - Syntax kind.
-     */
-    getChildrenOfKind<T extends Node = Node>(kind: ts.SyntaxKind) {
-        return this.getChildren().filter(c => c.getKind() === kind) as T[];
     }
 
     /**
@@ -495,6 +373,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets a compiler node property wrapped in a Node.
+     * @param propertyName - Property name.
+     */
+    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType) {
+        // todo: once filtering keys by type is supported need to (1) make this only show keys that are of type ts.Node and (2) have ability to return an array of nodes.
+        if ((this.compilerNode[propertyName] as any).kind == null)
+            throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} only works with properties that return a node.`);
+        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode[propertyName], this.sourceFile) as Node<NodeType[KeyType]>;
+    }
+
+    /**
      * Goes up the tree yielding all the parents in order.
      */
     *getParents() {
@@ -520,47 +409,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         if (parentNode == null)
             throw new errors.InvalidOperationError("A parent is required to do this operation.");
         return parentNode;
-    }
-
-    /**
-     * Gets the parent if it's a certain syntax kind.
-     */
-    getParentIfKind(kind: ts.SyntaxKind) {
-        const parentNode = this.getParent();
-        return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
-    }
-
-    /**
-     * Gets the parent if it's a certain syntax kind of throws.
-     */
-    getParentIfKindOrThrow(kind: ts.SyntaxKind) {
-        const parentNode = this.getParentIfKind(kind);
-        if (parentNode == null)
-            throw new errors.InvalidOperationError(`A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
-        return parentNode;
-    }
-
-    /**
-     * Gets the first parent by syntax kind or throws if not found.
-     * @param kind - Syntax kind.
-     */
-    getFirstParentByKindOrThrow(kind: ts.SyntaxKind) {
-        const parentNode = this.getFirstParentByKind(kind);
-        if (parentNode == null)
-            throw new errors.InvalidOperationError(`A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
-        return parentNode;
-    }
-
-    /**
-     * Get the first parent by syntax kind.
-     * @param kind - Syntax kind.
-     */
-    getFirstParentByKind(kind: ts.SyntaxKind) {
-        for (const parent of this.getParents()) {
-            if (parent.getKind() === kind)
-                return parent;
-        }
-        return undefined;
     }
 
     /**
@@ -788,5 +636,172 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
 
         return false;
+    }
+
+    /**
+     * Gets the first child by syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildByKindOrThrow(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChildByKind(kind);
+        if (firstChild == null)
+            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return firstChild;
+    }
+
+    /**
+     * Gets the first child by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildByKind(kind: ts.SyntaxKind) {
+        return this.getFirstChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the first child if it matches the specified syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildIfKindOrThrow(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChildIfKind(kind);
+        if (firstChild == null)
+            throw new errors.InvalidOperationError(`A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return firstChild;
+    }
+
+    /**
+     * Gets the first child if it matches the specified syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstChildIfKind(kind: ts.SyntaxKind) {
+        const firstChild = this.getFirstChild();
+        return firstChild != null && firstChild.getKind() === kind ? firstChild : undefined;
+    }
+
+    /**
+     * Gets the last child by syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getLastChildByKindOrThrow(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChildByKind(kind);
+        if (lastChild == null)
+            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return lastChild;
+    }
+
+    /**
+     * Gets the last child by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getLastChildByKind(kind: ts.SyntaxKind) {
+        return this.getLastChild(child => child.getKind() === kind);
+    }
+
+    /**
+     * Gets the last child if it matches the specified syntax kind or throws an error if not found.
+     * @param kind - Syntax kind.
+     */
+    getLastChildIfKindOrThrow(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChildIfKind(kind);
+        if (lastChild == null)
+            throw new errors.InvalidOperationError(`A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+        return lastChild;
+    }
+
+    /**
+     * Gets the last child if it matches the specified syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getLastChildIfKind(kind: ts.SyntaxKind) {
+        const lastChild = this.getLastChild();
+        return lastChild != null && lastChild.getKind() === kind ? lastChild : undefined;
+    }
+
+    /**
+     * Gets the previous sibiling if it matches the specified kind, or throws.
+     * @param kind - Kind to check.
+     */
+    getPreviousSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
+        const previousSibling = this.getPreviousSiblingIfKind(kind);
+        if (previousSibling == null)
+            throw new errors.InvalidOperationError(`A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+        return previousSibling;
+    }
+
+    /**
+     * Gets the next sibiling if it matches the specified kind, or throws.
+     * @param kind - Kind to check.
+     */
+    getNextSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
+        const nextSibling = this.getNextSiblingIfKind(kind);
+        if (nextSibling == null)
+            throw new errors.InvalidOperationError(`A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+        return nextSibling;
+    }
+
+    /**
+     * Gets the previous sibling if it matches the specified kind.
+     * @param kind - Kind to check.
+     */
+    getPreviousSiblingIfKind(kind: ts.SyntaxKind) {
+        const previousSibling = this.getPreviousSibling();
+        return previousSibling != null && previousSibling.getKind() === kind ? previousSibling : undefined;
+    }
+
+    /**
+     * Gets the next sibling if it matches the specified kind.
+     * @param kind - Kind to check.
+     */
+    getNextSiblingIfKind(kind: ts.SyntaxKind) {
+        const nextSibling = this.getNextSibling();
+        return nextSibling != null && nextSibling.getKind() === kind ? nextSibling : undefined;
+    }
+
+    /**
+     * Gets the children based on a kind.
+     * @param kind - Syntax kind.
+     */
+    getChildrenOfKind(kind: ts.SyntaxKind) {
+        return this.getChildren().filter(c => c.getKind() === kind);
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind.
+     */
+    getParentIfKind(kind: ts.SyntaxKind) {
+        const parentNode = this.getParent();
+        return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
+    }
+
+    /**
+     * Gets the parent if it's a certain syntax kind of throws.
+     */
+    getParentIfKindOrThrow(kind: ts.SyntaxKind) {
+        const parentNode = this.getParentIfKind(kind);
+        if (parentNode == null)
+            throw new errors.InvalidOperationError(`A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return parentNode;
+    }
+
+    /**
+     * Gets the first parent by syntax kind or throws if not found.
+     * @param kind - Syntax kind.
+     */
+    getFirstParentByKindOrThrow(kind: ts.SyntaxKind) {
+        const parentNode = this.getFirstParentByKind(kind);
+        if (parentNode == null)
+            throw new errors.InvalidOperationError(`A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return parentNode;
+    }
+
+    /**
+     * Get the first parent by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstParentByKind(kind: ts.SyntaxKind) {
+        for (const parent of this.getParents()) {
+            if (parent.getKind() === kind)
+                return parent;
+        }
+        return undefined;
     }
 }

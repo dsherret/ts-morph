@@ -5,9 +5,9 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
-        function doTest(startCode: string, index: number, structures: MethodDeclarationOverloadStructure[], expectedCode: string) {
+        function doTest(startCode: string, index: number, structures: MethodDeclarationOverloadStructure[], expectedCode: string, methodIndex = 0) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as MethodDeclaration;
+            const methodDeclaration = firstChild.getAllMembers()[methodIndex] as MethodDeclaration;
             const result = methodDeclaration.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -16,6 +16,11 @@ describe(nameof(MethodDeclaration), () => {
         it("should insert when no other overloads exist", () => {
             doTest("class Identifier {\n    identifier() {}\n }", 0, [{ returnType: "number" }, {}],
                 "class Identifier {\n    identifier(): number;\n    identifier();\n    identifier() {}\n }");
+        });
+
+        it("should insert when a JSDoc exists", () => {
+            doTest("class Identifier {\n    otherMethod(): string {}\n\n    /** Test */\n    identifier() {}\n }", 0, [{ returnType: "number" }],
+                "class Identifier {\n    otherMethod(): string {}\n\n    identifier(): number;\n    /** Test */\n    identifier() {}\n }", 1);
         });
 
         it("should copy over the static, abstract, and scope keywords", () => {

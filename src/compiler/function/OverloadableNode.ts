@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
+import {verifyAndGetIndex, insertIntoParent, getRangeFromArray} from "./../../manipulation";
+import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {BodyableNode, NamedNode} from "./../base";
@@ -104,16 +105,15 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
         // structures[i] = {...thisStructure, ...structures[i]}; // not supported by TS as of 2.4.1
     }
 
-    insertIntoBracesOrSourceFile<TStructure>({
-        parent: opts.node.getParentOrThrow(),
-        children: parentSyntaxList.getChildren(),
-        index: mainIndex,
-        childCodes: opts.childCodes,
-        structures,
-        separator: opts.node.global.manipulationSettings.getNewLineKind(),
-        previousBlanklineWhen: () => index === 0,
-        separatorNewlineWhen: () => false,
-        nextBlanklineWhen: () => false
+    const indentationText = opts.node.getIndentationText();
+    const newLineKind = opts.node.global.manipulationSettings.getNewLineKind();
+
+    insertIntoParent({
+        parent: parentSyntaxList,
+        childIndex: mainIndex,
+        insertItemsCount: structures.length,
+        insertPos: getNextNonWhitespacePos(opts.node.getSourceFile().getFullText(), opts.node.getPos()),
+        newText: opts.childCodes.map((c, i) => (i > 0 ? indentationText : "") + c).join(newLineKind) + newLineKind + indentationText
     });
 
     const children = getRangeFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);

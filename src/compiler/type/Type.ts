@@ -61,6 +61,15 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the array type
+     */
+    getArrayType() {
+        if (!this.isArrayType())
+            return undefined;
+        return this.getTypeArguments()[0];
+    }
+
+    /**
      * Gets the base types.
      */
     getBaseTypes() {
@@ -142,6 +151,14 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets type arguments.
+     */
+    getTypeArguments(): Type[] {
+        const typeArguments = (this.compilerType as any as ts.TypeReference).typeArguments || [];
+        return typeArguments.map(t => this.global.compilerFactory.getType(t));
+    }
+
+    /**
      * Gets the union types.
      */
     getUnionTypes(): Type[] {
@@ -174,6 +191,16 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     isAnonymousType() {
         return (this.getObjectFlags() & ts.ObjectFlags.Anonymous) !== 0;
+    }
+
+    /**
+     * Gets if this is an array type.
+     */
+    isArrayType() {
+        const symbol = this.getSymbol();
+        if (symbol == null)
+            return false;
+        return symbol.getName() === "Array" && this.getTypeArguments().length === 1;
     }
 
     /**

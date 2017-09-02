@@ -58,8 +58,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      */
     insertOverloads(index: number, structures: MethodDeclarationOverloadStructure[]) {
         const thisName = this.getName();
-        const indentationText = this.getIndentationText();
-        const childCodes = structures.map(structure => `${indentationText}${thisName}();`);
+        const childCodes = structures.map(structure => `${thisName}();`);
 
         return insertOverloads({
             node: this,

@@ -229,7 +229,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's import declarations.
      */
     getImports(): ImportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ImportDeclaration>(ts.SyntaxKind.ImportDeclaration);
+        // todo: remove type assertion
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration[];
     }
 
     /**
@@ -310,7 +311,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's export declarations.
      */
     getExports(): ExportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind<ExportDeclaration>(ts.SyntaxKind.ExportDeclaration);
+        // todo: remove type assertion
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration[];
     }
 
     /**

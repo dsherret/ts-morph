@@ -54,8 +54,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]) {
-        const indentationText = this.getIndentationText();
-        const childCodes = structures.map(structure => `${indentationText}constructor();`);
+        const childCodes = structures.map(structure => `constructor();`);
 
         return insertOverloads({
             node: this,

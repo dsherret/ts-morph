@@ -58,9 +58,8 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * @param structure - Structures of the overloads.
      */
     insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]) {
-        const indentationText = this.getIndentationText();
         const thisName = this.getName();
-        const childCodes = structures.map(structure => `${indentationText}function ${thisName}();`);
+        const childCodes = structures.map(structure => `function ${thisName}();`);
 
         return insertOverloads({
             node: this,

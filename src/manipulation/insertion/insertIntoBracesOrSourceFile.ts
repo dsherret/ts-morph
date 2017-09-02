@@ -42,7 +42,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         newText = separator + newText;
     else if (insertPos !== 0)
         newText = newLineChar + newText;
-    else if (sourceFile.getFullWidth() > 0)
+    else if (parent.getFullWidth() > 0)
         newText = newText + separator;
 
     if (opts.previousBlanklineWhen != null) {

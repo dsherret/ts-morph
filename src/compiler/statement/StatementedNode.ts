@@ -313,7 +313,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getClasses(): classes.ClassDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<classes.ClassDeclaration>(ts.SyntaxKind.ClassDeclaration);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ClassDeclaration) as classes.ClassDeclaration[];
         }
 
         getClass(name: string): classes.ClassDeclaration | undefined;
@@ -348,7 +349,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getEnums(): enums.EnumDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<enums.EnumDeclaration>(ts.SyntaxKind.EnumDeclaration);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.EnumDeclaration) as enums.EnumDeclaration[];
         }
 
         getEnum(name: string): enums.EnumDeclaration | undefined;
@@ -383,7 +385,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): functions.FunctionDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<functions.FunctionDeclaration>(ts.SyntaxKind.FunctionDeclaration)
+            // todo: remove type assertion
+            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.FunctionDeclaration) as functions.FunctionDeclaration[])
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
 
@@ -419,7 +422,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getInterfaces(): interfaces.InterfaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<interfaces.InterfaceDeclaration>(ts.SyntaxKind.InterfaceDeclaration);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.InterfaceDeclaration) as interfaces.InterfaceDeclaration[];
         }
 
         getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
@@ -456,7 +460,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): namespaces.NamespaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<namespaces.NamespaceDeclaration>(ts.SyntaxKind.ModuleDeclaration);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ModuleDeclaration) as namespaces.NamespaceDeclaration[];
         }
 
         getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
@@ -498,7 +503,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getTypeAliases(): types.TypeAliasDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<types.TypeAliasDeclaration>(ts.SyntaxKind.TypeAliasDeclaration);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.TypeAliasDeclaration) as types.TypeAliasDeclaration[];
         }
 
         getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
@@ -508,7 +514,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatements(): variable.VariableStatement[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind<variable.VariableStatement>(ts.SyntaxKind.VariableStatement);
+            // todo: remove type assertion
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as variable.VariableStatement[];
         }
 
         getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined {
