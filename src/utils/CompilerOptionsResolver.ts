@@ -35,7 +35,7 @@ export class CompilerOptionsResolver {
         const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
         this.verifyFileExists(absoluteFilePath);
         const text = this.fileSystem.readFile(absoluteFilePath);
-        const result = ts.parseConfigFileTextToJson(absoluteFilePath, text, true);
+        const result = ts.parseConfigFileTextToJson(absoluteFilePath, text);
 
         if (result.error != null)
             throw new Error(result.error.messageText.toString());

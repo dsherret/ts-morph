@@ -52,14 +52,17 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
             newText = newLineChar + newText;
     }
 
+    const nextMember: Node | undefined = children[index];
     if (opts.nextBlanklineWhen != null) {
-        const nextMember: Node | undefined = children[index];
         const lastStructure = opts.structures![opts.structures!.length - 1];
         if (nextMember != null && opts.nextBlanklineWhen(nextMember, lastStructure)) {
             if (!isBlankLineAtPos(sourceFile, insertPos))
                 newText = newText + newLineChar;
         }
     }
+
+    if (parent.isSourceFile() && nextMember == null && !newText.endsWith(newLineChar) && !sourceFile.getFullText().endsWith("\n"))
+        newText = newText + newLineChar;
 
     insertIntoCreatableSyntaxList({
         parent,

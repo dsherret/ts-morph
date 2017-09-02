@@ -8,7 +8,7 @@ import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Decorator} from "./../decorator/Decorator";
 
-export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator>; }>;
+export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
 
 export interface DecoratableNode {
     /**

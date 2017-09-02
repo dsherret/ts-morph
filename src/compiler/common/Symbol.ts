@@ -89,7 +89,7 @@ export class Symbol {
         if (this.compilerSymbol.exports == null)
             return undefined;
 
-        const tsSymbol = this.compilerSymbol.exports!.get(name);
+        const tsSymbol = this.compilerSymbol.exports!.get(name as ts.__String);
         return tsSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsSymbol);
     }
 

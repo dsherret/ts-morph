@@ -1,4 +1,5 @@
-﻿import {Node, SourceFile} from "./../compiler";
+﻿import * as ts from "typescript";
+import {Node, SourceFile} from "./../compiler";
 
 /**
  * Replaces text in a source file. Good for renaming identifiers. Not good for creating new nodes!
@@ -12,6 +13,8 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
 
     replaceForNode(sourceFile);
     sourceFile.global.resetProgram();
+
+    // todo: in TS2.5.2, can the source file text just be replaced? (faster)
 
     function replaceForNode(node: Node) {
         const currentStart = node.getStart();
@@ -27,7 +30,11 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
             if (text != null) {
                 const relativeStart = replaceStart - currentStart;
                 const relativeEnd = replaceEnd - currentStart;
-                (compilerNode as any).text = text.substring(0, relativeStart) + newText + text.substring(relativeEnd);
+                const newNodeText = text.substring(0, relativeStart) + newText + text.substring(relativeEnd);
+                if (compilerNode.kind === ts.SyntaxKind.SourceFile)
+                    (compilerNode as any).text = newNodeText;
+                else
+                    (compilerNode as any).escapedText = newNodeText;
             }
             compilerNode.end += difference;
         }

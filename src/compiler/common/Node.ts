@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {replaceNodeText} from "./../../manipulation";
 import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
@@ -562,66 +561,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
                 return parent;
         }
         return undefined;
-    }
-
-    /**
-     * @internal
-     */
-    appendNewLineSeparatorIfNecessary() {
-        // todo: consider removing this method
-        const text = this.getFullText();
-        if (this.isSourceFile()) {
-            const hasText = text.length > 0;
-            if (hasText)
-                this.ensureLastChildNewLine();
-        }
-        else
-            this.ensureLastChildNewLine();
-    }
-
-    /**
-     * @internal
-     */
-    ensureLastChildNewLine() {
-        // todo: consider removing this method
-        if (!this.isLastChildTextNewLine())
-            this.appendChildNewLine();
-    }
-
-    /**
-     * @internal
-     */
-    isLastChildTextNewLine(): boolean {
-        // todo: consider removing this method
-        const text = this.getFullText();
-        /* istanbul ignore else */
-        if (this.isSourceFile())
-            return text.endsWith("\n");
-        else if (this.isBodyableNode() || this.isBodiedNode()) {
-            const body = this.isBodyableNode() ? this.getBodyOrThrow() : this.getBody();
-            const bodyText = body.getFullText();
-            return /\n\s*\}$/.test(bodyText);
-        }
-        else
-            throw errors.getNotImplementedForSyntaxKindError(this.getKind());
-    }
-
-    /**
-     * @internal
-     */
-    appendChildNewLine() {
-        // todo: consider removing this method
-        const newLineText = this.global.manipulationSettings.getNewLineKind();
-        if (this.isSourceFile()) {
-            this.sourceFile.compilerNode.text += newLineText;
-            this.sourceFile.compilerNode.end += newLineText.length;
-        }
-        else {
-            const indentationText = this.getIndentationText();
-            const lastToken = this.getLastToken();
-            const lastTokenPos = lastToken.getStart();
-            replaceNodeText(this.sourceFile, lastTokenPos, lastTokenPos, newLineText + indentationText);
-        }
     }
 
     /**

@@ -601,7 +601,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 separatorNewlineWhen: opts.separatorNewlineWhen || doBlankLine,
                 nextBlanklineWhen: opts.nextBlanklineWhen || doBlankLine
             });
-            this.appendNewLineSeparatorIfNecessary();
 
             // get children
             return getRangeFromArray<U>(syntaxList.getChildren(), index, childCodes.length, expectedSyntaxKind);
