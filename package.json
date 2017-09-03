@@ -1,16 +1,16 @@
 {
   "name": "ts-simple-ast",
-  "version": "0.59.0",
+  "version": "0.60.0",
   "description": "TypeScript compiler wrapper for AST navigation and code generation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
-  "scripts": {
-    "prepublishOnly": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/ensureNoDefinitionFileErrors",
-    "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "build": "gulp typescript",
-    "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch"
-  },
+    "scripts": {
+        "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && npm run code-verification && npm publish",
+        "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+        "build": "gulp typescript",
+        "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
+        "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch"
+    },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dsherret/ts-simple-ast.git"

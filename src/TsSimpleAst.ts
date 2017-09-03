@@ -3,7 +3,7 @@ import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
-import {CompilerOptionsResolver, FileUtils} from "./utils";
+import {getCompilerOptionsFromTsConfig, FileUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
@@ -31,8 +31,7 @@ export class TsSimpleAst {
      * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
     constructor(options: Options = {}, private fileSystem: FileSystemHost = new DefaultFileSystemHost()) {
-        const compilerOptionsResolver = new CompilerOptionsResolver(fileSystem, options);
-        this.global = new GlobalContainer(fileSystem, compilerOptionsResolver.getCompilerOptions(), true);
+        this.global = new GlobalContainer(fileSystem, getCompilerOptionsFromOptions(options, fileSystem), true);
         if (options.manipulationSettings != null)
             this.global.manipulationSettings.set(options.manipulationSettings);
     }
@@ -201,4 +200,19 @@ export class TsSimpleAst {
     emit(emitOptions: compiler.EmitOptions = {}): compiler.EmitResult {
         return this.global.program.emit(emitOptions);
     }
+
+    /**
+     * Gets the compiler options.
+     */
+    getCompilerOptions() {
+        // return a copy
+        return {...this.global.compilerOptions};
+    }
+}
+
+function getCompilerOptionsFromOptions(options: Options, fileSystem: FileSystemHost) {
+    return {
+        ...(options.tsConfigFilePath == null ? {} : getCompilerOptionsFromTsConfig(options.tsConfigFilePath, fileSystem)),
+        ...(options.compilerOptions || {}) as ts.CompilerOptions
+    };
 }

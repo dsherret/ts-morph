@@ -31,7 +31,7 @@
 
                     <nav class="sidebar-nav" id="navbarSupportedContent">
                         <ul class="navbar-nav navbar-default">
-                            <li class="nav-item{% if page.dir == '/' %} active{% endif %}">
+                            <li class="nav-item{% if page.path == 'index.md' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/" | prepend: site.baseurl }}">Overview</a>
                             </li>
                             <li class="nav-item{% if page.dir == '/setup/' %} active{% endif %}">
@@ -66,7 +66,7 @@
                                 </ul>
                                 {% endif %}
                             </li>
-                            <li class="nav-item{% if page.dir == '/emitting/' %} active{% endif %}">
+                            <li class="nav-item{% if page.path == 'emitting.md' %} active{% endif %}">
                                 <a class="nav-link" href="{{ "/emitting" | prepend: site.baseurl }}">Emitting</a>
                             </li>
                             <li class="{% if page.path == 'details/index.md' %}active{% endif %}">
@@ -96,6 +96,9 @@
                                     <li class="{% if page.path == 'details/modifiers.md' %}active{% endif %}"><a href="{{ "/details/modifiers" | prepend: site.baseurl }}">Modifiers</a></li>
                                 </ul>
                                 {% endif %}
+                            </li>
+                            <li class="nav-item{% if page.path == 'utilities.md' %} active{% endif %}">
+                                <a class="nav-link" href="{{ "/utilities" | prepend: site.baseurl }}">Utilities</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ site.github.repository_url }}">View on GitHub</a>

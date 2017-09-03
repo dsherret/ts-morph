@@ -21,6 +21,38 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.getCompilerOptions), () => {
+        it(`should get the default compiler options when not providing anything and no tsconfig exists`, () => {
+            const host = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({}, host);
+            expect(ast.getCompilerOptions()).to.deep.equal({});
+        });
+
+        it(`should not get the compiler options from tsconfig.json when not providing anything and a tsconfig exists`, () => {
+            const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const ast = new TsSimpleAst({}, host);
+            expect(ast.getCompilerOptions()).to.deep.equal({});
+        });
+
+        it(`should get empty compiler options when providing an empty compiler options object`, () => {
+            const host = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: {} }, host);
+            expect(ast.getCompilerOptions()).to.deep.equal({});
+        });
+
+        it(`should override the tsconfig options`, () => {
+            const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+            const ast = new TsSimpleAst({
+                tsConfigFilePath: "tsconfig.json",
+                compilerOptions: {
+                    target: 2,
+                    allowJs: true
+                }
+            }, host);
+            expect(ast.getCompilerOptions()).to.deep.equal({ rootDir: "test", target: 2, allowJs: true });
+        });
+    });
+
     describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFileFromFilePath), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
