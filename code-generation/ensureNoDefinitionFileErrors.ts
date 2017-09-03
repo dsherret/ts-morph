@@ -1,7 +1,7 @@
 ﻿import * as path from "path";
 import * as ts from "typescript";
 import TsSimpleAst from "./../src/main";
-import {getDefinitionAst} from "./common"
+import {getDefinitionAst} from "./common";
 
 const ast = getDefinitionAst();
 

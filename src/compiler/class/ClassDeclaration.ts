@@ -307,7 +307,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             if (isAmbient)
                 code += ";";
             else
-                code += ` {` + newLineChar + indentationText + `}`
+                code += ` {` + newLineChar + indentationText + `}`;
 
             codes.push(code);
         }
