@@ -9,7 +9,7 @@
     "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "gulp typescript",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "code-verification": "gulp code-generate && node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch"
+    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch"
   },
   "repository": {
     "type": "git",
