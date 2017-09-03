@@ -11,7 +11,7 @@ if (ast.getSourceFiles().length === 0)
 const problems = ast.getDiagnostics().map(d => {
     let text = "";
     if (d.getSourceFile() != null)
-        text += d.getSourceFileOrThrow().getFilePath() + ": ";
+        text += d.getSourceFile()!.getFilePath() + ": ";
     text += d.getMessageText();
     return text;
 });
