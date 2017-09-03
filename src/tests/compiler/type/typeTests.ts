@@ -349,4 +349,16 @@ describe(nameof(Type), () => {
             expect(typeArgs[0].getText()).to.equal("string");
         });
     });
+
+    describe(nameof<Type>(t => t.isUndefinedType), () => {
+        it("should not be undefined when not undefined", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.isUndefinedType()).to.be.false;
+        });
+
+        it("should be undefined when not undefined", () => {
+            const {firstType} = getTypeFromText("let myType: undefined;");
+            expect(firstType.isUndefinedType()).to.be.true;
+        });
+    });
 });

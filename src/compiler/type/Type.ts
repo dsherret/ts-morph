@@ -246,6 +246,13 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is the undefined type.
+     */
+    isUndefinedType() {
+        return (this.compilerType.flags & ts.TypeFlags.Undefined) !== 0;
+    }
+
+    /**
      * Gets the type flags.
      */
     getFlags(): ts.TypeFlags {
