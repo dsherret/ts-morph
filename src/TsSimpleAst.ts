@@ -31,9 +31,6 @@ export class TsSimpleAst {
      * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
     constructor(options: Options = {}, private fileSystem: FileSystemHost = new DefaultFileSystemHost()) {
-        if (options.tsConfigFilePath != null && options.compilerOptions != null)
-            throw new errors.InvalidOperationError(`Cannot set both ${nameof(options.tsConfigFilePath)} and ${nameof(options.compilerOptions)}.`);
-
         const compilerOptionsResolver = new CompilerOptionsResolver(fileSystem, options);
         this.global = new GlobalContainer(fileSystem, compilerOptionsResolver.getCompilerOptions(), true);
         if (options.manipulationSettings != null)

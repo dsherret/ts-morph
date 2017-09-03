@@ -18,17 +18,11 @@ export class CompilerOptionsResolver {
      * Get the compiler options.
      * @param options - The passed in compiler options or the tsconfig.json file path.
      */
-    getCompilerOptions() {
-        let compilerOptions: ts.CompilerOptions;
-
-        if (this.options.compilerOptions != null)
-            compilerOptions = {...this.options.compilerOptions};
-        else if (this.options.tsConfigFilePath != null)
-            compilerOptions = this.getCompilerOptionsFromTsConfig(this.options.tsConfigFilePath);
-        else
-            compilerOptions = {};
-
-        return compilerOptions;
+    getCompilerOptions(): ts.CompilerOptions {
+        return {
+            ...(this.options.tsConfigFilePath == null ? {} : this.getCompilerOptionsFromTsConfig(this.options.tsConfigFilePath)),
+            ...(this.options.compilerOptions || {}) as ts.CompilerOptions
+        };
     }
 
     private getCompilerOptionsFromTsConfig(filePath: string) {

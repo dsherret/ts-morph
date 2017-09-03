@@ -31,17 +31,17 @@ describe(nameof(CompilerOptionsResolver), () => {
                 expect(compilerOptions).to.deep.equal({});
             });
 
-            it(`should use compiler options when providing a tsconfig path`, () => {
-                const host = testHelpers.getFileSystemHostWithFiles([]);
+            it(`should override the tsconfig options`, () => {
+                const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
                 const resolver = new CompilerOptionsResolver(host, {
-                    tsConfigFilePath: "test.txt",
+                    tsConfigFilePath: "tsconfig.json",
                     compilerOptions: {
-                        rootDir: "test",
-                        target: 1
+                        target: 2,
+                        allowJs: true
                     }
                 });
                 const compilerOptions = resolver.getCompilerOptions();
-                expect(compilerOptions).to.deep.equal({ rootDir: "test", target: 1 });
+                expect(compilerOptions).to.deep.equal({ rootDir: "test", target: 2, allowJs: true });
             });
         });
 

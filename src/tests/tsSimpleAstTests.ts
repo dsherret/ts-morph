@@ -10,16 +10,6 @@ import * as testHelpers from "./testHelpers";
 
 describe(nameof(TsSimpleAst), () => {
     describe("constructor", () => {
-        it("should throw an exception if providing both a tsconfig.json and compiler options.", () => {
-            expect(() => {
-                // tslint:disable-next-line
-                new TsSimpleAst({
-                    tsConfigFilePath: "",
-                    compilerOptions: {}
-                });
-            }).to.throw(errors.InvalidOperationError, "Cannot set both tsConfigFilePath and compilerOptions.");
-        });
-
         it("should set the manipulation settings if provided", () => {
             const ast = new TsSimpleAst({
                 manipulationSettings: {
