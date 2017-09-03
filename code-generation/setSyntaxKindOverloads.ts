@@ -8,7 +8,7 @@ const ast = getDefinitionAst();
 setSyntaxKindOverloads(Array.from(getNodeToWrapperMappings(getAst())));
 
 export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[]) {
-    const sourceFile = ast.getSourceFile("Node.d.ts")!;
+    const sourceFile = ast.getSourceFileOrThrow("Node.d.ts");
     const nodeClass = sourceFile.getClass("Node")!;
     const syntaxKindMethods = nodeClass.getInstanceMethods().filter(m => m.getParameters().length === 1 && m.getParameters()[0].getType().getText() === "ts.SyntaxKind");
 

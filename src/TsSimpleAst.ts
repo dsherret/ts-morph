@@ -107,12 +107,40 @@ export class TsSimpleAst {
     }
 
     /**
-     * Gets a source file by a file name, file path, or search function. Returns undefined if none exists.
-     * @param fileName - File name or path that the path could end with or equal.
+     * Gets a source file by a file name or file path. Throws an error if it doesn't exist.
+     * @param fileNameOrPath - File name or path that the path could end with or equal.
+     */
+    getSourceFileOrThrow(fileNameOrPath: string): compiler.SourceFile;
+    /**
+     * Gets a source file by a search function. Throws an erorr if it doesn't exist.
      * @param searchFunction - Search function.
      */
+    getSourceFileOrThrow(searchFunction: (file: compiler.SourceFile) => boolean): compiler.SourceFile;
+    getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile {
+        const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
+        if (sourceFile == null) {
+            if (typeof fileNameOrSearchFunction === "string")
+                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${fileNameOrSearchFunction}.`);
+            else
+                throw new errors.InvalidOperationError(`Could not find source file based on the provided condition.`);
+        }
+        return sourceFile;
+    }
+
+    /**
+     * Gets a source file by a file name or file path. Returns undefined if none exists.
+     * @param fileNameOrPath - File name or path that the path could end with or equal.
+     */
     getSourceFile(fileNameOrPath: string): compiler.SourceFile | undefined;
+    /**
+     * Gets a source file by a search function. Returns undefined if none exists.
+     * @param searchFunction - Search function.
+     */
     getSourceFile(searchFunction: (file: compiler.SourceFile) => boolean): compiler.SourceFile | undefined;
+    /**
+     * @internal
+     */
+    getSourceFile(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile | undefined;
     getSourceFile(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile | undefined {
         let searchFunction = fileNameOrSearchFunction as ((file: compiler.SourceFile) => boolean);
 

@@ -3,7 +3,7 @@ import {NodeToWrapperViewModel} from "./../view-models";
 import TsSimpleAst, {ClassDeclaration, Node} from "./../../src/main";
 
 export function* getNodeToWrapperMappings(ast: TsSimpleAst): IterableIterator<NodeToWrapperViewModel> {
-    const sourceFile = ast.getSourceFile("nodeToWrapperMappings.ts")!;
+    const sourceFile = ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
     const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
     const initializer = nodeToWrapperMappings.getInitializer()!;
     const propertyAssignments = initializer.getDescendants().filter(d => d.getKind() === ts.SyntaxKind.PropertyAssignment) as Node<ts.PropertyAssignment>[];

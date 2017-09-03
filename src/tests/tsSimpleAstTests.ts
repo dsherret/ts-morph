@@ -136,9 +136,9 @@ describe(nameof(TsSimpleAst), () => {
         });
 
         it("should rename an identifier appropriately", () => {
-            const interfaceFile = ast.getSourceFile("testInterfaces.ts")!;
+            const interfaceFile = ast.getSourceFileOrThrow("testInterfaces.ts");
             interfaceFile.getInterfaces()[0].getProperties()[0].getNameIdentifier().rename("newName");
-            const variableFile = ast.getSourceFile("variableTestFile.ts")!;
+            const variableFile = ast.getSourceFileOrThrow("variableTestFile.ts");
             expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });
     });
@@ -227,6 +227,24 @@ describe(nameof(TsSimpleAst), () => {
             expect(writeLog[1].filePath).to.equal("dist/file2.d.ts");
             expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.getSourceFileOrThrow), () => {
+        it("should throw when it can't find the source file based on a provided path", () => {
+            const ast = new TsSimpleAst();
+            expect(() => ast.getSourceFileOrThrow("some path")).to.throw();
+        });
+
+        it("should throw when it can't find the source file based on a provided condition", () => {
+            const ast = new TsSimpleAst();
+            expect(() => ast.getSourceFileOrThrow(s => false)).to.throw();
+        });
+
+        it("should not throw when it finds the file", () => {
+            const ast = new TsSimpleAst();
+            ast.addSourceFileFromText("myFile.ts", "");
+            expect(ast.getSourceFileOrThrow("myFile.ts").getFilePath()).to.contain("myFile.ts");
         });
     });
 

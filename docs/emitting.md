@@ -27,7 +27,7 @@ declare const num = 1;
 Call `.emit()` on the source file:
 
 ```typescript
-const sourceFile = ast.getSourceFile("MyFile.ts")!;
+const sourceFile = ast.getSourceFileOrThrow("MyFile.ts");
 sourceFile.emit();
 ```
 

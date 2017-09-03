@@ -23,7 +23,7 @@ for (const sourceFile of ast.getSourceFiles().filter(f => f.getFilePath().includ
 
             const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null)
-                problems.push(`Expected method ${method.getName()} on ${c.getName()}  to have a corresponding OrThrow method.`);
+                problems.push(`Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
         }
     }
 
@@ -34,7 +34,7 @@ for (const sourceFile of ast.getSourceFiles().filter(f => f.getFilePath().includ
 
             const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null)
-                problems.push(`Expected method ${method.getName()} on ${i.getName()} to have a corresponding OrThrow method.`);
+                problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
         }
     }
 }

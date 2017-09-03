@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration} from "./../../../compiler";
+import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -225,6 +225,193 @@ describe(nameof(Node), () => {
 
         it("should throw when it's not the right kind", () => {
             expect(() => child.getParentIfKindOrThrow(ts.SyntaxKind.InterfaceDeclaration)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstChildOrThrow), () => {
+        const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the first child by a condition", () => {
+            expect(syntaxList.getFirstChildOrThrow(n => n.getKind() === ts.SyntaxKind.InterfaceDeclaration)).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should throw when it can't find the child", () => {
+            expect(() => syntaxList.getFirstChildOrThrow(n => n.getKind() === ts.SyntaxKind.IsKeyword)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getLastChildOrThrow), () => {
+        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface {}");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the last child by a condition", () => {
+            const interfaceDec = syntaxList.getLastChildOrThrow(n => n.getKind() === ts.SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration;
+            expect(interfaceDec.getName()).to.equal("MyInterface");
+        });
+
+        it("should throw when it can't find the child", () => {
+            expect(() => syntaxList.getLastChildOrThrow(n => n.getKind() === ts.SyntaxKind.IsKeyword)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstDescendant), () => {
+        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+
+        it("should get the first descendant by a condition", () => {
+            const prop = sourceFile.getFirstDescendant(n => n.getKind() === ts.SyntaxKind.PropertySignature);
+            expect(prop).to.be.instanceOf(PropertySignature);
+            expect((prop as PropertySignature).getName()).to.equal("prop");
+        });
+
+        it("should return undefined when it can't find it", () => {
+            const privateKeyword = sourceFile.getFirstDescendant(n => n.getKind() === ts.SyntaxKind.PrivateKeyword);
+            expect(privateKeyword).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstDescendantOrThrow), () => {
+        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+
+        it("should get the first descendant by a condition", () => {
+            const prop = sourceFile.getFirstDescendantOrThrow(n => n.getKind() === ts.SyntaxKind.PropertySignature);
+            expect(prop).to.be.instanceOf(PropertySignature);
+            expect((prop as PropertySignature).getName()).to.equal("prop");
+        });
+
+        it("should return undefined when it can't find it", () => {
+            expect(() => sourceFile.getFirstDescendantOrThrow(n => n.getKind() === ts.SyntaxKind.PrivateKeyword)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstDescendantByKind), () => {
+        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+
+        it("should get the first descendant by a condition", () => {
+            const prop = sourceFile.getFirstDescendantByKind(ts.SyntaxKind.PropertySignature);
+            expect(prop).to.be.instanceOf(PropertySignature);
+            expect((prop as PropertySignature).getName()).to.equal("prop");
+        });
+
+        it("should return undefined when it can't find it", () => {
+            const privateKeyword = sourceFile.getFirstDescendantByKind(ts.SyntaxKind.PrivateKeyword);
+            expect(privateKeyword).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstDescendantByKindOrThrow), () => {
+        const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+
+        it("should get the first descendant by a condition", () => {
+            const prop = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.PropertySignature);
+            expect(prop).to.be.instanceOf(PropertySignature);
+            expect((prop as PropertySignature).getName()).to.equal("prop");
+        });
+
+        it("should return undefined when it can't find it", () => {
+            expect(() => sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.PrivateKeyword)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getPreviousSibling), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the previous sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSibling(s => s.isInterfaceDeclaration() && s.getName() === "Interface1")!.getText())
+                .to.equal("interface Interface1 {}");
+        });
+
+        it("should get the previous sibling when not supplying a condition", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSibling()!.getText()).to.equal("interface Interface2 {}");
+        });
+
+        it("should return undefined when it can't find the sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSibling(s => false)).to.be.undefined;
+        });
+
+        it("should return undefined when there isn't a previous sibling", () => {
+            expect(sourceFile.getInterfaces()[0].getPreviousSibling()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getPreviousSiblingOrThrow), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the previous sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => s.isInterfaceDeclaration() && s.getName() === "Interface1").getText())
+                .to.equal("interface Interface1 {}");
+        });
+
+        it("should get the previous sibling when not supplying a condition", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow().getText()).to.equal("interface Interface2 {}");
+        });
+
+        it("should throw when it can't find the sibling based on a condition", () => {
+            expect(() => sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => false)).to.throw();
+        });
+
+        it("should throw when there isn't a previous sibling", () => {
+            expect(() => sourceFile.getInterfaces()[0].getPreviousSiblingOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getNextSibling), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the next sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSibling(s => s.isInterfaceDeclaration() && s.getName() === "Interface3")!.getText())
+                .to.equal("interface Interface3 {}");
+        });
+
+        it("should get the next sibling when not supplying a condition", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSibling()!.getText()).to.equal("interface Interface2 {}");
+        });
+
+        it("should return undefined when it can't find the sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSibling(s => false)).to.be.undefined;
+        });
+
+        it("should return undefined when there isn't a next sibling", () => {
+            expect(sourceFile.getInterfaces()[2].getNextSibling()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getNextSiblingOrThrow), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the next sibling based on a condition", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSiblingOrThrow(s => s.isInterfaceDeclaration() && s.getName() === "Interface3").getText())
+                .to.equal("interface Interface3 {}");
+        });
+
+        it("should get the next sibling when not supplying a condition", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSiblingOrThrow().getText()).to.equal("interface Interface2 {}");
+        });
+
+        it("should throw when it can't find the sibling based on a condition", () => {
+            expect(() => sourceFile.getInterfaces()[0].getNextSiblingOrThrow(s => false)).to.throw();
+        });
+
+        it("should throw when there isn't a next sibling", () => {
+            expect(() => sourceFile.getInterfaces()[2].getNextSiblingOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getPreviousSiblings), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the previous siblings going away in order", () => {
+            expect(sourceFile.getInterfaces()[2].getPreviousSiblings().map(s => (s as InterfaceDeclaration).getName()))
+                .to.deep.equal(["Interface2", "Interface1"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getNextSiblings), () => {
+        const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
+
+        it("should get the previous siblings going away in order", () => {
+            expect(sourceFile.getInterfaces()[0].getNextSiblings().map(s => (s as InterfaceDeclaration).getName()))
+                .to.deep.equal(["Interface2", "Interface3"]);
         });
     });
 });

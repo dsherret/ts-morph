@@ -113,15 +113,37 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the first child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstChildOrThrow(condition?: (node: Node) => boolean) {
+        const child = this.getFirstChild(condition);
+        if (child == null)
+            throw new errors.InvalidOperationError("Could not find a child that matched the specified condition.");
+        return child;
+    }
+
+    /**
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
     getFirstChild(condition?: (node: Node) => boolean) {
-        for (const child of this.getChildren()) {
+        for (const child of this.getChildrenIterator()) {
             if (condition == null || condition(child))
                 return child;
         }
         return undefined;
+    }
+
+    /**
+     * Gets the last child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getLastChildOrThrow(condition?: (node: Node) => boolean) {
+        const child = this.getLastChild(condition);
+        if (child == null)
+            throw new errors.InvalidOperationError("Could not find a child that matched the specified condition.");
+        return child;
     }
 
     /**
@@ -132,6 +154,29 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         for (const child of this.getChildren().reverse()) {
             if (condition == null || condition(child))
                 return child;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the first descendant by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstDescendantOrThrow(condition?: (node: Node) => boolean) {
+        const descendant = this.getFirstDescendant(condition);
+        if (descendant == null)
+            throw new errors.InvalidOperationError("Could not find a descendant that matched the specified condition.");
+        return descendant;
+    }
+
+    /**
+     * Gets the first descendant by a condition.
+     * @param condition - Condition.
+     */
+    getFirstDescendant(condition?: (node: Node) => boolean) {
+        for (const descendant of this.getDescendantsIterator()) {
+            if (condition == null || condition(descendant))
+                return descendant;
         }
         return undefined;
     }
@@ -150,35 +195,81 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
     }
 
-    getPreviousSibling() {
-        let previousSibling: Node | undefined;
-
-        for (const sibling of this.getPreviousSiblings()) {
-            previousSibling = sibling;
-        }
-
+    /**
+     * Gets the previous sibling or throws.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSiblingOrThrow(condition?: (node: Node) => boolean) {
+        const previousSibling = this.getPreviousSibling(condition);
+        if (previousSibling == null)
+            throw new errors.InvalidOperationError("Could not find the previous sibling.");
         return previousSibling;
     }
 
-    getNextSibling() {
-        const nextResult = this.getNextSiblings().next();
-        return nextResult.done ? undefined : nextResult.value;
+    /**
+     * Gets the previous sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSibling(condition?: (node: Node) => boolean) {
+        for (const sibling of this.getPreviousSiblings()) {
+            if (condition == null || condition(sibling))
+                return sibling;
+        }
+
+        return undefined;
     }
 
-    *getPreviousSiblings() {
+    /**
+     * Gets the next sibling or throws.
+     * @param condition - Optional condition for getting the next sibling.
+     */
+    getNextSiblingOrThrow(condition?: (node: Node) => boolean) {
+        const nextSibling = this.getNextSibling(condition);
+        if (nextSibling == null)
+            throw new errors.InvalidOperationError("Could not find the next sibling.");
+        return nextSibling;
+    }
+
+    /**
+     * Gets the next sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getNextSibling(condition?: (node: Node) => boolean) {
+        for (const sibling of this.getNextSiblings()) {
+            if (condition == null || condition(sibling))
+                return sibling;
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Gets the previous siblings.
+     *
+     * Note: Closest sibling is the zero index.
+     */
+    getPreviousSiblings() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const previousSiblings: Node[] = [];
 
         for (const child of parent.getChildrenIterator()) {
             if (child === this)
-                return;
+                break;
 
-            yield child;
+            previousSiblings.splice(0, 0, child);
         }
+
+        return previousSiblings;
     }
 
-    *getNextSiblings() {
-        // todo: optimize
+    /**
+     * Gets the next siblings.
+     *
+     * Note: Closest sibling is the zero index.
+     */
+    getNextSiblings() {
         let foundChild = false;
+        const nextSiblings: Node[] = [];
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
 
         for (const child of parent.getChildrenIterator()) {
@@ -187,8 +278,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
                 continue;
             }
 
-            yield child;
+            nextSiblings.push(child);
         }
+
+        return nextSiblings;
     }
 
     /**
@@ -384,9 +477,16 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Goes up the tree yielding all the parents in order.
+     * Goes up the tree getting all the parents in ascending order.
      */
-    *getParents() {
+    getParents() {
+        return Array.from(this.getParentsIterator());
+    }
+
+    /**
+     * @internal
+     */
+    *getParentsIterator() {
         let parent = (this as Node).getParent();
         while (parent != null) {
             yield parent;
@@ -639,6 +739,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the children based on a kind.
+     * @param kind - Syntax kind.
+     */
+    getChildrenOfKind(kind: ts.SyntaxKind) {
+        return this.getChildren().filter(c => c.getKind() === kind);
+    }
+
+    /**
      * Gets the first child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
@@ -757,14 +865,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the children based on a kind.
-     * @param kind - Syntax kind.
-     */
-    getChildrenOfKind(kind: ts.SyntaxKind) {
-        return this.getChildren().filter(c => c.getKind() === kind);
-    }
-
-    /**
      * Gets the parent if it's a certain syntax kind.
      */
     getParentIfKind(kind: ts.SyntaxKind) {
@@ -801,6 +901,29 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         for (const parent of this.getParents()) {
             if (parent.getKind() === kind)
                 return parent;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the first descendant by syntax kind or throws.
+     * @param kind - Syntax kind.
+     */
+    getFirstDescendantByKindOrThrow(kind: ts.SyntaxKind) {
+        const descendant = this.getFirstDescendantByKind(kind);
+        if (descendant == null)
+            throw new errors.InvalidOperationError(`A descendant of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return descendant;
+    }
+
+    /**
+     * Gets the first descendant by syntax kind.
+     * @param kind - Syntax kind.
+     */
+    getFirstDescendantByKind(kind: ts.SyntaxKind) {
+        for (const descendant of this.getDescendantsIterator()) {
+            if (descendant.getKind() === kind)
+                return descendant;
         }
         return undefined;
     }
