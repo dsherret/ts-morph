@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "prepublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/ensureNoDefinitionFileErrors",
+    "prepublishOnly": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/ensureNoDefinitionFileErrors",
     "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "build": "gulp typescript",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
