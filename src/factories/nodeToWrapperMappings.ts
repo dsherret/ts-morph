@@ -1,11 +1,13 @@
 ﻿import * as ts from "typescript";
+// they need to be individually imported instead of using a namespace import so that this works with the `declaration: true` compiler argument
 import {ArrayLiteralExpression, CallExpression, SourceFile, ClassDeclaration, ConstructorDeclaration, ConstructSignatureDeclaration, Decorator,
     EnumDeclaration, EnumMember, ExportDeclaration, ExportSpecifier, ExpressionWithTypeArguments, FunctionDeclaration, GetAccessorDeclaration,
     HeritageClause, Identifier, ImportDeclaration, ImportSpecifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, NamespaceDeclaration,
     Expression, ParameterDeclaration, PropertyDeclaration, PropertySignature, SetAccessorDeclaration, TypeAliasDeclaration, TypeParameterDeclaration,
     VariableDeclaration, VariableDeclarationList, VariableStatement, JSDoc} from "./../compiler";
 
-// they need to be individually imported instead of using a namespace import so that this works with the `declaration: true` compiler argument
+// when changing this, make sure to run `npm run code-generate`.
+// that will automatically update all other parts of the application that need to be updated when this changes.
 
 export const nodeToWrapperMappings = {
     [ts.SyntaxKind.SourceFile]: SourceFile,

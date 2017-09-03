@@ -292,6 +292,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
         const newLineChar = this.global.manipulationSettings.getNewLineKind();
+        const isAmbient = this.isAmbient();
 
         // create code
         const codes: string[] = [];
@@ -302,8 +303,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             code += `${structure.name}()`;
             if (structure.returnType != null && structure.returnType.length > 0)
                 code += `: ${structure.returnType}`;
-            code += ` {` + newLineChar;
-            code += indentationText + `}`;
+
+            if (isAmbient)
+                code += ";";
+            else
+                code += ` {` + newLineChar + indentationText + `}`
+
             codes.push(code);
         }
 
@@ -315,9 +320,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             index,
             childCodes: codes,
             structures,
-            previousBlanklineWhen: () => true,
-            nextBlanklineWhen: () => true,
-            separatorNewlineWhen: () => true,
+            previousBlanklineWhen: () => !isAmbient,
+            nextBlanklineWhen: () => !isAmbient,
+            separatorNewlineWhen: () => !isAmbient,
             expectedKind: ts.SyntaxKind.MethodDeclaration,
             fillFunction: (node, structure) => node.fill(structure)
         });

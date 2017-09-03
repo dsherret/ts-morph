@@ -2,9 +2,8 @@
 import * as fs from "fs";
 import TsSimpleAst from "./../src/main";
 import {rootFolder, isOverloadStructure} from "./config";
-import {getAst, getClassViewModels, getStructureViewModels, getNodeToWrapperMappings} from "./common";
+import {getAst, getClassViewModels, getStructureViewModels} from "./common";
 import {createGetStructureFunctions} from "./createGetStructureFunctions";
-import {setSyntaxKindOverloads} from "./setSyntaxKindOverloads";
 
 const ast = getAst();
 const classVMs = Array.from(getClassViewModels(ast));
@@ -14,5 +13,3 @@ const overloadStructureVMs = structureVMs.filter(s => isOverloadStructure(s));
 // get structure functions
 const getStructureCode = createGetStructureFunctions(structureVMs);
 fs.writeFileSync(path.join(rootFolder, "src/manipulation/getStructureFunctions.ts"), getStructureCode, { encoding: "utf-8" });
-
-setSyntaxKindOverloads(ast, Array.from(getNodeToWrapperMappings(ast)));

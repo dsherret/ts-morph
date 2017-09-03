@@ -1,42 +1,53 @@
-﻿import TsSimpleAst, {MethodDeclaration, MethodDeclarationOverloadStructure} from "./../src/main";
+﻿import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure} from "./../src/main";
 import {NodeToWrapperViewModel} from "./view-models";
+import {getAst, getDefinitionAst, getNodeToWrapperMappings} from "./common";
 
 // this file sets the overloads of methods that take a syntax kind and return a wrapped node
 
-export function setSyntaxKindOverloads(ast: TsSimpleAst, nodeToWrappers: NodeToWrapperViewModel[]) {
-    const sourceFile = ast.getSourceFile("Node.ts")!;
+const ast = getDefinitionAst();
+setSyntaxKindOverloads(Array.from(getNodeToWrapperMappings(getAst())));
+
+export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[]) {
+    const sourceFile = ast.getSourceFile("Node.d.ts")!;
     const nodeClass = sourceFile.getClass("Node")!;
-    const syntaxKindMethods = nodeClass.getInstanceMethods().filter(m => m.getName() === "getChildrenOfKind" && m.getParameters().length === 1 && m.getParameters()[0].getType().getText() === "ts.SyntaxKind");
+    const syntaxKindMethods = nodeClass.getInstanceMethods().filter(m => m.getParameters().length === 1 && m.getParameters()[0].getType().getText() === "ts.SyntaxKind");
+
+    console.log("Adding compiler import...");
+    sourceFile.addImport({
+        namespaceImport: "compiler",
+        moduleSpecifier: "./../../compiler"
+    });
 
     for (const method of syntaxKindMethods) {
-        console.log("Doing method: " + method.getName());
-        changeMethod(method, nodeToWrappers);
-        break;
+        console.log("Modifying method: " + method.getName() + "...");
+        addMethods(nodeClass, method, nodeToWrappers);
     }
-    console.log(nodeClass.getFullText());
+
+    const diagnostics = sourceFile.getDiagnostics();
+    if (diagnostics.length > 0)
+        throw new Error("There were definition file errors after adding the syntax kind overloads: " + diagnostics[0].getMessageText());
+
+    sourceFile.saveSync();
 }
 
-function changeMethod(method: MethodDeclaration, nodeToWrappers: NodeToWrapperViewModel[]) {
+function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaration, nodeToWrappers: NodeToWrapperViewModel[]) {
     const isArrayType = method.getReturnType().isArrayType();
+    const isNullableType = method.getReturnType().isUnionType();
     const doc = method.getDocumentationComment()! + "\n" + "@param kind - Syntax kind.";
-    const structures: MethodDeclarationOverloadStructure[] = [];
+    const structures: MethodDeclarationStructure[] = [];
+
     for (const nodeToWrapper of nodeToWrappers) {
+        const typeText = `ts.SyntaxKind.${nodeToWrapper.syntaxKindName}`;
+
         structures.push({
+            name: method.getName(),
             parameters: [{ name: "kind", type: `ts.SyntaxKind.${nodeToWrapper.syntaxKindName}` }],
-            returnType: "ambientCompiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : ""),
+            returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
             docs: [{
                 description: doc
             }]
         });
     }
 
-    structures.push({
-        parameters: [{ name: "kind", type: "ts.SyntaxKind" }],
-        returnType: "Node" + (isArrayType ? "[]" : ""),
-        docs: [{
-            description: doc
-        }]
-    });
-
-    method.addOverloads(structures);
+    classDeclaration.insertMethods(method.getChildIndex(), structures);
 }

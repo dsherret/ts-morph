@@ -4,7 +4,6 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
-import * as ambientCompiler from "./../../compiler";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";

@@ -1,10 +1,9 @@
 ﻿import * as path from "path";
 import * as ts from "typescript";
 import TsSimpleAst from "./../src/main";
-import {rootFolder} from "./config";
+import {getDefinitionAst} from "./common"
 
-const ast = new TsSimpleAst({ tsConfigFilePath: path.join(rootFolder, "tsconfig.json") });
-ast.addSourceFiles(path.join(rootFolder, "dist-cg/**/*.d.ts"));
+const ast = getDefinitionAst();
 
 if (ast.getSourceFiles().length === 0)
     throw new Error("Could not find any source files.");
