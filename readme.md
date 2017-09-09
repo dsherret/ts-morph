@@ -13,10 +13,6 @@ TypeScript compiler wrapper. Provides a simple way to navigate and manipulate th
 * Most AST navigation is implemented, but still some missing. This library can be used to help you easily navigate the TypeScript compiler's AST.
 * Code manipulation/generation is making steady progress and is somewhat useable at this point. There's still lots to do.
 
-High priority:
-
-* [#47 - Removing nodes](https://github.com/dsherret/ts-simple-ast/issues/47) - Nodes that can be removed are documented.
-
 ## Documentation
 
 Work in progress: https://dsherret.github.io/ts-simple-ast/
@@ -33,11 +29,11 @@ ast.addSourceFiles("folder/**/*{.d.ts,.ts}");
 ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
 ast.addSourceFile("misc.ts", {
     classes: [{
-        name: "MyClass",
+        name: "SomeClass",
         isExported: true
     }],
     enums: [{
-        name: "MyEnum",
+        name: "SomeEnum",
         isExported: true,
         members: [{ name: "member" }]
     }]
@@ -61,7 +57,7 @@ sourceFile.getFullText(); // returns: "enum NewName {\n    myNewMember\n}\nlet m
 sourceFile.save();        // save it to MyFile.ts
 
 // get underlying compiler node from the typescript AST from any node
-const sourceFileCompilerNode = sourceFile.node;
+const sourceFileCompilerNode = sourceFile.compilerNode;
 ```
 
 Or navigate existing compiler nodes created outside this library:

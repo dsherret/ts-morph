@@ -13,7 +13,24 @@ const imports = sourceFile.getImports();
 const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() != null);
 ```
 
-Or inserted via the `addImport`, `addImports`, `insertImport`, and `insertImports` methods on [`SourceFile`](source-files).
+### Add/Insert
+
+Add or insert use `insertImport`, `insertImports`, `addImport`, or `addImports`:
+
+```typescript
+const importDeclaration = sourceFile.addImport({
+    defaultImport: "MyClass",
+    moduleSpecifier: "./file"
+});
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+importDeclaration.remove();
+```
 
 ### Module specifier
 

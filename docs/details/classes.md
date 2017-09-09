@@ -14,12 +14,20 @@ const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().l
 
 ### Add/Insert
 
-You can add or insert classes to a source file or namespace by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
+You can add or insert classes to a source file, namespace, or function like declarations by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
 
 ```typescript
 const classDeclaration = sourceFile.addClass({
     name: "ClassName"
 });
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+classDeclaration.remove();
 ```
 
 ### Extends expression
@@ -86,13 +94,17 @@ const myStaticMethod = classDeclaration.getStaticMethod("myMethod");
 const firstStaticMethodWith2Params = classDeclaration.getStaticMethod(m => m.getParameters().length === 2);
 ```
 
+#### Add/Insert
+
 Add or insert methods by using `insertMethods()`, `insertMethod`, `addMethod`, or `addMethods`:
 
 ```typescript
 const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", returnType: "string" });
 ```
 
-Remove a method:
+#### Remove
+
+Call `.remove()`:
 
 ```typescript
 method.remove();
@@ -120,13 +132,17 @@ const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
     p instanceof PropertyDeclaration && p.getType().getText() === "string");
 ```
 
+#### Add/Insert
+
 Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:
 
 ```typescript
 const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
 ```
 
-Remove a property:
+#### Remove
+
+Call `.remove()`:
 
 ```typescript
 property.remove();

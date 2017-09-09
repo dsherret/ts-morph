@@ -12,6 +12,24 @@ const interface1 = sourceFile.getInterface("Interface1");
 const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperties().length === 5);
 ```
 
+### Add/Insert
+
+You can add or insert interfaces to a source file, namespace, or function like declarations by calling `addInterface()`, `addInterfaces()`, `insertInterface()`, or `insertInterfaces()`.
+
+```typescript
+const interfaceDeclaration = sourceFile.addInterface({
+    name: "InterfaceName"
+});
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+interfaceDeclaration.remove();
+```
+
 ### Extends expressions
 
 Will return [`ExpressionWithTypeArguments[]`](expressions):
@@ -38,11 +56,15 @@ const constructSignatures = interfaceDeclaration.getConstructSignatures();
 const constructSignature = interfaceDeclaration.getConstructSignature(c => c.getParameters().length > 2);
 ```
 
+#### Add/Insert
+
 To add or insert use `addConstructSignature()`, `addConstructSignatures()`, `insertConstructSignature`, or `insertConstructSignatures()`:
 
 ```typescript
 const constructSignature = interfaceDeclaration.addConstructSignature({ returnType: "SomeClass" });
 ```
+
+#### Remove
 
 Remove a construct signature:
 
@@ -60,11 +82,15 @@ const myMethod = interfaceDeclaration.getMethod("myMethod");
 const firstMethodWith4Params = interfaceDeclaration.getMethod(m => m.getParameters().length === 4);
 ```
 
+#### Add/Insert
+
 To add or insert use `addMethod()`, `addMethods()`, `insertMethod`, or `insertMethods()`:
 
 ```typescript
 const methodSignature = interfaceDeclaration.insertMethod(1, { name: "newMethod", returnType: "boolean" });
 ```
+
+#### Remove
 
 Remove a method signature:
 
@@ -82,11 +108,15 @@ const myProperty = interfaceDeclaration.getProperty("myProperty");
 const firstStringProperty = interfaceDeclaration.getProperty(p => p.getType().getText() === "string");
 ```
 
+#### Add/Insert
+
 To add or insert use `addProperty()`, `addProperties()`, `insertProperty`, or `insertProperties()`:
 
 ```typescript
 const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
 ```
+
+#### Remove
 
 Remove a property signature:
 

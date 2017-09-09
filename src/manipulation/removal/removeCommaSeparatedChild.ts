@@ -2,7 +2,12 @@
 import {Node} from "./../../compiler";
 import {removeChildren} from "./removeChildren";
 
-export function removeCommaSeparatedChild(child: Node) {
+export interface RemoveCommaSeparatedChildOptions {
+    removePrecedingSpaces?: boolean;
+}
+
+export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparatedChildOptions) {
+    const {removePrecedingSpaces = undefined} = opts || {};
     const childrenToRemove: Node[] = [child];
     const syntaxList = child.getParentSyntaxListOrThrow();
 
@@ -11,7 +16,7 @@ export function removeCommaSeparatedChild(child: Node) {
 
     removeChildren({
         children: childrenToRemove,
-        removePrecedingSpaces: true,
+        removePrecedingSpaces: removePrecedingSpaces == null ? true : removePrecedingSpaces,
         removeFollowingSpaces: childrenToRemove[0] === syntaxList.getFirstChild()
     });
 

@@ -16,12 +16,20 @@ Most of the information you can get about functions is covered in other sections
 
 ### Add/Insert
 
-You can add or insert enums to a source file or namespace by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
+You can add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
 
 ```typescript
 const functionDeclaration = sourceFile.addFunction({
     name: "FunctionName"
 });
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+functionDeclaration.remove();
 ```
 
 ### Overloads
@@ -45,6 +53,18 @@ From the overloads, you can get the implementation by calling:
 
 ```typescript
 const implementation = overload.getImplementation();
+```
+
+#### Add/Insert
+
+You can add or insert overloads by using either the `.addOverload()`, `.addOverloads()`, `.insertOverload()`, or `insertOverloads()` methods.
+
+#### Remove
+
+Call `.remove()` on the overload:
+
+```typescript
+overload.remove();
 ```
 
 ### Set body text

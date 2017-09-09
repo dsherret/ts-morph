@@ -44,6 +44,7 @@
         "no-empty-interface": false,
         "no-object-literal-type-assertion": false,
         "no-this-assignment": false,
-        "prefer-object-spread": false
+        "prefer-object-spread": false,
+        "no-unnecessary-initializer": false
     }
 }

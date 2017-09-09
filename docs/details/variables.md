@@ -29,6 +29,14 @@ const variableStatements = sourceFile.getVariableStatements();
 const firstExportedVariableStatement = sourceFile.getVariableStatement(s => s.hasExportKeyword());
 ```
 
+### Remove
+
+Call `.remove()`:
+
+```typescript
+variableStatement.remove();
+```
+
 ## Variable Declaration List
 
 Example:
@@ -89,4 +97,12 @@ const variableDeclarations = sourceFile.getVariableDeclarations();
 const variableDeclaration = sourceFile.getVariableDeclaration("myVar");
 const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v =>
     v.getType().getText() === "string");
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+variableDeclaration.remove();
 ```

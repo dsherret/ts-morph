@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node} from "./../common";
 import {ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
@@ -11,5 +12,12 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      */
     getDeclarationList(): VariableDeclarationList {
         return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.declarationList, this.sourceFile) as VariableDeclarationList;
+    }
+
+    /**
+     * Removes this variable statement.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }

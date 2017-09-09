@@ -14,7 +14,7 @@ const enum2 = sourceFile.getEnum(e => e.getMembers().length === 5);
 
 ### Add/Insert
 
-You can add or insert enums to a source file or namespace by calling `addEnum()`, `addEnums()`, `insertEnum()`, or `insertEnums()`.
+You can add or insert enums to a source file, namespace, or function like declarations by calling `addEnum()`, `addEnums()`, `insertEnum()`, or `insertEnums()`.
 
 ```typescript
 const enumDeclaration = sourceFile.addEnum({
@@ -23,6 +23,14 @@ const enumDeclaration = sourceFile.addEnum({
         name: "member"
     }]
 });
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+enumDeclaration.remove();
 ```
 
 ### Get all members

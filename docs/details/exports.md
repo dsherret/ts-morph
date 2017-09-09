@@ -79,6 +79,25 @@ exportDeclaration.setModuleSpecifier("./new-file");
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
 ```
 
+### Add/Insert
+
+Add or insert use `insertExport`, `insertExports`, `addExport`, or `addExports`:
+
+```typescript
+const exportDeclaration = sourceFile.addExport({
+    defaultImport: "MyClass",
+    moduleSpecifier: "./file"
+});
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+exportDeclaration.remove();
+```
+
 ### Named Exports
 
 Get the named exports from an export declaration:
