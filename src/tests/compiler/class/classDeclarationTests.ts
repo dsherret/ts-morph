@@ -589,4 +589,16 @@ class c {
 `);
         });
     });
+
+    describe(nameof<ClassDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getClasses()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the class declaration", () => {
+            doTest("class I {}\n\nclass J {}\n\nclass K {}", 1, "class I {}\n\nclass K {}");
+        });
+    });
 });

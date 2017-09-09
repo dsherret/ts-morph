@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {TypeAliasDeclarationStructure} from "./../../structures";
+import {removeStatementedNodeChild} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode} from "./../base";
@@ -15,5 +16,12 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
         callBaseFill(TypeAliasDeclarationBase.prototype, this, structure);
 
         return this;
+    }
+
+    /**
+     * Removes this type alias declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }

@@ -19,4 +19,16 @@ describe(nameof(TypeAliasDeclaration), () => {
             doTest("type Identifier = string;", { type: "number" }, "type Identifier = number;");
         });
     });
+
+    describe(nameof<TypeAliasDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getTypeAliases()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the type alias declaration", () => {
+            doTest("type I = 1;\ntype J = 2;\ntype K = 3;", 1, "type I = 1;\ntype K = 3;");
+        });
+    });
 });

@@ -302,4 +302,16 @@ describe(nameof(InterfaceDeclaration), () => {
             doTest("interface Identifier {\n}", structure, "interface Identifier {\n    new(): string;\n    p;\n    m();\n}");
         });
     });
+
+    describe(nameof<InterfaceDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getInterfaces()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the interface declaration", () => {
+            doTest("interface I {}\n\ninterface J {}\n\ninterface K {}", 1, "interface I {}\n\ninterface K {}");
+        });
+    });
 });

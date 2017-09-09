@@ -98,4 +98,39 @@ describe(nameof(FunctionDeclaration), () => {
             doTest("function identifier() {\n}", structure, "function identifier(): string;\nfunction identifier() {\n}");
         });
     });
+
+    describe(nameof<FunctionDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getFunctions()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        function doOverloadTest(text: string, index: number, overloadIndex: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getFunctions()[index].getOverloads()[overloadIndex].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the function declaration", () => {
+            doTest("function I() {}\n\nfunction J() {}\n\nfunction K() {}", 1, "function I() {}\n\nfunction K() {}");
+        });
+
+        it("should remove the function declaration and its overloads", () => {
+            doTest("function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, "function I() {}\n\nfunction K() {}");
+        });
+
+        it("should remove the function declaration overload when the first", () => {
+            doOverloadTest("function I() {}\n\nfunction J(): void;\nfunction J() {}\n\nfunction K() {}", 1, 0, "function I() {}\n\nfunction J() {}\n\nfunction K() {}");
+        });
+
+        it("should remove the function declaration overload when the middle", () => {
+            doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
+                "function I() {}\n\nfunction J(first): void;\nfunction J(third): void;\nfunction J() {}\n\nfunction K() {}");
+        });
+        it("should remove the function declaration overload when last", () => {
+            doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
+                "function I() {}\n\nfunction J(first): void;\nfunction J() {}\n\nfunction K() {}");
+        });
+    });
 });

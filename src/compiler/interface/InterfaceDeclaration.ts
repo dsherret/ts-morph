@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
+import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, removeStatementedNodeChild} from "./../../manipulation";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -272,5 +272,12 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getAllMembers(): InterfaceMemberTypes[] {
         return this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];
+    }
+
+    /**
+     * Removes this interface declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }

@@ -6,10 +6,12 @@ export interface RemoveChildrenOptions {
     children: Node[];
     removePrecedingSpaces?: boolean;
     removeFollowingSpaces?: boolean;
+    removePrecedingNewLines?: boolean;
+    removeFollowingNewLines?: boolean;
 }
 
 export function removeChildren(opts: RemoveChildrenOptions) {
-    const {children, removePrecedingSpaces = false, removeFollowingSpaces = false} = opts;
+    const {children, removePrecedingSpaces = false, removeFollowingSpaces = false, removePrecedingNewLines = false, removeFollowingNewLines = false} = opts;
     if (children.length === 0)
         return;
 
@@ -34,13 +36,27 @@ export function removeChildren(opts: RemoveChildrenOptions) {
     }
 
     function getRemovalPos() {
-        const pos = children[0].getStart();
-        return removePrecedingSpaces ? getPreviousMatchingPos(fullText, pos, charNotSpaceOrTab) : pos;
+        const pos = children[0].getNonWhitespaceStart();
+        if (removePrecedingSpaces || removePrecedingNewLines)
+            return getPreviousMatchingPos(fullText, pos, getCharRemovalFunction(removePrecedingSpaces, removePrecedingNewLines));
+        return pos;
     }
 
     function getRemovalEnd() {
         const end = children[children.length - 1].getEnd();
-        return removeFollowingSpaces ? getNextMatchingPos(fullText, end, charNotSpaceOrTab) : end;
+        if (removeFollowingSpaces || removeFollowingNewLines)
+            return getNextMatchingPos(fullText, end, getCharRemovalFunction(removeFollowingSpaces, removeFollowingNewLines));
+        return end;
+    }
+
+    function getCharRemovalFunction(removeSpaces: boolean, removeNewLines: boolean) {
+        return (char: string) => {
+            if (removeNewLines && (char === "\r" || char === "\n"))
+                return false;
+            if (removeSpaces && !charNotSpaceOrTab(char))
+                return false;
+            return true;
+        };
     }
 
     function charNotSpaceOrTab(char: string) {

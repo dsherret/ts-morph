@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
+    removeStatementedNodeChild} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
@@ -432,12 +433,23 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         return members;
     }
 
+    /**
+     * Removes this class declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
+    }
+
     private getBodyMembers() {
         const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
 
         // filter out the method declarations or constructor declarations without a body if not ambient
         return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
     }
+}
+
+function getBodyMembers(this: ClassDeclaration) {
+
 }
 
 function isClassPropertyType(m: Node) {

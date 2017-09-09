@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
-import {verifyAndGetIndex} from "./../../manipulation";
+import {verifyAndGetIndex, removeOverloadableStatementedNodeChild} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
 import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode, TextInsertableNode} from "./../base";
 import {StatementedNode} from "./../statement";
@@ -70,5 +70,12 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             fillNodeFromStructure: (node, structure) => node.fill(structure),
             expectedSyntaxKind: ts.SyntaxKind.FunctionDeclaration
         });
+    }
+
+    /**
+     * Removes this function declaration.
+     */
+    remove() {
+        removeOverloadableStatementedNodeChild(this);
     }
 }

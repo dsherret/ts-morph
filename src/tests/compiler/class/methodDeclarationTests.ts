@@ -170,6 +170,21 @@ describe(nameof(MethodDeclaration), () => {
                     "class Identifier {\n    method(param) {}\n}");
             });
 
+            it("should remove when the first overload", () => {
+                doTest("class Identifier {\n    method(first): void;\n    method(second): void;\n    method(param) {}\n}", "method", 0,
+                    "class Identifier {\n    method(second): void;\n    method(param) {}\n}");
+            });
+
+            it("should remove when the middle overload", () => {
+                doTest("class Identifier {\n    method(first): void;\n    method(second): void;\n    method(third): void;\n    method(param) {}\n}", "method", 1,
+                    "class Identifier {\n    method(first): void;\n    method(third): void;\n    method(param) {}\n}");
+            });
+
+            it("should remove when the last overload", () => {
+                doTest("class Identifier {\n    method(first): void;\n    method(last): void;\n    method(param) {}\n}", "method", 1,
+                    "class Identifier {\n    method(first): void;\n    method(param) {}\n}");
+            });
+
             it("should remove only the specified overload and its jsdoc", () => {
                 doTest("class Identifier {\n    /** Test */\n    method(str): void;\n    method(param) {}\n}", "method", 0,
                     "class Identifier {\n    method(param) {}\n}");

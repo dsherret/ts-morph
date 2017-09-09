@@ -165,4 +165,16 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum Identifier {\n}", structure, "const enum Identifier {\n    member\n}");
         });
     });
+
+    describe(nameof<EnumDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getEnums()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the enum declaration", () => {
+            doTest("enum I {}\n\nenum J {}\n\nenum K {}", 1, "enum I {}\n\nenum K {}");
+        });
+    });
 });

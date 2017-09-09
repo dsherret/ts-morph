@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
-import {insertIntoCreatableSyntaxList, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode} from "./../base";
@@ -157,5 +157,12 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     getConstKeyword() {
         return this.getFirstModifierByKind(ts.SyntaxKind.ConstKeyword);
+    }
+
+    /**
+     * Removes this enum declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }
