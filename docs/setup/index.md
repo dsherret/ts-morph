@@ -26,8 +26,6 @@ const ast = new Ast({
 
 ### Custom tsconfig.json
 
-By default, if a *tsconfig.json* is found in the current working directory then it will use that file for the *tsconfig.json*.
-
 If you would like to manually specify the path to a *tsconfig.json* file then specify that:
 
 ```typescript
@@ -35,3 +33,5 @@ const ast = new Ast({
     tsConfigFilePath: "path/to/tsconfig.json"
 });
 ```
+
+Note: You can override any `tsconfig.json` options by also providing a `compilerOptions` object.
