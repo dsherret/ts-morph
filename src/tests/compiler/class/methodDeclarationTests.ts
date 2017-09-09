@@ -170,6 +170,11 @@ describe(nameof(MethodDeclaration), () => {
                     "class Identifier {\n    method(param) {}\n}");
             });
 
+            it("should remove only the specified overload and its jsdoc", () => {
+                doTest("class Identifier {\n    /** Test */\n    method(str): void;\n    method(param) {}\n}", "method", 0,
+                    "class Identifier {\n    method(param) {}\n}");
+            });
+
             it("should remove only the specified signature when it's in an ambient class", () => {
                 doTest("declare class Identifier {\n    method(): void;\n    method(): void;\n}", "method", 1,
                     "declare class Identifier {\n    method(): void;\n}");

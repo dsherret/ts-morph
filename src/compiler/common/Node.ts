@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
+import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {Disposable} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
@@ -409,10 +410,17 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the start without trivia.
+     * Gets the start position without leading trivia.
      */
     getStart() {
         return this.compilerNode.getStart(this.sourceFile.compilerNode);
+    }
+
+    /**
+     * Gets the first position that is not whitespace.
+     */
+    getNonWhitespaceStart() {
+        return getNextNonWhitespacePos(this.sourceFile.getFullText(), this.getPos());
     }
 
     /**

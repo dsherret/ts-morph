@@ -73,9 +73,9 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
             return previousSibling.getEnd();
 
         if (parent.getPos() === children[0].getPos())
-            return children[0].getStart(); // do not shift the parent
+            return children[0].getNonWhitespaceStart(); // do not shift the parent
 
-        return children[0].isFirstNodeOnLine() ? getPosAfterPreviousNonBlankLine(fullText, children[0].getStart()) : children[0].getStart();
+        return children[0].isFirstNodeOnLine() ? getPosAfterPreviousNonBlankLine(fullText, children[0].getNonWhitespaceStart()) : children[0].getNonWhitespaceStart();
     }
 
     function getRemovalEnd() {

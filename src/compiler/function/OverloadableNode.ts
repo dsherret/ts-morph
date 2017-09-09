@@ -112,7 +112,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
         parent: parentSyntaxList,
         childIndex: mainIndex,
         insertItemsCount: structures.length,
-        insertPos: getNextNonWhitespacePos(opts.node.getSourceFile().getFullText(), opts.node.getPos()),
+        insertPos: opts.node.getNonWhitespaceStart(),
         newText: opts.childCodes.map((c, i) => (i > 0 ? indentationText : "") + c).join(newLineKind) + newLineKind + indentationText
     });
 
