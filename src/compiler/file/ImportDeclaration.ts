@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
@@ -221,6 +221,13 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         if (namedImports == null)
             return [];
         return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ImportSpecifier) as ImportSpecifier[];
+    }
+
+    /**
+     * Removes this import declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 
     private getImportClause() {

@@ -159,4 +159,16 @@ describe(nameof(NamespaceDeclaration), () => {
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
         });
     });
+
+    describe(nameof<NamespaceDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getNamespaces()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the namespace declaration", () => {
+            doTest("namespace I {}\n\nnamespace J {}\n\nnamespace K {}", 1, "namespace I {}\n\nnamespace K {}");
+        });
+    });
 });

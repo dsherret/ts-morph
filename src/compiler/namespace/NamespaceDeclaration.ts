@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {replaceNodeText} from "./../../manipulation";
+import {replaceNodeText, removeStatementedNodeChild} from "./../../manipulation";
 import {NamespaceDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Logger} from "./../../utils";
@@ -123,5 +123,12 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         return this.getFirstChild(child =>
             child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
             child.getKind() === ts.SyntaxKind.ModuleKeyword);
+    }
+
+    /**
+     * Removes this namespace declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }

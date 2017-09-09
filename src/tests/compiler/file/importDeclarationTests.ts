@@ -266,4 +266,16 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import {name1} from "./test";`, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3} from "./test";`);
         });
     });
+
+    describe(nameof<ImportDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getImports()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the import declaration", () => {
+            doTest("import * from 'i';\nimport * from 'j';\nimport * from 'k';\n", 1, "import * from 'i';\nimport * from 'k';\n");
+        });
+    });
 });

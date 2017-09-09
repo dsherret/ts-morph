@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportSpecifier} from "./ExportSpecifier";
@@ -146,5 +146,12 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
         if (namedExports == null)
             return [];
         return namedExports.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ExportSpecifier) as ExportSpecifier[];
+    }
+
+    /**
+     * Removes this export declaration.
+     */
+    remove() {
+        removeStatementedNodeChild(this);
     }
 }

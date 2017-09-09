@@ -18,29 +18,29 @@ export interface DocumentationableNode {
     /**
      * Gets the documentation comment nodes.
      */
-    getDocumentationCommentNodes(): Node<ts.JSDoc>[];
+    getDocumentationCommentNodes(): JSDoc[];
     /**
      * Adds a documentation comment.
      * @param structure - Structure to add.
      */
-    addDoc(structure: JSDocStructure): Node<ts.JSDoc>;
+    addDoc(structure: JSDocStructure): JSDoc;
     /**
      * Adds documentation comments.
      * @param structures - Structures to add.
      */
-    addDocs(structures: JSDocStructure[]): Node<ts.JSDoc>[];
+    addDocs(structures: JSDocStructure[]): JSDoc[];
     /**
      * Inserts a documentation comment.
      * @param index - Index to insert at.
      * @param structure - Structure to insert.
      */
-    insertDoc(index: number, structure: JSDocStructure): Node<ts.JSDoc>;
+    insertDoc(index: number, structure: JSDocStructure): JSDoc;
     /**
      * Inserts documentation comments.
      * @param index - Index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDocs(index: number, structures: JSDocStructure[]): Node<ts.JSDoc>[];
+    insertDocs(index: number, structures: JSDocStructure[]): JSDoc[];
 }
 
 export function DocumentationableNode<T extends Constructor<DocumentationableNodeExtensionType>>(Base: T): Constructor<DocumentationableNode> & T {

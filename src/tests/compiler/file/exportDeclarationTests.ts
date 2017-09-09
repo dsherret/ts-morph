@@ -182,4 +182,16 @@ describe(nameof(ExportDeclaration), () => {
             doTest(`export {name1} from "./test";`, [{ name: "name2" }, { name: "name3" }], `export {name1, name2, name3} from "./test";`);
         });
     });
+
+    describe(nameof<ExportDeclaration>(d => d.remove), () => {
+        function doTest(text: string, index: number, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getExports()[index].remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the export declaration", () => {
+            doTest("export * from 'i';\nexport * from 'j';\nexport * from 'k';\n", 1, "export * from 'i';\nexport * from 'k';\n");
+        });
+    });
 });
