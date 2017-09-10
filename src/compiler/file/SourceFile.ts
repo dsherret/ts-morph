@@ -56,7 +56,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     replaceCompilerNode(compilerNode: ts.SourceFile) {
         super.replaceCompilerNode(compilerNode);
         this.global.resetProgram(); // make sure the program has the latest source file
-        this._isSaved = true;
+        this._isSaved = false;
     }
 
     /**

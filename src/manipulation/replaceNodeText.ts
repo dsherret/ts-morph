@@ -13,6 +13,7 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
 
     replaceForNode(sourceFile);
     sourceFile.global.resetProgram();
+    sourceFile.setIsSaved(false);
 
     function replaceForNode(node: Node) {
         const currentStart = node.getStart();

@@ -70,6 +70,30 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.isSaved), () => {
+        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+
+        it("should not be saved after doing an action that will replace the tree", () => {
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
+            expect(sourceFile.isSaved()).to.be.false;
+            sourceFile.saveSync();
+            expect(sourceFile.isSaved()).to.be.true;
+            sourceFile.addClass({ name: "NewClass" });
+            expect(sourceFile.isSaved()).to.be.false;
+        });
+
+        it("should not be saved after doing an action that changes only the text", () => {
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
+            expect(sourceFile.isSaved()).to.be.false;
+            sourceFile.saveSync();
+            expect(sourceFile.isSaved()).to.be.true;
+            sourceFile.getClasses()[0].rename("NewClassName");
+            expect(sourceFile.isSaved()).to.be.false;
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.saveSync), () => {
         const fileText = "    interface Identifier {}    ";
         const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
