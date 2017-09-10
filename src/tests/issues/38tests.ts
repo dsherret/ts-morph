@@ -12,6 +12,5 @@ describe("tests for issue #38", () => {
         const prop = firstChild.getStaticProperties()[0] as PropertyDeclaration;
         prop.setInitializer(`"2.0"`);
         expect(firstChild.getFullText()).to.equal(text.replace("1", "2"));
-
     });
 });

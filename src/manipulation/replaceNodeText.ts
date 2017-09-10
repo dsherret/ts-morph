@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node, SourceFile} from "./../compiler";
+import {Logger} from "./../utils";
 
 /**
  * Replaces text in a source file. Good for renaming identifiers. Not good for creating new nodes!
@@ -16,7 +17,7 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
     sourceFile.setIsSaved(false);
 
     function replaceForNode(node: Node) {
-        const currentStart = node.getStart();
+        const currentStart = node.isSourceFile() ? 0 : node.getStart();
         const compilerNode = node.compilerNode;
 
         // do the children first so that the underlying _children array is filled in based on the source file
@@ -32,8 +33,10 @@ export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, re
                 const newNodeText = text.substring(0, relativeStart) + newText + text.substring(relativeEnd);
                 if (compilerNode.kind === ts.SyntaxKind.SourceFile)
                     (compilerNode as any).text = newNodeText;
-                else
+                else if ((compilerNode as any).escapedText != null)
                     (compilerNode as any).escapedText = newNodeText;
+                else
+                    Logger.warn("Unhandled scenario when replacing node text: Node did not have an escapedText property.");
             }
             compilerNode.end += difference;
         }

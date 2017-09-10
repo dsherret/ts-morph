@@ -3,7 +3,6 @@ import * as errors from "./../../errors";
 import {replaceNodeText, removeStatementedNodeChild} from "./../../manipulation";
 import {NamespaceDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {Logger} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode, TextInsertableNode} from "./../base";
 import {StatementedNode} from "./../statement";
@@ -99,10 +98,8 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
 
         const declarationTypeKeyword = this.getDeclarationTypeKeyword();
         /* istanbul ignore if */
-        if (declarationTypeKeyword == null) {
-            Logger.warn("The declaration type keyword of a namespace was undefined.");
-            return this;
-        }
+        if (declarationTypeKeyword == null)
+            throw new errors.NotImplementedError("Expected the declaration type keyword to exist on a namespace.");
 
         replaceNodeText(this.getSourceFile(), declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
         return this;
