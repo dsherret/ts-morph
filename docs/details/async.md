@@ -16,7 +16,7 @@ functionDeclaration.isAsync(); // returns: boolean
 
 ### `async` keyword
 
-You can get the `async` keyword if it exists:
+Get the `async` keyword if it exists:
 
 ```typescript
 functionDeclaration.getAsyncKeyword();

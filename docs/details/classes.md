@@ -14,7 +14,7 @@ const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().l
 
 ### Add/Insert
 
-You can add or insert classes to a source file, namespace, or function like declarations by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
+Add or insert classes to a source file, namespace, or function like declarations by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
 
 ```typescript
 const classDeclaration = sourceFile.addClass({
@@ -205,7 +205,7 @@ Explore the functionality available via auto-complete.
 
 ## Get Accessors
 
-If it exists, you can get the corresponding set accessor:
+If it exists, get the corresponding set accessor:
 
 ```typescript
 const setAccessor = getAccessor.getSetAccessor();
@@ -213,7 +213,7 @@ const setAccessor = getAccessor.getSetAccessor();
 
 ## Set Accessors
 
-If it exists, you can get the corresponding get accessor:
+If it exists, get the corresponding get accessor:
 
 ```typescript
 const getAccessor = setAccessor.getGetAccessor();

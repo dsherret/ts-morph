@@ -12,7 +12,7 @@ const decorators = classDeclaration.getDecorators();
 
 ### Name
 
-You can get the name or fully qualified name of a decorator by using the `getName()` or `getFullName()` functions respectively.
+Get the name or fully qualified name of a decorator by using the `getName()` or `getFullName()` functions respectively.
 
 For example, given the following code:
 
@@ -64,7 +64,7 @@ decorator.removeTypeArgument(typeArgs[0]);
 
 ### Call expression
 
-Decorator factories are call expressions. You can get the call expression by calling:
+Decorator factories are call expressions. Get the call expression by calling:
 
 ```typescript
 const callExpression = decorator.getCallExpression(); // returns: CallExpression | undefined

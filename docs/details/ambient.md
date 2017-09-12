@@ -18,7 +18,7 @@ This will do several checks to see if it's an ambient declaration.
 
 ### `declare` keyword
 
-You can check for the `declare` keyword:
+Check for the `declare` keyword:
 
 ```typescript
 classDeclaration.hasDeclareKeyword(); // returns: boolean

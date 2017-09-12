@@ -27,7 +27,7 @@ This will return `undefined` if no documentation comment exists.
 
 ### Get all documentation comment nodes
 
-You can get all the documentation comment nodes by using `getDocumentationCommentNodes()`:
+Get all the documentation comment nodes by using `getDocumentationCommentNodes()`:
 
 ```typescript
 functionDeclaration.getDocumentationCommentNodes(); // returns: JSDoc[]
@@ -35,7 +35,7 @@ functionDeclaration.getDocumentationCommentNodes(); // returns: JSDoc[]
 
 ### Add/insert docs
 
-You can add or insert documentation comments using the `addDoc()`, `addDocs()`, `insertDoc()`, and `insertDocs()` methods.
+Add or insert documentation comments using the `addDoc()`, `addDocs()`, `insertDoc()`, and `insertDocs()` methods.
 
 For example:
 

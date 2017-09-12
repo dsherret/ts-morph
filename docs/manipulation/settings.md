@@ -35,7 +35,7 @@ const ast = new TsSimpleAst({
 
 ### Details
 
-You can get more details about the settings by looking at the `manipulationSettings` property on the main AST object:
+Get more details about the settings by looking at the `manipulationSettings` property on the main AST object:
 
 ```typescript
 ast.manipulationSettings.getIndentationText();

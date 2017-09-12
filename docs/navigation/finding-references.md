@@ -4,7 +4,7 @@ title: Finding References
 
 ## Finding References
 
-You can find all the references of a node by calling `.findReferences()` on an identifier.
+Find all the references of a node by calling `.findReferences()` on an identifier.
 
 ### Example
 

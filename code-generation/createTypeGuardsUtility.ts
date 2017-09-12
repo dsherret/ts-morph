@@ -12,6 +12,7 @@
  * ------------------------------------------
  */
 import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
 import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel} from "./view-models";
 
@@ -44,12 +45,14 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
             }],
             parameters: [{ name: "node", type: "compiler.Node" }],
             returnType: `node is compiler.${method.name}` + (method.isMixin ? " & compiler.Node" : ""),
-            bodyText: `switch (node.getKind()) {\r\n` +
-                method.syntaxKinds.map(k => `    case ts.SyntaxKind.${k}:`).join("\r\n") + "\r\n" +
-                "        return true;\r\n" +
-                "    default:\r\n" +
-                "        return false;\r\n" +
-                "}"
+            bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
+                    for (const syntaxKindName of method.syntaxKinds) {
+                        writer.writeLine(`case ts.SyntaxKind.${syntaxKindName}:`);
+                    }
+                    writer.indent().write("return true;").newLine();
+                    writer.writeLine("default:")
+                        .indent().write("return false;").newLine();
+                })
         }))
     });
 

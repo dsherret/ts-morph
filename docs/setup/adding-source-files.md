@@ -23,7 +23,7 @@ const sourceFile = ast.getOrAddSourceFileFromFilePath("path/to/file.ts");
 
 ### By structure
 
-You can create source files based on an object that looks like the AST of a source file:
+Create source files based on an object that looks like the AST of a source file:
 
 ```typescript
 const sourceFile = ast.addSourceFileFromStructure("path/to/myStructureFile.ts", {

@@ -62,7 +62,7 @@ export {MyClass} from "./other-file";
 export {MyClass};
 ```
 
-You can get the export declarations by calling:
+Get the export declarations by calling:
 
 ```typescript
 const exports = sourceFile.getExports();

@@ -48,7 +48,7 @@ const var1 = "5",
 
 ### Get variable declaration list
 
-You can get one from the variable statement:
+Get one from the variable statement:
 
 ```typescript
 const declarationList = variableStatement.getDeclarationList();
@@ -84,7 +84,7 @@ These are the individual declarations within a variable declaration list.
 
 ### Get variable declaration
 
-You can get them from the variable declaration list:
+Get them from the variable declaration list:
 
 ```typescript
 const variableDeclarations = variableDeclarationList.getDeclarations();

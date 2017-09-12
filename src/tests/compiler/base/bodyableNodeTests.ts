@@ -1,10 +1,35 @@
 ﻿import {expect} from "chai";
+import CodeBlockWriter from "code-block-writer";
 import {BodyableNode, ClassDeclaration, FunctionDeclaration} from "./../../../compiler";
 import {BodyableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(BodyableNode), () => {
     describe(nameof<BodyableNode>(n => n.setBodyText), () => {
+        describe("using a writer", () => {
+            function doTest(startCode: string, writerFunc: ((writer: CodeBlockWriter) => void), expectedCode: string) {
+                const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+                firstChild.setBodyText(writerFunc);
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should set the body text with only one ending newline when writing a line at the end", () => {
+                doTest("function myFunction() {}",
+                    writer => {
+                        writer.writeLine("test;").writeLine("test2;");
+                    },
+                    "function myFunction() {\n    test;\n    test2;\n}");
+            });
+
+            it("should set the body text with only one ending newline when not writing a line at the end", () => {
+                doTest("function myFunction() {}",
+                    writer => {
+                        writer.writeLine("test;").write("test2;");
+                    },
+                    "function myFunction() {\n    test;\n    test2;\n}");
+            });
+        });
+
         describe("class method", () => {
             function doTest(startCode: string, newText: string, expectedCode: string) {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
@@ -76,8 +101,12 @@ describe(nameof(BodyableNode), () => {
             expect(firstChild.getText()).to.equal(expectedCode);
         }
 
-        it("should set the text of a function", () => {
+        it("should set the text of a function when using a string", () => {
             doTest("function myFunction() {\n}", { bodyText: "var myVar;" }, "function myFunction() {\n    var myVar;\n}");
+        });
+
+        it("should set the text of a function when using a writer", () => {
+            doTest("function myFunction() {\n}", { bodyText: writer => writer.writeLine("var myVar;") }, "function myFunction() {\n    var myVar;\n}");
         });
     });
 });

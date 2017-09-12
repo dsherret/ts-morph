@@ -24,7 +24,7 @@ sourceFile.isDeclarationFile(); // returns: boolean
 
 ### Saving
 
-You can save a source file to the file system using one of the following commands:
+Save a source file to the file system using one of the following commands:
 
 ```typescript
 sourceFile.save(); // returns: Promise
@@ -43,7 +43,7 @@ ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are
 
 ### Copy
 
-You can copy a source file to a new file by specifying a new relative or absolute path:
+Copy a source file to a new file by specifying a new relative or absolute path:
 
 ```typescript
 const newSourceFile = sourceFile.copy("newFileName.ts");
@@ -57,7 +57,7 @@ TODO: Not yet supported.
 
 ### Remove
 
-You can remove a source file from the AST by calling:
+Remove a source file from the AST by calling:
 
 ```typescript
 ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
@@ -118,7 +118,7 @@ return "";
 }
 ```
 
-You can automatically format the text of this file by calling format text on it:
+Automatically format the text of this file by calling format text on it:
 
 ```typescript
 sourceFile.formatText();

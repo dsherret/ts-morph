@@ -12,7 +12,7 @@ const parameters = functionDeclaration.getParameters();
 
 ### Inserting/Adding
 
-You can insert or add rest parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`.
+Insert or add rest parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`.
 
 For example:
 
@@ -25,7 +25,7 @@ const parameter = functionDeclaration.insertParameter(1, {
 
 ### Removing
 
-You can remove a parameter by calling `.remove()` on it:
+Remove a parameter by calling `.remove()` on it:
 
 ```typescript
 parameter.remove();
@@ -33,7 +33,7 @@ parameter.remove();
 
 ### Rest parameter
 
-You can tell if a parameter is a rest parameter:
+Tell if a parameter is a rest parameter:
 
 ```typescript
 const isRestParameter = parameter.isRestParameter(); // returns: boolean

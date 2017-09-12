@@ -14,7 +14,7 @@ const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperti
 
 ### Add/Insert
 
-You can add or insert interfaces to a source file, namespace, or function like declarations by calling `addInterface()`, `addInterfaces()`, `insertInterface()`, or `insertInterfaces()`.
+Add or insert interfaces to a source file, namespace, or function like declarations by calling `addInterface()`, `addInterfaces()`, `insertInterface()`, or `insertInterfaces()`.
 
 ```typescript
 const interfaceDeclaration = sourceFile.addInterface({

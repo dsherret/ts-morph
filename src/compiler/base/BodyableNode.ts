@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {BodyableNodeStructure} from "./../../structures";
@@ -19,6 +20,12 @@ export interface BodyableNode {
     getBody(): Node | undefined;
     /**
      * Sets the body text. A body is required to do this operation.
+     * @param writerFunction - Function for using a writer to write out the body text.
+     */
+    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    /**
+     * Sets the body text. A body is required to do this operation.
+     * @param text - Text to set as the body.
      */
     setBodyText(text: string): this;
 }
@@ -37,9 +44,12 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             return body == null ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(body, this.sourceFile);
         }
 
-        setBodyText(text: string) {
+        setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+        setBodyText(text: string): this;
+        setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
+        setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             const body = this.getBodyOrThrow();
-            setBodyTextForNode(body, text);
+            setBodyTextForNode(body, textOrWriterFunction);
             return this;
         }
 

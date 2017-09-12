@@ -16,7 +16,7 @@ Most of the information you can get about type aliases is covered in other secti
 
 ### Add/Insert
 
-You can add or insert namespaces to a source file, namespace, or function like declarations by calling `addTypeAlias()`, `addTypeAliases()`, `insertTypeAlias()`, or `insertTypeAliases()`.
+Add or insert namespaces to a source file, namespace, or function like declarations by calling `addTypeAlias()`, `addTypeAliases()`, `insertTypeAlias()`, or `insertTypeAliases()`.
 
 ```typescript
 const typeAliasDeclaration = sourceFile.addTypeAlias({

@@ -34,7 +34,7 @@ const myVar = 4;
 
 The type is `4` and the apparent type is `Number`.
 
-You can retrieve the apparent type via the following:
+Retrieve the apparent type via the following:
 
 ```typescript
 const apparentType = type.getApparentType();
@@ -48,13 +48,13 @@ Getting the type text can be achieved by calling `.getText()`:
 const text = type.getText();
 ```
 
-Sometimes this may not be good enough. If not, you can also provide the enclosing node:
+Sometimes this may not be good enough. If not, try to provide the enclosing node:
 
 ```typescript
 const text = type.getText(parameter);
 ```
 
-And you can format it by providing `ts.TypeFormatFlags`:
+Format it by providing `ts.TypeFormatFlags`:
 
 ```typescript
 const text = type.getText(parameter, ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.WriteArrayAsGenericType);
@@ -114,7 +114,7 @@ const constructSignatures = type.getConstructSignatures();
 
 ### Index types
 
-You can get either the string index type (ex. for `{ [index: string]: Date; }` it would be `Date`)
+Get either the string index type (ex. for `{ [index: string]: Date; }` it would be `Date`)
 or the number index type (ex. for `{ [index: number]: object; }` it would be `object`):
 
 ```typescript
@@ -189,7 +189,7 @@ If you see something that doesn't exist here and should (there's a lot missing),
 
 ### Removing a Type
 
-You can remove a type or a return type from a node:
+Remove a type or a return type from a node:
 
 ```typescript
 propertyDeclaration.removeType();

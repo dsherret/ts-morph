@@ -18,7 +18,7 @@ Note: Although it's a compile error, you can also retreive namespaces from funct
 
 ### Add/Insert
 
-You can add or insert namespaces to a source file, namespace, or function like declarations by calling `addNamespace()`, `addNamespaces()`, `insertNamespace()`, or `insertNamespaces()`.
+Add or insert namespaces to a source file, namespace, or function like declarations by calling `addNamespace()`, `addNamespaces()`, `insertNamespace()`, or `insertNamespaces()`.
 
 ```typescript
 const namespaceDeclaration = sourceFile.addNamespace({

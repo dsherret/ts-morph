@@ -16,7 +16,7 @@ Most of the information you can get about functions is covered in other sections
 
 ### Add/Insert
 
-You can add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
+Add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
 
 ```typescript
 const functionDeclaration = sourceFile.addFunction({
@@ -36,7 +36,7 @@ functionDeclaration.remove();
 
 By default, in ambient contexts or for ambient nodes, all overloads will be returned. In non-ambient contexts, only the implementation will be returned.
 
-You can get the overloads by calling:
+Get the overloads by calling:
 
 ```typescript
 const overloads = functionDeclaration.getOverloads(); // returns: FunctionDeclaration[]
@@ -49,7 +49,7 @@ functionDeclaration.isOverload();
 functionDeclaration.isImplementation();
 ```
 
-From the overloads, you can get the implementation by calling:
+From the overloads, get the implementation by calling:
 
 ```typescript
 const implementation = overload.getImplementation();
@@ -57,7 +57,7 @@ const implementation = overload.getImplementation();
 
 #### Add/Insert
 
-You can add or insert overloads by using either the `.addOverload()`, `.addOverloads()`, `.insertOverload()`, or `insertOverloads()` methods.
+Add or insert overloads by using either the `.addOverload()`, `.addOverloads()`, `.insertOverload()`, or `insertOverloads()` methods.
 
 #### Remove
 
@@ -73,4 +73,13 @@ The body text can be set via the `.setBodyText()` method:
 
 ```typescript
 functionDeclaration.setBodyText("const myNumber = 5;");
+```
+
+Or alternatively, write the body text with [code-block-writer](https://github.com/dsherret/code-block-writer):
+
+```typescript
+functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;")
+    .write("if (myNumber === 5)").block(() => {
+        writer.writeLine("console.log('yes')");
+    }));
 ```
