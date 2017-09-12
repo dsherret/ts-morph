@@ -22,9 +22,7 @@ const firstProperty = classDec.getProperties()[0];
 // ... do more stuff here ...
 ```
 
-### No TypeChecker, Program, or Language Service
-
-This is a lightweight way to navigate a node, but there are certian functionalities you can't use since there is no language service, type checker, or program.
+**Note:** This is a lightweight way to navigate a node, but there are certian functionalities you can't use since there is no language service, type checker, or program.
 For example, getting the type of a node will not work because that requires a type checker.
 
 For now, you can always get the underlying compiler node from a wrapped node and use that with your existing compiler objects (ex. TypeChecker),
