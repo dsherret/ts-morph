@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
     removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, TypeGuards} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
@@ -151,7 +151,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the constructor declarations.
      */
     getConstructors() {
-        return this.getAllMembers().filter(m => m.isConstructorDeclaration()) as ConstructorDeclaration[];
+        return this.getAllMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
     }
 
     /**
@@ -209,8 +209,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             index,
             childCodes: codes,
             structures,
-            previousBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
-            nextBlanklineWhen: n => n.isBodyableNode() || n.isBodiedNode(),
+            previousBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
+            nextBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
             expectedKind: ts.SyntaxKind.PropertyDeclaration,
             fillFunction: (node, structure) => node.fill(structure)
         });
@@ -389,7 +389,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && (m instanceof ParameterDeclaration || !m.isStatic())) as ClassInstanceMemberTypes[];
+        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (m instanceof ParameterDeclaration || !m.isStatic())) as ClassInstanceMemberTypes[];
     }
 
     /**
@@ -410,7 +410,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the static members.
      */
     getStaticMembers() {
-        return this.getAllMembers().filter(m => !m.isConstructorDeclaration() && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
+        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
     }
 
     /**
@@ -418,7 +418,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getAllMembers() {
         const members = this.getBodyMembers();
-        const implementationCtors = members.filter(c => c.isConstructorDeclaration() && c.isImplementation()) as ConstructorDeclaration[];
+        const implementationCtors = members.filter(c => TypeGuards.isConstructorDeclaration(c) && c.isImplementation()) as ConstructorDeclaration[];
         for (const ctor of implementationCtors) {
             // insert after the constructor
             let insertIndex = members.indexOf(ctor) + 1;

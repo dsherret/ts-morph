@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {SourceFile, Node, LanguageService} from "./../../compiler";
+import {TypeGuards} from "./../../utils";
 import {verifyAndGetIndex} from "./../verifyAndGetIndex";
 import {isBlankLineAtPos} from "./../textChecks";
 import {insertIntoCreatableSyntaxList} from "./insertIntoCreatableSyntaxList";
@@ -61,7 +62,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         }
     }
 
-    if (parent.isSourceFile() && nextMember == null && !newText.endsWith(newLineChar) && !sourceFile.getFullText().endsWith("\n"))
+    if (TypeGuards.isSourceFile(parent) && nextMember == null && !newText.endsWith(newLineChar) && !sourceFile.getFullText().endsWith("\n"))
         newText = newText + newLineChar;
 
     insertIntoCreatableSyntaxList({
@@ -76,7 +77,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
 
 function getInsertPosition(index: number, parent: Node, children: Node[]) {
     if (index === 0) {
-        if (parent.isSourceFile())
+        if (TypeGuards.isSourceFile(parent))
             return 0;
         else {
             const parentContainer = getParentContainer(parent);
@@ -89,9 +90,9 @@ function getInsertPosition(index: number, parent: Node, children: Node[]) {
 }
 
 function getParentContainer(parent: Node) {
-    if (parent.isBodiedNode())
+    if (TypeGuards.isBodiedNode(parent))
         return parent.getBody();
-    if (parent.isBodyableNode())
+    if (TypeGuards.isBodyableNode(parent))
         return parent.getBodyOrThrow();
     else
         return parent;

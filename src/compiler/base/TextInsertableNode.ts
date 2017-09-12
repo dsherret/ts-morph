@@ -2,6 +2,7 @@
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent} from "./../../manipulation";
+import {TypeGuards} from "./../../utils";
 import {Node} from "./../common";
 
 export type TextInsertableNodeExtensionType = Node;
@@ -86,7 +87,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             }
 
             function getNodeToVerifyRange() {
-                if (thisNode.isSourceFile())
+                if (TypeGuards.isSourceFile(thisNode))
                     return thisNode;
                 return childSyntaxList;
             }

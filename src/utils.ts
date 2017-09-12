@@ -11,4 +11,5 @@ export * from "./utils/KeyValueCache";
 export * from "./utils/Logger";
 export * from "./utils/newLineKindToTs";
 export * from "./utils/StringUtils";
+export * from "./utils/TypeGuards";
 export * from "./utils/using";

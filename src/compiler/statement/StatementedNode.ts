@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, using} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, using, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -494,9 +494,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
                     child.fill(structures[i]);
                 }, {
-                    previousBlanklineWhen: previousMember => !previousMember.isTypeAliasDeclaration(),
+                    previousBlanklineWhen: previousMember => !TypeGuards.isTypeAliasDeclaration(previousMember),
                     separatorNewlineWhen: () => false,
-                    nextBlanklineWhen: nextMember => !nextMember.isTypeAliasDeclaration()
+                    nextBlanklineWhen: nextMember => !TypeGuards.isTypeAliasDeclaration(nextMember)
                 });
 
             return newChildren;

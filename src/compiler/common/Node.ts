@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
-import {Disposable} from "./../../utils";
+import {Disposable, TypeGuards} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -316,13 +316,13 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     getChildSyntaxList(): Node | undefined {
         let node: Node = this;
-        if (node.isBodyableNode() || node.isBodiedNode()) {
+        if (TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) {
             do {
-                node = node.isBodyableNode() ? node.getBodyOrThrow() : node.getBody();
-            } while ((node.isBodyableNode() || node.isBodiedNode()) && (node.compilerNode as ts.Block).statements == null);
+                node = TypeGuards.isBodyableNode(node) ? node.getBodyOrThrow() : node.getBody();
+            } while ((TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) && (node.compilerNode as ts.Block).statements == null);
         }
 
-        if (node.isSourceFile() || this.isBodyableNode() || this.isBodiedNode())
+        if (TypeGuards.isSourceFile(node) || TypeGuards.isBodyableNode(this) || TypeGuards.isBodiedNode(this))
             return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList);
 
         let passedBrace = false;
@@ -586,95 +586,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets if the current node is a source file.
-     * @internal
-     */
-    isSourceFile(): this is SourceFile {
-        return this.compilerNode.kind === ts.SyntaxKind.SourceFile;
-    }
-
-    /**
-     * Gets if the current node is a constructor declaration.
-     * @internal
-     */
-    isConstructorDeclaration(): this is ConstructorDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.Constructor;
-    }
-
-    /**
-     * Gets if the current node is a function declaration.
-     * @internal
-     */
-    isFunctionDeclaration(): this is FunctionDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.FunctionDeclaration;
-    }
-
-    /**
-     * Gets if the current node is an interface declaration.
-     * @internal
-     */
-    isInterfaceDeclaration(): this is InterfaceDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.InterfaceDeclaration;
-    }
-
-    /**
-     * Gets if the current node is a namespace declaration.
-     * @internal
-     */
-    isNamespaceDeclaration(): this is NamespaceDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.ModuleDeclaration;
-    }
-
-    /**
-     * Gets if the current node is a type alias declaration.
-     * @internal
-     */
-    isTypeAliasDeclaration(): this is TypeAliasDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.TypeAliasDeclaration;
-    }
-
-    /**
-     * Gets if the current node is a modifierable node.
-     * @internal
-     */
-    isModifierableNode(): this is base.ModifierableNode {
-        return (this as any)[nameof<base.ModifierableNode>(n => n.addModifier)] != null;
-    }
-
-    /**
-     * Gets if the current node is a method declaration.
-     * @internal
-     */
-    isMethodDeclaration(): this is MethodDeclaration {
-        return this.compilerNode.kind === ts.SyntaxKind.MethodDeclaration;
-    }
-
-    /* Mixin type guards (overridden in mixins to set to true) */
-
-    /**
-     * Gets if this is a bodied node.
-     */
-    isBodiedNode(): this is base.BodiedNode {
-        return false;
-    }
-
-    /**
-     * Gets if this is a bodyable node.
-     */
-    isBodyableNode(): this is base.BodyableNode {
-        return false;
-    }
-
-    /**
-     * Gets if this is an initializer expressionable node.
-     */
-    isInitializerExpressionableNode(): this is base.InitializerExpressionableNode {
-        return false;
-    }
-
-    /* End mixin type guards */
-
-    /**
      * Gets the indentation text.
      */
     getIndentationText() {
@@ -704,7 +615,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the next indentation level text.
      */
     getChildIndentationText() {
-        if (this.isSourceFile())
+        if (TypeGuards.isSourceFile(this))
             return "";
 
         return this.getIndentationText() + this.global.manipulationSettings.getIndentationText();

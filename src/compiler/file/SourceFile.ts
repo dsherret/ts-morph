@@ -4,7 +4,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ArrayUtils, FileUtils, newLineKindToTs} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
@@ -349,7 +349,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const declaration = defaultExportSymbol.getDeclarations()[0];
         if (declaration.compilerNode.kind === ts.SyntaxKind.ExportAssignment)
             removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
-        else if (declaration.isModifierableNode()) {
+        else if (TypeGuards.isModifierableNode(declaration)) {
             declaration.toggleModifier("default", false);
             declaration.toggleModifier("export", false);
         }

@@ -3,6 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {ExportableNodeStructure} from "./../../structures";
+import {TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
@@ -84,14 +85,14 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         isNamedExport() {
             const parentNode = this.getParentOrThrow();
-            return parentNode.isSourceFile() && this.hasExportKeyword() && !this.hasDefaultKeyword();
+            return TypeGuards.isSourceFile(parentNode) && this.hasExportKeyword() && !this.hasDefaultKeyword();
         }
 
         setIsDefaultExport(value: boolean) {
             if (value === this.isDefaultExport())
                 return this;
 
-            if (value && !this.getParentOrThrow().isSourceFile())
+            if (value && !TypeGuards.isSourceFile(this.getParentOrThrow()))
                 throw new errors.InvalidOperationError("The parent must be a source file in order to set this node as a default export.");
 
             // remove any existing default export
@@ -112,7 +113,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         setIsExported(value: boolean) {
             // remove the default export if it is one no matter what
-            if (this.getParentOrThrow().isSourceFile())
+            if (TypeGuards.isSourceFile(this.getParentOrThrow()))
                 this.setIsDefaultExport(false);
 
             this.toggleModifier("export", value);

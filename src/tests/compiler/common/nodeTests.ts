@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature} from "./../../../compiler";
+import {TypeGuards} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -124,17 +125,6 @@ describe(nameof(Node), () => {
 
         it("should return a the node at the specified pos when specifying a space", () => {
             expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(ts.SyntaxKind.FirstPunctuation);
-        });
-    });
-
-    describe(nameof<Node>(n => n.isSourceFile), () => {
-        const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
-        it("should return true for the source file", () => {
-            expect(sourceFile.isSourceFile()).to.be.true;
-        });
-
-        it("should return false for something not a source file", () => {
-            expect(firstChild.isSourceFile()).to.be.false;
         });
     });
 
@@ -317,7 +307,7 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[2].getPreviousSibling(s => s.isInterfaceDeclaration() && s.getName() === "Interface1")!.getText())
+            expect(sourceFile.getInterfaces()[2].getPreviousSibling(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1")!.getText())
                 .to.equal("interface Interface1 {}");
         });
 
@@ -338,7 +328,7 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the previous sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => s.isInterfaceDeclaration() && s.getName() === "Interface1").getText())
+            expect(sourceFile.getInterfaces()[2].getPreviousSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface1").getText())
                 .to.equal("interface Interface1 {}");
         });
 
@@ -359,7 +349,7 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the next sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[0].getNextSibling(s => s.isInterfaceDeclaration() && s.getName() === "Interface3")!.getText())
+            expect(sourceFile.getInterfaces()[0].getNextSibling(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface3")!.getText())
                 .to.equal("interface Interface3 {}");
         });
 
@@ -380,7 +370,7 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Interface1 {}\ninterface Interface2 {}\ninterface Interface3 {}");
 
         it("should get the next sibling based on a condition", () => {
-            expect(sourceFile.getInterfaces()[0].getNextSiblingOrThrow(s => s.isInterfaceDeclaration() && s.getName() === "Interface3").getText())
+            expect(sourceFile.getInterfaces()[0].getNextSiblingOrThrow(s => TypeGuards.isInterfaceDeclaration(s) && s.getName() === "Interface3").getText())
                 .to.equal("interface Interface3 {}");
         });
 

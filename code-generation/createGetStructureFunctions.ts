@@ -2,6 +2,7 @@
 import {getFlattenedExtensions} from "./common";
 import {InterfaceViewModel} from "./view-models";
 
+// todo: a lot of this code was written before this library supported manipulation
 export function createGetStructureFunctions(structures: InterfaceViewModel[]) {
     const writer = new CodeBlockWriter();
 

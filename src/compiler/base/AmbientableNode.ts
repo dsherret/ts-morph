@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {AmbientableNodeStructure} from "./../../structures";
+import {TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
@@ -39,7 +40,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
 
         isAmbient() {
             const isThisAmbient = (this.getCombinedModifierFlags() & ts.ModifierFlags.Ambient) === ts.ModifierFlags.Ambient;
-            if (isThisAmbient || this.isInterfaceDeclaration() || this.isTypeAliasDeclaration())
+            if (isThisAmbient || TypeGuards.isInterfaceDeclaration(this) || TypeGuards.isTypeAliasDeclaration(this))
                 return true;
 
             let topParent = this as Node;
@@ -51,7 +52,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
                     return true;
             }
 
-            return topParent.isSourceFile() && topParent.isDeclarationFile();
+            return TypeGuards.isSourceFile(topParent) && topParent.isDeclarationFile();
         }
 
         toggleDeclareKeyword(value?: boolean) {

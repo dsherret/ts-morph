@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
+import {TypeGuards} from "./../../utils";
 import {FormattingKind} from "./FormattingKind";
 
 export function getStatementedNodeChildFormatting(parent: Node, member: Node) {
@@ -10,11 +11,10 @@ export function getStatementedNodeChildFormatting(parent: Node, member: Node) {
 }
 
 function hasBody(node: Node) {
-    if (node.isBodyableNode() && node.getBody() != null)
+    if (TypeGuards.isBodyableNode(node) && node.getBody() != null)
         return true;
-    if (node.isBodiedNode())
+    if (TypeGuards.isBodiedNode(node))
         return true;
-    // todo: use #22 once implemented
-    return node.isInterfaceDeclaration() || node.getKind() === ts.SyntaxKind.ClassDeclaration || node.getKind() === ts.SyntaxKind.EnumDeclaration ||
-        node.getKind() === ts.SyntaxKind.EnumDeclaration;
+    return TypeGuards.isInterfaceDeclaration(node) || TypeGuards.isClassDeclaration(node) || TypeGuards.isEnumDeclaration(node) ||
+        TypeGuards.isEnumDeclaration(node);
 }

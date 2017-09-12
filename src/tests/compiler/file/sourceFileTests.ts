@@ -113,17 +113,6 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.isSourceFile), () => {
-        const {sourceFile, firstChild} = getInfoFromText("enum MyEnum {}");
-        it("should return true for the source file", () => {
-            expect(sourceFile.isSourceFile()).to.be.true;
-        });
-
-        it("should return false for something not a source file", () => {
-            expect(firstChild.isSourceFile()).to.be.false;
-        });
-    });
-
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
             const ast = new TsSimpleAst();

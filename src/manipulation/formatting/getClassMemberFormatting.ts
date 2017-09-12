@@ -1,4 +1,5 @@
 ﻿import {Node, ClassDeclaration} from "./../../compiler";
+import {TypeGuards} from "./../../utils";
 import {FormattingKind} from "./FormattingKind";
 
 export function getClassMemberFormatting(parent: ClassDeclaration, member: Node) {
@@ -12,9 +13,9 @@ export function getClassMemberFormatting(parent: ClassDeclaration, member: Node)
 }
 
 function hasBody(node: Node) {
-    if (node.isBodyableNode() && node.getBody() != null)
+    if (TypeGuards.isBodyableNode(node) && node.getBody() != null)
         return true;
-    if (node.isBodiedNode())
+    if (TypeGuards.isBodiedNode(node))
         return true;
     return false;
 }

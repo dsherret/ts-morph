@@ -10,11 +10,6 @@ export type BodyableNodeExtensionType = Node<ts.Node>;
 
 export interface BodyableNode {
     /**
-     * Gets if this is a bodyable node.
-     * @internal
-     */
-    isBodyableNode(): this is BodyableNode;
-    /**
      * Gets the body or throws an error if it doesn't exist.
      */
     getBodyOrThrow(): Node;
@@ -30,10 +25,6 @@ export interface BodyableNode {
 
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
     return class extends Base implements BodyableNode {
-        isBodyableNode(): true {
-            return true;
-        }
-
         getBodyOrThrow() {
             const body = this.getBody();
             if (body == null)
