@@ -31,5 +31,5 @@ It may be useful in certain instances to use the type checker though.
 Get the type of any node by calling:
 
 ```typescript
-const type = typeChecker.getTypeAtLocation(node);
+const typeOfNode = typeChecker.getTypeAtLocation(node);
 ```
