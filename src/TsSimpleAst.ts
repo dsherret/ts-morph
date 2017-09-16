@@ -187,10 +187,24 @@ export class TsSimpleAst {
     }
 
     /**
-     * Gets a language service.
+     * Gets the language service.
      */
     getLanguageService(): compiler.LanguageService {
         return this.global.languageService;
+    }
+
+    /**
+     * Gets the program.
+     */
+    getProgram(): compiler.Program {
+        return this.global.program;
+    }
+
+    /**
+     * Gets the type checker.
+     */
+    getTypeChecker(): compiler.TypeChecker {
+        return this.global.typeChecker;
     }
 
     /**

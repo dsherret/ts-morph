@@ -1,9 +1,26 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, SourceFile} from "./../../../compiler";
+import {StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration} from "./../../../compiler";
 import {StatementedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(StatementedNode), () => {
+    describe(nameof<StatementedNode>(s => s.getStatements), () => {
+        it("should get the statements of a source file", () => {
+            const {sourceFile} = getInfoFromText("var t; var m;");
+            expect(sourceFile.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
+        });
+
+        it("should get the statements of a function", () => {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>("function i() { var t; var m; }");
+            expect(firstChild.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
+        });
+
+        it("should get the statements of a namespace", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace n { var t; var m; }");
+            expect(firstChild.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
+        });
+    });
+
     describe(nameof<SourceFile>(s => s.fill), () => {
         function doTest(startingCode: string, structure: StatementedNodeStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startingCode);

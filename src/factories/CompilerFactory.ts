@@ -118,13 +118,13 @@ export class CompilerFactory {
      * Gets a wrapped compiler type based on the node's kind.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode(compilerNode: ts.Node, sourceFile: compiler.SourceFile): compiler.Node {
+    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: compiler.SourceFile): compiler.Node<NodeType> {
         if (compilerNode.kind === ts.SyntaxKind.SourceFile)
-            return this.getSourceFile(compilerNode as ts.SourceFile);
+            return this.getSourceFile(compilerNode as any as ts.SourceFile) as compiler.Node as compiler.Node<NodeType>;
         else if (nodeToWrapperMappings[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new (nodeToWrapperMappings[compilerNode.kind] as any)(this.global, compilerNode, sourceFile));
+            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => new (nodeToWrapperMappings[compilerNode.kind] as any)(this.global, compilerNode, sourceFile));
         else
-            return this.nodeCache.getOrCreate<compiler.Node>(compilerNode, () => new compiler.Node(this.global, compilerNode, sourceFile));
+            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => new compiler.Node(this.global, compilerNode, sourceFile));
     }
 
     /**

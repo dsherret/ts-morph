@@ -20,6 +20,10 @@ export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDecla
 
 export interface StatementedNode {
     /**
+     * Gets the node's statements.
+     */
+    getStatements(): Node[];
+    /**
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
      */
@@ -287,6 +291,21 @@ export interface StatementedNode {
 
 export function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T {
     return class extends Base implements StatementedNode {
+        /* General */
+        getStatements() {
+            let statements: ts.NodeArray<ts.Statement>;
+            if (TypeGuards.isSourceFile(this))
+                statements = this.compilerNode.statements;
+            else if (TypeGuards.isBodyableNode(this))
+                statements = (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else if (TypeGuards.isBodiedNode(this))
+                statements = (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else
+                throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
+
+            return statements.map(s => this.global.compilerFactory.getNodeFromCompilerNode(s, this.sourceFile));
+        }
+
         /* Classes */
 
         addClass(structure: ClassDeclarationStructure) {

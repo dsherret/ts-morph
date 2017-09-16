@@ -98,6 +98,11 @@ export class LanguageService {
         return this.program;
     }
 
+    /**
+     * Rename the specified node.
+     * @param node - Node to rename.
+     * @param newName - New name for the node.
+     */
     renameNode(node: Node, newName: string) {
         errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
 
@@ -106,6 +111,11 @@ export class LanguageService {
         this.renameLocations(this.findRenameLocations(node), newName);
     }
 
+    /**
+     * Rename the provided rename locations.
+     * @param renameLocations - Rename locations.
+     * @param newName - New name for the node.
+     */
     renameLocations(renameLocations: RenameLocation[], newName: string) {
         const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
         for (const renameLocation of renameLocations) {
@@ -142,18 +152,28 @@ export class LanguageService {
         return results.map(s => new ReferencedSymbol(this.global, s));
     }
 
+    /**
+     * Find the rename locations for the specified node.
+     * @param node - Node to get the rename locations for.
+     */
     findRenameLocations(node: Node): RenameLocation[] {
         const sourceFile = node.getSourceFile();
         const renameLocations = this.compilerObject.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
         return renameLocations.map(l => new RenameLocation(this.global, l));
     }
 
+    /**
+     * @internal
+     */
     addSourceFile(sourceFile: SourceFile) {
         // todo: these source files should be strictly stored in the factory cache
         this.sourceFiles.push(sourceFile);
         this.resetProgram();
     }
 
+    /**
+     * @internal
+     */
     removeSourceFile(sourceFile: SourceFile) {
         const index = this.sourceFiles.indexOf(sourceFile);
         if (index === -1)
@@ -165,6 +185,9 @@ export class LanguageService {
         return true;
     }
 
+    /**
+     * @internal
+     */
     getSourceFiles() {
         return this.sourceFiles;
     }
