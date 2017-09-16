@@ -274,6 +274,17 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getDescendantsOfKind), () => {
+        const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+
+        it("should get the descendant by a kind", () => {
+            const properties = sourceFile.getDescendantsOfKind(ts.SyntaxKind.PropertySignature);
+            expect(properties.length).to.equal(2);
+            expect(properties[0]).to.be.instanceOf(PropertySignature);
+            expect(properties[1]).to.be.instanceOf(PropertySignature);
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstDescendantByKind), () => {
         const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 

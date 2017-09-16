@@ -351,7 +351,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         for (const child of this.getChildrenIterator()) {
             yield child;
 
-            for (const childChild of child.getDescendants())
+            for (const childChild of child.getDescendantsIterator())
                 yield childChild;
         }
     }
@@ -822,6 +822,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
                 return parent;
         }
         return undefined;
+    }
+
+    /**
+     * Gets the descendants that match a specified syntax kind.
+     * @param kind - Kind to check.
+     */
+    getDescendantsOfKind(kind: ts.SyntaxKind) {
+        return this.getDescendants().filter(c => c.getKind() === kind);
     }
 
     /**
