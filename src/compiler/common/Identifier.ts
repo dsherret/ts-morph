@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./Node";
+import {Type} from "./../type";
 import {ReferencedSymbol} from "./../tools";
 
 export class Identifier extends Node<ts.Identifier> {
@@ -23,5 +24,12 @@ export class Identifier extends Node<ts.Identifier> {
      */
     findReferences(): ReferencedSymbol[] {
         return this.global.languageService.findReferences(this.sourceFile, this);
+    }
+
+    /**
+     * Gets the type of the identifier.
+     */
+    getType(): Type {
+        return this.global.typeChecker.getTypeAtLocation(this);
     }
 }

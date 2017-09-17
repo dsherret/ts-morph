@@ -62,4 +62,16 @@ describe(nameof(Identifier), () => {
             expect(references[2].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
         });
     });
+
+    describe(nameof<Identifier>(n => n.getType), () => {
+        function doTest(text: string, expectedTypes: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            const identifiers = sourceFile.getDescendantsOfKind(ts.SyntaxKind.Identifier) as Identifier[];
+            expect(identifiers.map(i => i.getType().getText())).to.deep.equal(expectedTypes);
+        }
+
+        it("should get the identifier", () => {
+            doTest("class Identifier {}\n var t = Identifier;", ["Identifier", "typeof Identifier", "typeof Identifier"]);
+        });
+    });
 });

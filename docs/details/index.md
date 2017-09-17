@@ -28,10 +28,11 @@ Types:
 
 * [Types](types)
 * Type Nodes - todo
-* [Expressions](expressions)
 
 Common:
 
+* [Expressions](expressions)
+* [Identifiers](identifiers)
 * [Ambient](ambient)
 * [Async](async)
 * [Exports](exports)
