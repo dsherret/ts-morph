@@ -12,4 +12,11 @@ export class HeritageClause extends Node<ts.HeritageClause> {
 
         return this.compilerNode.types.map(t => this.global.compilerFactory.getNodeFromCompilerNode(t, this.sourceFile)) as ExpressionWithTypeArguments[];
     }
+
+    /**
+     * Gets the heritage clause token.
+     */
+    getToken() {
+        return this.compilerNode.token;
+    }
 }

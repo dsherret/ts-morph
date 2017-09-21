@@ -61,6 +61,14 @@ classDeclaration.insertImplements(1, "Named");
 classDeclaration.insertImplements(1, ["Named", "Aged"]);
 ```
 
+### Derived Classes
+
+Will return all the class declarations that derive from the current class:
+
+```typescript
+const derivedClasses = classDeclaration.getDerivedClasses();
+```
+
 ### Constructor
 
 Constructors can be retreived via `getConstructors`. This returns all the constructors in an ambient context, but will only return the
@@ -175,7 +183,7 @@ Nodes on a class may be abstract.
 Get if it's abstract:
 
 ```typescript
-method.getIsAbstract(); // returns: boolean
+method.isAbstract(); // returns: boolean
 ```
 
 Get the abstract keyword:

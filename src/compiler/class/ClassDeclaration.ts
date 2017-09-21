@@ -7,6 +7,7 @@ import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDec
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode} from "./../base";
+import {HeritageClause} from "./../general";
 import {AbstractableNode} from "./base";
 import {SourceFile} from "./../file";
 import {ParameterDeclaration} from "./../function";
@@ -434,10 +435,49 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets all the derived classes.
+     */
+    getDerivedClasses() {
+        const classes = this.getImmediateDerivedClasses();
+
+        for (let i = 0; i < classes.length; i++) {
+            const derivedClasses = classes[i].getImmediateDerivedClasses();
+            for (const derivedClass of derivedClasses) {
+                // don't allow circular references
+                if (derivedClass !== this && classes.indexOf(derivedClass) === -1)
+                    classes.push(derivedClass);
+            }
+        }
+
+        return classes;
+    }
+
+    /**
      * Removes this class declaration.
      */
     remove() {
         removeStatementedNodeChild(this);
+    }
+
+    private getImmediateDerivedClasses() {
+        const references = this.getNameIdentifier().findReferences();
+        const classes: ClassDeclaration[] = [];
+        for (const reference of references) {
+            for (const ref of reference.getReferences()) {
+                if (ref.isDefinition())
+                    continue;
+                const node = ref.getNode();
+                const nodeParent = node.getParentIfKind(ts.SyntaxKind.ExpressionWithTypeArguments);
+                if (nodeParent == null)
+                    continue;
+                const heritageClause = nodeParent.getParentIfKind(ts.SyntaxKind.HeritageClause) as HeritageClause;
+                if (heritageClause == null || heritageClause.getToken() !== ts.SyntaxKind.ExtendsKeyword)
+                    continue;
+                classes.push(heritageClause.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration);
+            }
+        }
+
+        return classes;
     }
 
     private getBodyMembers() {
@@ -446,10 +486,6 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // filter out the method declarations or constructor declarations without a body if not ambient
         return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
     }
-}
-
-function getBodyMembers(this: ClassDeclaration) {
-
 }
 
 function isClassPropertyType(m: Node) {

@@ -590,6 +590,28 @@ class c {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getDerivedClasses), () => {
+        function doTest(text: string, className: string, expectedNames: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            const classes = sourceFile.getClass(className)!.getDerivedClasses();
+            expect(classes.map(c => c.getName())).to.deep.equal(expectedNames);
+        }
+
+        it("should get the class descendants", () => {
+            doTest("class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {} class GreatGrandChild1 extends Grandchild1 {}",
+                "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
+        });
+
+        it("should not blow up for a circular references", () => {
+            doTest("class Base extends GreatGrandChild1 {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {} " +
+                "class GreatGrandChild1 extends Grandchild1 {}", "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
+        });
+
+        it("should get the class descendants when there are none", () => {
+            doTest("class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {}", "Grandchild1", []);
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);

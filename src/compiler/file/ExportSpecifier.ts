@@ -72,6 +72,6 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the export declaration associated with this export specifier.
      */
     getExportDeclaration() {
-        return this.getFirstParentByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
     }
 }

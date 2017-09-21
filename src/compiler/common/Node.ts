@@ -487,14 +487,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /**
      * Goes up the tree getting all the parents in ascending order.
      */
-    getParents() {
-        return Array.from(this.getParentsIterator());
+    getAncestors() {
+        return Array.from(this.getAncestorsIterator());
     }
 
     /**
      * @internal
      */
-    *getParentsIterator() {
+    *getAncestorsIterator() {
         let parent = (this as Node).getParent();
         while (parent != null) {
             yield parent;
@@ -802,22 +802,22 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the first parent by syntax kind or throws if not found.
+     * Gets the first ancestor by syntax kind or throws if not found.
      * @param kind - Syntax kind.
      */
-    getFirstParentByKindOrThrow(kind: ts.SyntaxKind) {
-        const parentNode = this.getFirstParentByKind(kind);
+    getFirstAncestorByKindOrThrow(kind: ts.SyntaxKind) {
+        const parentNode = this.getFirstAncestorByKind(kind);
         if (parentNode == null)
             throw new errors.InvalidOperationError(`A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
         return parentNode;
     }
 
     /**
-     * Get the first parent by syntax kind.
+     * Get the first ancestor by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstParentByKind(kind: ts.SyntaxKind) {
-        for (const parent of this.getParents()) {
+    getFirstAncestorByKind(kind: ts.SyntaxKind) {
+        for (const parent of this.getAncestors()) {
             if (parent.getKind() === kind)
                 return parent;
         }

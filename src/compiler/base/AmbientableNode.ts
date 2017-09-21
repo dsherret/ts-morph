@@ -44,7 +44,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
                 return true;
 
             let topParent = this as Node;
-            for (const parent of this.getParents()) {
+            for (const parent of this.getAncestors()) {
                 topParent = parent; // store the top parent for later
 
                 const modifierFlags = parent.getCombinedModifierFlags();

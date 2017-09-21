@@ -74,6 +74,6 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the import declaration associated with this import specifier.
      */
     getImportDeclaration() {
-        return this.getFirstParentByKindOrThrow(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration;
     }
 }

@@ -38,27 +38,27 @@ describe(nameof(Identifier), () => {
             expect(references[0].getSourceFile()).to.equal(sourceFile);
             expect(references[0].getTextSpan().getStart()).to.equal(9);
             expect(references[0].getTextSpan().getLength()).to.equal("myFunction".length);
-            expect(references[0].getIsDefinition()).to.equal(true);
-            expect(references[0].getIsInString()).to.equal(undefined);
-            expect(references[0].getIsWriteAccess()).to.equal(true);
+            expect(references[0].isDefinition()).to.equal(true);
+            expect(references[0].isInString()).to.equal(undefined);
+            expect(references[0].isWriteAccess()).to.equal(true);
             expect(references[0].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
 
             // second reference
             expect(references[1].getSourceFile()).to.equal(sourceFile);
             expect(references[1].getTextSpan().getStart()).to.equal(43);
             expect(references[1].getTextSpan().getLength()).to.equal("myFunction".length);
-            expect(references[1].getIsDefinition()).to.equal(false);
-            expect(references[1].getIsInString()).to.equal(undefined);
-            expect(references[1].getIsWriteAccess()).to.equal(false);
+            expect(references[1].isDefinition()).to.equal(false);
+            expect(references[1].isInString()).to.equal(undefined);
+            expect(references[1].isWriteAccess()).to.equal(false);
             expect(references[1].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
 
             // third reference
             expect(references[2].getSourceFile()).to.equal(secondSourceFile);
             expect(references[2].getTextSpan().getStart()).to.equal(19);
             expect(references[2].getTextSpan().getLength()).to.equal("myFunction".length);
-            expect(references[2].getIsDefinition()).to.equal(false);
-            expect(references[2].getIsInString()).to.equal(undefined);
-            expect(references[2].getIsWriteAccess()).to.equal(false);
+            expect(references[2].isDefinition()).to.equal(false);
+            expect(references[2].isInString()).to.equal(undefined);
+            expect(references[2].isWriteAccess()).to.equal(false);
             expect(references[2].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
         });
     });

@@ -12,7 +12,7 @@ export interface AbstractableNode {
     /**
      * Gets if the node is abstract.
      */
-    getIsAbstract(): boolean;
+    isAbstract(): boolean;
     /**
      * Gets the abstract keyword or undefined if it doesn't exist.
      */
@@ -26,7 +26,7 @@ export interface AbstractableNode {
 
 export function AbstractableNode<T extends Constructor<AbstractableNodeExtensionType>>(Base: T): Constructor<AbstractableNode> & T {
     return class extends Base implements AbstractableNode {
-        getIsAbstract() {
+        isAbstract() {
             return this.getAbstractKeyword() != null;
         }
 
@@ -50,7 +50,7 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
 
         getStructure() {
             return callBaseGetStructure<AbstractableNodeStructure>(Base.prototype, this, {
-                isAbstract: this.getIsAbstract()
+                isAbstract: this.isAbstract()
             });
         }
     };

@@ -16,15 +16,15 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
-    describe(nameof<AbstractableNode>(d => d.getIsAbstract), () => {
+    describe(nameof<AbstractableNode>(d => d.isAbstract), () => {
         it("should be abstract when abstract", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
-            expect(firstChild.getIsAbstract()).to.be.true;
+            expect(firstChild.isAbstract()).to.be.true;
         });
 
         it("should be not abstract when not abstract", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
-            expect(firstChild.getIsAbstract()).to.be.false;
+            expect(firstChild.isAbstract()).to.be.false;
         });
     });
 

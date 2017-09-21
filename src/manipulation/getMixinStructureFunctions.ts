@@ -3,7 +3,7 @@ import * as structures from "./../structures";
 
 export function fromAbstractableNode(node: compiler.AbstractableNode): MakeRequired<structures.AbstractableNodeStructure> {
     return {
-        isAbstract: node.getIsAbstract()
+        isAbstract: node.isAbstract()
     };
 }
 

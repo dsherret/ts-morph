@@ -10,7 +10,7 @@ export class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
         super(global, compilerObject);
     }
 
-    getIsWriteAccess() {
+    isWriteAccess() {
         // todo: not sure what this does
         return this.compilerObject.isWriteAccess;
     }
@@ -18,11 +18,11 @@ export class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
     /**
      * If this is the definition reference.
      */
-    getIsDefinition() {
+    isDefinition() {
         return this.compilerObject.isDefinition;
     }
 
-    getIsInString() {
+    isInString() {
         // todo: not sure what this does and why it can be undefined
         return this.compilerObject.isInString;
     }
