@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {insertIntoParent} from "./../../../manipulation";
-import {getCodeBlockWriter} from "./../../../utils";
+import {getTextFromStringOrWriter} from "./../../../utils";
 import {Node} from "./../../common";
 
 /**
@@ -30,7 +30,7 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
     });
 
     function getNewText() {
-        let text = getTextFromParam() || "";
+        let text = getTextFromStringOrWriter(body.global.manipulationSettings, textOrWriterFunction) || "";
         if (text.length > 0)
             text = newLineKind + text.split(/\r?\n/).map(t => t.length > 0 ? childIndentationText + t : t).join(newLineKind);
 
@@ -38,14 +38,5 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
             text += newLineKind;
 
         return text + body.getParentOrThrow().getIndentationText();
-    }
-
-    function getTextFromParam() {
-        if (typeof textOrWriterFunction === "string")
-            return textOrWriterFunction;
-
-        const writer = getCodeBlockWriter(body.global.manipulationSettings);
-        textOrWriterFunction(writer);
-        return writer.toString();
     }
 }

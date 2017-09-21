@@ -84,4 +84,4 @@ functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;"
     }));
 ```
 
-Using the writer is very useful to use to write code out using the indentation and newline settings of the AST.
+Using the writer is very useful because it will write code out using the indentation and newline settings of the AST. It's also easier to use.

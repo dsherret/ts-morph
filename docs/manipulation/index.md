@@ -23,6 +23,18 @@ sourceFile.removeText([sourceFile.getPos(), sourceFile.getEnd()]);
 
 These methods are also available on any node that has a body (functions, classes, enums, etc.)
 
+#### Writing with `code-block-writer`
+
+It's possible to write text using a provided [code-block-writer](https://github.com/dsherret/code-block-writer):
+
+```typescript
+sourceFile.insertText(0, writer => writer.writeLine("let myNumber = 5;")
+    .write("if (myNumber === 5)").block(() => {
+        writer.writeLine("console.log('yes')");
+    }));
+```
+
+Using the writer is very useful because it will write code out using the indentation and newline settings of the AST. It's also easier to use.
 
 #### **Warning**
 

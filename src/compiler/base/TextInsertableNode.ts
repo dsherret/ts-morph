@@ -1,8 +1,9 @@
 ﻿import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent} from "./../../manipulation";
-import {TypeGuards} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
 
 export type TextInsertableNodeExtensionType = Node;
@@ -17,6 +18,14 @@ export interface TextInsertableNode {
      */
     insertText(pos: number, text: string): this;
     /**
+     * Inserts text within the body of the node using a writer.
+     *
+     * WARNING: This will dispose any previously navigated descendant nodes.
+     * @param pos - Position to insert at.
+     * @param writerFunction - Write the text using the provided writer.
+     */
+    insertText(pos: number, writerFunction: (writer: CodeBlockWriter) => void): this;
+    /**
      * Replaces text within the body of the node.
      *
      * WARNING: This will dispose any previously navigated descendant nodes.
@@ -24,6 +33,14 @@ export interface TextInsertableNode {
      * @param text - Text to replace the range with.
      */
     replaceText(range: [number, number], text: string): this;
+    /**
+     * Replaces text within the body of the node using a writer function.
+     *
+     * WARNING: This will dispose any previously navigated descendant nodes.
+     * @param range - Start and end position of the text to replace.
+     * @param writerFunction - Write the text using the provided writer.
+     */
+    replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
     /**
      * Removes text within the body of the node.
      *
@@ -36,8 +53,10 @@ export interface TextInsertableNode {
 
 export function TextInsertableNode<T extends Constructor<TextInsertableNodeExtensionType>>(Base: T): Constructor<TextInsertableNode> & T {
     return class extends Base implements TextInsertableNode {
-        insertText(pos: number, text: string) {
-            this.replaceText([pos, pos], text);
+        insertText(pos: number, writerFunction: (writer: CodeBlockWriter) => void): this;
+        insertText(pos: number, text: string): this;
+        insertText(pos: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            this.replaceText([pos, pos], textOrWriterFunction);
             return this;
         }
 
@@ -46,7 +65,10 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             return this;
         }
 
-        replaceText(range: [number, number], text: string) {
+        replaceText(range: [number, number], text: string): this;
+        replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
+        replaceText(range: [number, number], textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
+        replaceText(range: [number, number], textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             const thisNode = this;
             const childSyntaxList = this.getChildSyntaxListOrThrow();
             const pos = range[0];
@@ -59,7 +81,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
                 insertPos: pos,
                 childIndex: childSyntaxList.getChildIndex(),
                 insertItemsCount: 1,
-                newText: text,
+                newText: getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction),
                 parent: this,
                 replacing: {
                     length: end - pos,

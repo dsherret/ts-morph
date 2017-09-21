@@ -50,7 +50,7 @@
     "tslint": "^5.6.0"
   },
   "dependencies": {
-    "code-block-writer": "^4.2.0",
+    "code-block-writer": "^4.2.1",
     "globby": "^6.1.0",
     "typescript": "2.5.2"
   },

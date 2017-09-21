@@ -12,6 +12,12 @@ describe(nameof(TextInsertableNode), () => {
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
+            function doWriterTest(startCode: string, range: [number, number], insertCode: string, expectedCode: string) {
+                const {sourceFile} = getInfoFromText(startCode);
+                sourceFile.replaceText(range, writer => writer.write(insertCode));
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
             it("should throw when specifying a position outside the lower bound", () => {
                 const {sourceFile} = getInfoFromText("");
                 expect(() => sourceFile.replaceText([-1, 0], "text;")).to.throw(errors.InvalidOperationError);
@@ -34,6 +40,10 @@ describe(nameof(TextInsertableNode), () => {
 
             it("should replace the text specified", () => {
                 doTest("var t;", [4, 5], "u", "var u;");
+            });
+
+            it("should replace with a writer", () => {
+                doWriterTest("var t;", [4, 5], "u", "var u;");
             });
         });
 
@@ -73,6 +83,12 @@ describe(nameof(TextInsertableNode), () => {
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
 
+            function doWriterTest(startCode: string, pos: number, insertCode: string, expectedCode: string) {
+                const {sourceFile} = getInfoFromText(startCode);
+                sourceFile.insertText(pos, writer => writer.write(insertCode));
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
             it("should insert text into an empty source file", () => {
                 doTest("", 0, "class MyClass {}", "class MyClass {}");
             });
@@ -87,6 +103,10 @@ describe(nameof(TextInsertableNode), () => {
 
             it("should insert text into a source file at the end", () => {
                 doTest("class MyClass {}", 16, "\n\ninterface MyInterface {}", "class MyClass {}\n\ninterface MyInterface {}");
+            });
+
+            it("should insert with a writer", () => {
+                doWriterTest("class MyClass {}", 16, "\n\ninterface MyInterface {}", "class MyClass {}\n\ninterface MyInterface {}");
             });
         });
     });
