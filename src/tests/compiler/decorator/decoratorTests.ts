@@ -26,47 +26,72 @@ describe(nameof(Decorator), () => {
         });
     });
 
+    describe(nameof<Decorator>(d => d.getNameIdentifier), () => {
+        function doTest(text: string, expectedName: string) {
+            const {firstDecorator} = getFirstClassDecorator(text);
+            expect(firstDecorator.getNameIdentifier().getText()).to.equal(expectedName);
+        }
+
+        it("should get the name identifier for a non-decorator factory", () => {
+            doTest("@decorator\nclass Identifier {}", "decorator");
+        });
+
+        it("should get the name identifier for a non-decorator factory decorator with a namespace", () => {
+            doTest("@namespaceTest.decorator\nclass Identifier {}", "decorator");
+        });
+
+        it("should get the name identifier for a decorator factory", () => {
+            doTest("@decorator()\nclass Identifier {}", "decorator");
+        });
+
+        it("should get the name identifier for a decorator factory decorator with a namespace", () => {
+            doTest("@namespaceTest.decorator()\nclass Identifier {}", "decorator");
+        });
+    });
+
     describe(nameof<Decorator>(d => d.getName), () => {
+        function doTest(text: string, expectedName: string) {
+            const {firstDecorator} = getFirstClassDecorator(text);
+            expect(firstDecorator.getName()).to.equal(expectedName);
+        }
+
         it("should get the name for a non-decorator factory", () => {
-            const {firstDecorator} = getFirstClassDecorator("@decorator\nclass Identifier {}");
-            expect(firstDecorator.getName()).to.equal("decorator");
+            doTest("@decorator\nclass Identifier {}", "decorator");
         });
 
         it("should get the name for a non-decorator factory decorator with a namespace", () => {
-            const {firstDecorator} = getFirstClassDecorator("@namespaceTest.decorator\nclass Identifier {}");
-            expect(firstDecorator.getName()).to.equal("decorator");
+            doTest("@namespaceTest.decorator\nclass Identifier {}", "decorator");
         });
 
         it("should get the name for a decorator factory", () => {
-            const {firstDecorator} = getFirstClassDecorator("@decorator()\nclass Identifier {}");
-            expect(firstDecorator.getName()).to.equal("decorator");
+            doTest("@decorator()\nclass Identifier {}", "decorator");
         });
 
         it("should get the name for a decorator factory decorator with a namespace", () => {
-            const {firstDecorator} = getFirstClassDecorator("@namespaceTest.decorator()\nclass Identifier {}");
-            expect(firstDecorator.getName()).to.equal("decorator");
+            doTest("@namespaceTest.decorator()\nclass Identifier {}", "decorator");
         });
     });
 
     describe(nameof<Decorator>(d => d.getFullName), () => {
+        function doTest(text: string, expectedName: string) {
+            const {firstDecorator} = getFirstClassDecorator(text);
+            expect(firstDecorator.getFullName()).to.equal(expectedName);
+        }
+
         it("should get the name for a non-decorator factory", () => {
-            const {firstDecorator} = getFirstClassDecorator("@decorator\nclass Identifier {}");
-            expect(firstDecorator.getFullName()).to.equal("decorator");
+            doTest("@decorator\nclass Identifier {}", "decorator");
         });
 
         it("should get the name for a non-decorator factory decorator with a namespace", () => {
-            const {firstDecorator} = getFirstClassDecorator("@namespaceTest.decorator\nclass Identifier {}");
-            expect(firstDecorator.getFullName()).to.equal("namespaceTest.decorator");
+            doTest("@namespaceTest.decorator\nclass Identifier {}", "namespaceTest.decorator");
         });
 
         it("should get the name for a decorator factory", () => {
-            const {firstDecorator} = getFirstClassDecorator("@decorator()\nclass Identifier {}");
-            expect(firstDecorator.getFullName()).to.equal("decorator");
+            doTest("@decorator()\nclass Identifier {}", "decorator");
         });
 
         it("should get the name for a decorator factory decorator with a namespace", () => {
-            const {firstDecorator} = getFirstClassDecorator("@namespaceTest.decorator()\nclass Identifier {}");
-            expect(firstDecorator.getFullName()).to.equal("namespaceTest.decorator");
+            doTest("@namespaceTest.decorator()\nclass Identifier {}", "namespaceTest.decorator");
         });
     });
 

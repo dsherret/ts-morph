@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
-import {Node, CallExpression, Expression} from "./../common";
+import {Node, CallExpression, Expression, Identifier} from "./../common";
 import {TypeNode} from "./../type";
 
 export const DecoratorBase = Node;
@@ -10,21 +10,37 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the decorator name.
      */
     getName() {
+        return this.getNameIdentifier().getText();
+    }
+
+    /**
+     * Gets the name identifier of the decorator.
+     */
+    getNameIdentifier() {
         const sourceFile = this.getSourceFile();
 
         if (this.isDecoratorFactory()) {
             const callExpression = this.compilerNode.expression as ts.CallExpression;
-            return getNameFromExpression(callExpression.expression);
+            return getIdentifierFromName(callExpression.expression);
         }
 
-        return getNameFromExpression(this.compilerNode.expression);
+        return getIdentifierFromName(this.compilerNode.expression);
+
+        function getIdentifierFromName(expression: ts.LeftHandSideExpression) {
+            const identifier = getNameFromExpression(expression);
+            if (identifier.kind !== ts.SyntaxKind.Identifier) {
+                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText(sourceFile.compilerNode)}' to be an identifier, ` +
+                    `but it wasn't. Please report this as a bug.`);
+            }
+            return sourceFile.global.compilerFactory.getNodeFromCompilerNode(identifier, sourceFile) as Identifier;
+        }
 
         function getNameFromExpression(expression: ts.LeftHandSideExpression) {
             if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
                 const propAccess = expression as ts.PropertyAccessExpression;
-                return propAccess.name.getText(sourceFile.compilerNode);
+                return propAccess.name;
             }
-            return expression.getText(sourceFile.compilerNode);
+            return expression;
         }
     }
 
