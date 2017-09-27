@@ -53,12 +53,12 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFileFromFilePath), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             expect(() => {
-                ast.getOrAddSourceFileFromFilePath("non-existent-file.ts");
+                ast.getOrAddSourceFile("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("non-existent-file.ts")}`);
         });
     });

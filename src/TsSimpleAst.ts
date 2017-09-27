@@ -51,7 +51,7 @@ export class TsSimpleAst {
         for (const filePath of filePaths) {
             // ignore any FileNotFoundErrors
             try {
-                this.getOrAddSourceFileFromFilePath(filePath);
+                this.getOrAddSourceFile(filePath);
             } catch (ex) {
                 /* istanbul ignore if */
                 if (!(ex instanceof errors.FileNotFoundError))
@@ -64,7 +64,7 @@ export class TsSimpleAst {
      * Gets or adds a source file from a file path.
      * @param filePath - File path to create the file from.
      */
-    getOrAddSourceFileFromFilePath(filePath: string): compiler.SourceFile {
+    getOrAddSourceFile(filePath: string): compiler.SourceFile {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (!this.fileSystem.fileExists(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);

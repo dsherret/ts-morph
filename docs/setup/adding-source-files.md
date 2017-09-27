@@ -18,7 +18,7 @@ ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlo
 ### By file path
 
 ```typescript
-const sourceFile = ast.getOrAddSourceFileFromFilePath("path/to/file.ts");
+const sourceFile = ast.getOrAddSourceFile("path/to/file.ts");
 ```
 
 ### By structure
