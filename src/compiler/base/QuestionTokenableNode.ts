@@ -14,9 +14,13 @@ export interface QuestionTokenableNode {
      */
     hasQuestionToken(): boolean;
     /**
-     * Gets the question token node.
+     * Gets the question token node or returns undefined if it doesn't exist.
      */
     getQuestionTokenNode(): Node<ts.QuestionToken> | undefined;
+    /**
+     * Gets the question token node or throws.
+     */
+    getQuestionTokenNodeOrThrow(): Node<ts.QuestionToken>;
     /**
      * Sets if this node is optional.
      * @param value - If optional or not.
@@ -34,6 +38,10 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             if (this.compilerNode.questionToken == null)
                 return undefined;
             return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.questionToken, this.sourceFile) as Node<ts.QuestionToken>;
+        }
+
+        getQuestionTokenNodeOrThrow(): Node<ts.QuestionToken> {
+            return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), "Expected to find a question token.");
         }
 
         setIsOptional(value: boolean) {

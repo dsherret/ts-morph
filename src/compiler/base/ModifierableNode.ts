@@ -13,6 +13,11 @@ export interface ModifierableNode {
      */
     getModifiers(): Node[];
     /**
+     * Gets the first modifier of the specified syntax kind or throws if none found.
+     * @param kind - Syntax kind.
+     */
+    getFirstModifierByKindOrThrow(kind: ts.SyntaxKind): Node<ts.Modifier>;
+    /**
      * Gets the first modifier of the specified syntax kind or undefined if none found.
      * @param kind - Syntax kind.
      */
@@ -53,6 +58,10 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
     return class extends Base implements ModifierableNode {
         getModifiers() {
             return this.compilerNode.modifiers == null ? [] : this.compilerNode.modifiers.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile));
+        }
+
+        getFirstModifierByKindOrThrow(kind: ts.SyntaxKind) {
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${ts.SyntaxKind[kind]}`);
         }
 
         getFirstModifierByKind(kind: ts.SyntaxKind) {

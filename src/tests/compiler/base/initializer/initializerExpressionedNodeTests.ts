@@ -46,6 +46,18 @@ describe(nameof(InitializerExpressionableNode), () => {
         });
     });
 
+    describe(nameof<InitializerExpressionableNode>(n => n.getInitializerOrThrow), () => {
+        it("should get when the initializer exists", () => {
+            const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
+            expect(member.getInitializerOrThrow().getText()).to.equal("4");
+        });
+
+        it("should throw when the initializer doesn't exist", () => {
+            const {member} = getEnumMemberFromText("enum MyEnum { myMember }");
+            expect(() => member.getInitializerOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<InitializerExpressionableNode>(n => n.removeInitializer), () => {
         function doTest(startCode: string, expectedCode: string) {
             const {member, sourceFile} = getEnumMemberFromText(startCode);

@@ -30,6 +30,16 @@ describe(nameof(AmbientableNode), () => {
             });
         });
 
+        describe(nameof<AmbientableNode>(n => n.getDeclareKeywordOrThrow), () => {
+            it("should have an declare keyword when it has one", () => {
+                expect(ambientedStatement.getDeclareKeywordOrThrow().getText()).to.equal("declare");
+            });
+
+            it("should not have an declare keyword when it doesn't have one", () => {
+                expect(() => notAmbientedStatement.getDeclareKeywordOrThrow()).to.throw();
+            });
+        });
+
         describe(nameof<AmbientableNode>(n => n.isAmbient), () => {
             it("should not be ambient when not", () => {
                 const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");

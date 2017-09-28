@@ -118,10 +118,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param condition - Condition.
      */
     getFirstChildOrThrow(condition?: (node: Node) => boolean) {
-        const child = this.getFirstChild(condition);
-        if (child == null)
-            throw new errors.InvalidOperationError("Could not find a child that matched the specified condition.");
-        return child;
+        return errors.throwIfNullOrUndefined(this.getFirstChild(condition), "Could not find a child that matched the specified condition.");
     }
 
     /**
@@ -141,10 +138,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param condition - Condition.
      */
     getLastChildOrThrow(condition?: (node: Node) => boolean) {
-        const child = this.getLastChild(condition);
-        if (child == null)
-            throw new errors.InvalidOperationError("Could not find a child that matched the specified condition.");
-        return child;
+        return errors.throwIfNullOrUndefined(this.getLastChild(condition), "Could not find a child that matched the specified condition.");
     }
 
     /**
@@ -164,10 +158,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param condition - Condition.
      */
     getFirstDescendantOrThrow(condition?: (node: Node) => boolean) {
-        const descendant = this.getFirstDescendant(condition);
-        if (descendant == null)
-            throw new errors.InvalidOperationError("Could not find a descendant that matched the specified condition.");
-        return descendant;
+        return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), "Could not find a descendant that matched the specified condition.");
     }
 
     /**
@@ -201,10 +192,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param condition - Optional condition for getting the previous sibling.
      */
     getPreviousSiblingOrThrow(condition?: (node: Node) => boolean) {
-        const previousSibling = this.getPreviousSibling(condition);
-        if (previousSibling == null)
-            throw new errors.InvalidOperationError("Could not find the previous sibling.");
-        return previousSibling;
+        return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), "Could not find the previous sibling.");
     }
 
     /**
@@ -225,10 +213,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param condition - Optional condition for getting the next sibling.
      */
     getNextSiblingOrThrow(condition?: (node: Node) => boolean) {
-        const nextSibling = this.getNextSibling(condition);
-        if (nextSibling == null)
-            throw new errors.InvalidOperationError("Could not find the next sibling.");
-        return nextSibling;
+        return errors.throwIfNullOrUndefined(this.getNextSibling(condition), "Could not find the next sibling.");
     }
 
     /**
@@ -305,10 +290,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the child syntax list or throws if it doesn't exist.
      */
     getChildSyntaxListOrThrow() {
-        const syntaxList = this.getChildSyntaxList();
-        if (syntaxList == null)
-            throw new errors.InvalidOperationError("A child syntax list was expected.");
-        return syntaxList;
+        return errors.throwIfNullOrUndefined(this.getChildSyntaxList(), "A child syntax list was expected.");
     }
 
     /**
@@ -513,10 +495,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the parent or throws an error if it doesn't exist.
      */
     getParentOrThrow() {
-        const parentNode = this.getParent();
-        if (parentNode == null)
-            throw new errors.InvalidOperationError("A parent is required to do this operation.");
-        return parentNode;
+        return errors.throwIfNullOrUndefined(this.getParent(), "A parent is required to do this operation.");
     }
 
     /**
@@ -524,9 +503,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     getLastToken() {
         const lastToken = this.compilerNode.getLastToken(this.sourceFile.compilerNode);
-        /* istanbul ignore if */
         if (lastToken == null)
-            throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist");
+            throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist.");
 
         return this.global.compilerFactory.getNodeFromCompilerNode(lastToken, this.sourceFile);
     }
@@ -542,10 +520,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the parent if it's a syntax list or throws an error otherwise.
      */
     getParentSyntaxListOrThrow() {
-        const parentSyntaxList = this.getParentSyntaxList();
-        if (parentSyntaxList == null)
-            throw new errors.InvalidOperationError("Expected the parent to be a syntax list.");
-        return parentSyntaxList;
+        return errors.throwIfNullOrUndefined(this.getParentSyntaxList(), "Expected the parent to be a syntax list.");
     }
 
     /**
@@ -670,10 +645,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getFirstChildByKindOrThrow(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChildByKind(kind);
-        if (firstChild == null)
-            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return firstChild;
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -689,10 +661,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getFirstChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChildIfKind(kind);
-        if (firstChild == null)
-            throw new errors.InvalidOperationError(`A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return firstChild;
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -709,10 +678,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getLastChildByKindOrThrow(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChildByKind(kind);
-        if (lastChild == null)
-            throw new errors.InvalidOperationError(`A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return lastChild;
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -728,10 +694,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getLastChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChildIfKind(kind);
-        if (lastChild == null)
-            throw new errors.InvalidOperationError(`A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
-        return lastChild;
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -748,10 +711,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Kind to check.
      */
     getPreviousSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        const previousSibling = this.getPreviousSiblingIfKind(kind);
-        if (previousSibling == null)
-            throw new errors.InvalidOperationError(`A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
-        return previousSibling;
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -759,10 +719,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Kind to check.
      */
     getNextSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        const nextSibling = this.getNextSiblingIfKind(kind);
-        if (nextSibling == null)
-            throw new errors.InvalidOperationError(`A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
-        return nextSibling;
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
     }
 
     /**
@@ -795,10 +752,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the parent if it's a certain syntax kind of throws.
      */
     getParentIfKindOrThrow(kind: ts.SyntaxKind) {
-        const parentNode = this.getParentIfKind(kind);
-        if (parentNode == null)
-            throw new errors.InvalidOperationError(`A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
-        return parentNode;
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
     }
 
     /**
@@ -806,10 +760,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKindOrThrow(kind: ts.SyntaxKind) {
-        const parentNode = this.getFirstAncestorByKind(kind);
-        if (parentNode == null)
-            throw new errors.InvalidOperationError(`A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
-        return parentNode;
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
     }
 
     /**
@@ -837,10 +788,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKindOrThrow(kind: ts.SyntaxKind) {
-        const descendant = this.getFirstDescendantByKind(kind);
-        if (descendant == null)
-            throw new errors.InvalidOperationError(`A descendant of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
-        return descendant;
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
     }
 
     /**

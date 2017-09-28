@@ -37,6 +37,16 @@ describe(nameof(TypedNode), () => {
         });
     });
 
+    describe(nameof<TypedNode>(n => n.getTypeNodeOrThrow), () => {
+        it("should get the type node when it exists", () => {
+            expect(explicitVarDeclaration.getTypeNodeOrThrow().getText()).to.equal("string");
+        });
+
+        it("should return undefined when no type node exists", () => {
+            expect(() => implicitVarDeclaration.getTypeNodeOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<TypedNode>(n => n.setType), () => {
         describe("class properties", () => {
             function doTest(startText: string, type: string, expectedText: string) {

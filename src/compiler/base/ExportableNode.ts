@@ -20,6 +20,10 @@ export interface ExportableNode {
      */
     getExportKeyword(): Node | undefined;
     /**
+     * Gets the export keyword or throws if none exists.
+     */
+    getExportKeywordOrThrow(): Node;
+    /**
      * If the node has the default keyword.
      */
     hasDefaultKeyword(): boolean;
@@ -27,6 +31,10 @@ export interface ExportableNode {
      * Gets the default keyword or undefined if none exists.
      */
     getDefaultKeyword(): Node | undefined;
+    /**
+     * Gets the default keyword or throws if none exists.
+     */
+    getDefaultKeywordOrThrow(): Node;
     /**
      * Gets if this node is a default export.
      */
@@ -58,12 +66,20 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return this.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
         }
 
+        getExportKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getExportKeyword(), "Expected to find an export keyword.");
+        }
+
         hasDefaultKeyword() {
             return this.getDefaultKeyword() != null;
         }
 
         getDefaultKeyword() {
             return this.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
+        }
+
+        getDefaultKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), "Expected to find a default keyword.");
         }
 
         isDefaultExport() {

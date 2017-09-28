@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import * as errors from "./../../errors";
 import {ReadonlyableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -17,6 +18,10 @@ export interface ReadonlyableNode {
      */
     getReadonlyKeyword(): Node | undefined;
     /**
+     * Gets the readonly keyword, or throws if none exists.
+     */
+    getReadonlyKeywordOrThrow(): Node;
+    /**
      * Sets if this node is readonly.
      * @param value - If readonly or not.
      */
@@ -31,6 +36,10 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
 
         getReadonlyKeyword() {
             return this.getFirstModifierByKind(ts.SyntaxKind.ReadonlyKeyword);
+        }
+
+        getReadonlyKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getReadonlyKeyword(), "Expected to find a readonly keyword.");
         }
 
         setIsReadonly(value: boolean) {

@@ -16,6 +16,18 @@ describe(nameof(AbstractableNode), () => {
         });
     });
 
+    describe(nameof<AbstractableNode>(d => d.getAbstractKeywordOrThrow), () => {
+        it("should get the abstract keyword when abstract", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");
+            expect(firstChild.getAbstractKeywordOrThrow().getText()).to.be.equal("abstract");
+        });
+
+        it("should throw when not abstract", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
+            expect(() => firstChild.getAbstractKeywordOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<AbstractableNode>(d => d.isAbstract), () => {
         it("should be abstract when abstract", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("abstract class Identifier {}");

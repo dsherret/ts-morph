@@ -31,6 +31,16 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
+    describe(nameof<ExportableNode>(n => n.getExportKeywordOrThrow), () => {
+        it("should have an export keyword when exported", () => {
+            expect(exportedStatement.getExportKeywordOrThrow().getText()).to.equal("export");
+        });
+
+        it("should not have an export keyword when not exported", () => {
+            expect(() => notExportedStatement.getExportKeywordOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<ExportableNode>(n => n.hasDefaultKeyword), () => {
         it("should have a default keyword when default exported", () => {
             expect(exportedDefaultClass.hasDefaultKeyword()).to.be.true;
@@ -50,6 +60,16 @@ describe(nameof(ExportableNode), () => {
 
         it("should not have an export keyword when not default exported", () => {
             expect(exportedStatement.getDefaultKeyword()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ExportableNode>(n => n.getDefaultKeywordOrThrow), () => {
+        it("should have a default keyword when default exported", () => {
+            expect(exportedDefaultClass.getDefaultKeywordOrThrow().getText()).to.equal("default");
+        });
+
+        it("should not have an export keyword when not default exported", () => {
+            expect(() => exportedStatement.getDefaultKeywordOrThrow()).to.throw();
         });
     });
 

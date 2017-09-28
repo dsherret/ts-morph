@@ -15,6 +15,17 @@ describe(nameof(ModifierableNode), () => {
         });
     });
 
+    describe(nameof<ModifierableNode>(n => n.getFirstModifierByKindOrThrow), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
+        it("should return the modifier when it exists", () => {
+            expect(firstChild.getFirstModifierByKindOrThrow(ts.SyntaxKind.ExportKeyword)).to.not.be.undefined;
+        });
+
+        it("should return undefined when the modifier doesn't exist", () => {
+            expect(() => firstChild.getFirstModifierByKindOrThrow(ts.SyntaxKind.AbstractKeyword)).to.throw();
+        });
+    });
+
     describe(nameof<ModifierableNode>(n => n.hasModifier), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         describe("providing string", () => {

@@ -4,6 +4,7 @@ import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
 import {ArgumentOutOfRangeError} from "./ArgumentOutOfRangeError";
+import {InvalidOperationError} from "./InvalidOperationError";
 import {NotImplementedError} from "./NotImplementedError";
 
 /**
@@ -67,4 +68,15 @@ export function getNotImplementedForSyntaxKindError(syntaxKind: ts.SyntaxKind) {
 export function throwIfNegative(value: number, argName: string) {
     if (value < 0)
         throw new ArgumentError(argName, "Expected a non-negative value.");
+}
+
+/**
+ * Throws when the value is null or undefined
+ * @param value - Value to check.
+ * @param errorMessage - Error message to throw when not defined.
+ */
+export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string) {
+    if (value == null)
+        throw new InvalidOperationError(errorMessage);
+    return value;
 }

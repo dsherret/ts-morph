@@ -30,6 +30,16 @@ describe(nameof(StaticableNode), () => {
         });
     });
 
+    describe(nameof<StaticableNode>(n => n.getStaticKeywordOrThrow), () => {
+        it("should have a static keyword when static", () => {
+            expect(staticProp.getStaticKeywordOrThrow().getText()).to.equal("static");
+        });
+
+        it("should throw when not static", () => {
+            expect(() => instanceProp.getStaticKeywordOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<StaticableNode>(n => n.setIsStatic), () => {
         it("should set as static when not static", () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");

@@ -33,6 +33,18 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
+    describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNodeOrThrow), () => {
+        it("should be get the question token node", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop?: string;}\n");
+            expect(firstProperty.getQuestionTokenNodeOrThrow().getText()).to.equal("?");
+        });
+
+        it("should throw when not optional", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            expect(() => firstProperty.getQuestionTokenNodeOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<QuestionTokenableNode>(d => d.setIsOptional), () => {
         it("should be set as optional when not optional", () => {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");

@@ -21,6 +21,10 @@ export interface TypedNode {
      */
     getTypeNode(): TypeNode | undefined;
     /**
+     * Gets the type node or throws if none exists.
+     */
+    getTypeNodeOrThrow(): TypeNode;
+    /**
      * Sets the type.
      * @param text - Text to set the type to.
      */
@@ -39,6 +43,10 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
         getTypeNode() {
             return this.compilerNode.type == null ? undefined : (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.type, this.sourceFile) as TypeNode);
+        }
+
+        getTypeNodeOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
         }
 
         setType(text: string) {

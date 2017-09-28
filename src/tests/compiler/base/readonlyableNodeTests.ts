@@ -33,6 +33,18 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
+    describe(nameof<ReadonlyableNode>(d => d.getReadonlyKeywordOrThrow), () => {
+        it("should be get the readonly keyword when readonly", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nreadonly prop: string;}\n");
+            expect(firstProperty.getReadonlyKeywordOrThrow().getText()).to.equal("readonly");
+        });
+
+        it("should throw when not readonly", () => {
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            expect(() => firstProperty.getReadonlyKeywordOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<ReadonlyableNode>(n => n.setIsReadonly), () => {
         it("should set as readonly when not readonly", () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class MyClass { prop: string; }");

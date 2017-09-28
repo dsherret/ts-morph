@@ -28,6 +28,16 @@ describe(nameof(AsyncableNode), () => {
                 expect(nonAsyncFunc.getAsyncKeyword()).to.be.undefined;
             });
         });
+
+        describe(nameof<AsyncableNode>(n => n.getAsyncKeywordOrThrow), () => {
+            it("should have a async keyword when async", () => {
+                expect(asyncFunc.getAsyncKeywordOrThrow().getText()).to.equal("async");
+            });
+
+            it("should not have a async keyword when not async", () => {
+                expect(() => nonAsyncFunc.getAsyncKeywordOrThrow()).to.throw();
+            });
+        });
     });
 
     describe(nameof<AsyncableNode>(n => n.setIsAsync), () => {

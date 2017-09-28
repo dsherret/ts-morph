@@ -28,6 +28,16 @@ describe(nameof(GeneratorableNode), () => {
         });
     });
 
+    describe(nameof<GeneratorableNode>(n => n.getAsteriskTokenOrThrow), () => {
+        it("should have an asterisk token when a generator", () => {
+            expect(generatorFunc.getAsteriskTokenOrThrow().getText()).to.equal("*");
+        });
+
+        it("should not have a async keyword when not async", () => {
+            expect(() => func.getAsteriskTokenOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<GeneratorableNode>(n => n.setIsGenerator), () => {
         describe("Functions", () => {
             it("should set as generator when not a generator", () => {

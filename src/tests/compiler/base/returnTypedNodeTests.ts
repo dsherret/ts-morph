@@ -19,12 +19,22 @@ describe(nameof(ReturnTypedNode), () => {
     });
 
     describe(nameof<ReturnTypedNode>(n => n.getReturnTypeNode), () => {
+        it("should get the expected explicit type for an explicit type", () => {
+            expect(explicitDeclaration.getReturnTypeNode()!.getText()).to.equal("string");
+        });
+
         it("should return undefined for an implicit type", () => {
             expect(implicitDeclaration.getReturnTypeNode()).to.be.undefined;
         });
+    });
 
+    describe(nameof<ReturnTypedNode>(n => n.getReturnTypeNodeOrThrow), () => {
         it("should get the expected explicit type for an explicit type", () => {
-            expect(explicitDeclaration.getReturnTypeNode()!.getText()).to.equal("string");
+            expect(explicitDeclaration.getReturnTypeNodeOrThrow().getText()).to.equal("string");
+        });
+
+        it("should throw for an implicit type", () => {
+            expect(() => implicitDeclaration.getReturnTypeNodeOrThrow()).to.throw();
         });
     });
 

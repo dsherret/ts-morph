@@ -21,6 +21,10 @@ export interface ReturnTypedNode {
      */
     getReturnTypeNode(): TypeNode | undefined;
     /**
+     * Gets the return type node or throws if none exists.
+     */
+    getReturnTypeNodeOrThrow(): TypeNode;
+    /**
      * Sets the return type of the node.
      * @param text - Text to set as the type.
      */
@@ -41,6 +45,10 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
 
         getReturnTypeNode() {
             return this.compilerNode.type == null ? undefined : (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.type, this.sourceFile) as TypeNode);
+        }
+
+        getReturnTypeNodeOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), "Expected to find a return type node.");
         }
 
         setReturnType(text: string) {

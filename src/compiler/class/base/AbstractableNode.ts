@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {AbstractableNodeStructure} from "./../../../structures";
+import * as errors from "./../../../errors";
 import {Constructor} from "./../../../Constructor";
 import {Node} from "./../../common";
 import {ModifierableNode} from "./../../base";
@@ -18,6 +19,10 @@ export interface AbstractableNode {
      */
     getAbstractKeyword(): Node | undefined;
     /**
+     * Gets the abstract keyword or throws if it doesn't exist.
+     */
+    getAbstractKeywordOrThrow(): Node;
+    /**
      * Sets if the node is abstract.
      * @param isAbstract - If it should be abstract or not.
      */
@@ -32,6 +37,10 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
 
         getAbstractKeyword() {
             return this.getFirstModifierByKind(ts.SyntaxKind.AbstractKeyword);
+        }
+
+        getAbstractKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getAbstractKeyword(), "Expected to find an abstract keyword.");
         }
 
         setIsAbstract(isAbstract: boolean) {

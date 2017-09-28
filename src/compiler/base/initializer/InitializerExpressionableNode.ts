@@ -22,6 +22,10 @@ export interface InitializerExpressionableNode {
      */
     getInitializer(): Expression | undefined;
     /**
+     * Gets the initializer or throw.
+     */
+    getInitializerOrThrow(): Expression;
+    /**
      * Removes the initailizer.
      */
     removeInitializer(): this;
@@ -45,6 +49,10 @@ export function InitializerExpressionableNode<T extends Constructor<InitializerE
         getInitializer() {
             return this.compilerNode.initializer == null ? undefined :
                 (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.initializer, this.sourceFile) as Expression);
+        }
+
+        getInitializerOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getInitializer(), "Expected to find an initializer.");
         }
 
         removeInitializer() {

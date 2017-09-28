@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import * as errors from "./../../errors";
 import {AsyncableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -17,6 +18,10 @@ export interface AsyncableNode {
      */
     getAsyncKeyword(): Node<ts.Modifier> | undefined;
     /**
+     * Gets the async keyword or throws if none exists.
+     */
+    getAsyncKeywordOrThrow(): Node<ts.Modifier>;
+    /**
      * Sets if the node is async.
      * @param value - If it should be async or not.
      */
@@ -31,6 +36,10 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
 
         getAsyncKeyword(): Node<ts.Modifier> | undefined {
             return this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
+        }
+
+        getAsyncKeywordOrThrow(): Node<ts.Modifier> {
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword), "Expected to find an async keyword.");
         }
 
         setIsAsync(value: boolean) {

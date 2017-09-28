@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import * as errors from "./../../errors";
 import {AmbientableNodeStructure} from "./../../structures";
 import {TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -18,6 +19,10 @@ export interface AmbientableNode {
      */
     getDeclareKeyword(): Node | undefined;
     /**
+     * Gets the declare keyword or throws if it doesn't exist.
+     */
+    getDeclareKeywordOrThrow(): Node;
+    /**
      * Gets if the node is ambient.
      */
     isAmbient(): boolean;
@@ -32,6 +37,10 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
     return class extends Base implements AmbientableNode {
         hasDeclareKeyword() {
             return this.getDeclareKeyword() != null;
+        }
+
+        getDeclareKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getDeclareKeyword(), "Expected to find a declare keyword.");
         }
 
         getDeclareKeyword() {

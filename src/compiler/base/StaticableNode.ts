@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
+import * as errors from "./../../errors";
 import {StaticableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -17,6 +18,10 @@ export interface StaticableNode {
      */
     getStaticKeyword(): Node | undefined;
     /**
+     * Gets the static keyword, or throws if none exists.
+     */
+    getStaticKeywordOrThrow(): Node;
+    /**
      * Sets if the node is static.
      * @param value - If it should be static or not.
      */
@@ -31,6 +36,10 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
 
         getStaticKeyword() {
             return this.getFirstModifierByKind(ts.SyntaxKind.StaticKeyword);
+        }
+
+        getStaticKeywordOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getStaticKeyword(), "Expected to find a static keyword.");
         }
 
         setIsStatic(value: boolean) {

@@ -33,10 +33,7 @@ export interface BodyableNode {
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
     return class extends Base implements BodyableNode {
         getBodyOrThrow() {
-            const body = this.getBody();
-            if (body == null)
-                throw new errors.InvalidOperationError("A node body is required to do this operation.");
-            return body;
+            return errors.throwIfNullOrUndefined(this.getBody(), "A node body is required to do this operation.");
         }
 
         getBody() {
