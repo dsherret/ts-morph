@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, using, TypeGuards} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -60,6 +60,16 @@ export interface StatementedNode {
      */
     getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
     /**
+     * Gets a class or throws if it doesn't exist.
+     * @param name - Name of the class.
+     */
+    getClassOrThrow(name: string): classes.ClassDeclaration;
+    /**
+     * Gets a class or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the class.
+     */
+    getClassOrThrow(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration;
+    /**
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
      */
@@ -95,6 +105,16 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the enum.
      */
     getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
+    /**
+     * Gets an enum or throws if it doesn't exist.
+     * @param name - Name of the enum.
+     */
+    getEnumOrThrow(name: string): enums.EnumDeclaration;
+    /**
+     * Gets an enum or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the enum.
+     */
+    getEnumOrThrow(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration;
     /**
      * Adds a function declaration as a child.
      * @param structure - Structure of the function declaration to add.
@@ -132,6 +152,16 @@ export interface StatementedNode {
      */
     getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
     /**
+     * Gets a function or throws if it doesn't exist.
+     * @param name - Name of the function.
+     */
+    getFunctionOrThrow(name: string): functions.FunctionDeclaration;
+    /**
+     * Gets a function or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the function.
+     */
+    getFunctionOrThrow(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration;
+    /**
      * Adds a interface declaration as a child.
      * @param structure - Structure of the interface declaration to add.
      */
@@ -167,6 +197,16 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the interface.
      */
     getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
+    /**
+     * Gets an interface or throws if it doesn't exist.
+     * @param name - Name of the interface.
+     */
+    getInterfaceOrThrow(name: string): interfaces.InterfaceDeclaration;
+    /**
+     * Gets an interface or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the interface.
+     */
+    getInterfaceOrThrow(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration;
     /**
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
@@ -204,6 +244,16 @@ export interface StatementedNode {
      */
     getNamespace(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration | undefined;
     /**
+     * Gets a namespace or throws if it doesn't exist.
+     * @param name - Name of the namespace.
+     */
+    getNamespaceOrThrow(name: string): namespaces.NamespaceDeclaration;
+    /**
+     * Gets a namespace or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the namespace.
+     */
+    getNamespaceOrThrow(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration;
+    /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
      */
@@ -240,6 +290,16 @@ export interface StatementedNode {
      */
     getTypeAlias(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration | undefined;
     /**
+     * Gets a type alias or throws if it doesn't exist.
+     * @param name - Name of the type alias.
+     */
+    getTypeAliasOrThrow(name: string): types.TypeAliasDeclaration;
+    /**
+     * Gets a type alias or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the type alias.
+     */
+    getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
+    /**
      * Gets the direct variable statement children.
      */
     getVariableStatements(): variable.VariableStatement[];
@@ -249,6 +309,11 @@ export interface StatementedNode {
      */
     getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined;
     /**
+     * Gets a variable statement or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the variable statement.
+     */
+    getVariableStatementOrThrow(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement;
+    /**
      * Gets the variable declaration lists of the direct variable statement children.
      */
     getVariableDeclarationLists(): variable.VariableDeclarationList[];
@@ -257,6 +322,11 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the variable declaration list.
      */
     getVariableDeclarationList(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList | undefined;
+    /**
+     * Gets a variable declaration list or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the variable declaration list.
+     */
+    getVariableDeclarationListOrThrow(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList;
     /**
      * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
      */
@@ -271,6 +341,16 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the variable declaration.
      */
     getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
+    /**
+     * Gets a variable declaration or throws if it doesn't exist.
+     * @param name - Name of the variable declaration.
+     */
+    getVariableDeclarationOrThrow(name: string): variable.VariableDeclaration;
+    /**
+     * Gets a variable declaration or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the variable declaration.
+     */
+    getVariableDeclarationOrThrow(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration;
 
     /**
      * @internal
@@ -338,8 +418,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getClass(name: string): classes.ClassDeclaration | undefined;
         getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
+        getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined;
         getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
+        }
+
+        getClassOrThrow(name: string): classes.ClassDeclaration;
+        getClassOrThrow(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration;
+        getClassOrThrow(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration {
+            return errors.throwIfNullOrUndefined(this.getClass(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction));
         }
 
         /* Enums */
@@ -374,8 +461,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getEnum(name: string): enums.EnumDeclaration | undefined;
         getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
+        getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined;
         getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
+        }
+
+        getEnumOrThrow(name: string): enums.EnumDeclaration;
+        getEnumOrThrow(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration;
+        getEnumOrThrow(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration {
+            return errors.throwIfNullOrUndefined(this.getEnum(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction));
         }
 
         /* Functions */
@@ -411,8 +505,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getFunction(name: string): functions.FunctionDeclaration | undefined;
         getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
+        getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined;
         getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
+        }
+
+        getFunctionOrThrow(name: string): functions.FunctionDeclaration;
+        getFunctionOrThrow(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration;
+        getFunctionOrThrow(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration {
+            return errors.throwIfNullOrUndefined(this.getFunction(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction));
         }
 
         /* Interfaces */
@@ -447,8 +548,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
         getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
+        getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined;
         getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
+        }
+
+        getInterfaceOrThrow(name: string): interfaces.InterfaceDeclaration;
+        getInterfaceOrThrow(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration;
+        getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration {
+            return errors.throwIfNullOrUndefined(this.getInterface(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction));
         }
 
         /* Namespaces */
@@ -485,8 +593,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
         getNamespace(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration | undefined;
+        getNamespace(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration | undefined;
         getNamespace(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
+        }
+
+        getNamespaceOrThrow(name: string): namespaces.NamespaceDeclaration;
+        getNamespaceOrThrow(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration;
+        getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration {
+            return errors.throwIfNullOrUndefined(this.getNamespace(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
         }
 
         /* Type aliases */
@@ -528,8 +643,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
         getTypeAlias(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration | undefined;
+        getTypeAlias(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration | undefined;
         getTypeAlias(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
+        }
+
+        getTypeAliasOrThrow(name: string): types.TypeAliasDeclaration;
+        getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
+        getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration {
+            return errors.throwIfNullOrUndefined(this.getTypeAlias(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
         }
 
         getVariableStatements(): variable.VariableStatement[] {
@@ -541,12 +663,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.getVariableStatements().find(findFunction);
         }
 
+        getVariableStatementOrThrow(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement {
+            return errors.throwIfNullOrUndefined(this.getVariableStatement(findFunction), "Expected to find a variable statement that matched the provided condition.");
+        }
+
         getVariableDeclarationLists(): variable.VariableDeclarationList[] {
             return this.getVariableStatements().map(s => s.getDeclarationList());
         }
 
         getVariableDeclarationList(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList | undefined {
             return this.getVariableDeclarationLists().find(findFunction);
+        }
+
+        getVariableDeclarationListOrThrow(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList {
+            return errors.throwIfNullOrUndefined(this.getVariableDeclarationList(findFunction), "Could not find a variable declaration that matched the provided condition.");
         }
 
         getVariableDeclarations(): variable.VariableDeclaration[] {
@@ -561,8 +691,16 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getVariableDeclaration(name: string): variable.VariableDeclaration | undefined;
         getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
+        getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined;
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
+        }
+
+        getVariableDeclarationOrThrow(name: string): variable.VariableDeclaration;
+        getVariableDeclarationOrThrow(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration;
+        getVariableDeclarationOrThrow(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration {
+            return errors.throwIfNullOrUndefined(this.getVariableDeclaration(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("variable declaration", nameOrFindFunction));
         }
 
         fill(structure: Partial<StatementedNodeStructure>) {

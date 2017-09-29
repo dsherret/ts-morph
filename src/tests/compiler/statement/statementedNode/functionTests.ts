@@ -116,4 +116,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getFunction("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getFunctionOrThrow), () => {
+        const {sourceFile} = getInfoFromText("function Identifier1() {}\nfunction Identifier2() {}");
+
+        it("should get a function by a name", () => {
+            expect(sourceFile.getFunctionOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a function by a search function", () => {
+            expect(sourceFile.getFunctionOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the function doesn't exist", () => {
+            expect(() => sourceFile.getFunctionOrThrow("asdf")).to.throw();
+        });
+    });
 });

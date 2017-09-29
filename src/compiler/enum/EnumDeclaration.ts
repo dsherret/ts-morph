@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
 import {insertIntoCreatableSyntaxList, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode} from "./../base";
 import {Node} from "./../common";
@@ -123,12 +124,32 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Gets an enum member.
      * @param name - Name of the member.
-     * @param findFunction - Function to use to find the member.
      */
     getMember(name: string): EnumMember | undefined;
+    /**
+     * Gets an enum member.
+     * @param findFunction - Function to use to find the member.
+     */
     getMember(findFunction: (declaration: EnumMember) => boolean): EnumMember | undefined;
+    /** @internal */
+    getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined;
     getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined {
         return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets an enum member or throws if not found.
+     * @param name - Name of the member.
+     */
+    getMemberOrThrow(name: string): EnumMember;
+    /**
+     * Gets an enum member or throws if not found.
+     * @param findFunction - Function to use to find the member.
+     */
+    getMemberOrThrow(findFunction: (declaration: EnumMember) => boolean): EnumMember;
+    getMemberOrThrow(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember {
+        return errors.throwIfNullOrUndefined(this.getMember(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("enum member", nameOrFindFunction));
     }
 
     /**

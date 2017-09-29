@@ -7,14 +7,29 @@ describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {
         it("should get a member by its name", () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
-            const member = firstChild.getMember("member2")!;
-            expect(member.getText()).to.equal("member2");
+            expect(firstChild.getMember("member2")!.getText()).to.equal("member2");
         });
 
         it("should get a member by a function", () => {
             const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
-            const member = firstChild.getMember(m => m.getName() === "member2")!;
-            expect(member.getText()).to.equal("member2");
+            expect(firstChild.getMember(m => m.getName() === "member2")!.getText()).to.equal("member2");
+        });
+    });
+
+    describe(nameof<EnumDeclaration>(d => d.getMemberOrThrow), () => {
+        it("should get a member by its name", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            expect(firstChild.getMemberOrThrow("member2").getText()).to.equal("member2");
+        });
+
+        it("should get a member by a function", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            expect(firstChild.getMemberOrThrow(m => m.getName() === "member2").getText()).to.equal("member2");
+        });
+
+        it("should get a member by a function", () => {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            expect(() => firstChild.getMemberOrThrow(m => m.getName() === "member9")).to.throw();
         });
     });
 

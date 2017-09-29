@@ -115,4 +115,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getInterface("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getInterfaceOrThrow), () => {
+        const {sourceFile} = getInfoFromText("interface Identifier1 {}\ninterface Identifier2 {}");
+
+        it("should get an interface by a name", () => {
+            expect(sourceFile.getInterfaceOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a interface by a search function", () => {
+            expect(sourceFile.getInterfaceOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the interface doesn't exist", () => {
+            expect(() => sourceFile.getInterfaceOrThrow("asdf")).to.throw();
+        });
+    });
 });

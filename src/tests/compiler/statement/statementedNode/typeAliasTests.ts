@@ -124,4 +124,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getTypeAlias("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getTypeAliasOrThrow), () => {
+        const {sourceFile} = getInfoFromText("type Identifier1 = string;\ntype Identifier2 = number;");
+
+        it("should get a type alias by a name", () => {
+            expect(sourceFile.getTypeAliasOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a type alias by a search function", () => {
+            expect(sourceFile.getTypeAliasOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the type alias doesn't exist", () => {
+            expect(() => sourceFile.getTypeAliasOrThrow("asdf")).to.throw();
+        });
+    });
 });

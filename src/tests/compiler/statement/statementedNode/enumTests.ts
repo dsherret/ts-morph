@@ -115,4 +115,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getEnum("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getEnumOrThrow), () => {
+        const {sourceFile} = getInfoFromText("enum Identifier1 {}\nenum Identifier2 { member }");
+
+        it("should get an enum by a name", () => {
+            expect(sourceFile.getEnumOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a enum by a search function", () => {
+            expect(sourceFile.getEnumOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the enum doesn't exist", () => {
+            expect(() => sourceFile.getEnumOrThrow("asdf")).to.throw();
+        });
+    });
 });

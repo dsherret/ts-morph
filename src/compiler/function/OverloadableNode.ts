@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
-import {verifyAndGetIndex, insertIntoParent, getRangeFromArray} from "./../../manipulation";
-import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
+import {verifyAndGetIndex, insertIntoParent, getRangeFromArray} from "./../../manipulation";
+import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {BodyableNode, NamedNode} from "./../base";
 import {Node} from "./../common";
 
@@ -20,6 +20,10 @@ export interface OverloadableNode {
      * Gets the implementation or undefined if it doesn't exist.
      */
     getImplementation(): this | undefined;
+    /**
+     * Gets the implementation or throws if it doesn't exist.
+     */
+    getImplementationOrThrow(): this;
     /**
      * Gets if this is an overload.
      */
@@ -40,6 +44,10 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
             if (this.isImplementation())
                 return this;
             return getOverloadsAndImplementation(this).find(n => n.isImplementation()) as this | undefined;
+        }
+
+        getImplementationOrThrow(): this {
+            return errors.throwIfNullOrUndefined(this.getImplementation(), "Expected to find a corresponding implementation for the overload.");
         }
 
         isOverload() {

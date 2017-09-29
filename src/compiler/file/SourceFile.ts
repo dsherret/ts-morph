@@ -226,6 +226,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the import by.
+     */
+    getImportOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration {
+        return errors.throwIfNullOrUndefined(this.getImport(condition), "Expected to find an import with the provided condition.");
+    }
+
+    /**
      * Get the file's import declarations.
      */
     getImports(): ImportDeclaration[] {
@@ -308,6 +316,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export by.
+     */
+    getExportOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration {
+        return errors.throwIfNullOrUndefined(this.getExport(condition), "Expected to find an export with the provided condition.");
+    }
+
+    /**
      * Get the file's export declarations.
      */
     getExports(): ExportDeclaration[] {
@@ -326,6 +342,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return undefined;
 
         return sourceFileSymbol.getExportByName("default");
+    }
+
+    /**
+     * Gets the default export symbol of the file or throws if it doesn't exist.
+     */
+    getDefaultExportSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getDefaultExportSymbol(), "Expected to find a default export symbol");
     }
 
     /**

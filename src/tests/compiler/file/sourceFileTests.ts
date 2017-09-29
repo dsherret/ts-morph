@@ -240,6 +240,18 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.getImportOrThrow), () => {
+        it("should get the import declaration", () => {
+            const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
+            expect(sourceFile.getImportOrThrow(i => i.getDefaultImport() != null).getText()).to.equal("import myImport from 'test';");
+        });
+
+        it("should throw when not exists", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.getImportOrThrow(e => false)).to.throw();
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.insertExports), () => {
         function doTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
@@ -333,6 +345,18 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.getExportOrThrow), () => {
+        it("should get the export declaration", () => {
+            const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
+            expect(sourceFile.getExportOrThrow(e => e.isNamespaceExport()).getText()).to.equal("export * from 'test';");
+        });
+
+        it("should throw when not exists", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.getExportOrThrow(e => false)).to.throw();
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.getDefaultExportSymbol), () => {
         it("should return undefined when there's no default export", () => {
             const {sourceFile} = getInfoFromText("");
@@ -349,6 +373,18 @@ describe(nameof(SourceFile), () => {
             const {sourceFile} = getInfoFromText("class Identifier {}\nexport default Identifier;");
             const defaultExportSymbol = sourceFile.getDefaultExportSymbol()!;
             expect(defaultExportSymbol.getName()).to.equal("default");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getDefaultExportSymbolOrThrow), () => {
+        it("should throw when there's no default export", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.getDefaultExportSymbolOrThrow()).to.throw();
+        });
+
+        it("should return the default export symbol when one exists", () => {
+            const {sourceFile} = getInfoFromText("export default class Identifier {}");
+            expect(sourceFile.getDefaultExportSymbolOrThrow().getName()).to.equal("default");
         });
     });
 

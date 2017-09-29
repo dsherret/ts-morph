@@ -27,6 +27,13 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
     }
 
     /**
+     * Gets the corresponding get accessor or throws if not exists.
+     */
+    getGetAccessorOrThrow(): GetAccessorDeclaration {
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(), () => `Expected to find a corresponding get accessor for ${this.getName()}.`);
+    }
+
+    /**
      * Removes the set accessor.
      */
     remove() {

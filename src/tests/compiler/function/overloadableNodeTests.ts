@@ -106,4 +106,17 @@ describe(nameof(OverloadableNode), () => {
             });
         });
     });
+
+    describe(nameof<OverloadableNode>(d => d.getImplementationOrThrow), () => {
+        it("should get the implementation when asking an overload", () => {
+            const implementation = functions[0].getImplementationOrThrow();
+            expect(implementation).to.equal(functions[1]);
+        });
+
+        it("should throw in an ambient context", () => {
+            const code = `declare function myFunction(): void;declare function myFunction(): void;`;
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
+            expect(() => firstChild.getImplementationOrThrow()).to.throw();
+        });
+    });
 });

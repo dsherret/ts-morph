@@ -116,4 +116,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getNamespace("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getNamespaceOrThrow), () => {
+        const {sourceFile} = getInfoFromText("namespace Identifier1 {}\nnamespace Identifier2 {}");
+
+        it("should get a namespace by a name", () => {
+            expect(sourceFile.getNamespaceOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a namespace by a search function", () => {
+            expect(sourceFile.getNamespaceOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the namespace doesn't exist", () => {
+            expect(() => sourceFile.getNamespaceOrThrow("asdf")).to.throw();
+        });
+    });
 });

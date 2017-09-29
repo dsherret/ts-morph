@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, removeStatementedNodeChild} from "./../../manipulation";
+import * as errors from "./../../errors";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
-import {getNamedNodeByNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
@@ -98,6 +99,14 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     }
 
     /**
+     * Gets the first construct signature by a find function or throws if not found.
+     * @param findFunction - Function to find the construct signature by.
+     */
+    getConstructSignatureOrThrow(findFunction: (member: ConstructSignatureDeclaration) => boolean): ConstructSignatureDeclaration {
+        return errors.throwIfNullOrUndefined(this.getConstructSignature(findFunction), "Expected to find a construct signature with the provided condition.");
+    }
+
+    /**
      * Gets the interface method signatures.
      */
     getConstructSignatures(): ConstructSignatureDeclaration[] {
@@ -175,8 +184,25 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param findFunction - Function to find the method by.
      */
     getMethod(findFunction: (member: MethodSignature) => boolean): MethodSignature | undefined;
+    /** @internal */
+    getMethod(nameOrFindFunction: string | ((member: MethodSignature) => boolean)): MethodSignature | undefined;
     getMethod(nameOrFindFunction: string | ((member: MethodSignature) => boolean)): MethodSignature | undefined {
         return getNamedNodeByNameOrFindFunction(this.getMethods(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first method by name or throws if not found.
+     * @param name - Name.
+     */
+    getMethodOrThrow(name: string): MethodSignature;
+    /**
+     * Gets the first method by a find function or throws if not found.
+     * @param findFunction - Function to find the method by.
+     */
+    getMethodOrThrow(findFunction: (member: MethodSignature) => boolean): MethodSignature;
+    getMethodOrThrow(nameOrFindFunction: string | ((member: MethodSignature) => boolean)): MethodSignature {
+        return errors.throwIfNullOrUndefined(this.getMethod(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("interface method signature", nameOrFindFunction));
     }
 
     /**
@@ -255,8 +281,25 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param findFunction - Function to find the property by.
      */
     getProperty(findFunction: (member: PropertySignature) => boolean): PropertySignature | undefined;
+    /** @internal */
+    getProperty(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature | undefined;
     getProperty(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature | undefined {
         return getNamedNodeByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first property by name or throws if not found.
+     * @param name - Name.
+     */
+    getPropertyOrThrow(name: string): PropertySignature;
+    /**
+     * Gets the first property by a find function or throws if not found.
+     * @param findFunction - Function to find the property by.
+     */
+    getPropertyOrThrow(findFunction: (member: PropertySignature) => boolean): PropertySignature;
+    getPropertyOrThrow(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature {
+        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("interface property signature", nameOrFindFunction));
     }
 
     /**

@@ -27,6 +27,17 @@ describe(nameof(StatementedNode), () => {
         });
     });
 
+    describe(nameof<StatementedNode>(n => n.getVariableStatementOrThrow), () => {
+        it("should get a variable statement when something matches", () => {
+            const statement = variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarationList().getDeclarations().length === 2);
+            expect(statement.getDeclarationList().getDeclarations()[0].getName()).to.equal("Identifier2");
+        });
+
+        it("should throw when nothing matches", () => {
+            expect(() => variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarationList().getDeclarations().length === 5)).to.throw();
+        });
+    });
+
     describe(nameof<StatementedNode>(n => n.getVariableDeclarationLists), () => {
         const declarationLists = variablesSourceFile.getVariableDeclarationLists();
         it("should have the expected number of variable declaration lists", () => {
@@ -47,6 +58,17 @@ describe(nameof(StatementedNode), () => {
         it("should return undefined when nothing matches", () => {
             const list = variablesSourceFile.getVariableDeclarationList(s => s.getDeclarations().length === 5);
             expect(list).to.be.undefined;
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.getVariableDeclarationListOrThrow), () => {
+        it("should get a variable declaration list when something matches", () => {
+            const list = variablesSourceFile.getVariableDeclarationListOrThrow(s => s.getDeclarations().length === 2);
+            expect(list.getDeclarations()[0].getName()).to.equal("Identifier2");
+        });
+
+        it("should throw when nothing matches", () => {
+            expect(() => variablesSourceFile.getVariableDeclarationListOrThrow(s => s.getDeclarations().length === 5)).to.throw();
         });
     });
 
@@ -72,6 +94,20 @@ describe(nameof(StatementedNode), () => {
 
         it("should return undefined when the variable declaration doesn't exist", () => {
             expect(variablesSourceFile.getVariableDeclaration("asdf")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<StatementedNode>(n => n.getVariableDeclarationOrThrow), () => {
+        it("should get a variable declaration by a name", () => {
+            expect(variablesSourceFile.getVariableDeclarationOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a variableOrThrow declaration by a earch function", () => {
+            expect(variablesSourceFile.getVariableDeclarationOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should return undefined OrThrowwhen the variable declaration doesn't exist", () => {
+            expect(() => variablesSourceFile.getVariableDeclarationOrThrow("asdf")).to.throw();
         });
     });
 });

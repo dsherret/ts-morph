@@ -94,6 +94,18 @@ describe(nameof(InterfaceDeclaration), () => {
         });
     });
 
+    describe(nameof<InterfaceDeclaration>(d => d.getConstructSignatureOrThrow), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { new(): string; new(str: string): string; }");
+
+        it("should get the first that matches", () => {
+            expect(firstChild.getConstructSignatureOrThrow(c => c.getParameters().length > 0)).to.equal(firstChild.getConstructSignatures()[1]);
+        });
+
+        it("should throw when none match", () => {
+            expect(() => firstChild.getConstructSignatureOrThrow(c => c.getParameters().length > 5)).to.throw();
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(d => d.insertMethods), () => {
         function doTest(startCode: string, insertIndex: number, structures: MethodSignatureStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
@@ -151,19 +163,35 @@ describe(nameof(InterfaceDeclaration), () => {
         });
     });
 
-    describe(nameof<InterfaceDeclaration>(d => d.getMethods), () => {
-        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { method1() {} method2(){} method3(){} }");
+    describe(nameof<InterfaceDeclaration>(d => d.getMethod), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { method1(); method2(); method3(); }");
 
         it("should get the first that matches by name", () => {
-            expect(firstChild.getMethod("method2")).to.equal(firstChild.getMethods()[1]);
+            expect(firstChild.getMethod("method2")!.getName()).to.equal("method2");
         });
 
         it("should return the first that matches by a find function", () => {
-            expect(firstChild.getMethod(m => m.getName() === "method3")).to.equal(firstChild.getMethods()[2]);
+            expect(firstChild.getMethod(m => m.getName() === "method3")!.getName()).to.equal("method3");
         });
 
         it("should return undefined when none match", () => {
             expect(firstChild.getMethod(m => m.getParameters().length > 5)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getMethodOrThrow), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { method1(); method2(); method3(); }");
+
+        it("should get the first that matches by name", () => {
+            expect(firstChild.getMethodOrThrow("method2").getName()).to.equal("method2");
+        });
+
+        it("should return the first that matches by a find function", () => {
+            expect(firstChild.getMethodOrThrow(m => m.getName() === "method3").getName()).to.equal("method3");
+        });
+
+        it("should throw when none match", () => {
+            expect(() => firstChild.getMethodOrThrow(m => m.getParameters().length > 5)).to.throw();
         });
     });
 
@@ -249,15 +277,31 @@ describe(nameof(InterfaceDeclaration), () => {
         const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { prop1: string; prop2: number; prop3: Date; }");
 
         it("should get the first that matches by name", () => {
-            expect(firstChild.getProperty("prop2")).to.equal(firstChild.getProperties()[1]);
+            expect(firstChild.getProperty("prop2")!.getName()).to.equal("prop2");
         });
 
         it("should return the first that matches by a find function", () => {
-            expect(firstChild.getProperty(p => p.getName() === "prop3")).to.equal(firstChild.getProperties()[2]);
+            expect(firstChild.getProperty(p => p.getName() === "prop3")!.getName()).to.equal("prop3");
         });
 
         it("should return undefined when none match", () => {
             expect(firstChild.getProperty(p => p.getName() === "none")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getPropertyOrThrow), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { prop1: string; prop2: number; prop3: Date; }");
+
+        it("should get the first that matches by name", () => {
+            expect(firstChild.getPropertyOrThrow("prop2").getName()).to.equal("prop2");
+        });
+
+        it("should return the first that matches by a find function", () => {
+            expect(firstChild.getPropertyOrThrow(p => p.getName() === "prop3").getName()).to.equal("prop3");
+        });
+
+        it("should throw when none match", () => {
+            expect(() => firstChild.getPropertyOrThrow(p => p.getName() === "none")).to.throw();
         });
     });
 

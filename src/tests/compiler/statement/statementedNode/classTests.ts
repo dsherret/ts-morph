@@ -112,4 +112,20 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getClass("asdf")).to.be.undefined;
         });
     });
+
+    describe(nameof<StatementedNode>(n => n.getClassOrThrow), () => {
+        const {sourceFile} = getInfoFromText("class Identifier1 {}\nclass Identifier2 { prop: string; }");
+
+        it("should get a class by a name", () => {
+            expect(sourceFile.getClassOrThrow("Identifier2").getName()).to.equal("Identifier2");
+        });
+
+        it("should get a class by a search function", () => {
+            expect(sourceFile.getClassOrThrow(c => c.getName() === "Identifier1").getName()).to.equal("Identifier1");
+        });
+
+        it("should throw when the class doesn't exist", () => {
+            expect(() => sourceFile.getClassOrThrow("asdf")).to.throw();
+        });
+    });
 });

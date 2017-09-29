@@ -75,8 +75,8 @@ export function throwIfNegative(value: number, argName: string) {
  * @param value - Value to check.
  * @param errorMessage - Error message to throw when not defined.
  */
-export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string) {
+export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: string | (() => string)) {
     if (value == null)
-        throw new InvalidOperationError(errorMessage);
+        throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
     return value;
 }

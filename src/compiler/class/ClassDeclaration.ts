@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
     removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, TypeGuards} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
@@ -227,8 +227,25 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find an instance property by.
      */
     getInstanceProperty(findFunction: (prop: ClassInstancePropertyTypes) => boolean): ClassInstancePropertyTypes | undefined;
+    /** @internal */
+    getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined;
     getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined {
         return getNamedNodeByNameOrFindFunction(this.getInstanceProperties(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first instance property by name or throws if not found.
+     * @param name - Name.
+     */
+    getInstancePropertyOrThrow(name: string): ClassInstancePropertyTypes;
+    /**
+     * Gets the first instance property by a find function or throws if not found.
+     * @param findFunction - Function to find an instance property by.
+     */
+    getInstancePropertyOrThrow(findFunction: (prop: ClassInstancePropertyTypes) => boolean): ClassInstancePropertyTypes;
+    getInstancePropertyOrThrow(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes {
+        return errors.throwIfNullOrUndefined(this.getInstanceProperty(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class instance property", nameOrFindFunction));
     }
 
     /**
@@ -249,8 +266,25 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find a static property by.
      */
     getStaticProperty(findFunction: (prop: ClassStaticPropertyTypes) => boolean): ClassStaticPropertyTypes | undefined;
+    /** @internal */
+    getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined;
     getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined {
         return getNamedNodeByNameOrFindFunction(this.getStaticProperties(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first static property by name or throws if not found.
+     * @param name - Name.
+     */
+    getStaticPropertyOrThrow(name: string): ClassStaticPropertyTypes;
+    /**
+     * Gets the first static property by a find function. or throws if not found.
+     * @param findFunction - Function to find a static property by.
+     */
+    getStaticPropertyOrThrow(findFunction: (prop: ClassStaticPropertyTypes) => boolean): ClassStaticPropertyTypes;
+    getStaticPropertyOrThrow(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes {
+        return errors.throwIfNullOrUndefined(this.getStaticProperty(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class static property", nameOrFindFunction));
     }
 
     /**
@@ -340,8 +374,25 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find an instance method by.
      */
     getInstanceMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    /** @internal */
+    getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
     getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
         return getNamedNodeByNameOrFindFunction(this.getInstanceMethods(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first instance method by name or throws if not found.
+     * @param name - Name.
+     */
+    getInstanceMethodOrThrow(name: string): MethodDeclaration;
+    /**
+     * Gets the first instance method by a find function. or throws if not found.
+     * @param findFunction - Function to find an instance method by.
+     */
+    getInstanceMethodOrThrow(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration;
+    getInstanceMethodOrThrow(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration {
+        return errors.throwIfNullOrUndefined(this.getInstanceMethod(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class instance method", nameOrFindFunction));
     }
 
     /**
@@ -361,8 +412,24 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find a static method by.
      */
     getStaticMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    /** @internal */
+    getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
     getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
         return getNamedNodeByNameOrFindFunction(this.getStaticMethods(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first static method by name or throws if not found.
+     * @param name - Name.
+     */
+    getStaticMethodOrThrow(name: string): MethodDeclaration;
+    /**
+     * Gets the first static method by a find function. or throws if not found.
+     * @param findFunction - Function to find a static method by.
+     */
+    getStaticMethodOrThrow(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration;
+    getStaticMethodOrThrow(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration {
+        return errors.throwIfNullOrUndefined(this.getStaticMethod(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class static method", nameOrFindFunction));
     }
 
     /**
@@ -382,8 +449,25 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find the instance member by.
      */
     getInstanceMember(findFunction: (member: ClassInstanceMemberTypes) => boolean): ClassInstanceMemberTypes | undefined;
+    /** @internal */
+    getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined;
     getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined {
         return getNamedNodeByNameOrFindFunction(this.getInstanceMembers(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first instance member by name or throws if not found.
+     * @param name - Name.
+     */
+    getInstanceMemberOrThrow(name: string): ClassInstanceMemberTypes;
+    /**
+     * Gets the first instance member by a find function. or throws if not found.
+     * @param findFunction - Function to find the instance member by.
+     */
+    getInstanceMemberOrThrow(findFunction: (member: ClassInstanceMemberTypes) => boolean): ClassInstanceMemberTypes;
+    getInstanceMemberOrThrow(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes {
+        return errors.throwIfNullOrUndefined(this.getInstanceMember(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class instance member", nameOrFindFunction));
     }
 
     /**
@@ -403,8 +487,24 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param findFunction - Function to find an static method by.
      */
     getStaticMember(findFunction: (member: ClassStaticMemberTypes) => boolean): ClassStaticMemberTypes | undefined;
+    /** @internal */
+    getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined;
     getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined {
         return getNamedNodeByNameOrFindFunction(this.getStaticMembers(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first static member by name or throws if not found.
+     * @param name - Name.
+     */
+    getStaticMemberOrThrow(name: string): ClassStaticMemberTypes;
+    /**
+     * Gets the first static member by a find function. or throws if not found.
+     * @param findFunction - Function to find an static method by.
+     */
+    getStaticMemberOrThrow(findFunction: (member: ClassStaticMemberTypes) => boolean): ClassStaticMemberTypes;
+    getStaticMemberOrThrow(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes {
+        return errors.throwIfNullOrUndefined(this.getStaticMember(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class static member", nameOrFindFunction));
     }
 
     /**
