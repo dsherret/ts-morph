@@ -44,34 +44,34 @@ describe(nameof(ScopedNode), () => {
     });
 
     describe(nameof<ScopedNode>(d => d.setScope), () => {
+        function doTest(startText: string, scope: Scope, expectedText: string) {
+            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText(startText);
+            firstProperty.setScope(scope);
+            expect(firstChild.getText()).to.be.equal(expectedText);
+        }
+
         it("should clear the scope keyword if set to public", () => {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { private prop: string; }");
-            firstProperty.setScope(Scope.Public);
-            expect(firstChild.getText()).to.be.equal("class Identifier { prop: string; }");
+            doTest("class Identifier { private prop: string; }", Scope.Public, "class Identifier { prop: string; }");
         });
 
         it("should clear the scope keyword if set to public even when public", () => {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { public prop: string; }");
-            firstProperty.setScope(Scope.Public);
-            expect(firstChild.getText()).to.be.equal("class Identifier { prop: string; }");
+            doTest("class Identifier { public prop: string; }", Scope.Public, "class Identifier { prop: string; }");
         });
 
         it("should set the scope keyword to protected when specified", () => {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { private prop: string; }");
-            firstProperty.setScope(Scope.Protected);
-            expect(firstChild.getText()).to.be.equal("class Identifier { protected prop: string; }");
+            doTest("class Identifier { private prop: string; }", Scope.Protected, "class Identifier { protected prop: string; }");
         });
 
         it("should set the scope keyword to private when specified", () => {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { protected prop: string; }");
-            firstProperty.setScope(Scope.Private);
-            expect(firstChild.getText()).to.be.equal("class Identifier { private prop: string; }");
+            doTest("class Identifier { protected prop: string; }", Scope.Private, "class Identifier { private prop: string; }");
         });
 
         it("should set the scope keyword when none exists and setting to not public", () => {
-            const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText("class Identifier { prop: string; }");
-            firstProperty.setScope(Scope.Private);
-            expect(firstChild.getText()).to.be.equal("class Identifier { private prop: string; }");
+            doTest("class Identifier { prop: string; }", Scope.Private, "class Identifier { private prop: string; }");
+        });
+
+        it("should set the scope keyword when none exists, a decorator exists, and setting to not public", () => {
+            doTest("class Identifier { @dec prop: string; }", Scope.Private, "class Identifier { @dec private prop: string; }");
         });
     });
 

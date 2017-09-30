@@ -85,6 +85,18 @@ describe(nameof(ModifierableNode), () => {
             firstChild.addModifier("export");
             expect(firstChild.getText()).to.equal("export class Identifier {}");
         });
+
+        it("should add when there's a decorator", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("@dec class Identifier {}");
+            firstChild.addModifier("export");
+            expect(firstChild.getText()).to.equal("@dec export class Identifier {}");
+        });
+
+        it("should add when there's a js doc", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("/** Test */ class Identifier {}");
+            firstChild.addModifier("export");
+            expect(firstChild.getFullText()).to.equal("/** Test */ export class Identifier {}");
+        });
     });
 
     describe(nameof<ModifierableNode>(n => n.toggleModifier), () => {

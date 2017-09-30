@@ -186,6 +186,10 @@ describe(nameof(ExportableNode), () => {
                 doTest("class Identifier {}", true, "export class Identifier {}");
             });
 
+            it("should add the export keyword if not exported to a class that has decorators", () => {
+                doTest("@dec class Identifier {}", true, "@dec export class Identifier {}");
+            });
+
             it("should do nothing if already exported from a namespace", () => {
                 doInnerTest("namespace Identifier { export class Identifier {} }", true, "namespace Identifier { export class Identifier {} }");
             });

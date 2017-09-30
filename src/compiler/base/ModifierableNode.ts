@@ -101,25 +101,12 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 return this.getModifiers().find(m => m.getText() === text) as Node<ts.Modifier>;
 
             // get insert position & index
-            let insertPos = this.getStart();
-            let insertIndex = 0;
-            getAddAfterModifierTexts(text).forEach(addAfterText => {
-                for (let i = 0; i < modifiers.length; i++) {
-                    const modifier = modifiers[i];
-                    if (modifier.getText() === addAfterText) {
-                        if (insertPos < modifier.getEnd()) {
-                            insertPos = modifier.getEnd();
-                            insertIndex = i + 1;
-                        }
-                        break;
-                    }
-                }
-            });
+            const {insertPos, insertIndex} = getInsertInfo(this);
 
             // insert setup
             let startPos: number;
             let newText: string;
-            const isFirstModifier = insertPos === this.getStart();
+            const isFirstModifier = modifiers.length === 0 || insertPos === modifiers[0].getStart();
             if (isFirstModifier) {
                 newText = text + " ";
                 startPos = insertPos;
@@ -140,6 +127,36 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             });
 
             return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
+
+            function getInsertInfo(node: ModifierableNode & Node) {
+                let pos = getInitialInsertPos();
+                let index = 0;
+                for (const addAfterText of getAddAfterModifierTexts(text)) {
+                    for (let i = 0; i < modifiers.length; i++) {
+                        const modifier = modifiers[i];
+                        if (modifier.getText() === addAfterText) {
+                            if (pos < modifier.getEnd()) {
+                                pos = modifier.getEnd();
+                                index = i + 1;
+                            }
+                            break;
+                        }
+                    }
+                }
+                return { insertPos: pos, insertIndex: index };
+
+                function getInitialInsertPos() {
+                    if (modifiers.length > 0)
+                        return modifiers[0].getStart();
+                    for (const child of node.getChildrenIterator()) {
+                        // skip over any initial syntax lists (ex. decorators) or js docs
+                        if (child.getKind() === ts.SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
+                            continue;
+                        return child.getStart();
+                    }
+                    return node.getStart();
+                }
+            }
         }
 
         removeModifier(text: ModifierTexts) {
