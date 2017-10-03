@@ -8,18 +8,19 @@ import {areNodesEqual} from "./areNodesEqual";
 export interface ReplaceTreeCreatingSyntaxListOptions {
     replacementSourceFile: SourceFile;
     parent: Node;
+    insertPos: number;
 }
 
 /**
  * Replaces with tree that creates a syntax list.
  */
 export function replaceTreeCreatingSyntaxList(opts: ReplaceTreeCreatingSyntaxListOptions) {
-    const {parent, replacementSourceFile} = opts;
+    const {parent, replacementSourceFile, insertPos} = opts;
     replaceTree({
         parent,
         childCount: 1,
         replacementSourceFile,
-        isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && currentNode.getKind() !== ts.SyntaxKind.SyntaxList
+        isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
     });
 }
 

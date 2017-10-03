@@ -4,7 +4,7 @@ import {SourceFile, Node, LanguageService} from "./../../compiler";
 import {TypeGuards} from "./../../utils";
 import {verifyAndGetIndex} from "./../verifyAndGetIndex";
 import {isBlankLineAtPos} from "./../textChecks";
-import {insertIntoCreatableSyntaxList} from "./insertIntoCreatableSyntaxList";
+import {insertIntoParent} from "./insertIntoParent";
 
 export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     parent: Node;
@@ -65,11 +65,10 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     if (TypeGuards.isSourceFile(parent) && nextMember == null && !newText.endsWith(newLineChar) && !sourceFile.getFullText().endsWith("\n"))
         newText = newText + newLineChar;
 
-    insertIntoCreatableSyntaxList({
-        parent,
+    insertIntoParent({
+        parent: parent.getChildSyntaxListOrThrow(),
         insertPos,
         newText,
-        syntaxList: parent.getChildSyntaxListOrThrow(),
         childIndex: index,
         insertItemsCount: childCodes.length
     });

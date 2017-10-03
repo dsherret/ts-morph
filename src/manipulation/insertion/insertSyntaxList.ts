@@ -18,6 +18,7 @@ export function insertSyntaxList(opts: InsertSyntaxListOptions) {
 
     replaceTreeCreatingSyntaxList({
         parent,
-        replacementSourceFile: tempSourceFile
+        replacementSourceFile: tempSourceFile,
+        insertPos
     });
 }
