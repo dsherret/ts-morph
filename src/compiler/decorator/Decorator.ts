@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
+import {TypeGuards} from "./../../utils";
 import {Node, CallExpression, Expression, Identifier} from "./../common";
 import {TypeNode} from "./../type";
 
@@ -20,26 +21,24 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         const sourceFile = this.getSourceFile();
 
         if (this.isDecoratorFactory()) {
-            const callExpression = this.compilerNode.expression as ts.CallExpression;
-            return getIdentifierFromName(callExpression.expression);
+            const callExpression = this.getCallExpression()!;
+            return getIdentifierFromName(callExpression.getExpression());
         }
 
-        return getIdentifierFromName(this.compilerNode.expression);
+        return getIdentifierFromName(this.getExpression());
 
-        function getIdentifierFromName(expression: ts.LeftHandSideExpression) {
+        function getIdentifierFromName(expression: Expression) {
             const identifier = getNameFromExpression(expression);
-            if (identifier.kind !== ts.SyntaxKind.Identifier) {
-                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText(sourceFile.compilerNode)}' to be an identifier, ` +
+            if (!TypeGuards.isIdentifier(identifier)) {
+                throw new errors.NotImplementedError(`Expected the decorator expression '${identifier.getText()}' to be an identifier, ` +
                     `but it wasn't. Please report this as a bug.`);
             }
-            return sourceFile.global.compilerFactory.getNodeFromCompilerNode(identifier, sourceFile) as Identifier;
+            return identifier;
         }
 
-        function getNameFromExpression(expression: ts.LeftHandSideExpression) {
-            if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
-                const propAccess = expression as ts.PropertyAccessExpression;
-                return propAccess.name;
-            }
+        function getNameFromExpression(expression: Expression) {
+            if (TypeGuards.isPropertyAccessExpression(expression))
+                return expression.getNameIdentifier();
             return expression;
         }
     }
@@ -69,7 +68,14 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (!this.isDecoratorFactory())
             return undefined;
 
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression as ts.CallExpression, this.sourceFile) as CallExpression;
+        return this.getExpression() as any as CallExpression;
+    }
+
+    /**
+     * Gets the expression.
+     */
+    getExpression(): Expression<ts.LeftHandSideExpression> {
+        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression<ts.LeftHandSideExpression>;
     }
 
     /**

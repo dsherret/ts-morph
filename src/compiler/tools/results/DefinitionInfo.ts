@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../../GlobalContainer";
-import {SourceFile} from "./../../../compiler";
+import {SourceFile, Node} from "./../../../compiler";
 import {Memoize} from "./../../../utils";
 import {TextSpan} from "./TextSpan";
 
@@ -69,5 +69,27 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      */
     getContainerName() {
         return this.compilerObject.containerName;
+    }
+
+    /**
+     * Gets the definition node.
+     */
+    getNode(): Node | undefined {
+        const start = this.getTextSpan().getStart();
+        const identifier = findIdentifier(this.getSourceFile());
+
+        return identifier == null ? undefined : identifier.getParentOrThrow();
+
+        function findIdentifier(node: Node): Node | undefined {
+            if (node.getKind() === ts.SyntaxKind.Identifier && node.getStart() === start)
+                return node;
+
+            for (const child of node.getChildrenIterator()) {
+                if (child.getPos() <= start && child.getEnd() >= start)
+                    return findIdentifier(child);
+            }
+
+            return undefined;
+        }
     }
 }

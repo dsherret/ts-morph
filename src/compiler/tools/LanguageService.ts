@@ -6,7 +6,7 @@ import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
-import {ReferencedSymbol, RenameLocation} from "./results";
+import {ReferencedSymbol, DefinitionInfo, RenameLocation} from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -135,19 +135,39 @@ export class LanguageService {
     }
 
     /**
+     * Gets the definitions for the specified node.
+     * @param sourceFile - Source file.
+     * @param node - Node.
+     */
+    getDefinitions(sourceFile: SourceFile, node: Node): DefinitionInfo[] {
+        return this.getDefinitionsAtPosition(sourceFile, node.getStart());
+    }
+
+    /**
+     * Gets the definitions at the specified position.
+     * @param sourceFile - Source file.
+     * @param pos - Position.
+     */
+    getDefinitionsAtPosition(sourceFile: SourceFile, pos: number): DefinitionInfo[] {
+        const results = this.compilerObject.getDefinitionAtPosition(sourceFile.getFilePath(), pos) || [];
+        return results.map(info => new DefinitionInfo(this.global, info));
+    }
+
+    /**
      * Finds references based on the specified node.
      * @param sourceFile - Source file.
      * @param node - Node to find references for.
      */
-    findReferences(sourceFile: SourceFile, node: Node): ReferencedSymbol[];
+    findReferences(sourceFile: SourceFile, node: Node) {
+        return this.findReferencesAtPosition(sourceFile, node.getStart());
+    }
+
     /**
      * Finds references based on the specified position.
      * @param sourceFile - Source file.
      * @param pos - Position to find the reference at.
      */
-    findReferences(sourceFile: SourceFile, pos: number): ReferencedSymbol[];
-    findReferences(sourceFile: SourceFile, posOrNode: Node | number) {
-        const pos = typeof posOrNode === "number" ? posOrNode : posOrNode.getStart();
+    findReferencesAtPosition(sourceFile: SourceFile, pos: number) {
         const results = this.compilerObject.findReferences(sourceFile.getFilePath(), pos) || [];
         return results.map(s => new ReferencedSymbol(this.global, s));
     }

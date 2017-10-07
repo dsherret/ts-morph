@@ -607,6 +607,7 @@ export class TypeGuards {
     static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.PropertyAccessExpression:
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.InterfaceDeclaration:
@@ -691,6 +692,19 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a PropertyAccessExpression.
+     * @param node - Node to check.
+     */
+    static isPropertyAccessExpression(node: compiler.Node): node is compiler.PropertyAccessExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyAccessExpression:
                 return true;
             default:
                 return false;

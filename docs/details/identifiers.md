@@ -49,6 +49,14 @@ Find all the references:
 const references = identifier.findReferences();
 ```
 
+### Get Definitions
+
+Gets the definitions of the identifier. This is similar to "go to definition" functionality that exists with TypeScript in most IDEs.
+
+```typescript
+const definitions = identifier.getDefinitions();
+```
+
 ### Type
 
 Get the type of an identifier:

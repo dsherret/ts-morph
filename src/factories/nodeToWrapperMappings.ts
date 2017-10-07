@@ -3,7 +3,7 @@
 import {ArrayLiteralExpression, CallExpression, SourceFile, ClassDeclaration, ConstructorDeclaration, ConstructSignatureDeclaration, Decorator,
     EnumDeclaration, EnumMember, ExportDeclaration, ExportSpecifier, ExpressionWithTypeArguments, FunctionDeclaration, GetAccessorDeclaration,
     HeritageClause, Identifier, ImportDeclaration, ImportSpecifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, NamespaceDeclaration,
-    Expression, ParameterDeclaration, PropertyDeclaration, PropertySignature, QualifiedName, SetAccessorDeclaration, TypeAliasDeclaration,
+    Expression, ParameterDeclaration, PropertyAccessExpression, PropertyDeclaration, PropertySignature, QualifiedName, SetAccessorDeclaration, TypeAliasDeclaration,
     TypeParameterDeclaration, TypeReferenceNode, VariableDeclaration, VariableDeclarationList, VariableStatement, JSDoc} from "./../compiler";
 
 // when changing this, make sure to run `npm run code-generate`.
@@ -34,6 +34,7 @@ export const nodeToWrapperMappings = {
     [ts.SyntaxKind.ModuleDeclaration]: NamespaceDeclaration,
     [ts.SyntaxKind.NumericLiteral]: Expression,
     [ts.SyntaxKind.Parameter]: ParameterDeclaration,
+    [ts.SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression,
     [ts.SyntaxKind.PropertyDeclaration]: PropertyDeclaration,
     [ts.SyntaxKind.PropertySignature]: PropertySignature,
     [ts.SyntaxKind.QualifiedName]: QualifiedName,

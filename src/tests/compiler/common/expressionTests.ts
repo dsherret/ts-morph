@@ -4,6 +4,7 @@ import {Expression, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Expression), () => {
+    // todo: this remove should be moved to be on decorators
     describe(nameof<Expression>(e => e.remove), () => {
         describe("decorators", () => {
             function doTest(text: string, removeIndex: number, expectedText: string) {

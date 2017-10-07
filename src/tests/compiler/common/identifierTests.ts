@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {Identifier, FunctionDeclaration} from "./../../../compiler";
+import {Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Identifier), () => {
@@ -10,6 +10,28 @@ describe(nameof(Identifier), () => {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
             firstChild.getNameIdentifier().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
+        });
+    });
+
+    describe(nameof<Identifier>(n => n.getDefinitions), () => {
+        it("should get the definition", () => {
+            const sourceFileText = "function myFunction() {}\nconst reference = myFunction;";
+            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>(sourceFileText);
+            const secondSourceFile = tsSimpleAst.addSourceFileFromText("second.ts", "const reference2 = myFunction;");
+            const definitions = (secondSourceFile.getVariableDeclarationOrThrow("reference2").getInitializerOrThrow() as any as Identifier).getDefinitions();
+            expect(definitions.length).to.equal(1);
+            expect(definitions[0].getName()).to.equal("myFunction");
+            expect(definitions[0].getSourceFile().getFullText()).to.equal(sourceFileText);
+            expect(definitions[0].getKind()).to.equal(ts.ScriptElementKind.functionElement);
+            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameIdentifier().getStart());
+            expect(definitions[0].getNode()).to.equal(firstChild);
+        });
+
+        it("should get the definition when nested inside a namespace", () => {
+            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
+            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameIdentifier().getDefinitions();
+            expect(definitions.length).to.equal(1);
+            expect(definitions[0].getNode()).to.equal(firstChild.getFunctions()[0]);
         });
     });
 
