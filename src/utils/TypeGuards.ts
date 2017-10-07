@@ -743,6 +743,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a QualifiedName.
+     * @param node - Node to check.
+     */
+    static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.QualifiedName:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a QuestionTokenableNode.
      * @param node - Node to check.
      */
@@ -980,6 +993,19 @@ export class TypeGuards {
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeReferenceNode.
+     * @param node - Node to check.
+     */
+    static isTypeReferenceNode(node: compiler.Node): node is compiler.TypeReferenceNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeReference:
                 return true;
             default:
                 return false;

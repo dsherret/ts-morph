@@ -3,8 +3,8 @@
 import {ArrayLiteralExpression, CallExpression, SourceFile, ClassDeclaration, ConstructorDeclaration, ConstructSignatureDeclaration, Decorator,
     EnumDeclaration, EnumMember, ExportDeclaration, ExportSpecifier, ExpressionWithTypeArguments, FunctionDeclaration, GetAccessorDeclaration,
     HeritageClause, Identifier, ImportDeclaration, ImportSpecifier, InterfaceDeclaration, MethodDeclaration, MethodSignature, NamespaceDeclaration,
-    Expression, ParameterDeclaration, PropertyDeclaration, PropertySignature, SetAccessorDeclaration, TypeAliasDeclaration, TypeParameterDeclaration,
-    VariableDeclaration, VariableDeclarationList, VariableStatement, JSDoc} from "./../compiler";
+    Expression, ParameterDeclaration, PropertyDeclaration, PropertySignature, QualifiedName, SetAccessorDeclaration, TypeAliasDeclaration,
+    TypeParameterDeclaration, TypeReferenceNode, VariableDeclaration, VariableDeclarationList, VariableStatement, JSDoc} from "./../compiler";
 
 // when changing this, make sure to run `npm run code-generate`.
 // that will automatically update all other parts of the application that need to be updated when this changes.
@@ -36,9 +36,11 @@ export const nodeToWrapperMappings = {
     [ts.SyntaxKind.Parameter]: ParameterDeclaration,
     [ts.SyntaxKind.PropertyDeclaration]: PropertyDeclaration,
     [ts.SyntaxKind.PropertySignature]: PropertySignature,
+    [ts.SyntaxKind.QualifiedName]: QualifiedName,
     [ts.SyntaxKind.SetAccessor]: SetAccessorDeclaration,
     [ts.SyntaxKind.TypeAliasDeclaration]: TypeAliasDeclaration,
     [ts.SyntaxKind.TypeParameter]: TypeParameterDeclaration,
+    [ts.SyntaxKind.TypeReference]: TypeReferenceNode,
     [ts.SyntaxKind.VariableDeclaration]: VariableDeclaration,
     [ts.SyntaxKind.VariableDeclarationList]: VariableDeclarationList,
     [ts.SyntaxKind.VariableStatement]: VariableStatement,

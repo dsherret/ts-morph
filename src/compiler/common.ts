@@ -6,3 +6,4 @@ export * from "./common/Node";
 export * from "./common/Scope";
 export * from "./common/Signature";
 export * from "./common/Symbol";
+export * from "./common/QualifiedName";
