@@ -78,16 +78,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Asynchronously saves this file with any changes.
      */
-    save() {
-        return this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText()).then(() => {
-            this._isSaved = true;
-        });
+    async save() {
+        await FileUtils.ensureDirectoryExists(this.global.fileSystem, FileUtils.getDirName(this.getFilePath()));
+        await this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText());
+        this._isSaved = true;
     }
 
     /**
      * Synchronously saves this file with any changes.
      */
     saveSync() {
+        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirName(this.getFilePath()));
         this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }

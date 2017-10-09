@@ -177,18 +177,16 @@ describe(nameof(TsSimpleAst), () => {
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.saveUnsavedSourceFiles), () => {
-        it("should save all the unsaved source files asynchronously", done => {
+        it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             ast.addSourceFileFromText("file1.ts", "").saveSync();
             ast.addSourceFileFromText("file2.ts", "");
             ast.addSourceFileFromText("file3.ts", "");
-            ast.saveUnsavedSourceFiles().then(() => {
-                expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
-                expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
-                expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
-                done();
-            });
+            await ast.saveUnsavedSourceFiles();
+            expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
+            expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
+            expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
         });
     });
 

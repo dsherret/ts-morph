@@ -66,7 +66,7 @@ export class CompilerFactory {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(absoluteFilePath);
         if (sourceFile == null) {
-            if (this.global.fileSystem.fileExists(absoluteFilePath)) {
+            if (this.global.fileSystem.fileExistsSync(absoluteFilePath)) {
                 Logger.log(`Loading file: ${absoluteFilePath}`);
                 sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFile(absoluteFilePath));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with

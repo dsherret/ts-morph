@@ -35,6 +35,6 @@ function getErrorMessage(errors: ts.Diagnostic[]) {
 
 function verifyFileExists(fileSystemHost: FileSystemHost, filePath: string) {
     // unfortunately the ts compiler doesn't do things asynchronously so for now we won't either
-    if (!fileSystemHost.fileExists(filePath))
+    if (!fileSystemHost.fileExistsSync(filePath))
         throw new FileNotFoundError(filePath);
 }

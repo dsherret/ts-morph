@@ -26,7 +26,33 @@ export class DefaultFileSystemHost implements FileSystemHost {
         fs.writeFileSync(filePath, fileText);
     }
 
+    mkdir(dirPath: string) {
+        return new Promise<void>((resolve, reject) => {
+            fs.mkdir(dirPath, err => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            });
+        });
+    }
+
+    mkdirSync(dirPath: string) {
+        fs.mkdirSync(dirPath);
+    }
+
     fileExists(filePath: string) {
+        return new Promise<boolean>((resolve, reject) => {
+            fs.stat(filePath, (err, stat) => {
+                if (err)
+                    resolve(false);
+                else
+                    resolve(stat.isFile());
+            });
+        });
+    }
+
+    fileExistsSync(filePath: string) {
         try {
             return fs.statSync(filePath).isFile();
         } catch (err) {
@@ -35,6 +61,17 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     directoryExists(dirPath: string) {
+        return new Promise<boolean>((resolve, reject) => {
+            fs.stat(dirPath, (err, stat) => {
+                if (err)
+                    resolve(false);
+                else
+                    resolve(stat.isDirectory());
+            });
+        });
+    }
+
+    directoryExistsSync(dirPath: string) {
         try {
             return fs.statSync(dirPath).isDirectory();
         } catch (err) {

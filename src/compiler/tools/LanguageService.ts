@@ -29,7 +29,7 @@ export class LanguageService {
 
         // I don't know what I'm doing for some of this...
         let version = 0;
-        const fileExists = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystem.fileExists(path);
+        const fileExistsSync = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystem.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => global.compilerOptions,
             getNewLine: () => global.manipulationSettings.getNewLineKind(),
@@ -38,7 +38,7 @@ export class LanguageService {
                 return (version++).toString();
             },
             getScriptSnapshot: fileName => {
-                if (!fileExists(fileName))
+                if (!fileExistsSync(fileName))
                     return undefined;
                 return ts.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
@@ -50,8 +50,8 @@ export class LanguageService {
                     return this.global.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
                 return this.global.fileSystem.readFile(path, encoding);
             },
-            fileExists,
-            directoryExists: dirName => this.global.compilerFactory.containsFileInDirectory(dirName) || this.global.fileSystem.directoryExists(dirName)
+            fileExists: fileExistsSync,
+            directoryExists: dirName => this.global.compilerFactory.containsFileInDirectory(dirName) || this.global.fileSystem.directoryExistsSync(dirName)
         };
 
         this.compilerHost = {
@@ -61,8 +61,9 @@ export class LanguageService {
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: ts.CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
-            writeFile: (fileName, data, writeByteOrderMark, onError, sourceFiles) => {
-                this.global.fileSystem.writeFileSync(fileName, data);
+            writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
+                FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirName(filePath));
+                this.global.fileSystem.writeFileSync(filePath, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
             getDirectories: (path: string) => {

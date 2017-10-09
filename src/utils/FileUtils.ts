@@ -1,7 +1,44 @@
 ﻿import * as path from "path";
+import {FileSystemHost} from "./../FileSystemHost";
 
 export class FileUtils {
     private constructor() {
+    }
+
+    /**
+     * Ensure the directory exists synchronously.
+     * @param host - File system host.
+     * @param dirPath - Directory path.
+     */
+    static ensureDirectoryExistsSync(host: FileSystemHost, dirPath: string) {
+        if (host.directoryExistsSync(dirPath))
+            return;
+
+        // ensure the parent exists and is not the root
+        const parentDirPath = path.dirname(dirPath);
+        if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
+            FileUtils.ensureDirectoryExistsSync(host, path.dirname(dirPath));
+
+        // make this directory
+        host.mkdirSync(dirPath);
+    }
+
+    /**
+     * Ensure the directory exists asynchronously.
+     * @param host - File system host.
+     * @param dirPath - Directory path.
+     */
+    static async ensureDirectoryExists(host: FileSystemHost, dirPath: string) {
+        if (await host.directoryExists(dirPath))
+            return;
+
+        // ensure the parent exists and is not the root
+        const parentDirPath = path.dirname(dirPath);
+        if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
+            await FileUtils.ensureDirectoryExists(host, path.dirname(dirPath));
+
+        // make this directory
+        await host.mkdir(dirPath);
     }
 
     /**

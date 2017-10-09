@@ -66,7 +66,7 @@ export class TsSimpleAst {
      */
     getOrAddSourceFile(filePath: string): compiler.SourceFile {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
-        if (!this.fileSystem.fileExists(absoluteFilePath))
+        if (!this.fileSystem.fileExistsSync(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);
         return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath)!;
     }

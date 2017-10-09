@@ -55,18 +55,17 @@ describe(nameof(SourceFile), () => {
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
-        it("should save the file", done => {
+        it("should save the file", async () => {
             expect(sourceFile.isSaved()).to.be.false;
 
-            sourceFile.save().then(() => {
-                expect(sourceFile.isSaved()).to.be.true;
-                const writeLog = host.getWriteLog();
-                const entry = writeLog[0];
-                expect(entry.filePath).to.equal(filePath);
-                expect(entry.fileText).to.equal(fileText);
-                expect(writeLog.length).to.equal(1);
-                done();
-            });
+            await sourceFile.save();
+            expect(sourceFile.isSaved()).to.be.true;
+            const writeLog = host.getWriteLog();
+            const entry = writeLog[0];
+            expect(entry.filePath).to.equal(filePath);
+            expect(entry.fileText).to.equal(fileText);
+            expect(writeLog.length).to.equal(1);
+            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirName(filePath)]);
         });
     });
 
@@ -110,6 +109,7 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
+            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirName(filePath)]);
         });
     });
 
@@ -433,6 +433,15 @@ describe(nameof(SourceFile), () => {
             expect(writeLog[0].filePath).to.equal("dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
+        });
+
+        it("should create the directories when emitting", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist/subdir" } }, fileSystem);
+            const sourceFile = ast.addSourceFileFromText("/test.ts", "const num1 = 1;");
+            ast.emit();
+            const directories = fileSystem.getCreatedDirectories();
+            expect(directories).to.deep.equal(["dist", "dist/subdir"]);
         });
     });
 
