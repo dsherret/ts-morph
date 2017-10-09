@@ -65,7 +65,7 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
-            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirName(filePath)]);
+            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirPath(filePath)]);
         });
     });
 
@@ -109,7 +109,7 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
-            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirName(filePath)]);
+            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirPath(filePath)]);
         });
     });
 

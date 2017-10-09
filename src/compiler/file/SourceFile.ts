@@ -71,7 +71,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param filePath - A new file path. Can be relative to the original file or an absolute path.
      */
     copy(filePath: string): SourceFile {
-        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirName(this.getFilePath()));
+        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirPath(this.getFilePath()));
         return this.global.compilerFactory.addSourceFileFromText(absoluteFilePath, this.getFullText());
     }
 
@@ -79,7 +79,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Asynchronously saves this file with any changes.
      */
     async save() {
-        await FileUtils.ensureDirectoryExists(this.global.fileSystem, FileUtils.getDirName(this.getFilePath()));
+        await FileUtils.ensureDirectoryExists(this.global.fileSystem, FileUtils.getDirPath(this.getFilePath()));
         await this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
@@ -88,7 +88,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirName(this.getFilePath()));
+        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirPath(this.getFilePath()));
         this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
@@ -98,9 +98,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencedFiles() {
         // todo: add tests
-        const dirName = FileUtils.getDirName(this.getFilePath());
+        const dirPath = FileUtils.getDirPath(this.getFilePath());
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)))
+            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -109,9 +109,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getTypeReferenceDirectives() {
         // todo: add tests
-        const dirName = FileUtils.getDirName(this.getFilePath());
+        const dirPath = FileUtils.getDirPath(this.getFilePath());
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirName, f.fileName)))
+            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 

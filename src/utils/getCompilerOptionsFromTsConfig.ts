@@ -19,7 +19,7 @@ export function getCompilerOptionsFromTsConfig(filePath: string, fileSystemHost?
     if (result.error != null)
         throw new Error(result.error.messageText.toString());
 
-    const settings = ts.convertCompilerOptionsFromJson(result.config.compilerOptions, FileUtils.getDirName(filePath));
+    const settings = ts.convertCompilerOptionsFromJson(result.config.compilerOptions, FileUtils.getDirPath(filePath));
 
     if (!settings.options)
         throw new Error(getErrorMessage(settings.errors));

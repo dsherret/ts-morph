@@ -137,7 +137,7 @@ export class CompilerFactory {
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
 
             // add to list of directories
-            const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirName(sourceFile.getFilePath()));
+            const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirPath(sourceFile.getFilePath()));
             if (!this.normalizedDirectories.has(normalizedDir))
                 this.normalizedDirectories.add(normalizedDir);
 

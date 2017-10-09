@@ -17,7 +17,7 @@ export class FileUtils {
         // ensure the parent exists and is not the root
         const parentDirPath = path.dirname(dirPath);
         if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
-            FileUtils.ensureDirectoryExistsSync(host, path.dirname(dirPath));
+            FileUtils.ensureDirectoryExistsSync(host, parentDirPath);
 
         // make this directory
         host.mkdirSync(dirPath);
@@ -35,7 +35,7 @@ export class FileUtils {
         // ensure the parent exists and is not the root
         const parentDirPath = path.dirname(dirPath);
         if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
-            await FileUtils.ensureDirectoryExists(host, path.dirname(dirPath));
+            await FileUtils.ensureDirectoryExists(host, parentDirPath);
 
         // make this directory
         await host.mkdir(dirPath);
@@ -65,10 +65,10 @@ export class FileUtils {
     }
 
     /**
-     * Gets the directory name.
+     * Gets the directory path.
      * @param fileOrDirPath - Path to get the directory name from.
      */
-    static getDirName(fileOrDirPath: string) {
+    static getDirPath(fileOrDirPath: string) {
         return path.dirname(fileOrDirPath);
     }
 
@@ -84,21 +84,30 @@ export class FileUtils {
         return FileUtils.getStandardizedAbsolutePath(path.join(baseDir, filePath));
     }
 
-    static standardizeSlashes(fileName: string) {
-        return fileName.replace(/\\/g, "/");
+    /**
+     * Changes all back slashes to forward slashes.
+     * @param fileOrDirPath - Path.
+     */
+    static standardizeSlashes(fileOrDirPath: string) {
+        return fileOrDirPath.replace(/\\/g, "/");
     }
 
-    static filePathMatches(fileName: string | null, searchString: string | null) {
+    /**
+     * Checks if a file path matches a specified search string.
+     * @param filePath - File path.
+     * @param searchString - Search string.
+     */
+    static filePathMatches(filePath: string | null, searchString: string | null) {
         const splitBySlash = (p: string | null) => this.standardizeSlashes(p || "").replace(/^\//, "").split("/");
 
-        const fileNameItems = splitBySlash(fileName);
+        const filePathItems = splitBySlash(filePath);
         const searchItems = splitBySlash(searchString);
 
-        if (searchItems.length > fileNameItems.length)
+        if (searchItems.length > filePathItems.length)
             return false;
 
         for (let i = 0; i < searchItems.length; i++) {
-            if (searchItems[searchItems.length - i - 1] !== fileNameItems[fileNameItems.length - i - 1])
+            if (searchItems[searchItems.length - i - 1] !== filePathItems[filePathItems.length - i - 1])
                 return false;
         }
 

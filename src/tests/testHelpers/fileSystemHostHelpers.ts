@@ -7,13 +7,13 @@ export interface CustomFileSystemProps {
     getCreatedDirectories(): string[];
 }
 
-export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[]): FileSystemHost & CustomFileSystemProps {
+export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
     files.forEach(file => {
         file.filePath = FileUtils.getStandardizedAbsolutePath(file.filePath);
     });
     const writeLog: { filePath: string; fileText: string; }[] = [];
     const syncWriteLog: { filePath: string; fileText: string; }[] = [];
-    const directories: string[] = [];
+    const directories = [...initialDirectories];
     return {
         readFile: filePath => {
             const file = files.find(f => f.filePath === filePath);
@@ -49,6 +49,6 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         glob: patterns => [] as string[],
         getSyncWriteLog: () => [...syncWriteLog],
         getWriteLog: () => [...writeLog],
-        getCreatedDirectories: () => [...directories]
+        getCreatedDirectories: () => [...directories].filter(path => initialDirectories.indexOf(path) === -1)
     };
 }
