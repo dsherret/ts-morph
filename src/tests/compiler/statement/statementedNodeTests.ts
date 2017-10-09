@@ -19,6 +19,11 @@ describe(nameof(StatementedNode), () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace n { var t; var m; }");
             expect(firstChild.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
         });
+
+        it("should get the statements of a namespace that uses dot notation", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace n.inner { var t; var m; }");
+            expect(firstChild.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
+        });
     });
 
     describe(nameof<SourceFile>(s => s.fill), () => {

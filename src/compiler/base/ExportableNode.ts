@@ -36,15 +36,15 @@ export interface ExportableNode {
      */
     getDefaultKeywordOrThrow(): Node;
     /**
-     * Gets if this node is a default export.
+     * Gets if this node is a default export of a file.
      */
     isDefaultExport(): boolean;
     /**
-     * Gets if this node is a named export.
+     * Gets if this node is a named export of a file.
      */
     isNamedExport(): boolean;
     /**
-     * Sets if this node is a default export.
+     * Sets if this node is a default export of a file.
      * @param value - If it should be a default export or not.
      */
     setIsDefaultExport(value: boolean): this;
