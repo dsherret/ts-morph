@@ -9,7 +9,7 @@ export interface InsertIntoParentOptions {
     childIndex: number;
     insertItemsCount: number;
     replacing?: {
-        length: number;
+        textLength: number;
         nodes: Node[];
     };
 }
@@ -20,7 +20,7 @@ export function insertIntoParent(opts: InsertIntoParentOptions) {
         sourceFile: parent.getSourceFile(),
         insertPos,
         newText,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.length
+        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
     });
 
     replaceTreeWithChildIndex({

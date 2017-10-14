@@ -88,7 +88,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
                 insertPos,
                 newText,
                 replacing: {
-                    length: typeNode == null ? 0 : typeNode.getWidth(),
+                    textLength: typeNode == null ? 0 : typeNode.getWidth(),
                     nodes: typeNode == null ? [] : [typeNode]
                 }
             });

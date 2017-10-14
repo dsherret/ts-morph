@@ -68,7 +68,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 newText: text,
                 insertPos: childSyntaxListStart,
                 replacing: {
-                    length: childSyntaxList.getEnd() - childSyntaxListStart,
+                    textLength: childSyntaxList.getEnd() - childSyntaxListStart,
                     nodes: [childSyntaxList]
                 }
             });

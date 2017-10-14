@@ -20,7 +20,7 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
             childIndex: stringLiteral.getChildIndex(),
             insertItemsCount: 1,
             replacing: {
-                length: stringLiteral.getWidth() - 2,
+                textLength: stringLiteral.getWidth() - 2,
                 nodes: [stringLiteral]
             }
         });

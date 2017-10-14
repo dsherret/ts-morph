@@ -1,8 +1,10 @@
 ﻿import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
-import {Disposable, TypeGuards} from "./../../utils";
+import {insertIntoParent} from "./../../manipulation/insertion";
+import {Disposable, TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -630,6 +632,52 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
 
         return false;
+    }
+
+    /**
+     * Replaces the text of the current node with new text.
+     *
+     * This will dispose the current node and return a new node that can be asserted or type guarded to the correct type.
+     * @param writerFunction - Writer function to replace the text with.
+     * @returns The new node.
+     */
+    replaceWithText(writerFunction: (writer: CodeBlockWriter) => void): Node;
+    /**
+     * Replaces the text of the current node with new text.
+     *
+     * This will dispose the current node and return a new node that can be asserted or type guarded to the correct type.
+     * @param text - Text to replace with.
+     * @returns The new node.
+     */
+    replaceWithText(text: string): Node;
+    replaceWithText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        const newText = getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction);
+        if (TypeGuards.isSourceFile(this)) {
+            this.replaceText([this.getPos(), this.getEnd()], newText);
+            return this;
+        }
+
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const childIndex = this.getChildIndex();
+
+        try {
+            insertIntoParent({
+                parent,
+                childIndex,
+                insertItemsCount: 1,
+                insertPos: this.getStart(),
+                newText,
+                replacing: {
+                    nodes: [this],
+                    textLength: this.getWidth()
+                }
+            });
+        } catch (err) {
+            throw new errors.InvalidOperationError(`${nameof<Node>(n => n.replaceWithText)} currently only supports replacing the current node ` +
+                `with a single new node. If you need the ability to replace it with multiple nodes, then please open an issue.\n\nInner error: ` + err);
+        }
+
+        return parent.getChildren()[childIndex];
     }
 
     /**

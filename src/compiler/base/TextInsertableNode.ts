@@ -84,7 +84,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
                 newText: getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction),
                 parent: this,
                 replacing: {
-                    length: end - pos,
+                    textLength: end - pos,
                     nodes: [childSyntaxList]
                 }
             });

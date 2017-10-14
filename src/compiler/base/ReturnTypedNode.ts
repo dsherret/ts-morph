@@ -72,7 +72,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
                 insertPos: colonToken != null ? colonToken.getEnd() : closeParenToken.getEnd(),
                 newText: colonToken != null ? ` ${text}` : `: ${text}`,
                 replacing: {
-                    length: returnTypeNode == null ? 0 : returnTypeNode.getFullWidth(),
+                    textLength: returnTypeNode == null ? 0 : returnTypeNode.getFullWidth(),
                     nodes: returnTypeNode == null ? [] : [returnTypeNode]
                 }
             });

@@ -33,7 +33,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
                 childIndex: stringLiteral.getChildIndex(),
                 insertItemsCount: 1,
                 replacing: {
-                    length: stringLiteral.getWidth() - 2,
+                    textLength: stringLiteral.getWidth() - 2,
                     nodes: [stringLiteral]
                 }
             });
@@ -127,7 +127,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
                 insertItemsCount: 1,
                 replacing: {
                     nodes: [asteriskToken],
-                    length: 1
+                    textLength: 1
                 }
             });
         }

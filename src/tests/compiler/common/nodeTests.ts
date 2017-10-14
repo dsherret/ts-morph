@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
-import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature} from "./../../../compiler";
+import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression} from "./../../../compiler";
 import {TypeGuards} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -413,6 +414,55 @@ describe(nameof(Node), () => {
         it("should get the previous siblings going away in order", () => {
             expect(sourceFile.getInterfaces()[0].getNextSiblings().map(s => (s as InterfaceDeclaration).getName()))
                 .to.deep.equal(["Interface2", "Interface3"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.replaceWithText), () => {
+        function doTest(startText: string, replaceText: string | ((writer: CodeBlockWriter) => void), expectedText: string) {
+            const {sourceFile} = getInfoFromText(startText);
+            const varDeclaration = sourceFile.getVariableDeclarations()[0];
+            const propAccess = (varDeclaration.getInitializerOrThrow() as PropertyAccessExpression);
+            let newNode: Node;
+            if (typeof replaceText === "string")
+                newNode = propAccess.replaceWithText(replaceText);
+            else
+                newNode = propAccess.replaceWithText(replaceText);
+            expect(newNode.getText()).to.equal(getReplaceTextAsString());
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(() => propAccess.compilerNode).to.throw(); // should be disposed
+
+            function getReplaceTextAsString() {
+                if (typeof replaceText === "string")
+                    return replaceText;
+
+                const writer = new CodeBlockWriter();
+                replaceText(writer);
+                return writer.toString();
+            }
+        }
+
+        it("should replace when using a string", () => {
+            doTest("var t = Some.Prop.Access.Expression;", "NewText", "var t = NewText;");
+        });
+
+        it("should replace when using a writer", () => {
+            doTest("var t = Some.Prop.Access.Expression;", writer => writer.write("NewText"), "var t = NewText;");
+        });
+
+        it("should replace the text for a source file", () => {
+            const {sourceFile} = getInfoFromText("var t = Some.Prop.Access;");
+            const result = sourceFile.replaceWithText("var t;");
+            expect(sourceFile.getFullText()).to.equal("var t;"); // in this case, it will not dispose the source file
+            expect(result).to.equal(sourceFile);
+        });
+
+        it("should throw when replacing with more than one node", () => {
+            const {sourceFile} = getInfoFromText("var t = Some.Prop.Access;");
+            const varDeclaration = sourceFile.getVariableDeclarations()[0];
+            const propAccess = (varDeclaration.getInitializerOrThrow() as PropertyAccessExpression);
+            expect(() => {
+                propAccess.replaceWithText("SomeTest; Test");
+            }).to.throw();
         });
     });
 });
