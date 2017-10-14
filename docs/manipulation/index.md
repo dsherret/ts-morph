@@ -31,7 +31,7 @@ That will make the source file hold the following text:
 let myVariable = MyReference;
 ```
 
-Note that `originalInitializer` will be disposed after calling `.replaceWithText(...)` on it—an error will be thrown if you try to use it.
+Note that `originalInitializer` will be disposed after calling `.replaceWithText(...)` on itâ€”an error will be thrown if you try to use it.
 You will have to use the new node returned by that method.
 
 ### Inserting, replacing, and removing text
@@ -53,7 +53,7 @@ These methods are also available on any node that has a body (functions, classes
 
 #### **Warning**
 
-If you use `insertText`, `replaceText`, or `removeText`, all previously navigated descendants of the node will be disposed and not be available for use—an error will be thrown
+If you use `insertText`, `replaceText`, or `removeText`, all previously navigated descendants of the node will be disposed and not be available for useâ€”an error will be thrown
 if you try to use them. You will have to renavigate to those nodes.
 
 For example:
