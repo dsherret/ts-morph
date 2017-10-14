@@ -38,6 +38,7 @@ export const nodeToWrapperMappings = {
     [ts.SyntaxKind.PropertyDeclaration]: PropertyDeclaration,
     [ts.SyntaxKind.PropertySignature]: PropertySignature,
     [ts.SyntaxKind.QualifiedName]: QualifiedName,
+    [ts.SyntaxKind.FirstNode]: QualifiedName,
     [ts.SyntaxKind.SetAccessor]: SetAccessorDeclaration,
     [ts.SyntaxKind.TypeAliasDeclaration]: TypeAliasDeclaration,
     [ts.SyntaxKind.TypeParameter]: TypeParameterDeclaration,
