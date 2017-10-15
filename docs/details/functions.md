@@ -85,3 +85,27 @@ functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;"
 ```
 
 Using the writer is very useful because it will write code out using the indentation and newline settings of the AST. It's also easier to use.
+
+### Unwrap
+
+A function declaration can be replaced with its body using the `.unwrap()` method.
+
+Given the following code:
+
+```typescript
+function someFunction() {
+    function innerFunction() {
+    }
+
+    const someDeclaration = 5;
+}
+```
+
+Calling `.unwrap()` on the function will change the code to the following:
+
+```typescript
+function innerFunction() {
+}
+
+const someDeclaration = 5;
+```

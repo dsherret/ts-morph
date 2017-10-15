@@ -24,3 +24,4 @@ export * from "./base/TextInsertableNode";
 export * from "./base/TypeArgumentedNode";
 export * from "./base/TypedNode";
 export * from "./base/TypeParameteredNode";
+export * from "./base/UnwrappableNode";

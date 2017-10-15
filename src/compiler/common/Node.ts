@@ -49,7 +49,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Releases the node from the cache and ast.
+     * Releases the node and all its descendants from the cache and ast.
      * @internal
      */
     dispose() {
@@ -57,6 +57,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
             child.dispose();
         }
 
+        this.disposeOnlyThis();
+    }
+
+    /**
+     * Release only this node from the cache and ast.
+     * @internal
+     */
+    disposeOnlyThis() {
         this.global.compilerFactory.removeNodeFromCache(this);
         this._compilerNode = undefined;
     }

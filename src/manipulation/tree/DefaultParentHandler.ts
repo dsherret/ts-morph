@@ -48,9 +48,8 @@ export class DefaultParentHandler implements NodeHandler {
         }
 
         // handle the rest
-        while (!currentNodeChildren.done) {
+        while (!currentNodeChildren.done)
             this.straightReplacementNodeHandler.handleNode(currentNodeChildren.next(), newNodeChildren.next());
-        }
 
         // ensure the new children iterator is done too
         if (!newNodeChildren.done)

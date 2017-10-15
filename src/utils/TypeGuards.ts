@@ -1044,6 +1044,20 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a UnwrappableNode.
+     * @param node - Node to check.
+     */
+    static isUnwrappableNode(node: compiler.Node): node is compiler.UnwrappableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a VariableDeclaration.
      * @param node - Node to check.
      */

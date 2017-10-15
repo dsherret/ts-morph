@@ -55,3 +55,29 @@ Or get the keyword:
 ```typescript
 namespaceDeclaration.getDeclarationTypeKeyword(); // returns: the module or namespace keyword
 ```
+
+### Unwrap
+
+A namespace declaration can be replaced with its body using the `.unwrap()` method.
+
+Given the following code:
+
+```typescript
+namespace MyNamespace {
+    function someFunction() {
+    }
+
+    class SomeClass {
+    }
+}
+```
+
+Calling `.unwrap()` on the namespace will change the code to the following:
+
+```typescript
+function someFunction() {
+}
+
+class SomeClass {
+}
+```
