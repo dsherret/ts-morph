@@ -77,6 +77,28 @@ describe("helpers", () => {
         });
     });
 
+    describe(nameof(errors.throwIfRangeOutOfRange), () => {
+        it("should throw when the range is flipped", () => {
+            expect(() => errors.throwIfRangeOutOfRange([9, 2], [1, 10], "arg")).to.throw();
+        });
+
+        it("should not throw when inside the bounds", () => {
+            expect(() => errors.throwIfRangeOutOfRange([2, 9], [1, 10], "arg")).to.not.throw();
+        });
+
+        it("should throw when outside the inclusive lower bound", () => {
+            expect(() => errors.throwIfRangeOutOfRange([0, 9], [1, 10], "arg")).to.throw();
+        });
+
+        it("should not throw when inside the inclusive lower or upper bound", () => {
+            expect(() => errors.throwIfRangeOutOfRange([1, 10], [1, 10], "arg")).to.not.throw();
+        });
+
+        it("should throw when outside the inclusive upper bound", () => {
+            expect(() => errors.throwIfRangeOutOfRange([2, 11], [1, 10], "arg")).to.throw();
+        });
+    });
+
     describe(nameof(errors.throwIfNegative), () => {
         it("should throw when negative", () => {
             expect(() => errors.throwIfNegative(-1, "arg")).to.throw();

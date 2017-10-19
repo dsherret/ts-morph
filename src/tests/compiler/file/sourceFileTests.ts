@@ -522,6 +522,11 @@ function myFunction(param: MyClass) {
             expect(() => sourceFile.indent([0, 2])).to.throw();
         });
 
+        it("should throw when the range is flipped", () => {
+            const {sourceFile} = getInfoFromText("     ");
+            expect(() => sourceFile.indent([2, 1])).to.throw();
+        });
+
         it("should indent the specified pos", () => {
             doTest("//testing\n//testing\n//testing", 11, 1, "//testing\n    //testing\n//testing");
         });

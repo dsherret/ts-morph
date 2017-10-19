@@ -53,6 +53,21 @@ export function throwIfOutOfRange(value: number, range: [number, number], argNam
 }
 
 /**
+ * Throws an ArgumentOutOfRangeError if an argument's range value is out of an inclusive range.
+ *
+ * Also throws when the start of the range is greater than the end.
+ * @param actualRange - Range to check.
+ * @param range - Range to check against.
+ * @param argName - Argument name.
+ */
+export function throwIfRangeOutOfRange(actualRange: [number, number], range: [number, number], argName: string) {
+    if (actualRange[0] > actualRange[1])
+        throw new ArgumentError(argName, `The start of a range must not be greater than the end: [${actualRange[0]}, ${actualRange[1]}]`);
+    throwIfOutOfRange(actualRange[0], range, argName);
+    throwIfOutOfRange(actualRange[1], range, argName);
+}
+
+/**
  * Gets an error saying that a feature is not implemented for a certain syntax kind.
  * @param syntaxKind - Syntax kind that isn't implemented.
  */
