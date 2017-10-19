@@ -106,7 +106,7 @@ See [Import Declarations](imports).
 
 See [Export Declarations](exports).
 
-### Indenting / Deindenting
+### Indenting / Unindenting
 
 Call the `.indent` or `.unindent` methods.
 
@@ -120,6 +120,8 @@ sourceFile.unindent(10);     // unindent line containing position 10
 sourceFile.indent(10, -1);   // unindent line containing position 10 (specify negative times)
 sourceFile.unindent(10, -1); // indent line containing position 10 (specify negative times)
 ```
+
+This will indent and unindent based on your [manipulation settings](../manipulation/settings).
 
 ### Formatting Text
 
