@@ -1,8 +1,8 @@
 ---
-title: Settings
+title: Manipulation Settings
 ---
 
-## Settings
+## Manipulation Settings
 
 The manipulation settings can be set when creating the main AST object:
 
@@ -25,7 +25,7 @@ const ast = new TsSimpleAst({
 });
 ```
 
-You may only provide a partial of these settings if you wish:
+You can only provide a partial of these settings if you wish:
 
 ```typescript
 const ast = new TsSimpleAst({
@@ -44,9 +44,11 @@ ast.manipulationSettings.getStringChar();
 ast.manipulationSettings.getScriptTarget();
 ```
 
-Then update these settings later if you wish by using the `set` method:
+### Updating
 
-```
+You can update these settings later if you wish by using the `set` method:
+
+```typescript
 // set only one
 ast.manipulationSettings.set({ stringChar: StringChar.SingleQuote });
 
