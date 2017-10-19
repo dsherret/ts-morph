@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
+import {isStringNode} from "./../../utils";
 import {replaceTreeUnwrappingNode} from "./../tree";
 import {getNewReplacementSourceFile} from "./../insertion/getNewReplacementSourceFile";
 
@@ -24,16 +25,14 @@ function getReplacementText(node: Node) {
     const childIndentationText = node.getChildIndentationText();
     const indentationDifference = childIndentationText.replace(indentationText, "");
     const replaceRegex = new RegExp("^" + indentationDifference);
-    const stringNodes = childSyntaxList.getDescendants().filter(n => n.getKind() === ts.SyntaxKind.StringLiteral ||
-        n.getKind() === ts.SyntaxKind.FirstTemplateToken || n.getKind() === ts.SyntaxKind.TemplateHead ||
-        n.getKind() === ts.SyntaxKind.TemplateMiddle || n.getKind() === ts.SyntaxKind.LastTemplateToken);
+    const stringNodeRanges = childSyntaxList.getDescendants().filter(n => isStringNode(n)).map(n => [n.getStart(), n.getEnd()] as [number, number]);
     const originalText = childSyntaxList.getFullText();
     const lines = originalText.split("\n");
 
     let pos = childSyntaxList.getPos();
     const newLines: string[] = [];
     for (const line of lines) {
-        if (stringNodes.some(n => n.getStart() <= pos && n.getEnd() > pos))
+        if (stringNodeRanges.some(n => n[0] < pos && n[1] > pos))
             newLines.push(line);
         else
             newLines.push(line.replace(replaceRegex, ""));

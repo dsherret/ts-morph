@@ -1,8 +1,8 @@
-﻿import {AdvancedIterator} from "./../../utils";
-import {NodeHandler} from "./NodeHandler";
-import {Node} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+﻿import {AdvancedIterator} from "./../../../utils";
+import {Node} from "./../../../compiler";
+import {CompilerFactory} from "./../../../factories";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
+import {NodeHandler} from "./NodeHandler";
 
 /**
  * Handler for deailing with a parent that is going to have a child replaced.

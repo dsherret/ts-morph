@@ -1,10 +1,11 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
+import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting} from "./../../manipulation";
+import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, isStringNode} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
@@ -379,6 +380,96 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         }
 
         return this;
+    }
+
+    /**
+     * Deindents the line at the specified position.
+     * @param pos - Position.
+     * @param times - Times to unindent. Specify a negative value to indent.
+     */
+    unindent(pos: number, times?: number): this;
+    /**
+     * Deindents the lines within the specified range.
+     * @param positionRange - Position range.
+     * @param times - Times to unindent. Specify a negative value to indent.
+     */
+    unindent(positionRange: [number, number], times?: number): this;
+    /**
+     * @internal
+     */
+    unindent(positionRangeOrPos: [number, number] | number, times?: number): this;
+    unindent(positionRangeOrPos: [number, number] | number, times = 1) {
+        return this.indent(positionRangeOrPos, times * -1);
+    }
+
+    /**
+     * Indents the line at the specified position.
+     * @param pos - Position.
+     * @param times - Times to indent. Specify a negative value to unindent.
+     */
+    indent(pos: number, times?: number): this;
+    /**
+     * Indents the lines within the specified range.
+     * @param positionRange - Position range.
+     * @param times - Times to indent. Specify a negative value to unindent.
+     */
+    indent(positionRange: [number, number], times?: number): this;
+    /**
+     * @internal
+     */
+    indent(positionRangeOrPos: [number, number] | number, times?: number): this;
+    indent(positionRangeOrPos: [number, number] | number, times = 1) {
+        if (times === 0)
+            return this;
+        const sourceFileText = this.getFullText();
+        const positionRange = typeof positionRangeOrPos === "number" ? [positionRangeOrPos, positionRangeOrPos] : positionRangeOrPos;
+        const fileRange = [0, sourceFileText.length] as [number, number];
+        errors.throwIfOutOfRange(positionRange[0], fileRange, nameof(positionRange));
+        errors.throwIfOutOfRange(positionRange[1], fileRange, nameof(positionRange));
+
+        const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
+        const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
+        const stringNodeRanges = this.getDescendants().filter(n => isStringNode(n)).map(n => [n.getStart(), n.getEnd()] as [number, number]);
+        const indentText = this.global.manipulationSettings.getIndentationText();
+        const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
+
+        let pos = startLinePos;
+        const newLines: string[] = [];
+        for (const line of sourceFileText.substring(startLinePos, endLinePos).split("\n")) {
+            if (stringNodeRanges.some(n => n[0] < pos && n[1] > pos))
+                newLines.push(line);
+            else if (times > 0)
+                newLines.push(indentText.repeat(times) + line);
+            else // negative
+                newLines.push(line.replace(unindentRegex!, ""));
+            pos += line.length;
+        }
+
+        replaceSourceFileTextForFormatting({
+            sourceFile: this,
+            newText: sourceFileText.substring(0, startLinePos) + newLines.join("\n") + sourceFileText.substring(endLinePos)
+        });
+
+        return this;
+
+        function getDeindentRegexText() {
+            const isSpaces = /^ +$/;
+            let text = "^";
+            for (let i = 0; i < Math.abs(times); i++) {
+                text += "(";
+                if (isSpaces.test(indentText)) {
+                    // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
+                    for (let j = 0; j < indentText.length; j++)
+                        text += " ?";
+                }
+                else
+                    text += indentText;
+
+                text += "|\t)?";
+            }
+
+            return text;
+        }
     }
 
     /**

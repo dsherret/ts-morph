@@ -10,6 +10,7 @@ export * from "./utils/getNamedNodeByNameOrFindFunction";
 export * from "./utils/getSymbolByNameOrFindFunction";
 export * from "./utils/KeyValueCache";
 export * from "./utils/Logger";
+export * from "./utils/isStringNode";
 export * from "./utils/newLineKindToTs";
 export * from "./utils/StringUtils";
 export * from "./utils/TypeGuards";

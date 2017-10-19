@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
-import {Node, SourceFile} from "./../compiler";
-import {Logger, TypeGuards} from "./../utils";
+import {Node, SourceFile} from "./../../compiler";
+import {Logger, TypeGuards} from "./../../utils";
 
 /**
  * Replaces text in a source file. Good for renaming identifiers. Not good for creating new nodes!

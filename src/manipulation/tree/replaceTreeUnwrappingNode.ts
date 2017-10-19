@@ -2,8 +2,7 @@
 import * as errors from "./../../errors";
 import {Node, SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {UnwrapParentHandler} from "./UnwrapParentHandler";
-import {ParentFinderReplacementNodeHandler} from "./ParentFinderReplacementNodeHandler";
+import {UnwrapParentHandler, ParentFinderReplacementNodeHandler} from "./nodeHandlers";
 
 export interface ReplaceTreeUnwrappingNodeOptions {
     replacementSourceFile: SourceFile;

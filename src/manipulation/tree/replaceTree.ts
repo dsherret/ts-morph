@@ -2,8 +2,7 @@
 import * as errors from "./../../errors";
 import {Node, SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {DefaultParentHandler} from "./DefaultParentHandler";
-import {ParentFinderReplacementNodeHandler} from "./ParentFinderReplacementNodeHandler";
+import {DefaultParentHandler, ParentFinderReplacementNodeHandler} from "./nodeHandlers";
 
 export interface ReplaceTreeCreatingSyntaxListOptions {
     replacementSourceFile: SourceFile;

@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
+import {IndentationText} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -501,6 +502,109 @@ function myFunction(param: MyClass) {
             const {sourceFile, firstChild} = getInfoFromText("function test {}");
             sourceFile.formatText();
             expect(() => firstChild.compilerNode).to.throw();
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.indent), () => {
+        function doTest(startingCode: string, rangeOrPos: [number, number] | number, times: number, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startingCode);
+            sourceFile.indent(rangeOrPos, times);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should throw when the range is outside the lower bound of the file", () => {
+            const {sourceFile} = getInfoFromText(" ");
+            expect(() => sourceFile.indent([-1, 0])).to.throw();
+        });
+
+        it("should throw when the range is outside the upper bound of the file", () => {
+            const {sourceFile} = getInfoFromText(" ");
+            expect(() => sourceFile.indent([0, 2])).to.throw();
+        });
+
+        it("should indent the specified pos", () => {
+            doTest("//testing\n//testing\n//testing", 11, 1, "//testing\n    //testing\n//testing");
+        });
+
+        it("should do nothing when specifying a times of 0", () => {
+            doTest("//testing\n//testing\n//testing", 11, 0, "//testing\n//testing\n//testing");
+        });
+
+        it("should indent the specified text based on the lines provided", () => {
+            const sourceFileLines = ["class MyClass {", "    test;", "}"];
+            doTest(sourceFileLines.join("\n"), [sourceFileLines[0].length + 1, sourceFileLines[0].length + 1 + sourceFileLines[1].length], 3,
+                `class MyClass {
+                test;
+}`);
+        });
+
+        it("should indent the line when specifying the end of it for the start of the range", () => {
+            const sourceFileLines = ["class MyClass {", "    test;", "}"];
+            doTest(sourceFileLines.join("\n"), [sourceFileLines[0].length, sourceFileLines[0].length + 1], 1,
+                `    class MyClass {
+        test;
+}`);
+        });
+
+        it("should not indent within a multiline string", () => {
+            doTest(`"somestring \\\notherstring";`, 17, 1, `"somestring \\\notherstring";`);
+        });
+
+        it("should not indent within a template string", () => {
+            doTest(`\`testingthiso\ntestingmore$\{here}testing\`;`, 17, 1, `\`testingthiso\ntestingmore$\{here}testing\`;`);
+        });
+
+        it("should indent when string starts on line", () => {
+            doTest(`"somestring";`, 0, 1, `    "somestring";`);
+        });
+
+        it("should indent when only specifying two spaces", () => {
+            const {sourceFile} = getInfoFromText("//code");
+            sourceFile.global.manipulationSettings.set({ indentationText: IndentationText.TwoSpaces });
+            sourceFile.indent(0);
+            expect(sourceFile.getFullText()).to.equal("  //code");
+        });
+
+        it("should indent when specifying tabs", () => {
+            const {sourceFile} = getInfoFromText("//code");
+            sourceFile.global.manipulationSettings.set({ indentationText: IndentationText.Tab });
+            sourceFile.indent(0);
+            expect(sourceFile.getFullText()).to.equal("\t//code");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.unindent), () => {
+        // most of the tests are in indent
+        function doTest(startingCode: string, rangeOrPos: [number, number] | number, times: number, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startingCode);
+            sourceFile.unindent(rangeOrPos, times);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should do nothing when already unindented to the end of the line", () => {
+            doTest("//testing\n//testing\n//testing", 11, 1, "//testing\n//testing\n//testing");
+        });
+
+        it("should unindent when indented", () => {
+            doTest("//testing\n    //testing\n//testing", 11, 1, "//testing\n//testing\n//testing");
+        });
+
+        it("should unindent when the line doesn't have the unindent number of spaces", () => {
+            doTest("//testing\n //testing\n//testing", 11, 1, "//testing\n//testing\n//testing");
+            doTest("//testing\n  //testing\n//testing", 11, 1, "//testing\n//testing\n//testing");
+            doTest("//testing\n   //testing\n//testing", 11, 1, "//testing\n//testing\n//testing");
+        });
+
+        it("should unindent when using tabs", () => {
+            doTest("//testing\n\t\t\t//testing\n//testing", 11, 1, "//testing\n\t\t//testing\n//testing");
+        });
+
+        it("should unindent when mixing tabs and spaces", () => {
+            doTest("//testing\n\t\t    //testing\n//testing", 11, 3, "//testing\n//testing\n//testing");
+        });
+
+        it("should unindent multiple times", () => {
+            doTest("//testing\n\t\t\t//testing\n//testing", 11, 2, "//testing\n\t//testing\n//testing");
         });
     });
 });

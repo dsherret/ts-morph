@@ -1,7 +1,7 @@
-﻿import {AdvancedIterator} from "./../../utils";
+﻿import {AdvancedIterator} from "./../../../utils";
+import {Node, BodiedNode} from "./../../../compiler";
+import {CompilerFactory} from "./../../../factories";
 import {NodeHandler} from "./NodeHandler";
-import {Node, BodiedNode} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 
 /**

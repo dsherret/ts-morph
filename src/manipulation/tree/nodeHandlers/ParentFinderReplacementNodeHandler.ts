@@ -1,8 +1,8 @@
-﻿import {Node} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+﻿import {Node} from "./../../../compiler";
+import {CompilerFactory} from "./../../../factories";
+import {areNodesEqual} from "./../areNodesEqual";
 import {NodeHandler} from "./NodeHandler";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
-import {areNodesEqual} from "./areNodesEqual";
 
 /**
  * Replacement handler that tries to find the parents.

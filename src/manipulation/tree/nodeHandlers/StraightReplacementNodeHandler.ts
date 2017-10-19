@@ -1,7 +1,7 @@
-﻿import * as errors from "./../../errors";
-import {Node} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
-import {getInsertErrorMessageText} from "./../getInsertErrorMessageText";
+﻿import * as errors from "./../../../errors";
+import {Node} from "./../../../compiler";
+import {CompilerFactory} from "./../../../factories";
+import {getInsertErrorMessageText} from "./../../getInsertErrorMessageText";
 import {NodeHandler} from "./NodeHandler";
 
 /**

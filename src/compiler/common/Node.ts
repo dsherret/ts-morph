@@ -2,7 +2,7 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
+import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
 import {Disposable, TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {SourceFile} from "./../file";
@@ -613,13 +613,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         const sourceFileText = this.sourceFile.getFullText();
         const startPos = this.getStart();
 
-        for (let i = startPos - 1; i >= 0; i--) {
-            const currentChar = sourceFileText[i];
-            if (currentChar === "\n")
-                return i + 1;
-        }
-
-        return 0;
+        return getPreviousMatchingPos(sourceFileText, startPos, char => char === "\n");
     }
 
     /**

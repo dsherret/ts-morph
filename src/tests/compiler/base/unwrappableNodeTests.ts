@@ -35,7 +35,7 @@ var v: string;
     }`, `    var t: string;`);
         });
 
-        it("should not deindent any string literals", () => {
+        it("should not unindent any string literals", () => {
             doTest(`namespace Test {
     var t = "some text \\
     goes here";

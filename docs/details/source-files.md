@@ -106,6 +106,21 @@ See [Import Declarations](imports).
 
 See [Export Declarations](exports).
 
+### Indenting / Deindenting
+
+Call the `.indent` or `.unindent` methods.
+
+```typescript
+sourceFile.indent(5);        // indent line containing position 5
+sourceFile.indent([5, 10]);  // indent line or lines within position range [5-10]
+sourceFile.indent(10, 3);    // indent line containing position 10, 3 times
+
+sourceFile.unindent(10);     // unindent line containing position 10
+
+sourceFile.indent(10, -1);   // unindent line containing position 10 (specify negative times)
+sourceFile.unindent(10, -1); // indent line containing position 10 (specify negative times)
+```
+
 ### Formatting Text
 
 Sometimes you might encounter code that looks terrible. For example:
