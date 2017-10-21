@@ -10,6 +10,5 @@ export * from "./compiler/general";
 export * from "./compiler/interface";
 export * from "./compiler/namespace";
 export * from "./compiler/statement";
-export * from "./compiler/variable";
 export * from "./compiler/tools";
 export * from "./compiler/type";
