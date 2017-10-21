@@ -123,3 +123,13 @@ Remove a property signature:
 ```typescript
 propertySignature.remove();
 ```
+
+### Implementations
+
+Get the implementations.
+
+```typescript
+const implementations = interfaceDeclaration.getImplementations();
+```
+
+Similar to "go to implementation" command available in IDEs.
