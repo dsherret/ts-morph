@@ -23,7 +23,7 @@ describe(nameof(StatementedNode), () => {
                     name: "Identifier2",
                     type: "number",
                     initializer: "5"
-                }],
+                }]
             }], "export var Identifier = 'test', Identifier2: number = 5;\n");
         });
 

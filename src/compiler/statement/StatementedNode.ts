@@ -713,7 +713,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const indentationText = this.getChildIndentationText();
             const texts = structures.map(structure => {
                 let text = `${indentationText}${structure.declarationType || VariableDeclarationType.Let} `;
-                let declarationTexts: string[] = [];
+                const declarationTexts: string[] = [];
                 for (const declarationStructure of structure.declarations) {
                     let declarationText = declarationStructure.name;
                     if (declarationStructure.type != null)
