@@ -1,12 +1,30 @@
 ﻿import * as ts from "typescript";
 import {removeStatementedNodeChild} from "./../../manipulation";
+import * as errors from "./../../errors";
 import {Node} from "./../common";
+import {VariableStatementStructure} from "./../../structures";
 import {ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
+import {callBaseFill} from "./../callBaseFill";
 import {VariableDeclarationList} from "./VariableDeclarationList";
 
 export const VariableStatementBase = NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(Node)))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<VariableStatementStructure>) {
+        callBaseFill(VariableStatementBase.prototype, this, structure);
+
+        if (structure.declarationType != null)
+            throw new errors.NotImplementedError("Filling variable declaration type not implemented. Please comment on issue #27 if you need this and I will increase the priority.");
+        if (structure.declarations != null)
+            throw new errors.NotImplementedError("Filling variable declarations not implemented. Please open an issue if you need this and I will increase the prioirty.");
+
+        return this;
+    }
+
     /**
      * Gets the declaration list of variables.
      */

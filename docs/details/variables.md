@@ -99,6 +99,27 @@ const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v 
     v.getType().getText() === "string");
 ```
 
+### Add/Insert
+
+Add or insert variable statements to a source file, namespace, or function like declarations by calling `addVariableStatement()`, `addVariableStatements()`,
+`insertVariableStatement()`, or `insertVariableStatements()`.
+
+```typescript
+import Ast, {VariableDeclarationType} from "ts-simple-ast";
+
+const variableStatement = sourceFile.addVariableStatement({
+    declarationType: VariableDeclarationType.Const // defaults to "let"
+    declarations: [{
+        name: "myNumber",
+        initializer: "5"
+    }, {
+        name: "myString",
+        type: "string",
+        initializer: `'my string'`
+    }]
+});
+```
+
 ### Remove
 
 Call `.remove()`:

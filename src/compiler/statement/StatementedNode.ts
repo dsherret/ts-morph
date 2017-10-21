@@ -2,7 +2,7 @@ import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure} from "./../../structures";
+    EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -14,7 +14,8 @@ import * as functions from "./../function";
 import * as interfaces from "./../interface";
 import * as namespaces from "./../namespace";
 import * as types from "./../type";
-import * as variable from "./../variable";
+import * as statement from "./../statement";
+import {VariableDeclarationType} from "./VariableDeclarationType";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
 
@@ -299,58 +300,79 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the type alias.
      */
     getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
+
+    /**
+     * Adds a variable statement.
+     * @param structure - Structure of the variable statement.
+     */
+    addVariableStatement(structure: VariableStatementStructure): statement.VariableStatement;
+    /**
+     * Adds variable statements.
+     * @param structures - Structures of the variable statements.
+     */
+    addVariableStatements(structures: VariableStatementStructure[]): statement.VariableStatement[];
+    /**
+     * Inserts a variable statement.
+     * @param structure - Structure of the variable statement.
+     */
+    insertVariableStatement(index: number, structure: VariableStatementStructure): statement.VariableStatement;
+    /**
+     * Inserts variable statements.
+     * @param structures - Structures of the variable statements.
+     */
+    insertVariableStatements(index: number, structures: VariableStatementStructure[]): statement.VariableStatement[];
     /**
      * Gets the direct variable statement children.
      */
-    getVariableStatements(): variable.VariableStatement[];
+    getVariableStatements(): statement.VariableStatement[];
     /**
      * Gets a variable statement.
      * @param findFunction - Function to use to find the variable statement.
      */
-    getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined;
+    getVariableStatement(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement | undefined;
     /**
      * Gets a variable statement or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable statement.
      */
-    getVariableStatementOrThrow(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement;
+    getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement;
     /**
      * Gets the variable declaration lists of the direct variable statement children.
      */
-    getVariableDeclarationLists(): variable.VariableDeclarationList[];
+    getVariableDeclarationLists(): statement.VariableDeclarationList[];
     /**
      * Gets a variable declaration list.
      * @param findFunction - Function to use to find the variable declaration list.
      */
-    getVariableDeclarationList(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList | undefined;
+    getVariableDeclarationList(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList | undefined;
     /**
      * Gets a variable declaration list or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable declaration list.
      */
-    getVariableDeclarationListOrThrow(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList;
+    getVariableDeclarationListOrThrow(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList;
     /**
      * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
      */
-    getVariableDeclarations(): variable.VariableDeclaration[];
+    getVariableDeclarations(): statement.VariableDeclaration[];
     /**
      * Gets a variable declaration.
      * @param name - Name of the variable declaration.
      */
-    getVariableDeclaration(name: string): variable.VariableDeclaration | undefined;
+    getVariableDeclaration(name: string): statement.VariableDeclaration | undefined;
     /**
      * Gets a variable declaration.
      * @param findFunction - Function to use to find the variable declaration.
      */
-    getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
+    getVariableDeclaration(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration | undefined;
     /**
      * Gets a variable declaration or throws if it doesn't exist.
      * @param name - Name of the variable declaration.
      */
-    getVariableDeclarationOrThrow(name: string): variable.VariableDeclaration;
+    getVariableDeclarationOrThrow(name: string): statement.VariableDeclaration;
     /**
      * Gets a variable declaration or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable declaration.
      */
-    getVariableDeclarationOrThrow(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration;
+    getVariableDeclarationOrThrow(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration;
 
     /**
      * @internal
@@ -595,7 +617,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): namespaces.NamespaceDeclaration[] {
-            // todo: remove type assertion
             return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ModuleDeclaration) as namespaces.NamespaceDeclaration[];
         }
 
@@ -662,33 +683,81 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getTypeAlias(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
         }
 
-        getVariableStatements(): variable.VariableStatement[] {
-            // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as variable.VariableStatement[];
+        /* Variable statements */
+
+        getVariableStatements(): statement.VariableStatement[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as statement.VariableStatement[];
         }
 
-        getVariableStatement(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement | undefined {
+        getVariableStatement(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement | undefined {
             return this.getVariableStatements().find(findFunction);
         }
 
-        getVariableStatementOrThrow(findFunction: (declaration: variable.VariableStatement) => boolean): variable.VariableStatement {
+        getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement {
             return errors.throwIfNullOrUndefined(this.getVariableStatement(findFunction), "Expected to find a variable statement that matched the provided condition.");
         }
 
-        getVariableDeclarationLists(): variable.VariableDeclarationList[] {
+        addVariableStatement(structure: VariableStatementStructure) {
+            return this.addVariableStatements([structure])[0];
+        }
+
+        addVariableStatements(structures: VariableStatementStructure[]) {
+            return this.insertVariableStatements(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        }
+
+        insertVariableStatement(index: number, structure: VariableStatementStructure) {
+            return this.insertVariableStatements(index, [structure])[0];
+        }
+
+        insertVariableStatements(index: number, structures: VariableStatementStructure[]) {
+            const indentationText = this.getChildIndentationText();
+            const texts = structures.map(structure => {
+                let text = `${indentationText}${structure.declarationType || VariableDeclarationType.Let} `;
+                let declarationTexts: string[] = [];
+                for (const declarationStructure of structure.declarations) {
+                    let declarationText = declarationStructure.name;
+                    if (declarationStructure.type != null)
+                        declarationText += ": " + declarationStructure.type;
+                    if (declarationStructure.initializer != null)
+                        declarationText += " = " + declarationStructure.initializer;
+                    declarationTexts.push(declarationText);
+                }
+                text += declarationTexts.join(", ");
+                text += ";";
+                return text;
+            });
+            const newChildren = this._insertMainChildren<statement.VariableStatement>(index, texts, structures, ts.SyntaxKind.VariableStatement, (child, i) => {
+                const structure = {...structures[i]};
+                delete structure.declarations;
+                delete structure.declarationType;
+                child.fill(structure);
+            }, {
+                previousBlanklineWhen: previousMember => !TypeGuards.isVariableStatement(previousMember),
+                separatorNewlineWhen: () => false,
+                nextBlanklineWhen: nextMember => !TypeGuards.isVariableStatement(nextMember)
+            });
+
+            return newChildren;
+        }
+
+        /* Variable declaration lists */
+
+        getVariableDeclarationLists(): statement.VariableDeclarationList[] {
             return this.getVariableStatements().map(s => s.getDeclarationList());
         }
 
-        getVariableDeclarationList(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList | undefined {
+        getVariableDeclarationList(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList | undefined {
             return this.getVariableDeclarationLists().find(findFunction);
         }
 
-        getVariableDeclarationListOrThrow(findFunction: (declaration: variable.VariableDeclarationList) => boolean): variable.VariableDeclarationList {
+        getVariableDeclarationListOrThrow(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList {
             return errors.throwIfNullOrUndefined(this.getVariableDeclarationList(findFunction), "Could not find a variable declaration that matched the provided condition.");
         }
 
-        getVariableDeclarations(): variable.VariableDeclaration[] {
-            const variables: variable.VariableDeclaration[] = [];
+        /* Variable declarations */
+
+        getVariableDeclarations(): statement.VariableDeclaration[] {
+            const variables: statement.VariableDeclaration[] = [];
 
             for (const list of this.getVariableDeclarationLists()) {
                 variables.push(...list.getDeclarations());
@@ -697,16 +766,16 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return variables;
         }
 
-        getVariableDeclaration(name: string): variable.VariableDeclaration | undefined;
-        getVariableDeclaration(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration | undefined;
-        getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined;
-        getVariableDeclaration(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration | undefined {
+        getVariableDeclaration(name: string): statement.VariableDeclaration | undefined;
+        getVariableDeclaration(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration | undefined;
+        getVariableDeclaration(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration | undefined;
+        getVariableDeclaration(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
 
-        getVariableDeclarationOrThrow(name: string): variable.VariableDeclaration;
-        getVariableDeclarationOrThrow(findFunction: (declaration: variable.VariableDeclaration) => boolean): variable.VariableDeclaration;
-        getVariableDeclarationOrThrow(nameOrFindFunction: string | ((declaration: variable.VariableDeclaration) => boolean)): variable.VariableDeclaration {
+        getVariableDeclarationOrThrow(name: string): statement.VariableDeclaration;
+        getVariableDeclarationOrThrow(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration;
+        getVariableDeclarationOrThrow(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration {
             return errors.throwIfNullOrUndefined(this.getVariableDeclaration(nameOrFindFunction),
                 () => getNotFoundErrorMessageForNameOrFindFunction("variable declaration", nameOrFindFunction));
         }

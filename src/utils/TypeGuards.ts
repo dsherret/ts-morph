@@ -43,8 +43,8 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -250,8 +250,8 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -321,8 +321,8 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -592,8 +592,8 @@ export class TypeGuards {
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -1035,8 +1035,8 @@ export class TypeGuards {
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.Parameter:
             case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.VariableDeclaration:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
