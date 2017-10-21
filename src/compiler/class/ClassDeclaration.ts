@@ -567,10 +567,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 if (ref.isDefinition())
                     continue;
                 const node = ref.getNode();
-                const nodeParent = node.getParentIfKind(ts.SyntaxKind.ExpressionWithTypeArguments);
-                if (nodeParent == null)
+                if (node.getKind() !== ts.SyntaxKind.ExpressionWithTypeArguments)
                     continue;
-                const heritageClause = nodeParent.getParentIfKind(ts.SyntaxKind.HeritageClause) as HeritageClause;
+                const heritageClause = node.getParentIfKind(ts.SyntaxKind.HeritageClause) as HeritageClause;
                 if (heritageClause == null || heritageClause.getToken() !== ts.SyntaxKind.ExtendsKeyword)
                     continue;
                 classes.push(heritageClause.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration);

@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration} from "./../../../compiler";
+import {Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration, ClassDeclaration, InterfaceDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Identifier), () => {
@@ -32,6 +32,17 @@ describe(nameof(Identifier), () => {
             const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameIdentifier().getDefinitions();
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getNode()).to.equal(firstChild.getFunctions()[0]);
+        });
+    });
+
+    describe(nameof<Identifier>(n => n.getImplementations), () => {
+        it("should get the implementations", () => {
+            const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
+            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
+            const implementations = firstChild.getNameIdentifier().getImplementations();
+            expect(implementations.length).to.equal(2);
+            expect((implementations[0].getNode() as ClassDeclaration).getName()).to.equal("Class1");
+            expect((implementations[1].getNode() as ClassDeclaration).getName()).to.equal("Class2");
         });
     });
 

@@ -16,9 +16,9 @@ console.log(identifier);
 
 ### Getting identifiers
 
-From a given node, get all the children or descendants that are identifiers.
+A lot of the time, a node will have a name and you can retrieve the identifier via `.getNameIdentifier()`.
 
-For example:
+If not, from a given node, you can get all the children or descendants that are identifiers. For example:
 
 ```typescript
 const childIdentifiers = node.getChildrenOfKind(ts.SyntaxKind.Identifier);
@@ -55,6 +55,14 @@ Gets the definitions of the identifier. This is similar to "go to definition" fu
 
 ```typescript
 const definitions = identifier.getDefinitions();
+```
+
+### Get Implementations
+
+Gets the implementations of the identifier. This is similar to "go to implementation" functionality that exists with TypeScript in most IDEs.
+
+```typescript
+const implementations = identifier.getImplementations();
 ```
 
 ### Type

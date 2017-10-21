@@ -6,7 +6,7 @@ import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
-import {ReferencedSymbol, DefinitionInfo, RenameLocation} from "./results";
+import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation} from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -137,11 +137,10 @@ export class LanguageService {
 
     /**
      * Gets the definitions for the specified node.
-     * @param sourceFile - Source file.
      * @param node - Node.
      */
-    getDefinitions(sourceFile: SourceFile, node: Node): DefinitionInfo[] {
-        return this.getDefinitionsAtPosition(sourceFile, node.getStart());
+    getDefinitions(node: Node): DefinitionInfo[] {
+        return this.getDefinitionsAtPosition(node.sourceFile, node.getStart());
     }
 
     /**
@@ -155,12 +154,29 @@ export class LanguageService {
     }
 
     /**
-     * Finds references based on the specified node.
+     * Gets the implementations for the specified node.
+     * @param node - Node.
+     */
+    getImplementations(node: Node): ImplementationLocation[] {
+        return this.getImplementationsAtPosition(node.sourceFile, node.getStart());
+    }
+
+    /**
+     * Gets the implementations at the specified position.
      * @param sourceFile - Source file.
+     * @param pos - Position.
+     */
+    getImplementationsAtPosition(sourceFile: SourceFile, pos: number): ImplementationLocation[] {
+        const results = this.compilerObject.getImplementationAtPosition(sourceFile.getFilePath(), pos) || [];
+        return results.map(location => new ImplementationLocation(this.global, location));
+    }
+
+    /**
+     * Finds references based on the specified node.
      * @param node - Node to find references for.
      */
-    findReferences(sourceFile: SourceFile, node: Node) {
-        return this.findReferencesAtPosition(sourceFile, node.getStart());
+    findReferences(node: Node) {
+        return this.findReferencesAtPosition(node.sourceFile, node.getStart());
     }
 
     /**

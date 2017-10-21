@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./Node";
 import {Type} from "./../type";
-import {ReferencedSymbol, DefinitionInfo} from "./../tools";
+import {ReferencedSymbol, DefinitionInfo, ImplementationLocation} from "./../tools";
 
 export class Identifier extends Node<ts.Identifier> {
     /**
@@ -23,16 +23,25 @@ export class Identifier extends Node<ts.Identifier> {
      * Finds all the references of this identifier.
      */
     findReferences(): ReferencedSymbol[] {
-        return this.global.languageService.findReferences(this.sourceFile, this);
+        return this.global.languageService.findReferences(this);
     }
 
     /**
      * Gets the definitions of the current identifier.
      *
-     * This is similar to "go to definition".
+     * This is similar to "go to definition."
      */
     getDefinitions(): DefinitionInfo[] {
-        return this.global.languageService.getDefinitions(this.sourceFile, this);
+        return this.global.languageService.getDefinitions(this);
+    }
+
+    /**
+     * Gets the implementations of the current identifier.
+     *
+     * This is similar to "go to implementation."
+     */
+    getImplementations(): ImplementationLocation[] {
+        return this.global.languageService.getImplementations(this);
     }
 
     /**

@@ -8,6 +8,7 @@ import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode, TextInsertableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
+import {ImplementationLocation} from "./../tools";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
@@ -315,6 +316,15 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getAllMembers(): InterfaceMemberTypes[] {
         return this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];
+    }
+
+    /**
+     * Gets all the implementations of the interface.
+     *
+     * This is similar to "go to implementation."
+     */
+    getImplementations(): ImplementationLocation[] {
+        return this.getNameIdentifier().getImplementations();
     }
 
     /**

@@ -3,6 +3,7 @@ export * from "./results/Diagnostic";
 export * from "./results/DiagnosticMessageChain";
 export * from "./results/DocumentSpan";
 export * from "./results/EmitResult";
+export * from "./results/ImplementationLocation";
 export * from "./results/ReferencedSymbol";
 export * from "./results/ReferencedSymbolDefinitionInfo";
 export * from "./results/ReferenceEntry";
