@@ -8,8 +8,16 @@ After source files are added, you will need to get them in order to navigate or 
 
 ### All
 
+Get all the source files:
+
 ```typescript
 const sourceFiles = ast.getSourceFiles();
+```
+
+Or filter by glob:
+
+```typescript
+const testSourceFiles = ast.getSourceFiles("**/src/test/**/*.ts");
 ```
 
 ### By file path

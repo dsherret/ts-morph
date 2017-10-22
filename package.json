@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "0.77.0",
+  "version": "0.78.0",
   "description": "TypeScript compiler wrapper for AST navigation and code generation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/minimatch": "^3.0.1",
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.48",
     "chai": "^3.5.0",
@@ -52,6 +53,7 @@
   "dependencies": {
     "code-block-writer": "^4.2.1",
     "globby": "^6.1.0",
+    "minimatch": "^3.0.4",
     "typescript": "2.5.3"
   },
   "peerDependencies": {

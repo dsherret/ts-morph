@@ -87,7 +87,7 @@ export class LanguageService {
      */
     resetProgram() {
         if (this.program != null)
-            this.program.reset(this.getSourceFiles().map(s => s.getFilePath()), this.compilerHost);
+            this.program.reset(this.sourceFiles.map(s => s.getFilePath()), this.compilerHost);
     }
 
     /**
@@ -95,7 +95,7 @@ export class LanguageService {
      */
     getProgram() {
         if (this.program == null)
-            this.program = new Program(this.global, this.getSourceFiles().map(s => s.getFilePath()), this.compilerHost);
+            this.program = new Program(this.global, this.sourceFiles.map(s => s.getFilePath()), this.compilerHost);
         return this.program;
     }
 
@@ -226,6 +226,6 @@ export class LanguageService {
      * @internal
      */
     getSourceFiles() {
-        return this.sourceFiles;
+        return [...this.sourceFiles];
     }
 }

@@ -268,6 +268,35 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.getSourceFiles), () => {
+        it("should get all the source files added to the ast", () => {
+            const ast = new TsSimpleAst();
+            ast.addSourceFileFromText("file1.ts", "");
+            ast.addSourceFileFromText("file2.ts", "");
+            expect(ast.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
+                FileUtils.getStandardizedAbsolutePath("file1.ts"),
+                FileUtils.getStandardizedAbsolutePath("file2.ts")
+            ]);
+        });
+
+        it("should be able to do a file glob", () => {
+            const ast = new TsSimpleAst();
+            ast.addSourceFileFromText("file.ts", "");
+            ast.addSourceFileFromText("src/file.ts", "");
+            ast.addSourceFileFromText("src/test/file1.ts", "");
+            ast.addSourceFileFromText("src/test/file2.ts", "");
+            ast.addSourceFileFromText("src/test/file3.ts", "");
+            ast.addSourceFileFromText("src/test/file3.js", "");
+            ast.addSourceFileFromText("src/test/folder/file.ts", "");
+            expect(ast.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
+                FileUtils.getStandardizedAbsolutePath("src/test/file1.ts"),
+                FileUtils.getStandardizedAbsolutePath("src/test/file2.ts"),
+                FileUtils.getStandardizedAbsolutePath("src/test/file3.ts"),
+                FileUtils.getStandardizedAbsolutePath("src/test/folder/file.ts")
+            ]);
+        });
+    });
+
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
             const ast = new TsSimpleAst();

@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import {Minimatch} from "minimatch";
 import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
@@ -148,9 +149,15 @@ export class TsSimpleAst {
 
     /**
      * Gets all the source files contained in the compiler wrapper.
+     * @param globPattern - Glob pattern for filtering out the source files.
      */
-    getSourceFiles(): compiler.SourceFile[] {
-        return this.global.languageService.getSourceFiles();
+    getSourceFiles(globPattern?: string): compiler.SourceFile[] {
+        let sourceFiles = this.global.languageService.getSourceFiles();
+        if (typeof globPattern === "string") {
+            const mm = new Minimatch(globPattern, { matchBase: true });
+            sourceFiles = sourceFiles.filter(s => mm.match(s.getFilePath()));
+        }
+        return sourceFiles;
     }
 
     /**
