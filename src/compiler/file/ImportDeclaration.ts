@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
 import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
 
@@ -220,7 +220,7 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         const namedImports = importClause.getFirstChildByKind(ts.SyntaxKind.NamedImports);
         if (namedImports == null)
             return [];
-        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ImportSpecifier) as ImportSpecifier[];
+        return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isImportSpecifier(c)) as ImportSpecifier[];
     }
 
     /**

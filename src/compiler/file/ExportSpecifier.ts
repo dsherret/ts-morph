@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {insertIntoParent, replaceNodeText} from "./../../manipulation";
+import {TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportDeclaration} from "./ExportDeclaration";
 
@@ -63,7 +64,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         if (asKeyword == null)
             return undefined;
         const aliasIdentifier = asKeyword.getNextSibling();
-        if (aliasIdentifier == null || !(aliasIdentifier instanceof Identifier))
+        if (aliasIdentifier == null || !(TypeGuards.isIdentifier(aliasIdentifier)))
             return undefined;
         return aliasIdentifier;
     }

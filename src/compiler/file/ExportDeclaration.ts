@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
 import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportSpecifier} from "./ExportSpecifier";
 
@@ -145,7 +145,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
         const namedExports = this.getFirstChildByKind(ts.SyntaxKind.NamedExports);
         if (namedExports == null)
             return [];
-        return namedExports.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ExportSpecifier) as ExportSpecifier[];
+        return namedExports.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isExportSpecifier(c)) as ExportSpecifier[];
     }
 
     /**

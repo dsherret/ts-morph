@@ -213,8 +213,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
 
         return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ImportDeclaration, undefined, {
-            previousBlanklineWhen: previousMember => !(previousMember instanceof ImportDeclaration),
-            nextBlanklineWhen: nextMember => !(nextMember instanceof ImportDeclaration),
+            previousBlanklineWhen: previousMember => !(TypeGuards.isImportDeclaration(previousMember)),
+            nextBlanklineWhen: nextMember => !(TypeGuards.isImportDeclaration(nextMember)),
             separatorNewlineWhen: () => false
         });
     }
@@ -303,8 +303,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
 
         return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ExportDeclaration, undefined, {
-            previousBlanklineWhen: previousMember => !(previousMember instanceof ExportDeclaration),
-            nextBlanklineWhen: nextMember => !(nextMember instanceof ExportDeclaration),
+            previousBlanklineWhen: previousMember => !(TypeGuards.isExportDeclaration(previousMember)),
+            nextBlanklineWhen: nextMember => !(TypeGuards.isExportDeclaration(nextMember)),
             separatorNewlineWhen: () => false
         });
     }

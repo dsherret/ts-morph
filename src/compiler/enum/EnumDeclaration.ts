@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
 import {insertIntoCreatableSyntaxList, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode} from "./../base";
 import {Node} from "./../common";
@@ -156,7 +156,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers() {
-        return this.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof EnumMember) as EnumMember[];
+        return this.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isEnumMember(c)) as EnumMember[];
     }
 
     /**
