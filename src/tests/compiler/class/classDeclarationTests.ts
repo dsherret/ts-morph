@@ -434,10 +434,17 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         describe("has methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+            const {firstChild} = getInfoFromText<ClassDeclaration>(`class Identifier {
+    static prop2: string;
+    static method() {}
+    prop: string;
+    method1() {}
+    method2() {}
+    abstract method3(): void;
+}\n`);
 
             it("should get the right number of methods", () => {
-                expect(firstChild.getInstanceMethods().length).to.equal(2);
+                expect(firstChild.getInstanceMethods().length).to.equal(3);
             });
 
             it("should get a method of the right instance of", () => {
@@ -661,10 +668,10 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getAllMembers), () => {
         it("should get the right number of instance, static, and constructor members in a non-ambient context", () => {
-            const code = "class Identifier {\nconstructor();constructor() {}\nstatic prop2: string;\nstatic method();static method() {}\n" +
+            const code = "class Identifier {\nconstructor();constructor() {}\nstatic prop2: string;\nstatic method();static method() {}\nabstract abstractMethod(): void;\n" +
                 "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
-            expect(firstChild.getAllMembers().length).to.equal(6);
+            expect(firstChild.getAllMembers().length).to.equal(7);
         });
 
         it("should get the right number of instance, static, and constructor members in an ambient context", () => {

@@ -128,7 +128,7 @@ Get the instance properties:
 const instanceProperties = classDeclaration.getInstanceProperties();
 const myProperty = classDeclaration.getInstanceProperty("myProperty");
 const myStringProperty = classDeclaration.getInstanceProperty(p =>
-    p instanceof PropertyDeclaration && p.getType().getText() === "string");
+    TypeGuards.isPropertyDeclaration(p) && p.getType().getText() === "string");
 ```
 
 Get the static properties:
@@ -137,7 +137,7 @@ Get the static properties:
 const staticProperties = classDeclaration.getStaticProperties();
 const myStaticProperty = classDeclaration.getStaticProperty("myStaticProperty");
 const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
-    p instanceof PropertyDeclaration && p.getType().getText() === "string");
+    TypeGuards.isPropertyDeclaration(p) && p.getType().getText() === "string");
 ```
 
 #### Add/Insert

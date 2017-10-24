@@ -474,7 +474,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (m instanceof ParameterDeclaration || !m.isStatic())) as ClassInstanceMemberTypes[];
+        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
     }
 
     /**
@@ -583,10 +583,16 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
 
         // filter out the method declarations or constructor declarations without a body if not ambient
-        return this.isAmbient() ? members : members.filter(m => !(m instanceof ConstructorDeclaration || m instanceof MethodDeclaration) || m.isImplementation());
+        return this.isAmbient() ? members : members.filter(m => {
+            if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+                return true;
+            if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+                return true;
+            return m.isImplementation();
+        });
     }
 }
 
 function isClassPropertyType(m: Node) {
-    return m instanceof PropertyDeclaration || m instanceof SetAccessorDeclaration || m instanceof GetAccessorDeclaration || m instanceof ParameterDeclaration;
+    return TypeGuards.isPropertyDeclaration(m) || TypeGuards.isSetAccessorDeclaration(m) || TypeGuards.isGetAccessorDeclaration(m) || TypeGuards.isParameterDeclaration(m);
 }
