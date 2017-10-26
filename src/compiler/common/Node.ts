@@ -531,18 +531,46 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the parent while a condition is true.
-     * @param predicate - Predicate that tests the parent to see if the expression is true.
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Throws if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile(predicate: (node: Node) => boolean) {
+    getParentWhileOrThrow(condition: (node: Node) => boolean) {
+        return errors.throwIfNullOrUndefined(this.getParentWhile(condition), "The initial parent did not match the provided condition.");
+    }
+
+    /**
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Returns undefined if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
+     */
+    getParentWhile(condition: (node: Node) => boolean) {
         let node: Node | undefined = undefined;
         let nextParent = this.getParent();
-        while (nextParent != null && predicate(nextParent)) {
+        while (nextParent != null && condition(nextParent)) {
             node = nextParent;
             nextParent = nextParent.getParent();
         }
 
         return node;
+    }
+
+    /**
+     * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
+     * Throws if the initial parent is not the specified syntax kind.
+     * @param kind - Syntax kind to check for.
+     */
+    getParentWhileKindOrThrow(kind: ts.SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${ts.SyntaxKind[kind]}.`);
+    }
+
+    /**
+     * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
+     * Returns undefined if the initial parent is not the specified syntax kind.
+     * @param kind - Syntax kind to check for.
+     */
+    getParentWhileKind(kind: ts.SyntaxKind) {
+        return this.getParentWhile(n => n.getKind() === kind);
     }
 
     /**

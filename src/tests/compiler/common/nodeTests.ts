@@ -219,6 +219,66 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getParentWhile), () => {
+        it("should keep getting the parent until a condition is no longer matched", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
+            const topParent = deepestNode.getParentWhile(n => n.getKind() === ts.SyntaxKind.PropertyAccessExpression)!;
+            expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
+        });
+
+        it("should return undefined when the initial parent doesn't match the condition", () => {
+            const {sourceFile} = getInfoFromText("const t;");
+            const child = sourceFile.getVariableStatements()[0];
+            expect(child.getParentWhile(() => false)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentWhileOrThrow), () => {
+        it("should keep getting the parent until a condition is no longer matched", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
+            const topParent = deepestNode.getParentWhileOrThrow(n => n.getKind() === ts.SyntaxKind.PropertyAccessExpression);
+            expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
+        });
+
+        it("should return undefined when the initial parent doesn't match the condition", () => {
+            const {sourceFile} = getInfoFromText("const t;");
+            const child = sourceFile.getVariableStatements()[0];
+            expect(() => child.getParentWhileOrThrow(() => false)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentWhileKind), () => {
+        it("should keep getting the parent until a condition is no longer matched", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
+            const topParent = deepestNode.getParentWhileKind(ts.SyntaxKind.PropertyAccessExpression)!;
+            expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
+        });
+
+        it("should return undefined when the initial parent doesn't match the condition", () => {
+            const {sourceFile} = getInfoFromText("const t;");
+            const child = sourceFile.getVariableStatements()[0];
+            expect(child.getParentWhileKind(ts.SyntaxKind.PrivateKeyword)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentWhileKindOrThrow), () => {
+        it("should keep getting the parent until a condition is no longer matched", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
+            const topParent = deepestNode.getParentWhileKindOrThrow(ts.SyntaxKind.PropertyAccessExpression);
+            expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
+        });
+
+        it("should return undefined when the initial parent doesn't match the condition", () => {
+            const {sourceFile} = getInfoFromText("const t;");
+            const child = sourceFile.getVariableStatements()[0];
+            expect(() => child.getParentWhileKindOrThrow(ts.SyntaxKind.PrivateKeyword)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstChildOrThrow), () => {
         const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
