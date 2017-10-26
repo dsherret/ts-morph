@@ -749,7 +749,7 @@ class c {
         }
 
         it("should get the class descendants", () => {
-            doTest("class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1 extends Child1 {} class GreatGrandChild1 extends Grandchild1 {}",
+            doTest("class Base {} class Child1 extends Base {} class Child2 extends Base {} class Grandchild1<T> extends Child1 {} class GreatGrandChild1<T> extends Grandchild1<T> {}",
                 "Base", ["Child1", "Child2", "Grandchild1", "GreatGrandChild1"]);
         });
 

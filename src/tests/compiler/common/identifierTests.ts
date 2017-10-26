@@ -94,6 +94,23 @@ describe(nameof(Identifier), () => {
             expect(references[2].isWriteAccess()).to.equal(false);
             expect(references[2].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
         });
+
+        it("should get the right node when the reference is at the start of a property access expression", () => {
+            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<NamespaceDeclaration>(`
+namespace MyNamespace {
+    export class MyClass {
+    }
+}
+
+const t = MyNamespace.MyClass;
+`);
+            const referencedSymbols = firstChild.getNameIdentifier().findReferences();
+            expect(referencedSymbols.length).to.equal(1);
+            const referencedSymbol = referencedSymbols[0];
+            const references = referencedSymbol.getReferences();
+            const propAccessExpr = sourceFile.getVariableDeclarations()[0].getInitializerOrThrow() as PropertyAccessExpression;
+            expect(references[1].getNode()).to.equal(propAccessExpr.getExpression());
+        });
     });
 
     describe(nameof<Identifier>(n => n.getType), () => {

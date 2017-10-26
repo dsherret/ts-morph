@@ -388,6 +388,24 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
+     * Gets the most specific descendant at the provided start position with the specified width, or undefined if not found.
+     * @param start - Start position to search for.
+     * @param width - Width of the node to search for.
+     */
+    getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
+        let nextNode: Node | undefined = this.getSourceFile();
+        let foundNode: Node | undefined;
+
+        do {
+            nextNode = nextNode.getChildAtPos(start);
+            if (nextNode != null && nextNode.getStart() === start && nextNode.getWidth() === width)
+                foundNode = nextNode;
+        } while (nextNode != null);
+
+        return foundNode;
+    }
+
+    /**
      * Gets the start position with leading trivia.
      */
     getPos() {

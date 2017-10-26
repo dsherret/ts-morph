@@ -22,17 +22,8 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
         this.global = global;
         this._compilerObject = compilerObject;
 
-        // get the parent most, non-syntax tree, non-source file at the given position
-        // todo: could make this faster by only going down the tree instead of going down then up
-        let node = this.getSourceFile().getDescendantAtPos(this.getTextSpan().getStart())!;
-        let nodeParent = node.getParent();
-        while (nodeParent != null && nodeParent.getStart() === node.getStart() && nodeParent.getKind() !== ts.SyntaxKind.SourceFile) {
-            node = nodeParent;
-            nodeParent = node.getParent();
-        }
-
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
-        this.node = node;
+        this.node = this.getSourceFile().getDescendantAtStartWithWidth(this.getTextSpan().getStart(), this.getTextSpan().getLength())!;
     }
 
     /**
