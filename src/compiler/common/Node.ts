@@ -398,8 +398,12 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
 
         do {
             nextNode = nextNode.getChildAtPos(start);
-            if (nextNode != null && nextNode.getStart() === start && nextNode.getWidth() === width)
-                foundNode = nextNode;
+            if (nextNode != null) {
+                if (nextNode.getStart() === start && nextNode.getWidth() === width)
+                    foundNode = nextNode;
+                else if (foundNode != null)
+                    break; // no need to keep looking
+            }
         } while (nextNode != null);
 
         return foundNode;
@@ -524,6 +528,21 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     getParentOrThrow() {
         return errors.throwIfNullOrUndefined(this.getParent(), "A parent is required to do this operation.");
+    }
+
+    /**
+     * Gets the parent while a condition is true.
+     * @param predicate - Predicate that tests the parent to see if the expression is true.
+     */
+    getParentWhile(predicate: (node: Node) => boolean) {
+        let node: Node | undefined = undefined;
+        let nextParent = this.getParent();
+        while (nextParent != null && predicate(nextParent)) {
+            node = nextParent;
+            nextParent = nextParent.getParent();
+        }
+
+        return node;
     }
 
     /**
