@@ -6,7 +6,20 @@ title: AST Viewers
 
 An AST viewer is a useful way to help understand the TypeScript AST for some source code.
 
-I have evaluated a few AST viewers and the only one I can recommend is the one available in *atom-typescript*. Many AST viewers do not give a sufficient level of detail to understand what's going on.
+### TypeScript AST Viewer
+
+I've created this very basic web-based TypeScript AST viewer.
+
+Features:
+
+* View code on left, tree in middle, and selected node's properties on the right.
+* Select a node in the tree to focus on that node's properties.
+
+[TypeScript AST Viewer](https://dsherret.github.io/ts-ast-viewer/)
+
+![TypeScript AST Viewer](images/ts-ast-viewer.png)
+
+I will improve and add more functionality to this in the future, but for now it will give you a good understanding of the tree.
 
 ### Atom TypeScript
 
@@ -27,6 +40,6 @@ This AST viewer gives an excellent view of the AST.
 
 8. A new tab will appear with the AST.
 
-    [![Ast Viewer](images/atom-ast_small.png)](images/atom-ast.png)
+    [![atom-typescript AST Viewer](images/atom-ast_small.png)](images/atom-ast.png)
 
 **Bug warning:** There seems to be an issue with the AST viewer where you have to close the "TypeScript AST" tab before running the `TypeScript: Ast Full` command again.
