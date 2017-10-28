@@ -10,14 +10,14 @@ An AST viewer is a useful way to help understand the TypeScript AST for some sou
 
 I've created this very basic web-based TypeScript AST viewer.
 
-Features:
-
-* View code on left, tree in middle, and selected node's properties on the right.
-* Select a node in the tree to focus on that node's properties.
-
 [TypeScript AST Viewer](https://dsherret.github.io/ts-ast-viewer/)
 
-![TypeScript AST Viewer](images/ts-ast-viewer.png)
+Features:
+
+* View code on left, tree in middle, and selected node's properties on right.
+* Select a node in the tree to focus on that node's properties.
+
+[![TypeScript AST Viewer](images/ts-ast-viewer.png)](https://dsherret.github.io/ts-ast-viewer/)
 
 I will improve and add more functionality to this in the future, but for now it will give you a good understanding of the tree.
 
