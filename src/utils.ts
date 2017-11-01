@@ -1,6 +1,7 @@
 ﻿export * from "./utils/AdvancedIterator";
 export * from "./utils/ArrayUtils";
 export * from "./utils/decorators";
+export * from "./utils/Es5Map";
 export * from "./utils/EventContainer";
 export * from "./utils/FileUtils";
 export * from "./utils/getCompilerOptionsFromTsConfig";
