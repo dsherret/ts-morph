@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
     removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
@@ -57,7 +57,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
         const heritageClauses = this.getHeritageClauses();
-        const extendsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = ArrayUtils.find(heritageClauses, c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
             const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList);
             const childSyntaxListStart = childSyntaxList.getStart();
@@ -75,7 +75,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             return this;
         }
 
-        const implementsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ImplementsKeyword);
+        const implementsClause = ArrayUtils.find(heritageClauses, c => c.compilerNode.token === ts.SyntaxKind.ImplementsKeyword);
         let insertPos: number;
         if (implementsClause != null)
             insertPos = implementsClause.getStart();
@@ -103,8 +103,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the extends expression.
      */
     getExtends(): ExpressionWithTypeArguments | undefined {
-        const heritageClauses = this.getHeritageClauses();
-        const extendsClause = heritageClauses.find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = ArrayUtils.find(this.getHeritageClauses(), c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
         if (extendsClause == null)
             return undefined;
 

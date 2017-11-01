@@ -2,6 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
+import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 
 export type ModiferableNodeExtensionType = Node;
@@ -98,7 +99,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             const modifiers = this.getModifiers();
             const hasModifier = modifiers.some(m => m.getText() === text);
             if (hasModifier)
-                return this.getModifiers().find(m => m.getText() === text) as Node<ts.Modifier>;
+                return ArrayUtils.find(this.getModifiers(), m => m.getText() === text) as Node<ts.Modifier>;
 
             // get insert position & index
             const {insertPos, insertIndex} = getInsertInfo(this);
@@ -126,7 +127,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 insertItemsCount: 1
             });
 
-            return this.getModifiers().find(m => m.getStart() === startPos) as Node<ts.Modifier>;
+            return ArrayUtils.find(this.getModifiers(), m => m.getStart() === startPos) as Node<ts.Modifier>;
 
             function getInsertInfo(node: ModifierableNode & Node) {
                 let pos = getInitialInsertPos();
@@ -160,7 +161,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         removeModifier(text: ModifierTexts) {
-            const modifier = this.getModifiers().find(m => m.getText() === text);
+            const modifier = ArrayUtils.find(this.getModifiers(), m => m.getText() === text);
             if (modifier == null)
                 return false;
 

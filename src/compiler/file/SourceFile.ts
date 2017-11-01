@@ -5,7 +5,7 @@ import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFo
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, isStringNode} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, isStringNode, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
@@ -224,7 +224,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param condition - Condition to get the import by.
      */
     getImport(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
-        return this.getImports().find(condition);
+        return ArrayUtils.find(this.getImports(), condition);
     }
 
     /**
@@ -314,7 +314,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param condition - Condition to get the export by.
      */
     getExport(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined {
-        return this.getExports().find(condition);
+        return ArrayUtils.find(this.getExports(), condition);
     }
 
     /**
@@ -437,7 +437,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             if (stringNodeRanges.some(n => n[0] < pos && n[1] > pos))
                 newLines.push(line);
             else if (times > 0)
-                newLines.push(indentText.repeat(times) + line);
+                newLines.push(StringUtils.repeat(indentText, times) + line);
             else // negative
                 newLines.push(line.replace(unindentRegex!, ""));
             pos += line.length;

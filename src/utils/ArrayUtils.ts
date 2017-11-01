@@ -2,12 +2,6 @@
     private constructor() {
     }
 
-    static *getIterator<T>(a: T[]) {
-        for (const item of a) {
-            yield item;
-        }
-    }
-
     static isNullOrEmpty<T>(a: (T[] | undefined)): a is undefined {
         return !(a instanceof Array) || a.length === 0;
     }
@@ -22,5 +16,20 @@
             return false;
         a.splice(index, 1);
         return true;
+    }
+
+    static find<T>(items: T[], condition: (item: T) => boolean) {
+        for (const item of items) {
+            if (condition(item))
+                return item;
+        }
+        return undefined;
+    }
+
+    static from<T>(items: IterableIterator<T>) {
+        const a: T[] = [];
+        for (const item of items)
+            a.push(item);
+        return a;
     }
 }

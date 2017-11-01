@@ -2,6 +2,6 @@
 
 export class NotSupportedError extends BaseError {
     constructor(public message: string) {
-        super(message);
+        super(message, NotSupportedError.prototype);
     }
 }

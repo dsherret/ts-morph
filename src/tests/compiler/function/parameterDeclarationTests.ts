@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import {ParameterDeclaration, FunctionDeclaration} from "./../../../compiler";
 import {ParameterDeclarationStructure, ParameterDeclarationSpecificStructure} from "./../../../structures";
+import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ParameterDeclaration), () => {
@@ -108,7 +109,7 @@ describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
-            firstChild.getParameters().find(p => p.getName() === nameToRemove)!.remove();
+            ArrayUtils.find(firstChild.getParameters(), p => p.getName() === nameToRemove)!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 

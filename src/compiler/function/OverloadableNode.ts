@@ -1,7 +1,9 @@
 ﻿import * as ts from "typescript";
+import * as objectAssign from "object-assign";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {verifyAndGetIndex, insertIntoParent, getRangeFromArray} from "./../../manipulation";
+import {ArrayUtils} from "./../../utils";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {BodyableNode, NamedNode} from "./../base";
 import {Node} from "./../common";
@@ -43,7 +45,7 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
         getImplementation(): this | undefined {
             if (this.isImplementation())
                 return this;
-            return getOverloadsAndImplementation(this).find(n => n.isImplementation()) as this | undefined;
+            return ArrayUtils.find(getOverloadsAndImplementation(this), n => n.isImplementation()) as this | undefined;
         }
 
         getImplementationOrThrow(): this {
@@ -109,7 +111,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     const structures = opts.structures;
 
     for (let i = 0; i < structures.length; i++) {
-        structures[i] = Object.assign(Object.assign({}, thisStructure), structures[i]);
+        structures[i] = objectAssign(objectAssign({}, thisStructure), structures[i]);
         // structures[i] = {...thisStructure, ...structures[i]}; // not supported by TS as of 2.4.1
     }
 

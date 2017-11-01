@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -690,7 +690,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableStatement(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement | undefined {
-            return this.getVariableStatements().find(findFunction);
+            return ArrayUtils.find(this.getVariableStatements(), findFunction);
         }
 
         getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement {
@@ -747,7 +747,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getVariableDeclarationList(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList | undefined {
-            return this.getVariableDeclarationLists().find(findFunction);
+            return ArrayUtils.find(this.getVariableDeclarationLists(), findFunction);
         }
 
         getVariableDeclarationListOrThrow(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList {

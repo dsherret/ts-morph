@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as compiler from "./../compiler";
 import * as errors from "./../errors";
-import {KeyValueCache, Logger, FileUtils, EventContainer} from "./../utils";
+import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
 import {createWrappedNode} from "./../createWrappedNode";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
@@ -12,7 +12,7 @@ import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
-    private readonly normalizedDirectories = new Set<string>();
+    private readonly normalizedDirectories = createHashSet<string>();
     private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
     private readonly sourceFileAddedEventContainer = new EventContainer<{ addedSourceFile: compiler.SourceFile; }>();
 

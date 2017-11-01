@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {SourceFile, Node, LanguageService} from "./../../compiler";
-import {TypeGuards} from "./../../utils";
+import {TypeGuards, StringUtils} from "./../../utils";
 import {verifyAndGetIndex} from "./../verifyAndGetIndex";
 import {isBlankLineAtPos} from "./../textChecks";
 import {insertIntoParent} from "./insertIntoParent";
@@ -62,7 +62,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         }
     }
 
-    if (TypeGuards.isSourceFile(parent) && nextMember == null && !newText.endsWith(newLineChar) && !sourceFile.getFullText().endsWith("\n"))
+    if (TypeGuards.isSourceFile(parent) && nextMember == null && !StringUtils.endsWith(newText, newLineChar) && !StringUtils.endsWith(sourceFile.getFullText(), "\n"))
         newText = newText + newLineChar;
 
     insertIntoParent({

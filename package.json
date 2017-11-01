@@ -34,6 +34,7 @@
     "@types/minimatch": "^3.0.1",
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.48",
+    "@types/object-assign": "^4.0.30",
     "chai": "^3.5.0",
     "coveralls": "^2.13.1",
     "del": "^2.0.2",
@@ -54,6 +55,7 @@
     "code-block-writer": "^4.2.1",
     "globby": "^6.1.0",
     "minimatch": "^3.0.4",
+    "object-assign": "^4.1.1",
     "typescript": "2.5.3"
   },
   "peerDependencies": {

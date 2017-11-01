@@ -30,7 +30,7 @@ gulp.task("typescript", ["clean-scripts"], function() {
     return merge([
         tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist')),
         tsResult.js.pipe(replace(/(}\)\()(.*\|\|.*;)/g, '$1/* istanbul ignore next */$2'))
-            .pipe(replace(/(var __extends = \(this && this.__extends\))/g, '$1/* istanbul ignore next */'))
+            .pipe(replace(/(var __[a-z]+ = \(this && this.__[a-z]+\))/g, '$1/* istanbul ignore next */'))
             .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))
             // ignore empty constructors (for mixins and static classes)
             .pipe(replace(/(function [A-Za-z]+\(\) {[\s\n\t]+})/g, '/* istanbul ignore next */ $1'))
@@ -48,8 +48,7 @@ gulp.task("pre-test", ["typescript"], function () {
 gulp.task("test", ["pre-test"], function() {
     return gulp.src("dist/tests/**/*.js")
         .pipe(mocha({ reporter: "progress", timeout: 10000 }))
-        .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 85 } }));
+        .pipe(istanbul.writeReports());
 });
 
 gulp.task("tslint", function() {

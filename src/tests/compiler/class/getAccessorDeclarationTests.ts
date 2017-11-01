@@ -1,11 +1,12 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {ClassDeclaration, GetAccessorDeclaration} from "./../../../compiler";
+import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
-    const getAccessor = result.firstChild.getInstanceProperties().find(f => f.getKind() === ts.SyntaxKind.GetAccessor) as GetAccessorDeclaration;
+    const getAccessor = ArrayUtils.find(result.firstChild.getInstanceProperties(), f => f.getKind() === ts.SyntaxKind.GetAccessor) as GetAccessorDeclaration;
     return {...result, getAccessor};
 }
 

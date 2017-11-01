@@ -1,5 +1,5 @@
 ﻿import {FileSystemHost} from "./../../FileSystemHost";
-import {FileUtils} from "./../../utils";
+import {FileUtils, ArrayUtils} from "./../../utils";
 
 export interface CustomFileSystemProps {
     getSyncWriteLog(): { filePath: string; fileText: string; }[];
@@ -16,7 +16,7 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
     const directories = [...initialDirectories];
     return {
         readFile: filePath => {
-            const file = files.find(f => f.filePath === filePath);
+            const file = ArrayUtils.find(files, f => f.filePath === filePath);
             if (file == null)
                 throw new Error(`Can't find file ${filePath}.`);
             return file.text;

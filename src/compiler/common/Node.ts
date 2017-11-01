@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
-import {Disposable, TypeGuards, getTextFromStringOrWriter} from "./../../utils";
+import {Disposable, TypeGuards, getTextFromStringOrWriter, ArrayUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -332,7 +332,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the node's descendants.
      */
     getDescendants(): Node[] {
-        return Array.from(this.getDescendantsIterator());
+        return ArrayUtils.from(this.getDescendantsIterator());
     }
 
     /**
@@ -502,7 +502,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Goes up the tree getting all the parents in ascending order.
      */
     getAncestors() {
-        return Array.from(this.getAncestorsIterator());
+        return ArrayUtils.from(this.getAncestorsIterator());
     }
 
     /**

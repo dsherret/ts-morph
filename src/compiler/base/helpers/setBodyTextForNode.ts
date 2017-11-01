@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {insertIntoParent} from "./../../../manipulation";
-import {getTextFromStringOrWriter} from "./../../../utils";
+import {getTextFromStringOrWriter, StringUtils} from "./../../../utils";
 import {Node} from "./../../common";
 
 /**
@@ -34,7 +34,7 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
         if (text.length > 0)
             text = newLineKind + text.split(/\r?\n/).map(t => t.length > 0 ? childIndentationText + t : t).join(newLineKind);
 
-        if (!text.endsWith(newLineKind))
+        if (!StringUtils.endsWith(text, newLineKind))
             text += newLineKind;
 
         return text + body.getParentOrThrow().getIndentationText();

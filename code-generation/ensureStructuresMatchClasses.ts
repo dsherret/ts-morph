@@ -1,16 +1,17 @@
-﻿import {getAst, getClassViewModels, getStructureViewModels, getMixinsOfMixins} from "./common";
+﻿import {ArrayUtils} from "./../src/utils";
+import {getAst, getClassViewModels, getStructureViewModels, getMixinsOfMixins} from "./common";
 import {ClassViewModel, MixinViewModel, InterfaceViewModel} from "./view-models";
 import {isAllowedMixin, isAllowedClass} from "./config";
 
 const ast = getAst();
-const classVMs = Array.from(getClassViewModels(ast));
-const structureVMs = Array.from(getStructureViewModels(ast));
+const classVMs = ArrayUtils.from(getClassViewModels(ast));
+const structureVMs = ArrayUtils.from(getStructureViewModels(ast));
 const mixinsOfMixins = getMixinsOfMixins(classVMs);
 const problems: string[] = [];
 
 for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.filter(m => m.mixins.length > 0)]) {
     const structureName = getStructureName(vm);
-    const structureVM = structureVMs.find(s => s.name === structureName);
+    const structureVM = ArrayUtils.find(structureVMs, s => s.name === structureName);
     if (structureVM == null)
         continue;
 
@@ -23,7 +24,7 @@ for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.
 
     for (const structureExtend of structureVM.extends.filter(e => !isStructureToIgnore(e))) {
         const declarationName = structureExtend.name.replace(/Structure$/, "");
-        const mixin = vm.mixins.find(m => m.name === declarationName);
+        const mixin = ArrayUtils.find(vm.mixins, m => m.name === declarationName);
 
         if (mixin == null)
             problems.push(`${structureVM.name} has ${structureExtend.name}, but it shouldn't.`);

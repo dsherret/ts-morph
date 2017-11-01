@@ -2,6 +2,6 @@
 
 export class InvalidOperationError extends BaseError {
     constructor(public message: string) {
-        super(message);
+        super(message, InvalidOperationError.prototype);
     }
 }

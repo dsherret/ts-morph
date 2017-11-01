@@ -14,6 +14,7 @@
 import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
+import {ArrayUtils} from "./../src/utils";
 import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel} from "./view-models";
 
 interface MethodInfo {
@@ -88,7 +89,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
         }
 
         function getSyntaxKindForName(name: string) {
-            const nodeToWrapperVM = nodeToWrapperVMs.find(n => n.wrapperName === name);
+            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperVMs, n => n.wrapperName === name);
             if (nodeToWrapperVM == null)
                 throw new Error("Could not find: " + name);
             return nodeToWrapperVM.syntaxKindName;

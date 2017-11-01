@@ -4,7 +4,7 @@ import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
-import {getCompilerOptionsFromTsConfig, FileUtils} from "./utils";
+import {getCompilerOptionsFromTsConfig, FileUtils, ArrayUtils} from "./utils";
 import {FileSystemHost} from "./FileSystemHost";
 import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
@@ -144,7 +144,7 @@ export class TsSimpleAst {
         if (typeof fileNameOrSearchFunction === "string")
             searchFunction = def => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
 
-        return this.getSourceFiles().find(searchFunction);
+        return ArrayUtils.find(this.getSourceFiles(), searchFunction);
     }
 
     /**

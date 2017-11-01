@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {AdvancedIterator} from "./../../utils";
+import {AdvancedIterator, ArrayUtils} from "./../../utils";
 
 describe(nameof(AdvancedIterator), () => {
     function *getNumIterator() {
@@ -31,7 +31,7 @@ describe(nameof(AdvancedIterator), () => {
             const nums: number[] = [];
             while (!iterator.done)
                 nums.push(iterator.next());
-            expect(nums).to.deep.equal(Array.from(getNumIterator()));
+            expect(nums).to.deep.equal(ArrayUtils.from(getNumIterator()));
         });
 
         it("should throw when calling .next at the end of the iterator", () => {
@@ -118,7 +118,7 @@ describe(nameof(AdvancedIterator), () => {
             const iterator = new AdvancedIterator(getNumIterator());
             iterator.next();
             iterator.next();
-            expect(Array.from(iterator.rest())).to.deep.equal(Array.from(getNumIterator()).slice(2));
+            expect(ArrayUtils.from(iterator.rest())).to.deep.equal(ArrayUtils.from(getNumIterator()).slice(2));
         });
     });
 });

@@ -1,5 +1,6 @@
 ﻿import {NamedNode} from "./../compiler/base/name/NamedNode";
 import {DeclarationNamedNode} from "./../compiler/base/name/DeclarationNamedNode";
+import {ArrayUtils} from "./../utils";
 
 export function getNamedNodeByNameOrFindFunction<T extends NamedNode | DeclarationNamedNode>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
@@ -9,7 +10,7 @@ export function getNamedNodeByNameOrFindFunction<T extends NamedNode | Declarati
     else
         findFunc = nameOrFindFunc;
 
-    return items.find(findFunc);
+    return ArrayUtils.find(items, findFunc);
 }
 
 export function getNotFoundErrorMessageForNameOrFindFunction(findName: string, nameOrFindFunction: string | Function) {

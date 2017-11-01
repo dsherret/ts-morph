@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
+import {ArrayUtils} from "./../../utils";
 import * as errors from "./../../errors";
 import {ExtendsClauseableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -40,7 +41,7 @@ export interface ExtendsClauseableNode {
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
         getExtends(): ExpressionWithTypeArguments[] {
-            const extendsClause = this.getHeritageClauses().find(c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = ArrayUtils.find(this.getHeritageClauses(), c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 

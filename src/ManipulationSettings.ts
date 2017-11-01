@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as objectAssign from "object-assign";
 
 /** String characters */
 export enum StringChar {
@@ -86,6 +87,6 @@ export class ManipulationSettingsContainer {
      * @param settings - Settings to set.
      */
     set(settings: Partial<ManipulationSettings>) {
-        Object.assign(this.settings, settings);
+        objectAssign(this.settings, settings);
     }
 }

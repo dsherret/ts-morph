@@ -1,15 +1,16 @@
-﻿import {getAst, getStructureViewModels, getFlattenedExtensions} from "./common";
+﻿import {ArrayUtils} from "./../src/utils";
+import {getAst, getStructureViewModels, getFlattenedExtensions} from "./common";
 import {InterfaceViewModel} from "./view-models";
 import {isOverloadStructure} from "./config";
 
 const ast = getAst();
-const structureVMs = Array.from(getStructureViewModels(ast));
+const structureVMs = ArrayUtils.from(getStructureViewModels(ast));
 const overloadVMs = structureVMs.filter(s => isOverloadStructure(s));
 const problems: string[] = [];
 
 for (const overloadVM of overloadVMs) {
     const structureName = overloadVM.name.replace("Overload", "");
-    const structureVM = structureVMs.find(s => s.name === structureName)!;
+    const structureVM = ArrayUtils.find(structureVMs, s => s.name === structureName)!;
 
     const flattenedOverloadExtensions = getFlattenedExtensions(overloadVM);
     const flattenedStructureExtensions = getFlattenedExtensions(structureVM).filter(s => isAllowedStructure(s));

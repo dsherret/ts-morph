@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "module": "commonjs",
         "declaration": true,
-        "strict":  true,
+        "strict": true,
         "sourceMap": false,
         "removeComments": false,
         "experimentalDecorators": true,
@@ -12,7 +12,9 @@
         "noImplicitReturns": true,
         "stripInternal": true,
         "typeRoots": [ "node_modules/@types/" ],
-        "types": [ "node", "mocha" ]
+        "types": [ "node", "mocha" ],
+        "downlevelIteration": true,
+        "lib": [ "es2015" ]
     },
     "compileOnSave": false
 }

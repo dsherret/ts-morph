@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-    - "6.1"
+    - "4.8"
 before_script:
     - gulp tslint
     - gulp code-generate

@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import {ManipulationSettings, ManipulationSettingsContainer, IndentationText, StringChar, NewLineKind} from "./../ManipulationSettings";
+import {StringUtils} from "./../utils";
 
 describe(nameof(IndentationText), () => {
     // ensure this enum is correct. It's hard to read all the spaces since string enums can't use computed values
@@ -10,15 +11,15 @@ describe(nameof(IndentationText), () => {
     });
 
     it("should have two spaces when has two", () => {
-        expect(IndentationText.TwoSpaces).to.equal(" ".repeat(2));
+        expect(IndentationText.TwoSpaces).to.equal(StringUtils.repeat(" ", 2));
     });
 
     it("should have four spaces when has four", () => {
-        expect(IndentationText.FourSpaces).to.equal(" ".repeat(4));
+        expect(IndentationText.FourSpaces).to.equal(StringUtils.repeat(" ", 4));
     });
 
     it("should have eight spaces when has eight", () => {
-        expect(IndentationText.EightSpaces).to.equal(" ".repeat(8));
+        expect(IndentationText.EightSpaces).to.equal(StringUtils.repeat(" ", 8));
     });
 });
 

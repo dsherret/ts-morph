@@ -2,7 +2,7 @@
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, removeStatementedNodeChild} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
@@ -96,7 +96,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * @param findFunction - Function to find the construct signature by.
      */
     getConstructSignature(findFunction: (member: ConstructSignatureDeclaration) => boolean): ConstructSignatureDeclaration | undefined {
-        return this.getConstructSignatures().find(findFunction);
+        return ArrayUtils.find(this.getConstructSignatures(), findFunction);
     }
 
     /**
