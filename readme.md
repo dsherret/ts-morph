@@ -27,7 +27,7 @@ const ast = new Ast();
 const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
 ast.addSourceFiles("folder/**/*{.d.ts,.ts}");
 ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
-ast.addSourceFile("misc.ts", {
+ast.addSourceFileFromStructure("misc.ts", {
     classes: [{
         name: "SomeClass",
         isExported: true
