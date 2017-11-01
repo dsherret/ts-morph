@@ -3,6 +3,5 @@ node_js:
     - "4.8"
 before_script:
     - gulp tslint
-    - gulp code-generate
 after_script:
-    - npm run code-verification
+    - gulp code-generate && npm run code-verification

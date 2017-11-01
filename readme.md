@@ -75,3 +75,7 @@ const firstProperty = classDec.getProperties()[0];
 
 // ... do more stuff here ...
 ```
+
+## Resources
+
+* [AST Viewers](https://dsherret.github.io/ts-simple-ast/setup/ast-viewers)
