@@ -1,5 +1,5 @@
 ---
-title: TS Simple AST - Documentation
+title: Documentation
 ---
 
 ## Purpose
