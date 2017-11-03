@@ -62,7 +62,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         const thisName = this.getName();
         const childCodes = structures.map(structure => `function ${thisName}();`);
 
-        return insertOverloads({
+        return insertOverloads<FunctionDeclaration, FunctionDeclarationOverloadStructure>({
             node: this,
             index,
             structures,

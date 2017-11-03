@@ -490,7 +490,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.
      */
-    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType) {
+    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node<NodeType[KeyType]> {
         // todo: once filtering keys by type is supported need to (1) make this only show keys that are of type ts.Node and (2) have ability to return an array of nodes.
         if ((this.compilerNode[propertyName] as any).kind == null)
             throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} ` +

@@ -56,7 +56,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
     insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]) {
         const childCodes = structures.map(structure => `constructor();`);
 
-        return insertOverloads({
+        return insertOverloads<ConstructorDeclaration, ConstructorDeclarationOverloadStructure>({
             node: this,
             index,
             structures,

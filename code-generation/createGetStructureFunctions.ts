@@ -8,6 +8,7 @@ export function createGetStructureFunctions(structures: InterfaceViewModel[]) {
 
     writer.writeLine("/* tslint:disable */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
+    writer.writeLine(`import * as objectAssign from "object-assign";`);
     writer.writeLine(`import * as compiler from "./../compiler";`);
     writer.writeLine(`import * as structures from "./../structures";`);
     writer.writeLine(`import * as getMixinStructureFuncs from "./getMixinStructureFunctions";`);
@@ -34,7 +35,7 @@ function write(writer: CodeBlockWriter, vm: InterfaceViewModel) {
 function writeBody(writer: CodeBlockWriter, vm: InterfaceViewModel, extendsStructures: InterfaceViewModel[]) {
     writer.writeLine(`let structure: structures.${vm.name} = {} as any;`);
     for (const extendsStructure of extendsStructures) {
-        writer.write("Object.assign(structure, ");
+        writer.write("objectAssign(structure, ");
         writer.write("getMixinStructureFuncs.");
         const extendsClassName = extendsStructure.name.replace(/Structure$/, "");
         writer.write(`from${extendsClassName}(node));`).newLine();

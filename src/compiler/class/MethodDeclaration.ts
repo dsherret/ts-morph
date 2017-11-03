@@ -60,7 +60,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
         const thisName = this.getName();
         const childCodes = structures.map(structure => `${thisName}();`);
 
-        return insertOverloads({
+        return insertOverloads<MethodDeclaration, MethodDeclarationOverloadStructure>({
             node: this,
             index,
             structures,
