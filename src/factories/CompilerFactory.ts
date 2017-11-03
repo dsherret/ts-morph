@@ -122,7 +122,8 @@ export class CompilerFactory {
         if (compilerNode.kind === ts.SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode as any as ts.SourceFile) as compiler.Node as compiler.Node<NodeType>;
         else if ((nodeToWrapperMappings as any)[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => new ((nodeToWrapperMappings as any)[compilerNode.kind] as any)(this.global, compilerNode, sourceFile));
+            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () =>
+                new ((nodeToWrapperMappings as any)[compilerNode.kind] as any)(this.global, compilerNode, sourceFile));
         else
             return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => new compiler.Node(this.global, compilerNode, sourceFile));
     }
