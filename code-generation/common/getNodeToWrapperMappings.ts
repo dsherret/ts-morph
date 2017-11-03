@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {NodeToWrapperViewModel} from "./../view-models";
-import TsSimpleAst, {ClassDeclaration, Node} from "./../../src/main";
+import TsSimpleAst, {ClassDeclaration, Node, PropertyAccessExpression} from "./../../src/main";
 
 export function* getNodeToWrapperMappings(ast: TsSimpleAst): IterableIterator<NodeToWrapperViewModel> {
     const sourceFile = ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
@@ -11,7 +11,7 @@ export function* getNodeToWrapperMappings(ast: TsSimpleAst): IterableIterator<No
     for (const assignment of propertyAssignments) {
         const nodeToWrapperVm: NodeToWrapperViewModel = {
             syntaxKindName: getSyntaxKindName(assignment),
-            wrapperName: assignment.getNodeProperty("initializer").getText()
+            wrapperName: (assignment.getNodeProperty("initializer") as PropertyAccessExpression).getName()
         };
 
         yield nodeToWrapperVm;
@@ -19,7 +19,7 @@ export function* getNodeToWrapperMappings(ast: TsSimpleAst): IterableIterator<No
 
     function getSyntaxKindName(assignment: Node<ts.PropertyAssignment>) {
         const computedPropertyName = assignment.getNodeProperty("name") as Node<ts.ComputedPropertyName>;
-        const propAccessExpr = computedPropertyName.getNodeProperty("expression") as Node<ts.PropertyAccessExpression>;
+        const propAccessExpr = computedPropertyName.getNodeProperty("expression") as PropertyAccessExpression;
         return propAccessExpr.getNodeProperty("name").getText();
     }
 }
