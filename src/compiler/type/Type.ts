@@ -165,7 +165,7 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isUnionType())
             return [];
 
-        return this.compilerType.types.map(t => this.global.compilerFactory.getType(t));
+        return (this.compilerType as any as ts.UnionType).types.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
@@ -175,7 +175,7 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isIntersectionType())
             return [];
 
-        return this.compilerType.types.map(t => this.global.compilerFactory.getType(t));
+        return (this.compilerType as any as ts.IntersectionType).types.map(t => this.global.compilerFactory.getType(t));
     }
 
     /**
@@ -213,35 +213,35 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is an enum type.
      */
-    isEnumType(): this is Type<ts.EnumType> {
+    isEnumType() {
         return (this.compilerType.flags & ts.TypeFlags.Enum) !== 0;
     }
 
     /**
      * Gets if this is an interface type.
      */
-    isInterfaceType(): this is Type<ts.InterfaceType> {
+    isInterfaceType() {
         return (this.getObjectFlags() & ts.ObjectFlags.Interface) !== 0;
     }
 
     /**
      * Gets if this is an intersection type.
      */
-    isIntersectionType(): this is Type<ts.UnionOrIntersectionType> {
+    isIntersectionType() {
         return (this.compilerType.flags & ts.TypeFlags.Intersection) !== 0;
     }
 
     /**
      * Gets if this is an object type.
      */
-    isObjectType(): this is Type<ts.ObjectType> {
+    isObjectType() {
         return (this.compilerType.flags & ts.TypeFlags.Object) !== 0;
     }
 
     /**
      * Gets if this is a union type.
      */
-    isUnionType(): this is Type<ts.UnionOrIntersectionType> {
+    isUnionType() {
         return (this.compilerType.flags & ts.TypeFlags.Union) !== 0;
     }
 
@@ -266,6 +266,6 @@ export class Type<TType extends ts.Type = ts.Type> {
         if (!this.isObjectType())
             return 0;
 
-        return this.compilerType.objectFlags || 0;
+        return (this.compilerType as any as ts.ObjectType).objectFlags || 0;
     }
 }
