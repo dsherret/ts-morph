@@ -91,6 +91,45 @@ describe(nameof(ImplementsClauseableNode), () => {
         });
     });
 
+    describe(nameof<ImplementsClauseableNode>(n => n.removeImplements), () => {
+        function doTest(startingCode: string, index: number, expectedCode: string) {
+            doIndexTest();
+            doNodeTest();
+
+            function doIndexTest() {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+                firstChild.removeImplements(index);
+                expect(firstChild.getText()).to.equal(expectedCode);
+            }
+
+            function doNodeTest() {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+                firstChild.removeImplements(firstChild.getImplements()[index]);
+                expect(firstChild.getText()).to.equal(expectedCode);
+            }
+        }
+
+        it("should remove the implements when there is one", () => {
+            doTest("class MyClass implements T1 {}", 0, "class MyClass {}");
+        });
+
+        it("should remove the implements when there is one and an extends exists", () => {
+            doTest("class MyClass extends B implements T1 {}", 0, "class MyClass extends B {}");
+        });
+
+        it("should remove the implements when there are multiple and the first is specified", () => {
+            doTest("class MyClass implements T1, T2 {}", 0, "class MyClass implements T2 {}");
+        });
+
+        it("should remove the implements when there are multiple and the middle is specified", () => {
+            doTest("class MyClass implements T1, T2, T3 {}", 1, "class MyClass implements T1, T3 {}");
+        });
+
+        it("should remove the implements when there are multiple and the last is specified", () => {
+            doTest("class MyClass implements T1, T2 {}", 1, "class MyClass implements T1 {}");
+        });
+    });
+
     describe(nameof<ClassDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: ImplementsClauseableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);

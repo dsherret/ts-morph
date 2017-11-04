@@ -234,6 +234,11 @@ describe(nameof(Decorator), () => {
             expect(() => firstChild.getDecorators()[0].removeArgument(3)).to.throw();
         });
 
+        it("should throw when removing and none exist", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("@test()\nclass T {}");
+            expect(() => firstChild.getDecorators()[0].removeArgument(0)).to.throw();
+        });
+
         it("should remove a decorator argument at the start", () => {
             doTest("@test(1, 2, 3)\nclass T {}", 0, "@test(2, 3)\nclass T {}");
         });
