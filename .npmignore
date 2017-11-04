@@ -4,6 +4,7 @@
 /.vscode
 /code-generation
 /dist-cg
+/dist/tests
 /src
 *.js.map
 /obj

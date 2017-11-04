@@ -1,10 +1,12 @@
 import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils} from "./../../utils";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, insertIntoParentTextRange, getIndentedText, getInsertPosFromIndex,
+    removeStatementedNodeChildren} from "./../../manipulation";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -24,6 +26,42 @@ export interface StatementedNode {
      * Gets the node's statements.
      */
     getStatements(): Node[];
+    /**
+     * Adds statements.
+     * @param text - Text of the statement or statements to add.
+     * @returns The statements that were added.
+     */
+    addStatements(text: string): Node[];
+    /**
+     * Add statements.
+     * @param writerFunction - Write the text using the provided writer.
+     * @returns The statements that were added.
+     */
+    addStatements(writerFunction: (writer: CodeBlockWriter) => void): Node[];
+    /**
+     * Inserts statements at the specified index.
+     * @param index - Index to insert at.
+     * @param text - Text of the statement or statements to insert.
+     * @returns The statements that were inserted.
+     */
+    insertStatements(index: number, text: string): Node[];
+    /**
+     * Inserts statements at the specified index.
+     * @param index - Index to insert at.
+     * @param writerFunction - Write the text using the provided writer.
+     * @returns The statements that were inserted.
+     */
+    insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Node[];
+    /**
+     * Removes the statement at the specified index.
+     * @param index - Index to remove the statement at.
+     */
+    removeStatement(index: number): this;
+    /**
+     * Removes the statements at the specified index range.
+     * @param indexRange - The start and end inclusive index range to remove.
+     */
+    removeStatements(indexRange: [number, number]): this;
     /**
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
@@ -300,7 +338,6 @@ export interface StatementedNode {
      * @param findFunction - Function to use to find the type alias.
      */
     getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
-
     /**
      * Adds a variable statement.
      * @param structure - Structure of the variable statement.
@@ -414,6 +451,67 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
 
             return statements.map(s => this.global.compilerFactory.getNodeFromCompilerNode(s, this.sourceFile));
+        }
+
+        addStatements(text: string): Node[];
+        addStatements(writerFunction: (writer: CodeBlockWriter) => void): Node[];
+        addStatements(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            const childSyntaxList = this.getChildSyntaxListOrThrow();
+            return this.insertStatements(childSyntaxList.getChildCount(), textOrWriterFunction);
+        }
+
+        insertStatements(index: number, text: string): Node[];
+        insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Node[];
+        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Node[];
+        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            // get index
+            const childSyntaxList = this.getChildSyntaxListOrThrow();
+            const initialChildCount = childSyntaxList.getChildCount();
+            const newLineKind = this.global.manipulationSettings.getNewLineKind();
+            index = verifyAndGetIndex(index, initialChildCount);
+
+            // get text
+            let insertText = getIndentedText({
+                textOrWriterFunction,
+                manipulationSettings: this.global.manipulationSettings,
+                indentationText: this.getChildIndentationText()
+            });
+
+            if (insertText.length === 0)
+                return [];
+
+            if (index === 0 && TypeGuards.isSourceFile(this)) {
+                if (!StringUtils.endsWith(insertText, newLineKind))
+                    insertText += newLineKind;
+            }
+            else
+                insertText = newLineKind + insertText;
+
+            // insert
+            const insertPos = getInsertPosFromIndex(index, this, childSyntaxList.getChildren());
+            insertIntoParentTextRange({
+                insertPos,
+                newText: insertText,
+                parent: childSyntaxList
+            });
+
+            // get inserted statements
+            const finalChildren = childSyntaxList.getChildren();
+            return finalChildren.slice(index, index + finalChildren.length - initialChildCount);
+        }
+
+        removeStatement(index: number) {
+            index = verifyAndGetIndex(index, this.getStatements().length);
+            return this.removeStatements([index, index]);
+        }
+
+        removeStatements(indexRange: [number, number]) {
+            const statements = this.getStatements();
+            errors.throwIfRangeOutOfRange(indexRange, [0, statements.length], nameof(indexRange));
+
+            removeStatementedNodeChildren(statements.slice(indexRange[0], indexRange[1] + 1));
+
+            return this;
         }
 
         /* Classes */

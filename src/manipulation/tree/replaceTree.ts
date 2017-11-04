@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {Node, SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {DefaultParentHandler, ParentFinderReplacementNodeHandler} from "./nodeHandlers";
+import {DefaultParentHandler, ParentFinderReplacementNodeHandler, RangeParentHandler} from "./nodeHandlers";
 
 export interface ReplaceTreeCreatingSyntaxListOptions {
     replacementSourceFile: SourceFile;
@@ -32,7 +32,7 @@ export interface ReplaceTreeWithChildIndexOptions {
 }
 
 /**
- * Replaces with tree based on the child index from the parent.
+ * Replaces the tree based on the child index from the parent.
  */
 export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
     const {replacementSourceFile, parent, childIndex, childCount, replacingNodes} = opts;
@@ -50,6 +50,31 @@ export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions
         childCount,
         replacingNodes
     });
+}
+
+export interface ReplaceTreeWithRangeOptions {
+    replacementSourceFile: SourceFile;
+    parent: Node;
+    start: number;
+    end: number;
+}
+
+/**
+ * Replaces the tree based on the start and end position.
+ */
+export function replaceTreeWithRange(opts: ReplaceTreeWithRangeOptions) {
+    const {replacementSourceFile, parent: changingParent, start, end} = opts;
+    const sourceFile = changingParent.getSourceFile();
+    const compilerFactory = sourceFile.global.compilerFactory;
+
+    const parentHandler = new RangeParentHandler(compilerFactory, { start, end });
+
+    if (changingParent === sourceFile)
+        parentHandler.handleNode(sourceFile, replacementSourceFile);
+    else {
+        const parentFinderReplacement = new ParentFinderReplacementNodeHandler(compilerFactory, parentHandler, changingParent);
+        parentFinderReplacement.handleNode(sourceFile, replacementSourceFile);
+    }
 }
 
 export interface ReplaceTreeOptions {

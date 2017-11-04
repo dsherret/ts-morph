@@ -5,6 +5,7 @@ import {TypeGuards, StringUtils} from "./../../utils";
 import {verifyAndGetIndex} from "./../verifyAndGetIndex";
 import {isBlankLineAtPos} from "./../textChecks";
 import {insertIntoParent} from "./insertIntoParent";
+import {getInsertPosFromIndex} from "./getInsertPosFromIndex";
 
 export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     parent: Node;
@@ -25,7 +26,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     const {parent, index, childCodes, separator, children} = opts;
 
     const sourceFile = parent.getSourceFile();
-    const insertPos = getInsertPosition(index, parent, children);
+    const insertPos = getInsertPosFromIndex(index, parent, children);
     const newLineChar = sourceFile.global.manipulationSettings.getNewLineKind();
 
     let newText = "";
@@ -72,27 +73,4 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         childIndex: index,
         insertItemsCount: childCodes.length
     });
-}
-
-function getInsertPosition(index: number, parent: Node, children: Node[]) {
-    if (index === 0) {
-        if (TypeGuards.isSourceFile(parent))
-            return 0;
-        else {
-            const parentContainer = getParentContainer(parent);
-            const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
-            return openBraceToken.getEnd();
-        }
-    }
-
-    return children[index - 1].getEnd();
-}
-
-function getParentContainer(parent: Node) {
-    if (TypeGuards.isBodiedNode(parent))
-        return parent.getBody();
-    if (TypeGuards.isBodyableNode(parent))
-        return parent.getBodyOrThrow();
-    else
-        return parent;
 }
