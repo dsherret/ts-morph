@@ -81,7 +81,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     /**
      * Gets the decorator's arguments from its call expression.
      */
-    getArguments(): Expression[] {
+    getArguments(): Node[] {
         const callExpression = this.getCallExpression();
         return callExpression == null ? [] : callExpression.getArguments();
     }
@@ -98,18 +98,38 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
      */
-    removeTypeArgument(typeArg: Node): void;
+    removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
      * @param index - Index to remove.
      */
-    removeTypeArgument(index: number): void;
+    removeTypeArgument(index: number): this;
     removeTypeArgument(typeArgOrIndex: Node | number) {
         const callExpression = this.getCallExpression();
         if (callExpression == null)
             throw new errors.InvalidOperationError("Cannot remove a type argument from a decorator that has no type arguments.");
 
         callExpression.removeTypeArgument(typeArgOrIndex);
+        return this;
+    }
+
+    /**
+     * Removes an argument based on the node.
+     * @param node - Argument's node to remove.
+     */
+    removeArgument(node: Node): this;
+    /**
+     * Removes an argument based on the specified index.
+     * @param index - Index to remove.
+     */
+    removeArgument(index: number): this;
+    removeArgument(argOrIndex: Node | number): this {
+        const callExpression = this.getCallExpression();
+        if (callExpression == null)
+            throw new errors.InvalidOperationError("Cannot remove an argument from a decorator that has no arguments.");
+
+        callExpression.removeArgument(argOrIndex);
+        return this;
     }
 
     /**

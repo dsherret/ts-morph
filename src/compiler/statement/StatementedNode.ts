@@ -501,7 +501,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         removeStatement(index: number) {
-            index = verifyAndGetIndex(index, this.getStatements().length);
+            index = verifyAndGetIndex(index, this.getStatements().length - 1);
             return this.removeStatements([index, index]);
         }
 

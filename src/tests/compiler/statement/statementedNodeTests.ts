@@ -158,8 +158,8 @@ describe(nameof(StatementedNode), () => {
         }
 
         it("should throw when specifying an invalid index", () => {
-            const {sourceFile} = getInfoFromText("");
-            expect(() => sourceFile.removeStatement(5)).to.throw();
+            const {sourceFile} = getInfoFromText("class myClass {}");
+            expect(() => sourceFile.removeStatement(1)).to.throw();
         });
 
         it("should remove at the specified index", () => {

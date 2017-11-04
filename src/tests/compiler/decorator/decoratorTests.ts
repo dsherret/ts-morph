@@ -210,4 +210,40 @@ describe(nameof(Decorator), () => {
             });
         });
     });
+
+    describe(nameof<Decorator>(d => d.removeArgument), () => {
+        function doTest(text: string, removeIndex: number, expectedText: string) {
+            doTestByIndex();
+            doTestByArg();
+
+            function doTestByIndex() {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+                firstChild.getDecorators()[0].removeArgument(removeIndex);
+                expect(sourceFile.getFullText()).to.equal(expectedText);
+            }
+
+            function doTestByArg() {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+                firstChild.getDecorators()[0].removeArgument(firstChild.getDecorators()[0].getArguments()[removeIndex]);
+                expect(sourceFile.getFullText()).to.equal(expectedText);
+            }
+        }
+
+        it("should throw when specifying an invalid index", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("@test(1, 2, 3)\nclass T {}");
+            expect(() => firstChild.getDecorators()[0].removeArgument(3)).to.throw();
+        });
+
+        it("should remove a decorator argument at the start", () => {
+            doTest("@test(1, 2, 3)\nclass T {}", 0, "@test(2, 3)\nclass T {}");
+        });
+
+        it("should remove a decorator argument in the middle", () => {
+            doTest("@test(1, 2, 3)\nclass T {}", 1, "@test(1, 3)\nclass T {}");
+        });
+
+        it("should remove a decorator argument at the end", () => {
+            doTest("@test(1, 2, 3)\nclass T {}", 2, "@test(1, 2)\nclass T {}");
+        });
+    });
 });

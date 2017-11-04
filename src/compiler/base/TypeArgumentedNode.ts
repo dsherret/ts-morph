@@ -16,18 +16,18 @@ export interface TypeArgumentedNode {
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
      */
-    removeTypeArgument(typeArg: Node): void;
+    removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
      * @param index - Index to remove.
      */
-    removeTypeArgument(index: number): void;
+    removeTypeArgument(index: number): this;
     /**
      * Removes a type argument.
      * @internal
      * @param typeArgOrIndex - Type argument of index to remove.
      */
-    removeTypeArgument(typeArgOrIndex: Node | number): void;
+    removeTypeArgument(typeArgOrIndex: Node | number): this;
 }
 
 export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExtensionType>>(Base: T): Constructor<TypeArgumentedNode> & T {
@@ -38,8 +38,8 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             return this.compilerNode.typeArguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile) as TypeNode);
         }
 
-        removeTypeArgument(typeArg: Node): void;
-        removeTypeArgument(index: number): void;
+        removeTypeArgument(typeArg: Node): this;
+        removeTypeArgument(index: number): this;
         removeTypeArgument(typeArgOrIndex: Node | number) {
             const typeArguments = this.getTypeArguments();
             if (typeArguments.length === 0)
@@ -58,6 +58,8 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             }
             else
                 removeCommaSeparatedChild(typeArgToRemove);
+
+            return this;
 
             function getTypeArgFromIndex(index: number) {
                 return typeArguments[verifyAndGetIndex(index, typeArguments.length - 1)];
