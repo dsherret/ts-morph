@@ -25,8 +25,8 @@ function myFunction() {
 The following happens:
 
 ```typescript
-decorator.getName(); // decorator
-decorator.getFullName(); // obj.decorator
+decorator.getName(); // "decorator"
+decorator.getFullName(); // "obj.decorator"
 ```
 
 ### Decorator factory

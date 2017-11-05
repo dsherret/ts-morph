@@ -2,6 +2,6 @@
 
 export class ArgumentNullOrWhitespaceError extends ArgumentError {
     constructor(public readonly argName: string) {
-        super(argName, "Was null or whitespace.", ArgumentNullOrWhitespaceError.prototype);
+        super(argName, "Cannot be null or whitespace.", ArgumentNullOrWhitespaceError.prototype);
     }
 }

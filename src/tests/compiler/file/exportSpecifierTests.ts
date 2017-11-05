@@ -1,14 +1,15 @@
 ﻿import {expect} from "chai";
 import TsSimpleAst from "./../../../main";
 import {ExportDeclaration, ExportSpecifier} from "./../../../compiler";
+import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
-    describe(nameof<ExportSpecifier>(n => n.getName), () => {
+    describe(nameof<ExportSpecifier>(n => n.getNameIdentifier), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
-            expect(namedExport.getName().getText()).to.equal(name);
+            expect(namedExport.getNameIdentifier().getText()).to.equal(name);
         }
 
         it("should get the name when there is no alias", () => {
@@ -72,14 +73,14 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
-    describe(nameof<ExportSpecifier>(n => n.getAlias), () => {
+    describe(nameof<ExportSpecifier>(n => n.getAliasIdentifier), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
             if (alias == null)
-                expect(namedExport.getAlias()).to.equal(undefined);
+                expect(namedExport.getAliasIdentifier()).to.equal(undefined);
             else
-                expect(namedExport.getAlias()!.getText()).to.equal(alias);
+                expect(namedExport.getAliasIdentifier()!.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {
@@ -131,6 +132,35 @@ describe(nameof(ExportSpecifier), () => {
             const {firstChild} = getInfoFromText<ExportDeclaration>(`export {name} from "./test";`);
             const namedExport = firstChild.getNamedExports()[0];
             expect(namedExport.getExportDeclaration()).to.equal(firstChild);
+        });
+    });
+
+    describe(nameof<ExportSpecifier>(n => n.remove), () => {
+        function doTest(text: string, nameToRemove: string, expectedText: string) {
+            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const namedExport = ArrayUtils.find(firstChild.getNamedExports(), e => e.getNameIdentifier().getText() === nameToRemove);
+            namedExport!.remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should change to a namespace import when there's only one to remove and a module specifier exists", () => {
+            doTest(`export {name} from "./test";`, "name", `export * from "./test";`);
+        });
+
+        it("should remove the export declaration when there's only one to remove and no module specifier exists", () => {
+            doTest(`export {name};`, "name", ``);
+        });
+
+        it("should remove the named import when it's the first", () => {
+            doTest(`export {name1, name2} from "./test";`, "name1", `export {name2} from "./test";`);
+        });
+
+        it("should remove the named import when it's in the middle", () => {
+            doTest(`export {name1, name2, name3} from "./test";`, "name2", `export {name1, name3} from "./test";`);
+        });
+
+        it("should remove the named import when it's the last", () => {
+            doTest(`export {name1, name2} from "./test";`, "name2", `export {name1} from "./test";`);
         });
     });
 });

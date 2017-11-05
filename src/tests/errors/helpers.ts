@@ -28,7 +28,7 @@ describe("helpers", () => {
 
         it("should throw when whitespace string", () => {
             expect(() => errors.throwIfNotStringOrWhitespace(" ", "argName")).to.throw(errors.ArgumentNullOrWhitespaceError,
-                "Argument Error (argName): Was null or whitespace.");
+                "Argument Error (argName): Cannot be null or whitespace.");
         });
 
         it("should throw when string that's not a whitespace string", () => {

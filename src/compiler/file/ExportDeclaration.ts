@@ -149,6 +149,31 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
     }
 
     /**
+     * Changes the export declaration to namespace export. Removes all the named exports.
+     */
+    toNamespaceExport(): this {
+        if (!this.hasModuleSpecifier())
+            throw new errors.InvalidOperationError("Cannot change to a namespace export when no module specifier exists.");
+
+        const namedExportsNode = this.getFirstChildByKind(ts.SyntaxKind.NamedExports);
+        if (namedExportsNode == null)
+            return this;
+
+        insertIntoParent({
+            parent: this,
+            newText: "*",
+            insertPos: namedExportsNode.getStart(),
+            childIndex: namedExportsNode.getChildIndex(),
+            insertItemsCount: 1,
+            replacing: {
+                textLength: namedExportsNode.getWidth(),
+                nodes: [namedExportsNode]
+            }
+        });
+        return this;
+    }
+
+    /**
      * Removes this export declaration.
      */
     remove() {

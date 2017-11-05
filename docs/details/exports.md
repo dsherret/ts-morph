@@ -98,12 +98,41 @@ Call `.remove()`:
 exportDeclaration.remove();
 ```
 
+### To Namespace Export
+
+Given an export declaration with named exports:
+
+```typescript
+export {Export1, Export2, Export3} from "./other-file";
+```
+
+Calling `exportDeclaration.toNamespaceExport();` will change the code to the following:
+
+```typescript
+export * from "./other-file";
+```
+
 ### Named Exports
 
 Get the named exports from an export declaration:
 
 ```typescript
 const namedExports = exportDeclaration.getNamedExports();
+```
+
+Adding or inserting named exports can be done via the `addNamedExport`, `addNamedExports`, `insertNamedExport`, or `insertNamedExports` methods.
+
+```typescript
+const namedExport = exportDeclaration.addNamedExport({
+    name: "MyClass",
+    alias: "MyAliasName" // alias is optional
+});
+```
+
+Removing one named export:
+
+```typescript
+namedExport.remove();
 ```
 
 #### Export specifier
@@ -113,7 +142,7 @@ Export specifiers are the individual named exports.
 ##### Name
 
 ```typescript
-namedExport.getName(); // returns: Identifier
+namedExport.getNameIdentifier(); // returns: Identifier
 namedExport.setName("NewName");
 namedExport.renameName("NewName");
 ```
@@ -121,7 +150,7 @@ namedExport.renameName("NewName");
 ##### Alias
 
 ```typescript
-namedExport.getAlias(); // returns: Identifier | undefined
+namedExport.getAliasIdentifier(); // returns: Identifier | undefined
 namedExport.setAlias("NewAliasName");
 ```
 

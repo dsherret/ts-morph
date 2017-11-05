@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import {ExportDeclaration} from "./../../../compiler";
 import {ExportSpecifierStructure} from "./../../../structures";
+import * as errors from "./../../../errors";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
@@ -106,11 +107,11 @@ describe(nameof(ExportDeclaration), () => {
             const namedExports = firstChild.getNamedExports();
             expect(namedExports.length).to.equal(expected.length);
             for (let i = 0; i < namedExports.length; i++) {
-                expect(namedExports[i].getName().getText()).to.equal(expected[i].name);
+                expect(namedExports[i].getNameIdentifier().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
-                    expect(namedExports[i].getAlias()).to.equal(undefined);
+                    expect(namedExports[i].getAliasIdentifier()).to.equal(undefined);
                 else
-                    expect(namedExports[i].getAlias()!.getText()).to.equal(expected[i].alias);
+                    expect(namedExports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
             }
         }
 
@@ -192,6 +193,27 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should remove the export declaration", () => {
             doTest("export * from 'i';\nexport * from 'j';\nexport * from 'k';\n", 1, "export * from 'i';\nexport * from 'k';\n");
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.toNamespaceExport), () => {
+        function doTest(text: string, expectedText: string) {
+            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(text);
+            firstChild.toNamespaceExport();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should throw when no module specifier exists", () => {
+            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(`export {name};`);
+            expect(() => firstChild.toNamespaceExport()).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should change to a namespace import when there's only one to remove", () => {
+            doTest(`export {name} from "./test";`, `export * from "./test";`);
+        });
+
+        it("should change to a namespace import when there's multiple to remove", () => {
+            doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
         });
     });
 });

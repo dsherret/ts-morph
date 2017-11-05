@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild, removeChildren} from "./../../manipulation";
 import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
@@ -41,6 +41,8 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
      * @param text - Text to set as the default import.
      */
     setDefaultImport(text: string) {
+        errors.throwIfNotStringOrWhitespace(text, nameof(text));
+
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
             defaultImport.rename(text);
@@ -105,7 +107,7 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
                 insertPos: defaultImport.getEnd(),
                 childIndex: defaultImport.getChildIndex() + 1,
                 insertItemsCount: 2, // CommaToken, NamespaceImport
-                parent: this.getImportClause(),
+                parent: this.getImportClause()!,
                 newText: `, * as ${text}`
             });
             return this;
@@ -224,6 +226,32 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     }
 
     /**
+     * Removes all the named imports.
+     */
+    removeNamedImports(): this {
+        const importClause = this.getImportClause();
+        if (importClause == null)
+            return this;
+
+        const namedImportsNode = importClause.getFirstChildByKind(ts.SyntaxKind.NamedImports);
+        if (namedImportsNode == null)
+            return this;
+
+        // ex. import defaultExport, {Export1} from "module-name";
+        const defaultImport = this.getDefaultImport();
+        if (defaultImport != null) {
+            const commaToken = defaultImport.getNextSiblingIfKindOrThrow(ts.SyntaxKind.CommaToken);
+            removeChildren({ children: [commaToken, namedImportsNode] });
+            return this;
+        }
+
+        // ex. import {Export1} from "module-name";
+        const fromKeyword = importClause.getNextSiblingIfKindOrThrow(ts.SyntaxKind.FromKeyword);
+        removeChildren({ children: [importClause, fromKeyword], removePrecedingSpaces: true });
+        return this;
+    }
+
+    /**
      * Removes this import declaration.
      */
     remove() {
@@ -231,6 +259,6 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     }
 
     private getImportClause() {
-        return this.getFirstChildByKind(ts.SyntaxKind.ImportClause) as Node<ts.ImportClause>;
+        return this.getFirstChildByKind(ts.SyntaxKind.ImportClause) as Node<ts.ImportClause> | undefined;
     }
 }

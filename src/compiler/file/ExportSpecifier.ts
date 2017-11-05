@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {insertIntoParent, replaceNodeText} from "./../../manipulation";
+import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ExportDeclaration} from "./ExportDeclaration";
@@ -9,7 +9,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Sets the name of what's being exported.
      */
     setName(name: string) {
-        const nameIdentifier = this.getName();
+        const nameIdentifier = this.getNameIdentifier();
         if (nameIdentifier.getText() === name)
             return this;
 
@@ -23,14 +23,14 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Renames the name of what's being exported.
      */
     renameName(name: string) {
-        this.getName().rename(name);
+        this.getNameIdentifier().rename(name);
         return this;
     }
 
     /**
-     * Gets the name of what's being exported.
+     * Gets the name identifier of what's being exported.
      */
-    getName() {
+    getNameIdentifier() {
         return this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier) as Identifier;
     }
 
@@ -39,10 +39,10 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * @param alias - Alias to set.
      */
     setAlias(alias: string) {
-        let aliasIdentifier = this.getAlias();
+        let aliasIdentifier = this.getAliasIdentifier();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            const nameIdentifier = this.getName();
+            const nameIdentifier = this.getNameIdentifier();
             insertIntoParent({
                 insertPos: nameIdentifier.getEnd(),
                 childIndex: nameIdentifier.getChildIndex() + 1,
@@ -50,16 +50,16 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
                 parent: this,
                 newText: ` as ${nameIdentifier.getText()}`
             });
-            aliasIdentifier = this.getAlias()!;
+            aliasIdentifier = this.getAliasIdentifier()!;
         }
         aliasIdentifier.rename(alias);
         return this;
     }
 
     /**
-     * Gets the alias, if it exists.
+     * Gets the alias identifier, if it exists.
      */
-    getAlias() {
+    getAliasIdentifier() {
         const asKeyword = this.getFirstChildByKind(ts.SyntaxKind.AsKeyword);
         if (asKeyword == null)
             return undefined;
@@ -74,5 +74,20 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      */
     getExportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
+    }
+
+    /**
+     * Removes the export specifier.
+     */
+    remove() {
+        const exportDeclaration = this.getExportDeclaration();
+        const exports = exportDeclaration.getNamedExports();
+
+        if (exports.length > 1)
+            removeCommaSeparatedChild(this);
+        else if (exportDeclaration.hasModuleSpecifier())
+            exportDeclaration.toNamespaceExport();
+        else
+            exportDeclaration.remove();
     }
 }

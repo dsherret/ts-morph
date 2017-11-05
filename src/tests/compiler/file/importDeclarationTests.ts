@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration} from "./../../../compiler";
+import * as errors from "./../../../errors";
 import {ImportSpecifierStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -49,6 +50,11 @@ describe(nameof(ImportDeclaration), () => {
             firstChild.setDefaultImport(newDefaultImport);
             expect(sourceFile.getText()).to.equal(expected);
         }
+
+        it("should throw when whitespace", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>("import d from './file';");
+            expect(() => firstChild.setDefaultImport(" ")).to.throw(errors.ArgumentNullOrWhitespaceError);
+        });
 
         it("should rename when exists", () => {
             doTest(`import identifier from './file'; const t = identifier;`, "newName", `import newName from './file'; const t = newName;`);
@@ -170,11 +176,11 @@ describe(nameof(ImportDeclaration), () => {
             const namedImports = firstChild.getNamedImports();
             expect(namedImports.length).to.equal(expected.length);
             for (let i = 0; i < namedImports.length; i++) {
-                expect(namedImports[i].getName().getText()).to.equal(expected[i].name);
+                expect(namedImports[i].getNameIdentifier().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
-                    expect(namedImports[i].getAlias()).to.equal(undefined);
+                    expect(namedImports[i].getAliasIdentifier()).to.equal(undefined);
                 else
-                    expect(namedImports[i].getAlias()!.getText()).to.equal(expected[i].alias);
+                    expect(namedImports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
             }
         }
 
@@ -276,6 +282,22 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should remove the import declaration", () => {
             doTest("import * from 'i';\nimport * from 'j';\nimport * from 'k';\n", 1, "import * from 'i';\nimport * from 'k';\n");
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(d => d.removeNamedImports), () => {
+        function doTest(text: string, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            sourceFile.getImports()[0].removeNamedImports();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the named imports when only named imports exist", () => {
+            doTest(`import {Name1, Name2} from "module-name";`, `import "module-name";`);
+        });
+
+        it("should remove the named imports when a default import exist", () => {
+            doTest(`import defaultExport, {Name1, Name2} from "module-name";`, `import defaultExport from "module-name";`);
         });
     });
 });

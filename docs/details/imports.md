@@ -120,6 +120,18 @@ const namedImport = importDeclaration.addNamedImport({
 });
 ```
 
+Removing one named import:
+
+```typescript
+namedImport.remove();
+```
+
+Removing all named imports:
+
+```typescript
+importDeclaration.removeNamedImports();
+```
+
 #### Import specifier
 
 Import specifiers are the individual named imports.
@@ -127,7 +139,7 @@ Import specifiers are the individual named imports.
 ##### Name
 
 ```typescript
-namedImport.getName(); // returns: Identifier
+namedImport.getNameIdentifier(); // returns: Identifier
 namedImport.setName("NewName");
 namedImport.renameName("NewName");
 ```
@@ -135,7 +147,7 @@ namedImport.renameName("NewName");
 ##### Alias
 
 ```typescript
-namedImport.getAlias(); // returns: Identifier | undefined
+namedImport.getAliasIdentifier(); // returns: Identifier | undefined
 namedImport.setAlias("NewAliasName");
 ```
 

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration, ImportSpecifier} from "./../../../compiler";
+import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ImportSpecifier), () => {
@@ -34,11 +35,11 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.getName), () => {
+    describe(nameof<ImportSpecifier>(n => n.getNameIdentifier), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
-            expect(namedImport.getName().getText()).to.equal(name);
+            expect(namedImport.getNameIdentifier().getText()).to.equal(name);
         }
 
         it("should get the name when there is no alias", () => {
@@ -77,14 +78,14 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.getAlias), () => {
+    describe(nameof<ImportSpecifier>(n => n.getAliasIdentifier), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
             if (alias == null)
-                expect(namedImport.getAlias()).to.equal(undefined);
+                expect(namedImport.getAliasIdentifier()).to.equal(undefined);
             else
-                expect(namedImport.getAlias()!.getText()).to.equal(alias);
+                expect(namedImport.getAliasIdentifier()!.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {
@@ -105,6 +106,35 @@ describe(nameof(ImportSpecifier), () => {
             const {firstChild} = getInfoFromText<ImportDeclaration>(`import {name} from "./test";`);
             const namedImport = firstChild.getNamedImports()[0];
             expect(namedImport.getImportDeclaration()).to.equal(firstChild);
+        });
+    });
+
+    describe(nameof<ImportSpecifier>(n => n.remove), () => {
+        function doTest(text: string, nameToRemove: string, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            const importSpecifier = ArrayUtils.find(sourceFile.getImports()[0].getNamedImports(), i => i.getNameIdentifier().getText() === nameToRemove)!;
+            importSpecifier.remove();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove the named import when it's the first one", () => {
+            doTest(`import {Name1, Name2} from "module-name";`, "Name1", `import {Name2} from "module-name";`);
+        });
+
+        it("should remove the named import when it's in the middle", () => {
+            doTest(`import {Name1, Name2, Name3} from "module-name";`, "Name2", `import {Name1, Name3} from "module-name";`);
+        });
+
+        it("should remove the named import when it's the last one", () => {
+            doTest(`import {Name1, Name2} from "module-name";`, "Name2", `import {Name1} from "module-name";`);
+        });
+
+        it("should remove the named imports when only one exist", () => {
+            doTest(`import {Name1} from "module-name";`, "Name1", `import "module-name";`);
+        });
+
+        it("should remove the named imports when only one exists and a default import exist", () => {
+            doTest(`import defaultExport, {Name1} from "module-name";`, "Name1", `import defaultExport from "module-name";`);
         });
     });
 });
