@@ -109,6 +109,16 @@ describe(nameof(ImplementsClauseableNode), () => {
             }
         }
 
+        it("should throw when trying to remove and none exist", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class C {}");
+            expect(() => firstChild.removeImplements(0)).to.throw();
+        });
+
+        it("should throw when specifying a bad index", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class C implements B {}");
+            expect(() => firstChild.removeImplements(1)).to.throw();
+        });
+
         it("should remove the implements when there is one", () => {
             doTest("class MyClass implements T1 {}", 0, "class MyClass {}");
         });

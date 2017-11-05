@@ -47,6 +47,13 @@ interfaceDeclaration.insertExtends(1, "Named");
 interfaceDeclaration.insertExtends(2, ["Named", "Aged"]);
 ```
 
+Remove an expression:
+
+```typescript
+interfaceDeclaration.removeExtends(0); // index
+interfaceDeclaration.removeExtends(interfaceDeclaration.getExtends()[0]); // node
+```
+
 ### Construct signatures
 
 Use:

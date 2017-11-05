@@ -86,6 +86,51 @@ describe(nameof(ExtendsClauseableNode), () => {
         });
     });
 
+    describe(nameof<ExtendsClauseableNode>(n => n.removeExtends), () => {
+        function doTest(startingCode: string, index: number, expectedCode: string) {
+            doIndexTest();
+            doNodeTest();
+
+            function doIndexTest() {
+                const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+                firstChild.removeExtends(index);
+                expect(firstChild.getText()).to.equal(expectedCode);
+            }
+
+            function doNodeTest() {
+                const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+                firstChild.removeExtends(firstChild.getExtends()[index]);
+                expect(firstChild.getText()).to.equal(expectedCode);
+            }
+        }
+
+        it("should throw when trying to remove and none exist", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface C {}");
+            expect(() => firstChild.removeExtends(0)).to.throw();
+        });
+
+        it("should throw when specifying a bad index", () => {
+            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface C extends B {}");
+            expect(() => firstChild.removeExtends(1)).to.throw();
+        });
+
+        it("should remove the extends when there is one", () => {
+            doTest("interface Identifier extends T1 {}", 0, "interface Identifier {}");
+        });
+
+        it("should remove the extends when there are multiple and the first is specified", () => {
+            doTest("interface Identifier extends T1, T2 {}", 0, "interface Identifier extends T2 {}");
+        });
+
+        it("should remove the extends when there are multiple and the middle is specified", () => {
+            doTest("interface Identifier extends T1, T2, T3 {}", 1, "interface Identifier extends T1, T3 {}");
+        });
+
+        it("should remove the extends when there are multiple and the last is specified", () => {
+            doTest("interface Identifier extends T1, T2 {}", 1, "interface Identifier extends T1 {}");
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: ExtendsClauseableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
@@ -94,19 +139,19 @@ describe(nameof(ExtendsClauseableNode), () => {
         }
 
         it("should modify when setting one", () => {
-            doTest("interface MyClass {}", { extends: ["Test"] }, "interface MyClass extends Test {}");
+            doTest("interface Identifier {}", { extends: ["Test"] }, "interface Identifier extends Test {}");
         });
 
         it("should modify when setting two", () => {
-            doTest("interface MyClass {}", { extends: ["Test", "Test2"] }, "interface MyClass extends Test, Test2 {}");
+            doTest("interface Identifier {}", { extends: ["Test", "Test2"] }, "interface Identifier extends Test, Test2 {}");
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("interface MyClass {}", {}, "interface MyClass {}");
+            doTest("interface Identifier {}", {}, "interface Identifier {}");
         });
 
         it("should not modify anything if the structure has an empty array", () => {
-            doTest("interface MyClass {}", { extends: [] }, "interface MyClass {}");
+            doTest("interface Identifier {}", { extends: [] }, "interface Identifier {}");
         });
     });
 });

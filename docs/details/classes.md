@@ -44,6 +44,12 @@ Set the extends expression:
 classDeclaration.setExtends("BaseClass");
 ```
 
+Remove it:
+
+```typescript
+classDeclaration.removeExtends();
+```
+
 ### Implements expressions
 
 Will return [`ExpressionWithTypeArguments[]`](expressions):
@@ -59,6 +65,13 @@ classDeclaration.addImplements("Named");
 classDeclaration.addImplements(["Named", "Aged"]);
 classDeclaration.insertImplements(1, "Named");
 classDeclaration.insertImplements(1, ["Named", "Aged"]);
+```
+
+Remove an expression:
+
+```typescript
+classDeclaration.removeImplements(0); // index
+classDeclaration.removeImplements(classDeclaration.getImplements()[0]); // node
 ```
 
 ### Derived Classes

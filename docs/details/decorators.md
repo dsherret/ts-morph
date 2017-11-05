@@ -85,8 +85,9 @@ classDeclaration.addDecorator({
 
 ### Remove decorators
 
-Call `.remove()` on them:
+Call `.removeDecorator()`:
 
 ```typescript
-decorator.remove();
+classDeclaration.removeDecorator(0); // index
+classDeclaration.removeDecorator(classDeclaration.getDecorators()[0]); // node
 ```

@@ -1,9 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
-import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList, removeCommaSeparatedChild,
-    removeChildren} from "./../../manipulation";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
 import {ImplementsClauseableNodeStructure} from "./../../structures";
-import {ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
@@ -44,7 +42,7 @@ export interface ImplementsClauseableNode {
      */
     removeImplements(index: number): this;
     /**
-     * Removes the implements.
+     * Removes the specified implements.
      * @param implementsNode - Node of the implements to remove.
      */
     removeImplements(implementsNode: ExpressionWithTypeArguments): this;
@@ -52,8 +50,8 @@ export interface ImplementsClauseableNode {
 
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
     return class extends Base implements ImplementsClauseableNode {
-        getImplements(heritageClauses: HeritageClause[] = this.getHeritageClauses()): ExpressionWithTypeArguments[] {
-            const implementsClause = getImplementsHeritageClause(heritageClauses);
+        getImplements(): ExpressionWithTypeArguments[] {
+            const implementsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
@@ -76,7 +74,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             }
 
             const heritageClauses = this.getHeritageClauses();
-            const implementsTypes = this.getImplements(heritageClauses);
+            const implementsTypes = this.getImplements();
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
@@ -107,26 +105,12 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
         removeImplements(index: number): this;
         removeImplements(implementsNode: ExpressionWithTypeArguments): this;
         removeImplements(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
-            const implementsNodes = this.getImplements();
-            if (implementsNodes.length === 0)
+            const implementsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ImplementsKeyword);
+            if (implementsClause == null)
                 throw new errors.InvalidOperationError("Cannot remove an implements when none exist.");
-            const implementsNodeToRemove = typeof implementsNodeOrIndex === "number" ? getImplementsFromIndex(implementsNodeOrIndex) : implementsNodeOrIndex;
 
-            if (implementsNodes.length === 1) {
-                const heritageClauses = this.getHeritageClauses();
-                if (heritageClauses.length === 1)
-                    removeChildren({ children: [heritageClauses[0].getParentSyntaxListOrThrow()], removePrecedingSpaces: true });
-                else
-                    removeChildren({ children: [getImplementsHeritageClause(heritageClauses)!], removePrecedingSpaces: true });
-            }
-            else
-                removeCommaSeparatedChild(implementsNodeToRemove, { removePrecedingSpaces: implementsNodeToRemove !== implementsNodes[0] });
-
+            implementsClause.removeExpression(implementsNodeOrIndex);
             return this;
-
-            function getImplementsFromIndex(index: number) {
-                return implementsNodes[verifyAndGetIndex(index, implementsNodes.length - 1)];
-            }
         }
 
         fill(structure: Partial<ImplementsClauseableNodeStructure>) {
@@ -138,8 +122,4 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             return this;
         }
     };
-}
-
-function getImplementsHeritageClause(heritageClauses: HeritageClause[]) {
-    return ArrayUtils.find(heritageClauses, c => c.compilerNode.token === ts.SyntaxKind.ImplementsKeyword);
 }

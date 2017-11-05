@@ -40,35 +40,54 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.setExtends), () => {
+        function doTest(startCode: string, extendsText: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            firstChild.setExtends(extendsText);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
         it("should set an extends", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("  class Identifier {}  ");
-            firstChild.setExtends("Base");
-            expect(sourceFile.getFullText()).to.equal("  class Identifier extends Base {}  ");
+            doTest("  class Identifier {}  ", "Base", "  class Identifier extends Base {}  ");
         });
 
         it("should set an extends when an implements exists", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier implements IBase {}");
-            firstChild.setExtends("Base");
-            expect(sourceFile.getFullText()).to.equal("class Identifier extends Base implements IBase {}");
+            doTest("class Identifier implements IBase {}", "Base", "class Identifier extends Base implements IBase {}");
         });
 
         it("should set an extends when the brace is right beside the identifier", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("  class Identifier{}  ");
-            firstChild.setExtends("Base");
-            expect(sourceFile.getFullText()).to.equal("  class Identifier extends Base {}  ");
+            doTest("  class Identifier{}  ", "Base", "  class Identifier extends Base {}  ");
         });
 
         it("should set an extends when an extends already exists", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier extends Base1 {}");
-            firstChild.setExtends("Base2");
-            expect(sourceFile.getFullText()).to.equal("class Identifier extends Base2 {}");
+            doTest("class Identifier extends Base1 {}", "Base2", "class Identifier extends Base2 {}");
         });
 
-        it("should throw an error when providing invalid input", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier extends Base1 {}");
-            expect(() => firstChild.setExtends("")).to.throw();
-            expect(() => firstChild.setExtends("  ")).to.throw();
-            expect(() => firstChild.setExtends(5 as any)).to.throw();
+        it("should remove when providing an empty string", () => {
+            doTest("class Identifier extends Base1 {}", "", "class Identifier {}");
+        });
+
+        it("should remove when providing whitespace string", () => {
+            doTest("class Identifier extends Base1 {}", "    ", "class Identifier {}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.removeExtends), () => {
+        function doTest(startCode: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            firstChild.removeExtends();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not do anything when there's no thing to remove", () => {
+            doTest("class Identifier {}", "class Identifier {}");
+        });
+
+        it("should remove when there is an extends", () => {
+            doTest("class Identifier extends Base1 {}", "class Identifier {}");
+        });
+
+        it("should remove when there is an extends and implements", () => {
+            doTest("class Identifier extends Base1 implements T {}", "class Identifier implements T {}");
         });
     });
 

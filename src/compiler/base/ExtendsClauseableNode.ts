@@ -1,11 +1,11 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
 import * as errors from "./../../errors";
 import {ExtendsClauseableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
+import {HeritageClause} from "./../general";
 import {HeritageClauseableNode} from "./HeritageClauseableNode";
 import {ExpressionWithTypeArguments} from "./../type/ExpressionWithTypeArguments";
 
@@ -36,12 +36,22 @@ export interface ExtendsClauseableNode {
      * @param text - Text to insert for the extends clause.
      */
     insertExtends(index: number, text: string): ExpressionWithTypeArguments;
+    /**
+     * Removes the extends at the specified index.
+     * @param index - Index to remove.
+     */
+    removeExtends(index: number): this;
+    /**
+     * Removes the specified extends.
+     * @param extendsNode - Node of the extend to remove.
+     */
+    removeExtends(extendsNode: ExpressionWithTypeArguments): this;
 }
 
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
         getExtends(): ExpressionWithTypeArguments[] {
-            const extendsClause = ArrayUtils.find(this.getHeritageClauses(), c => c.compilerNode.token === ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 
@@ -88,6 +98,17 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             });
 
             return getNodeOrNodesToReturn(this.getExtends(), index, length);
+        }
+
+        removeExtends(index: number): this;
+        removeExtends(implementsNode: ExpressionWithTypeArguments): this;
+        removeExtends(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
+            const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+            if (extendsClause == null)
+                throw new errors.InvalidOperationError("Cannot remove an extends when none exist.");
+
+            extendsClause.removeExpression(implementsNodeOrIndex);
+            return this;
         }
 
         fill(structure: Partial<ExtendsClauseableNodeStructure>) {
