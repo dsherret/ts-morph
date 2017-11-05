@@ -107,6 +107,18 @@ describe(nameof(Decorator), () => {
         });
     });
 
+    describe(nameof<Decorator>(d => d.getCallExpressionOrThrow), () => {
+        it("should return undefined when not a decorator factory", () => {
+            const {firstDecorator} = getFirstClassDecorator("@decorator\nclass Identifier {}");
+            expect(() => firstDecorator.getCallExpressionOrThrow()).to.throw();
+        });
+
+        it("should get the compiler call expression when a decorator factory", () => {
+            const {firstDecorator} = getFirstClassDecorator("@decorator('str', 4)\nclass Identifier {}");
+            expect(firstDecorator.getCallExpressionOrThrow().getArguments().length).to.equal(2);
+        });
+    });
+
     describe(nameof<Decorator>(d => d.getArguments), () => {
         it("should return an empty array when not a decorator factory", () => {
             const {firstDecorator} = getFirstClassDecorator("@decorator\nclass Identifier {}");
@@ -128,6 +140,59 @@ describe(nameof(Decorator), () => {
         it("should get the type arguments when a decorator factory", () => {
             const {firstDecorator} = getFirstClassDecorator("@decorator<number, string>()\nclass Identifier {}");
             expect(firstDecorator.getTypeArguments().length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Decorator>(n => n.insertTypeArguments), () => {
+        function doTest(code: string, index: number, texts: string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const result = firstChild.getDecorators()[0].insertTypeArguments(index, texts);
+            expect(result.map(t => t.getText())).to.deep.equal(texts);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        // most of these tests are in typeArgumentedNodeTests
+        it("should insert multiple type args when none exist", () => {
+            doTest("@dec()\nclass T {}", 0, ["5", "6", "7"], "@dec<5, 6, 7>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<Decorator>(n => n.insertTypeArgument), () => {
+        function doTest(code: string, index: number, text: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const result = firstChild.getDecorators()[0].insertTypeArgument(index, text);
+            expect(result.getText()).to.equal(text);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert a type arg", () => {
+            doTest("@dec<1, 3>()\nclass T {}", 1, "2", "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<Decorator>(n => n.addTypeArguments), () => {
+        function doTest(code: string, texts: string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const result = firstChild.getDecorators()[0].addTypeArguments(texts);
+            expect(result.map(t => t.getText())).to.deep.equal(texts);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple type args", () => {
+            doTest("@dec<1>()\nclass T {}", ["2", "3"], "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<Decorator>(n => n.addTypeArgument), () => {
+        function doTest(code: string, text: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const result = firstChild.getDecorators()[0].addTypeArgument(text);
+            expect(result.getText()).to.equal(text);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add a type arg", () => {
+            doTest("@dec<1, 2>()\nclass T {}", "3", "@dec<1, 2, 3>()\nclass T {}");
         });
     });
 
@@ -213,41 +278,18 @@ describe(nameof(Decorator), () => {
 
     describe(nameof<Decorator>(d => d.removeArgument), () => {
         function doTest(text: string, removeIndex: number, expectedText: string) {
-            doTestByIndex();
-            doTestByArg();
-
-            function doTestByIndex() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
-                firstChild.getDecorators()[0].removeArgument(removeIndex);
-                expect(sourceFile.getFullText()).to.equal(expectedText);
-            }
-
-            function doTestByArg() {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
-                firstChild.getDecorators()[0].removeArgument(firstChild.getDecorators()[0].getArguments()[removeIndex]);
-                expect(sourceFile.getFullText()).to.equal(expectedText);
-            }
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
+            firstChild.getDecorators()[0].removeArgument(removeIndex);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
-        it("should throw when specifying an invalid index", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("@test(1, 2, 3)\nclass T {}");
-            expect(() => firstChild.getDecorators()[0].removeArgument(3)).to.throw();
-        });
-
+        // most of these tests are in argumentedNodeTests
         it("should throw when removing and none exist", () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("@test()\nclass T {}");
             expect(() => firstChild.getDecorators()[0].removeArgument(0)).to.throw();
         });
 
-        it("should remove a decorator argument at the start", () => {
-            doTest("@test(1, 2, 3)\nclass T {}", 0, "@test(2, 3)\nclass T {}");
-        });
-
-        it("should remove a decorator argument in the middle", () => {
-            doTest("@test(1, 2, 3)\nclass T {}", 1, "@test(1, 3)\nclass T {}");
-        });
-
-        it("should remove a decorator argument at the end", () => {
+        it("should remove a decorator argument", () => {
             doTest("@test(1, 2, 3)\nclass T {}", 2, "@test(1, 2)\nclass T {}");
         });
     });

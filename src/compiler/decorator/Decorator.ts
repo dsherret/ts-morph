@@ -62,7 +62,14 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     }
 
     /**
-     * Gets the compiler call expression if a decorator factory.
+     * Gets the call expression if a decorator factory, or throws.
+     */
+    getCallExpressionOrThrow(): CallExpression {
+        return errors.throwIfNullOrUndefined(this.getCallExpression(), "Expected to find a call expression.");
+    }
+
+    /**
+     * Gets the call expression if a decorator factory.
      */
     getCallExpression(): CallExpression | undefined {
         if (!this.isDecoratorFactory())
@@ -92,6 +99,40 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     getTypeArguments(): TypeNode[] {
         const callExpression = this.getCallExpression();
         return callExpression == null ? [] : callExpression.getTypeArguments();
+    }
+
+    /**
+     * Adds a type argument.
+     * @param argumentTexts - Argument text.
+     */
+    addTypeArgument(argumentText: string) {
+        return this.getCallExpressionOrThrow().addTypeArgument(argumentText);
+    }
+
+    /**
+     * Adds type arguments.
+     * @param argumentTexts - Argument texts.
+     */
+    addTypeArguments(argumentTexts: string[]) {
+        return this.getCallExpressionOrThrow().addTypeArguments(argumentTexts);
+    }
+
+    /**
+     * Inserts a type argument.
+     * @param index - Index to insert at.
+     * @param argumentTexts - Argument text.
+     */
+    insertTypeArgument(index: number, argumentText: string) {
+        return this.getCallExpressionOrThrow().insertTypeArgument(index, argumentText);
+    }
+
+    /**
+     * Inserts type arguments.
+     * @param index - Index to insert at.
+     * @param argumentTexts - Argument texts.
+     */
+    insertTypeArguments(index: number, argumentTexts: string[]) {
+        return this.getCallExpressionOrThrow().insertTypeArguments(index, argumentTexts);
     }
 
     /**

@@ -65,7 +65,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
         for (const classVM of classVMs.filter(c => nodeToWrapperVMs.some(vm => vm.wrapperName === c.name))) {
             methodInfos[classVM.name] = {
                 name: classVM.name,
-                syntaxKinds: [getSyntaxKindForName(classVM.name)],
+                syntaxKinds: [...getSyntaxKindsForName(classVM.name)],
                 isMixin: false
             };
 
@@ -83,16 +83,16 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                         isMixin: true
                     };
                 }
-                methodInfos[mixin.name].syntaxKinds.push(getSyntaxKindForName(classVM.name));
+                methodInfos[mixin.name].syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
                 fillMixinable(classVM, mixin);
             }
         }
 
-        function getSyntaxKindForName(name: string) {
+        function getSyntaxKindsForName(name: string) {
             const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperVMs, n => n.wrapperName === name);
             if (nodeToWrapperVM == null)
                 throw new Error("Could not find: " + name);
-            return nodeToWrapperVM.syntaxKindName;
+            return nodeToWrapperVM.syntaxKindNames;
         }
     }
 }

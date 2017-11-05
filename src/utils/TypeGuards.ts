@@ -763,6 +763,7 @@ export class TypeGuards {
     static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
         switch (node.getKind()) {
             case ts.SyntaxKind.QualifiedName:
+            case ts.SyntaxKind.FirstNode:
                 return true;
             default:
                 return false;
@@ -972,6 +973,20 @@ export class TypeGuards {
     static isTypeArgumentedNode(node: compiler.Node): node is compiler.TypeArgumentedNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.CallExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeNode.
+     * @param node - Node to check.
+     */
+    static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FirstTypeNode:
+            case ts.SyntaxKind.LastTypeNode:
                 return true;
             default:
                 return false;

@@ -37,16 +37,18 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
     const structures: MethodDeclarationStructure[] = [];
 
     for (const nodeToWrapper of nodeToWrappers) {
-        const typeText = `ts.SyntaxKind.${nodeToWrapper.syntaxKindName}`;
+        for (const syntaxKindName of nodeToWrapper.syntaxKindNames) {
+            const typeText = `ts.SyntaxKind.${syntaxKindName}`;
 
-        structures.push({
-            name: method.getName(),
-            parameters: [{ name: "kind", type: `ts.SyntaxKind.${nodeToWrapper.syntaxKindName}` }],
-            returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
-            docs: [{
-                description: doc
-            }]
-        });
+            structures.push({
+                name: method.getName(),
+                parameters: [{ name: "kind", type: `ts.SyntaxKind.${syntaxKindName}` }],
+                returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
+                docs: [{
+                    description: doc
+                }]
+            });
+        }
     }
 
     classDeclaration.insertMethods(method.getChildIndex(), structures);

@@ -53,6 +53,12 @@ Get the decorator's type arguments by calling `.getTypeArguments()`:
 const typeArgs = decorator.getTypeArguments(); // returns: TypeNode[]
 ```
 
+Add and insert via `.insertTypeArgument(...)`, `.insertTypeArguments(...)`, `.addTypeArgument(...)`, or `.addTypeArguments(...)`.
+
+```typescript
+const typeArgs = decorator.insertTypeArguments(1, ["string", "number"]);
+```
+
 And remove them by calling `.removeTypeArgument()`:
 
 ```typescript

@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
+import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {TypeNode} from "./../type";
 
@@ -12,6 +13,28 @@ export interface TypeArgumentedNode {
      * Gets all the type arguments of the node.
      */
     getTypeArguments(): TypeNode[];
+    /**
+     * Adds a type argument.
+     * @param argumentText - Argument text to add.
+     */
+    addTypeArgument(argumentText: string): TypeNode;
+    /**
+     * Adds type arguments.
+     * @param argumentTexts - Argument texts to add.
+     */
+    addTypeArguments(argumentTexts: string[]): TypeNode[];
+    /**
+     * Inserts a type argument.
+     * @param index - Index to insert at.
+     * @param argumentText - Argument text to insert.
+     */
+    insertTypeArgument(index: number, argumentText: string): TypeNode;
+    /**
+     * Inserts type arguments.
+     * @param index - Index to insert at.
+     * @param argumentTexts - Argument texts to insert.
+     */
+    insertTypeArguments(index: number, argumentTexts: string[]): TypeNode[];
     /**
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
@@ -36,6 +59,42 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             if (this.compilerNode.typeArguments == null)
                 return [];
             return this.compilerNode.typeArguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile) as TypeNode);
+        }
+
+        addTypeArgument(argumentText: string) {
+            return this.addTypeArguments([argumentText])[0];
+        }
+
+        addTypeArguments(argumentTexts: string[]) {
+            return this.insertTypeArguments(this.getTypeArguments().length, argumentTexts);
+        }
+
+        insertTypeArgument(index: number, argumentText: string) {
+            return this.insertTypeArguments(index, [argumentText])[0];
+        }
+
+        insertTypeArguments(index: number, argumentTexts: string[]) {
+            if (ArrayUtils.isNullOrEmpty(argumentTexts))
+                return [];
+
+            const typeArguments = this.getTypeArguments();
+            index = verifyAndGetIndex(index, typeArguments.length);
+
+            if (typeArguments.length === 0) {
+                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier);
+                insertIntoParent({
+                    insertPos: identifier.getEnd(),
+                    childIndex: identifier.getChildIndex() + 1,
+                    insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
+                    parent: this,
+                    newText: `<${argumentTexts.join(", ")}>`
+                });
+            }
+            else {
+                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: typeArguments, insertIndex: index, newTexts: argumentTexts });
+            }
+
+            return this.getTypeArguments().slice(index, index + argumentTexts.length);
         }
 
         removeTypeArgument(typeArg: Node): this;

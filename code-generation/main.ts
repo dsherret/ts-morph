@@ -10,7 +10,7 @@ const ast = getAst();
 const classVMs = Array.from(getClassViewModels(ast));
 const structureVMs = Array.from(getStructureViewModels(ast));
 // const overloadStructureVMs = structureVMs.filter(s => isOverloadStructure(s));
-const nodeToWrapperVMs = Array.from(getNodeToWrapperMappings(getAst()));
+const nodeToWrapperVMs = getNodeToWrapperMappings(getAst());
 
 // get structure functions
 const getStructureCode = createGetStructureFunctions(structureVMs);

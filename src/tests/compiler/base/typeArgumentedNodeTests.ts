@@ -19,6 +19,74 @@ describe(nameof(TypeArgumentedNode), () => {
         });
     });
 
+    describe(nameof<TypeArgumentedNode>(n => n.insertTypeArguments), () => {
+        function doTest(code: string, index: number, texts: string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const result = callExpr.insertTypeArguments(index, texts);
+            expect(result.map(t => t.getText())).to.deep.equal(texts);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert multiple type args when none exist", () => {
+            doTest("@dec()\nclass T {}", 0, ["5", "6", "7"], "@dec<5, 6, 7>()\nclass T {}");
+        });
+
+        it("should insert multiple type args at the beginning", () => {
+            doTest("@dec<3>()\nclass T {}", 0, ["1", "2"], "@dec<1, 2, 3>()\nclass T {}");
+        });
+
+        it("should insert multiple type args in the middle", () => {
+            doTest("@dec<1, 4>()\nclass T {}", 1, ["2", "3"], "@dec<1, 2, 3, 4>()\nclass T {}");
+        });
+
+        it("should insert multiple type args at the end", () => {
+            doTest("@dec<1>()\nclass T {}", 1, ["2", "3"], "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<TypeArgumentedNode>(n => n.insertTypeArgument), () => {
+        function doTest(code: string, index: number, text: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const result = callExpr.insertTypeArgument(index, text);
+            expect(result.getText()).to.equal(text);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should insert a type arg", () => {
+            doTest("@dec<1, 3>()\nclass T {}", 1, "2", "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<TypeArgumentedNode>(n => n.addTypeArguments), () => {
+        function doTest(code: string, texts: string[], expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const result = callExpr.addTypeArguments(texts);
+            expect(result.map(t => t.getText())).to.deep.equal(texts);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple type args", () => {
+            doTest("@dec<1>()\nclass T {}", ["2", "3"], "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
+    describe(nameof<TypeArgumentedNode>(n => n.addTypeArgument), () => {
+        function doTest(code: string, text: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
+            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const result = callExpr.addTypeArgument(text);
+            expect(result.getText()).to.equal(text);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should add a type arg", () => {
+            doTest("@dec<1, 2>()\nclass T {}", "3", "@dec<1, 2, 3>()\nclass T {}");
+        });
+    });
+
     describe(nameof<TypeArgumentedNode>(n => n.removeTypeArgument), () => {
         it("should throw when there are no current type arguments", () => {
             const {firstChild} = getInfoFromText<ClassDeclaration>("@decorator(arg1, arg2)\nclass MyClass {}");
