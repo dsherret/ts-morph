@@ -95,3 +95,11 @@ export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: st
         throw new InvalidOperationError(typeof errorMessage === "string" ? errorMessage : errorMessage());
     return value;
 }
+
+/**
+ * Throw if the value should have been the never type.
+ * @param value - Value to check.
+ */
+export function getNotImplementedForNeverValueError(value: never) {
+    return new NotImplementedError(`Not implemented value: ${value}`);
+}

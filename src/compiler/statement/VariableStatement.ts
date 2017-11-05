@@ -18,7 +18,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
         callBaseFill(VariableStatementBase.prototype, this, structure);
 
         if (structure.declarationType != null)
-            throw new errors.NotImplementedError("Filling variable declaration type not implemented. Please comment on issue #27 if you need this and I will increase the priority.");
+            this.getDeclarationList().setDeclarationType(structure.declarationType);
         if (structure.declarations != null)
             throw new errors.NotImplementedError("Filling variable declarations not implemented. Please open an issue if you need this and I will increase the prioirty.");
 

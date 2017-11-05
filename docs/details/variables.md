@@ -46,8 +46,6 @@ const var1 = "5",
     var2 = "6";
 ```
 
-### Get variable declaration list
-
 Get one from the variable statement:
 
 ```typescript
@@ -62,9 +60,9 @@ const firstConstDeclaration = sourceFile.getVariableDeclarationList(l =>
     l.getDeclarationType() === VariableDeclarationType.Const);
 ```
 
-### Get declaration type
+### Declaration type
 
-Use:
+Get:
 
 ```typescript
 const declarationType = variableDeclarationList.getDeclarationType();
@@ -73,9 +71,17 @@ const declarationType = variableDeclarationList.getDeclarationType();
 It will return one of the following values:
 
 ```typescript
+import {VariableDeclarationType} from "ts-simple-ast";
+
 VariableDeclarationType.Let;
 VariableDeclarationType.Const;
 VariableDeclarationType.Var;
+```
+
+Set:
+
+```typescript
+variableDeclarationList.setDeclarationType(VariableDeclarationType.Const);
 ```
 
 ## Variable Declaration
