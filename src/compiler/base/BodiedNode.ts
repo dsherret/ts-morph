@@ -16,7 +16,7 @@ export interface BodiedNode {
     getBody(): Node;
     /**
      * Sets the body text.
-     * @param writerFunction - Function for using a writer to write out the body text.
+     * @param writerFunction - Write the text using the provided writer.
      */
     setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
     /**

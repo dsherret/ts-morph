@@ -672,13 +672,11 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     }
 
     /**
-     * Gets the position of the start of the line that this node is on.
+     * Gets the position of the start of the line that this node starts on.
      */
     getStartLinePos() {
         const sourceFileText = this.sourceFile.getFullText();
-        const startPos = this.getStart();
-
-        return getPreviousMatchingPos(sourceFileText, startPos, char => char === "\n");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(), char => char === "\n");
     }
 
     /**
@@ -705,7 +703,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Replaces the text of the current node with new text.
      *
      * This will dispose the current node and return a new node that can be asserted or type guarded to the correct type.
-     * @param writerFunction - Writer function to replace the text with.
+     * @param writerFunction - Write the text using the provided writer.
      * @returns The new node.
      */
     replaceWithText(writerFunction: (writer: CodeBlockWriter) => void): Node;

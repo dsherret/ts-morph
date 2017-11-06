@@ -20,7 +20,7 @@ export interface BodyableNode {
     getBody(): Node | undefined;
     /**
      * Sets the body text. A body is required to do this operation.
-     * @param writerFunction - Function for using a writer to write out the body text.
+     * @param writerFunction - Write the text using the provided writer.
      */
     setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
     /**

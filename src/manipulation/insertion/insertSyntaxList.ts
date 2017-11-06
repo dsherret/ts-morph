@@ -1,6 +1,6 @@
 ﻿import {Node} from "./../../compiler";
 import {replaceTreeCreatingSyntaxList} from "./../tree";
-import {getNewReplacementSourceFile} from "./getNewReplacementSourceFile";
+import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
 
 export interface InsertSyntaxListOptions {
     insertPos: number;

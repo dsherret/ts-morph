@@ -11,7 +11,7 @@ export interface GetIndentedTextOptions {
 export function getIndentedText(opts: GetIndentedTextOptions) {
     const {textOrWriterFunction, manipulationSettings, indentationText} = opts;
     const newLineKind = manipulationSettings.getNewLineKind();
-    const originalText = getTextFromStringOrWriter(manipulationSettings, textOrWriterFunction) || "";
+    const originalText = getTextFromStringOrWriter(manipulationSettings, textOrWriterFunction);
     if (originalText.length > 0)
         return originalText.split(/\r?\n/).map(t => t.length > 0 ? indentationText + t : t).join(newLineKind);
     return originalText;

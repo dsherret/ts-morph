@@ -50,7 +50,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             if (docCommentNodes.length === 0)
                 return undefined;
 
-            const texts = docCommentNodes.map(n => (n.compilerNode.comment || "").trim());
+            const texts = docCommentNodes.map(n => (n.getComment() || "").trim());
             return texts.filter(t => t.length > 0).join(this.global.manipulationSettings.getNewLineKind());
         }
 

@@ -44,5 +44,12 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.VariableStatement]: compiler.VariableStatement,
     [ts.SyntaxKind.JSDocComment]: compiler.JSDoc,
     [ts.SyntaxKind.FirstTypeNode]: compiler.TypeNode,
-    [ts.SyntaxKind.LastTypeNode]: compiler.TypeNode
+    [ts.SyntaxKind.LastTypeNode]: compiler.TypeNode,
+    [ts.SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag,
+    [ts.SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag,
+    [ts.SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag,
+    [ts.SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag,
+    [ts.SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag,
+    [ts.SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag,
+    [ts.SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag
 };

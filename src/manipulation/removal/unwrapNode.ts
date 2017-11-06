@@ -2,7 +2,7 @@
 import {Node} from "./../../compiler";
 import {isStringNode} from "./../../utils";
 import {replaceTreeUnwrappingNode} from "./../tree";
-import {getNewReplacementSourceFile} from "./../insertion/getNewReplacementSourceFile";
+import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
 
 export function unwrapNode(node: Node) {
     const tempSourceFile = getNewReplacementSourceFile({

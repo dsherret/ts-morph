@@ -1,4 +1,4 @@
-﻿import {Node, SourceFile} from "./../../compiler";
+﻿import {Node, SourceFile} from "./../compiler";
 
 export interface GetNewReplacementSourceFileOptions {
     insertPos: number;

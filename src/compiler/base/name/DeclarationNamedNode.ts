@@ -22,6 +22,10 @@ export interface DeclarationNamedNode {
      */
     getName(): string | undefined;
     /**
+     * Gets the name or throws if it doens't exist.
+     */
+    getNameOrThrow(): string;
+    /**
      * Renames the name.
      * @param text - Text to set as the name.
      */
@@ -50,6 +54,10 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);
             }
+        }
+
+        getNameOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getName(), "Expected to find a name.");
         }
 
         getName() {

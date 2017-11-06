@@ -1,6 +1,6 @@
 ﻿import {Node} from "./../../compiler";
 import {replaceTreeWithRange} from "./../tree";
-import {getNewReplacementSourceFile} from "./getNewReplacementSourceFile";
+import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;

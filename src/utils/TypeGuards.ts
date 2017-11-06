@@ -548,6 +548,110 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JSDocAugmentsTag.
+     * @param node - Node to check.
+     */
+    static isJSDocAugmentsTag(node: compiler.Node): node is compiler.JSDocAugmentsTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocAugmentsTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocClassTag.
+     * @param node - Node to check.
+     */
+    static isJSDocClassTag(node: compiler.Node): node is compiler.JSDocClassTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocClassTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocPropertyLikeTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPropertyLikeTag(node: compiler.Node): node is compiler.JSDocPropertyLikeTag & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocPropertyTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocPropertyTag.
+     * @param node - Node to check.
+     */
+    static isJSDocPropertyTag(node: compiler.Node): node is compiler.JSDocPropertyTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocPropertyTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocReturnTag.
+     * @param node - Node to check.
+     */
+    static isJSDocReturnTag(node: compiler.Node): node is compiler.JSDocReturnTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocReturnTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocTypeTag.
+     * @param node - Node to check.
+     */
+    static isJSDocTypeTag(node: compiler.Node): node is compiler.JSDocTypeTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocTypeTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocTypedefTag.
+     * @param node - Node to check.
+     */
+    static isJSDocTypedefTag(node: compiler.Node): node is compiler.JSDocTypedefTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocTypedefTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocUnknownTag.
+     * @param node - Node to check.
+     */
+    static isJSDocUnknownTag(node: compiler.Node): node is compiler.JSDocUnknownTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a MethodDeclaration.
      * @param node - Node to check.
      */
