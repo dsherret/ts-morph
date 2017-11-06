@@ -5,8 +5,6 @@ export function isAllowedClass(classVM: ClassViewModel) {
         // not supported yet...
         case "GetAccessorDeclaration":
         case "SetAccessorDeclaration":
-        // no need to test this one
-        case "VariableDeclarationList":
             return false;
         default:
             return true;

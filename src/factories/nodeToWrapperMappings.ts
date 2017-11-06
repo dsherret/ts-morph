@@ -40,7 +40,6 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration,
     [ts.SyntaxKind.TypeReference]: compiler.TypeReferenceNode,
     [ts.SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration,
-    [ts.SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList,
     [ts.SyntaxKind.VariableStatement]: compiler.VariableStatement,
     [ts.SyntaxKind.JSDocComment]: compiler.JSDoc,
     [ts.SyntaxKind.FirstTypeNode]: compiler.TypeNode,

@@ -1,4 +1,5 @@
-﻿export * from "./doc/JSDoc";
+﻿export * from "./doc/base";
+export * from "./doc/JSDoc";
 export * from "./doc/JSDocTag";
 export * from "./doc/JSDocUnknownTag";
 export * from "./doc/JSDocAugmentsTag";

@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, VariableStatement, VariableDeclarationList, VariableDeclaration, VariableDeclarationType} from "./../../../../compiler";
+import {StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationType} from "./../../../../compiler";
 import {VariableStatementStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
@@ -115,58 +115,24 @@ describe(nameof(StatementedNode), () => {
 
     describe(nameof<StatementedNode>(n => n.getVariableStatement), () => {
         it("should get a variable statement when something matches", () => {
-            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarationList().getDeclarations().length === 2)!;
-            expect(statement.getDeclarationList().getDeclarations()[0].getName()).to.equal("Identifier2");
+            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarations().length === 2)!;
+            expect(statement.getDeclarations()[0].getName()).to.equal("Identifier2");
         });
 
         it("should return undefined when nothing matches", () => {
-            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarationList().getDeclarations().length === 5);
+            const statement = variablesSourceFile.getVariableStatement(s => s.getDeclarations().length === 5);
             expect(statement).to.be.undefined;
         });
     });
 
     describe(nameof<StatementedNode>(n => n.getVariableStatementOrThrow), () => {
         it("should get a variable statement when something matches", () => {
-            const statement = variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarationList().getDeclarations().length === 2);
-            expect(statement.getDeclarationList().getDeclarations()[0].getName()).to.equal("Identifier2");
+            const statement = variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarations().length === 2);
+            expect(statement.getDeclarations()[0].getName()).to.equal("Identifier2");
         });
 
         it("should throw when nothing matches", () => {
-            expect(() => variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarationList().getDeclarations().length === 5)).to.throw();
-        });
-    });
-
-    describe(nameof<StatementedNode>(n => n.getVariableDeclarationLists), () => {
-        const declarationLists = variablesSourceFile.getVariableDeclarationLists();
-        it("should have the expected number of variable declaration lists", () => {
-            expect(declarationLists.length).to.equal(2);
-        });
-
-        it("should have correct type", () => {
-            expect(declarationLists[0]).to.be.instanceOf(VariableDeclarationList);
-        });
-    });
-
-    describe(nameof<StatementedNode>(n => n.getVariableDeclarationList), () => {
-        it("should get a variable declaration list when something matches", () => {
-            const list = variablesSourceFile.getVariableDeclarationList(s => s.getDeclarations().length === 2)!;
-            expect(list.getDeclarations()[0].getName()).to.equal("Identifier2");
-        });
-
-        it("should return undefined when nothing matches", () => {
-            const list = variablesSourceFile.getVariableDeclarationList(s => s.getDeclarations().length === 5);
-            expect(list).to.be.undefined;
-        });
-    });
-
-    describe(nameof<StatementedNode>(n => n.getVariableDeclarationListOrThrow), () => {
-        it("should get a variable declaration list when something matches", () => {
-            const list = variablesSourceFile.getVariableDeclarationListOrThrow(s => s.getDeclarations().length === 2);
-            expect(list.getDeclarations()[0].getName()).to.equal("Identifier2");
-        });
-
-        it("should throw when nothing matches", () => {
-            expect(() => variablesSourceFile.getVariableDeclarationListOrThrow(s => s.getDeclarations().length === 5)).to.throw();
+            expect(() => variablesSourceFile.getVariableStatementOrThrow(s => s.getDeclarations().length === 5)).to.throw();
         });
     });
 

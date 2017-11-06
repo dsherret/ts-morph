@@ -373,20 +373,6 @@ export interface StatementedNode {
      */
     getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement;
     /**
-     * Gets the variable declaration lists of the direct variable statement children.
-     */
-    getVariableDeclarationLists(): statement.VariableDeclarationList[];
-    /**
-     * Gets a variable declaration list.
-     * @param findFunction - Function to use to find the variable declaration list.
-     */
-    getVariableDeclarationList(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList | undefined;
-    /**
-     * Gets a variable declaration list or throws if it doesn't exist.
-     * @param findFunction - Function to use to find the variable declaration list.
-     */
-    getVariableDeclarationListOrThrow(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList;
-    /**
      * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
      */
     getVariableDeclarations(): statement.VariableDeclaration[];
@@ -838,26 +824,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return newChildren;
         }
 
-        /* Variable declaration lists */
-
-        getVariableDeclarationLists(): statement.VariableDeclarationList[] {
-            return this.getVariableStatements().map(s => s.getDeclarationList());
-        }
-
-        getVariableDeclarationList(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList | undefined {
-            return ArrayUtils.find(this.getVariableDeclarationLists(), findFunction);
-        }
-
-        getVariableDeclarationListOrThrow(findFunction: (declaration: statement.VariableDeclarationList) => boolean): statement.VariableDeclarationList {
-            return errors.throwIfNullOrUndefined(this.getVariableDeclarationList(findFunction), "Could not find a variable declaration that matched the provided condition.");
-        }
-
         /* Variable declarations */
 
         getVariableDeclarations(): statement.VariableDeclaration[] {
             const variables: statement.VariableDeclaration[] = [];
 
-            for (const list of this.getVariableDeclarationLists()) {
+            for (const list of this.getVariableStatements()) {
                 variables.push(...list.getDeclarations());
             }
 

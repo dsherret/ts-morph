@@ -1190,19 +1190,6 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a VariableDeclarationList.
-     * @param node - Node to check.
-     */
-    static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VariableDeclarationList:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Gets if the node is a VariableStatement.
      * @param node - Node to check.
      */

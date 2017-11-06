@@ -4,6 +4,68 @@ import {VariableStatementStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(VariableStatement), () => {
+    describe(nameof<VariableStatement>(d => d.getDeclarationType), () => {
+        function doTest(code: string, expectedType: VariableDeclarationType) {
+            const {firstChild} = getInfoFromText<VariableStatement>(code);
+            expect(firstChild.getDeclarationType()).to.equal(expectedType);
+        }
+
+        it("should get var for a var variable", () => {
+            doTest("var myVar;", VariableDeclarationType.Var);
+        });
+
+        it("should get let for a let variable", () => {
+            doTest("let myVar;", VariableDeclarationType.Let);
+        });
+
+        it("should get const for a const variable", () => {
+            doTest("const myVar = 3;", VariableDeclarationType.Const);
+        });
+    });
+
+    describe(nameof<VariableStatement>(d => d.getDeclarationTypeKeyword), () => {
+        function doTest(code: string, expectedType: VariableDeclarationType) {
+            const {firstChild} = getInfoFromText<VariableStatement>(code);
+            expect(firstChild.getDeclarationTypeKeyword().getText()).to.equal(expectedType);
+        }
+
+        it("should get var for a var variable", () => {
+            doTest("var myVar;", VariableDeclarationType.Var);
+        });
+
+        it("should get let for a let variable", () => {
+            doTest("let myVar;", VariableDeclarationType.Let);
+        });
+
+        it("should get const for a const variable", () => {
+            doTest("const myVar = 3;", VariableDeclarationType.Const);
+        });
+    });
+
+    describe(nameof<VariableStatement>(d => d.setDeclarationType), () => {
+        function doTest(code: string, newType: VariableDeclarationType, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(code);
+            firstChild.setDeclarationType(newType);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not change the type when it is the same", () => {
+            doTest("var myVar;", VariableDeclarationType.Var, "var myVar;");
+        });
+
+        it("should change to let", () => {
+            doTest("var myVar;", VariableDeclarationType.Let, "let myVar;");
+        });
+
+        it("should change to const", () => {
+            doTest("var myVar;", VariableDeclarationType.Const, "const myVar;");
+        });
+
+        it("should change to var", () => {
+            doTest("let myVar;", VariableDeclarationType.Var, "var myVar;");
+        });
+    });
+
     describe(nameof<VariableStatement>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);

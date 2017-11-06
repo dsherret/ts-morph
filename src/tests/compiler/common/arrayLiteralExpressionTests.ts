@@ -6,7 +6,7 @@ import {getInfoFromText} from "./../testHelpers";
 describe(nameof(ArrayLiteralExpression), () => {
     function getArrayLiteralExpression(text: string) {
         const opts = getInfoFromText<VariableStatement>(text);
-        const declaration = opts.firstChild.getDeclarationList().getDeclarations()[0];
+        const declaration = opts.firstChild.getDeclarations()[0];
         return {
             arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(ts.SyntaxKind.ArrayLiteralExpression) as ArrayLiteralExpression,
             ...opts

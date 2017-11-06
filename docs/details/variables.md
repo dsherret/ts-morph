@@ -37,35 +37,12 @@ Call `.remove()`:
 variableStatement.remove();
 ```
 
-## Variable Declaration List
-
-Example:
-
-```typescript
-const var1 = "5",
-    var2 = "6";
-```
-
-Get one from the variable statement:
-
-```typescript
-const declarationList = variableStatement.getDeclarationList();
-```
-
-Or from source files, namespaces, and function bodies:
-
-```typescript
-const variableDeclarationLists = sourceFile.getVariableDeclarationLists();
-const firstConstDeclaration = sourceFile.getVariableDeclarationList(l =>
-    l.getDeclarationType() === VariableDeclarationType.Const);
-```
-
 ### Declaration type
 
 Get:
 
 ```typescript
-const declarationType = variableDeclarationList.getDeclarationType();
+const declarationType = variableStatement.getDeclarationType();
 ```
 
 It will return one of the following values:
@@ -81,19 +58,19 @@ VariableDeclarationType.Var;
 Set:
 
 ```typescript
-variableDeclarationList.setDeclarationType(VariableDeclarationType.Const);
+variableStatement.setDeclarationType(VariableDeclarationType.Const);
 ```
 
 ## Variable Declaration
 
-These are the individual declarations within a variable declaration list.
+These are the individual declarations within a variable statement.
 
 ### Get variable declaration
 
-Get them from the variable declaration list:
+Get them from the variable statement:
 
 ```typescript
-const variableDeclarations = variableDeclarationList.getDeclarations();
+const variableDeclarations = variableStatement.getDeclarations();
 ```
 
 Or from source files, namespaces, and function bodies:

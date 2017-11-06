@@ -6,7 +6,7 @@ import {getInfoFromText} from "./../testHelpers";
 describe(nameof(Type), () => {
     function getTypeFromText(text: string) {
         const result = getInfoFromText<VariableStatement>(text);
-        return {...result, firstType: result.firstChild.getDeclarationList().getDeclarations()[0].getType()};
+        return {...result, firstType: result.firstChild.getDeclarations()[0].getType()};
     }
 
     describe(nameof<Type>(t => t.compilerType), () => {

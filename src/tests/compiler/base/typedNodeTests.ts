@@ -5,8 +5,8 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypedNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");
-    const implicitVarDeclaration = mainSourceFile.getVariableStatements()[0].getDeclarationList().getDeclarations()[0];
-    const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarationList().getDeclarations()[0];
+    const implicitVarDeclaration = mainSourceFile.getVariableStatements()[0].getDeclarations()[0];
+    const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarations()[0];
     const typeAliasDeclaration = mainSourceFile.getTypeAliases()[0];
 
     describe(nameof<TypedNode>(n => n.getType), () => {
@@ -131,7 +131,7 @@ describe(nameof(TypedNode), () => {
         describe("variable declaration", () => {
             function doTest(startText: string, type: string, expectedText: string) {
                 const {firstChild} = getInfoFromText<VariableStatement>(expectedText);
-                const declaration = firstChild.getDeclarationList().getDeclarations()[0];
+                const declaration = firstChild.getDeclarations()[0];
                 declaration.setType(type);
                 expect(firstChild.getText()).to.equal(expectedText);
             }
@@ -150,7 +150,7 @@ describe(nameof(TypedNode), () => {
 
             it("should set for other declaration in list", () => {
                 const {firstChild} = getInfoFromText<VariableStatement>(`var var1, var2, var3;`);
-                const declaration = firstChild.getDeclarationList().getDeclarations()[1];
+                const declaration = firstChild.getDeclarations()[1];
                 declaration.setType("number");
                 expect(firstChild.getText()).to.equal(`var var1, var2: number, var3;`);
             });
