@@ -2,23 +2,13 @@
 title: Variables
 ---
 
-## Variables
-
-There is a hierarchy in the AST that's important to understand for variables:
-
-1. Variable statement.
-2. Variable declaration list.
-3. Variable declaration.
-
 ## Variable Statement
 
-Example:
+A variable statement looks like the following:
 
 ```typescript
 export const var1 = "5", var2 = "6";
 ```
-
-From a variable statement you will be able to get or set (if implemented) a variable declaration list, documentation, ambient information, and exported information.
 
 ### Get a variable statement
 
