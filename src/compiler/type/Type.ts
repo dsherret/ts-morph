@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getSymbolByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common/Node";
@@ -43,6 +44,13 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     getAliasSymbol(): Symbol | undefined {
         return this.compilerType.aliasSymbol == null ? undefined : this.global.compilerFactory.getSymbol(this.compilerType.aliasSymbol);
+    }
+
+    /**
+     * Gets the alias symbol if it exists, or throws.
+     */
+    getAliasSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getAliasSymbol(), "Expected to find an alias symbol.");
     }
 
     /**
@@ -184,6 +192,13 @@ export class Type<TType extends ts.Type = ts.Type> {
     getSymbol(): Symbol | undefined {
         const tsSymbol = this.compilerType.getSymbol();
         return tsSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsSymbol);
+    }
+
+    /**
+     * Gets the symbol of the type or throws.
+     */
+    getSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getSymbol(), "Expected to find a symbol.");
     }
 
     /**

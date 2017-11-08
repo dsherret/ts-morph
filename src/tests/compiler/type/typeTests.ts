@@ -242,6 +242,18 @@ describe(nameof(Type), () => {
         });
     });
 
+    describe(nameof<Type>(t => t.getSymbolOrThrow), () => {
+        it("should get symbol when it has one", () => {
+            const {firstType} = getTypeFromText("let myType: MyClass; class MyClass {}");
+            expect(firstType.getSymbolOrThrow().getName()).to.equal("MyClass");
+        });
+
+        it("should return undefined when it doesn't have one", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(() => firstType.getSymbolOrThrow()).to.throw();
+        });
+    });
+
     describe(nameof<Type>(t => t.getApparentType), () => {
         it("should get the apparent type", () => {
             const {firstType} = getTypeFromText(`const myType = 4;`);
@@ -325,14 +337,26 @@ describe(nameof(Type), () => {
     });
 
     describe(nameof<Type>(t => t.getAliasSymbol), () => {
+        it("should return the alias symbol when it exists", () => {
+            const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
+            expect(firstType.getAliasSymbol()!.getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+        });
+
         it("should return undefined when not exists", () => {
             const {firstType} = getTypeFromText("let myType: string;");
             expect(firstType.getAliasSymbol()).to.be.undefined;
         });
+    });
 
+    describe(nameof<Type>(t => t.getAliasSymbolOrThrow), () => {
         it("should return the alias symbol when it exists", () => {
             const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
-            expect(firstType.getAliasSymbol()!.getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+            expect(firstType.getAliasSymbolOrThrow().getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+        });
+
+        it("should throw when not exists", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(() => firstType.getAliasSymbolOrThrow()).to.throw();
         });
     });
 
