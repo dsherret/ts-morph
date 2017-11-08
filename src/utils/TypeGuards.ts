@@ -85,6 +85,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
                 return true;
             default:
                 return false;
@@ -112,6 +113,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case ts.SyntaxKind.GetAccessor:
             case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ModuleDeclaration:
                 return true;
             default:
@@ -245,6 +247,7 @@ export class TypeGuards {
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.EnumMember:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
@@ -382,6 +385,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a FunctionExpression.
+     * @param node - Node to check.
+     */
+    static isFunctionExpression(node: compiler.Node): node is compiler.FunctionExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a FunctionLikeDeclaration.
      * @param node - Node to check.
      */
@@ -406,6 +422,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
                 return true;
             default:
                 return false;
@@ -692,12 +709,26 @@ export class TypeGuards {
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.Parameter:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NameableNode.
+     * @param node - Node to check.
+     */
+    static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionExpression:
                 return true;
             default:
                 return false;
@@ -794,6 +825,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -916,6 +948,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -978,6 +1011,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -1012,6 +1046,7 @@ export class TypeGuards {
             case ts.SyntaxKind.SourceFile:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ModuleDeclaration:
                 return true;
             default:
@@ -1049,6 +1084,7 @@ export class TypeGuards {
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.SourceFile:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
                 return true;
@@ -1122,6 +1158,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
