@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
+import {Logger} from "./../../utils";
 import {TypeChecker} from "./TypeChecker";
 import {SourceFile} from "./../file";
 import {EmitResult} from "./results";
@@ -51,8 +52,21 @@ export class Program {
      * @internal
      */
     reset(rootNames: string[], host: ts.CompilerHost) {
-        this._compilerObject = ts.createProgram(rootNames, this.global.compilerOptions, host, this._compilerObject);
+        const compilerOptions = this.global.compilerOptions;
+        const oldProgram = this._compilerObject;
+        this._compilerObject = getNewProgram();
         this.typeChecker.reset(this._compilerObject.getTypeChecker());
+
+        function getNewProgram() {
+            try {
+                // try to reuse the old compiler object
+                return ts.createProgram(rootNames, compilerOptions, host, oldProgram);
+            } catch (err) {
+                Logger.warn("Could not create new program from old program. " + err);
+                // if that fails, try without using the old program
+                return ts.createProgram(rootNames, compilerOptions, host);
+            }
+        }
     }
 
     /**
