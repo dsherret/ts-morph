@@ -8,3 +8,4 @@ export * from "./common/QualifiedName";
 export * from "./common/Scope";
 export * from "./common/Signature";
 export * from "./common/Symbol";
+export * from "./common/SyntaxList";

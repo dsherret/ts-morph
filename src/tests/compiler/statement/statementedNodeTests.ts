@@ -85,6 +85,11 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
+        it("should insert statements into an empty function", () => {
+            doFirstChildTest<FunctionDeclaration>("function i() {\n}\n", 0, "statement;", 1,
+                "function i() {\n    statement;\n}\n");
+        });
+
         it("should insert statements at the beginning and into a function", () => {
             doFirstChildTest<FunctionDeclaration>("function i() {\n    var t;\n    var m;\n}", 0, "newText;\nsecondText;", 2,
                 "function i() {\n    newText;\n    secondText;\n    var t;\n    var m;\n}");

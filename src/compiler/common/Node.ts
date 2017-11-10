@@ -13,6 +13,7 @@ import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./Symbol";
+import {SyntaxList} from "./SyntaxList";
 
 export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /** @internal */
@@ -306,7 +307,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /**
      * Gets the child syntax list if it exists.
      */
-    getChildSyntaxList(): Node | undefined {
+    getChildSyntaxList(): SyntaxList | undefined {
         let node: Node = this;
         if (TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) {
             do {
@@ -315,14 +316,14 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         }
 
         if (TypeGuards.isSourceFile(node) || TypeGuards.isBodyableNode(this) || TypeGuards.isBodiedNode(this))
-            return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList);
+            return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList) as SyntaxList | undefined;
 
         let passedBrace = false;
         for (const child of node.getChildrenIterator()) {
             if (!passedBrace)
                 passedBrace = child.getKind() === ts.SyntaxKind.FirstPunctuation;
             else if (child.getKind() === ts.SyntaxKind.SyntaxList)
-                return child;
+                return child as SyntaxList;
         }
 
         return undefined;

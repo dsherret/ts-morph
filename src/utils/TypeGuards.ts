@@ -1071,6 +1071,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a SyntaxList.
+     * @param node - Node to check.
+     */
+    static isSyntaxList(node: compiler.Node): node is compiler.SyntaxList {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SyntaxList:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
      */

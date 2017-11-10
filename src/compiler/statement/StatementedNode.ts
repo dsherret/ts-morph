@@ -4,9 +4,8 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, insertIntoParentTextRange, getIndentedText, getInsertPosFromIndex,
-    removeStatementedNodeChildren} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils, StringUtils} from "./../../utils";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren} from "./../../manipulation";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -450,40 +449,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Node[];
         insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Node[];
         insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-            // get index
-            const childSyntaxList = this.getChildSyntaxListOrThrow();
-            const initialChildCount = childSyntaxList.getChildCount();
-            const newLineKind = this.global.manipulationSettings.getNewLineKind();
-            index = verifyAndGetIndex(index, initialChildCount);
-
-            // get text
-            let insertText = getIndentedText({
-                textOrWriterFunction,
-                manipulationSettings: this.global.manipulationSettings,
-                indentationText: this.getChildIndentationText()
-            });
-
-            if (insertText.length === 0)
-                return [];
-
-            if (index === 0 && TypeGuards.isSourceFile(this)) {
-                if (!StringUtils.endsWith(insertText, newLineKind))
-                    insertText += newLineKind;
-            }
-            else
-                insertText = newLineKind + insertText;
-
-            // insert
-            const insertPos = getInsertPosFromIndex(index, this, childSyntaxList.getChildren());
-            insertIntoParentTextRange({
-                insertPos,
-                newText: insertText,
-                parent: childSyntaxList
-            });
-
-            // get inserted statements
-            const finalChildren = childSyntaxList.getChildren();
-            return finalChildren.slice(index, index + finalChildren.length - initialChildCount);
+            return this.getChildSyntaxListOrThrow().insertChildText(index, textOrWriterFunction);
         }
 
         removeStatement(index: number) {

@@ -37,6 +37,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.QualifiedName]: compiler.QualifiedName,
     [ts.SyntaxKind.FirstNode]: compiler.QualifiedName,
     [ts.SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration,
+    [ts.SyntaxKind.SyntaxList]: compiler.SyntaxList,
     [ts.SyntaxKind.TypeAliasDeclaration]: compiler.TypeAliasDeclaration,
     [ts.SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration,
     [ts.SyntaxKind.TypeReference]: compiler.TypeReferenceNode,
