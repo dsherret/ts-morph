@@ -24,11 +24,11 @@ for (const overloadVM of overloadVMs) {
     }
 
     for (const remainingOverloadExtension of flattenedOverloadExtensions) {
-        problems.push(`Overload extension of ${remainingOverloadExtension.name} does not exist on main structure.`);
+        problems.push(`${overloadVM.name}: Overload extension of ${remainingOverloadExtension.name} does not exist on main structure.`);
     }
 
     for (const remainingStructureExtension of flattenedStructureExtensions) {
-        problems.push(`Structure extension of ${remainingStructureExtension.name} does not exist on overload structure.`);
+        problems.push(`${overloadVM.name}: Structure extension of ${remainingStructureExtension.name} does not exist on overload structure.`);
     }
 }
 
@@ -39,7 +39,8 @@ if (problems.length > 0) {
 
 function isAllowedStructure(vm: InterfaceViewModel) {
     switch (vm.name) {
-        case "NamedStructure":
+        case "NamedNodeStructure":
+        case "PropertyNamedNodeStructure":
         case "FunctionLikeDeclarationStructure":
         case "BodiedNodeStructure":
         case "BodyableNodeStructure":

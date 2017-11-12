@@ -161,6 +161,18 @@ Add or insert properties by using `insertProperties()`, `insertProperty`, `addPr
 const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
 ```
 
+Add or insert get accessors by using `insertGetAccessors()`, `insertGetAccessor`, `addGetAccessor`, or `addGetAccessors`:
+
+```typescript
+const getAccessor = classDeclaration.addGetAccessor({ name: "someNumber", returnType: "number", body: "return 5;" });
+```
+
+Add or insert set accessors by using `insertSetAccessors()`, `insertSetAccessor`, `addSetAccessor`, or `addSetAccessors`:
+
+```typescript
+const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], body: "_someNumber = value;" });
+```
+
 #### Remove
 
 Call `.remove()`:

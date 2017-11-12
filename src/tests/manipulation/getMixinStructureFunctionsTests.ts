@@ -238,7 +238,7 @@ describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () =>
 });
 
 describe(nameof(getMixinStructureFuncs.fromNamedNode), () => {
-    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.NamedStructure>) {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.NamedNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromNamedNode(firstChild)).to.deep.equal(expectedStructure);
     }

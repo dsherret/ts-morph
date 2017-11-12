@@ -97,7 +97,7 @@ export function fromInitializerExpressionableNode(node: compiler.InitializerExpr
     };
 }
 
-export function fromNamedNode(node: compiler.NamedNode): MakeRequired<structures.NamedStructure> {
+export function fromNamedNode(node: compiler.NamedNode): MakeRequired<structures.NamedNodeStructure> {
     return {
         name: node.getName()
     };

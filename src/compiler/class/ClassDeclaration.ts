@@ -3,7 +3,8 @@ import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
     removeStatementedNodeChild} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils} from "./../../utils";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
+    SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode} from "./../base";
@@ -43,6 +44,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             this.addConstructor(structure.ctor);
         if (structure.properties != null)
             this.addProperties(structure.properties);
+        if (structure.getAccessors != null)
+            this.addGetAccessors(structure.getAccessors);
+        if (structure.setAccessors != null)
+            this.addSetAccessors(structure.setAccessors);
         if (structure.methods != null)
             this.addMethods(structure.methods);
 
@@ -164,6 +169,130 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     getConstructors() {
         return this.getAllMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
+    }
+
+    /**
+     * Add get accessor.
+     * @param structure - Structure representing the get accessor.
+     */
+    addGetAccessor(structure: GetAccessorDeclarationStructure) {
+        return this.addGetAccessors([structure])[0];
+    }
+
+    /**
+     * Add properties.
+     * @param structures - Structures representing the properties.
+     */
+    addGetAccessors(structures: GetAccessorDeclarationStructure[]) {
+        return this.insertGetAccessors(getEndIndexFromArray(this.getBodyMembers()), structures);
+    }
+
+    /**
+     * Insert get accessor.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the get accessor.
+     */
+    insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure) {
+        return this.insertGetAccessors(index, [structure])[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the properties.
+     */
+    insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = `${indentationText}`;
+            if (structure.isStatic)
+                code += "static ";
+            code += `get ${structure.name}()`;
+            if (structure.returnType != null && structure.returnType.length > 0)
+                code += `: ${structure.returnType}`;
+            code += " {" + newLineKind + indentationText + "}";
+            codes.push(code);
+        }
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
+            getIndexedChildren: () => this.getBodyMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            previousBlanklineWhen: () => true,
+            separatorNewlineWhen: () => true,
+            nextBlanklineWhen: () => true,
+            expectedKind: ts.SyntaxKind.GetAccessor,
+            fillFunction: (node, structure) => node.fill(structure)
+        });
+    }
+
+    /**
+     * Add set accessor.
+     * @param structure - Structure representing the set accessor.
+     */
+    addSetAccessor(structure: SetAccessorDeclarationStructure) {
+        return this.addSetAccessors([structure])[0];
+    }
+
+    /**
+     * Add properties.
+     * @param structures - Structures representing the properties.
+     */
+    addSetAccessors(structures: SetAccessorDeclarationStructure[]) {
+        return this.insertSetAccessors(getEndIndexFromArray(this.getBodyMembers()), structures);
+    }
+
+    /**
+     * Insert set accessor.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the set accessor.
+     */
+    insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure) {
+        return this.insertSetAccessors(index, [structure])[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the properties.
+     */
+    insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+
+        // create code
+        const codes: string[] = [];
+        for (const structure of structures) {
+            let code = `${indentationText}`;
+            if (structure.isStatic)
+                code += "static ";
+            code += `set ${structure.name}()`;
+            if (structure.returnType != null && structure.returnType.length > 0)
+                code += `: ${structure.returnType}`;
+            code += " {" + newLineKind + indentationText + "}";
+            codes.push(code);
+        }
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
+            getIndexedChildren: () => this.getBodyMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            previousBlanklineWhen: () => true,
+            separatorNewlineWhen: () => true,
+            nextBlanklineWhen: () => true,
+            expectedKind: ts.SyntaxKind.SetAccessor,
+            fillFunction: (node, structure) => node.fill(structure)
+        });
     }
 
     /**

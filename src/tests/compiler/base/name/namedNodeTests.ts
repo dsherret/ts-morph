@@ -52,4 +52,12 @@ describe(nameof(NamedNode), () => {
             expect(nameNode).to.be.instanceOf(Identifier);
         });
     });
+
+    describe("fill", () => {
+        it("should fill the node with a new name via a rename", () => {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
+            firstChild.fill({ name: "MyNewEnum" });
+            expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyNewEnum;");
+        });
+    });
 });

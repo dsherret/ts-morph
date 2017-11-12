@@ -1,7 +1,8 @@
-﻿import {NamedStructure, TypedNodeStructure, QuestionTokenableNodeStructure, DocumentationableNodeStructure, ReadonlyableNodeStructure,
+﻿import {PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, DocumentationableNodeStructure, ReadonlyableNodeStructure,
     InitializerExpressionableNodeStructure} from "./../base";
 
 export interface PropertySignatureStructure
-    extends NamedStructure, TypedNodeStructure, QuestionTokenableNodeStructure, DocumentationableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure
+    extends PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, DocumentationableNodeStructure, ReadonlyableNodeStructure,
+        InitializerExpressionableNodeStructure
 {
 }

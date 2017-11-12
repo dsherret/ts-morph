@@ -1,7 +1,8 @@
 ﻿import {expect} from "chai";
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
     ConstructorDeclaration, ParameterDeclaration, Scope} from "./../../../compiler";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure} from "./../../../structures";
+import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
+    GetAccessorDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
@@ -21,9 +22,12 @@ describe(nameof(ClassDeclaration), () => {
                 extends: "Other",
                 ctor: {},
                 properties: [{ name: "p" }],
+                getAccessors: [{ name: "g" }],
+                setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
                 methods: [{ name: "m" }]
             };
-            doTest("class Identifier {\n}", structure, "class Identifier extends Other {\n    constructor() {\n    }\n\n    p;\n\n    m() {\n    }\n}");
+            doTest("class Identifier {\n}", structure, "class Identifier extends Other {\n    constructor() {\n    }\n\n    p;\n\n    get g() {\n    }" +
+                "\n\n    set s(value: string) {\n    }\n\n    m() {\n    }\n}");
         });
     });
 
@@ -152,6 +156,66 @@ describe(nameof(ClassDeclaration), () => {
             expect(constructors.length).to.equal(2);
             expect(constructors[0]!.getText()).to.equal("constructor(str: string);");
             expect(constructors[1]!.getText()).to.equal("constructor(str: any);");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertGetAccessors), () => {
+        function doTest(startCode: string, insertIndex: number, structures: GetAccessorDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertGetAccessors(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, [{ name: "identifier" }], "class c {\n    get identifier() {\n    }\n}");
+        });
+
+        it("should insert multiple into other methods", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertGetAccessor), () => {
+        function doTest(startCode: string, insertIndex: number, structure: GetAccessorDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertGetAccessor(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(GetAccessorDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    get m2() {\n    }\n\n    m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addGetAccessors), () => {
+        function doTest(startCode: string, structures: GetAccessorDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addGetAccessors(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple", () => {
+            doTest("class c {\n    m1() {\n    }\n}", [{ name: "m2" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    get m2() {\n    }\n\n    get m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addGetAccessor), () => {
+        function doTest(startCode: string, structure: GetAccessorDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addGetAccessor(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(GetAccessorDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    get m2() {\n    }\n}");
         });
     });
 

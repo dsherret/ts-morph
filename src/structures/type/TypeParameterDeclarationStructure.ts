@@ -1,5 +1,5 @@
-﻿import {NamedStructure} from "./../base";
+﻿import {NamedNodeStructure} from "./../base";
 
-export interface TypeParameterDeclarationStructure extends NamedStructure {
+export interface TypeParameterDeclarationStructure extends NamedNodeStructure {
     constraint?: string;
 }

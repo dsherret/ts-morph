@@ -1,7 +1,9 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
+import {NamedNodeStructure} from "./../../../structures";
 import {Node, Identifier} from "./../../common";
+import {callBaseFill} from "./../../callBaseFill";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
 // (maybe NameableNode and rename some of the other "-ed" classes)
@@ -39,6 +41,15 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
 
             errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
             this.getNameIdentifier().rename(newName);
+            return this;
+        }
+
+        fill(structure: Partial<NamedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.name != null)
+                this.rename(structure.name);
+
             return this;
         }
     };

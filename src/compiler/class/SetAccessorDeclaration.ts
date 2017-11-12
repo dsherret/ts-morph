@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeClassMember} from "./../../manipulation";
+import {SetAccessorDeclarationStructure} from "./../../structures";
+import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode, TextInsertableNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
@@ -12,6 +14,15 @@ export const SetAccessorDeclarationBase = TextInsertableNode(DecoratableNode(Abs
     BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
 ))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<SetAccessorDeclarationStructure>) {
+        callBaseFill(SetAccessorDeclarationBase.prototype, this, structure);
+        return this;
+    }
+
     /**
      * Gets the corresponding get accessor if one exists.
      */

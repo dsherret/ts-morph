@@ -10,7 +10,7 @@ export * from "./base/GeneratorableNodeStructure";
 export * from "./base/ExtendsClauseableNodeStructure";
 export * from "./base/ImplementsClauseableNodeStructure";
 export * from "./base/InitializerExpressionableNodeStructure";
-export * from "./base/NamedStructure";
+export * from "./base/name";
 export * from "./base/QuestionTokenableNodeStructure";
 export * from "./base/ParameteredNodeStructure";
 export * from "./base/ReadonlyableNodeStructure";

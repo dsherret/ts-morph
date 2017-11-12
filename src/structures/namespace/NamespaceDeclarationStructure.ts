@@ -1,8 +1,8 @@
-﻿import {NamedStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodiedNodeStructure} from "./../base";
+﻿import {NamedNodeStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodiedNodeStructure} from "./../base";
 import {StatementedNodeStructure} from "./../statement";
 
 export interface NamespaceDeclarationStructure
-    extends NamedStructure, NamespaceDeclarationSpecificStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure,
+    extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure,
         BodiedNodeStructure
 {
 }

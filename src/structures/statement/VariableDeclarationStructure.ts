@@ -1,4 +1,4 @@
-﻿import {NamedStructure, InitializerExpressionableNodeStructure, TypedNodeStructure} from "./../base";
+﻿import {BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure} from "./../base";
 
-export interface VariableDeclarationStructure extends NamedStructure, InitializerExpressionableNodeStructure, TypedNodeStructure {
+export interface VariableDeclarationStructure extends BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure {
 }

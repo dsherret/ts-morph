@@ -1,7 +1,9 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
+import {PropertyNamedNodeStructure} from "./../../../structures";
 import {Node, Identifier} from "./../../common";
+import {callBaseFill} from "./../../callBaseFill";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
@@ -32,6 +34,15 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
         rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
             this.getNameIdentifier().rename(text);
+            return this;
+        }
+
+        fill(structure: Partial<PropertyNamedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.name != null)
+                this.rename(structure.name);
+
             return this;
         }
     };

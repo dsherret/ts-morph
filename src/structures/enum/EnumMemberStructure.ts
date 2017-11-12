@@ -1,6 +1,6 @@
-﻿import {NamedStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure} from "./../base";
+﻿import {PropertyNamedNodeStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure} from "./../base";
 
-export interface EnumMemberStructure extends EnumMemberSpecificStructure, NamedStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure {
+export interface EnumMemberStructure extends EnumMemberSpecificStructure, PropertyNamedNodeStructure, DocumentationableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
 export interface EnumMemberSpecificStructure {

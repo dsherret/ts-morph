@@ -41,11 +41,6 @@ function getStructureName(vm: ClassViewModel | MixinViewModel) {
 }
 
 function isStructureToIgnore(structure: InterfaceViewModel) {
-    switch (structure.name) {
-        case "NamedStructure":
-            return true;
-    }
-
     if (/SpecificStructure$/.test(structure.name))
         return true;
 
