@@ -1,8 +1,8 @@
 ﻿import * as ts from "typescript";
-import {removeStatementedNodeChild, insertIntoParent} from "./../../manipulation";
+import {removeStatementedNodeChild, insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
-import {VariableStatementStructure} from "./../../structures";
+import {VariableStatementStructure, VariableDeclarationStructure} from "./../../structures";
 import {ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
 import {callBaseFill} from "./../callBaseFill";
@@ -75,6 +75,62 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     }
 
     /**
+     * Add a variable declaration to the statement.
+     * @param structure - Structure representing the variable declaration to add.
+     */
+    addDeclaration(structure: VariableDeclarationStructure) {
+        return this.addDeclarations([structure])[0];
+    }
+
+    /**
+     * Adds variable declarations to the statement.
+     * @param structures - Structures representing the variable declarations to add.
+     */
+    addDeclarations(structures: VariableDeclarationStructure[]) {
+        return this.insertDeclarations(this.getDeclarations().length, structures);
+    }
+
+    /**
+     * Inserts a variable declaration at the specified index within the statement.
+     * @param index - Index to insert.
+     * @param structure - Structure representing the variable declaration to insert.
+     */
+    insertDeclaration(index: number, structure: VariableDeclarationStructure) {
+        return this.insertDeclarations(index, [structure])[0];
+    }
+
+    /**
+     * Inserts variable declarations at the specified index within the statement.
+     * @param index - Index to insert.
+     * @param structures - Structures representing the variable declarations to insert.
+     */
+    insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+        const texts = structures.map(structure => {
+            let text = structure.name;
+            if (structure.type != null)
+                text += ": " + structure.type;
+            if (structure.initializer != null)
+                text += " = " + structure.initializer;
+            return text;
+        });
+
+        insertIntoCommaSeparatedNodes({
+            parent: this,
+            currentNodes: this.getDeclarations(),
+            insertIndex: index,
+            newTexts: texts
+        });
+
+        const declarations = this.getDeclarations().slice(index, index + texts.length);
+
+        for (let i = 0; i < structures.length; i++)
+            declarations[i].fill(structures[i]);
+
+        return declarations;
+    }
+
+    /**
      * Fills the node from a structure.
      * @param structure - Structure to fill.
      */
@@ -84,7 +140,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
         if (structure.declarationType != null)
             this.setDeclarationType(structure.declarationType);
         if (structure.declarations != null)
-            throw new errors.NotImplementedError("Filling variable declarations not implemented. Please open an issue if you need this and I will increase the prioirty.");
+            this.addDeclarations(structure.declarations);
 
         return this;
     }

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {VariableStatement, VariableDeclarationType} from "./../../../compiler";
-import {VariableStatementStructure} from "./../../../structures";
+import {VariableStatement, VariableDeclarationType, VariableDeclaration} from "./../../../compiler";
+import {VariableStatementStructure, VariableDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(VariableStatement), () => {
@@ -66,6 +66,69 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
+    describe(nameof<VariableStatement>(d => d.insertDeclarations), () => {
+        function doTest(startText: string, index: number, structures: VariableDeclarationStructure[], expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const result = firstChild.insertDeclarations(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should insert declarations at the beginning", () => {
+            doTest("var v4;", 0, [{ name: "v1" }, { name: "v2", type: "string" }, { name: "v3", initializer: "5" }],
+                "var v1, v2: string, v3 = 5, v4;");
+        });
+
+        it("should insert declarations in the middle", () => {
+            doTest("var v1, v4;", 1, [{ name: "v2" }, { name: "v3", type: "number", initializer: "5" }],
+                "var v1, v2, v3: number = 5, v4;");
+        });
+
+        it("should insert declarations at the end", () => {
+            doTest("var v1;", 1, [{ name: "v2" }, { name: "v3" }],
+                "var v1, v2, v3;");
+        });
+    });
+
+    describe(nameof<VariableStatement>(d => d.insertDeclaration), () => {
+        function doTest(startText: string, index: number, structure: VariableDeclarationStructure, expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const result = firstChild.insertDeclaration(index, structure);
+            expect(result).to.be.instanceOf(VariableDeclaration);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should insert a declaration", () => {
+            doTest("var v1, v3;", 1, { name: "v2" }, "var v1, v2, v3;");
+        });
+    });
+
+    describe(nameof<VariableStatement>(d => d.addDeclarations), () => {
+        function doTest(startText: string, structures: VariableDeclarationStructure[], expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const result = firstChild.addDeclarations(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should add declarations", () => {
+            doTest("var v1;", [{ name: "v2" }, { name: "v3" }], "var v1, v2, v3;");
+        });
+    });
+
+    describe(nameof<VariableStatement>(d => d.addDeclaration), () => {
+        function doTest(startText: string, structure: VariableDeclarationStructure, expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const result = firstChild.addDeclaration(structure);
+            expect(result).to.be.instanceOf(VariableDeclaration);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should add a declaration", () => {
+            doTest("var v1;", { name: "v2" }, "var v1, v2;");
+        });
+    });
+
     describe(nameof<VariableStatement>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
@@ -87,6 +150,10 @@ describe(nameof(VariableStatement), () => {
 
         it("should set the variable declaration type", () => {
             doTest("const t = '';", { declarationType: VariableDeclarationType.Let }, "let t = '';");
+        });
+
+        it("should add declarations", () => {
+            doTest("const t = '';", { declarations: [{ name: "v2" }, { name: "v3" }] }, "const t = '', v2, v3;");
         });
     });
 });
