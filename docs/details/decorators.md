@@ -37,6 +37,12 @@ Decorators with parenthesis (ex. `@decorator(3)`) are decorator factories, while
 decorator.isDecoratorFactory(); // returns: boolean
 ```
 
+Set as a decorator factory or not:
+
+```typescript
+decorator.setIsDecoratorFactory(true);
+```
+
 ### Arguments
 
 Get the decorator's arguments by calling `.getArguments()`:
@@ -44,6 +50,21 @@ Get the decorator's arguments by calling `.getArguments()`:
 ```typescript
 const args = decorator.getArguments(); // returns: Expression[]
 ```
+```
+
+Add and insert via `.addArgument(...)`, `.insertArguments(...)`, `.addArgument(...)`, or `.addArguments(...)`.
+
+```typescript
+const args = decorator.insertArguments(1, ["5", "6"]);
+```
+
+And remove them by calling `.removeArgument()`:
+
+```typescript
+// specify the index
+decorator.removeArgument(0);
+// or specify the argument node
+decorator.removeArgument(args[0]);
 
 ### Type arguments
 
@@ -64,7 +85,7 @@ And remove them by calling `.removeTypeArgument()`:
 ```typescript
 // specify the index
 decorator.removeTypeArgument(0);
-// or specify the type argument
+// or specify the type argument node
 decorator.removeTypeArgument(typeArgs[0]);
 ```
 

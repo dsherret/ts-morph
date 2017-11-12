@@ -19,6 +19,27 @@ const variableStatements = sourceFile.getVariableStatements();
 const firstExportedVariableStatement = sourceFile.getVariableStatement(s => s.hasExportKeyword());
 ```
 
+### Add/Insert
+
+Add or insert variable statements to a source file, namespace, or function like declarations by calling `addVariableStatement()`, `addVariableStatements()`,
+`insertVariableStatement()`, or `insertVariableStatements()`.
+
+```typescript
+import Ast, {VariableDeclarationType} from "ts-simple-ast";
+
+const variableStatement = sourceFile.addVariableStatement({
+    declarationType: VariableDeclarationType.Const // defaults to "let"
+    declarations: [{
+        name: "myNumber",
+        initializer: "5"
+    }, {
+        name: "myString",
+        type: "string",
+        initializer: `'my string'`
+    }]
+});
+```
+
 ### Remove
 
 Call `.remove()`:
@@ -74,23 +95,11 @@ const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v 
 
 ### Add/Insert
 
-Add or insert variable statements to a source file, namespace, or function like declarations by calling `addVariableStatement()`, `addVariableStatements()`,
-`insertVariableStatement()`, or `insertVariableStatements()`.
+Add or insert variable declarations to a variable statement by calling `addDeclaration()`, `addDeclarations()`,
+`insertDeclaration()`, or `insertDeclarations()`.
 
 ```typescript
-import Ast, {VariableDeclarationType} from "ts-simple-ast";
-
-const variableStatement = sourceFile.addVariableStatement({
-    declarationType: VariableDeclarationType.Const // defaults to "let"
-    declarations: [{
-        name: "myNumber",
-        initializer: "5"
-    }, {
-        name: "myString",
-        type: "string",
-        initializer: `'my string'`
-    }]
-});
+const declaration = variableStatement.addDeclaration({ name: "num", type: "number" });
 ```
 
 ### Remove
