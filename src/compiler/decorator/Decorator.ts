@@ -210,6 +210,41 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     }
 
     /**
+     * Adds an argument.
+     * @param argumentTexts - Argument text.
+     */
+    addArgument(argumentText: string) {
+        return this.addArguments([argumentText])[0];
+    }
+
+    /**
+     * Adds arguments.
+     * @param argumentTexts - Argument texts.
+     */
+    addArguments(argumentTexts: string[]) {
+        return this.insertArguments(this.getArguments().length, argumentTexts);
+    }
+
+    /**
+     * Inserts an argument.
+     * @param index - Index to insert at.
+     * @param argumentTexts - Argument text.
+     */
+    insertArgument(index: number, argumentText: string) {
+        return this.insertArguments(index, [argumentText])[0];
+    }
+
+    /**
+     * Inserts arguments.
+     * @param index - Index to insert at.
+     * @param argumentTexts - Argument texts.
+     */
+    insertArguments(index: number, argumentTexts: string[]) {
+        this.setIsDecoratorFactory(true);
+        return this.getCallExpressionOrThrow().insertArguments(index, argumentTexts);
+    }
+
+    /**
      * Removes an argument based on the node.
      * @param node - Argument's node to remove.
      */

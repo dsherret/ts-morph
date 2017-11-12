@@ -6,7 +6,7 @@ describe(nameof(TypeArgumentedNode), () => {
     describe(nameof<TypeArgumentedNode>(n => n.getTypeArguments), () => {
         function doTest(code: string, expectedArgs: string[]) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
-            const args = firstChild.getDecorators()[0].getCallExpression()!.getTypeArguments();
+            const args = firstChild.getDecorators()[0].getCallExpressionOrThrow().getTypeArguments();
             expect(args.map(a => a.getText())).to.deep.equal(expectedArgs);
         }
 
@@ -22,7 +22,7 @@ describe(nameof(TypeArgumentedNode), () => {
     describe(nameof<TypeArgumentedNode>(n => n.insertTypeArguments), () => {
         function doTest(code: string, index: number, texts: string[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.insertTypeArguments(index, texts);
             expect(result.map(t => t.getText())).to.deep.equal(texts);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -48,7 +48,7 @@ describe(nameof(TypeArgumentedNode), () => {
     describe(nameof<TypeArgumentedNode>(n => n.insertTypeArgument), () => {
         function doTest(code: string, index: number, text: string, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.insertTypeArgument(index, text);
             expect(result.getText()).to.equal(text);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -62,7 +62,7 @@ describe(nameof(TypeArgumentedNode), () => {
     describe(nameof<TypeArgumentedNode>(n => n.addTypeArguments), () => {
         function doTest(code: string, texts: string[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.addTypeArguments(texts);
             expect(result.map(t => t.getText())).to.deep.equal(texts);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -76,7 +76,7 @@ describe(nameof(TypeArgumentedNode), () => {
     describe(nameof<TypeArgumentedNode>(n => n.addTypeArgument), () => {
         function doTest(code: string, text: string, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-            const callExpr = firstChild.getDecorators()[0].getCallExpression()!;
+            const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
             const result = callExpr.addTypeArgument(text);
             expect(result.getText()).to.equal(text);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
