@@ -26,6 +26,40 @@ describe(nameof(Decorator), () => {
         });
     });
 
+    describe(nameof<Decorator>(d => d.setIsDecoratorFactory), () => {
+        function doSettingTest(startText: string, expectedText: string) {
+            const {firstDecorator, sourceFile} = getFirstClassDecorator(startText);
+            const expr = firstDecorator.getExpression();
+            firstDecorator.setIsDecoratorFactory(true);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(() => expr.getFullText()).to.not.throw(); // should not throw when accessing this moved node
+        }
+
+        it("should set as a decorator factory when not one", () => {
+            doSettingTest("@decorator\nclass Identifier {}", "@decorator()\nclass Identifier {}");
+        });
+
+        it("should set as a decorator factory when not one and is a property access expression", () => {
+            doSettingTest("@dec.prop\nclass Identifier {}", "@dec.prop()\nclass Identifier {}");
+        });
+
+        function doUnSettingTest(startText: string, expectedText: string) {
+            const {firstDecorator, sourceFile} = getFirstClassDecorator(startText);
+            const expr = firstDecorator.getCallExpressionOrThrow().getExpression();
+            firstDecorator.setIsDecoratorFactory(false);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(() => expr.getFullText()).to.not.throw(); // should not throw when accessing this moved node
+        }
+
+        it("should set as not a decorator factory when is one", () => {
+            doUnSettingTest("@decorator()\nclass Identifier {}", "@decorator\nclass Identifier {}");
+        });
+
+        it("should set as not a decorator factory when is one and is a property access expression", () => {
+            doUnSettingTest("@dec.prop()\nclass Identifier {}", "@dec.prop\nclass Identifier {}");
+        });
+    });
+
     describe(nameof<Decorator>(d => d.getNameIdentifier), () => {
         function doTest(text: string, expectedName: string) {
             const {firstDecorator} = getFirstClassDecorator(text);

@@ -29,13 +29,14 @@ export interface ReplaceTreeWithChildIndexOptions {
     childIndex: number;
     childCount: number;
     replacingNodes?: Node[];
+    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }
 
 /**
  * Replaces the tree based on the child index from the parent.
  */
 export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions) {
-    const {replacementSourceFile, parent, childIndex, childCount, replacingNodes} = opts;
+    const {replacementSourceFile, parent, childIndex, childCount, replacingNodes, customMappings} = opts;
     const parentChildren = parent.getChildren();
     errors.throwIfOutOfRange(childIndex, [0, parentChildren.length], nameof.full(opts.childIndex));
     if (childCount < 0)
@@ -48,7 +49,8 @@ export function replaceTreeWithChildIndex(opts: ReplaceTreeWithChildIndexOptions
         parent,
         isFirstChild,
         childCount,
-        replacingNodes
+        replacingNodes,
+        customMappings
     });
 }
 
@@ -83,18 +85,19 @@ export interface ReplaceTreeOptions {
     isFirstChild: (currentNode: Node, newNode: Node) => boolean;
     childCount: number;
     replacingNodes?: Node[];
+    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }
 
 /**
  * Replaces the tree with a new one.
  */
 export function replaceTree(opts: ReplaceTreeOptions) {
-    const {replacementSourceFile, parent: changingParent, isFirstChild, childCount} = opts;
+    const {replacementSourceFile, parent: changingParent, isFirstChild, childCount, customMappings} = opts;
     const sourceFile = changingParent.getSourceFile();
     const compilerFactory = sourceFile.global.compilerFactory;
     const replacingNodes = opts.replacingNodes == null ? undefined : [...opts.replacingNodes];
 
-    const parentHandler = new DefaultParentHandler(compilerFactory, { childCount, isFirstChild, replacingNodes });
+    const parentHandler = new DefaultParentHandler(compilerFactory, { childCount, isFirstChild, replacingNodes, customMappings });
 
     if (changingParent === sourceFile)
         parentHandler.handleNode(sourceFile, replacementSourceFile);

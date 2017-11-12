@@ -32,4 +32,10 @@
             a.push(item);
         return a;
     }
+
+    static *toIterator<T>(items: T[]) {
+        for (const item of items) {
+            yield item;
+        }
+    }
 }

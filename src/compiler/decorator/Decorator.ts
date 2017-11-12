@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
+import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParent} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {Node, CallExpression, Expression, Identifier} from "./../common";
 import {TypeNode} from "./../type";
@@ -59,6 +59,61 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      */
     isDecoratorFactory() {
         return this.compilerNode.expression.kind === ts.SyntaxKind.CallExpression;
+    }
+
+    /**
+     * Set if this decorator is a decorator factory.
+     * @param isDecoratorFactory - If it should be a decorator factory or not.
+     */
+    setIsDecoratorFactory(isDecoratorFactory: boolean) {
+        if (this.isDecoratorFactory() === isDecoratorFactory)
+            return this;
+
+        if (isDecoratorFactory) {
+            const expression = this.getExpression();
+            const expressionText = expression.getText();
+            insertIntoParent({
+                parent: this,
+                childIndex: expression.getChildIndex(),
+                insertItemsCount: 1,
+                insertPos: expression.getStart(),
+                newText: `${expressionText}()`,
+                replacing: {
+                    nodes: [expression],
+                    textLength: expressionText.length
+                },
+                customMappings: newParent => {
+                    // the expression will move into the call expression
+                    const callExpression = (newParent as Decorator).getCallExpressionOrThrow();
+                    const newExpression = callExpression.getExpression();
+                    return [{ currentNode: expression, newNode: newExpression }];
+                }
+            });
+        }
+        else {
+            const callExpression = this.getCallExpressionOrThrow();
+            const expression = callExpression.getExpression();
+            const expressionText = expression.getText();
+
+            insertIntoParent({
+                parent: this,
+                childIndex: callExpression.getChildIndex(),
+                insertItemsCount: 1,
+                insertPos: callExpression.getStart(),
+                newText: `${expressionText}`,
+                replacing: {
+                    nodes: [callExpression],
+                    textLength: callExpression.getWidth()
+                },
+                customMappings: newParent => {
+                    // the expression will move out of the call expression
+                    const newExpression = (newParent as Decorator).getExpression();
+                    return [{ currentNode: expression, newNode: newExpression }];
+                }
+            });
+        }
+
+        return this;
     }
 
     /**
