@@ -6,12 +6,13 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-TypeScript compiler wrapper. Provides a simple way to navigate and manipulate the TypeScript AST.
+TypeScript compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (20 August 2017)
+## Library Development - Progress Update (12 November 2017)
 
-* Most AST navigation is implemented, but still some missing. This library can be used to help you easily navigate the TypeScript compiler's AST.
-* Code manipulation/generation is making steady progress and is somewhat useable at this point. There's still lots to do.
+Most common navigation and code manipulation/generation use cases are implemented, but there's still a lot of work to do before a stable 1.0 release.
+
+Please open an issue if find a feature missing that isn't in the issue tracker.
 
 ## Documentation
 
