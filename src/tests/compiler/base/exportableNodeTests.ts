@@ -73,6 +73,42 @@ describe(nameof(ExportableNode), () => {
         });
     });
 
+    describe(nameof<ExportableNode>(n => n.isExported), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<ClassDeclaration>(text);
+            expect(firstChild.isExported()).to.equal(expected);
+        }
+
+        it("should not be exported when not", () => {
+            doTest("class Identifier {}", false);
+        });
+
+        it("should be exported when default exported on a different line", () => {
+            doTest("class Identifier {}\nexport default Identifier;", true);
+        });
+
+        it("should be exported when default exported on the same line", () => {
+            doTest("export default class Identifier {}", true);
+        });
+
+        it("should be when a named export", () => {
+            doTest("export class Identifier {}", true);
+        });
+
+        function doNamespaceTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
+            expect(firstChild.getClasses()[0].isExported()).to.equal(expected);
+        }
+
+        it("should be when exported from a namespace", () => {
+            doNamespaceTest("namespace Identifier { export class Identifier {} }", true);
+        });
+
+        it("should not be when not exported from a namespace", () => {
+            doNamespaceTest("namespace Identifier { class Identifier {} }", false);
+        });
+    });
+
     describe(nameof<ExportableNode>(n => n.isDefaultExport), () => {
         function doTest(text: string, expected: boolean) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(text);

@@ -36,6 +36,10 @@ export interface ExportableNode {
      */
     getDefaultKeywordOrThrow(): Node;
     /**
+     * Gets if the node is exported from a namespace, is a default export, or is a named export.
+     */
+    isExported(): boolean;
+    /**
      * Gets if this node is a default export of a file.
      */
     isDefaultExport(): boolean;
@@ -82,9 +86,16 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return errors.throwIfNullOrUndefined(this.getDefaultKeyword(), "Expected to find a default keyword.");
         }
 
+        isExported() {
+            return this.hasExportKeyword() || this.isDefaultExport();
+        }
+
         isDefaultExport() {
             if (this.hasDefaultKeyword())
                 return true;
+
+            if (!TypeGuards.isSourceFile(this.getParentOrThrow()))
+                return false;
 
             const thisSymbol = this.getSymbol();
             const defaultExportSymbol = this.getSourceFile().getDefaultExportSymbol();

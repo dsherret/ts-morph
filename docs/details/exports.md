@@ -8,9 +8,10 @@ Certain nodes in TypeScript can be [exported](https://www.typescriptlang.org/doc
 
 ### Is export
 
-Use the `isNamedExport()` and `isDefaultExport()` methods:
+Use `isExported()`, `isNamedExport()`, or `isDefaultExport()` methods:
 
 ```typescript
+functionDeclaration.isExported(); // returns: boolean
 functionDeclaration.isNamedExport(); // returns: boolean
 functionDeclaration.isDefaultExport(); // returns: boolean
 ```
