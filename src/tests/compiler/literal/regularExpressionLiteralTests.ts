@@ -18,11 +18,11 @@ describe(nameof(RegularExpressionLiteral), () => {
         }
 
         it("should get the correct literal text when there are flags", () => {
-            doTest("const t = /testing/gi", "testing", "gi");
+            doTest("const t = /testing/gi;", "testing", "gi");
         });
 
         it("should get the correct literal text when there are no flags", () => {
-            doTest("const t = /testing/", "testing", "");
+            doTest("const t = /testing/;", "testing", "");
         });
     });
 });
