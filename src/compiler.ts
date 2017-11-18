@@ -8,6 +8,7 @@ export * from "./compiler/file";
 export * from "./compiler/function";
 export * from "./compiler/general";
 export * from "./compiler/interface";
+export * from "./compiler/literal";
 export * from "./compiler/namespace";
 export * from "./compiler/statement";
 export * from "./compiler/tools";

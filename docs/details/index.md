@@ -38,6 +38,7 @@ Common:
 * [Exports](exports)
 * [Generators](generators)
 * [JS Docs](documentation)
+* [Literals](literals)
 * [Modifiers](modifiers)
 * Question tokenable - todo
 * Readonly - todo

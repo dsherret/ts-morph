@@ -107,7 +107,7 @@ describe(nameof(ExportDeclaration), () => {
             const namedExports = firstChild.getNamedExports();
             expect(namedExports.length).to.equal(expected.length);
             for (let i = 0; i < namedExports.length; i++) {
-                expect(namedExports[i].getNameIdentifier().getText()).to.equal(expected[i].name);
+                expect(namedExports[i].getNameNode().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
                     expect(namedExports[i].getAliasIdentifier()).to.equal(undefined);
                 else

@@ -1,5 +1,6 @@
 ﻿export * from "./common/ArrayLiteralExpression";
 export * from "./common/CallExpression";
+export * from "./common/ComputedPropertyName";
 export * from "./common/Expression";
 export * from "./common/Identifier";
 export * from "./common/Node";

@@ -29,7 +29,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the full name of the namespace.
      */
     getName() {
-        return this.getNameIdentifiers().map(n => n.getText()).join(".");
+        return this.getNameNodes().map(n => n.getText()).join(".");
     }
 
     /**
@@ -37,7 +37,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * @param newName - New full namespace name.
      */
     setName(newName: string) {
-        const nameNodes = this.getNameIdentifiers();
+        const nameNodes = this.getNameNodes();
         const openIssueText = `Please open an issue if you really need this and I'll up the priority.`;
         if (nameNodes.length > 1)
             throw new errors.NotImplementedError(`Not implemented to set a namespace name that uses dot notation. ${openIssueText}`);
@@ -52,9 +52,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * @param newName - New name.
      */
     rename(newName: string) {
-        const nameNodes = this.getNameIdentifiers();
+        const nameNodes = this.getNameNodes();
         if (nameNodes.length > 1)
-            throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameIdentifiers)}()`);
+            throw new errors.NotSupportedError(`Cannot rename a namespace name that uses dot notation. Rename the individual nodes via .${nameof(this.getNameNodes)}()`);
         if (newName.indexOf(".") >= 0)
             throw new errors.NotSupportedError(`Cannot rename a namespace name to a name containing a period.`);
         nameNodes[0].rename(newName);
@@ -62,9 +62,9 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /**
-     * Gets the name identifiers.
+     * Gets the name nodes.
      */
-    getNameIdentifiers() {
+    getNameNodes() {
         const nodes: Identifier[] = [];
         let current: Node<ts.NamespaceDeclaration> | undefined = this;
         do {

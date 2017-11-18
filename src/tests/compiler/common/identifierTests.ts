@@ -8,7 +8,7 @@ describe(nameof(Identifier), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
-            firstChild.getNameIdentifier().rename("newFunction");
+            firstChild.getNameNode().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
         });
     });
@@ -23,13 +23,13 @@ describe(nameof(Identifier), () => {
             expect(definitions[0].getName()).to.equal("myFunction");
             expect(definitions[0].getSourceFile().getFullText()).to.equal(sourceFileText);
             expect(definitions[0].getKind()).to.equal(ts.ScriptElementKind.functionElement);
-            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameIdentifier().getStart());
+            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNode().getStart());
             expect(definitions[0].getNode()).to.equal(firstChild);
         });
 
         it("should get the definition when nested inside a namespace", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
-            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameIdentifier().getDefinitions();
+            const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameNode().getDefinitions();
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getNode()).to.equal(firstChild.getFunctions()[0]);
         });
@@ -39,7 +39,7 @@ describe(nameof(Identifier), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
-            const implementations = firstChild.getNameIdentifier().getImplementations();
+            const implementations = firstChild.getNameNode().getImplementations();
             expect(implementations.length).to.equal(2);
             expect((implementations[0].getNode() as ClassDeclaration).getName()).to.equal("Class1");
             expect((implementations[1].getNode() as ClassDeclaration).getName()).to.equal("Class2");
@@ -50,7 +50,7 @@ describe(nameof(Identifier), () => {
         it("should find all the references", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = tsSimpleAst.addSourceFileFromText("second.ts", "const reference2 = myFunction;");
-            const referencedSymbols = firstChild.getNameIdentifier().findReferences();
+            const referencedSymbols = firstChild.getNameNode().findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];
             const references = referencedSymbol.getReferences();
@@ -104,7 +104,7 @@ namespace MyNamespace {
 
 const t = MyNamespace.MyClass;
 `);
-            const referencedSymbols = firstChild.getNameIdentifier().findReferences();
+            const referencedSymbols = firstChild.getNameNode().findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];
             const references = referencedSymbol.getReferences();

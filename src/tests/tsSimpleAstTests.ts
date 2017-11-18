@@ -157,9 +157,9 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.getSourceFiles().length).to.equal(3);
         });
 
-        it("should rename an identifier appropriately", () => {
+        it("should rename a name appropriately", () => {
             const interfaceFile = ast.getSourceFileOrThrow("testInterfaces.ts");
-            interfaceFile.getInterfaces()[0].getProperties()[0].getNameIdentifier().rename("newName");
+            interfaceFile.getInterfaces()[0].getProperties()[0].rename("newName");
             const variableFile = ast.getSourceFileOrThrow("variableTestFile.ts");
             expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
         });

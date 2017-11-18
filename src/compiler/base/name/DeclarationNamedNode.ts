@@ -12,11 +12,11 @@ export interface DeclarationNamedNode {
     /**
      * Gets the name node.
      */
-    getNameIdentifier(): Identifier | undefined;
+    getNameNode(): Identifier | undefined;
     /**
      * Gets the name node or throws an error if it doesn't exists.
      */
-    getNameIdentifierOrThrow(): Identifier;
+    getNameNodeOrThrow(): Identifier;
     /**
      * Gets the name.
      */
@@ -34,14 +34,14 @@ export interface DeclarationNamedNode {
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
     return class extends Base implements DeclarationNamedNode {
-        getNameIdentifierOrThrow() {
-            const nameNode = this.getNameIdentifier();
+        getNameNodeOrThrow() {
+            const nameNode = this.getNameNode();
             if (nameNode == null)
                 throw new errors.InvalidOperationError("Expected a name node.");
             return nameNode;
         }
 
-        getNameIdentifier() {
+        getNameNode() {
             const compilerNameNode = this.compilerNode.name;
 
             if (compilerNameNode == null)
@@ -61,13 +61,13 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
         }
 
         getName() {
-            const nameNode = this.getNameIdentifier();
+            const nameNode = this.getNameNode();
             return nameNode == null ? undefined : nameNode.getText();
         }
 
         rename(text: string) {
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            const nameNode = this.getNameIdentifier();
+            const nameNode = this.getNameNode();
 
             if (nameNode == null)
                 throw errors.getNotImplementedForSyntaxKindError(this.getKind());

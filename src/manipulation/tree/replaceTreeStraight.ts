@@ -2,7 +2,7 @@
 import {StraightReplacementNodeHandler} from "./nodeHandlers";
 
 /**
- * Replaces two trees that should be identical other than positions.
+ * Replaces a tree with a new one that should be identical other than positions.
  * @param currentSourceFile - Current source file.
  * @param replacementSourceFile - Replacement source file.
  */

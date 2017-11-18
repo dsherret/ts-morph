@@ -20,10 +20,10 @@ describe(nameof(NamespaceDeclaration), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(d => d.getNameIdentifiers), () => {
+    describe(nameof<NamespaceDeclaration>(d => d.getNameNodes), () => {
         function doTest(text: string, expectedNames: string[]) {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>(text);
-            expect(firstChild.getNameIdentifiers().map(n => n.getText())).to.deep.equal(expectedNames);
+            expect(firstChild.getNameNodes().map(n => n.getText())).to.deep.equal(expectedNames);
         }
 
         it("should get the name nodes when not using dot notation", () => {

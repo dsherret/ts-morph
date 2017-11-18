@@ -60,10 +60,10 @@ describe(nameof(NameableNode), () => {
         });
     });
 
-    describe(nameof<NameableNode>(n => n.getNameIdentifier), () => {
+    describe(nameof<NameableNode>(n => n.getNameNode), () => {
         function doTest(startCode: string, expectedName: string | undefined) {
             const {funcExpr, sourceFile} = getFunctionExpression(startCode);
-            const identifier = funcExpr.getNameIdentifier();
+            const identifier = funcExpr.getNameNode();
             expect(identifier == null ? undefined : identifier.getText()).to.equal(expectedName);
         }
 
@@ -76,15 +76,15 @@ describe(nameof(NameableNode), () => {
         });
     });
 
-    describe(nameof<NameableNode>(n => n.getNameIdentifierOrThrow), () => {
+    describe(nameof<NameableNode>(n => n.getNameNodeOrThrow), () => {
         it("should get the name when it exists", () => {
             const {funcExpr, sourceFile} = getFunctionExpression("const v = function name() {};");
-            expect(funcExpr.getNameIdentifierOrThrow().getText()).to.equal("name");
+            expect(funcExpr.getNameNodeOrThrow().getText()).to.equal("name");
         });
 
         it("should throw when it doesn't exist", () => {
             const {funcExpr, sourceFile} = getFunctionExpression("const v = function() {};");
-            expect(() => funcExpr.getNameIdentifierOrThrow()).to.throw();
+            expect(() => funcExpr.getNameNodeOrThrow()).to.throw();
         });
     });
 });

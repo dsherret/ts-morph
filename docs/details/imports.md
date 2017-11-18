@@ -139,7 +139,7 @@ Import specifiers are the individual named imports.
 ##### Name
 
 ```typescript
-namedImport.getNameIdentifier(); // returns: Identifier
+namedImport.getNameNode(); // returns: Identifier
 namedImport.setName("NewName");
 namedImport.renameName("NewName");
 ```

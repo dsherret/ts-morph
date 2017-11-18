@@ -163,6 +163,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ComputedPropertyName.
+     * @param node - Node to check.
+     */
+    static isComputedPropertyName(node: compiler.Node): node is compiler.ComputedPropertyName {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ComputedPropertyName:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ConstructSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -326,19 +339,6 @@ export class TypeGuards {
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Expression.
-     * @param node - Node to check.
-     */
-    static isExpression(node: compiler.Node): node is compiler.Expression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.NumericLiteral:
                 return true;
             default:
                 return false;
@@ -669,6 +669,22 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a LiteralLikeNode.
+     * @param node - Node to check.
+     */
+    static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a MethodDeclaration.
      * @param node - Node to check.
      */
@@ -780,6 +796,20 @@ export class TypeGuards {
     static isNamespaceDeclaration(node: compiler.Node): node is compiler.NamespaceDeclaration {
         switch (node.getKind()) {
             case ts.SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NumericLiteral.
+     * @param node - Node to check.
+     */
+    static isNumericLiteral(node: compiler.Node): node is compiler.NumericLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.FirstLiteralToken:
                 return true;
             default:
                 return false;
@@ -938,6 +968,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a RegularExpressionLiteral.
+     * @param node - Node to check.
+     */
+    static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.RegularExpressionLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ReturnTypedNode.
      * @param node - Node to check.
      */
@@ -1064,6 +1107,19 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a StringLiteral.
+     * @param node - Node to check.
+     */
+    static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.StringLiteral:
                 return true;
             default:
                 return false;

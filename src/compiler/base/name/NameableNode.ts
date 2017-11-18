@@ -11,11 +11,11 @@ export interface NameableNode {
     /**
      * Gets the name node if it exists.
      */
-    getNameIdentifier(): Identifier | undefined;
+    getNameNode(): Identifier | undefined;
     /**
      * Gets the name node if it exists, or throws.
      */
-    getNameIdentifierOrThrow(): Identifier;
+    getNameNodeOrThrow(): Identifier;
     /**
      * Gets the name if it exists.
      */
@@ -33,19 +33,19 @@ export interface NameableNode {
 
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
     return class extends Base implements NameableNode {
-        getNameIdentifier() {
+        getNameNode() {
             const nameNode = this.compilerNode.name;
             if (nameNode == null)
                 return undefined;
             return this.global.compilerFactory.getNodeFromCompilerNode(nameNode, this.sourceFile) as Identifier;
         }
 
-        getNameIdentifierOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getNameIdentifier(), "Expected to have a name identifier.");
+        getNameNodeOrThrow() {
+            return errors.throwIfNullOrUndefined(this.getNameNode(), "Expected to have a name node.");
         }
 
         getName() {
-            const identifier = this.getNameIdentifier();
+            const identifier = this.getNameNode();
             return identifier == null ? undefined : identifier.getText();
         }
 
@@ -57,17 +57,17 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             if (newName === this.getName())
                 return this;
 
-            const nameIdentifier = this.getNameIdentifier();
+            const nameNode = this.getNameNode();
 
             if (StringUtils.isNullOrWhitespace(newName)) {
-                if (nameIdentifier == null)
+                if (nameNode == null)
                     return this;
 
-                removeChildren({ children: [nameIdentifier], removePrecedingSpaces: true });
+                removeChildren({ children: [nameNode], removePrecedingSpaces: true });
                 return this;
             }
 
-            if (nameIdentifier == null) {
+            if (nameNode == null) {
                 const openParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken);
                 insertIntoParent({
                     childIndex: openParenToken.getChildIndex(),
@@ -78,7 +78,7 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
                 });
             }
             else
-                nameIdentifier.rename(newName);
+                nameNode.rename(newName);
 
             return this;
         }

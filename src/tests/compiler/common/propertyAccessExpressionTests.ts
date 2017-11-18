@@ -12,7 +12,7 @@ describe(nameof(PropertyAccessExpression), () => {
     it("should get the property access expression when only one dot", () => {
         const propertyAccessExpression = getPropertyAccessExpression("const t = M.N;");
         expect(propertyAccessExpression.getExpression().getText()).to.equal("M");
-        expect(propertyAccessExpression.getNameIdentifier().getText()).to.equal("N");
+        expect(propertyAccessExpression.getNameNode().getText()).to.equal("N");
     });
 
     it("should get the nested property access expression when two dots", () => {
@@ -21,6 +21,6 @@ describe(nameof(PropertyAccessExpression), () => {
         expect(nestedExpression.getText()).to.equal("M.N");
         expect(nestedExpression.getExpression().getText()).to.equal("M");
         expect(nestedExpression.getName()).to.equal("N");
-        expect(propertyAccessExpression.getNameIdentifier().getText()).to.equal("O");
+        expect(propertyAccessExpression.getNameNode().getText()).to.equal("O");
     });
 });

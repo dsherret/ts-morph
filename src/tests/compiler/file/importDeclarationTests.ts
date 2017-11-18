@@ -176,7 +176,7 @@ describe(nameof(ImportDeclaration), () => {
             const namedImports = firstChild.getNamedImports();
             expect(namedImports.length).to.equal(expected.length);
             for (let i = 0; i < namedImports.length; i++) {
-                expect(namedImports[i].getNameIdentifier().getText()).to.equal(expected[i].name);
+                expect(namedImports[i].getNameNode().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
                     expect(namedImports[i].getAliasIdentifier()).to.equal(undefined);
                 else

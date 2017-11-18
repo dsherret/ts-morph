@@ -60,25 +60,25 @@ describe(nameof(Decorator), () => {
         });
     });
 
-    describe(nameof<Decorator>(d => d.getNameIdentifier), () => {
+    describe(nameof<Decorator>(d => d.getNameNode), () => {
         function doTest(text: string, expectedName: string) {
             const {firstDecorator} = getFirstClassDecorator(text);
-            expect(firstDecorator.getNameIdentifier().getText()).to.equal(expectedName);
+            expect(firstDecorator.getNameNode().getText()).to.equal(expectedName);
         }
 
-        it("should get the name identifier for a non-decorator factory", () => {
+        it("should get the name node for a non-decorator factory", () => {
             doTest("@decorator\nclass Identifier {}", "decorator");
         });
 
-        it("should get the name identifier for a non-decorator factory decorator with a namespace", () => {
+        it("should get the name node for a non-decorator factory decorator with a namespace", () => {
             doTest("@namespaceTest.decorator\nclass Identifier {}", "decorator");
         });
 
-        it("should get the name identifier for a decorator factory", () => {
+        it("should get the name node for a decorator factory", () => {
             doTest("@decorator()\nclass Identifier {}", "decorator");
         });
 
-        it("should get the name identifier for a decorator factory decorator with a namespace", () => {
+        it("should get the name node for a decorator factory decorator with a namespace", () => {
             doTest("@namespaceTest.decorator()\nclass Identifier {}", "decorator");
         });
     });

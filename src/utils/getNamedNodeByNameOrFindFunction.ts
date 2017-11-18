@@ -1,8 +1,9 @@
 ﻿import {NamedNode} from "./../compiler/base/name/NamedNode";
+import {PropertyNamedNode} from "./../compiler/base/name/PropertyNamedNode";
 import {DeclarationNamedNode} from "./../compiler/base/name/DeclarationNamedNode";
 import {ArrayUtils} from "./../utils";
 
-export function getNamedNodeByNameOrFindFunction<T extends NamedNode | DeclarationNamedNode>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
+export function getNamedNodeByNameOrFindFunction<T extends NamedNode | DeclarationNamedNode | PropertyNamedNode>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
 
     if (typeof nameOrFindFunc === "string")

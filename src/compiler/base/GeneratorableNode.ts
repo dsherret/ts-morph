@@ -97,7 +97,7 @@ function getAsteriskInsertInfo(node: Node) {
     if (namedNode.getName == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 
-    const identifier = namedNode.getNameIdentifier();
+    const identifier = namedNode.getNameNode();
     return {
         pos: identifier.getStart(),
         childIndex: identifier.getChildIndex()

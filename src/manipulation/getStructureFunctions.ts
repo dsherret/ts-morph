@@ -11,7 +11,6 @@ export function fromConstructorDeclarationOverload(node: compiler.ConstructorDec
     objectAssign(structure, getMixinStructureFuncs.fromScopedNode(node));
     return structure;
 }
-
 export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration): structures.MethodDeclarationOverloadStructure {
     let structure: structures.MethodDeclarationOverloadStructure = {} as any;
     objectAssign(structure, getMixinStructureFuncs.fromStaticableNode(node));
@@ -19,7 +18,6 @@ export function fromMethodDeclarationOverload(node: compiler.MethodDeclaration):
     objectAssign(structure, getMixinStructureFuncs.fromScopedNode(node));
     return structure;
 }
-
 export function fromFunctionDeclarationOverload(node: compiler.FunctionDeclaration): structures.FunctionDeclarationOverloadStructure {
     let structure: structures.FunctionDeclarationOverloadStructure = {} as any;
     objectAssign(structure, getMixinStructureFuncs.fromAmbientableNode(node));

@@ -143,7 +143,7 @@ Export specifiers are the individual named exports.
 ##### Name
 
 ```typescript
-namedExport.getNameIdentifier(); // returns: Identifier
+namedExport.getNameNode(); // returns: Identifier
 namedExport.setName("NewName");
 namedExport.renameName("NewName");
 ```

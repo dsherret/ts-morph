@@ -52,10 +52,10 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
             return this;
 
         if (value) {
-            const nameIdentifier = this.getNameIdentifierOrThrow();
+            const nameNode = this.getNameNodeOrThrow();
             insertIntoParent({
-                insertPos: nameIdentifier.getStart(),
-                childIndex: nameIdentifier.getChildIndex(),
+                insertPos: nameNode.getStart(),
+                childIndex: nameNode.getChildIndex(),
                 insertItemsCount: 1,
                 parent: this,
                 newText: "..."

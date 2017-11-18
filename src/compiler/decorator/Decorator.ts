@@ -11,13 +11,13 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the decorator name.
      */
     getName() {
-        return this.getNameIdentifier().getText();
+        return this.getNameNode().getText();
     }
 
     /**
-     * Gets the name identifier of the decorator.
+     * Gets the name node of the decorator.
      */
-    getNameIdentifier() {
+    getNameNode() {
         const sourceFile = this.getSourceFile();
 
         if (this.isDecoratorFactory()) {
@@ -38,7 +38,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
         function getNameFromExpression(expression: Expression) {
             if (TypeGuards.isPropertyAccessExpression(expression))
-                return expression.getNameIdentifier();
+                return expression.getNameNode();
             return expression;
         }
     }

@@ -12,6 +12,7 @@ export * from "./base/ExtendsClauseableNode";
 export * from "./base/GeneratorableNode";
 export * from "./base/HeritageClauseableNode";
 export * from "./base/ImplementsClauseableNode";
+export * from "./base/LiteralLikeNode";
 export * from "./base/ModifierableNode";
 export * from "./base/ParameteredNode";
 export * from "./base/QuestionTokenableNode";

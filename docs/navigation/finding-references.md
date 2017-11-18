@@ -12,7 +12,7 @@ Simple example:
 
 ```typescript
 const classDeclaration = ...; // get a class or some other declaration somehow
-const referencedSymbols = classDeclaration.getNameIdentifier().findReferences();
+const referencedSymbols = classDeclaration.getNameNode().findReferences();
 
 for (const referencedSymbol of referencedSymbols) {
     for (const reference of referencedSymbol.getReferences()) {

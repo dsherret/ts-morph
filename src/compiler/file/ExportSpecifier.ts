@@ -9,12 +9,12 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Sets the name of what's being exported.
      */
     setName(name: string) {
-        const nameIdentifier = this.getNameIdentifier();
-        if (nameIdentifier.getText() === name)
+        const nameNode = this.getNameNode();
+        if (nameNode.getText() === name)
             return this;
 
-        const start = nameIdentifier.getStart();
-        replaceNodeText(this.sourceFile, start, start + nameIdentifier.getWidth(), name);
+        const start = nameNode.getStart();
+        replaceNodeText(this.sourceFile, start, start + nameNode.getWidth(), name);
 
         return this;
     }
@@ -23,14 +23,14 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Renames the name of what's being exported.
      */
     renameName(name: string) {
-        this.getNameIdentifier().rename(name);
+        this.getNameNode().rename(name);
         return this;
     }
 
     /**
-     * Gets the name identifier of what's being exported.
+     * Gets the name node of what's being exported.
      */
-    getNameIdentifier() {
+    getNameNode() {
         return this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier) as Identifier;
     }
 
@@ -42,13 +42,13 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         let aliasIdentifier = this.getAliasIdentifier();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
-            const nameIdentifier = this.getNameIdentifier();
+            const nameNode = this.getNameNode();
             insertIntoParent({
-                insertPos: nameIdentifier.getEnd(),
-                childIndex: nameIdentifier.getChildIndex() + 1,
+                insertPos: nameNode.getEnd(),
+                childIndex: nameNode.getChildIndex() + 1,
                 insertItemsCount: 2, // AsKeyword, Identifier
                 parent: this,
-                newText: ` as ${nameIdentifier.getText()}`
+                newText: ` as ${nameNode.getText()}`
             });
             aliasIdentifier = this.getAliasIdentifier()!;
         }

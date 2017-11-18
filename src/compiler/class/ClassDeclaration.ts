@@ -700,7 +700,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     private getImmediateDerivedClasses() {
-        const references = this.getNameIdentifier().findReferences();
+        const references = this.getNameNode().findReferences();
         const classes: ClassDeclaration[] = [];
         for (const reference of references) {
             for (const ref of reference.getReferences()) {

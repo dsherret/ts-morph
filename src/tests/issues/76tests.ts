@@ -1,4 +1,5 @@
 ﻿import {expect} from "chai";
+import * as ts from "typescript";
 import {ClassDeclaration} from "./../../compiler";
 import {getInfoFromText} from "./../compiler/testHelpers";
 
@@ -16,7 +17,7 @@ class Identifier {
         firstChild.rename("NewName");
         firstChild.getInstanceProperties()[0].rename("newPropName");
         expect(firstChild.getFullText()).to.equal(text.replace("Identifier", "NewName").replace("prop", "newPropName"));
-        expect(firstChild.getNameIdentifier().compilerNode.escapedText).to.equal("NewName");
-        expect(firstChild.getInstanceProperties()[0].getNameIdentifier()!.compilerNode.escapedText).to.equal("newPropName");
+        expect(firstChild.getNameNode().compilerNode.escapedText).to.equal("NewName");
+        expect((firstChild.getInstanceProperties()[0].getNameNode()!.compilerNode as ts.Identifier).escapedText).to.equal("newPropName");
     });
 });

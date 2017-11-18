@@ -16,7 +16,7 @@ console.log(identifier);
 
 ### Getting identifiers
 
-A lot of the time, a node will have a name and you can retrieve the identifier via `.getNameIdentifier()`.
+A lot of the time, a node will have a name and you can retrieve the identifier via `.getNameNode()`.
 
 If not, from a given node, you can get all the children or descendants that are identifiers. For example:
 

@@ -35,11 +35,11 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.getNameIdentifier), () => {
+    describe(nameof<ImportSpecifier>(n => n.getNameNode), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
-            expect(namedImport.getNameIdentifier().getText()).to.equal(name);
+            expect(namedImport.getNameNode().getText()).to.equal(name);
         }
 
         it("should get the name when there is no alias", () => {
@@ -112,7 +112,7 @@ describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.remove), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
-            const importSpecifier = ArrayUtils.find(sourceFile.getImports()[0].getNamedImports(), i => i.getNameIdentifier().getText() === nameToRemove)!;
+            const importSpecifier = ArrayUtils.find(sourceFile.getImports()[0].getNamedImports(), i => i.getNameNode().getText() === nameToRemove)!;
             importSpecifier.remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

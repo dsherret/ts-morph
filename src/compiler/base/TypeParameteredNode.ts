@@ -68,10 +68,10 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
-                const nameIdentifier = getNamedNode(this).getNameIdentifier();
+                const nameNode = getNamedNode(this).getNameNode();
                 insertIntoParent({
-                    insertPos: nameIdentifier.getEnd(),
-                    childIndex: nameIdentifier.getChildIndex() + 1,
+                    insertPos: nameNode.getEnd(),
+                    childIndex: nameNode.getChildIndex() + 1,
                     insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
                     parent: this,
                     newText: `<${typeParamCodes.join(", ")}>`
@@ -106,7 +106,7 @@ function getNamedNode(node: TypeParameteredNode) {
     const namedNode = node as any as NamedNode;
 
     /* istanbul ignore if */
-    if (namedNode.getNameIdentifier == null)
+    if (namedNode.getNameNode == null)
         throw new errors.NotImplementedError("Not implemented scenario. Type parameters can only be added to a node with a name.");
 
     return namedNode;

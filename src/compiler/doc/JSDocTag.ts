@@ -13,9 +13,9 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<N
     }
 
     /**
-     * Gets the tag name identifier.
+     * Gets the tag name node.
      */
-    getTagNameIdentifier() {
+    getTagNameNode() {
         return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.tagName, this.sourceFile) as Identifier;
     }
 

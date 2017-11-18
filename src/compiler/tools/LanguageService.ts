@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {replaceNodeText} from "./../../manipulation";
+import {replaceSourceFileTextForRename} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {KeyValueCache, FileUtils} from "./../../utils";
 import {SourceFile} from "./../file";
@@ -109,6 +109,7 @@ export class LanguageService {
 
         if (node.getText() === newName)
             return;
+
         this.renameLocations(this.findRenameLocations(node), newName);
     }
 
@@ -125,13 +126,11 @@ export class LanguageService {
         }
 
         for (const [sourceFile, locations] of renameLocationsBySourceFile.getEntries()) {
-            let difference = 0;
-            for (const textSpan of locations.map(l => l.getTextSpan())) {
-                let start = textSpan.getStart();
-                start -= difference;
-                replaceNodeText(sourceFile, start, start + textSpan.getLength(), newName);
-                difference += textSpan.getLength() - newName.length;
-            }
+            replaceSourceFileTextForRename({
+                sourceFile,
+                renameLocations: locations,
+                newName
+            });
         }
     }
 

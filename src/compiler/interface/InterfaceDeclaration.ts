@@ -324,7 +324,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * This is similar to "go to implementation."
      */
     getImplementations(): ImplementationLocation[] {
-        return this.getNameIdentifier().getImplementations();
+        return this.getNameNode().getImplementations();
     }
 
     /**
