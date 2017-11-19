@@ -5,6 +5,7 @@ export * from "./doc/JSDocUnknownTag";
 export * from "./doc/JSDocAugmentsTag";
 export * from "./doc/JSDocClassTag";
 export * from "./doc/JSDocReturnTag";
+export * from "./doc/JSDocTagInfo";
 export * from "./doc/JSDocTypeTag";
 export * from "./doc/JSDocTypedefTag";
 export * from "./doc/JSDocPropertyTag";

@@ -152,11 +152,27 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets a warpped symbol display part form a compiler symbol display part.
+     * @param compilerObject - Compiler symbol display part.
+     */
+    getSymbolDisplayPart(compilerObject: ts.SymbolDisplayPart) {
+        return new compiler.SymbolDisplayPart(compilerObject);
+    }
+
+    /**
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
      */
     getType(type: ts.Type): compiler.Type {
         return new compiler.Type(this.global, type);
+    }
+
+    /**
+     * Gets a warpped type parameter from a compiler type parameter.
+     * @param typeParameter - Compiler type parameter
+     */
+    getTypeParameter(typeParameter: ts.TypeParameter): compiler.TypeParameter {
+        return new compiler.TypeParameter(this.global, typeParameter);
     }
 
     /**
@@ -189,6 +205,14 @@ export class CompilerFactory {
      */
     getDiagnosticMessageChain(diagnosticMessageChain: ts.DiagnosticMessageChain): compiler.DiagnosticMessageChain {
         return new compiler.DiagnosticMessageChain(this.global, diagnosticMessageChain);
+    }
+
+    /**
+     * Gets a warpped JS doc tag info from a compiler object.
+     * @param jsDocTagInfo - Compiler object.
+     */
+    getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): compiler.JSDocTagInfo {
+        return new compiler.JSDocTagInfo(jsDocTagInfo);
     }
 
     /**

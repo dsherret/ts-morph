@@ -8,7 +8,7 @@ import {Signature} from "./../common/Signature";
 
 export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */
-    protected readonly global: GlobalContainer;
+    readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerType: TType;
 

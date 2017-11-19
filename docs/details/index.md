@@ -27,6 +27,7 @@ Find out more information about:
 Types:
 
 * [Types](types)
+* [Signatures](signatures)
 * Type Nodes - todo
 
 Common:

@@ -12,7 +12,7 @@ export class SymbolDisplayPart {
         this._compilerObject = compilerObject;
     }
 
-    /** Gets the compiler text span. */
+    /** Gets the compiler symbol display part. */
     get compilerObject() {
         return this._compilerObject;
     }
@@ -26,6 +26,8 @@ export class SymbolDisplayPart {
 
     /**
      * Gets the kind.
+     *
+     * Examples: "text", "lineBreak"
      */
     getKind() {
         return this.compilerObject.kind;

@@ -14,6 +14,13 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     }
 
     /**
+     * Gets the default node.
+     */
+    getDefaultNode(): TypeNode | undefined {
+        return this.compilerNode.default == null ? undefined : (this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.default, this.sourceFile) as TypeNode);
+    }
+
+    /**
      * Removes this type parameter.
      */
     remove() {

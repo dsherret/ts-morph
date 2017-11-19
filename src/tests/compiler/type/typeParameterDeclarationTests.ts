@@ -27,6 +27,18 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
+    describe(nameof<TypeParameterDeclaration>(d => d.getDefaultNode), () => {
+        it("should return undefined when there's no default node", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
+            expect(typeParameterDeclaration.getDefaultNode()).to.be.undefined;
+        });
+
+        it("should return the default type node when there's a default", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T = string>() {}\n");
+            expect(typeParameterDeclaration.getDefaultNode()!.getText()).to.equal("string");
+        });
+    });
+
     describe(nameof<TypeParameterDeclaration>(d => d.remove), () => {
         function doTest(startText: string, indexToRemove: number, expectedText: string) {
             const typeParameterDeclaration = getTypeParameterFromText(startText, indexToRemove);

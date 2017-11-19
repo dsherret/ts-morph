@@ -40,7 +40,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         getReturnType() {
             const typeChecker = this.global.typeChecker;
             const signature = typeChecker.getSignatureFromNode(this)!; // should always return a signature
-            return typeChecker.getReturnTypeOfSignature(signature);
+            return signature.getReturnType();
         }
 
         getReturnTypeNode() {
