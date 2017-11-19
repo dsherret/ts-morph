@@ -5,6 +5,7 @@ export * from "./manipulation/getNodeOrNodesToReturn";
 export * from "./manipulation/getEndIndexFromArray";
 export * from "./manipulation/getRangeFromArray";
 export * from "./manipulation/insertion";
+export * from "./manipulation/move";
 export * from "./manipulation/replaction";
 export * from "./manipulation/verifyAndGetIndex";
 export * from "./manipulation/removal";

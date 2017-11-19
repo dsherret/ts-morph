@@ -3,13 +3,13 @@ import {removeStatementedNodeChild, insertIntoParent, insertIntoCommaSeparatedNo
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {VariableStatementStructure, VariableDeclarationStructure} from "./../../structures";
-import {ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode} from "./../base";
+import {ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, ChildOrderableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
 import {callBaseFill} from "./../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 
-export const VariableStatementBase = NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(Node)))));
+export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(ModifierableNode(Node))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
      * Get the variable declarations.

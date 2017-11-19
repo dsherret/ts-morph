@@ -2,6 +2,7 @@
 import {FormattingKind, getFormattingKindText} from "./../formatting";
 import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "./../textSeek";
 import {replaceTreeWithChildIndex} from "./../tree";
+import {getSpacingBetweenNodes} from "./../text";
 
 export interface RemoveChildrenWithFormattingOptions<TNode extends Node> {
     children: Node[];
@@ -29,7 +30,7 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     if (children.length === 0)
         return;
 
-    const parent = children[0].getParentOrThrow();
+    const parent = children[0].getParentOrThrow() as TNode;
     const sourceFile = parent.getSourceFile();
     const fullText = sourceFile.getFullText();
     const newLineKind = sourceFile.global.manipulationSettings.getNewLineKind();
@@ -50,18 +51,13 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     }
 
     function getSpacing() {
-        if (previousSibling != null && nextSibling != null) {
-            const previousSiblingFormatting = getSiblingFormatting(parent as TNode, previousSibling);
-            const nextSiblingFormatting = getSiblingFormatting(parent as TNode, nextSibling);
-
-            if (previousSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Blankline)
-                return newLineKind + newLineKind;
-            else if (previousSiblingFormatting === FormattingKind.Newline || nextSiblingFormatting === FormattingKind.Newline)
-                return newLineKind;
-            else if (previousSiblingFormatting === FormattingKind.Space || nextSiblingFormatting === FormattingKind.Space)
-                return " ";
-        }
-        return "";
+        return getSpacingBetweenNodes({
+            parent,
+            previousSibling,
+            nextSibling,
+            newLineKind,
+            getSiblingFormatting
+        });
     }
 
     function getSuffix() {

@@ -5,13 +5,13 @@ import {removeClassMember, removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, DocumentationableNode, StaticableNode,
-    ModifierableNode, ScopedNode, DecoratableNode} from "./../base";
+    ModifierableNode, ScopedNode, DecoratableNode, ChildOrderableNode} from "./../base";
 import {ClassDeclaration} from "./ClassDeclaration";
 import {AbstractableNode} from "./base";
 
-export const PropertyDeclarationBase = DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(DocumentationableNode(ReadonlyableNode(QuestionTokenableNode(
-    InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node))))
-)))))));
+export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(DocumentationableNode(
+    ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node))))))
+))))));
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
      * Fills the node from a structure.

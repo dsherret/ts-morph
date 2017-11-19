@@ -5,6 +5,7 @@ export * from "./base/ArgumentedNode";
 export * from "./base/AsyncableNode";
 export * from "./base/BodyableNode";
 export * from "./base/BodiedNode";
+export * from "./base/ChildOrderableNode";
 export * from "./base/DecoratableNode";
 export * from "./base/DocumentationableNode";
 export * from "./base/ExportableNode";

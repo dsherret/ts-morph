@@ -24,20 +24,21 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
     }
 
     handleNode(currentNode: Node, newNode: Node) {
-        const currentNodeChildren = currentNode.getChildren();
+        const currentNodeChildren = this.getChildrenInNewOrder(currentNode.getChildren());
         const newNodeChildren = newNode.getChildren();
 
         errors.throwIfNotEqual(newNodeChildren.length, currentNodeChildren.length, "New children length should match the old children length.");
 
-        for (let i = 0; i < newNodeChildren.length; i++) {
-            if (i === this.newIndex)
-                this.straightReplacementNodeHandler.handleNode(currentNodeChildren[this.oldIndex], newNodeChildren[this.newIndex]);
-            else if (i === this.oldIndex)
-                this.straightReplacementNodeHandler.handleNode(currentNodeChildren[this.newIndex], newNodeChildren[this.oldIndex]);
-            else
-                this.straightReplacementNodeHandler.handleNode(currentNodeChildren[i], newNodeChildren[i]);
-        }
+        for (let i = 0; i < newNodeChildren.length; i++)
+            this.straightReplacementNodeHandler.handleNode(currentNodeChildren[i], newNodeChildren[i]);
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+    }
+
+    private getChildrenInNewOrder(children: Node[]) {
+        const result = [...children];
+        const movingNode = result.splice(this.oldIndex, 1)[0];
+        result.splice(this.newIndex, 0, movingNode);
+        return result;
     }
 }

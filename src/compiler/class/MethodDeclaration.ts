@@ -5,13 +5,14 @@ import {removeOverloadableClassMember} from "./../../manipulation";
 import {MethodDeclarationOverloadStructure, MethodDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, ScopedNode, DecoratableNode, BodyableNode, TextInsertableNode} from "./../base";
+import {PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, ScopedNode, DecoratableNode, BodyableNode, TextInsertableNode,
+    ChildOrderableNode} from "./../base";
 import {FunctionLikeDeclaration, OverloadableNode, insertOverloads} from "./../function";
 import {AbstractableNode} from "./base";
 
-export const MethodDeclarationBase = TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(AsyncableNode(
-    GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))
-))))))));
+export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
+    StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
+)))))));
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
      * Fills the node from a structure.

@@ -4,12 +4,13 @@ import {replaceNodeText, removeStatementedNodeChild} from "./../../manipulation"
 import {NamespaceDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node, Identifier} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode, TextInsertableNode, UnwrappableNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, BodiedNode, TextInsertableNode, UnwrappableNode,
+    ChildOrderableNode} from "./../base";
 import {StatementedNode} from "./../statement";
 import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
-export const NamespaceDeclarationBase = UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(DocumentationableNode(AmbientableNode(
-    ExportableNode(ModifierableNode(NamedNode(Node)))
+export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(DocumentationableNode(
+    AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))
 )))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**

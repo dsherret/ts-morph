@@ -4,15 +4,15 @@ import {removeClassMember} from "./../../manipulation";
 import {SetAccessorDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode, TextInsertableNode} from "./../base";
+import {PropertyNamedNode, StaticableNode, ScopedNode, DecoratableNode, BodiedNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {FunctionLikeDeclaration} from "./../function";
 import {AbstractableNode} from "./base";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {ClassDeclaration} from "./ClassDeclaration";
 
-export const SetAccessorDeclarationBase = TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
+export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
     BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
-))))));
+)))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
      * Fills the node from a structure.
