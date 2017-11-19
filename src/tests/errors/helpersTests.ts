@@ -124,4 +124,15 @@ describe("helpers", () => {
             expect(result.message).to.equal("Not implemented feature for syntax kind 'EnumDeclaration'.");
         });
     });
+
+    describe(nameof(errors.throwIfNotEqual), () => {
+        it("should throw when not equal", () => {
+            expect(() => errors.throwIfNotEqual(1, 2, "New length should equal old length.")).to.throw(errors.InvalidOperationError,
+                "Expected 1 to equal 2. New length should equal old length.");
+        });
+
+        it("should not throw when equal", () => {
+            expect(() => errors.throwIfNotEqual(2, 2, "New length should equal old length.")).to.not.throw();
+        });
+    });
 });

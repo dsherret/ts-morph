@@ -103,3 +103,14 @@ export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: st
 export function getNotImplementedForNeverValueError(value: never) {
     return new NotImplementedError(`Not implemented value: ${value}`);
 }
+
+/**
+ * Throws an error if the actual value does not equal the expected value.
+ * @param actual - Actual value.
+ * @param expected - Expected value.
+ * @param description - Message to show in the error. Should be a full sentence that doesn't include the actual and expected values.
+ */
+export function throwIfNotEqual<T>(actual: T, expected: T, description: string) {
+    if (actual !== expected)
+        throw new InvalidOperationError(`Expected ${actual} to equal ${expected}. ${description}`);
+}
