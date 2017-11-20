@@ -12,6 +12,7 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "OverloadableNode":
         case "TextInsertableNode":
         case "UnwrappableNode":
+        case "ChildOrderableNode":
             return false;
         default:
             return true;
