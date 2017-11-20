@@ -6,25 +6,25 @@ import {Node} from "./../common";
 
 export interface ChildOrderableNode {
     /**
-     * Sets the child index of the node within the parent.
+     * Sets the child order of the node within the parent.
      */
-    setOrder(index: number): this;
+    setOrder(order: number): this;
 }
 
 export function ChildOrderableNode<T extends Constructor<Node>>(Base: T): Constructor<ChildOrderableNode> & T {
     return class extends Base implements ChildOrderableNode {
-        setOrder(index: number) {
+        setOrder(order: number) {
             const childIndex = this.getChildIndex();
-            errors.throwIfOutOfRange(index, [0, this.getChildCount() - 1], nameof(index));
+            errors.throwIfOutOfRange(order, [0, this.getChildCount() - 1], nameof(order));
 
-            if (childIndex === index)
+            if (childIndex === order)
                 return this;
 
             changeChildOrder({
                 parent: this.getParentSyntaxList() || this.getParentOrThrow(),
                 getSiblingFormatting: getGeneralFormatting,
                 oldIndex: childIndex,
-                newIndex: index
+                newIndex: order
             });
             return this;
         }
