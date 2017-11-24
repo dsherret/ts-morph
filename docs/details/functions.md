@@ -112,24 +112,14 @@ const someDeclaration = 5;
 
 ## Function Expressions
 
-They look like this:
+They exist in an expression:
 
 ```typescript
 const add = function(a: number, b: number) { return a + b; };
 ```
 
-In this scenario, get the variable declaration's initializer expression:
+In this case, it can be retrieved via the variable declaration's [initializer](initializers).
 
 ```typescript
-const addFunc = sourceFile.getVariableDeclarationOrThrow("add");
-const initializer = addFunc.getInitializerOrThrow();
-```
-
-Then tell if the initailizer is a function expression by using the [type guard](../utilities) (or alternatively assert it to `FunctionExpression` if you know for sure that it is one):
-
-```typescript
-if (TypeGuards.isFunctionExpression(initializer)) {
-    // now use it:
-    console.log(initializer.getParameters()[0].getName()); // "a"
-}
+const functionExpression = sourceFile.getVariableDeclarationOrThrow("add").getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression);
 ```

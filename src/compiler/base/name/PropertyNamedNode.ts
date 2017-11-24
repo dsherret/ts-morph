@@ -3,13 +3,11 @@ import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {PropertyNamedNodeStructure} from "./../../../structures";
 import {TypeGuards} from "./../../../utils";
-import {Node, Identifier, ComputedPropertyName} from "./../../common";
-import {StringLiteral, NumericLiteral} from "./../../literal";
+import {Node} from "./../../common";
+import {PropertyName} from "./../../aliases";
 import {callBaseFill} from "./../../callBaseFill";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
-
-export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
 export interface PropertyNamedNode {
     getNameNode(): PropertyName;
@@ -20,18 +18,8 @@ export interface PropertyNamedNode {
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
     return class extends Base implements PropertyNamedNode {
         getNameNode() {
-            const compilerNameNode = this.compilerNode.name;
-
-            switch (compilerNameNode.kind) {
-                case ts.SyntaxKind.Identifier:
-                case ts.SyntaxKind.StringLiteral:
-                case ts.SyntaxKind.NumericLiteral:
-                case ts.SyntaxKind.ComputedPropertyName:
-                    return this.global.compilerFactory.getNodeFromCompilerNode(compilerNameNode, this.sourceFile) as PropertyName;
-                /* istanbul ignore next */
-                default:
-                    throw errors.getNotImplementedForNeverValueError(compilerNameNode);
-            }
+            const compilerNameNode: ts.PropertyName = this.compilerNode.name;
+            return this.global.compilerFactory.getNodeFromCompilerNode(compilerNameNode, this.sourceFile) as PropertyName;
         }
 
         getName() {

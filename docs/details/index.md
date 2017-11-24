@@ -38,6 +38,7 @@ Common:
 * [Async](async)
 * [Exports](exports)
 * [Generators](generators)
+* [Initializers](initializers)
 * [JS Docs](documentation)
 * [Literals](literals)
 * [Modifiers](modifiers)

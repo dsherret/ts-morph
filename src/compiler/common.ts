@@ -4,6 +4,7 @@ export * from "./common/ComputedPropertyName";
 export * from "./common/Expression";
 export * from "./common/Identifier";
 export * from "./common/Node";
+export * from "./common/object";
 export * from "./common/PropertyAccessExpression";
 export * from "./common/QualifiedName";
 export * from "./common/Scope";
