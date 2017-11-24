@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration} from "./../../../../compiler";
-import {InitializerExpressionableNodeStructure} from "./../../../../structures";
+import {InitializerSetExpressionableNodeStructure} from "./../../../../structures";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(InitializerSetExpressionableNode), () => {
@@ -98,7 +98,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
     });
 
     describe(nameof<ClassDeclaration>(n => n.fill), () => {
-        function doTest(startingCode: string, structure: InitializerExpressionableNodeStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: InitializerSetExpressionableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
             const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
             firstProperty.fill(structure);

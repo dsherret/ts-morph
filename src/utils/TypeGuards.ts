@@ -566,6 +566,42 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a InitializerGetExpressionableNode.
+     * @param node - Node to check.
+     */
+    static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
+            case ts.SyntaxKind.EnumMember:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a InitializerSetExpressionableNode.
+     * @param node - Node to check.
+     */
+    static isInitializerSetExpressionableNode(node: compiler.Node): node is compiler.InitializerSetExpressionableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.EnumMember:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a InterfaceDeclaration.
      * @param node - Node to check.
      */
@@ -785,6 +821,7 @@ export class TypeGuards {
     static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
             case ts.SyntaxKind.PropertyAccessExpression:
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
@@ -837,6 +874,19 @@ export class TypeGuards {
         switch (node.getKind()) {
             case ts.SyntaxKind.NumericLiteral:
             case ts.SyntaxKind.FirstLiteralToken:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ObjectLiteralExpression.
+     * @param node - Node to check.
+     */
+    static isObjectLiteralExpression(node: compiler.Node): node is compiler.ObjectLiteralExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ObjectLiteralExpression:
                 return true;
             default:
                 return false;
@@ -905,6 +955,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a PropertyAssignment.
+     * @param node - Node to check.
+     */
+    static isPropertyAssignment(node: compiler.Node): node is compiler.PropertyAssignment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a PropertyDeclaration.
      * @param node - Node to check.
      */
@@ -927,6 +990,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.PropertyAssignment:
             case ts.SyntaxKind.EnumMember:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
@@ -970,6 +1034,8 @@ export class TypeGuards {
     static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
             case ts.SyntaxKind.Parameter:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
@@ -1071,6 +1137,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ShorthandPropertyAssignment.
+     * @param node - Node to check.
+     */
+    static isShorthandPropertyAssignment(node: compiler.Node): node is compiler.ShorthandPropertyAssignment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a SignaturedDeclaration.
      * @param node - Node to check.
      */
@@ -1097,6 +1176,19 @@ export class TypeGuards {
     static isSourceFile(node: compiler.Node): node is compiler.SourceFile {
         switch (node.getKind()) {
             case ts.SyntaxKind.SourceFile:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SpreadAssignment.
+     * @param node - Node to check.
+     */
+    static isSpreadAssignment(node: compiler.Node): node is compiler.SpreadAssignment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SpreadAssignment:
                 return true;
             default:
                 return false;
