@@ -37,3 +37,4 @@ Use `.setInitializer(...)`:
 
 ```typescript
 variableDeclaration.setInitializer("2 + 2");
+```
