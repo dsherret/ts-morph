@@ -12,7 +12,7 @@ export interface TextInsertableNode {
     /**
      * Inserts text within the body of the node.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      * @param pos - Position to insert at.
      * @param text - Text to insert.
      */
@@ -20,7 +20,7 @@ export interface TextInsertableNode {
     /**
      * Inserts text within the body of the node using a writer.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      * @param pos - Position to insert at.
      * @param writerFunction - Write the text using the provided writer.
      */
@@ -28,7 +28,7 @@ export interface TextInsertableNode {
     /**
      * Replaces text within the body of the node.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      * @param range - Start and end position of the text to replace.
      * @param text - Text to replace the range with.
      */
@@ -36,7 +36,7 @@ export interface TextInsertableNode {
     /**
      * Replaces text within the body of the node using a writer function.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      * @param range - Start and end position of the text to replace.
      * @param writerFunction - Write the text using the provided writer.
      */
@@ -44,7 +44,7 @@ export interface TextInsertableNode {
     /**
      * Removes text within the body of the node.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      * @param pos - Start position to remove.
      * @param end - End position to remove.
      */

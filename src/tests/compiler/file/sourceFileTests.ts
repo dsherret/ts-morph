@@ -498,7 +498,7 @@ function myFunction(param: MyClass) {
 `);
         });
 
-        it("should dispose of any previous descendants", () => {
+        it("should forget of any previous descendants", () => {
             const {sourceFile, firstChild} = getInfoFromText("function test {}");
             sourceFile.formatText();
             expect(() => firstChild.compilerNode).to.throw();

@@ -152,7 +152,7 @@ function myFunction(param: MyClass) {
 ```
 
 <aside class="warning">
-**WARNING:** If you use this method, all previously navigated descendants in the source file will be disposed because the TypeScript
+**WARNING:** If you use this method, all previously navigated descendants in the source file will be forgotten because the TypeScript
 compiler could possibly shift nodes around (an exception will be thrown if you try to use them).
 
 This shouldn't be an issue because usually this method will be called first or right before saving.

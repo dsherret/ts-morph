@@ -138,31 +138,17 @@ export class CompilerFactory {
         if (compilerNode.kind === ts.SyntaxKind.SourceFile)
             return this.getSourceFile(compilerNode as any as ts.SourceFile) as compiler.Node as compiler.Node<NodeType>;
 
-        let wasCreated = false;
-        let node: compiler.Node<NodeType>;
         const createNode = (ctor: any) => {
-            wasCreated = true;
+            // ensure the parent is created
+            if (compilerNode.parent != null && !this.nodeCache.has(compilerNode.parent))
+                this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
             return new ctor(this.global, compilerNode, sourceFile);
         };
 
         if (nodeToWrapperMappings[compilerNode.kind] != null)
-            node = this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
+            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
         else
-            node = this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(compiler.Node));
-
-        if (wasCreated) {
-            // ensure the parent is created
-            if (compilerNode.parent != null && !this.nodeCache.has(compilerNode.parent))
-                this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
-
-            // annoying, but ensure any child syntax lists are automatically added to the cache
-            // (since these aren't seen when traveling up the parents)
-            for (const child of node.getCompilerChildren()) {
-                if (child.kind === ts.SyntaxKind.SyntaxList)
-                    this.getNodeFromCompilerNode(child, sourceFile);
-            }
-        }
-        return node;
+            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(compiler.Node));
     }
 
     /**
@@ -173,12 +159,6 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
             const sourceFile = new compiler.SourceFile(this.global, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-
-            // add the source file's syntax list to the cache
-            const syntaxList = sourceFile.getCompilerChildren()[0];
-            if (syntaxList == null || syntaxList.kind !== ts.SyntaxKind.SyntaxList)
-                throw new errors.NotImplementedError("Expected the first child of a source file to be the syntax list.");
-            this.nodeCache.set(syntaxList, new compiler.SyntaxList(this.global, syntaxList as ts.SyntaxList, sourceFile));
 
             // add to list of directories
             const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirPath(sourceFile.getFilePath()));

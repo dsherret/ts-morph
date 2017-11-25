@@ -218,7 +218,7 @@ export class LanguageService {
 
         this.sourceFiles.splice(index, 1);
         this.resetProgram();
-        sourceFile.dispose(); // todo: don't dispose, just remove the language service for this node
+        sourceFile.forget(); // todo: don't forget, just remove the language service for this node
         return true;
     }
 

@@ -6,7 +6,7 @@ import {Node} from "./../Node";
 
 export const ShorthandPropertyAssignmentBase = InitializerGetExpressionableNode(QuestionTokenableNode(NamedNode(Node)));
 export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
-    // todo #65: Implement manipulation for initiailizer (need to dispose this node and change to PropertyAssignment)
+    // todo #65: Implement manipulation for initiailizer (need to forget this node and change to PropertyAssignment)
     // todo #65: Manipulation methods for the below
 
     /**

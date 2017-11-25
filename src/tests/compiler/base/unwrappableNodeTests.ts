@@ -9,7 +9,7 @@ describe(nameof(UnwrappableNode), () => {
             const {firstChild, sourceFile} = getInfoFromText(startCode);
             const nodeInBody = firstChild.getChildSyntaxListOrThrow().getChildren()[0];
             (firstChild as any as UnwrappableNode).unwrap();
-            expect(() => firstChild.compilerNode).to.throw(); // should be disposed
+            expect(() => firstChild.compilerNode).to.throw(); // should be forgotten
             expect(() => nodeInBody.compilerNode).to.not.throw();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }

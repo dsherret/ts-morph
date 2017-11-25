@@ -480,7 +480,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Formats the source file text using the internal typescript printer.
      *
-     * WARNING: This will dispose any previously navigated descendant nodes.
+     * WARNING: This will forget any previously navigated descendant nodes.
      */
     formatText(opts: { removeComments?: boolean } = {}) {
         const printer = ts.createPrinter({
@@ -489,7 +489,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
         const newText = printer.printFile(this.compilerNode);
         const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: this.getFilePath() });
-        this.getChildren().forEach(d => d.dispose()); // this will dispose all the descendants
+        this.getChildren().forEach(d => d.forget()); // this will forget all the descendants
         this.replaceCompilerNode(replacementSourceFile.compilerNode);
     }
 }

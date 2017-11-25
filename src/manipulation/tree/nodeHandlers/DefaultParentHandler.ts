@@ -58,7 +58,7 @@ export class DefaultParentHandler implements NodeHandler {
         }
         else if (count < 0) {
             while (count < 0) {
-                this.helper.disposeNodeIfNecessary(currentNodeChildren.next());
+                this.helper.forgetNodeIfNecessary(currentNodeChildren.next());
                 count++;
             }
         }
@@ -82,8 +82,8 @@ export class DefaultParentHandler implements NodeHandler {
         for (const mapping of customMappings) {
             const {currentNode, newNode} = mapping;
             const newCompilerNode = newNode.compilerNode;
-            // dispose before replacing so that the node is removed from the cache
-            newNode.dispose();
+            // forget before replacing so that the node is removed from the cache
+            newNode.forget();
             // now add the new node will be added to the cache
             currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newCompilerNode);
         }
@@ -98,7 +98,7 @@ export class DefaultParentHandler implements NodeHandler {
             return false;
 
         this.replacingNodes.splice(index, 1);
-        this.helper.disposeNodeIfNecessary(currentCompilerNode);
+        this.helper.forgetNodeIfNecessary(currentCompilerNode);
 
         return true;
     }

@@ -1,6 +1,6 @@
 ﻿import {SourceFile, RenameLocation} from "./../../compiler";
 import {Logger} from "./../../utils";
-import {replaceTreeDisposingChangedNodes} from "./../tree";
+import {replaceTreeForgettingChangedNodes} from "./../tree";
 
 export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; renameLocations: RenameLocation[]; newName: string; }) {
     const {sourceFile, renameLocations, newName} = opts;
@@ -20,11 +20,11 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
     const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, { filePath: sourceFile.getFilePath() });
 
     try {
-        replaceTreeDisposingChangedNodes(sourceFile, tempSourceFile);
+        replaceTreeForgettingChangedNodes(sourceFile, tempSourceFile);
     } catch (ex) {
-        Logger.warn("Could not replace tree, so disposing all nodes instead. Message: " + ex);
-        // dispose all the source file's nodes
-        sourceFile.getChildSyntaxListOrThrow().dispose();
+        Logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
+        // forget all the source file's nodes
+        sourceFile.getChildSyntaxListOrThrow().forget();
         // replace the source file with the temporary source file
         sourceFile.global.compilerFactory.replaceCompilerNode(sourceFile, tempSourceFile.compilerNode);
     }

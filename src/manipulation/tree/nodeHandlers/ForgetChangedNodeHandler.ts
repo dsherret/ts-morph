@@ -5,9 +5,9 @@ import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
 /**
- * Replacement handler that goes through the tree and disposes any nodes that have changed kind.
+ * Replacement handler that goes through the tree and forgets any nodes that have changed kind.
  */
-export class DisposeChangedNodeHandler implements NodeHandler {
+export class ForgetChangedNodeHandler implements NodeHandler {
     private readonly helper: NodeHandlerHelper;
 
     constructor(private readonly compilerFactory: CompilerFactory) {
@@ -16,7 +16,7 @@ export class DisposeChangedNodeHandler implements NodeHandler {
 
     handleNode(currentNode: Node, newNode: Node) {
         if (currentNode.getKind() !== newNode.getKind()) {
-            currentNode.dispose();
+            currentNode.forget();
             return;
         }
 

@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
-import {Disposable, TypeGuards, getTextFromStringOrWriter, ArrayUtils} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -15,7 +15,7 @@ import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./Symbol";
 import {SyntaxList} from "./SyntaxList";
 
-export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
+export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     readonly global: GlobalContainer;
     /** @internal */
@@ -28,7 +28,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      */
     get compilerNode(): NodeType {
         if (this._compilerNode == null)
-            throw new errors.InvalidOperationError("Attempted to get information from a node that was removed from the AST.");
+            throw new errors.InvalidOperationError("Attempted to get information from a node that was removed or forgotten.");
         return this._compilerNode;
     }
 
@@ -51,20 +51,21 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
 
     /**
      * Releases the node and all its descendants from the cache and ast.
-     * @internal
+     *
+     * This is useful if you want to improve the performance of manipulation by not tracking this node anymore.
      */
-    dispose() {
+    forget() {
         for (const child of this.getChildrenInCacheIterator())
-            child.dispose();
+            child.forget();
 
-        this.disposeOnlyThis();
+        this.forgetOnlyThis();
     }
 
     /**
-     * Release only this node from the cache and ast.
+     * Only forgets this node.
      * @internal
      */
-    disposeOnlyThis() {
+    forgetOnlyThis() {
         this.global.compilerFactory.removeNodeFromCache(this);
         this._compilerNode = undefined;
     }
@@ -288,9 +289,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @internal
      */
     *getChildrenIterator(): IterableIterator<Node> {
-        for (const compilerChild of this.getCompilerChildren()) {
+        for (const compilerChild of this.getCompilerChildren())
             yield this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
-        }
     }
 
     /**
@@ -300,6 +300,10 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
         for (const child of this.getCompilerChildren()) {
             if (this.global.compilerFactory.hasCompilerNode(child))
                 yield this.global.compilerFactory.getExistingCompilerNode(child)!;
+            else if (child.kind === ts.SyntaxKind.SyntaxList) {
+                // always return syntax lists because their parents could be in the cache
+                yield this.global.compilerFactory.getNodeFromCompilerNode(child, this.sourceFile);
+            }
         }
     }
 
@@ -709,7 +713,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /**
      * Replaces the text of the current node with new text.
      *
-     * This will dispose the current node and return a new node that can be asserted or type guarded to the correct type.
+     * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
      * @param writerFunction - Write the text using the provided writer.
      * @returns The new node.
      */
@@ -717,7 +721,7 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     /**
      * Replaces the text of the current node with new text.
      *
-     * This will dispose the current node and return a new node that can be asserted or type guarded to the correct type.
+     * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
      * @param text - Text to replace with.
      * @returns The new node.
      */

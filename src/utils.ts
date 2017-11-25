@@ -15,4 +15,3 @@ export * from "./utils/isStringNode";
 export * from "./utils/newLineKindToTs";
 export * from "./utils/StringUtils";
 export * from "./utils/TypeGuards";
-export * from "./utils/using";

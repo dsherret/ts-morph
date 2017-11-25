@@ -5,7 +5,7 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, using, TypeGuards, ArrayUtils} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -856,13 +856,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             // insert into a temp file
             const finalChildCodes: string[] = [];
             for (let i = 0; i < childCodes.length; i++) {
-                using(this.global.compilerFactory.createTempSourceFileFromText(childCodes[i], { createLanguageService: true }), tempSourceFile => {
-                    if (withEachChild != null) {
-                        const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
-                        withEachChild(tempSyntaxList.getChildren()[0] as U, i);
-                    }
-                    finalChildCodes.push(tempSourceFile.getFullText());
-                });
+                const tempSourceFile = this.global.compilerFactory.createTempSourceFileFromText(childCodes[i], { createLanguageService: true });
+                if (withEachChild != null) {
+                    const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
+                    withEachChild(tempSyntaxList.getChildren()[0] as U, i);
+                }
+                finalChildCodes.push(tempSourceFile.getFullText());
             }
 
             // insert

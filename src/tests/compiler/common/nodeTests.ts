@@ -489,7 +489,7 @@ describe(nameof(Node), () => {
                 newNode = propAccess.replaceWithText(replaceText);
             expect(newNode.getText()).to.equal(getReplaceTextAsString());
             expect(sourceFile.getFullText()).to.equal(expectedText);
-            expect(() => propAccess.compilerNode).to.throw(); // should be disposed
+            expect(() => propAccess.compilerNode).to.throw(); // should be forgotten
 
             function getReplaceTextAsString() {
                 if (typeof replaceText === "string")
@@ -512,7 +512,7 @@ describe(nameof(Node), () => {
         it("should replace the text for a source file", () => {
             const {sourceFile} = getInfoFromText("var t = Some.Prop.Access;");
             const result = sourceFile.replaceWithText("var t;");
-            expect(sourceFile.getFullText()).to.equal("var t;"); // in this case, it will not dispose the source file
+            expect(sourceFile.getFullText()).to.equal("var t;"); // in this case, it will not forget the source file
             expect(result).to.equal(sourceFile);
         });
 

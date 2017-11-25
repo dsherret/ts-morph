@@ -51,5 +51,6 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
         }
     }
 
-    classDeclaration.insertMethods(method.getChildIndex(), structures);
+    const methods = classDeclaration.insertMethods(method.getChildIndex(), structures);
+    methods.forEach(m => m.forget()); // for performance reasons
 }

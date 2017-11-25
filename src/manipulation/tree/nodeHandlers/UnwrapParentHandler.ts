@@ -34,17 +34,17 @@ export class UnwrapParentHandler implements NodeHandler {
             this.helper.handleForValues(this.straightReplacementNodeHandler, child, newNodeChildren.next());
 
         // destroy all the current child's children except for the children of its child syntax list
-        disposeNodes(currentChild);
-        function disposeNodes(node: Node) {
+        forgetNodes(currentChild);
+        function forgetNodes(node: Node) {
             if (node === childSyntaxList) {
-                node.disposeOnlyThis();
+                node.forgetOnlyThis();
                 return;
             }
 
-            for (const child of node.getCompilerChildren())
-                helper.disposeNodeIfNecessary(child);
+            for (const child of node.getChildrenInCacheIterator())
+                forgetNodes(child);
 
-            node.disposeOnlyThis();
+            node.forgetOnlyThis();
         }
 
         // handle the rest
