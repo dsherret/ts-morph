@@ -3,9 +3,6 @@ import * as globby from "globby";
 import {FileSystemHost} from "./FileSystemHost";
 import {FileUtils} from "./../utils";
 
-/**
- * @internal
- */
 export class DefaultFileSystemHost implements FileSystemHost {
     readFile(filePath: string, encoding = "utf-8") {
         return fs.readFileSync(filePath, encoding);

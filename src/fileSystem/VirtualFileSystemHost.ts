@@ -2,9 +2,6 @@
 import {KeyValueCache} from "./../utils";
 import {FileSystemHost} from "./FileSystemHost";
 
-/**
- * @internal
- */
 export class VirtualFileSystemHost implements FileSystemHost {
     private readonly files = new KeyValueCache<string, string>();
 
