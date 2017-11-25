@@ -17,7 +17,7 @@ export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeH
     }
 
     handleNode(currentNode: Node, newNode: Node) {
-        if (!this.foundParent && areNodesEqual(newNode, this.changingParent) && areNodesEqual(newNode!.getParentSyntaxList() || newNode.getParent(), this.changingParentParent)) {
+        if (!this.foundParent && areNodesEqual(newNode, this.changingParent) && areNodesEqual(newNode.getParentSyntaxList() || newNode.getParent(), this.changingParentParent)) {
             this.foundParent = true; // don't bother checking for the parent once it's found
             this.parentNodeHandler.handleNode(currentNode, newNode);
         }

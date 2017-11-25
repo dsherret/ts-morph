@@ -1,14 +1,19 @@
 ﻿import * as errors from "./../../../errors";
+import * as ts from "typescript";
 import {Node} from "./../../../compiler";
 import {CompilerFactory} from "./../../../factories";
 import {getInsertErrorMessageText} from "./../../getInsertErrorMessageText";
 import {NodeHandler} from "./NodeHandler";
+import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
 /**
  * Replacement handler for replacing parts of the tree that should be equal.
  */
 export class StraightReplacementNodeHandler implements NodeHandler {
+    private readonly helper: NodeHandlerHelper;
+
     constructor(private readonly compilerFactory: CompilerFactory) {
+        this.helper = new NodeHandlerHelper(compilerFactory);
     }
 
     handleNode(currentNode: Node, newNode: Node) {
@@ -18,10 +23,8 @@ export class StraightReplacementNodeHandler implements NodeHandler {
 
         const newNodeChildren = newNode.getChildrenIterator();
 
-        for (const currentNodeChild of currentNode.getChildrenIterator()) {
-            const newNodeChild = newNodeChildren.next().value;
-            this.handleNode(currentNodeChild, newNodeChild);
-        }
+        for (const currentNodeChild of currentNode.getCompilerChildren())
+            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value);
 
         /* istanbul ignore if */
         if (!newNodeChildren.next().done)

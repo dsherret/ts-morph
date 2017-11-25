@@ -82,7 +82,7 @@ export function replaceTreeWithRange(opts: ReplaceTreeWithRangeOptions) {
 export interface ReplaceTreeOptions {
     replacementSourceFile: SourceFile;
     parent: Node;
-    isFirstChild: (currentNode: Node, newNode: Node) => boolean;
+    isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
     childCount: number;
     replacingNodes?: Node[];
     customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];

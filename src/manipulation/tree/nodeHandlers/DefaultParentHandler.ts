@@ -1,12 +1,14 @@
-﻿import {AdvancedIterator, createHashSet, ArrayUtils} from "./../../../utils";
+﻿import * as ts from "typescript";
+import {AdvancedIterator, ArrayUtils} from "./../../../utils";
 import {Node} from "./../../../compiler";
 import {CompilerFactory} from "./../../../factories";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 import {NodeHandler} from "./NodeHandler";
+import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
 export interface DefaultParentHandlerOptions {
     childCount: number;
-    isFirstChild: (currentNode: Node, newNode: Node) => boolean;
+    isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
     replacingNodes?: Node[];
     customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }
@@ -16,22 +18,23 @@ export interface DefaultParentHandlerOptions {
  */
 export class DefaultParentHandler implements NodeHandler {
     private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
+    private readonly helper: NodeHandlerHelper;
     private readonly childCount: number;
-    private readonly isFirstChild: (currentNode: Node, newNode: Node) => boolean;
-    private readonly replacingNodes?: Node[];
+    private readonly isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
+    private readonly replacingNodes?: ts.Node[];
     private readonly customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
-    private readonly mappedNodes = createHashSet<Node>();
 
     constructor(private readonly compilerFactory: CompilerFactory, opts: DefaultParentHandlerOptions) {
         this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
+        this.helper = new NodeHandlerHelper(compilerFactory);
         this.childCount = opts.childCount;
         this.isFirstChild = opts.isFirstChild;
-        this.replacingNodes = opts.replacingNodes;
+        this.replacingNodes = opts.replacingNodes == null ? undefined : opts.replacingNodes.map(n => n.compilerNode);
         this.customMappings = opts.customMappings;
     }
 
     handleNode(currentNode: Node, newNode: Node) {
-        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getChildren())); // need to get a snapshot of the children for the nodes to ignore
+        const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getCompilerChildren()));
         const newNodeChildren = new AdvancedIterator(newNode.getChildrenIterator());
         let count = this.childCount;
 
@@ -40,7 +43,7 @@ export class DefaultParentHandler implements NodeHandler {
 
         // get the first child
         while (!currentNodeChildren.done && !newNodeChildren.done && !this.isFirstChild(currentNodeChildren.peek, newNodeChildren.peek))
-            this.straightReplacementNodeHandler.handleNode(currentNodeChildren.next(), newNodeChildren.next());
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next());
 
         // try replacing any nodes
         while (!currentNodeChildren.done && this.tryReplaceNode(currentNodeChildren.peek))
@@ -49,20 +52,20 @@ export class DefaultParentHandler implements NodeHandler {
         // add or remove the items
         if (count > 0) {
             while (count > 0) {
-                newNodeChildren.next().setSourceFile(currentNode.sourceFile);
+                newNodeChildren.next();
                 count--;
             }
         }
         else if (count < 0) {
             while (count < 0) {
-                currentNodeChildren.next().dispose();
+                this.helper.disposeNodeIfNecessary(currentNodeChildren.next());
                 count++;
             }
         }
 
         // handle the rest
         while (!currentNodeChildren.done)
-            this.straightReplacementNodeHandler.handleNode(currentNodeChildren.next(), newNodeChildren.next());
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next());
 
         // ensure the new children iterator is done too
         if (!newNodeChildren.done)
@@ -83,22 +86,19 @@ export class DefaultParentHandler implements NodeHandler {
             newNode.dispose();
             // now add the new node will be added to the cache
             currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newCompilerNode);
-            this.mappedNodes.add(currentNode);
         }
     }
 
-    private tryReplaceNode(currentNode: Node) {
+    private tryReplaceNode(currentCompilerNode: ts.Node) {
         if (this.replacingNodes == null || this.replacingNodes.length === 0)
             return false;
+        const index = this.replacingNodes.indexOf(currentCompilerNode);
 
-        const index = this.replacingNodes.indexOf(currentNode);
         if (index === -1)
             return false;
 
         this.replacingNodes.splice(index, 1);
-
-        if (!this.mappedNodes.has(currentNode))
-            currentNode.dispose();
+        this.helper.disposeNodeIfNecessary(currentCompilerNode);
 
         return true;
     }

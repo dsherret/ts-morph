@@ -54,9 +54,8 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * @internal
      */
     dispose() {
-        for (const child of this.getChildren()) {
+        for (const child of this.getChildrenInCacheIterator())
             child.dispose();
-        }
 
         this.disposeOnlyThis();
     }
@@ -68,17 +67,6 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
     disposeOnlyThis() {
         this.global.compilerFactory.removeNodeFromCache(this);
         this._compilerNode = undefined;
-    }
-
-    /**
-     * Sets the source file.
-     * @internal
-     * @param sourceFile - Source file to set.
-     */
-    setSourceFile(sourceFile: SourceFile) {
-        this.sourceFile = sourceFile;
-        for (const child of this.getChildren())
-            child.setSourceFile(sourceFile);
     }
 
     /**
@@ -285,15 +273,33 @@ export class Node<NodeType extends ts.Node = ts.Node> implements Disposable {
      * Gets the children of the node.
      */
     getChildren(): Node[] {
-        return this.compilerNode.getChildren().map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile));
+        return this.getCompilerChildren().map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile));
+    }
+
+    /**
+     * Gets the compiler children of the node.
+     * @internal
+     */
+    getCompilerChildren(): ts.Node[] {
+        return this.compilerNode.getChildren(this.sourceFile.compilerNode);
     }
 
     /**
      * @internal
      */
     *getChildrenIterator(): IterableIterator<Node> {
-        for (const compilerChild of this.compilerNode.getChildren(this.sourceFile.compilerNode)) {
+        for (const compilerChild of this.getCompilerChildren()) {
             yield this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
+        }
+    }
+
+    /**
+     * @internal
+     */
+    *getChildrenInCacheIterator(): IterableIterator<Node> {
+        for (const child of this.getCompilerChildren()) {
+            if (this.global.compilerFactory.hasCompilerNode(child))
+                yield this.global.compilerFactory.getExistingCompilerNode(child)!;
         }
     }
 
