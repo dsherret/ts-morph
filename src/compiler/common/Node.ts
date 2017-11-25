@@ -50,7 +50,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Releases the node and all its descendants from the cache and ast.
+     * Releases the node and all its descendants from the underlying node cache and ast.
      *
      * This is useful if you want to improve the performance of manipulation by not tracking this node anymore.
      */
