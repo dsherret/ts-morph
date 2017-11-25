@@ -856,7 +856,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             // insert into a temp file
             const finalChildCodes: string[] = [];
             for (let i = 0; i < childCodes.length; i++) {
-                using(this.global.compilerFactory.createTempSourceFileFromText(childCodes[i]), tempSourceFile => {
+                using(this.global.compilerFactory.createTempSourceFileFromText(childCodes[i], { createLanguageService: true }), tempSourceFile => {
                     if (withEachChild != null) {
                         const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
                         withEachChild(tempSyntaxList.getChildren()[0] as U, i);

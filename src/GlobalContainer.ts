@@ -4,7 +4,7 @@ import {CompilerFactory} from "./factories";
 import {LanguageService} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
-import {FileSystemHost} from "./FileSystemHost";
+import {FileSystemHost} from "./fileSystem";
 
 /**
  * Global container.

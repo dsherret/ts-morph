@@ -25,6 +25,10 @@ export class KeyValueCache<T, U> {
         return item;
     }
 
+    has(key: T) {
+        return this.cacheItems.has(key);
+    }
+
     get(key: T) {
         return this.cacheItems.get(key) || undefined;
     }

@@ -1,7 +1,7 @@
 ﻿import * as fs from "fs";
 import * as globby from "globby";
 import {FileSystemHost} from "./FileSystemHost";
-import {FileUtils} from "./utils";
+import {FileUtils} from "./../utils";
 
 /**
  * @internal

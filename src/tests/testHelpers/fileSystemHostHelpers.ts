@@ -1,4 +1,4 @@
-﻿import {FileSystemHost} from "./../../FileSystemHost";
+﻿import {FileSystemHost} from "./../../fileSystem";
 import {FileUtils, ArrayUtils} from "./../../utils";
 
 export interface CustomFileSystemProps {

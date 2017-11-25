@@ -37,7 +37,7 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     const previousSibling = children[0].getPreviousSibling();
     const nextSibling = children[children.length - 1].getNextSibling();
     const newText = getPrefix() + getSpacing() + getSuffix();
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
 
     replaceTreeWithChildIndex({
         replacementSourceFile: tempSourceFile,

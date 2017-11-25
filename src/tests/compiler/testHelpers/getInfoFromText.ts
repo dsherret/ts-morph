@@ -1,8 +1,7 @@
 ﻿import * as ts from "typescript";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
 import {createWrappedNode} from "./../../../createWrappedNode";
-import {DefaultFileSystemHost} from "./../../../DefaultFileSystemHost";
-import {FileSystemHost} from "./../../../FileSystemHost";
+import {FileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
 
 const defaultHost = new DefaultFileSystemHost();

@@ -12,5 +12,5 @@ export function getNewReplacementSourceFile(opts: GetNewReplacementSourceFileOpt
     const currentText = sourceFile.getFullText();
     const newFileText = currentText.substring(0, insertPos) + newText + currentText.substring(insertPos + replacingLength);
 
-    return sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
+    return sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, { filePath: sourceFile.getFilePath() });
 }

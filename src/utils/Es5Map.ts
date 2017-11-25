@@ -29,7 +29,10 @@ export class Es5Map<T, U> implements Dictionary<T, U> {
     }
 
     has(key: T) {
-        return this.get(key) != null;
+        const identifier = this.getIdentifier(key);
+        if (identifier == null)
+            return false;
+        return this.items.hasOwnProperty(identifier);
     }
 
     delete(key: T) {

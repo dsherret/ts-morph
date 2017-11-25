@@ -9,7 +9,7 @@ import {replaceTreeStraight} from "./../tree";
  */
 export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFile; newText: string; }) {
     const {sourceFile, newText} = opts;
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
 
     replaceTreeStraight(sourceFile, tempSourceFile);
 }

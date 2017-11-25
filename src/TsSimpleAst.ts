@@ -5,8 +5,7 @@ import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
 import {getCompilerOptionsFromTsConfig, FileUtils, ArrayUtils} from "./utils";
-import {FileSystemHost} from "./FileSystemHost";
-import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
+import {DefaultFileSystemHost, FileSystemHost} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
 

@@ -488,7 +488,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             removeComments: opts.removeComments || false
         });
         const newText = printer.printFile(this.compilerNode);
-        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(newText, this.getFilePath());
+        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: this.getFilePath() });
         this.getChildren().forEach(d => d.dispose()); // this will dispose all the descendants
         this.replaceCompilerNode(replacementSourceFile.compilerNode);
     }

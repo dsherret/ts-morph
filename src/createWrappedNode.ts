@@ -2,7 +2,7 @@
 import * as errors from "./errors";
 import {SourceFile, Node} from "./compiler";
 import {GlobalContainer} from "./GlobalContainer";
-import {DefaultFileSystemHost} from "./DefaultFileSystemHost";
+import {DefaultFileSystemHost} from "./fileSystem";
 
 /**
  * Creates a wrapped node from a compiler node.

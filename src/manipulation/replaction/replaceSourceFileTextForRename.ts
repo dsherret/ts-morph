@@ -17,7 +17,7 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
         difference += textSpan.getLength() - newName.length;
     }
 
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newFileText, { filePath: sourceFile.getFilePath() });
 
     try {
         replaceTreeDisposingChangedNodes(sourceFile, tempSourceFile);

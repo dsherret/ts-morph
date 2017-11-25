@@ -56,7 +56,8 @@ export class LanguageService {
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
-                return this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.compilerNode;
+                const sourceFile = this.global.compilerFactory.getSourceFileFromFilePath(fileName);
+                return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},

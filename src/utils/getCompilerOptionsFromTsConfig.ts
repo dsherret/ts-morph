@@ -1,7 +1,6 @@
 ﻿import * as ts from "typescript";
 import {FileNotFoundError} from "./../errors";
-import {FileSystemHost} from "./../FileSystemHost";
-import {DefaultFileSystemHost} from "./../DefaultFileSystemHost";
+import {DefaultFileSystemHost, FileSystemHost} from "./../fileSystem";
 import {FileUtils} from "./FileUtils";
 
 /**

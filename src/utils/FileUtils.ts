@@ -1,5 +1,5 @@
 ﻿import * as path from "path";
-import {FileSystemHost} from "./../FileSystemHost";
+import {FileSystemHost} from "./../fileSystem";
 
 export class FileUtils {
     private constructor() {

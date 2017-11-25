@@ -3,6 +3,7 @@ import * as compiler from "./../compiler";
 import * as errors from "./../errors";
 import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
+import {VirtualFileSystemHost} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 
@@ -51,11 +52,10 @@ export class CompilerFactory {
      * @param filePath - File path to use.
      * @returns Wrapped source file.
      */
-    createTempSourceFileFromText(sourceText: string, filePath = "tsSimpleAstTempFile.ts") {
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
-        const sourceFile = new compiler.SourceFile(this.global, compilerSourceFile);
-        this.nodeCache.set(compilerSourceFile, sourceFile);
-        return sourceFile;
+    createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
+        const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
+        const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), this.global.compilerOptions, createLanguageService);
+        return globalContainer.compilerFactory.addSourceFileFromText(filePath, sourceText);
     }
 
     /**

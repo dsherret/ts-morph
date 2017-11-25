@@ -18,7 +18,7 @@ export function changeChildOrder<TParentNode extends Node>(opts: ChangeChildOrde
     const {parent, getSiblingFormatting, oldIndex, newIndex} = opts;
     const newText = getTextChangingChildOrder({ parent, getSiblingFormatting, oldIndex, newIndex });
     const sourceFile = parent.sourceFile;
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
 
     replaceTreeChangingChildOrder({
         parent,

@@ -18,7 +18,7 @@ export function removeChildren(opts: RemoveChildrenOptions) {
     const sourceFile = children[0].getSourceFile();
     const fullText = sourceFile.getFullText();
     const newText = getPrefix() + getSuffix();
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, sourceFile.getFilePath());
+    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
 
     replaceTreeWithChildIndex({
         replacementSourceFile: tempSourceFile,
