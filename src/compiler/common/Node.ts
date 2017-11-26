@@ -99,7 +99,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         const nameNode = (this.compilerNode as any).name as ts.Node | undefined;
         if (nameNode != null)
-            return this.global.compilerFactory.getNodeFromCompilerNode(nameNode, this.sourceFile).getSymbol();
+            return getWrappedNode(this, nameNode).getSymbol();
 
         return undefined;
     }
@@ -126,11 +126,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Condition.
      */
     getFirstChild(condition?: (node: Node) => boolean) {
-        for (const child of this.getChildrenIterator()) {
-            if (condition == null || condition(child))
-                return child;
-        }
-        return undefined;
+        const firstChild = this.getCompilerFirstChild(getWrappedCondition(this, condition));
+        return firstChild == null ? undefined : getWrappedNode(this, firstChild);
     }
 
     /**
@@ -146,11 +143,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Condition.
      */
     getLastChild(condition?: (node: Node) => boolean) {
-        for (const child of this.getChildren().reverse()) {
-            if (condition == null || condition(child))
-                return child;
-        }
-        return undefined;
+        const lastChild = this.getCompilerLastChild(getWrappedCondition(this, condition));
+        return lastChild == null ? undefined : getWrappedNode(this, lastChild);
     }
 
     /**
@@ -200,12 +194,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Optional condition for getting the previous sibling.
      */
     getPreviousSibling(condition?: (node: Node) => boolean) {
-        for (const sibling of this.getPreviousSiblings()) {
-            if (condition == null || condition(sibling))
-                return sibling;
-        }
-
-        return undefined;
+        const previousSibling = this.getCompilerPreviousSibling(getWrappedCondition(this, condition));
+        return previousSibling == null ? undefined : getWrappedNode(this, previousSibling);
     }
 
     /**
@@ -221,12 +211,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param condition - Optional condition for getting the previous sibling.
      */
     getNextSibling(condition?: (node: Node) => boolean) {
-        for (const sibling of this.getNextSiblings()) {
-            if (condition == null || condition(sibling))
-                return sibling;
-        }
-
-        return undefined;
+        const nextSibling = this.getCompilerNextSibling(getWrappedCondition(this, condition));
+        return nextSibling == null ? undefined : getWrappedNode(this, nextSibling);
     }
 
     /**
@@ -235,17 +221,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      */
     getPreviousSiblings() {
-        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
-        const previousSiblings: Node[] = [];
-
-        for (const child of parent.getChildrenIterator()) {
-            if (child === this)
-                break;
-
-            previousSiblings.splice(0, 0, child);
-        }
-
-        return previousSiblings;
+        return this.getCompilerPreviousSiblings().map(n => getWrappedNode(this, n));
     }
 
     /**
@@ -254,35 +230,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Note: Closest sibling is the zero index.
      */
     getNextSiblings() {
-        let foundChild = false;
-        const nextSiblings: Node[] = [];
-        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
-
-        for (const child of parent.getChildrenIterator()) {
-            if (!foundChild) {
-                foundChild = child === this;
-                continue;
-            }
-
-            nextSiblings.push(child);
-        }
-
-        return nextSiblings;
+        return this.getCompilerNextSiblings().map(n => getWrappedNode(this, n));
     }
 
     /**
      * Gets the children of the node.
      */
     getChildren(): Node[] {
-        return this.getCompilerChildren().map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile));
-    }
-
-    /**
-     * Gets the compiler children of the node.
-     * @internal
-     */
-    getCompilerChildren(): ts.Node[] {
-        return this.compilerNode.getChildren(this.sourceFile.compilerNode);
+        return this.getCompilerChildren().map(n => getWrappedNode(this, n));
     }
 
     /**
@@ -290,7 +245,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     *getChildrenIterator(): IterableIterator<Node> {
         for (const compilerChild of this.getCompilerChildren())
-            yield this.global.compilerFactory.getNodeFromCompilerNode(compilerChild, this.sourceFile);
+            yield getWrappedNode(this, compilerChild);
     }
 
     /**
@@ -301,8 +256,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (this.global.compilerFactory.hasCompilerNode(child))
                 yield this.global.compilerFactory.getExistingCompilerNode(child)!;
             else if (child.kind === ts.SyntaxKind.SyntaxList) {
-                // always return syntax lists because their parents could be in the cache
-                yield this.global.compilerFactory.getNodeFromCompilerNode(child, this.sourceFile);
+                // always return syntax lists because their children could be in the cache
+                yield getWrappedNode(this, child);
             }
         }
     }
@@ -329,11 +284,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList) as SyntaxList | undefined;
 
         let passedBrace = false;
-        for (const child of node.getChildrenIterator()) {
+        for (const child of node.getCompilerChildren()) {
             if (!passedBrace)
-                passedBrace = child.getKind() === ts.SyntaxKind.FirstPunctuation;
-            else if (child.getKind() === ts.SyntaxKind.SyntaxList)
-                return child as SyntaxList;
+                passedBrace = child.kind === ts.SyntaxKind.FirstPunctuation;
+            else if (child.kind === ts.SyntaxKind.SyntaxList)
+                return getWrappedNode(this, child) as SyntaxList;
         }
 
         return undefined;
@@ -351,12 +306,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     *getDescendantsIterator(): IterableIterator<Node> {
-        for (const child of this.getChildrenIterator()) {
-            yield child;
-
-            for (const childChild of child.getDescendantsIterator())
-                yield childChild;
-        }
+        for (const descendant of this.getCompilerDescendantsIterator())
+            yield getWrappedNode(this, descendant);
     }
 
     /**
@@ -374,9 +325,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (pos < this.getPos() || pos >= this.getEnd())
             return undefined;
 
-        for (const child of this.getChildrenIterator()) {
-            if (pos >= child.getPos() && pos < child.getEnd())
-                return child;
+        for (const child of this.getCompilerChildren()) {
+            if (pos >= child.pos && pos < child.end)
+                return getWrappedNode(this, child);
         }
 
         return undefined;
@@ -442,7 +393,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the first position that is not whitespace.
+     * Gets the first position from the pos that is not whitespace.
      */
     getNonWhitespaceStart() {
         return getNextNonWhitespacePos(this.sourceFile.getFullText(), this.getPos());
@@ -506,7 +457,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if ((this.compilerNode[propertyName] as any).kind == null)
             throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} ` +
                 `only works with properties that return a node.`);
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode[propertyName], this.sourceFile) as Node<NodeType[KeyType]>;
+        return getWrappedNode(this, this.compilerNode[propertyName]) as Node<NodeType[KeyType]>;
     }
 
     /**
@@ -531,7 +482,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Get the node's parent.
      */
     getParent() {
-        return (this.compilerNode.parent == null) ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.parent, this.sourceFile);
+        return this.compilerNode.parent == null ? undefined : getWrappedNode(this, this.compilerNode.parent);
     }
 
     /**
@@ -592,7 +543,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (lastToken == null)
             throw new errors.NotImplementedError("Not implemented scenario where the last token does not exist.");
 
-        return this.global.compilerFactory.getNodeFromCompilerNode(lastToken, this.sourceFile);
+        return getWrappedNode(this, lastToken);
     }
 
     /**
@@ -619,12 +570,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         const pos = this.getPos();
         const end = this.getEnd();
-        for (const child of parent.getChildren()) {
-            if (child.getPos() > pos || child === this)
+        for (const child of parent.getCompilerChildren()) {
+            if (child.pos > pos || child === this.compilerNode)
                 return undefined;
 
-            if (child.getKind() === ts.SyntaxKind.SyntaxList && child.getPos() <= pos && child.getEnd() >= end)
-                return child;
+            if (child.kind === ts.SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)
+                return getWrappedNode(this, child);
         }
 
         return undefined; // shouldn't happen
@@ -636,8 +587,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getChildIndex() {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         let i = 0;
-        for (const child of parent.getChildren()) {
-            if (child === this)
+        for (const child of parent.getCompilerChildren()) {
+            if (child === this.compilerNode)
                 return i;
             i++;
         }
@@ -695,7 +646,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     isFirstNodeOnLine() {
         const sourceFileText = this.sourceFile.getFullText();
-        const startPos = this.getStart();
+        const startPos = this.getNonWhitespaceStart();
 
         for (let i = startPos - 1; i >= 0; i--) {
             const currentChar = sourceFileText[i];
@@ -707,7 +658,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return false;
         }
 
-        return false;
+        return true; // first node on the first line
     }
 
     /**
@@ -761,7 +712,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getChildrenOfKind(kind: ts.SyntaxKind) {
-        return this.getChildren().filter(c => c.getKind() === kind);
+        return this.getCompilerChildren().filter(c => c.kind === kind).map(c => getWrappedNode(this, c));
     }
 
     /**
@@ -777,7 +728,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildByKind(kind: ts.SyntaxKind) {
-        return this.getFirstChild(child => child.getKind() === kind);
+        const child = this.getCompilerFirstChild(c => c.kind === kind);
+        return child == null ? undefined : getWrappedNode(this, child);
     }
 
     /**
@@ -793,8 +745,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildIfKind(kind: ts.SyntaxKind) {
-        const firstChild = this.getFirstChild();
-        return firstChild != null && firstChild.getKind() === kind ? firstChild : undefined;
+        const firstChild = this.getCompilerFirstChild();
+        return firstChild != null && firstChild.kind === kind ? getWrappedNode(this, firstChild) : undefined;
     }
 
     /**
@@ -810,7 +762,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildByKind(kind: ts.SyntaxKind) {
-        return this.getLastChild(child => child.getKind() === kind);
+        const lastChild = this.getCompilerLastChild(c => c.kind === kind);
+        return lastChild == null ? undefined : getWrappedNode(this, lastChild);
     }
 
     /**
@@ -826,8 +779,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildIfKind(kind: ts.SyntaxKind) {
-        const lastChild = this.getLastChild();
-        return lastChild != null && lastChild.getKind() === kind ? lastChild : undefined;
+        const lastChild = this.getCompilerLastChild();
+        return lastChild != null && lastChild.kind === kind ? getWrappedNode(this, lastChild) : undefined;
     }
 
     /**
@@ -851,8 +804,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getPreviousSiblingIfKind(kind: ts.SyntaxKind) {
-        const previousSibling = this.getPreviousSibling();
-        return previousSibling != null && previousSibling.getKind() === kind ? previousSibling : undefined;
+        const previousSibling = this.getCompilerPreviousSibling();
+        return previousSibling != null && previousSibling.kind === kind ? getWrappedNode(this, previousSibling) : undefined;
     }
 
     /**
@@ -860,8 +813,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getNextSiblingIfKind(kind: ts.SyntaxKind) {
-        const nextSibling = this.getNextSibling();
-        return nextSibling != null && nextSibling.getKind() === kind ? nextSibling : undefined;
+        const nextSibling = this.getCompilerNextSibling();
+        return nextSibling != null && nextSibling.kind === kind ? getWrappedNode(this, nextSibling) : undefined;
     }
 
     /**
@@ -904,7 +857,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getDescendantsOfKind(kind: ts.SyntaxKind) {
-        return this.getDescendants().filter(c => c.getKind() === kind);
+        const descendants: Node[] = [];
+        for (const descendant of this.getCompilerDescendantsIterator()) {
+            if (descendant.kind === kind)
+                descendants.push(getWrappedNode(this, descendant));
+        }
+        return descendants;
     }
 
     /**
@@ -920,10 +878,140 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKind(kind: ts.SyntaxKind) {
-        for (const descendant of this.getDescendantsIterator()) {
-            if (descendant.getKind() === kind)
-                return descendant;
+        for (const descendant of this.getCompilerDescendantsIterator()) {
+            if (descendant.kind === kind)
+                return getWrappedNode(this, descendant);
         }
         return undefined;
     }
+
+    /**
+     * Gets the compiler children of the node.
+     * @internal
+     */
+    getCompilerChildren(): ts.Node[] {
+        return this.compilerNode.getChildren(this.sourceFile.compilerNode);
+    }
+
+    /**
+     * Gets the node's descendant compiler nodes as an iterator.
+     * @internal
+     */
+    getCompilerDescendantsIterator(): IterableIterator<ts.Node> {
+        const compilerSourceFile = this.sourceFile.compilerNode;
+        return getDescendantsIterator(this.compilerNode);
+
+        function* getDescendantsIterator(node: ts.Node): IterableIterator<ts.Node> {
+            for (const child of node.getChildren(compilerSourceFile)) {
+                yield child;
+                yield* getDescendantsIterator(child);
+            }
+        }
+    }
+
+    /**
+     * Gets the first compiler node child that matches the condition.
+     * @param condition - Condition.
+     * @internal
+     */
+    getCompilerFirstChild(condition?: (node: ts.Node) => boolean) {
+        for (const child of this.getCompilerChildren()) {
+            if (condition == null || condition(child))
+                return child;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the last compiler node child that matches the condition.
+     * @param condition - Condition.
+     * @internal
+     */
+    getCompilerLastChild(condition?: (node: ts.Node) => boolean) {
+        const children = this.getCompilerChildren();
+        for (let i = children.length - 1; i >= 0; i--) {
+            const child = children[i];
+            if (condition == null || condition(child))
+                return child;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the previous compiler siblings.
+     *
+     * Note: Closest sibling is the zero index.
+     * @internal
+     */
+    getCompilerPreviousSiblings() {
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const previousSiblings: ts.Node[] = [];
+
+        for (const child of parent.getCompilerChildren()) {
+            if (child === this.compilerNode)
+                break;
+            previousSiblings.unshift(child);
+        }
+
+        return previousSiblings;
+    }
+
+    /**
+     * Gets the next compiler siblings.
+     *
+     * Note: Closest sibling is the zero index.
+     * @internal
+     */
+    getCompilerNextSiblings() {
+        let foundChild = false;
+        const parent = this.getParentSyntaxList() || this.getParentOrThrow();
+        const nextSiblings: ts.Node[] = [];
+
+        for (const child of parent.getCompilerChildren()) {
+            if (!foundChild) {
+                foundChild = child === this.compilerNode;
+                continue;
+            }
+
+            nextSiblings.push(child);
+        }
+
+        return nextSiblings;
+    }
+
+    /**
+     * Gets the previous compiler sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     * @internal
+     */
+    getCompilerPreviousSibling(condition?: (node: ts.Node) => boolean) {
+        for (const sibling of this.getCompilerPreviousSiblings()) {
+            if (condition == null || condition(sibling))
+                return sibling;
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Gets the next compiler sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     * @internal
+     */
+    getCompilerNextSibling(condition?: (node: ts.Node) => boolean) {
+        for (const sibling of this.getCompilerNextSiblings()) {
+            if (condition == null || condition(sibling))
+                return sibling;
+        }
+
+        return undefined;
+    }
+}
+
+function getWrappedNode(thisNode: Node, compilerNode: ts.Node) {
+    return thisNode.global.compilerFactory.getNodeFromCompilerNode(compilerNode, thisNode.sourceFile);
+}
+
+function getWrappedCondition(thisNode: Node, condition: ((c: Node) => boolean) | undefined) {
+    return condition == null ? undefined : ((c: ts.Node) => condition(getWrappedNode(thisNode, c)));
 }

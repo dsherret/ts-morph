@@ -33,6 +33,6 @@ export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparat
 
         const precedingComma = child.getPreviousSiblingIfKind(ts.SyntaxKind.CommaToken);
         if (precedingComma != null)
-            childrenToRemove.splice(0, 0, precedingComma);
+            childrenToRemove.unshift(precedingComma);
     }
 }

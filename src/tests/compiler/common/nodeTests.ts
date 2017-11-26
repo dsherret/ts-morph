@@ -70,6 +70,30 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getFirstChildIfKind), () => {
+        const {firstChild} = getInfoFromText("enum MyEnum {}");
+
+        it("should return the first node if its the specified syntax kind", () => {
+            expect(firstChild.getFirstChildIfKind(ts.SyntaxKind.EnumKeyword)!.getText()).to.equal("enum");
+        });
+
+        it("should return undefined when the specified syntax kind isn't the first child", () => {
+            expect(firstChild.getFirstChildIfKind(ts.SyntaxKind.AbstractKeyword)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstChildIfKindOrThrow), () => {
+        const {firstChild} = getInfoFromText("enum MyEnum {}");
+
+        it("should return the first node if its the specified syntax kind", () => {
+            expect(firstChild.getFirstChildIfKindOrThrow(ts.SyntaxKind.EnumKeyword).getText()).to.equal("enum");
+        });
+
+        it("should return undefined when the specified syntax kind isn't the first child", () => {
+            expect(() => firstChild.getFirstChildIfKindOrThrow(ts.SyntaxKind.AbstractKeyword)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstChildByKind), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
 
@@ -77,7 +101,7 @@ describe(nameof(Node), () => {
             expect(firstChild.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getText()).to.equal("{");
         });
 
-        it("should return null when the specified syntax kind doesn't exist", () => {
+        it("should return undefined when the specified syntax kind doesn't exist", () => {
             expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.undefined;
         });
     });
@@ -474,6 +498,29 @@ describe(nameof(Node), () => {
         it("should get the previous siblings going away in order", () => {
             expect(sourceFile.getInterfaces()[0].getNextSiblings().map(s => (s as InterfaceDeclaration).getName()))
                 .to.deep.equal(["Interface2", "Interface3"]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.isFirstNodeOnLine), () => {
+        function doTest(text: string, index: number, expected: boolean) {
+            const {sourceFile} = getInfoFromText(text);
+            expect(sourceFile.getFirstChildIfKindOrThrow(ts.SyntaxKind.SyntaxList).getChildren()[index].isFirstNodeOnLine()).to.equal(expected);
+        }
+
+        it("should be true if it is and it's on the first line", () => {
+            doTest("    interface MyTest {}", 0, true);
+        });
+
+        it("should be true if it is and on a line within the file", () => {
+            doTest("interface MyTest {}\n    \tclass Test {}", 1, true);
+        });
+
+        it("should be false if there's something else and it's the first line", () => {
+            doTest("    interface MyTest {} class Test {}", 1, false);
+        });
+
+        it("should be false if there's something else and it's on a line within the file", () => {
+            doTest("\n\ninterface MyTest {\n} class Test {}", 1, false);
         });
     });
 
