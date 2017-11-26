@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "0.97.2",
+  "version": "0.97.1",
   "description": "TypeScript compiler wrapper for AST navigation and code generation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -60,5 +60,8 @@
   },
   "peerDependencies": {
     "typescript": "2.6.1"
+  },
+  "standard-version": {
+    "tagPrefix": ""
   }
 }
