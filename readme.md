@@ -41,7 +41,7 @@ ast.addSourceFileFromStructure("misc.ts", {
 });
 
 // get information from ast
-const enumDeclaration = sourceFile.getEnum("MyEnum")!;
+const enumDeclaration = sourceFile.getEnumOrThrow("MyEnum");
 enumDeclaration.getName();          // returns: "MyEnum"
 enumDeclaration.hasExportKeyword(); // returns: false
 enumDeclaration.isDefaultExport();  // returns: true
