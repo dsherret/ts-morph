@@ -6,7 +6,9 @@
 
 export interface HashSet<T> {
     has(value: T): boolean;
+    delete(value: T): boolean;
     add(value: T): void;
+    values(): IterableIterator<T>;
 }
 
 export class Es5HashSet<T> implements HashSet<T> {
@@ -20,5 +22,18 @@ export class Es5HashSet<T> implements HashSet<T> {
     add(value: T) {
         if (!this.has(value))
             this.items.push(value);
+    }
+
+    delete(value: T) {
+        const index = this.items.indexOf(value);
+        if (index === -1)
+            return false;
+        this.items.splice(index, 1);
+        return true;
+    }
+
+    *values() {
+        for (const item of this.items)
+            yield item;
     }
 }

@@ -1,7 +1,7 @@
 ﻿import * as path from "path";
 import * as ts from "typescript";
 import {expect} from "chai";
-import {EmitResult} from "./../compiler";
+import {EmitResult, Node, SourceFile, NamespaceDeclaration} from "./../compiler";
 import {TsSimpleAst} from "./../TsSimpleAst";
 import {IndentationText} from "./../ManipulationSettings";
 import {FileUtils} from "./../utils";
@@ -294,6 +294,73 @@ describe(nameof(TsSimpleAst), () => {
                 FileUtils.getStandardizedAbsolutePath("src/test/file3.ts"),
                 FileUtils.getStandardizedAbsolutePath("src/test/folder/file.ts")
             ]);
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(t => t.forgetNodesCreatedInBlock), () => {
+        const ast = new TsSimpleAst();
+        let sourceFile: SourceFile;
+        let sourceFileNotNavigated: SourceFile;
+        let classNode: Node;
+        let namespaceNode: NamespaceDeclaration;
+        let namespaceKeywordNode: Node;
+        let interfaceNode1: Node;
+        let interfaceNode2: Node;
+        let interfaceNode3: Node;
+        let interfaceNode4: Node;
+        ast.forgetNodesCreatedInBlock(remember => {
+            sourceFile = ast.addSourceFileFromText("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} " +
+                "interface Interface3 {} interface Interface4 {} }");
+            sourceFileNotNavigated = ast.addSourceFileFromText("test2.ts", "class MyClass {}");
+            classNode = sourceFile.getClassOrThrow("MyClass");
+            namespaceNode = sourceFile.getNamespaceOrThrow("MyNamespace");
+
+            ast.forgetNodesCreatedInBlock(remember2 => {
+                interfaceNode2 = namespaceNode.getInterfaceOrThrow("Interface2");
+                interfaceNode3 = namespaceNode.getInterfaceOrThrow("Interface3");
+                interfaceNode4 = namespaceNode.getInterfaceOrThrow("Interface4");
+                remember2(interfaceNode3, interfaceNode4);
+            });
+
+            namespaceKeywordNode = namespaceNode.getFirstChildByKindOrThrow(ts.SyntaxKind.NamespaceKeyword);
+            interfaceNode1 = namespaceNode.getInterfaceOrThrow("Interface1");
+            remember(interfaceNode1);
+        });
+
+        it("should not have forgotten the source file", () => {
+            expect(sourceFile.wasForgotten()).to.be.false;
+        });
+
+        it("should not have forgotten the not navigated source file", () => {
+            expect(sourceFileNotNavigated.wasForgotten()).to.be.false;
+        });
+
+        it("should have forgotten the class", () => {
+            expect(classNode.wasForgotten()).to.be.true;
+        });
+
+        it("should not have forgotten the namespace because one of its children was remembered", () => {
+            expect(namespaceNode.wasForgotten()).to.be.false;
+        });
+
+        it("should have forgotten the namespace keyword", () => {
+            expect(namespaceKeywordNode.wasForgotten()).to.be.true;
+        });
+
+        it("should not have forgotten the first interface because it was remembered", () => {
+            expect(interfaceNode1.wasForgotten()).to.be.false;
+        });
+
+        it("should have forgotten the second interface", () => {
+            expect(interfaceNode2.wasForgotten()).to.be.true;
+        });
+
+        it("should not have forgotten the third interface because it was remembered", () => {
+            expect(interfaceNode3.wasForgotten()).to.be.false;
+        });
+
+        it("should not have forgotten the third interface because it was remembered", () => {
+            expect(interfaceNode4.wasForgotten()).to.be.false;
         });
     });
 

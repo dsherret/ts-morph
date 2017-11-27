@@ -55,6 +55,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * This is useful if you want to improve the performance of manipulation by not tracking this node anymore.
      */
     forget() {
+        if (this.wasForgotten())
+            return;
+
         for (const child of this.getChildrenInCacheIterator())
             child.forget();
 
@@ -66,8 +69,19 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     forgetOnlyThis() {
+        if (this.wasForgotten())
+            return;
+
         this.global.compilerFactory.removeNodeFromCache(this);
         this._compilerNode = undefined;
+    }
+
+    /**
+     * Gets if the node was forgotten.
+     * @internal
+     */
+    wasForgotten() {
+        return this._compilerNode == null;
     }
 
     /**

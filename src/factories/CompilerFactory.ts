@@ -6,6 +6,7 @@ import {GlobalContainer} from "./../GlobalContainer";
 import {VirtualFileSystemHost} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
+import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
 
 /**
  * Factory for creating compiler wrappers.
@@ -14,7 +15,7 @@ import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
     private readonly normalizedDirectories = createHashSet<string>();
-    private readonly nodeCache = new KeyValueCache<ts.Node, compiler.Node>();
+    private readonly nodeCache = new ForgetfulNodeCache();
     private readonly sourceFileAddedEventContainer = new EventContainer<{ addedSourceFile: compiler.SourceFile; }>();
 
     /**
@@ -264,6 +265,22 @@ export class CompilerFactory {
         if (compilerNode.kind === ts.SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
+        }
+    }
+
+    /**
+     * Forgets the nodes created in the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void) {
+        this.nodeCache.setForgetPoint();
+        try {
+            block((...nodes) => {
+                for (const node of nodes)
+                    this.nodeCache.rememberNode(node);
+            });
+        } finally {
+            this.nodeCache.forgetLastPoint();
         }
     }
 }

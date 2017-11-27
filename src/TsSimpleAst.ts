@@ -228,6 +228,16 @@ export class TsSimpleAst {
         // return a copy
         return {...this.global.compilerOptions};
     }
+
+    /**
+     * Forgets the nodes created in the scope of the passed in block.
+     *
+     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void) {
+        this.global.compilerFactory.forgetNodesCreatedInBlock(block);
+    }
 }
 
 function getCompilerOptionsFromOptions(options: Options, fileSystem: FileSystemHost) {
