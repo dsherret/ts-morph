@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {ShorthandPropertyAssignment} from "./../../../../compiler";
+import {ShorthandPropertyAssignment, PropertyAssignment} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(ShorthandPropertyAssignment), () => {
@@ -22,6 +22,21 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         it("should return undefined when the object assignment initializer doesn't exist", () => {
             const {shorthandPropertyAssignment} = getShorthandPropertyAssignemntExpression("({prop})");
             expect(shorthandPropertyAssignment.getObjectAssignmentInitializer()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ShorthandPropertyAssignment>(a => a.hasObjectAssignmentInitializer), () => {
+        function doTest(text: string, expected: boolean) {
+            const {shorthandPropertyAssignment} = getShorthandPropertyAssignemntExpression(text);
+            expect(shorthandPropertyAssignment.hasObjectAssignmentInitializer()).to.equal(expected);
+        }
+
+        it("should be true when it does", () => {
+            doTest("({prop = 5})", true);
+        });
+
+        it("should be false when not", () => {
+            doTest("({prop})", false);
         });
     });
 
@@ -58,6 +73,59 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         it("should return undefined when the equals token doesn't exist", () => {
             const {shorthandPropertyAssignment} = getShorthandPropertyAssignemntExpression("({prop})");
             expect(() => shorthandPropertyAssignment.getEqualsTokenOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<ShorthandPropertyAssignment>(a => a.setInitializer), () => {
+        it("should set a new initializer", () => {
+            const {sourceFile} = getInfoFromText("const t = { prop, prop2 }");
+            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+            const propAssignment = shortPropAssignment.setInitializer("5");
+            expect(propAssignment).to.be.instanceOf(PropertyAssignment);
+            expect(shortPropAssignment.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal("const t = { prop: 5, prop2 }");
+        });
+    });
+
+    describe(nameof<ShorthandPropertyAssignment>(a => a.removeObjectAssignmentInitializer), () => {
+        function doTest(start: string, expected: string) {
+            const {sourceFile} = getInfoFromText(start);
+            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+            shortPropAssignment.removeObjectAssignmentInitializer();
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest("({ start })", "({ start })");
+        });
+
+        it("should remove when it does exist", () => {
+            doTest("({ start = 5 })", "({ start })");
+        });
+    });
+
+    describe(nameof<ShorthandPropertyAssignment>(a => a.setObjectAssignmentInitializer), () => {
+        function doTest(start: string, value: string, expected: string) {
+            const {sourceFile} = getInfoFromText(start);
+            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+            shortPropAssignment.setObjectAssignmentInitializer(value);
+            expect(sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should not do anything when specifying an empty string and nothing exists", () => {
+            doTest("({ start })", "", "({ start })");
+        });
+
+        it("should remove when specifying an empty string and it does exist", () => {
+            doTest("({ start = 5 })", "", "({ start })");
+        });
+
+        it("should set to a new value when one does not exists", () => {
+            doTest("({ start })", "6", "({ start = 6 })");
+        });
+
+        it("should set to a new value when one exists", () => {
+            doTest("({ start = 5 })", "6", "({ start = 6 })");
         });
     });
 });
