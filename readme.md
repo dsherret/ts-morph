@@ -10,7 +10,7 @@ TypeScript compiler wrapper. Provides a simple way to navigate and manipulate Ty
 
 ## Library Development - Progress Update (12 November 2017)
 
-Most common navigation and code manipulation/generation use cases are implemented, but there's still a lot of work to do before a stable 1.0 release.
+Most common navigation and code manipulation/generation use cases are implemented, but there's still a lot of work to do before a stable release.
 
 Please open an issue if find a feature missing that isn't in the issue tracker.
 
