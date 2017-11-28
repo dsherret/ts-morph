@@ -10,7 +10,13 @@ setSyntaxKindOverloads(Array.from(getNodeToWrapperMappings(getAst())));
 export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[]) {
     const sourceFile = ast.getSourceFileOrThrow("Node.d.ts");
     const nodeClass = sourceFile.getClass("Node")!;
-    const syntaxKindMethods = nodeClass.getInstanceMethods().filter(m => m.getParameters().length === 1 && m.getParameters()[0].getType().getText() === "ts.SyntaxKind");
+    const syntaxKindMethods: MethodDeclaration[] = [];
+
+    ast.forgetNodesCreatedInBlock(remember => {
+        const methods = nodeClass.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
+        remember(...methods);
+        syntaxKindMethods.push(...methods);
+    });
 
     console.log("Adding compiler import...");
     sourceFile.addImport({
@@ -20,7 +26,10 @@ export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[])
 
     for (const method of syntaxKindMethods) {
         console.log("Modifying method: " + method.getName() + "...");
-        addMethods(nodeClass, method, nodeToWrappers);
+        ast.forgetNodesCreatedInBlock(() => {
+            addMethods(nodeClass, method, nodeToWrappers);
+        });
+        method.forget();
     }
 
     const diagnostics = sourceFile.getDiagnostics();
@@ -40,17 +49,25 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
         for (const syntaxKindName of nodeToWrapper.syntaxKindNames) {
             const typeText = `ts.SyntaxKind.${syntaxKindName}`;
 
-            structures.push({
+            const methodStructure: MethodDeclarationStructure = {
                 name: method.getName(),
-                parameters: [{ name: "kind", type: `ts.SyntaxKind.${syntaxKindName}` }],
+                parameters: [],
                 returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
                 docs: [{
                     description: doc
                 }]
-            });
+            };
+            for (const param of method.getParameters()) {
+                const name = param.getName()!;
+                const type = param.getTypeNodeOrThrow().getText();
+                methodStructure.parameters!.push({
+                    name,
+                    type: type === "ts.SyntaxKind" ? `ts.SyntaxKind.${syntaxKindName}` : type
+                });
+            }
+            structures.push(methodStructure);
         }
     }
 
-    const methods = classDeclaration.insertMethods(method.getChildIndex(), structures);
-    methods.forEach(m => m.forget()); // for performance reasons
+    classDeclaration.insertMethods(method.getChildIndex(), structures);
 }
