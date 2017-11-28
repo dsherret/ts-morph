@@ -255,6 +255,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the child at the specified index.
+     * @param index - Index of the child.
+     */
+    getChildAtIndex(index: number) {
+        return getWrappedNode(this, this.getCompilerChildAtIndex(index));
+    }
+
+    /**
      * @internal
      */
     *getChildrenIterator(): IterableIterator<Node> {
@@ -798,6 +806,25 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the child at the specified index if it's the specified kind or throws an exception.
+     * @param index - Index to get.
+     * @param kind - Expected kind.
+     */
+    getChildAtIndexIfKindOrThrow(index: number, kind: ts.SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${ts.SyntaxKind[kind]}`);
+    }
+
+    /**
+     * Gets the child at the specified index if it's the specified kind or returns undefined.
+     * @param index - Index to get.
+     * @param kind - Expected kind.
+     */
+    getChildAtIndexIfKind(index: number, kind: ts.SyntaxKind) {
+        const node = this.getCompilerChildAtIndex(index);
+        return node.kind === kind ? getWrappedNode(this, node) : undefined;
+    }
+
+    /**
      * Gets the previous sibiling if it matches the specified kind, or throws.
      * @param kind - Kind to check.
      */
@@ -1019,6 +1046,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
 
         return undefined;
+    }
+
+    /**
+     * Gets the compiler child at the specified index.
+     * @param index - Index.
+     * @internal
+     */
+    getCompilerChildAtIndex(index: number) {
+        const children = this.getCompilerChildren();
+        errors.throwIfOutOfRange(index, [0, children.length - 1], nameof(index));
+        return children[index];
     }
 }
 

@@ -128,6 +128,53 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getChildAtIndex), () => {
+        const {sourceFile} = getInfoFromText("class Class { } interface Interface {}");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should throw when specifying a negative index", () => {
+            expect(() => syntaxList.getChildAtIndex(-1)).to.throw();
+        });
+
+        it("should throw when specifying an index too high", () => {
+            expect(() => syntaxList.getChildAtIndex(2)).to.throw();
+        });
+
+        it("should get the first child", () => {
+            expect(syntaxList.getChildAtIndex(0).getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+        });
+
+        it("should get the last child", () => {
+            expect(syntaxList.getChildAtIndex(1).getKind()).to.equal(ts.SyntaxKind.InterfaceDeclaration);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getChildAtIndexIfKind), () => {
+        const {sourceFile} = getInfoFromText("class Class { }");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the child at the specified index when the kind", () => {
+            expect(syntaxList.getChildAtIndexIfKind(0, ts.SyntaxKind.ClassDeclaration)!.getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+        });
+
+        it("should be undefined when specifying the wrong kind", () => {
+            expect(syntaxList.getChildAtIndexIfKind(0, ts.SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getChildAtIndexIfKindOrThrow), () => {
+        const {sourceFile} = getInfoFromText("class Class { }");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the child at the specified index when the kind", () => {
+            expect(syntaxList.getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.ClassDeclaration).getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+        });
+
+        it("should be undefined when specifying the wrong kind", () => {
+            expect(() => syntaxList.getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.InterfaceDeclaration)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getDescendantAtPos), () => {
         const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>("function myFunction() { const v = 5; }");
         const variableStatement = firstChild.getVariableStatements()[0];
