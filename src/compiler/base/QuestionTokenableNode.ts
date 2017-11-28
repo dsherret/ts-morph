@@ -22,10 +22,10 @@ export interface QuestionTokenableNode {
      */
     getQuestionTokenNodeOrThrow(): Node<ts.QuestionToken>;
     /**
-     * Sets if this node is optional.
-     * @param value - If optional or not.
+     * Sets if this node has a question token.
+     * @param value - If it should have a question token or not.
      */
-    setIsOptional(value: boolean): this;
+    setHasQuestionToken(value: boolean): this;
 }
 
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
@@ -44,7 +44,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             return errors.throwIfNullOrUndefined(this.getQuestionTokenNode(), "Expected to find a question token.");
         }
 
-        setIsOptional(value: boolean) {
+        setHasQuestionToken(value: boolean) {
             const questionTokenNode = this.getQuestionTokenNode();
             const hasQuestionToken = questionTokenNode != null;
 
@@ -72,7 +72,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.hasQuestionToken != null)
-                this.setIsOptional(structure.hasQuestionToken);
+                this.setHasQuestionToken(structure.hasQuestionToken);
 
             return this;
         }

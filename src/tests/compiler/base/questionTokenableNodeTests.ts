@@ -45,22 +45,22 @@ describe(nameof(QuestionTokenableNode), () => {
         });
     });
 
-    describe(nameof<QuestionTokenableNode>(d => d.setIsOptional), () => {
+    describe(nameof<QuestionTokenableNode>(d => d.setHasQuestionToken), () => {
         it("should be set as optional when not optional", () => {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
-            firstProperty.setIsOptional(true);
+            firstProperty.setHasQuestionToken(true);
             expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop?: string; }");
         });
 
         it("should be set as not optional when optional", () => {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop?: string; }");
-            firstProperty.setIsOptional(false);
+            firstProperty.setHasQuestionToken(false);
             expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
         });
 
         it("should do nothing when setting to same value", () => {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
-            firstProperty.setIsOptional(false);
+            firstProperty.setHasQuestionToken(false);
             expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
         });
     });
