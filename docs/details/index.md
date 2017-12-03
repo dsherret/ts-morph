@@ -33,6 +33,7 @@ Types:
 Common:
 
 * [Expressions](expressions)
+* [Object Literal Expressions](object-literal-expressions)
 * [Identifiers](identifiers)
 * [Ambient](ambient)
 * [Async](async)
@@ -42,7 +43,6 @@ Common:
 * [JS Docs](documentation)
 * [Literals](literals)
 * [Modifiers](modifiers)
-* [Object Literal Expressions](object-literal-expressions)
 * Question tokenable - todo
 * Readonly - todo
 * Return Types - todo
