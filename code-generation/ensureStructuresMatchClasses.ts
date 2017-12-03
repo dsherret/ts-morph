@@ -1,7 +1,7 @@
 ﻿import {ArrayUtils} from "./../src/utils";
 import {getAst, getClassViewModels, getStructureViewModels, getMixinsOfMixins} from "./common";
 import {ClassViewModel, MixinViewModel, InterfaceViewModel} from "./view-models";
-import {isAllowedMixin, isAllowedClass} from "./config";
+import {isAllowedMixin, isAllowedClass, isAllowedMixinForStructure} from "./config";
 
 const ast = getAst();
 const classVMs = ArrayUtils.from(getClassViewModels(ast));
@@ -15,7 +15,7 @@ for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.
     if (structureVM == null)
         continue;
 
-    for (const mixin of vm.mixins.filter(m => isAllowedMixin(m))) {
+    for (const mixin of vm.mixins.filter(m => isAllowedMixin(m) && isAllowedMixinForStructure(m, structureVM))) {
         const mixinStructureName = getStructureName(mixin);
         const structureHasMixin = structureVM.extends.some(s => s.name === mixinStructureName);
         if (!structureHasMixin)
