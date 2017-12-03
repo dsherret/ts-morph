@@ -132,7 +132,12 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
             });
         }
         else {
-            insertIntoCommaSeparatedNodes({ parent: this, currentNodes: namedExports, insertIndex: index, newTexts: codes });
+            insertIntoCommaSeparatedNodes({
+                parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.NamedExports).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                currentNodes: namedExports,
+                insertIndex: index,
+                newTexts: codes
+            });
         }
 
         return this.getNamedExports().slice(index, index + structures.length);

@@ -8,6 +8,7 @@ export interface GetIndentedTextOptions {
     indentationText: string;
 }
 
+// todo: remove this function
 export function getIndentedText(opts: GetIndentedTextOptions) {
     const {textOrWriterFunction, manipulationSettings, indentationText} = opts;
     const newLineKind = manipulationSettings.getNewLineKind();

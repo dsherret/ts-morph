@@ -7,6 +7,9 @@ import {Expression} from "./../Expression";
 import {Node} from "./../Node";
 import {PropertyAssignment} from "./PropertyAssignment";
 
+// This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
+// (See https://github.com/Microsoft/TypeScript/pull/5121/files)
+
 export const ShorthandPropertyAssignmentBase = InitializerGetExpressionableNode(QuestionTokenableNode(NamedNode(Node)));
 export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
@@ -51,29 +54,9 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
     }
 
     /**
-     * Sets the object assignment initializer text.
-     * @param text - Text to set for the object assignment initializer.
-     */
-    setObjectAssignmentInitializer(text: string) {
-        if (this.hasObjectAssignmentInitializer())
-            this.removeObjectAssignmentInitializer();
-
-        if (StringUtils.isNullOrWhitespace(text))
-            return this;
-
-        insertIntoParent({
-            parent: this,
-            insertPos: this.getEnd(),
-            newText: ` = ${text}`,
-            childIndex: this.getChildCount(),
-            insertItemsCount: 2 // equals token and initializer
-        });
-
-        return this;
-    }
-
-    /**
      * Remove the object assignment initializer.
+     *
+     * This is only useful to remove bad code.
      */
     removeObjectAssignmentInitializer() {
         if (!this.hasObjectAssignmentInitializer())

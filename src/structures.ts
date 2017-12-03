@@ -1,5 +1,6 @@
 ﻿export * from "./structures/base";
 export * from "./structures/class";
+export * from "./structures/common";
 export * from "./structures/decorator";
 export * from "./structures/doc";
 export * from "./structures/enum";

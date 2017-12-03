@@ -178,10 +178,10 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
                 text += ` as ${s.alias}`;
             return text;
         });
+        const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 
         if (namedImports.length === 0) {
-            const importClause = this.getImportClause();
             if (importClause == null) {
                 const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
                 insertIntoParent({
@@ -206,7 +206,15 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
             }
         }
         else {
-            insertIntoCommaSeparatedNodes({ parent: this, currentNodes: namedImports, insertIndex: index, newTexts: codes });
+            if (importClause == null)
+                throw new errors.NotImplementedError("Expected to have an import clause.");
+
+            insertIntoCommaSeparatedNodes({
+                parent: importClause.getFirstChildByKindOrThrow(ts.SyntaxKind.NamedImports).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                currentNodes: namedImports,
+                insertIndex: index,
+                newTexts: codes
+            });
         }
 
         return this.getNamedImports().slice(index, index + structures.length);

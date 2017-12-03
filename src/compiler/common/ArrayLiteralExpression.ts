@@ -46,7 +46,7 @@ export class ArrayLiteralExpression extends Expression<ts.ArrayLiteralExpression
         index = verifyAndGetIndex(index, elements.length);
 
         insertIntoCommaSeparatedNodes({
-            parent: this,
+            parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
             currentNodes: elements,
             insertIndex: index,
             newTexts: texts

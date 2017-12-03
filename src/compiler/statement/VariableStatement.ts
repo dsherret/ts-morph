@@ -116,7 +116,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
         });
 
         insertIntoCommaSeparatedNodes({
-            parent: this,
+            parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.VariableDeclarationList).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
             currentNodes: this.getDeclarations(),
             insertIndex: index,
             newTexts: texts

@@ -42,6 +42,7 @@ Common:
 * [JS Docs](documentation)
 * [Literals](literals)
 * [Modifiers](modifiers)
+* [Object Literal Expressions](object-literal-expressions)
 * Question tokenable - todo
 * Readonly - todo
 * Return Types - todo

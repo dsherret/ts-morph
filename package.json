@@ -43,7 +43,6 @@
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
     "gulp-replace": "^0.5.4",
-    "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^2.13.3",
     "merge2": "^1.0.3",
@@ -52,7 +51,7 @@
     "tslint": "^5.8.0"
   },
   "dependencies": {
-    "code-block-writer": "^5.0.0",
+    "code-block-writer": "^6.1.1",
     "globby": "^6.1.0",
     "minimatch": "^3.0.4",
     "object-assign": "^4.1.1",

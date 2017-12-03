@@ -7,7 +7,6 @@ var ts = require("gulp-typescript");
 var filter = require("gulp-filter");
 var gulpTslint = require("gulp-tslint");
 var replace = require("gulp-replace");
-var sourcemaps = require("gulp-sourcemaps");
 var p = require("./package.json");
 var tsNameOf = require("ts-nameof");
 var merge = require("merge2");
@@ -23,7 +22,6 @@ gulp.task("typescript", ["clean-scripts"], function() {
     });
 
     var tsResult = gulp.src(["./src/**/*.ts"])
-        .pipe(sourcemaps.init())
         .pipe(tsNameOf())
         .pipe(ts(tsProject));
 
@@ -34,7 +32,6 @@ gulp.task("typescript", ["clean-scripts"], function() {
             .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))
             // ignore empty constructors (for mixins and static classes)
             .pipe(replace(/(function [A-Za-z]+\(\) {[\s\n\t]+})/g, '/* istanbul ignore next */ $1'))
-            .pipe(sourcemaps.write("./"))
             .pipe(gulp.dest("./dist"))
     ]);
 });

@@ -2,6 +2,7 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
+import {IndentationText} from "./../../ManipulationSettings";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils} from "./../../utils";
@@ -1057,6 +1058,29 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const children = this.getCompilerChildren();
         errors.throwIfOutOfRange(index, [0, children.length - 1], nameof(index));
         return children[index];
+    }
+
+    /**
+     * Gets a writer with the child indentation text.
+     * @internal
+     */
+    getChildWriter() {
+        const writer = this.getWriter();
+        writer.setIndentationLevel(this.getChildIndentationText());
+        return writer;
+    }
+
+    /**
+     * Gets a writer with no child indentation text.
+     * @internal
+     */
+    getWriter() {
+        const indentationText = this.global.manipulationSettings.getIndentationText();
+        return new CodeBlockWriter({
+            newLine: this.global.manipulationSettings.getNewLineKind(),
+            indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
+            useTabs: indentationText === IndentationText.Tab
+        });
     }
 }
 

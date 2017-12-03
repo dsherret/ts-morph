@@ -75,8 +75,8 @@ describe(nameof(VariableStatement), () => {
         }
 
         it("should insert declarations at the beginning", () => {
-            doTest("var v4;", 0, [{ name: "v1" }, { name: "v2", type: "string" }, { name: "v3", initializer: "5" }],
-                "var v1, v2: string, v3 = 5, v4;");
+            doTest("export var v4;", 0, [{ name: "v1" }, { name: "v2", type: "string" }, { name: "v3", initializer: "5" }],
+                "export var v1, v2: string, v3 = 5, v4;");
         });
 
         it("should insert declarations in the middle", () => {

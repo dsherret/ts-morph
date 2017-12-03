@@ -91,7 +91,12 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                 });
             }
             else {
-                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: typeArguments, insertIndex: index, newTexts: argumentTexts });
+                insertIntoCommaSeparatedNodes({
+                    parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    currentNodes: typeArguments,
+                    insertIndex: index,
+                    newTexts: argumentTexts
+                });
             }
 
             return this.getTypeArguments().slice(index, index + argumentTexts.length);

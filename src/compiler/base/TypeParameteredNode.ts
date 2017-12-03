@@ -78,7 +78,12 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 });
             }
             else {
-                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: typeParameters, insertIndex: index, newTexts: typeParamCodes });
+                insertIntoCommaSeparatedNodes({
+                    parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    currentNodes: typeParameters,
+                    insertIndex: index,
+                    newTexts: typeParamCodes
+                });
             }
 
             return this.getTypeParameters().slice(index, index + structures.length);

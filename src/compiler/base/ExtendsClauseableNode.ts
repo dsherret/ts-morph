@@ -77,7 +77,13 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: extendsTypes, insertIndex: index, newTexts: texts });
+                const extendsClause = this.getHeritageClauseByKindOrThrow(ts.SyntaxKind.ExtendsKeyword);
+                insertIntoCommaSeparatedNodes({
+                    parent: extendsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    currentNodes: extendsTypes,
+                    insertIndex: index,
+                    newTexts: texts
+                });
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 

@@ -5,6 +5,7 @@ import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, i
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
+import * as structuresToText from "./../../structuresToText";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
@@ -146,9 +147,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             c.remove();
         }
 
-        const indentationText = this.getChildIndentationText();
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const code = `${indentationText}constructor() {${newLineChar}${indentationText}}`;
+        const writer = this.getChildWriter();
+        const structureToText = new structuresToText.ConstructorDeclarationStructureToText(writer);
+        structureToText.writeText(structure);
+        const code = writer.toString();
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
             getIndexedChildren: () => this.getBodyMembers(),
@@ -203,20 +205,15 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKind();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = `${indentationText}`;
-            if (structure.isStatic)
-                code += "static ";
-            code += `get ${structure.name}()`;
-            if (structure.returnType != null && structure.returnType.length > 0)
-                code += `: ${structure.returnType}`;
-            code += " {" + newLineKind + indentationText + "}";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structuresToText.GetAccessorDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getBodyMembers(),
@@ -268,17 +265,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const newLineKind = this.global.manipulationSettings.getNewLineKind();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = `${indentationText}`;
-            if (structure.isStatic)
-                code += "static ";
-            code += `set ${structure.name}()`;
-            if (structure.returnType != null && structure.returnType.length > 0)
-                code += `: ${structure.returnType}`;
-            code += " {" + newLineKind + indentationText + "}";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structuresToText.SetAccessorDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getBodyMembers(),
@@ -329,19 +322,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const indentationText = this.getChildIndentationText();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = `${indentationText}`;
-            if (structure.isStatic)
-                code += "static ";
-            code += structure.name;
-            if (structure.hasQuestionToken)
-                code += "?";
-            if (structure.type != null && structure.type.length > 0)
-                code += `: ${structure.type}`;
-            code += ";";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structuresToText.PropertyDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
             getIndexedChildren: () => this.getBodyMembers(),
@@ -467,26 +454,17 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
+        const newLineKind = this.global.manipulationSettings.getNewLineKind();
         const isAmbient = this.isAmbient();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = indentationText;
-            if (structure.isStatic)
-                code += "static ";
-            code += `${structure.name}()`;
-            if (structure.returnType != null && structure.returnType.length > 0)
-                code += `: ${structure.returnType}`;
-
-            if (isAmbient)
-                code += ";";
-            else
-                code += ` {` + newLineChar + indentationText + `}`;
-
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structuresToText.MethodDeclarationStructureToText(writer, { isAmbient });
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({

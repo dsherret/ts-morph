@@ -11,7 +11,7 @@ export interface InsertIntoParentOptions {
     insertItemsCount: number;
     replacing?: {
         textLength: number;
-        nodes: Node[];
+        nodes?: Node[];
     };
     customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }

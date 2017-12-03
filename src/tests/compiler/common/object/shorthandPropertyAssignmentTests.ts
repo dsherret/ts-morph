@@ -103,29 +103,4 @@ describe(nameof(ShorthandPropertyAssignment), () => {
             doTest("({ start = 5 })", "({ start })");
         });
     });
-
-    describe(nameof<ShorthandPropertyAssignment>(a => a.setObjectAssignmentInitializer), () => {
-        function doTest(start: string, value: string, expected: string) {
-            const {sourceFile} = getInfoFromText(start);
-            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
-            shortPropAssignment.setObjectAssignmentInitializer(value);
-            expect(sourceFile.getFullText()).to.equal(expected);
-        }
-
-        it("should not do anything when specifying an empty string and nothing exists", () => {
-            doTest("({ start })", "", "({ start })");
-        });
-
-        it("should remove when specifying an empty string and it does exist", () => {
-            doTest("({ start = 5 })", "", "({ start })");
-        });
-
-        it("should set to a new value when one does not exists", () => {
-            doTest("({ start })", "6", "({ start = 6 })");
-        });
-
-        it("should set to a new value when one exists", () => {
-            doTest("({ start = 5 })", "6", "({ start = 6 })");
-        });
-    });
 });

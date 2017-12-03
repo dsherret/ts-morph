@@ -5,6 +5,9 @@ import {PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNo
 import {Node} from "./../Node";
 import {ShorthandPropertyAssignment} from "./ShorthandPropertyAssignment";
 
+// This node only has a question token in order to tell the user about bad code.
+// (See https://github.com/Microsoft/TypeScript/pull/5121/files)
+
 export const PropertyAssignmentBase = InitializerGetExpressionableNode(QuestionTokenableNode(PropertyNamedNode(Node)));
 export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**

@@ -78,7 +78,13 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
-                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: implementsTypes, insertIndex: index, newTexts: texts });
+                const implementsClause = this.getHeritageClauseByKindOrThrow(ts.SyntaxKind.ImplementsKeyword);
+                insertIntoCommaSeparatedNodes({
+                    parent: implementsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    currentNodes: implementsTypes,
+                    insertIndex: index,
+                    newTexts: texts
+                });
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 

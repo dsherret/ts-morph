@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -16,6 +17,11 @@ export interface HeritageClauseableNode {
      * @kind - Kind of heritage clause.
      */
     getHeritageClauseByKind(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword): HeritageClause | undefined;
+    /**
+     * Gets the heritage clause by kind or throws if it doesn't exist.
+     * @kind - Kind of heritage clause.
+     */
+    getHeritageClauseByKindOrThrow(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword): HeritageClause;
 }
 
 export function HeritageClauseableNode<T extends Constructor<HeritageClauseableNodeExtensionType>>(Base: T): Constructor<HeritageClauseableNode> & T {
@@ -25,6 +31,10 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
             if (heritageClauses == null)
                 return [];
             return heritageClauses.map(c => this.global.compilerFactory.getNodeFromCompilerNode(c, this.sourceFile) as HeritageClause);
+        }
+
+        getHeritageClauseByKindOrThrow(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword) {
+            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${ts.SyntaxKind[kind]}.`);
         }
 
         getHeritageClauseByKind(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword) {

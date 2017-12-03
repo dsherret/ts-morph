@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, insertIntoCreatableSyntaxList, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
@@ -63,25 +63,15 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
 
             const parameters = this.getParameters();
             const parameterCodes = structures.map(s => getStructureCode(s));
+            const syntaxList = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList);
             index = verifyAndGetIndex(index, parameters.length);
 
-            if (parameters.length === 0) {
-                const syntaxList = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSibling();
-                if (syntaxList == null || syntaxList.getKind() !== ts.SyntaxKind.SyntaxList)
-                    throw new errors.NotImplementedError("Expected to find a syntax list after the open parens");
-
-                insertIntoCreatableSyntaxList({
-                    parent: this,
-                    insertPos: syntaxList.getPos(),
-                    newText: parameterCodes.join(", "),
-                    syntaxList,
-                    childIndex: 0,
-                    insertItemsCount: structures.length * 2 - 1
-                });
-            }
-            else {
-                insertIntoCommaSeparatedNodes({ parent: this, currentNodes: parameters, insertIndex: index, newTexts: parameterCodes });
-            }
+            insertIntoCommaSeparatedNodes({
+                parent: syntaxList,
+                currentNodes: parameters,
+                insertIndex: index,
+                newTexts: parameterCodes
+            });
 
             const newParameters = this.getParameters().slice(index, index + structures.length);
             newParameters.forEach((p, i) => p.fill(structures[i]));

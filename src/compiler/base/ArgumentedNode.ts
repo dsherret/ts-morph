@@ -76,7 +76,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             index = verifyAndGetIndex(index, args.length);
 
             insertIntoCommaSeparatedNodes({
-                parent: this,
+                parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
                 currentNodes: args,
                 insertIndex: index,
                 newTexts: argumentTexts
