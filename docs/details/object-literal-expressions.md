@@ -32,7 +32,9 @@ const properties = objectLiteralExpression.getProperties();
 // or
 const property = objectLiteralExpression.getProperty("propertyAssignment");
 // or
-const spreadAssignment = objectLiteralExpression.getProperty(p => p.getText() === "...spreadAssignment");
+const spreadAssignment = objectLiteralExpression.getProperty(
+    p => p.getText() === "...spreadAssignment"
+);
 // or
 const method = objectLiteralExpression.getPropertyOrThrow("method");
 ```
@@ -42,7 +44,10 @@ const method = objectLiteralExpression.getPropertyOrThrow("method");
 Add a property assignment via the `insertPropertyAssignment`, `insertPropertyAssignments`, `addPropertyAssignment`, or `addPropertyAssignments` methods.
 
 ```typescript
-const propertyAssignment = objectLiteralExpression.addPropertyAssignment({ name: "propertyAssignment", initializer: "5" });
+const propertyAssignment = objectLiteralExpression.addPropertyAssignment({
+    name: "propertyAssignment",
+    initializer: "5"
+});
 ```
 
 ### Shorthand Property Assignments
@@ -51,7 +56,9 @@ Add a shorthand property assignment via the `insertShorthandPropertyAssignment`,
 `addShorthandPropertyAssignment`, or `addShorthandPropertyAssignments` methods.
 
 ```typescript
-const shorthandPropertyAssignment = objectLiteralExpression.addShorthandPropertyAssignment({ name: "shorthandPropertyAssignment" });
+const shorthandPropertyAssignment = objectLiteralExpression.addShorthandPropertyAssignment({
+    name: "shorthandPropertyAssignment"
+});
 ```
 
 ### Spread Assignments
@@ -67,8 +74,16 @@ const spreadAssignment = objectLiteralExpression.addSpreadAssignment({ expressio
 Add get and set accessors via the `insertGetAccessor`, `insertGetAccessors`, `addGetAccessor`, `addGetAccessors`, or similarly named methods for set accessors.
 
 ```typescript
-const getAccessor = objectLiteralExpression.addGetAccessor({ name: "someNumber", returnType: "number", body: "return someNumber;" });
-const setAccessor = objectLiteralExpression.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], body: "someNumber = value;" });
+const getAccessor = objectLiteralExpression.addGetAccessor({
+    name: "someNumber",
+    returnType: "number",
+    body: "return someNumber;"
+});
+const setAccessor = objectLiteralExpression.addSetAccessor({
+    name: "someNumber",
+    parameters: [{ name: "value", type: "number" }],
+    body: "someNumber = value;"
+});
 ```
 
 ### Methods
@@ -76,5 +91,8 @@ const setAccessor = objectLiteralExpression.addSetAccessor({ name: "someNumber",
 Add a method via the `insertMethod`, `insertMethods`, `addMethod`, or `addMethods` methods.
 
 ```typescript
-const method = objectLiteralExpression.addMethod({ name: "method", body: `return "some string";` });
+const method = objectLiteralExpression.addMethod({
+    name: "method",
+    body: `return "some string";`
+});
 ```
