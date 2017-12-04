@@ -520,6 +520,12 @@ describe(nameof(SourceFile), () => {
                 { indentationText: IndentationText.TwoSpaces });
         });
 
+        it("should format and not format within strings", () => {
+            doTest("class MyClass {\n    myMethod() {\n        const t = `\n    t`;\n    }\n}",
+                "class MyClass {\n\tmyMethod() {\n\t\tconst t = `\n    t`;\n\t}\n}\n",
+                { indentationText: IndentationText.Tab });
+        });
+
         it("should format the text when it contains multiple semi colons", () => {
             doTest("var myTest: string;;;;", "var myTest: string;\n;\n;\n;\n");
         });
