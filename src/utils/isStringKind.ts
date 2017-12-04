@@ -1,12 +1,11 @@
 ﻿import * as ts from "typescript";
-import {Node} from "./../compiler";
 
 /**
- * Gets if the node is a string node.
- * @param node - Node.
+ * Gets if the kind is a string kind.
+ * @param kind - Node kind.
  */
-export function isStringNode(node: Node) {
-    switch (node.getKind()) {
+export function isStringKind(kind: ts.SyntaxKind) {
+    switch (kind) {
         case ts.SyntaxKind.StringLiteral:
         case ts.SyntaxKind.FirstTemplateToken:
         case ts.SyntaxKind.TemplateHead:

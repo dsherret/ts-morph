@@ -11,7 +11,7 @@ export * from "./utils/getSymbolByNameOrFindFunction";
 export * from "./utils/HashSet";
 export * from "./utils/KeyValueCache";
 export * from "./utils/Logger";
-export * from "./utils/isStringNode";
+export * from "./utils/isStringKind";
 export * from "./utils/newLineKindToTs";
 export * from "./utils/StringUtils";
 export * from "./utils/TypeGuards";

@@ -54,6 +54,47 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.isInStringAtPos), () => {
+        function doTest(text: string, isInStringAtPos: boolean[]) {
+            expect(text.length + 1).to.equal(isInStringAtPos.length);
+            const {sourceFile} = getInfoFromText(text);
+            for (let i = 0; i < isInStringAtPos.length; i++) {
+                expect(sourceFile.isInStringAtPos(i)).to.equal(isInStringAtPos[i], `should be equal at index ${i}`);
+            }
+        }
+
+        it("should be within a double quote string when it is", () => {
+            doTest(`"t"`, [false, true, false, false]);
+        });
+
+        it("should be within a single quote string when it is", () => {
+            doTest(`'t'`, [false, true, false, false]);
+        });
+
+        it("should be within a tagged template string when it is", () => {
+            doTest("`t${v}" + "t${u}t`", [
+                false, true, true, false, false, false,
+                true, true, false, false, false, true, false, false]);
+        });
+
+        it("should throw when specifying a pos less than 0", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.isInStringAtPos(-1)).to.throw();
+        });
+
+        it("should throw when specifying a pos greater than the length of the file", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.isInStringAtPos(1)).to.throw();
+        });
+
+        it("should clear the list of cached nodes after manipulating", () => {
+            const {sourceFile} = getInfoFromText(`"t"`);
+            expect(sourceFile.isInStringAtPos(3)).to.be.false;
+            sourceFile.replaceText([1, 1], "new text");
+            expect(sourceFile.isInStringAtPos(3)).to.be.true;
+        });
+    });
+
     describe(nameof<Node>(n => n.offsetPositions), () => {
         const {sourceFile} = getInfoFromText("enum MyEnum {}");
         const allNodes = [sourceFile, ...sourceFile.getDescendants()];

@@ -5,7 +5,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {IndentationText} from "./../../ManipulationSettings";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -21,6 +21,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     readonly global: GlobalContainer;
     /** @internal */
     private _compilerNode: NodeType | undefined;
+    /** @internal */
+    private _childStringRanges: [number, number][] | undefined;
     /** @internal */
     sourceFile: SourceFile;
 
@@ -126,6 +128,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     containsRange(pos: number, end: number) {
         return this.getPos() <= pos && end <= this.getEnd();
+    }
+
+    /**
+     * Gets if the specified position is within a string.
+     * @param pos - Position.
+     */
+    isInStringAtPos(pos: number) {
+        errors.throwIfOutOfRange(pos, [this.getPos(), this.getEnd()], nameof(pos));
+
+        if (this._childStringRanges == null) {
+            this._childStringRanges = [];
+            for (const descendant of this.getCompilerDescendantsIterator()) {
+                if (isStringKind(descendant.kind))
+                    this._childStringRanges.push([descendant.getStart(this.sourceFile.compilerNode), descendant.getEnd()]);
+            }
+        }
+
+        return ArrayUtils.binarySearch(this._childStringRanges, range => range[0] < pos && pos < range[1] - 1, range => range[0] > pos) !== -1;
     }
 
     /**
@@ -462,6 +482,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     replaceCompilerNode(compilerNode: NodeType) {
         this._compilerNode = compilerNode;
+        this._childStringRanges = undefined;
     }
 
     /**

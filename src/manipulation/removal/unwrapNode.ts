@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
-import {isStringNode} from "./../../utils";
 import {replaceTreeUnwrappingNode} from "./../tree";
 import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
 
@@ -25,14 +24,14 @@ function getReplacementText(node: Node) {
     const childIndentationText = node.getChildIndentationText();
     const indentationDifference = childIndentationText.replace(indentationText, "");
     const replaceRegex = new RegExp("^" + indentationDifference);
-    const stringNodeRanges = childSyntaxList.getDescendants().filter(n => isStringNode(n)).map(n => [n.getStart(), n.getEnd()] as [number, number]);
     const originalText = childSyntaxList.getFullText();
+    const sourceFile = node.sourceFile;
     const lines = originalText.split("\n");
 
     let pos = childSyntaxList.getPos();
     const newLines: string[] = [];
     for (const line of lines) {
-        if (stringNodeRanges.some(n => n[0] < pos && n[1] > pos))
+        if (sourceFile.isInStringAtPos(pos))
             newLines.push(line);
         else
             newLines.push(line.replace(replaceRegex, ""));

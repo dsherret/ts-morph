@@ -38,4 +38,22 @@
             yield item;
         }
     }
+
+    static binarySearch<T>(items: T[], isEqual: (item: T) => boolean, isGreaterThan: (item: T) => boolean) {
+        let top = items.length - 1;
+        let bottom = 0;
+
+        while (bottom <= top) {
+            let mid = Math.floor((top + bottom) / 2);
+            if (isEqual(items[mid]))
+                return mid;
+
+            if (isGreaterThan(items[mid]))
+                top = mid - 1;
+            else
+                bottom = mid + 1;
+        }
+
+        return -1;
+    }
 }
