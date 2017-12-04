@@ -44,7 +44,7 @@
         let bottom = 0;
 
         while (bottom <= top) {
-            let mid = Math.floor((top + bottom) / 2);
+            const mid = Math.floor((top + bottom) / 2);
             if (isEqual(items[mid]))
                 return mid;
 
