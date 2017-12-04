@@ -5,7 +5,7 @@ import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFo
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, isStringNode, StringUtils} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
@@ -427,14 +427,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
-        const stringNodeRanges = this.getDescendants().filter(n => isStringNode(n)).map(n => [n.getStart(), n.getEnd()] as [number, number]);
         const indentText = this.global.manipulationSettings.getIndentationText();
         const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
 
         let pos = startLinePos;
         const newLines: string[] = [];
         for (const line of sourceFileText.substring(startLinePos, endLinePos).split("\n")) {
-            if (stringNodeRanges.some(n => n[0] < pos && n[1] > pos))
+            if (this.isInStringAtPos(pos))
                 newLines.push(line);
             else if (times > 0)
                 newLines.push(StringUtils.repeat(indentText, times) + line);
@@ -483,13 +482,45 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING: This will forget any previously navigated descendant nodes.
      */
     formatText(opts: { removeComments?: boolean } = {}) {
+        const newLineChar = this.global.manipulationSettings.getNewLineKind();
+        const indentationText = this.global.manipulationSettings.getIndentationText();
         const printer = ts.createPrinter({
             newLine: newLineKindToTs(this.global.manipulationSettings.getNewLineKind()),
             removeComments: opts.removeComments || false
         });
-        const newText = printer.printFile(this.compilerNode);
-        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: this.getFilePath() });
+        const formattedCode = printer.printFile(this.compilerNode);
+        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(formattedCode, { filePath: this.getFilePath() });
+        const indentedCode = getIndentedLines(formattedCode.split(/\n/)).join(newLineChar);
+
         this.getChildren().forEach(d => d.forget()); // this will forget all the descendants
-        this.replaceCompilerNode(replacementSourceFile.compilerNode);
+        const finalReplacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(indentedCode, { filePath: this.getFilePath() });
+        this.replaceCompilerNode(finalReplacementSourceFile.compilerNode);
+
+        function getIndentedLines(lines: string[]) {
+            let nextPos = 0;
+            return lines.map(line => {
+                const pos = nextPos;
+                nextPos += line.length + 1;
+                if (replacementSourceFile.isInStringAtPos(pos))
+                    return removeSlashR(line);
+
+                let times = 0;
+                let endPos = 0;
+                for (let i = 0; i < line.length; i++) {
+                    if (line[i] !== " ")
+                        break;
+                    if (i > 0 && i % 4 === 3) {
+                        times++;
+                        endPos = i + 1;
+                    }
+                }
+
+                return StringUtils.repeat(indentationText, times) + removeSlashR(line.substring(endPos));
+            });
+
+            function removeSlashR(str: string) {
+                return StringUtils.endsWith(str, "\r") ? str.substring(0, str.length - 1) : str;
+            }
+        }
     }
 }

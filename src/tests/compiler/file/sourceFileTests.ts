@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
-import {IndentationText} from "./../../../ManipulationSettings";
+import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -467,14 +467,57 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.formatText), () => {
-        function doTest(startingCode: string, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(startingCode);
+        function doTest(startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {}) {
+            const {tsSimpleAst, sourceFile} = getInfoFromText(startingCode);
+            tsSimpleAst.manipulationSettings.set(manipulationSettings);
             sourceFile.formatText();
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
         it("should format the text when it contains different spacing", () => {
             doTest("class     MyClass{}", "class MyClass {\n}\n");
+        });
+
+        it("should format the text with eight spaces", () => {
+            doTest("class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n        myMethod() {\n        }\n}\n",
+                { indentationText: IndentationText.EightSpaces });
+        });
+
+        it("should format the text with four spaces", () => {
+            doTest("class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n    myMethod() {\n    }\n}\n",
+                { indentationText: IndentationText.FourSpaces });
+        });
+
+        it("should format the text with two spaces", () => {
+            doTest("class MyClass {\n    myMethod() {\n        console.log(t);\n    }\n}",
+                "class MyClass {\n  myMethod() {\n    console.log(t);\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces });
+        });
+
+        it("should format the text with tabs", () => {
+            doTest("class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
+                { indentationText: IndentationText.Tab });
+        });
+
+        it("should format the text with slash r slash n newlines", () => {
+            doTest("class MyClass {\n    myMethod() {\n    }\n}",
+                "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.CarriageReturnLineFeed });
+        });
+
+        it("should format the text with slash n newlines", () => {
+            doTest("class MyClass {\r\n    myMethod() {\r\n    }\r\n}",
+                "class MyClass {\n\tmyMethod() {\n\t}\n}\n",
+                { indentationText: IndentationText.Tab, newLineKind: NewLineKind.LineFeed });
+        });
+
+        it("should format and not indent within strings", () => {
+            doTest("class MyClass {\n    myMethod() {\n        const t = `\nt`;\n    }\n}",
+                "class MyClass {\n  myMethod() {\n    const t = `\nt`;\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces });
         });
 
         it("should format the text when it contains multiple semi colons", () => {
