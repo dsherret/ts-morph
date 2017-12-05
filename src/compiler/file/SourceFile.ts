@@ -5,6 +5,7 @@ import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFo
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
+import {ImportDeclarationStructureToText} from "./../../structuresToText";
 import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
@@ -181,35 +182,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const newLineChar = this.global.manipulationSettings.getNewLineKind();
         const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
-            const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
-            let code = `${indentationText}import`;
-            // validation
-            if (hasNamedImport && structure.namespaceImport != null)
-                throw new errors.InvalidOperationError("An import declaration cannot have both a namespace import and a named import.");
-            // default import
-            if (structure.defaultImport != null) {
-                code += ` ${structure.defaultImport}`;
-                if (hasNamedImport || structure.namespaceImport != null)
-                    code += ",";
-            }
-            // namespace import
-            if (structure.namespaceImport != null)
-                code += ` * as ${structure.namespaceImport}`;
-            // named imports
-            if (structure.namedImports != null && structure.namedImports.length > 0) {
-                const namedImportsCode = structure.namedImports.map(n => {
-                    let namedImportCode = n.name;
-                    if (n.alias != null)
-                        namedImportCode += ` as ${n.alias}`;
-                    return namedImportCode;
-                }).join(", ");
-                code += ` {${namedImportsCode}}`;
-            }
-            // from keyword
-            if (structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null)
-                code += " from";
-            code += ` "${structure.moduleSpecifier}";`;
-            return code;
+            // todo: pass the StructureToText to the method below
+            const writer = this.getWriter();
+            const structureToText = new ImportDeclarationStructureToText(writer);
+            structureToText.writeText(structure);
+            return writer.toString();
         });
 
         return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ImportDeclaration, undefined, {

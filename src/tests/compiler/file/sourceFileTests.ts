@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
-import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
+import {IndentationText, ManipulationSettings, NewLineKind, StringChar} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -129,8 +129,10 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.insertImports), () => {
-        function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+        function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
+            const {sourceFile, tsSimpleAst} = getInfoFromText(startCode);
+            if (useSingleQuotes)
+                tsSimpleAst.manipulationSettings.set({ stringChar: StringChar.SingleQuote });
             const result = sourceFile.insertImports(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -162,8 +164,8 @@ describe(nameof(SourceFile), () => {
             }).to.throw();
         });
 
-        it("should insert at the beginning", () => {
-            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `import "./test";\n\nexport class Class {}\n`);
+        it("should insert at the beginning and use single quotes when specified", () => {
+            doTest(`export class Class {}\n`, 0, [{ moduleSpecifier: "./test" }], `import './test';\n\nexport class Class {}\n`, true);
         });
 
         it("should insert in the middle", () => {
