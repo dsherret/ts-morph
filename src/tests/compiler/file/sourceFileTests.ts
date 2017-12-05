@@ -504,6 +504,12 @@ describe(nameof(SourceFile), () => {
                 { indentationText: IndentationText.Tab });
         });
 
+        it("should format the text to spaces when using tabs", () => {
+            doTest("class MyClass {\n\tmyMethod() {\n\t}\n}",
+                "class MyClass {\n  myMethod() {\n  }\n}\n",
+                { indentationText: IndentationText.TwoSpaces });
+        });
+
         it("should format the text with slash r slash n newlines", () => {
             doTest("class MyClass {\n    myMethod() {\n    }\n}",
                 "class MyClass {\r\n\tmyMethod() {\r\n\t}\r\n}\r\n",
