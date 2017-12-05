@@ -4,15 +4,15 @@
 [![npm version](https://badge.fury.io/js/ts-simple-ast.svg)](https://badge.fury.io/js/ts-simple-ast)
 [![Build Status](https://travis-ci.org/dsherret/ts-simple-ast.svg)](https://travis-ci.org/dsherret/ts-simple-ast)
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
-[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 TypeScript compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (12 November 2017)
+## Library Development - Progress Update (04 December 2017)
 
-Most common navigation and code manipulation/generation use cases are implemented, but there's still a lot of work to do before a stable release.
+Most common navigation and code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
-Please open an issue if find a feature missing that isn't in the issue tracker.
+Please open an issue if find a feature missing or bug that isn't in the issue tracker.
 
 ## Documentation
 
