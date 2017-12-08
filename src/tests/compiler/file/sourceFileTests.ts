@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings} from "./../../../compiler";
-import {IndentationText, ManipulationSettings, NewLineKind, StringChar} from "./../../../ManipulationSettings";
+import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings, QuoteType} from "./../../../compiler";
+import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -132,7 +132,7 @@ describe(nameof(SourceFile), () => {
         function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
             const {sourceFile, tsSimpleAst} = getInfoFromText(startCode);
             if (useSingleQuotes)
-                tsSimpleAst.manipulationSettings.set({ stringChar: StringChar.SingleQuote });
+                tsSimpleAst.manipulationSettings.set({ quoteType: QuoteType.Single });
             const result = sourceFile.insertImports(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);

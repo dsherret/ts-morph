@@ -2,7 +2,7 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {IndentationText, StringChar} from "./../../ManipulationSettings";
+import {IndentationText} from "./../../ManipulationSettings";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind} from "./../../utils";
@@ -12,6 +12,7 @@ import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
+import {QuoteType} from "./../literal/QuoteType";
 import {NamespaceDeclaration} from "./../namespace";
 import {Symbol} from "./Symbol";
 import {SyntaxList} from "./SyntaxList";
@@ -1103,7 +1104,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             newLine: this.global.manipulationSettings.getNewLineKind(),
             indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
             useTabs: indentationText === IndentationText.Tab,
-            useSingleQuote: this.global.manipulationSettings.getStringChar() === StringChar.SingleQuote
+            useSingleQuote: this.global.manipulationSettings.getQuoteType() === QuoteType.Single
         });
     }
 }

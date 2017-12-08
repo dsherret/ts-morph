@@ -255,7 +255,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     insertExports(index: number, structures: ExportDeclarationStructure[]) {
         const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const stringChar = this.global.manipulationSettings.getStringChar();
+        const quoteType = this.global.manipulationSettings.getQuoteType();
         const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
             const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
@@ -275,7 +275,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 code += " *";
 
             if (hasModuleSpecifier)
-                code += ` from ${stringChar}${structure.moduleSpecifier}${stringChar}`;
+                code += ` from ${quoteType}${structure.moduleSpecifier}${quoteType}`;
 
             code += `;`;
             return code;

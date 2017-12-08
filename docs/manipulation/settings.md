@@ -8,7 +8,7 @@ The manipulation settings can be set when creating the main AST object:
 
 ```typescript
 import * as ts from "typescript";
-import TsSimpleAst, {StringChar, NewLineKind, IndentationText} from "ts-simple-ast";
+import TsSimpleAst, {QuoteType, NewLineKind, IndentationText} from "ts-simple-ast";
 
 const ast = new TsSimpleAst({
     // these are the defaults
@@ -19,8 +19,8 @@ const ast = new TsSimpleAst({
         newLineKind: NewLineKind.LineFeed,
         // defines what ts.ScriptTarget source files are created with
         scriptTarget: ts.ScriptTarget.Latest,
-        // SingleQuote or DoubleQuote
-        stringChar: StringChar.DoubleQuote
+        // Single or Double
+        quoteType: QuoteType.Double
     }
 });
 ```
@@ -40,7 +40,7 @@ Get more details about the settings by looking at the `manipulationSettings` pro
 ```typescript
 ast.manipulationSettings.getIndentationText();
 ast.manipulationSettings.getNewLineKind();
-ast.manipulationSettings.getStringChar();
+ast.manipulationSettings.getQuoteType();
 ast.manipulationSettings.getScriptTarget();
 ```
 
@@ -50,11 +50,11 @@ You can update these settings later if you wish by using the `set` method:
 
 ```typescript
 // set only one
-ast.manipulationSettings.set({ stringChar: StringChar.SingleQuote });
+ast.manipulationSettings.set({ quoteType: QuoteType.Single });
 
 // or multiple
 ast.manipulationSettings.set({
-    stringChar: StringChar.SingleQuote,
+    quoteType: QuoteType.Single,
     indentationText: IndentationText.TwoSpaces
 });
 ```

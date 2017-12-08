@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {VariableStatement, StringLiteral} from "./../../../compiler";
+import {VariableStatement, StringLiteral, QuoteType} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithInitializer(text: string) {
@@ -47,6 +47,21 @@ describe(nameof(StringLiteral), () => {
 
         it("should have extended unicode escape", () => {
             doTest("const t = '\\u{20bb7}';", true);
+        });
+    });
+
+    describe(nameof<StringLiteral>(n => n.getQuoteType), () => {
+        function doTest(text: string, quoteType: QuoteType) {
+            const {initializer} = getInfoFromTextWithInitializer(text);
+            expect((initializer as StringLiteral).getQuoteType()).to.equal(quoteType);
+        }
+
+        it("should be a double when a double", () => {
+            doTest(`const t = "str";`, QuoteType.Double);
+        });
+
+        it("should be a single when a single", () => {
+            doTest("const t = 'str';", QuoteType.Single);
         });
     });
 });

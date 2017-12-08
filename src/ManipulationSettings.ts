@@ -1,13 +1,6 @@
 ﻿import * as ts from "typescript";
 import * as objectAssign from "object-assign";
-
-/** String characters */
-export enum StringChar {
-    /** Double quote */
-    DoubleQuote = "\"",
-    /** Single quote */
-    SingleQuote = "'"
-}
+import {QuoteType} from "./compiler";
 
 /** Kinds of new lines */
 export enum NewLineKind {
@@ -39,8 +32,8 @@ export interface ManipulationSettings {
     newLineKind: NewLineKind;
     /** Script target. */
     scriptTarget: ts.ScriptTarget;
-    /** String char */
-    stringChar: StringChar;
+    /** Quote type used for string literals. */
+    quoteType: QuoteType;
 }
 
 /**
@@ -51,14 +44,14 @@ export class ManipulationSettingsContainer {
         indentationText: IndentationText.FourSpaces,
         newLineKind: NewLineKind.LineFeed,
         scriptTarget: ts.ScriptTarget.Latest,
-        stringChar: StringChar.DoubleQuote
+        quoteType: QuoteType.Double
     };
 
     /**
-     * Gets the string character.
+     * Gets the quote type used for string literals.
      */
-    getStringChar() {
-        return this.settings.stringChar;
+    getQuoteType() {
+        return this.settings.quoteType;
     }
 
     /**

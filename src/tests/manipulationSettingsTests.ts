@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {ManipulationSettings, ManipulationSettingsContainer, IndentationText, StringChar, NewLineKind} from "./../ManipulationSettings";
+import {ManipulationSettings, ManipulationSettingsContainer, IndentationText, NewLineKind} from "./../ManipulationSettings";
+import {QuoteType} from "./../compiler";
 import {StringUtils} from "./../utils";
 
 describe(nameof(IndentationText), () => {
@@ -25,7 +26,7 @@ describe(nameof(IndentationText), () => {
 
 describe(nameof(ManipulationSettingsContainer), () => {
     function checkSettings(settings: ManipulationSettingsContainer, settingsSettings: ManipulationSettings) {
-        expect(settings.getStringChar()).to.equal(settingsSettings.stringChar);
+        expect(settings.getQuoteType()).to.equal(settingsSettings.quoteType);
         expect(settings.getNewLineKind()).to.equal(settingsSettings.newLineKind);
         expect(settings.getIndentationText()).to.equal(settingsSettings.indentationText);
         expect(settings.getScriptTarget()).to.equal(settingsSettings.scriptTarget);
@@ -34,7 +35,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should have the correct defaults", () => {
         const settings = new ManipulationSettingsContainer();
         checkSettings(settings, {
-            stringChar: StringChar.DoubleQuote,
+            quoteType: QuoteType.Double,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             scriptTarget: ts.ScriptTarget.Latest
@@ -44,11 +45,11 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should set the settings when partially setting them", () => {
         const settings = new ManipulationSettingsContainer();
         settings.set({
-            stringChar: StringChar.SingleQuote
+            quoteType: QuoteType.Single
         });
 
         checkSettings(settings, {
-            stringChar: StringChar.SingleQuote,
+            quoteType: QuoteType.Single,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             scriptTarget: ts.ScriptTarget.Latest
@@ -58,14 +59,14 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should set the settings when setting all of them", () => {
         const settings = new ManipulationSettingsContainer();
         settings.set({
-            stringChar: StringChar.SingleQuote,
+            quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             scriptTarget: ts.ScriptTarget.ES3
         });
 
         checkSettings(settings, {
-            stringChar: StringChar.SingleQuote,
+            quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             scriptTarget: ts.ScriptTarget.ES3

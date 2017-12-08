@@ -16,13 +16,13 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
-            const stringChar = this.global.manipulationSettings.getStringChar();
+            const quoteType = this.global.manipulationSettings.getQuoteType();
             insertIntoParent({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 childIndex: semiColonToken != null ? semiColonToken.getChildIndex() : this.getChildCount(),
                 insertItemsCount: 2, // FromKeyword, StringLiteral
                 parent: this,
-                newText: ` from ${stringChar}${text}${stringChar}`
+                newText: ` from ${quoteType}${text}${quoteType}`
             });
         }
         else {

@@ -34,8 +34,8 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     setValue(value: string | number) {
         let text: string;
         if (typeof value === "string") {
-            const stringChar = this.global.manipulationSettings.getStringChar();
-            text = stringChar + value + stringChar;
+            const quoteType = this.global.manipulationSettings.getQuoteType();
+            text = quoteType + value + quoteType;
         }
         else {
             text = value.toString();

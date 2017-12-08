@@ -1,5 +1,6 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {IndentationText, StringChar, ManipulationSettingsContainer} from "./../ManipulationSettings";
+import {QuoteType} from "./../compiler";
+import {IndentationText, ManipulationSettingsContainer} from "./../ManipulationSettings";
 
 // todo: remove this function
 export function getTextFromStringOrWriter(manipulationSettings: ManipulationSettingsContainer, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
@@ -18,6 +19,6 @@ export function getCodeBlockWriter(manipulationSettings: ManipulationSettingsCon
         newLine: manipulationSettings.getNewLineKind(),
         indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
         useTabs: indentationText === IndentationText.Tab,
-        useSingleQuote: manipulationSettings.getStringChar() === StringChar.SingleQuote
+        useSingleQuote: manipulationSettings.getQuoteType() === QuoteType.Single
     });
 }
