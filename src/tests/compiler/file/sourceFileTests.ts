@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult} from "./../../../compiler";
+import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings} from "./../../../compiler";
 import {IndentationText, ManipulationSettings, NewLineKind, StringChar} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -469,15 +469,23 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.formatText), () => {
-        function doTest(startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {}) {
+        function doTest(startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {}, settings: FormatCodeSettings = {}) {
             const {tsSimpleAst, sourceFile} = getInfoFromText(startingCode);
             tsSimpleAst.manipulationSettings.set(manipulationSettings);
-            sourceFile.formatText();
+            sourceFile.formatText(settings);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
 
         it("should format the text when it contains different spacing", () => {
-            doTest("class     MyClass{}", "class MyClass {\n}\n");
+            doTest("class     MyClass{}", "class MyClass {}\n");
+        });
+
+        it("should not add a newline when specifying not to ensure", () => {
+            doTest("class MyClass{}", "class MyClass {}", {}, { ensureNewLineAtEndOfFile: false });
+        });
+
+        it("should not by default add spaces immediately within named import braces", () => {
+            doTest("import {name, name2} from 'test';", "import {name, name2} from 'test';\n");
         });
 
         it("should format the text with eight spaces", () => {
@@ -535,12 +543,11 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should format the text when it contains multiple semi colons", () => {
-            doTest("var myTest: string;;;;", "var myTest: string;\n;\n;\n;\n");
+            doTest("var myTest: string;;;;", "var myTest: string;;;;\n");
         });
 
         it("should format the text when it contains syntax errors", () => {
-            // wow, it's impressive it does this
-            doTest("function myTest(}{{{{}}) {}", "function myTest({}, {}, {}, {}) { }\n");
+            doTest("function myTest(}{{{{}}) {}", "function myTest(}{{{{}}) {}\n");
         });
 
         it("should format the text in the documentation as described", () => {
@@ -553,12 +560,6 @@ function myFunction(param: MyClass) {
     return "";
 }
 `);
-        });
-
-        it("should forget of any previous descendants", () => {
-            const {sourceFile, firstChild} = getInfoFromText("function test {}");
-            sourceFile.formatText();
-            expect(() => firstChild.compilerNode).to.throw();
         });
     });
 

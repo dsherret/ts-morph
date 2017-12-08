@@ -6,6 +6,7 @@ export * from "./utils/EventContainer";
 export * from "./utils/FileUtils";
 export * from "./utils/getCompilerOptionsFromTsConfig";
 export * from "./utils/getCodeBlockWriter";
+export * from "./utils/fillDefaultFormatCodeSettings";
 export * from "./utils/getNamedNodeByNameOrFindFunction";
 export * from "./utils/getSymbolByNameOrFindFunction";
 export * from "./utils/HashSet";

@@ -479,8 +479,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * @internal
+     *
+     * WARNING: This should only be called by the compiler factory!
      */
-    replaceCompilerNode(compilerNode: NodeType) {
+    replaceCompilerNodeFromFactory(compilerNode: NodeType) {
         this._compilerNode = compilerNode;
         this._childStringRanges = undefined;
     }

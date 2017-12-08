@@ -25,6 +25,13 @@ export class TextSpan {
     }
 
     /**
+     * Gets the start + length.
+     */
+    getEnd() {
+        return this.compilerObject.start + this.compilerObject.length;
+    }
+
+    /**
      * Gets the length.
      */
     getLength() {

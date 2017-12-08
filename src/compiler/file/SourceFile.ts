@@ -11,7 +11,7 @@ import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
-import {Diagnostic, EmitResult} from "./../tools";
+import {Diagnostic, EmitResult, FormatCodeSettings} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 
@@ -54,9 +54,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * @internal
+     *
+     * WARNING: This should only be called by the compiler factory!
      */
-    replaceCompilerNode(compilerNode: ts.SourceFile) {
-        super.replaceCompilerNode(compilerNode);
+    replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
+        super.replaceCompilerNodeFromFactory(compilerNode);
         this.global.resetProgram(); // make sure the program has the latest source file
         this._isSaved = false;
     }
@@ -454,50 +456,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Formats the source file text using the internal typescript printer.
-     *
-     * WARNING: This will forget any previously navigated descendant nodes.
+     * Formats the source file text using the internal TypeScript formatting API.
      */
-    formatText(opts: { removeComments?: boolean } = {}) {
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const indentationText = this.global.manipulationSettings.getIndentationText();
-        const printer = ts.createPrinter({
-            newLine: newLineKindToTs(this.global.manipulationSettings.getNewLineKind()),
-            removeComments: opts.removeComments || false
+    formatText(settings: FormatCodeSettings = {}) {
+        replaceSourceFileTextForFormatting({
+            sourceFile: this,
+            newText: this.global.languageService.getFormattedDocumentText(this.getFilePath(), settings)
         });
-        const formattedCode = printer.printFile(this.compilerNode);
-        const replacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(formattedCode, { filePath: this.getFilePath() });
-        const indentedCode = getIndentedLines(formattedCode.split(/\n/)).join(newLineChar);
-
-        this.getChildren().forEach(d => d.forget()); // this will forget all the descendants
-        const finalReplacementSourceFile = this.global.compilerFactory.createTempSourceFileFromText(indentedCode, { filePath: this.getFilePath() });
-        this.replaceCompilerNode(finalReplacementSourceFile.compilerNode);
-
-        function getIndentedLines(lines: string[]) {
-            let nextPos = 0;
-            return lines.map(line => {
-                const pos = nextPos;
-                nextPos += line.length + 1;
-                if (replacementSourceFile.isInStringAtPos(pos))
-                    return removeSlashR(line);
-
-                let times = 0;
-                let endPos = 0;
-                for (let i = 0; i < line.length; i++) {
-                    if (line[i] !== " ")
-                        break;
-                    if (i > 0 && i % 4 === 3) {
-                        times++;
-                        endPos = i + 1;
-                    }
-                }
-
-                return StringUtils.repeat(indentationText, times) + removeSlashR(line.substring(endPos));
-            });
-
-            function removeSlashR(str: string) {
-                return StringUtils.endsWith(str, "\r") ? str.substring(0, str.length - 1) : str;
-            }
-        }
     }
 }

@@ -9,4 +9,5 @@ export * from "./results/ReferencedSymbolDefinitionInfo";
 export * from "./results/ReferenceEntry";
 export * from "./results/RenameLocation";
 export * from "./results/SymbolDisplayPart";
+export * from "./results/TextChange";
 export * from "./results/TextSpan";

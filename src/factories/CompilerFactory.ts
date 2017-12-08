@@ -251,7 +251,7 @@ export class CompilerFactory {
         this.nodeCache.replaceKey(nodeToReplace, newNode);
 
         if (node != null)
-            node.replaceCompilerNode(newNode);
+            node.replaceCompilerNodeFromFactory(newNode);
     }
 
     /**

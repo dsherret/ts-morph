@@ -139,21 +139,18 @@ Automatically format the text of this file by calling format text on it:
 
 ```typescript
 sourceFile.formatText();
+// or provide optional formatting settings
+sourceFile.formatText({
+    placeOpenBraceOnNewLineForFunctions: true
+});
 ```
 
-This will run the source file's text through the TypeScript compiler's printer, which will change the source file to contain the following text:
+This will run the source file's text through the TypeScript compiler's formatting API, which will change the source file to contain the following text:
 
 ```typescript
-// BadlyFormattedFile.ts
+// BadlyFormattedFile.ts (not anymore!)
 var myVariable: string | number;
 function myFunction(param: MyClass) {
     return "";
 }
 ```
-
-<aside class="warning">
-**WARNING:** If you use this method, all previously navigated descendants in the source file will be forgotten because the TypeScript
-compiler could possibly shift nodes around (an exception will be thrown if you try to use them).
-
-This shouldn't be an issue because usually this method will be called first or right before saving.
-</aside>
