@@ -26,12 +26,12 @@ functionDeclaration.getDocumentationComment(); // returns: string | undefined
 
 This will return `undefined` if no documentation comment exists.
 
-### Get all documentation comment nodes
+### Get all documentation nodes
 
-Get all the documentation comment nodes by using `getDocumentationCommentNodes()`:
+Get all the documentation nodes by using `getDocNodes()`:
 
 ```typescript
-functionDeclaration.getDocumentationCommentNodes(); // returns: JSDoc[]
+functionDeclaration.getDocNodes(); // returns: JSDoc[]
 ```
 
 ### Add/insert docs
@@ -54,7 +54,7 @@ Get the comment:
 
 ```typescript
 // getting the node from the original example above
-const jsDocNode = functionDeclaration.getDocumentationCommentNodes()[0];
+const jsDocNode = functionDeclaration.getDocNodes()[0];
 jsDocNode.getComment(); // returns string: "Gets the name."
 ```
 

@@ -16,9 +16,9 @@ export interface DocumentationableNode {
      */
     getDocumentationComment(): string | undefined;
     /**
-     * Gets the documentation comment nodes.
+     * Gets the documentation nodes.
      */
-    getDocumentationCommentNodes(): JSDoc[];
+    getDocNodes(): JSDoc[];
     /**
      * Adds a documentation comment.
      * @param structure - Structure to add.
@@ -46,7 +46,7 @@ export interface DocumentationableNode {
 export function DocumentationableNode<T extends Constructor<DocumentationableNodeExtensionType>>(Base: T): Constructor<DocumentationableNode> & T {
     return class extends Base implements DocumentationableNode {
         getDocumentationComment() {
-            const docCommentNodes = this.getDocumentationCommentNodes();
+            const docCommentNodes = this.getDocNodes();
             if (docCommentNodes.length === 0)
                 return undefined;
 
@@ -54,7 +54,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             return texts.filter(t => t.length > 0).join(this.global.manipulationSettings.getNewLineKind());
         }
 
-        getDocumentationCommentNodes(): JSDoc[] {
+        getDocNodes(): JSDoc[] {
             const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
             return nodes.map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile) as JSDoc);
         }
@@ -78,7 +78,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
             const indentationText = this.getIndentationText();
             const newLineText = this.global.manipulationSettings.getNewLineKind();
             const code = `${getDocumentationCode(structures, indentationText, newLineText)}${newLineText}${indentationText}`;
-            const nodes = this.getDocumentationCommentNodes();
+            const nodes = this.getDocNodes();
             index = verifyAndGetIndex(index, nodes.length);
 
             const insertPos = index === nodes.length ? this.getStart() : nodes[index].getStart();
@@ -90,7 +90,7 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
                 insertItemsCount: structures.length
             });
 
-            return this.getDocumentationCommentNodes().slice(index, index + structures.length);
+            return this.getDocNodes().slice(index, index + structures.length);
         }
 
         fill(structure: Partial<DocumentationableNodeStructure>) {

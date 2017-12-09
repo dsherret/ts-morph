@@ -42,7 +42,7 @@ export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[])
 function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaration, nodeToWrappers: NodeToWrapperViewModel[]) {
     const isArrayType = method.getReturnType().isArrayType();
     const isNullableType = method.getReturnType().isUnionType();
-    const docs: JSDocStructure[] = method.getDocumentationCommentNodes().map(n => ({ description: n.getInnerText() }));
+    const docs: JSDocStructure[] = method.getDocNodes().map(n => ({ description: n.getInnerText() }));
     const structures: MethodDeclarationStructure[] = [];
 
     for (const nodeToWrapper of nodeToWrappers) {

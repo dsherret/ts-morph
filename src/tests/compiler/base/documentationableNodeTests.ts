@@ -32,9 +32,9 @@ describe(nameof(DocumentationableNode), () => {
             });
         });
 
-        describe(nameof<DocumentationableNode>(n => n.getDocumentationCommentNodes), () => {
+        describe(nameof<DocumentationableNode>(n => n.getDocNodes), () => {
             describe("documentationed node", () => {
-                const nodes = docedStatement.getDocumentationCommentNodes();
+                const nodes = docedStatement.getDocNodes();
                 it("should have the right number of nodes", () => {
                     expect(nodes.length).to.equal(1);
                 });
@@ -50,13 +50,13 @@ describe(nameof(DocumentationableNode), () => {
 
             describe("multi documentationed node", () => {
                 it("should have the right number of nodes", () => {
-                    expect(multiDocedStatement.getDocumentationCommentNodes().length).to.equal(2);
+                    expect(multiDocedStatement.getDocNodes().length).to.equal(2);
                 });
             });
 
             describe("not documentationed node", () => {
                 it("should not have any doc comment nodes", () => {
-                    expect(nonDocedStatement.getDocumentationCommentNodes().length).to.equal(0);
+                    expect(nonDocedStatement.getDocNodes().length).to.equal(0);
                 });
             });
         });
@@ -64,7 +64,7 @@ describe(nameof(DocumentationableNode), () => {
 
     describe(nameof(FunctionDeclaration), () => {
         const {firstChild} = getInfoFromText<FunctionDeclaration>("/**\n * Test.\n * @name - Test\n */\nfunction myFunction(name: string) {}");
-        const doc = firstChild.getDocumentationCommentNodes()[0];
+        const doc = firstChild.getDocNodes()[0];
 
         it("should have the right node kind", () => {
             expect(doc.getKind()).to.equal(ts.SyntaxKind.JSDocComment);
