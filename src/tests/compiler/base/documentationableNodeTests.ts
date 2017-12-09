@@ -12,26 +12,6 @@ describe(nameof(DocumentationableNode), () => {
         const multiDocedStatement = statements[1];
         const nonDocedStatement = statements[2];
 
-        describe(nameof<DocumentationableNode>(n => n.getDocumentationComment), () => {
-            describe("documentationed node", () => {
-                it("should get the comment", () => {
-                    expect(docedStatement.getDocumentationComment()).to.equal("Text");
-                });
-            });
-
-            describe("multi-documentationed node", () => {
-                it("should get the comment separated by newlines", () => {
-                    expect(multiDocedStatement.getDocumentationComment()).to.equal("First\nSecond");
-                });
-            });
-
-            describe("not documentationed node", () => {
-                it("should return undefined", () => {
-                    expect(nonDocedStatement.getDocumentationComment()).to.be.undefined;
-                });
-            });
-        });
-
         describe(nameof<DocumentationableNode>(n => n.getDocNodes), () => {
             describe("documentationed node", () => {
                 const nodes = docedStatement.getDocNodes();

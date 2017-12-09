@@ -11,11 +11,6 @@ export type DocumentationableNodeExtensionType = Node<any>;
 
 export interface DocumentationableNode {
     /**
-     * Gets the documentation comment text or undefined if none exists.
-     * This will return multiple documentation comments separated by newlines.
-     */
-    getDocumentationComment(): string | undefined;
-    /**
      * Gets the documentation nodes.
      */
     getDocNodes(): JSDoc[];
@@ -45,15 +40,6 @@ export interface DocumentationableNode {
 
 export function DocumentationableNode<T extends Constructor<DocumentationableNodeExtensionType>>(Base: T): Constructor<DocumentationableNode> & T {
     return class extends Base implements DocumentationableNode {
-        getDocumentationComment() {
-            const docCommentNodes = this.getDocNodes();
-            if (docCommentNodes.length === 0)
-                return undefined;
-
-            const texts = docCommentNodes.map(n => (n.getComment() || "").trim());
-            return texts.filter(t => t.length > 0).join(this.global.manipulationSettings.getNewLineKind());
-        }
-
         getDocNodes(): JSDoc[] {
             const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
             return nodes.map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile) as JSDoc);

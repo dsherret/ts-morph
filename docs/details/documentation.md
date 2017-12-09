@@ -16,16 +16,6 @@ function getName(person: Person) {
 }
 ```
 
-### Get string
-
-Use `getDocumentationComment()` to return all the documentation comments separated by new lines as a string:
-
-```typescript
-functionDeclaration.getDocumentationComment(); // returns: string | undefined
-```
-
-This will return `undefined` if no documentation comment exists.
-
 ### Get all documentation nodes
 
 Get all the documentation nodes by using `getDocNodes()`:
