@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {removeChildren, replaceTextPossiblyCreatingChildNodes} from "./../../manipulation";
-import {getPreviousMatchingPos} from "./../../manipulation/textSeek";
+import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
 
@@ -24,6 +24,20 @@ export class JSDoc extends Node<ts.JSDoc> {
      */
     getComment() {
         return this.compilerNode.comment;
+    }
+
+    /**
+     * Gets the JSDoc's text without the surrounding comment.
+     */
+    getInnerText() {
+        const innerTextWithStars = this.getText().replace(/^\/\*\*[^\S\n]*\n?/, "").replace(/(\r?\n)?[^\S\n]*\*\/$/, "");
+        const leadingTest = /[\s\t\*\r]/;
+
+        return innerTextWithStars.split(/\n/).map(line => {
+            // skip over the " * " part of the text
+            const start = getNextMatchingPos(line, 0, char => !leadingTest.test(char));
+            return line.substring(start);
+        }).join("\n");
     }
 
     /**

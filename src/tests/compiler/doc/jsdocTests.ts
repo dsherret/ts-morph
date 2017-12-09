@@ -86,4 +86,28 @@ describe(nameof(JSDoc), () => {
             doTest("/**\n * Description\n * @param test - Test\n * @returns A value\n */function identifier() {}", ["@param test ", "@returns "]);
         });
     });
+
+    describe(nameof<JSDoc>(d => d.getInnerText), () => {
+        function doTest(text: string, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            const innerText = sourceFile.getFunctions()[0].getDocumentationCommentNodes()[0].getInnerText();
+            expect(innerText).to.deep.equal(expectedText);
+        }
+
+        it("should return the correct inner text when on one line", () => {
+            doTest("/** Description */function identifier() {}", "Description");
+        });
+
+        it("should return the correct inner text when on multiple lines", () => {
+            doTest("/**\n * Description\n */function identifier() {}", "Description");
+        });
+
+        it("should return the correct inner text with tags", () => {
+            doTest("/**\n * Description\n * @param - Test\n */function identifier() {}", "Description\n@param - Test");
+        });
+
+        it("should return the correct inner text when using slash r slash n", () => {
+            doTest("/**\r\n * Description\r\n * @param - Test\r\n */function identifier() {}", "Description\r\n@param - Test");
+        });
+    });
 });
