@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParent} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
@@ -12,6 +12,26 @@ import {TypeParameterDeclaration} from "./../type/TypeParameterDeclaration";
 export type TypeParameteredNodeExtensionType = Node<ts.Node & { typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>; }>;
 
 export interface TypeParameteredNode {
+    /**
+     * Gets a type parameter or undefined if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getTypeParameter(name: string): TypeParameterDeclaration | undefined;
+    /**
+     * Gets a type parameter or undefined if it doesn't exist.
+     * @param findFunction - Function to use to find the type parameter.
+     */
+    getTypeParameter(findFunction: (declaration: TypeParameterDeclaration) => boolean): TypeParameterDeclaration | undefined;
+    /**
+     * Gets a type parameter or throws if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getTypeParameterOrThrow(name: string): TypeParameterDeclaration;
+    /**
+     * Gets a type parameter or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the type parameter.
+     */
+    getTypeParameterOrThrow(findFunction: (declaration: TypeParameterDeclaration) => boolean): TypeParameterDeclaration;
     /**
      * Gets the type parameters.
      */
@@ -42,6 +62,14 @@ export interface TypeParameteredNode {
 
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
     return class extends Base implements TypeParameteredNode {
+        getTypeParameter(nameOrFindFunction: string | ((declaration: TypeParameterDeclaration) => boolean)): TypeParameterDeclaration | undefined {
+            return getNamedNodeByNameOrFindFunction(this.getTypeParameters(), nameOrFindFunction);
+        }
+
+        getTypeParameterOrThrow(nameOrFindFunction: string | ((declaration: TypeParameterDeclaration) => boolean)): TypeParameterDeclaration {
+            return errors.throwIfNullOrUndefined(this.getTypeParameter(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type parameter", nameOrFindFunction));
+        }
+
         getTypeParameters() {
             const typeParameters = (this.compilerNode.typeParameters || []) as ts.TypeParameterDeclaration[]; // why do I need this assert?
             return typeParameters.map(t => this.global.compilerFactory.getNodeFromCompilerNode(t, this.sourceFile) as TypeParameterDeclaration);

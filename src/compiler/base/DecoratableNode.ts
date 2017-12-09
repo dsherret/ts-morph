@@ -1,16 +1,37 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
+import * as errors from "./../../errors";
 import {callBaseFill} from "./../callBaseFill";
 import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {Decorator} from "./../decorator/Decorator";
 
 export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
 
 export interface DecoratableNode {
+    /**
+     * Gets a decorator or undefined if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getDecorator(name: string): Decorator | undefined;
+    /**
+     * Gets a decorator or undefined if it doesn't exist.
+     * @param findFunction - Function to use to find the parameter.
+     */
+    getDecorator(findFunction: (declaration: Decorator) => boolean): Decorator | undefined;
+    /**
+     * Gets a decorator or throws if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getDecoratorOrThrow(name: string): Decorator;
+    /**
+     * Gets a decorator or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the parameter.
+     */
+    getDecoratorOrThrow(findFunction: (declaration: Decorator) => boolean): Decorator;
     /**
      * Gets all the decorators of the node.
      */
@@ -41,6 +62,14 @@ export interface DecoratableNode {
 
 export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T {
     return class extends Base implements DecoratableNode {
+        getDecorator(nameOrFindFunction: string | ((declaration: Decorator) => boolean)): Decorator | undefined {
+            return getNamedNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
+        }
+
+        getDecoratorOrThrow(nameOrFindFunction: string | ((declaration: Decorator) => boolean)): Decorator {
+            return errors.throwIfNullOrUndefined(this.getDecorator(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("decorator", nameOrFindFunction));
+        }
+
         getDecorators(): Decorator[] {
             if (this.compilerNode.decorators == null)
                 return [];

@@ -4,6 +4,38 @@ import {DecoratableNode, Decorator, ClassDeclaration} from "./../../../compiler"
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(DecoratableNode), () => {
+    describe(nameof<DecoratableNode>(d => d.getDecorator), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
+
+        it("should get the decorator by name", () => {
+            expect(firstChild.getDecorator("log")!.getName()).to.equal("log");
+        });
+
+        it("should get the decorator by function", () => {
+            expect(firstChild.getDecorator(p => p.getName() === "log2")).to.equal(firstChild.getDecorators()[1]);
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            expect(firstChild.getDecorator("decorator")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<DecoratableNode>(d => d.getDecoratorOrThrow), () => {
+        const {firstChild} = getInfoFromText<ClassDeclaration>("@log\n@log2\nclass Class {}");
+
+        it("should get the decorator by name", () => {
+            expect(firstChild.getDecoratorOrThrow("log").getName()).to.equal("log");
+        });
+
+        it("should get the decorator by function", () => {
+            expect(firstChild.getDecoratorOrThrow(p => p.getName() === "log2")).to.equal(firstChild.getDecorators()[1]);
+        });
+
+        it("should throw when it doesn't exist", () => {
+            expect(() => firstChild.getDecoratorOrThrow("decoratorNamedNodeByNameOrFindFunctionSupportedTypes")).to.throw();
+        });
+    });
+
     describe(nameof<DecoratableNode>(n => n.getDecorators), () => {
         function doTest(text: string, expectedLength: number) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(text);

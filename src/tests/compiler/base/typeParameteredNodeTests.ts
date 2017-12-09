@@ -4,6 +4,38 @@ import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, Type
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
+    describe(nameof<TypeParameteredNode>(d => d.getTypeParameter), () => {
+        const {firstChild} = getInfoFromText<FunctionDeclaration>("function func<T, U>(){}");
+
+        it("should get the type parameter by name", () => {
+            expect(firstChild.getTypeParameter("T")!.getName()).to.equal("T");
+        });
+
+        it("should get the type parameter by function", () => {
+            expect(firstChild.getTypeParameter(p => p.getName() === "U")).to.equal(firstChild.getTypeParameters()[1]);
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            expect(firstChild.getTypeParameter("typeParam")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<TypeParameteredNode>(d => d.getTypeParameterOrThrow), () => {
+        const {firstChild} = getInfoFromText<FunctionDeclaration>("function func<T, U>(){}");
+
+        it("should get the type parameter by name", () => {
+            expect(firstChild.getTypeParameterOrThrow("T").getName()).to.equal("T");
+        });
+
+        it("should get the type parameter by function", () => {
+            expect(firstChild.getTypeParameterOrThrow(p => p.getName() === "U")).to.equal(firstChild.getTypeParameters()[1]);
+        });
+
+        it("should throw when it doesn't exist", () => {
+            expect(() => firstChild.getTypeParameterOrThrow("typeParam")).to.throw();
+        });
+    });
+
     describe(nameof<TypeParameteredNode>(n => n.getTypeParameters), () => {
         const {sourceFile} = getInfoFromText("function noTypeParamsFunc() {}\n function typeParamsFunc<T, U>() {}");
         const noTypeParamsFunc = sourceFile.getFunctions()[0];

@@ -4,6 +4,38 @@ import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../.
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ParameteredNode), () => {
+    describe(nameof<ParameteredNode>(d => d.getParameter), () => {
+        const {firstChild} = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
+
+        it("should get the parameter by name", () => {
+            expect(firstChild.getParameter("param1")!.getName()).to.equal("param1");
+        });
+
+        it("should get the parameter by function", () => {
+            expect(firstChild.getParameter(p => p.getName() === "param2")).to.equal(firstChild.getParameters()[1]);
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            expect(firstChild.getParameter("paramx")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ParameteredNode>(d => d.getParameterOrThrow), () => {
+        const {firstChild} = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
+
+        it("should get the parameter by name", () => {
+            expect(firstChild.getParameterOrThrow("param1").getName()).to.equal("param1");
+        });
+
+        it("should get the parameter by function", () => {
+            expect(firstChild.getParameterOrThrow(p => p.getName() === "param2")).to.equal(firstChild.getParameters()[1]);
+        });
+
+        it("should throw when it doesn't exist", () => {
+            expect(() => firstChild.getParameterOrThrow("paramx")).to.throw();
+        });
+    });
+
     describe(nameof<ParameteredNode>(d => d.getParameters), () => {
         const {firstChild} = getInfoFromText<FunctionDeclaration>("function func(param1: string, param2: number){}");
         const parameters = firstChild.getParameters();

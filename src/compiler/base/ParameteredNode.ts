@@ -4,13 +4,33 @@ import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
 export interface ParameteredNode {
+    /**
+     * Gets a parameter or undefined if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getParameter(name: string): ParameterDeclaration | undefined;
+    /**
+     * Gets a parameter or undefined if it doesn't exist.
+     * @param findFunction - Function to use to find the parameter.
+     */
+    getParameter(findFunction: (declaration: ParameterDeclaration) => boolean): ParameterDeclaration | undefined;
+    /**
+     * Gets a parameter or throws if it doesn't exist.
+     * @param name - Name of the parameter.
+     */
+    getParameterOrThrow(name: string): ParameterDeclaration;
+    /**
+     * Gets a parameter or throws if it doesn't exist.
+     * @param findFunction - Function to use to find the parameter.
+     */
+    getParameterOrThrow(findFunction: (declaration: ParameterDeclaration) => boolean): ParameterDeclaration;
     /**
      * Gets all the parameters of the node.
      */
@@ -41,6 +61,14 @@ export interface ParameteredNode {
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
     return class extends Base implements ParameteredNode {
+        getParameter(nameOrFindFunction: string | ((declaration: ParameterDeclaration) => boolean)): ParameterDeclaration | undefined {
+            return getNamedNodeByNameOrFindFunction(this.getParameters(), nameOrFindFunction);
+        }
+
+        getParameterOrThrow(nameOrFindFunction: string | ((declaration: ParameterDeclaration) => boolean)): ParameterDeclaration {
+            return errors.throwIfNullOrUndefined(this.getParameter(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("parameter", nameOrFindFunction));
+        }
+
         getParameters() {
             return this.compilerNode.parameters.map(p => this.global.compilerFactory.getNodeFromCompilerNode(p, this.sourceFile) as ParameterDeclaration);
         }
