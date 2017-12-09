@@ -3,5 +3,6 @@ import {Node} from "./../common";
 import {TextInsertableNode} from "./../base";
 import {StatementedNode} from "./StatementedNode";
 
-export class Block extends TextInsertableNode(StatementedNode(Node))<ts.Block> {
+export const BlockBase = TextInsertableNode(StatementedNode(Node));
+export class Block extends BlockBase<ts.Block> {
 }
