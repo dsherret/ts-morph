@@ -60,7 +60,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      */
     removeObjectAssignmentInitializer() {
         if (!this.hasObjectAssignmentInitializer())
-            return;
+            return this;
 
         removeChildren({
             children: [this.getEqualsTokenOrThrow(), this.getObjectAssignmentInitializerOrThrow()],
