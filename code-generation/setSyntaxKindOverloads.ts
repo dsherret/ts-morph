@@ -1,4 +1,4 @@
-﻿import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure} from "./../src/main";
+﻿import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, JSDocStructure} from "./../src/main";
 import {NodeToWrapperViewModel} from "./view-models";
 import {getAst, getDefinitionAst, getNodeToWrapperMappings} from "./common";
 
@@ -42,7 +42,7 @@ export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[])
 function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaration, nodeToWrappers: NodeToWrapperViewModel[]) {
     const isArrayType = method.getReturnType().isArrayType();
     const isNullableType = method.getReturnType().isUnionType();
-    const doc = method.getDocumentationComment()! + "\n" + "@param kind - Syntax kind.";
+    const docs: JSDocStructure[] = method.getDocumentationCommentNodes().map(n => ({ description: n.getInnerText() }));
     const structures: MethodDeclarationStructure[] = [];
 
     for (const nodeToWrapper of nodeToWrappers) {
@@ -53,9 +53,7 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
                 name: method.getName(),
                 parameters: [],
                 returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
-                docs: [{
-                    description: doc
-                }]
+                docs
             };
             for (const param of method.getParameters()) {
                 const name = param.getName()!;
