@@ -31,7 +31,7 @@ export class TsSimpleAst {
      * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
     constructor(options: Options = {}, private fileSystem: FileSystemHost = new DefaultFileSystemHost()) {
-        this.global = new GlobalContainer(fileSystem, getCompilerOptionsFromOptions(options, fileSystem), true);
+        this.global = new GlobalContainer(fileSystem, getCompilerOptionsFromOptions(options, fileSystem), { createLanguageService: true });
         if (options.manipulationSettings != null)
             this.global.manipulationSettings.set(options.manipulationSettings);
     }

@@ -22,8 +22,19 @@ const firstProperty = classDec.getProperties()[0];
 // ... do more stuff here ...
 ```
 
-**Note:** This is a lightweight way to navigate a node, but there are certian functionalities you can't use since there is no language service, type checker, or program.
-For example, getting the type of a node will not work because that requires a type checker.
+**Note:** This is a lightweight way to navigate a node, but there are certian functionalities which will throw an error since there is no
+language service, type checker, or program. For example, finding references will not work because that requires a language service.
 
-For now, you can always get the underlying compiler node from a wrapped node and use that with your existing compiler objects (ex. TypeChecker),
-but in the future [#42](https://github.com/dsherret/ts-simple-ast/issues/42) is being worked on.
+### Providing Type Checker
+
+If you would like to easily get the type information of the types in the provided source file, then provide a type checker:
+
+```ts
+// given an existing node and type checker
+const classNode: ts.ClassDeclaration = ...;
+const typeChecker: ts.TypeChecker = ...;
+
+// create and use a wrapped node
+const classDec = createWrappedNode(classNode, { typeChecker }) as ClassDeclaration;
+console.log(classDec.getPropertyOrThrow("propName").getType().getText()); // ok, because a type checker was provided
+```

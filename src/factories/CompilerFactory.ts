@@ -55,7 +55,7 @@ export class CompilerFactory {
      */
     createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
-        const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), this.global.compilerOptions, createLanguageService);
+        const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), this.global.compilerOptions, { createLanguageService });
         return globalContainer.compilerFactory.addSourceFileFromText(filePath, sourceText);
     }
 

@@ -86,7 +86,7 @@ export function throwIfNegative(value: number, argName: string) {
 }
 
 /**
- * Throws when the value is null or undefined
+ * Throws when the value is null or undefined.
  * @param value - Value to check.
  * @param errorMessage - Error message to throw when not defined.
  */
@@ -113,4 +113,14 @@ export function getNotImplementedForNeverValueError(value: never) {
 export function throwIfNotEqual<T>(actual: T, expected: T, description: string) {
     if (actual !== expected)
         throw new InvalidOperationError(`Expected ${actual} to equal ${expected}. ${description}`);
+}
+
+/**
+ * Throws if true.
+ * @param value - Value to check.
+ * @param errorMessage - Error message to throw when true.
+ */
+export function throwIfTrue(value: boolean | undefined, errorMessage: string) {
+    if (value === true)
+        throw new InvalidOperationError(errorMessage);
 }

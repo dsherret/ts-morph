@@ -1,10 +1,18 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./errors";
 import {CompilerFactory} from "./factories";
-import {LanguageService} from "./compiler";
+import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
 import {FileSystemHost} from "./fileSystem";
+
+/**
+ * @internal
+ */
+export interface GlobalContainerOptions {
+    createLanguageService: boolean;
+    typeChecker?: ts.TypeChecker;
+}
 
 /**
  * Global container.
@@ -16,12 +24,19 @@ export class GlobalContainer {
     private readonly _languageService: LanguageService | undefined;
     private readonly _fileSystem: FileSystemHost;
     private readonly _compilerOptions: ts.CompilerOptions;
+    private readonly _customTypeChecker: TypeChecker | undefined;
 
-    constructor(fileSystem: FileSystemHost, compilerOptions: ts.CompilerOptions, createLanguageService: boolean) {
+    constructor(fileSystem: FileSystemHost, compilerOptions: ts.CompilerOptions, opts: GlobalContainerOptions) {
         this._fileSystem = fileSystem;
         this._compilerOptions = compilerOptions;
         this._compilerFactory = new CompilerFactory(this);
-        this._languageService = createLanguageService ? new LanguageService(this) : undefined;
+        this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
+
+        if (opts.typeChecker != null) {
+            errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");
+            this._customTypeChecker = new TypeChecker(this);
+            this._customTypeChecker.reset(opts.typeChecker);
+        }
 
         if (this._languageService != null) {
             this.compilerFactory.onSourceFileAdded(args => {
@@ -52,12 +67,9 @@ export class GlobalContainer {
 
     /** Gets the language service. Throws an exception if it doesn't exist. */
     get languageService() {
-        if (this._languageService == null) {
-            throw new errors.InvalidOperationError("A language service is required for this operation. " +
-                "This might occur when manipulating or getting type information from a node that was not added " +
-                `to a TsSimpleAst object and created via ${nameof(createWrappedNode)}. ` +
-                "Please submit a bug report if you don't believe a language service should be required for this operation.");
-        }
+        if (this._languageService == null)
+            throw this.getToolRequiredError("language service");
+
         return this._languageService;
     }
 
@@ -65,6 +77,9 @@ export class GlobalContainer {
      * Gets the program.
      */
     get program() {
+        if (this._languageService == null)
+            throw this.getToolRequiredError("program");
+
         return this.languageService.getProgram();
     }
 
@@ -72,6 +87,11 @@ export class GlobalContainer {
      * Gets the type checker.
      */
     get typeChecker() {
+        if (this._customTypeChecker != null)
+            return this._customTypeChecker;
+        if (this._languageService == null)
+            throw this.getToolRequiredError("type checker");
+
         return this.program.getTypeChecker();
     }
 
@@ -87,5 +107,12 @@ export class GlobalContainer {
      */
     resetProgram() {
         this.languageService.resetProgram();
+    }
+
+    private getToolRequiredError(name: string) {
+        return new errors.InvalidOperationError(`A ${name} is required for this operation. ` +
+            "This might occur when manipulating or getting type information from a node that was not added " +
+            `to a TsSimpleAst object and created via ${nameof(createWrappedNode)}. ` +
+            `Please submit a bug report if you don't believe a ${name} should be required for this operation.`);
     }
 }

@@ -4,43 +4,50 @@ import {SourceFile, Node} from "./compiler";
 import {GlobalContainer} from "./GlobalContainer";
 import {DefaultFileSystemHost} from "./fileSystem";
 
+export interface CreateWrappedNodeOptions {
+    /**
+     * Compiler options.
+     */
+    compilerOptions?: ts.CompilerOptions;
+    /**
+     * Optional source file of the node. Will make it not bother going up the tree to find the source file.
+     */
+    sourceFile?: ts.SourceFile;
+    /**
+     * Type checker.
+     */
+    typeChecker?: ts.TypeChecker;
+}
+
 /**
  * Creates a wrapped node from a compiler node.
  * @param node - Node to create a wrapped node from.
- * @param sourceFile - Optional source file of the node to help improve performance.
+ * @param info - Info for creating the wrapped node.
  */
-export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, sourceFile?: ts.SourceFile | SourceFile): Node<T> {
-    let wrappedSourceFile: SourceFile;
-    if (sourceFile == null)
-        wrappedSourceFile = getSourceFileFromNode(node);
-    else if (sourceFile instanceof SourceFile)
-        wrappedSourceFile = sourceFile;
-    else
-        wrappedSourceFile = getWrappedSourceFile(sourceFile);
+export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: CreateWrappedNodeOptions = {}): Node<T> {
+    const {compilerOptions = {}, sourceFile, typeChecker} = opts;
+    const globalContainer = new GlobalContainer(new DefaultFileSystemHost(), compilerOptions, { createLanguageService: false, typeChecker });
 
-    return wrappedSourceFile.global.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;
-}
+    const wrappedSourceFile = globalContainer.compilerFactory.getSourceFile(getSourceFileNode());
+    return globalContainer.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;
 
-function getSourceFileFromNode(node: ts.Node) {
-    if (node.kind === ts.SyntaxKind.SourceFile)
-        return getWrappedSourceFile(node as ts.SourceFile);
-    if (node.parent == null)
-        throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
+    function getSourceFileNode() {
+        return sourceFile == null ? getSourceFileFromNode(node) : sourceFile;
+    }
 
-    let parent = node;
-    while (parent.parent != null)
-        parent = parent.parent;
+    function getSourceFileFromNode(compilerNode: ts.Node) {
+        if (compilerNode.kind === ts.SyntaxKind.SourceFile)
+            return compilerNode as ts.SourceFile;
+        if (compilerNode.parent == null)
+            throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
 
-    if (parent.kind !== ts.SyntaxKind.SourceFile)
-        throw new errors.NotImplementedError("For some reason the top parent was not a source file.");
+        let parent = compilerNode;
+        while (parent.parent != null)
+            parent = parent.parent;
 
-    return getWrappedSourceFile(parent as ts.SourceFile);
-}
+        if (parent.kind !== ts.SyntaxKind.SourceFile)
+            throw new errors.NotImplementedError("For some reason the top parent was not a source file.");
 
-function getWrappedSourceFile(sourceFile: ts.SourceFile) {
-    return getGlobalContainer().compilerFactory.getSourceFile(sourceFile);
-}
-
-function getGlobalContainer() {
-    return new GlobalContainer(new DefaultFileSystemHost(), {}, false);
+        return parent as ts.SourceFile;
+    }
 }

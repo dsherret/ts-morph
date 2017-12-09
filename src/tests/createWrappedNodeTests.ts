@@ -1,6 +1,7 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
 import * as ts from "typescript";
+import {TsSimpleAst} from "./../TsSimpleAst";
 import {createWrappedNode} from "./../createWrappedNode";
 import {SourceFile} from "./../compiler";
 import * as errors from "./../errors";
@@ -30,19 +31,38 @@ describe(nameof(createWrappedNode), () => {
     it("should get a wrapped node when also providing the source file", () => {
         const compilerSourceFile = ts.createSourceFile("file.ts", "class MyClass {}", ts.ScriptTarget.ES2016, true);
         const child = compilerSourceFile.getChildren()[0];
-        const node = createWrappedNode(child, compilerSourceFile);
+        const node = createWrappedNode(child, { sourceFile: compilerSourceFile });
         const sourceFile = node.getSourceFile();
 
         // testing for something arbitrary
         expect(sourceFile.getClasses().length).to.equal(1);
     });
 
-    it("should get a wrapped node when also providing the wrapped source file", () => {
-        const sourceFile = createWrappedNode(ts.createSourceFile("file.ts", "class MyClass {}", ts.ScriptTarget.ES2016, true)) as SourceFile;
-        const firstClass = sourceFile.getClasses()[0];
-        const node = createWrappedNode(firstClass.compilerNode, sourceFile);
+    it("should be able to provide compiler options", () => {
+        const compilerSourceFile = ts.createSourceFile("file.ts", "class MyClass {}", ts.ScriptTarget.ES2016, true);
+        const child = compilerSourceFile.getChildren()[0];
+        const compilerOptions = { target: ts.ScriptTarget.ES2016 };
+        const node = createWrappedNode(child, { compilerOptions });
 
-        expect(node).to.equal(firstClass);
-        expect(node.getSourceFile()).to.equal(sourceFile);
+        expect(node.global.compilerOptions).to.deep.equal(compilerOptions);
+    });
+
+    it("should be able to provide a type checker", () => {
+        const ast = new TsSimpleAst();
+        const sourceFile = ast.addSourceFileFromText("test.ts", "let s = '';");
+        const typeChecker = ast.getTypeChecker();
+        const wrappedSourceFile = createWrappedNode(sourceFile.compilerNode, { typeChecker: typeChecker.compilerObject }) as SourceFile;
+
+        expect(wrappedSourceFile.getVariableDeclarationOrThrow("s").getType().getText()).to.equal("string");
+    });
+
+    it("should throw when getting the type and no type checker was provided", () => {
+        const compilerSourceFile = ts.createSourceFile("file.ts", "let s = '';", ts.ScriptTarget.ES2016, true);
+        const wrappedSourceFile = createWrappedNode(compilerSourceFile) as SourceFile;
+        const expectedMessage = "A type checker is required for this operation. This might occur when manipulating or " +
+            "getting type information from a node that was not added to a TsSimpleAst object and created via createWrappedNode. " +
+            "Please submit a bug report if you don't believe a type checker should be required for this operation.";
+
+        expect(() => wrappedSourceFile.getVariableDeclarationOrThrow("s").getType()).to.throw(errors.InvalidOperationError, expectedMessage);
     });
 });

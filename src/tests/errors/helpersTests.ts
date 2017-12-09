@@ -135,4 +135,14 @@ describe("helpers", () => {
             expect(() => errors.throwIfNotEqual(2, 2, "New length should equal old length.")).to.not.throw();
         });
     });
+
+    describe(nameof(errors.throwIfTrue), () => {
+        it("should throw when true", () => {
+            expect(() => errors.throwIfTrue(true, "message")).to.throw(errors.InvalidOperationError, "message");
+        });
+
+        it("should not throw when false", () => {
+            expect(() => errors.throwIfTrue(false, "message")).to.not.throw();
+        });
+    });
 });
