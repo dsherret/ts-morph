@@ -55,10 +55,10 @@
     "globby": "^6.1.0",
     "minimatch": "^3.0.4",
     "object-assign": "^4.1.1",
-    "typescript": "2.6.1"
+    "typescript": "2.6.x"
   },
   "peerDependencies": {
-    "typescript": "2.6.1"
+    "typescript": "2.6.x"
   },
   "standard-version": {
     "tagPrefix": ""
