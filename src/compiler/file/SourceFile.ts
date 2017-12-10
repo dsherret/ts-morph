@@ -83,16 +83,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Asynchronously deletes the file from the file system.
      */
     async delete() {
-        await this.global.fileSystem.delete(this.getFilePath());
+        const filePath = this.getFilePath();
         this.global.languageService.removeSourceFile(this);
+        await this.global.fileSystem.delete(filePath);
     }
 
     /**
      * Synchronously deletes the file from the file system.
      */
     deleteSync() {
-        this.global.fileSystem.deleteSync(this.getFilePath());
+        const filePath = this.getFilePath();
         this.global.languageService.removeSourceFile(this);
+        this.global.fileSystem.deleteSync(filePath);
     }
 
     /**
