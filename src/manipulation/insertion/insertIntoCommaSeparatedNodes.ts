@@ -39,7 +39,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
     else {
         if (opts.useNewlines && currentNodes.length === 0)
-            newText = separator + newText + parent.global.manipulationSettings.getNewLineKind();
+            newText = separator + newText + parent.global.manipulationSettings.getNewLineKind() + parent.getIndentationText();
 
         insertIntoParent({
             insertPos: parent.getPos(),
