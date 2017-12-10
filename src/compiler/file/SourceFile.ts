@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import * as path from "path";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting} from "./../../manipulation";
@@ -68,6 +69,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getFilePath() {
         return this.compilerNode.fileName;
+    }
+
+    /**
+     * Gets the directory path that the file is contained in.
+     */
+    getDirectoryPath() {
+        return path.dirname(this.compilerNode.fileName);
     }
 
     /**
