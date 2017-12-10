@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
+import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type";
 
@@ -91,6 +92,15 @@ export class Symbol {
 
         const tsSymbol = this.compilerSymbol.exports!.get(name as ts.__String);
         return tsSymbol == null ? undefined : this.global.compilerFactory.getSymbol(tsSymbol);
+    }
+
+    /**
+     * Gets the exports from the symbol.
+     */
+    getExports(): Symbol[] {
+        if (this.compilerSymbol.exports == null)
+            return [];
+        return ArrayUtils.from(this.compilerSymbol.exports!.values()).map(symbol => this.global.compilerFactory.getSymbol(symbol));
     }
 
     /**

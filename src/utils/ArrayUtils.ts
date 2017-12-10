@@ -1,4 +1,6 @@
-﻿export class ArrayUtils {
+﻿import * as ts from "typescript";
+
+export class ArrayUtils {
     private constructor() {
     }
 
@@ -26,7 +28,7 @@
         return undefined;
     }
 
-    static from<T>(items: IterableIterator<T>) {
+    static from<T>(items: IterableIterator<T> | ts.Iterator<T>) {
         const a: T[] = [];
         for (const item of items)
             a.push(item);
