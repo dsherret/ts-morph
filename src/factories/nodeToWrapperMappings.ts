@@ -20,6 +20,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.ExportDeclaration]: compiler.ExportDeclaration,
     [ts.SyntaxKind.ExportSpecifier]: compiler.ExportSpecifier,
     [ts.SyntaxKind.ExpressionWithTypeArguments]: compiler.ExpressionWithTypeArguments,
+    [ts.SyntaxKind.ExpressionStatement]: compiler.ExpressionStatement,
     [ts.SyntaxKind.FunctionDeclaration]: compiler.FunctionDeclaration,
     [ts.SyntaxKind.FunctionExpression]: compiler.FunctionExpression,
     [ts.SyntaxKind.GetAccessor]: compiler.GetAccessorDeclaration,
