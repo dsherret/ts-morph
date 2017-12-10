@@ -12,8 +12,7 @@ var tsNameOf = require("ts-nameof");
 var merge = require("merge2");
 
 var unusedDefinitionsFilter = filter([
-    "**", "!*/factories/CompilerFactory.d.ts", "!*/factories.d.ts", "!*/tests/**/*.d.ts",
-    "!*/manipulation.d.ts", "!*/manipulation/**/*.d.ts"
+    "**", "!*/factories/CompilerFactory.d.ts", "!*/factories/index.d.ts", "!*/tests/**/*.d.ts", "!*/manipulation/**/*.d.ts"
 ]);
 
 gulp.task("typescript", ["clean-scripts"], function() {
