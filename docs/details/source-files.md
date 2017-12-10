@@ -22,12 +22,12 @@ Use:
 sourceFile.isDeclarationFile(); // returns: boolean
 ```
 
-### Saving
+### Save
 
 Save a source file to the file system using one of the following commands:
 
 ```typescript
-sourceFile.save(); // returns: Promise
+await sourceFile.save();
 sourceFile.saveSync();
 ```
 
@@ -39,6 +39,15 @@ to call one of the following methods on the main AST object in order to save uns
 ```typescript
 ast.saveUnsavedSourceFiles(); // returns: Promise
 ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are a lot of files to save
+```
+
+### Delete
+
+Delete a source file from the file system using one of the following commands:
+
+```typescript
+await sourceFile.delete();
+sourceFile.deleteSync();
 ```
 
 ### Copy

@@ -70,6 +70,40 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.delete), () => {
+        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const host = getFileSystemHostWithFiles([]);
+        const {sourceFile} = getInfoFromText("", { filePath, host });
+        sourceFile.saveSync();
+
+        it("should delete the file", async () => {
+            await sourceFile.delete();
+            expect(sourceFile.wasForgotten()).to.be.true;
+            const deleteLog = host.getDeleteLog();
+            const entry = deleteLog[0];
+            expect(entry.path).to.equal(filePath);
+            expect(deleteLog.length).to.equal(1);
+            expect(host.getFiles()).to.deep.equal([]);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.deleteSync), () => {
+        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const host = getFileSystemHostWithFiles([]);
+        const {sourceFile} = getInfoFromText("", { filePath, host });
+        sourceFile.saveSync();
+
+        it("should delete the file", () => {
+            sourceFile.deleteSync();
+            expect(sourceFile.wasForgotten()).to.be.true;
+            const deleteLog = host.getDeleteLog();
+            const entry = deleteLog[0];
+            expect(entry.path).to.equal(filePath);
+            expect(deleteLog.length).to.equal(1);
+            expect(host.getFiles()).to.deep.equal([]);
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.isSaved), () => {
         const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
 

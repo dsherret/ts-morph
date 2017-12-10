@@ -4,6 +4,21 @@ import {FileSystemHost} from "./FileSystemHost";
 import {FileUtils} from "./../utils";
 
 export class DefaultFileSystemHost implements FileSystemHost {
+    delete(path: string) {
+        return new Promise<void>((resolve, reject) => {
+            fs.unlink(path, err => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            });
+        });
+    }
+
+    deleteSync(path: string) {
+        fs.unlinkSync(path);
+    }
+
     readFile(filePath: string, encoding = "utf-8") {
         return fs.readFileSync(filePath, encoding);
     }

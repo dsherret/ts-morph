@@ -5,6 +5,15 @@ import {FileSystemHost} from "./FileSystemHost";
 export class VirtualFileSystemHost implements FileSystemHost {
     private readonly files = new KeyValueCache<string, string>();
 
+    delete(path: string) {
+        this.deleteSync(path);
+        return Promise.resolve();
+    }
+
+    deleteSync(path: string) {
+        this.files.removeByKey(path);
+    }
+
     readFile(filePath: string, encoding = "utf-8") {
         const fileText = this.files.get(filePath);
         if (fileText == null)

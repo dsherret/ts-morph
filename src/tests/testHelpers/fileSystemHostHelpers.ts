@@ -4,7 +4,9 @@ import {FileUtils, ArrayUtils} from "./../../utils";
 export interface CustomFileSystemProps {
     getSyncWriteLog(): { filePath: string; fileText: string; }[];
     getWriteLog(): { filePath: string; fileText: string; }[];
+    getDeleteLog(): { path: string; }[];
     getCreatedDirectories(): string[];
+    getFiles(): { filePath: string; text: string; }[];
 }
 
 export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
@@ -12,9 +14,18 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         file.filePath = FileUtils.getStandardizedAbsolutePath(file.filePath);
     });
     const writeLog: { filePath: string; fileText: string; }[] = [];
+    const deleteLog: { path: string; }[] = [];
     const syncWriteLog: { filePath: string; fileText: string; }[] = [];
     const directories = [...initialDirectories];
+
     return {
+        delete: path => {
+            doDelete(path);
+            return Promise.resolve();
+        },
+        deleteSync: path => {
+            doDelete(path);
+        },
         readFile: filePath => {
             const file = ArrayUtils.find(files, f => f.filePath === filePath);
             if (file == null)
@@ -49,6 +60,15 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         glob: patterns => [] as string[],
         getSyncWriteLog: () => [...syncWriteLog],
         getWriteLog: () => [...writeLog],
+        getDeleteLog: () => [...deleteLog],
+        getFiles: () => [...files],
         getCreatedDirectories: () => [...directories].filter(path => initialDirectories.indexOf(path) === -1)
     };
+
+    function doDelete(path: string) {
+        deleteLog.push({ path });
+        const fileItem = ArrayUtils.find(files, item => item.filePath === path);
+        if (fileItem != null)
+            ArrayUtils.removeFirst(files, fileItem);
+    }
 }

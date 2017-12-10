@@ -1,4 +1,6 @@
 ﻿export interface FileSystemHost {
+    delete(path: string): Promise<void>;
+    deleteSync(path: string): void;
     readFile(filePath: string, encoding?: string): string;
     writeFile(filePath: string, fileText: string): Promise<void>;
     writeFileSync(filePath: string, fileText: string): void;
