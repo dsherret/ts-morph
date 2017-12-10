@@ -104,7 +104,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the compiler symbol.
+     * Gets the symbol or throws an error if it doesn't exist.
+     */
+    getSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getSymbol(), "Could not find the node symbol.");
+    }
+
+    /**
+     * Gets the compiler symbol or undefined if it doesn't exist.
      */
     getSymbol(): Symbol | undefined {
         const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
