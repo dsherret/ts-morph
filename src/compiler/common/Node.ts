@@ -3,6 +3,7 @@ import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {IndentationText} from "./../../ManipulationSettings";
+import {StructureToText} from "./../../structureToTexts";
 import {getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {insertIntoParent} from "./../../manipulation/insertion";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind} from "./../../utils";

@@ -3,6 +3,7 @@ import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren
 import * as errors from "./../../errors";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
+import * as structureToTexts from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
@@ -70,14 +71,13 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         const indentationText = this.getChildIndentationText();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = `${indentationText}new()`;
-            if (structure.returnType != null && structure.returnType.length > 0)
-                code += `: ${structure.returnType}`;
-            code += ";";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structureToTexts.ConstructSignatureDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
             getIndexedChildren: () => this.getAllMembers(),
@@ -149,18 +149,13 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         const indentationText = this.getChildIndentationText();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = indentationText;
-            code += structure.name;
-            if (structure.hasQuestionToken)
-                code += "?";
-            code += "()";
-            if (structure.returnType != null && structure.returnType.length > 0)
-                code += `: ${structure.returnType}`;
-            code += ";";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structureToTexts.MethodSignatureStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodSignature, MethodSignatureStructure>({
@@ -248,17 +243,13 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         const indentationText = this.getChildIndentationText();
 
         // create code
-        const codes: string[] = [];
-        for (const structure of structures) {
-            let code = `${indentationText}`;
-            code += structure.name;
-            if (structure.hasQuestionToken)
-                code += "?";
-            if (structure.type != null && structure.type.length > 0)
-                code += `: ${structure.type}`;
-            code += ";";
-            codes.push(code);
-        }
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new structureToTexts.PropertySignatureStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertySignature, PropertySignatureStructure>({
             getIndexedChildren: () => this.getAllMembers(),

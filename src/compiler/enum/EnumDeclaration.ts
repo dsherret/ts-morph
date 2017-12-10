@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
-import {insertIntoCreatableSyntaxList, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
+import {EnumMemberStructureToText} from "./../../structureToTexts";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
@@ -65,56 +66,22 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         if (structures.length === 0)
             return [];
 
-        const previousMember: EnumMember | undefined = members[index - 1];
-        const previousMemberComma = previousMember == null ? undefined : previousMember.getNextSiblingIfKind(ts.SyntaxKind.CommaToken);
-        const nextMember: EnumMember | undefined = members[index];
-        const indentationText = this.getChildIndentationText();
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const syntaxList = this.getChildSyntaxListOrThrow();
-        const syntaxListChildren = syntaxList.getChildren();
-        const insertChildIndex = previousMember == null ? 0 : syntaxListChildren.indexOf(previousMemberComma || previousMember) + 1;
-
         // create member code
-        let numberChildren = 1;
-        let code = "";
-        if (previousMember != null && previousMemberComma == null) {
-            code += ",";
-            numberChildren++;
-        }
-        code += `${newLineChar}${getMemberText(structures[0])}`;
-        for (const structure of structures.slice(1)) {
-            code += `,${newLineChar}${getMemberText(structure)}`;
-            numberChildren += 2;
-        }
-        if (nextMember != null) {
-            code += ",";
-            numberChildren++;
-        }
-
-        function getMemberText(structure: EnumMemberStructure) {
-            let memberText = `${indentationText}${structure.name}`;
-            if (typeof structure.value !== "undefined")
-                memberText += ` = ${structure.value}`;
-            return memberText;
-        }
-
-        // get the insert position
-        let insertPos: number;
-        if (previousMember == null)
-            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken).getEnd();
-        else if (previousMemberComma == null)
-            insertPos = previousMember.getEnd();
-        else
-            insertPos = previousMember.getNextSiblingIfKind(ts.SyntaxKind.CommaToken)!.getEnd();
+        const newTexts = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getChildWriter();
+            const structureToText = new EnumMemberStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
 
         // insert
-        insertIntoCreatableSyntaxList({
-            parent: this,
-            insertPos,
-            newText: code,
-            syntaxList,
-            childIndex: insertChildIndex,
-            insertItemsCount: numberChildren
+        insertIntoCommaSeparatedNodes({
+            parent: this.getChildSyntaxListOrThrow(),
+            currentNodes: members,
+            insertIndex: index,
+            newTexts,
+            useNewlines: true
         });
 
         // get the members

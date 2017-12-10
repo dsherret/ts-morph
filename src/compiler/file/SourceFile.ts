@@ -5,7 +5,7 @@ import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFo
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ImportDeclarationStructureToText} from "./../../structuresToText";
+import {ImportDeclarationStructureToText} from "./../../structureToTexts";
 import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";

@@ -4,7 +4,7 @@ import * as errors from "./../../../errors";
 import {ArrayUtils} from "./../../../utils";
 import {verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../../manipulation";
 import {StructureToText, PropertyAssignmentStructureToText, ShorthandPropertyAssignmentStructureToText, SpreadAssignmentStructureToText,
-    MethodDeclarationStructureToText, GetAccessorDeclarationStructureToText, SetAccessorDeclarationStructureToText} from "./../../../structuresToText";
+    MethodDeclarationStructureToText, GetAccessorDeclarationStructureToText, SetAccessorDeclarationStructureToText} from "./../../../structureToTexts";
 import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
     MethodDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure} from "./../../../structures";
 import {ObjectLiteralElementLike} from "./../../aliases";

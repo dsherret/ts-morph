@@ -5,7 +5,7 @@ import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, i
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
-import * as structuresToText from "./../../structuresToText";
+import * as structureToTexts from "./../../structureToTexts";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
@@ -148,7 +148,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         const writer = this.getChildWriter();
-        const structureToText = new structuresToText.ConstructorDeclarationStructureToText(writer);
+        const structureToText = new structureToTexts.ConstructorDeclarationStructureToText(writer);
         structureToText.writeText(structure);
         const code = writer.toString();
 
@@ -210,7 +210,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
             const writer = this.getChildWriter();
-            const structureToText = new structuresToText.GetAccessorDeclarationStructureToText(writer);
+            const structureToText = new structureToTexts.GetAccessorDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
         });
@@ -268,7 +268,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
             const writer = this.getChildWriter();
-            const structureToText = new structuresToText.SetAccessorDeclarationStructureToText(writer);
+            const structureToText = new structureToTexts.SetAccessorDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
         });
@@ -325,7 +325,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
             const writer = this.getChildWriter();
-            const structureToText = new structuresToText.PropertyDeclarationStructureToText(writer);
+            const structureToText = new structureToTexts.PropertyDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
         });
@@ -461,7 +461,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
             const writer = this.getChildWriter();
-            const structureToText = new structuresToText.MethodDeclarationStructureToText(writer, { isAmbient });
+            const structureToText = new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient });
             structureToText.writeText(s);
             return writer.toString();
         });
