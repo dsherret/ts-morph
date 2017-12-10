@@ -4,6 +4,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
+import * as structureToTexts from "./../../structureToTexts";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -481,9 +482,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertClasses(index: number, structures: ClassDeclarationStructure[]): classes.ClassDeclaration[] {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => `${indentationText}class ${structure.name} {${newLineChar}${indentationText}}`);
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.ClassDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
+            });
             const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
@@ -524,9 +529,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertEnums(index: number, structures: EnumDeclarationStructure[]) {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => `${indentationText}${structure.isConst ? "const " : ""}enum ${structure.name} {${newLineChar}${indentationText}}`);
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.EnumDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
+            });
             const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
@@ -567,9 +576,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertFunctions(index: number, structures: FunctionDeclarationStructure[]) {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => `${indentationText}function ${structure.name}() {${newLineChar}${indentationText}}`);
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.FunctionDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
+            });
             const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
@@ -611,9 +624,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]) {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => `${indentationText}interface ${structure.name} {${newLineChar}${indentationText}}`);
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.InterfaceDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
+            });
             const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
@@ -654,10 +671,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]) {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => {
-                return `${indentationText}${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} {${newLineChar}${indentationText}}`;
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.NamespaceDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
             });
             const newChildren = this._insertMainChildren<namespaces.NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
                 child.fill(structures[i]);
@@ -698,10 +717,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]) {
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => {
-                return `${indentationText}type ${structure.name} = ${structure.type};`;
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.TypeAliasDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
             });
             const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, TypeAliasDeclarationStructure>(
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
@@ -760,21 +781,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertVariableStatements(index: number, structures: VariableStatementStructure[]) {
-            const indentationText = this.getChildIndentationText();
-            const texts = structures.map(structure => {
-                let text = `${indentationText}${structure.declarationType || VariableDeclarationType.Let} `;
-                const declarationTexts: string[] = [];
-                for (const declarationStructure of structure.declarations) {
-                    let declarationText = declarationStructure.name;
-                    if (declarationStructure.type != null)
-                        declarationText += ": " + declarationStructure.type;
-                    if (declarationStructure.initializer != null)
-                        declarationText += " = " + declarationStructure.initializer;
-                    declarationTexts.push(declarationText);
-                }
-                text += declarationTexts.join(", ");
-                text += ";";
-                return text;
+            const texts = structures.map(s => {
+                // todo: pass in the StructureToText to the function below
+                const writer = this.getChildWriter();
+                const structureToText = new structureToTexts.VariableStatementStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
             });
             const newChildren = this._insertMainChildren<statement.VariableStatement>(index, texts, structures, ts.SyntaxKind.VariableStatement, (child, i) => {
                 const structure = {...structures[i]};

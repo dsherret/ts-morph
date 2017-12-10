@@ -1,3 +1,4 @@
+export * from "./ClassDeclarationStructureToText";
 export * from "./ConstructorDeclarationStructureToText";
 export * from "./GetAccessorDeclarationStructureToText";
 export * from "./MethodDeclarationStructureToText";
