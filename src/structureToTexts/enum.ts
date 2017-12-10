@@ -1,1 +1,0 @@
-﻿export * from "./enum/EnumMemberStructureToText";
