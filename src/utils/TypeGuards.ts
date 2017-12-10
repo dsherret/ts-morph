@@ -106,6 +106,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a Block.
+     * @param node - Node to check.
+     */
+    static isBlock(node: compiler.Node): node is compiler.Block {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Block:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a BodiedNode.
      * @param node - Node to check.
      */
@@ -168,6 +181,7 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -366,6 +380,19 @@ export class TypeGuards {
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ExpressionStatement.
+     * @param node - Node to check.
+     */
+    static isExpressionStatement(node: compiler.Node): node is compiler.ExpressionStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ExpressionStatement:
                 return true;
             default:
                 return false;
@@ -1210,6 +1237,7 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.Block:
                 return true;
             default:
                 return false;
@@ -1275,6 +1303,7 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.Block:
                 return true;
             default:
                 return false;
