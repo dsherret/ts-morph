@@ -1,1 +1,1 @@
-﻿export * from "./NamespaceDeclarationStructureToText";
+export * from "./NamespaceDeclarationStructureToText";

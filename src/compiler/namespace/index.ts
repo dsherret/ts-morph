@@ -1,2 +1,2 @@
-export * from "./NamespaceDeclaration";
 export * from "./NamespaceChildableNode";
+export * from "./NamespaceDeclaration";

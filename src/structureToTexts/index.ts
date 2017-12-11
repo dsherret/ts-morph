@@ -1,3 +1,4 @@
+export * from "./StructureToText";
 export * from "./class";
 export * from "./common";
 export * from "./enum";
@@ -7,4 +8,3 @@ export * from "./interface";
 export * from "./namespace";
 export * from "./statement";
 export * from "./types";
-export * from "./StructureToText";

@@ -1,1 +1,1 @@
-﻿export * from "./VariableStatementStructureToText";
+export * from "./VariableStatementStructureToText";

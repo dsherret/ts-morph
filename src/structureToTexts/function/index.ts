@@ -1,1 +1,1 @@
-﻿export * from "./FunctionDeclarationStructureToText";
+export * from "./FunctionDeclarationStructureToText";

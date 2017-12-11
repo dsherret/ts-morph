@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+﻿/* barrel:ignore */
+import * as ts from "typescript";
 import * as compiler from "./../compiler";
 
 // when changing this, make sure to run `npm run code-generate`.

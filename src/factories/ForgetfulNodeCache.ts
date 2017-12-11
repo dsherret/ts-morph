@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+﻿/* barrel:ignore */
+import * as ts from "typescript";
 import {Node} from "./../compiler";
 import {KeyValueCache, createHashSet, HashSet} from "./../utils";
 

@@ -1,1 +1,1 @@
-﻿export * from "./TypeAliasDeclarationStructureToText";
+export * from "./TypeAliasDeclarationStructureToText";

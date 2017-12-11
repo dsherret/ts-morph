@@ -1,2 +1,2 @@
-export * from "./getNewInsertCode";
 export * from "./getIndentedText";
+export * from "./getNewInsertCode";

@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+﻿/* barrel:ignore */
+import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {insertIntoParent, getIndentedText} from "./../../../manipulation";
 import {getTextFromStringOrWriter, StringUtils} from "./../../../utils";

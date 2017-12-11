@@ -1,4 +1,4 @@
-export * from "./PropertySignatureStructure";
-export * from "./MethodSignatureStructure";
-export * from "./InterfaceDeclarationStructure";
 export * from "./ConstructSignatureDeclarationStructure";
+export * from "./InterfaceDeclarationStructure";
+export * from "./MethodSignatureStructure";
+export * from "./PropertySignatureStructure";
