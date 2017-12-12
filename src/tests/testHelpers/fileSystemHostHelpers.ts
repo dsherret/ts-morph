@@ -1,22 +1,25 @@
-﻿import {FileSystemHost} from "./../../fileSystem";
-import {FileUtils, ArrayUtils} from "./../../utils";
+﻿import {FileNotFoundError} from "./../../errors";
+import {FileSystemHost} from "./../../fileSystem";
+import {FileUtils, ArrayUtils, KeyValueCache} from "./../../utils";
 
 export interface CustomFileSystemProps {
     getSyncWriteLog(): { filePath: string; fileText: string; }[];
     getWriteLog(): { filePath: string; fileText: string; }[];
     getDeleteLog(): { path: string; }[];
     getCreatedDirectories(): string[];
-    getFiles(): { filePath: string; text: string; }[];
+    getFiles(): [string, string][];
 }
 
-export function getFileSystemHostWithFiles(files: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
-    files.forEach(file => {
-        file.filePath = FileUtils.getStandardizedAbsolutePath(file.filePath);
-    });
+export function getFileSystemHostWithFiles(initialFiles: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
     const writeLog: { filePath: string; fileText: string; }[] = [];
     const deleteLog: { path: string; }[] = [];
     const syncWriteLog: { filePath: string; fileText: string; }[] = [];
     const directories = [...initialDirectories];
+    const files = new KeyValueCache<string, string>();
+
+    initialFiles.forEach(file => {
+        files.set(FileUtils.getStandardizedAbsolutePath(file.filePath), file.text);
+    });
 
     return {
         delete: path => {
@@ -26,28 +29,24 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         deleteSync: path => {
             doDelete(path);
         },
-        readFile: filePath => {
-            const file = ArrayUtils.find(files, f => f.filePath === filePath);
-            if (file == null)
-                throw new Error(`Can't find file ${filePath}.`);
-            return file.text;
-        },
+        readFile: filePath => Promise.resolve(readFile(filePath)),
+        readFileSync: filePath => readFile(filePath),
         writeFile: (filePath, fileText) => {
             writeLog.push({ filePath, fileText });
-            files.push({ filePath, text: fileText });
+            files.set(filePath, fileText);
             return Promise.resolve();
         },
         writeFileSync: (filePath, fileText) => {
             syncWriteLog.push({ filePath, fileText });
-            files.push({ filePath, text: fileText });
+            files.set(filePath, fileText);
         },
         fileExists: filePath => {
             filePath = FileUtils.getStandardizedAbsolutePath(filePath);
-            return Promise.resolve(files.some(f => f.filePath === filePath));
+            return Promise.resolve(files.has(filePath));
         },
         fileExistsSync: filePath => {
             filePath = FileUtils.getStandardizedAbsolutePath(filePath);
-            return files.some(f => f.filePath === filePath);
+            return files.has(filePath);
         },
         getCurrentDirectory: () => FileUtils.getCurrentDirectory(),
         mkdir: dirPath => {
@@ -61,14 +60,18 @@ export function getFileSystemHostWithFiles(files: { filePath: string; text: stri
         getSyncWriteLog: () => [...syncWriteLog],
         getWriteLog: () => [...writeLog],
         getDeleteLog: () => [...deleteLog],
-        getFiles: () => [...files],
+        getFiles: () => ArrayUtils.from(files.getEntries()),
         getCreatedDirectories: () => [...directories].filter(path => initialDirectories.indexOf(path) === -1)
     };
 
+    function readFile(filePath: string) {
+        if (!files.has(filePath))
+            throw new FileNotFoundError(`Can't find file ${filePath}.`);
+        return files.get(filePath) || "";
+    }
+
     function doDelete(path: string) {
         deleteLog.push({ path });
-        const fileItem = ArrayUtils.find(files, item => item.filePath === path);
-        if (fileItem != null)
-            ArrayUtils.removeFirst(files, fileItem);
+        files.removeByKey(path);
     }
 }

@@ -5,9 +5,9 @@ import {FileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
 
 const defaultHost = new DefaultFileSystemHost();
-const pastReadFile = defaultHost.readFile;
+const pastReadFile = defaultHost.readFileSync;
 const fileMap = new Map<string, string>();
-defaultHost.readFile = filePath => {
+defaultHost.readFileSync = filePath => {
     // cache any file reads
     if (!fileMap.has(filePath))
         fileMap.set(filePath, pastReadFile.call(defaultHost, filePath));

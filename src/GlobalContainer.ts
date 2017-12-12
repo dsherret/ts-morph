@@ -103,6 +103,13 @@ export class GlobalContainer {
     }
 
     /**
+     * Gets the encoding.
+     */
+    getEncoding() {
+        return this.compilerOptions.charset || "utf-8";
+    }
+
+    /**
      * Resets the program.
      */
     resetProgram() {

@@ -46,8 +46,7 @@ ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are
 Delete a source file from the file system using one of the following commands:
 
 ```typescript
-await sourceFile.delete();
-sourceFile.deleteSync();
+await sourceFile.delete(); // or deleteSync()
 ```
 
 ### Copy
@@ -64,6 +63,22 @@ Note that the file won't be written to the file system unless you save it.
 
 TODO: Not yet supported.
 
+### Refresh from file system
+
+Refresh the source file from the file system:
+
+```ts
+import {FileSystemRefreshResult} from "ts-simple-ast";
+
+ // returns: FileSystemRefreshResult (NoChange, Updated, Deleted)
+const result = await sourceFile.refreshFromFileSystem(); // or refreshFromFileSystemSync()
+```
+
+This is useful when you are using a file system watcher and want to refresh a source file from the file system based on changes.
+
+If the file was _updated_: All the child nodes of the source file will be forgotten and you will have to renavigate the file.
+If the file was _deleted_: The source file will be removed and all its nodes forgotten.
+
 ### Remove
 
 Remove a source file from the AST by calling:
@@ -71,6 +86,8 @@ Remove a source file from the AST by calling:
 ```typescript
 ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
 ```
+
+Note: This does not delete the file from the file system. To do delete it, call `.delete()`.
 
 ### Referenced files
 

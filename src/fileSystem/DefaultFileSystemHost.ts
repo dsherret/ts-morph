@@ -20,6 +20,17 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     readFile(filePath: string, encoding = "utf-8") {
+        return new Promise<string>((resolve, reject) => {
+            fs.readFile(filePath, encoding, (err, data) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve(data);
+            });
+        });
+    }
+
+    readFileSync(filePath: string, encoding = "utf-8") {
         return fs.readFileSync(filePath, encoding);
     }
 

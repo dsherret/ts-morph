@@ -49,7 +49,7 @@ export class LanguageService {
             readFile: (path, encoding) => {
                 if (this.global.compilerFactory.containsSourceFileAtPath(path))
                     return this.global.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
-                return this.global.fileSystem.readFile(path, encoding);
+                return this.global.fileSystem.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
             directoryExists: dirName => this.global.compilerFactory.containsFileInDirectory(dirName) || this.global.fileSystem.directoryExistsSync(dirName)

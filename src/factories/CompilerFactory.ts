@@ -69,7 +69,7 @@ export class CompilerFactory {
         if (sourceFile == null) {
             if (this.global.fileSystem.fileExistsSync(absoluteFilePath)) {
                 Logger.log(`Loading file: ${absoluteFilePath}`);
-                sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFile(absoluteFilePath));
+                sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFileSync(absoluteFilePath));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 

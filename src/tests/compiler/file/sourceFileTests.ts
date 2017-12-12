@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings, QuoteType} from "./../../../compiler";
+import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings, QuoteType, FileSystemRefreshResult} from "./../../../compiler";
 import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -702,6 +702,73 @@ function myFunction(param: MyClass) {
 
         it("should unindent multiple times", () => {
             doTest("//testing\n\t\t\t//testing\n//testing", 11, 2, "//testing\n\t//testing\n//testing");
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.refreshFromFileSystemSync), () => {
+        it("should update the text", () => {
+            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const newText = "let t: string;";
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile, firstChild} = getInfoFromText("class MyClass {}", { filePath, host });
+            sourceFile.saveSync();
+            expect(sourceFile.refreshFromFileSystemSync()).to.equal(FileSystemRefreshResult.NoChange);
+            host.writeFileSync(filePath, newText);
+            expect(sourceFile.refreshFromFileSystemSync()).to.equal(FileSystemRefreshResult.Updated);
+            expect(firstChild.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal(newText);
+            host.deleteSync(filePath);
+            expect(sourceFile.refreshFromFileSystemSync()).to.equal(FileSystemRefreshResult.Deleted);
+            expect(sourceFile.wasForgotten()).to.be.true;
+        });
+
+        it("should throw when the read file throws an error other than file not found", () => {
+            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
+            sourceFile.saveSync();
+            const error = new Error("");
+            host.readFileSync = path => {
+                throw error;
+            };
+            expect(() => sourceFile.refreshFromFileSystemSync()).to.throw(error);
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.refreshFromFileSystem), () => {
+        it("should update the text", async () => {
+            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const newText = "let t: string;";
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile, firstChild} = getInfoFromText("class MyClass {}", { filePath, host });
+            await sourceFile.save();
+            expect(await sourceFile.refreshFromFileSystem()).to.equal(FileSystemRefreshResult.NoChange);
+            await host.writeFile(filePath, newText);
+            expect(await sourceFile.refreshFromFileSystem()).to.equal(FileSystemRefreshResult.Updated);
+            expect(firstChild.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal(newText);
+            await host.delete(filePath);
+            expect(await sourceFile.refreshFromFileSystem()).to.equal(FileSystemRefreshResult.Deleted);
+            expect(sourceFile.wasForgotten()).to.be.true;
+        });
+
+        it("should throw when the read file throws an error other than file not found", async () => {
+            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
+            await sourceFile.save();
+            const error = new Error("");
+            host.readFile = path => Promise.reject(error);
+
+            // testing a promise rejection without an UnhandledPromiseRejectionWarning
+            let didThrow = false;
+            try {
+                await sourceFile.refreshFromFileSystem();
+            } catch (err) {
+                didThrow = err === error;
+            }
+
+            expect(didThrow).to.be.true;
         });
     });
 });

@@ -113,4 +113,36 @@ export class FileUtils {
 
         return searchItems.length > 0;
     }
+
+    /**
+     * Reads a file or returns false if the file doesn't exist.
+     * @param fileSystem - File System.
+     * @param filePath - Path to file.
+     * @param encoding - File encoding.
+     */
+    static async readFileOrNotExists(fileSystem: FileSystemHost, filePath: string, encoding: string) {
+        try {
+            return await fileSystem.readFile(filePath, encoding);
+        } catch (err) {
+            if (err.code !== "ENOENT") // file not found exception
+                throw err;
+            return false;
+        }
+    }
+
+    /**
+     * Reads a file synchronously or returns false if the file doesn't exist.
+     * @param fileSystem - File System.
+     * @param filePath - Path to file.
+     * @param encoding - File encoding.
+     */
+    static readFileOrNotExistsSync(fileSystem: FileSystemHost, filePath: string, encoding: string) {
+        try {
+            return fileSystem.readFileSync(filePath, encoding);
+        } catch (err) {
+            if (err.code !== "ENOENT") // file not found exception
+                throw err;
+            return false;
+        }
+    }
 }

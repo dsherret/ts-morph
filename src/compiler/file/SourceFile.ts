@@ -15,6 +15,7 @@ import {StatementedNode} from "./../statement";
 import {Diagnostic, EmitResult, FormatCodeSettings} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
+import {FileSystemRefreshResult} from "./FileSystemRefreshResult";
 
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
 export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
@@ -489,5 +490,41 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             sourceFile: this,
             newText: this.global.languageService.getFormattedDocumentText(this.getFilePath(), settings)
         });
+    }
+
+    /**
+     * Refresh the source file from the file system.
+     *
+     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
+     * @returns What action ended up taking place.
+     */
+    async refreshFromFileSystem(): Promise<FileSystemRefreshResult> {
+        const fileReadResult = await FileUtils.readFileOrNotExists(this.global.fileSystem, this.getFilePath(), this.global.getEncoding());
+        return this._refreshFromFileSystemInternal(fileReadResult);
+    }
+
+    /**
+     * Synchronously refreshes the source file from the file system.
+     *
+     * WARNING: When updating from the file system, this will "forget" any previously navigated nodes.
+     * @returns What action ended up taking place.
+     */
+    refreshFromFileSystemSync(): FileSystemRefreshResult {
+        const fileReadResult = FileUtils.readFileOrNotExistsSync(this.global.fileSystem, this.getFilePath(), this.global.getEncoding());
+        return this._refreshFromFileSystemInternal(fileReadResult);
+    }
+
+    private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
+        if (fileReadResult === false) {
+            this.global.languageService.removeSourceFile(this);
+            return FileSystemRefreshResult.Deleted;
+        }
+
+        const fileText = fileReadResult;
+        if (fileText === this.getFullText())
+            return FileSystemRefreshResult.NoChange;
+
+        this.replaceText([0, this.getEnd()], fileText);
+        return FileSystemRefreshResult.Updated;
     }
 }

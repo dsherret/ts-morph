@@ -13,7 +13,7 @@ export function getCompilerOptionsFromTsConfig(filePath: string, fileSystemHost?
 
     const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
     verifyFileExists(fileSystemHost, absoluteFilePath);
-    const result = ts.parseConfigFileTextToJson(absoluteFilePath, fileSystemHost.readFile(absoluteFilePath));
+    const result = ts.parseConfigFileTextToJson(absoluteFilePath, fileSystemHost.readFileSync(absoluteFilePath));
 
     if (result.error != null)
         throw new Error(result.error.messageText.toString());

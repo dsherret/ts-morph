@@ -15,6 +15,10 @@ export class VirtualFileSystemHost implements FileSystemHost {
     }
 
     readFile(filePath: string, encoding = "utf-8") {
+        return Promise.resolve(this.readFileSync(filePath, encoding));
+    }
+
+    readFileSync(filePath: string, encoding = "utf-8") {
         const fileText = this.files.get(filePath);
         if (fileText == null)
             throw new errors.FileNotFoundError(filePath);
