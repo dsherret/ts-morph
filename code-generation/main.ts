@@ -1,6 +1,5 @@
 ﻿import * as path from "path";
 import * as fs from "fs";
-import TsSimpleAst from "./../src/main";
 import {rootFolder, isOverloadStructure} from "./config";
 import {getAst, getClassViewModels, getStructureViewModels, getNodeToWrapperMappings} from "./common";
 import {createGetStructureFunctions} from "./createGetStructureFunctions";

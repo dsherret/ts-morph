@@ -44,6 +44,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.QualifiedName]: compiler.QualifiedName,
     [ts.SyntaxKind.FirstNode]: compiler.QualifiedName,
     [ts.SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral,
+    [ts.SyntaxKind.ReturnStatement]: compiler.ReturnStatement,
     [ts.SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration,
     [ts.SyntaxKind.ShorthandPropertyAssignment]: compiler.ShorthandPropertyAssignment,
     [ts.SyntaxKind.SpreadAssignment]: compiler.SpreadAssignment,

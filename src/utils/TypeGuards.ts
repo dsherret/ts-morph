@@ -182,6 +182,7 @@ export class TypeGuards {
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.ExpressionStatement:
+            case ts.SyntaxKind.ReturnStatement:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -1094,6 +1095,19 @@ export class TypeGuards {
     static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
         switch (node.getKind()) {
             case ts.SyntaxKind.RegularExpressionLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ReturnStatement.
+     * @param node - Node to check.
+     */
+    static isReturnStatement(node: compiler.Node): node is compiler.ReturnStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ReturnStatement:
                 return true;
             default:
                 return false;
