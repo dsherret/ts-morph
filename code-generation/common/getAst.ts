@@ -9,6 +9,6 @@ export function getAst() {
             newLineKind: NewLineKind.CarriageReturnLineFeed
         }
     });
-    ast.addSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
+    ast.addExistingSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
     return ast;
 }

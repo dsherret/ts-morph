@@ -25,7 +25,7 @@ And setup:
 import Ast from "ts-simple-ast";
 
 const ast = new Ast();
-ast.addSourceFiles("**/*.ts");
+ast.addExistingSourceFiles("**/*.ts");
 ```
 
 ### Use
@@ -33,7 +33,7 @@ ast.addSourceFiles("**/*.ts");
 First you need to get the source file you would like to look at:
 
 ```typescript
-const sourceFile = ast.getSourceFile("Person.ts");
+const sourceFile = ast.getSourceFileOrThrow("Person.ts");
 ```
 
 Now inspect what's inside... here's a few examples:

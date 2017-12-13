@@ -28,7 +28,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: G
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, filePath = undefined, host = defaultHost, disableErrorCheck = false} = opts || {};
     const tsSimpleAst = new TsSimpleAst({ compilerOptions: { target: ts.ScriptTarget.ES2017 }}, host);
-    const sourceFile = tsSimpleAst.addSourceFileFromText(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
+    const sourceFile = tsSimpleAst.createSourceFile(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
     const firstChild = sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as TFirstChild;
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)

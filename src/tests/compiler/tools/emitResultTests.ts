@@ -9,8 +9,8 @@ describe(nameof(EmitResult), () => {
     it("should get the emit result when there are no errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
         const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
-        ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
-        ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
+        ast.createSourceFile("file1.ts", "const num1 = 1;");
+        ast.createSourceFile("file2.ts", "const num2 = 2;");
         const result = ast.emit();
         expect(result.compilerObject).to.not.be.undefined;
         expect(result.getEmitSkipped()).to.be.false;
@@ -20,7 +20,7 @@ describe(nameof(EmitResult), () => {
     it("should get the emit result when there are errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
         const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", noEmitOnError: true } }, fileSystem);
-        ast.addSourceFileFromText("file1.ts", "const num1;");
+        ast.createSourceFile("file1.ts", "const num1;");
         const result = ast.emit();
 
         expect(result.getEmitSkipped()).to.be.true;

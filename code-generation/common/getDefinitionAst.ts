@@ -10,6 +10,6 @@ export function getDefinitionAst() {
             newLineKind: NewLineKind.CarriageReturnLineFeed
         }
     });
-    ast.addSourceFiles(path.join(rootFolder, "dist/**/*.d.ts"));
+    ast.addExistingSourceFiles(path.join(rootFolder, "dist/**/*.d.ts"));
     return ast;
 }

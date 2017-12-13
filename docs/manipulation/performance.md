@@ -56,7 +56,7 @@ import {Ast, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from 
 
 const ast = new Ast();
 const text = "namespace Namespace { interface Interface {} class Class {} }";
-const sourceFile = ast.addSourceFileFromText("file.ts", text);
+const sourceFile = ast.createSourceFile("file.ts", text);
 
 let namespaceDeclaration: NamespaceDeclaration;
 let interfaceDeclaration: InterfaceDeclaration;

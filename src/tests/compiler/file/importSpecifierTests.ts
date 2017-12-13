@@ -8,7 +8,7 @@ describe(nameof(ImportSpecifier), () => {
         it("should only change what's imported", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
             const namedImport = firstChild.getNamedImports()[0];
-            const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}\nexport class newName {}");
+            const otherSourceFile = tsSimpleAst.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
             namedImport.setName("newName");
             expect(sourceFile.getText()).to.equal("import {newName} from './file'; const t = name;");
             expect(otherSourceFile.getText()).to.equal("export class name {}\nexport class newName {}");
@@ -17,7 +17,7 @@ describe(nameof(ImportSpecifier), () => {
         it("should set only the identifier when an alias already exists", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>("import {name as alias} from './file'; const t = alias;");
             const namedImport = firstChild.getNamedImports()[0];
-            const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}\nexport class newName {}");
+            const otherSourceFile = tsSimpleAst.createSourceFile("file.ts", "export class name {}\nexport class newName {}");
             namedImport.setName("newName");
             expect(sourceFile.getText()).to.equal("import {newName as alias} from './file'; const t = alias;");
             expect(otherSourceFile.getText()).to.equal("export class name {}\nexport class newName {}");
@@ -28,7 +28,7 @@ describe(nameof(ImportSpecifier), () => {
         it("should rename what's being imported", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
             const namedImport = firstChild.getNamedImports()[0];
-            const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}");
+            const otherSourceFile = tsSimpleAst.createSourceFile("file.ts", "export class name {}");
             namedImport.renameName("newName");
             expect(sourceFile.getText()).to.equal("import {newName} from './file'; const t = newName;");
             expect(otherSourceFile.getText()).to.equal("export class newName {}");
@@ -58,7 +58,7 @@ describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.setAlias), () => {
         function doTest(text: string, alias: string, expected: string) {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>(text);
-            const otherSourceFile = tsSimpleAst.addSourceFileFromText("file.ts", "export class name {}");
+            const otherSourceFile = tsSimpleAst.createSourceFile("file.ts", "export class name {}");
             const namedImport = firstChild.getNamedImports()[0];
             namedImport.setAlias(alias);
             expect(sourceFile.getText()).to.equal(expected);

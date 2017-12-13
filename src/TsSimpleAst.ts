@@ -44,27 +44,32 @@ export class TsSimpleAst {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
+     * @returns The matched source files.
      */
-    addSourceFiles(...fileGlobs: string[]) {
-        const filePaths = this.fileSystem.glob(fileGlobs);
+    addExistingSourceFiles(...fileGlobs: string[]): compiler.SourceFile[] {
+        const sourceFiles: compiler.SourceFile[] = [];
 
-        for (const filePath of filePaths) {
+        for (const filePath of this.fileSystem.glob(fileGlobs)) {
             // ignore any FileNotFoundErrors
             try {
-                this.getOrAddSourceFile(filePath);
+                sourceFiles.push(this.addExistingSourceFile(filePath));
             } catch (ex) {
                 /* istanbul ignore if */
                 if (!(ex instanceof errors.FileNotFoundError))
                     throw ex;
             }
         }
+
+        return sourceFiles;
     }
 
     /**
-     * Gets or adds a source file from a file path.
-     * @param filePath - File path to create the file from.
+     * Adds an existing source file from a file path.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
      */
-    getOrAddSourceFile(filePath: string): compiler.SourceFile {
+    addExistingSourceFile(filePath: string): compiler.SourceFile {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (!this.fileSystem.fileExistsSync(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);
@@ -72,24 +77,37 @@ export class TsSimpleAst {
     }
 
     /**
-     * Adds a source file from text.
-     * @param filePath - File path for the source file.
-     * @param sourceFileText - Source file text.
+     * Creates a source file at the specified file path.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    addSourceFileFromText(filePath: string, sourceFileText: string): compiler.SourceFile {
-        return this.global.compilerFactory.addSourceFileFromText(filePath, sourceFileText);
-    }
-
+    createSourceFile(filePath: string): compiler.SourceFile;
     /**
-     * Adds a source file from a structure.
-     * @param filePath - File path for the source file.
+     * Creates a source file at the specified file path with the specified text.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
+     * @param sourceFileText - Text of the source file.
+     * @throws - InvalidOperationError if a source file already exists at the provided file path.
+     */
+    createSourceFile(filePath: string, sourceFileText: string): compiler.SourceFile;
+    /**
+     * Creates a source file at the specified file path with the specified text.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
      * @param structure - Structure that represents the source file.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    addSourceFileFromStructure(filePath: string, structure: SourceFileStructure): compiler.SourceFile {
+    createSourceFile(filePath: string, structure: SourceFileStructure): compiler.SourceFile;
+    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string): compiler.SourceFile {
+        if (structureOrText == null || typeof structureOrText === "string")
+            return this.global.compilerFactory.addSourceFileFromText(filePath, structureOrText || "");
+
         const sourceFile = this.global.compilerFactory.addSourceFileFromText(filePath, "");
-        sourceFile.fill(structure);
+        sourceFile.fill(structureOrText);
         return sourceFile;
     }
 

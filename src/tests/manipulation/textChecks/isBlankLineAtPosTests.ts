@@ -5,7 +5,7 @@ import {isBlankLineAtPos} from "./../../../manipulation/textChecks";
 describe(nameof(isBlankLineAtPos), () => {
     function doTest(fileText: string, pos: number, expected: boolean) {
         const ast = new Ast();
-        const sourceFile = ast.addSourceFileFromText("file.ts", fileText);
+        const sourceFile = ast.createSourceFile("file.ts", fileText);
         expect(isBlankLineAtPos(sourceFile, pos)).to.equal(expected);
     }
 

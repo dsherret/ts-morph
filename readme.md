@@ -25,10 +25,10 @@ import Ast from "ts-simple-ast";
 
 // add source files to ast
 const ast = new Ast();
-const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
-ast.addSourceFiles("folder/**/*{.d.ts,.ts}");
-ast.addSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
-ast.addSourceFileFromStructure("misc.ts", {
+const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
+ast.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
+ast.addExistingSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
+ast.createSourceFile("misc.ts", {
     classes: [{
         name: "SomeClass",
         isExported: true

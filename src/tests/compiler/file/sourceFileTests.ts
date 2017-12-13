@@ -151,13 +151,13 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("MyFile.d.ts", "");
+            const sourceFile = ast.createSourceFile("MyFile.d.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.true;
         });
 
         it("should not be a source file when the file name ends with .ts", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("MyFile.ts", "");
+            const sourceFile = ast.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
     });
@@ -461,8 +461,8 @@ describe(nameof(SourceFile), () => {
         it("should emit the source file", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
-            const sourceFile = ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
-            ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
+            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
+            ast.createSourceFile("file2.ts", "const num2 = 2;");
             const result = sourceFile.emit();
 
             expect(result).to.be.instanceof(EmitResult);
@@ -475,7 +475,7 @@ describe(nameof(SourceFile), () => {
         it("should create the directories when emitting", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist/subdir" } }, fileSystem);
-            const sourceFile = ast.addSourceFileFromText("/test.ts", "const num1 = 1;");
+            const sourceFile = ast.createSourceFile("/test.ts", "const num1 = 1;");
             ast.emit();
             const directories = fileSystem.getCreatedDirectories();
             expect(directories).to.deep.equal(["dist", "dist/subdir"]);

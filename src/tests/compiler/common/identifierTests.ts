@@ -17,7 +17,7 @@ describe(nameof(Identifier), () => {
         it("should get the definition", () => {
             const sourceFileText = "function myFunction() {}\nconst reference = myFunction;";
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>(sourceFileText);
-            const secondSourceFile = tsSimpleAst.addSourceFileFromText("second.ts", "const reference2 = myFunction;");
+            const secondSourceFile = tsSimpleAst.createSourceFile("second.ts", "const reference2 = myFunction;");
             const definitions = (secondSourceFile.getVariableDeclarationOrThrow("reference2").getInitializerOrThrow() as any as Identifier).getDefinitions();
             expect(definitions.length).to.equal(1);
             expect(definitions[0].getName()).to.equal("myFunction");
@@ -49,7 +49,7 @@ describe(nameof(Identifier), () => {
     describe(nameof<Identifier>(n => n.findReferences), () => {
         it("should find all the references", () => {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
-            const secondSourceFile = tsSimpleAst.addSourceFileFromText("second.ts", "const reference2 = myFunction;");
+            const secondSourceFile = tsSimpleAst.createSourceFile("second.ts", "const reference2 = myFunction;");
             const referencedSymbols = firstChild.getNameNode().findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];

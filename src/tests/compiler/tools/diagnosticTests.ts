@@ -5,7 +5,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Diagnostic), () => {
     const {tsSimpleAst, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true });
-    tsSimpleAst.addSourceFileFromText("file.ts", "interface MyInterface { declare prop: string; }");
+    tsSimpleAst.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
     const diagnostics = tsSimpleAst.getDiagnostics();
     const constError = diagnostics[1];
 

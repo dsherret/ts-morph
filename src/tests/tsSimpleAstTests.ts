@@ -53,17 +53,17 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.getOrAddSourceFile), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.addExistingSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             expect(() => {
-                ast.getOrAddSourceFile("non-existent-file.ts");
+                ast.addExistingSourceFile("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("non-existent-file.ts")}`);
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.addSourceFiles), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.addExistingSourceFiles), () => {
         // todo: would be more ideal to use a mocking framework here
         const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file1.ts", text: "" }, { filePath: "file2.ts", text: "" }]);
         fileSystem.glob = patterns => {
@@ -72,36 +72,37 @@ describe(nameof(TsSimpleAst), () => {
             return ["file1.ts", "file2.ts", "file3.ts"].map(p => FileUtils.getStandardizedAbsolutePath(p));
         };
         const ast = new TsSimpleAst(undefined, fileSystem);
-        ast.addSourceFiles("some-pattern");
+        const result = ast.addExistingSourceFiles("some-pattern");
 
         it("should have 2 source files", () => {
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
+            expect(result).to.deep.equal(sourceFiles);
             expect(sourceFiles[0].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file1.ts"));
             expect(sourceFiles[0].isSaved()).to.be.true; // should be saved because it was read from the disk
             expect(sourceFiles[1].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file2.ts"));
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.addSourceFileFromText), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.createSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("file.ts", "");
+            ast.createSourceFile("file.ts", "");
             expect(() => {
-                ast.addSourceFileFromText("file.ts", "");
+                ast.createSourceFile("file.ts", "");
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
         });
 
         it("should mark the source file as having not been saved", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("file.ts", "");
+            const sourceFile = ast.createSourceFile("file.ts", "");
             expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("", () => {
             // todo: remove
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
+            const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
             enumDef.rename("NewName");
             const addedEnum = sourceFile.addEnum({
@@ -115,25 +116,25 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.addSourceFileFromStructure), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.createSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("file.ts", "");
+            ast.createSourceFile("file.ts", "");
             expect(() => {
-                ast.addSourceFileFromStructure("file.ts", {});
+                ast.createSourceFile("file.ts", {});
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
         });
 
         it("should mark the source file as having not been saved", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromStructure("file.ts", {});
+            const sourceFile = ast.createSourceFile("file.ts", {});
             expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("should add a source file based on a structure", () => {
             // basic test
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromStructure("MyFile.ts", {
+            const sourceFile = ast.createSourceFile("MyFile.ts", {
                 enums: [{
                     name: "MyEnum"
                 }],
@@ -147,8 +148,8 @@ describe(nameof(TsSimpleAst), () => {
     describe("mixing real files with virtual files", () => {
         const testFilesDirPath = path.join(__dirname, "../../src/tests/testFiles");
         const ast = new TsSimpleAst();
-        ast.addSourceFiles(`${testFilesDirPath}/**/*.ts`);
-        ast.addSourceFileFromText(
+        ast.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
+        ast.createSourceFile(
             path.join(testFilesDirPath, "variableTestFile.ts"),
             `import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().name;\n`
         );
@@ -168,7 +169,7 @@ describe(nameof(TsSimpleAst), () => {
     describe(nameof<TsSimpleAst>(ast => ast.removeSourceFile), () => {
         it("should remove the source file", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("myFile.ts", ``);
+            const sourceFile = ast.createSourceFile("myFile.ts", ``);
             expect(ast.removeSourceFile(sourceFile)).to.equal(true);
             expect(ast.removeSourceFile(sourceFile)).to.equal(false);
             expect(ast.getSourceFiles().length).to.equal(0);
@@ -180,9 +181,9 @@ describe(nameof(TsSimpleAst), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
-            ast.addSourceFileFromText("file1.ts", "").saveSync();
-            ast.addSourceFileFromText("file2.ts", "");
-            ast.addSourceFileFromText("file3.ts", "");
+            ast.createSourceFile("file1.ts", "").saveSync();
+            ast.createSourceFile("file2.ts", "");
+            ast.createSourceFile("file3.ts", "");
             await ast.saveUnsavedSourceFiles();
             expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
@@ -194,9 +195,9 @@ describe(nameof(TsSimpleAst), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
-            ast.addSourceFileFromText("file1.ts", "").saveSync();
-            ast.addSourceFileFromText("file2.ts", "");
-            ast.addSourceFileFromText("file3.ts", "");
+            ast.createSourceFile("file1.ts", "").saveSync();
+            ast.createSourceFile("file2.ts", "");
+            ast.createSourceFile("file3.ts", "");
             ast.saveUnsavedSourceFilesSync();
 
             expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
@@ -209,8 +210,8 @@ describe(nameof(TsSimpleAst), () => {
         function setup(compilerOptions: ts.CompilerOptions) {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst({ compilerOptions }, fileSystem);
-            ast.addSourceFileFromText("file1.ts", "const num1 = 1;");
-            ast.addSourceFileFromText("file2.ts", "const num2 = 2;");
+            ast.createSourceFile("file1.ts", "const num1 = 1;");
+            ast.createSourceFile("file2.ts", "const num2 = 2;");
             return {fileSystem, ast};
         }
 
@@ -263,7 +264,7 @@ describe(nameof(TsSimpleAst), () => {
 
         it("should not throw when it finds the file", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("myFile.ts", "");
+            ast.createSourceFile("myFile.ts", "");
             expect(ast.getSourceFileOrThrow("myFile.ts").getFilePath()).to.contain("myFile.ts");
         });
     });
@@ -271,8 +272,8 @@ describe(nameof(TsSimpleAst), () => {
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFiles), () => {
         it("should get all the source files added to the ast", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("file1.ts", "");
-            ast.addSourceFileFromText("file2.ts", "");
+            ast.createSourceFile("file1.ts", "");
+            ast.createSourceFile("file2.ts", "");
             expect(ast.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
                 FileUtils.getStandardizedAbsolutePath("file1.ts"),
                 FileUtils.getStandardizedAbsolutePath("file2.ts")
@@ -281,13 +282,13 @@ describe(nameof(TsSimpleAst), () => {
 
         it("should be able to do a file glob", () => {
             const ast = new TsSimpleAst();
-            ast.addSourceFileFromText("file.ts", "");
-            ast.addSourceFileFromText("src/file.ts", "");
-            ast.addSourceFileFromText("src/test/file1.ts", "");
-            ast.addSourceFileFromText("src/test/file2.ts", "");
-            ast.addSourceFileFromText("src/test/file3.ts", "");
-            ast.addSourceFileFromText("src/test/file3.js", "");
-            ast.addSourceFileFromText("src/test/folder/file.ts", "");
+            ast.createSourceFile("file.ts", "");
+            ast.createSourceFile("src/file.ts", "");
+            ast.createSourceFile("src/test/file1.ts", "");
+            ast.createSourceFile("src/test/file2.ts", "");
+            ast.createSourceFile("src/test/file3.ts", "");
+            ast.createSourceFile("src/test/file3.js", "");
+            ast.createSourceFile("src/test/folder/file.ts", "");
             expect(ast.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
                 FileUtils.getStandardizedAbsolutePath("src/test/file1.ts"),
                 FileUtils.getStandardizedAbsolutePath("src/test/file2.ts"),
@@ -309,9 +310,9 @@ describe(nameof(TsSimpleAst), () => {
         let interfaceNode3: Node;
         let interfaceNode4: Node;
         ast.forgetNodesCreatedInBlock(remember => {
-            sourceFile = ast.addSourceFileFromText("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} " +
+            sourceFile = ast.createSourceFile("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} " +
                 "interface Interface3 {} interface Interface4 {} }");
-            sourceFileNotNavigated = ast.addSourceFileFromText("test2.ts", "class MyClass {}");
+            sourceFileNotNavigated = ast.createSourceFile("test2.ts", "class MyClass {}");
             classNode = sourceFile.getClassOrThrow("MyClass");
             namespaceNode = sourceFile.getNamespaceOrThrow("MyNamespace");
 
@@ -367,7 +368,7 @@ describe(nameof(TsSimpleAst), () => {
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
             const ast = new TsSimpleAst();
-            const sourceFile = ast.addSourceFileFromText("myFile.ts", `function myFunction(param: string) {}`);
+            const sourceFile = ast.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
             const param = sourceFile.getFunctions()[0].getParameters()[0];
             expect(param.getType().getText()).to.equal("string");
             param.setType("number");
