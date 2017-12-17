@@ -1,4 +1,5 @@
 ﻿export interface Dictionary<K, V> {
+    readonly size: number;
     get(key: K): V | undefined;
     set(key: K, value: V): void;
     has(key: K): boolean;
@@ -14,6 +15,10 @@ export class Es5Map<K, V> implements Dictionary<K, V> {
     private itemCount = 0;
 
     private static instanceCount = 0;
+
+    get size() {
+        return Object.keys(this.items).length;
+    }
 
     set(key: K, value: V) {
         const identifier = this.getIdentifier(key) || this.createIdentifier(key);

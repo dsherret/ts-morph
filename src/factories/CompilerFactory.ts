@@ -30,10 +30,11 @@ export class CompilerFactory {
     }
 
     /**
-     * Gets the source files from the internal cache.
+     * Gets all the source files sorted by their directory depth.
      */
-    getSourceFiles() {
-        return ArrayUtils.from(this.sourceFileCacheByFilePath.getValues());
+    *getSourceFilesByDirectoryDepth() {
+        for (const dir of this.getDirectoriesByDepth())
+            yield* dir.getSourceFiles();
     }
 
     /**
@@ -227,6 +228,13 @@ export class CompilerFactory {
      */
     getDirectory(dirPath: string) {
         return this.directoryCache.get(dirPath);
+    }
+
+    /**
+     * Gets all the directories iterated by depth.
+     */
+    getDirectoriesByDepth() {
+        return this.directoryCache.getAllByDepth();
     }
 
     /**

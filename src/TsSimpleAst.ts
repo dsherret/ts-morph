@@ -85,6 +85,13 @@ export class TsSimpleAst {
     }
 
     /**
+     * Gets all the directories.
+     */
+    getDirectories() {
+        return ArrayUtils.from(this.global.compilerFactory.getDirectoriesByDepth());
+    }
+
+    /**
      * Gets the directories without a parent.
      */
     getRootDirectories() {
@@ -208,7 +215,7 @@ export class TsSimpleAst {
         if (typeof fileNameOrSearchFunction === "string")
             searchFunction = def => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
 
-        return ArrayUtils.find(this.getSourceFiles(), searchFunction);
+        return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), searchFunction);
     }
 
     /**
@@ -216,12 +223,19 @@ export class TsSimpleAst {
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(globPattern?: string): compiler.SourceFile[] {
-        let sourceFiles = this.global.compilerFactory.getSourceFiles();
-        if (typeof globPattern === "string") {
-            const mm = new Minimatch(globPattern, { matchBase: true });
-            sourceFiles = sourceFiles.filter(s => mm.match(s.getFilePath()));
+        const sourceFiles = this.global.compilerFactory.getSourceFilesByDirectoryDepth();
+        if (typeof globPattern === "string")
+            return ArrayUtils.from(getFilteredSourceFiles());
+        else
+            return ArrayUtils.from(sourceFiles);
+
+        function* getFilteredSourceFiles() {
+            const mm = new Minimatch(globPattern!, { matchBase: true });
+            for (const sourceFile of sourceFiles) {
+                if (mm.match(sourceFile.getFilePath()))
+                    yield sourceFile;
+            }
         }
-        return sourceFiles;
     }
 
     /**

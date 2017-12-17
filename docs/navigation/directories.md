@@ -32,6 +32,7 @@ Or from the main ast object:
 
 ```ts
 ast.getRootDirectories(); // gets directories without a parent
+ast.getDirectories(); // gets all the directories
 ast.getDirectory("path/to/directory");
 ast.getDirectoryOrThrow("path/to/directory");
 ```

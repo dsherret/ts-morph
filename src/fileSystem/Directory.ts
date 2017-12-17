@@ -40,6 +40,14 @@ export class Directory {
     }
 
     /**
+     * Gets the directory depth.
+     * @internal
+     */
+    getDepth() {
+        return this._pathParts.length;
+    }
+
+    /**
      * Gets the path to the directory.
      */
     getPath() {

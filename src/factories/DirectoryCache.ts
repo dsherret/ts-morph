@@ -22,7 +22,38 @@ export class DirectoryCache {
     }
 
     getOrphans() {
-        return Array.from(this.orphanDirs.values());
+        return ArrayUtils.from(this.orphanDirs.values());
+    }
+
+    getAll() {
+        return ArrayUtils.from(this.directoriesByPath.getValues());
+    }
+
+    *getAllByDepth() {
+        const dirLevels = new KeyValueCache<number, Directory[]>();
+        let depth = 0;
+        this.getOrphans().forEach(addToDirLevels);
+        depth = Math.min(...ArrayUtils.from(dirLevels.getKeys()));
+
+        while (dirLevels.getSize() > 0) {
+            for (const dir of dirLevels.get(depth) || []) {
+                yield dir;
+                dir.getDirectories().forEach(addToDirLevels);
+            }
+            dirLevels.removeByKey(depth);
+            depth++;
+        }
+
+        function addToDirLevels(dir: Directory) {
+            const dirDepth = dir.getDepth();
+
+            /* istanbul ignore if */
+            if (depth > dirDepth)
+                throw new Error(`For some reason a subdirectory had a lower depth than the parent directory: ${dir.getPath()}`);
+
+            const dirs = dirLevels.getOrCreate<Directory[]>(dirDepth, () => []);
+            dirs.push(dir);
+        }
     }
 
     remove(dirPath: string) {

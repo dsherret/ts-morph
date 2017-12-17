@@ -135,6 +135,26 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.getDirectories), () => {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const ast = new TsSimpleAst(undefined, fileSystem);
+        ast.createSourceFile("dir/child/file.ts");
+        ast.createSourceFile("dir2/child/file2.ts");
+        ast.createSourceFile("dir3/child/file2.ts");
+        ast.createSourceFile("dir/file.ts");
+        ast.createSourceFile("dir2/file2.ts");
+
+        it("should get all the directories in the order based on the directory structure", () => {
+            expect(ast.getDirectories().map(d => d.getPath())).to.deep.equal([
+                ast.getDirectoryOrThrow("dir"),
+                ast.getDirectoryOrThrow("dir2"),
+                ast.getDirectoryOrThrow("dir3/child"),
+                ast.getDirectoryOrThrow("dir/child"),
+                ast.getDirectoryOrThrow("dir2/child")
+            ].map(d => d.getPath()));
+        });
+    });
+
     describe(nameof<TsSimpleAst>(ast => ast.addExistingSourceFile), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
@@ -340,6 +360,22 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.getSourceFile), () => {
+        it("should get the first match based on the directory structure", () => {
+            const ast = new TsSimpleAst();
+            ast.createSourceFile("dir/file.ts");
+            const expectedFile = ast.createSourceFile("file.ts");
+            expect(ast.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+
+        it("should get the first match based on the directory structure when swapping the order fo what was created first", () => {
+            const ast = new TsSimpleAst();
+            const expectedFile = ast.createSourceFile("file.ts");
+            ast.createSourceFile("dir/file.ts");
+            expect(ast.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+    });
+
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFileOrThrow), () => {
         it("should throw when it can't find the source file based on a provided path", () => {
             const ast = new TsSimpleAst();
@@ -359,13 +395,17 @@ describe(nameof(TsSimpleAst), () => {
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFiles), () => {
-        it("should get all the source files added to the ast", () => {
+        it("should get all the source files added to the ast sorted by directory structure", () => {
             const ast = new TsSimpleAst();
-            ast.createSourceFile("file1.ts", "");
-            ast.createSourceFile("file2.ts", "");
+            ast.createSourceFile("dir/child/file.ts");
+            ast.createSourceFile("dir/file.ts");
+            ast.createSourceFile("file1.ts");
+            ast.createSourceFile("file2.ts");
             expect(ast.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
                 FileUtils.getStandardizedAbsolutePath("file1.ts"),
-                FileUtils.getStandardizedAbsolutePath("file2.ts")
+                FileUtils.getStandardizedAbsolutePath("file2.ts"),
+                FileUtils.getStandardizedAbsolutePath("dir/file.ts"),
+                FileUtils.getStandardizedAbsolutePath("dir/child/file.ts")
             ]);
         });
 

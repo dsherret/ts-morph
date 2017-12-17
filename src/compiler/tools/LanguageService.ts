@@ -68,7 +68,7 @@ export class LanguageService {
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
             getDirectories: (path: string) => {
-                console.log("ATTEMPT TO GET DIRECTORIES");
+                // todo: not sure where this is used...
                 return [];
             },
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),

@@ -1,7 +1,7 @@
 ﻿import * as errors from "./../errors";
 
 export class AdvancedIterator<T> {
-    private readonly buffer: (T | undefined)[] = Array.from(Array(3)); // previous, current, next
+    private readonly buffer: (T | undefined)[] = [undefined, undefined, undefined]; // previous, current, next
     private bufferIndex = 0;
     private isDone = false;
     private nextCount = 0;

@@ -20,7 +20,7 @@ export class ArrayUtils {
         return true;
     }
 
-    static find<T>(items: T[], condition: (item: T) => boolean) {
+    static find<T>(items: T[] | IterableIterator<T>, condition: (item: T) => boolean) {
         for (const item of items) {
             if (condition(item))
                 return item;

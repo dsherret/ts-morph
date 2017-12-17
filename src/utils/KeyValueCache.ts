@@ -10,6 +10,10 @@ export class KeyValueCache<T, U> {
             this.cacheItems = new Es5Map();
     }
 
+    getSize() {
+        return this.cacheItems.size;
+    }
+
     getValues() {
         return this.cacheItems.values();
     }
@@ -22,7 +26,7 @@ export class KeyValueCache<T, U> {
         return this.cacheItems.entries();
     }
 
-    getOrCreate<TCreate extends U>(key: T, createFunc: () => TCreate) {
+    getOrCreate<TCreate extends U = U>(key: T, createFunc: () => TCreate) {
         let item = this.get(key) as TCreate;
 
         if (item == null) {
