@@ -202,7 +202,7 @@ export class Directory {
         const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativePath));
         if (!this.global.fileSystem.directoryExistsSync(dirPath))
             throw new errors.DirectoryNotFoundError(dirPath);
-        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+        return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
     }
 
     /**
@@ -211,7 +211,7 @@ export class Directory {
      */
     createDirectory(relativePath: string) {
         const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativePath));
-        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+        return this.global.compilerFactory.createDirectory(dirPath);
     }
 
     /**

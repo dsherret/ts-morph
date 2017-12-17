@@ -87,6 +87,19 @@ describe(nameof(TsSimpleAst), () => {
             expect(createdDir).to.not.be.undefined;
             expect(ast.getDirectoryOrThrow("someDir")).to.equal(createdDir);
         });
+
+        it("should throw when a directory already exists at the specified path", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const createdDir = ast.createDirectory("someDir");
+            expect(() => ast.createDirectory("someDir")).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should throw when a directory already exists on the file system at the specified path", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["childDir"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            expect(() => ast.createDirectory("childDir")).to.throw(errors.InvalidOperationError);
+        });
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.getDirectory), () => {
@@ -200,6 +213,12 @@ describe(nameof(TsSimpleAst), () => {
             expect(() => {
                 ast.createSourceFile("file.ts", "");
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+        });
+
+        it("should throw an exception if creating a source file at an existing path on the disk", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            expect(() => ast.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
         });
 
         it("should mark the source file as having not been saved", () => {

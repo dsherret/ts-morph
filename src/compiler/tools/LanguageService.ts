@@ -51,7 +51,7 @@ export class LanguageService {
                 return this.global.fileSystem.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this.global.compilerFactory.containsFileInDirectory(dirName) || this.global.fileSystem.directoryExistsSync(dirName)
+            directoryExists: dirName => this.global.compilerFactory.containsDirectoryAtPath(dirName) || this.global.fileSystem.directoryExistsSync(dirName)
         };
 
         this.compilerHost = {

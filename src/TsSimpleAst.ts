@@ -51,24 +51,23 @@ export class TsSimpleAst {
         dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
         if (!this.fileSystem.directoryExistsSync(dirPath))
             throw new errors.DirectoryNotFoundError(dirPath);
-        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+        return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
     }
 
     /**
      * Creates a directory at the specified path.
-     *
-     * Will return the existing directory if it was already created.
      * Note: Will not save the directory to disk until one of its source files is saved.
-     * @param dirPath
+     * @param dirPath - Path to create the directory at.
+     * @throws - InvalidOperationError if a directory already exists at the provided file path.
      */
     createDirectory(dirPath: string): Directory {
         dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
-        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+        return this.global.compilerFactory.createDirectory(dirPath);
     }
 
     /**
      * Gets a directory by the specified path or throws it doesn't exist.
-     * @param dirPath - Directory path.
+     * @param dirPath - Path to create the directory at.
      */
     getDirectoryOrThrow(dirPath: string): Directory {
         return errors.throwIfNullOrUndefined(this.getDirectory(dirPath),

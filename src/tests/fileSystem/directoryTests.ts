@@ -14,8 +14,8 @@ describe(nameof(Directory), () => {
         children?: TreeNode[];
     }
 
-    function getAst() {
-        const ast = new TsSimpleAst(undefined, getFileSystemHostWithFiles([]));
+    function getAst(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {
+        const ast = new TsSimpleAst(undefined, getFileSystemHostWithFiles(initialFiles, initialDirectories));
         return ast;
     }
 
@@ -208,6 +208,12 @@ describe(nameof(Directory), () => {
         it("should create a source file in the directory when specifying a structure", () => {
             doTest({ enums: [{ name: "MyEnum" }] }, "enum MyEnum {\n}\n");
         });
+
+        it("should throw an exception if creating a source file at an existing path on the disk", () => {
+            const ast = getAst([{ filePath: "file.ts", text: "" }], [""]);
+            const directory = ast.addExistingDirectory("");
+            expect(() => directory.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
+        });
     });
 
     describe(nameof<Directory>(d => d.addExistingSourceFile), () => {
@@ -230,7 +236,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.createDirectory), () => {
-        const ast = getAst();
+        const ast = getAst([], ["", "childDir"]);
         const directory = ast.createDirectory("some/path");
         directory.createDirectory("child");
         directory.createDirectory("../../dir/other/deep/path");
@@ -255,6 +261,14 @@ describe(nameof(Directory), () => {
                     }]
                 }]
             });
+        });
+
+        it("should throw when a directory already exists at the specified path", () => {
+            expect(() => directory.createDirectory("child")).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should throw when a directory already exists on the file system at the specified path", () => {
+            expect(() => ast.addExistingDirectory("").createDirectory("childDir")).to.throw(errors.InvalidOperationError);
         });
     });
 

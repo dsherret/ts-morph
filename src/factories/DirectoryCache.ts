@@ -61,7 +61,7 @@ export class DirectoryCache {
         return this.directoriesByPath.removeByKey(dirPath);
     }
 
-    addIfNotExists(dirPath: string) {
+    createOrAddIfNotExists(dirPath: string) {
         if (this.has(dirPath))
             return this.get(dirPath)!;
 

@@ -81,10 +81,10 @@ export class CompilerFactory {
      * @param sourceText - Text to create the source file with.
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
-        if (this.containsSourceFileAtPath(absoluteFilePath))
-            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${absoluteFilePath}`);
-        const compilerSourceFile = ts.createSourceFile(absoluteFilePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        if (this.containsSourceFileAtPath(filePath) || this.global.fileSystem.fileExistsSync(filePath))
+            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
 
@@ -105,12 +105,13 @@ export class CompilerFactory {
      * @param filePath - File path to get the file from.
      */
     getSourceFileFromFilePath(filePath: string): compiler.SourceFile | undefined {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
-        let sourceFile = this.sourceFileCacheByFilePath.get(absoluteFilePath);
+        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
-            if (this.global.fileSystem.fileExistsSync(absoluteFilePath)) {
-                Logger.log(`Loading file: ${absoluteFilePath}`);
-                sourceFile = this.createSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFileSync(absoluteFilePath));
+            if (this.global.fileSystem.fileExistsSync(filePath)) {
+                Logger.log(`Loading file: ${filePath}`);
+                const compilerSourceFile = ts.createSourceFile(filePath, this.global.fileSystem.readFileSync(filePath), this.global.manipulationSettings.getScriptTarget(), true);
+                sourceFile = this.getSourceFile(compilerSourceFile);
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -130,14 +131,14 @@ export class CompilerFactory {
      */
     containsSourceFileAtPath(filePath: string) {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
-        return this.sourceFileCacheByFilePath.get(absoluteFilePath) != null;
+        return this.sourceFileCacheByFilePath.has(absoluteFilePath);
     }
 
     /**
      * Gets if the internal cache contains a source file with the specified directory path.
      * @param dirPath - Directory path to check.
      */
-    containsFileInDirectory(dirPath: string) {
+    containsDirectoryAtPath(dirPath: string) {
         const normalizedDirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
         return this.directoryCache.has(normalizedDirPath);
     }
@@ -204,7 +205,7 @@ export class CompilerFactory {
 
             // add to list of directories
             const dirPath = sourceFile.getDirectoryPath();
-            this.directoryCache.addIfNotExists(dirPath);
+            this.directoryCache.createOrAddIfNotExists(dirPath);
             this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
 
             // fire the event
@@ -215,11 +216,21 @@ export class CompilerFactory {
     }
 
     /**
-     * Creates a directory if it doesn't exist.
+     * Adds a directory if it doesn't exist.
      * @param dirPath - Directory path.
      */
-    createDirectoryIfNotExists(dirPath: string) {
-        return this.directoryCache.addIfNotExists(dirPath);
+    addDirectoryIfNotExists(dirPath: string) {
+        return this.directoryCache.createOrAddIfNotExists(dirPath);
+    }
+
+    /**
+     * Creates a directory.
+     * @param dirPath - Directory path.
+     */
+    createDirectory(dirPath: string) {
+        if (this.containsDirectoryAtPath(dirPath) || this.global.fileSystem.directoryExistsSync(dirPath))
+            throw new errors.InvalidOperationError(`A directory already exists at the provided path: ${dirPath}`);
+        return this.directoryCache.createOrAddIfNotExists(dirPath);
     }
 
     /**
