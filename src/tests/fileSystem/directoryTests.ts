@@ -56,6 +56,26 @@ describe(nameof(Directory), () => {
             expect(sourceFile.getDirectory().getParent()).to.be.undefined;
         });
 
+        it("should get the files in the alphabetical order", () => {
+            const ast = getAst();
+            const directory = ast.createDirectory("");
+            directory.createSourceFile("D.ts");
+            directory.createSourceFile("b.ts");
+            directory.createSourceFile("a.ts");
+            directory.createSourceFile("C.ts");
+            expect(directory.getSourceFiles().map(s => s.getBaseName())).to.deep.equal(["a.ts", "b.ts", "C.ts", "D.ts"]);
+        });
+
+        it("should get the directories in alphabetical order", () => {
+            const ast = getAst();
+            const directory = ast.createDirectory("");
+            directory.createDirectory("D");
+            directory.createDirectory("b");
+            directory.createDirectory("a");
+            directory.createDirectory("C");
+            expect(directory.getDirectories().map(s => s.getBaseName())).to.deep.equal(["a", "b", "C", "D"]);
+        });
+
         it("should have a parent when a file exists in an ancestor folder", () => {
             const ast = getAst();
             const sourceFile = ast.createSourceFile("file.ts");

@@ -6,12 +6,16 @@ title: Source Files
 
 Source files are the root nodes of the AST.
 
-### Get file path
+### File path and name
 
 Use:
 
 ```typescript
-sourceFile.getFilePath(); // returns: string
+// returns the file path (ex. /home/david/file.ts)
+sourceFile.getFilePath();
+
+// returns only the file name (ex. file.ts)
+sourceFile.getBaseName();
 ```
 
 ### Check if declaration file

@@ -67,10 +67,14 @@ const directory = ast.createDirectory("path/to/dir");
 
 ## Directory
 
-### Path
+### Path and name
 
 ```ts
+// returns the full path (ex. /home/david/project/)
 const path = directory.getPath();
+
+// returns only the directory name (ex. project)
+const baseName = directory.getBaseName();
 ```
 
 ### Parent directory

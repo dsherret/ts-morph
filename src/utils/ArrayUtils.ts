@@ -41,6 +41,21 @@ export class ArrayUtils {
         }
     }
 
+    static binaryInsert<T>(items: T[], newItem: T, isGreaterThan: (item: T) => boolean) {
+        let top = items.length - 1;
+        let bottom = 0;
+
+        while (bottom <= top) {
+            const mid = Math.floor((top + bottom) / 2);
+            if (isGreaterThan(items[mid]))
+                top = mid - 1;
+            else
+                bottom = mid + 1;
+        }
+
+        items.splice(top + 1, 0, newItem);
+    }
+
     static binarySearch<T>(items: T[], isEqual: (item: T) => boolean, isGreaterThan: (item: T) => boolean) {
         let top = items.length - 1;
         let bottom = 0;

@@ -1,5 +1,4 @@
-﻿import * as path from "path";
-import * as ts from "typescript";
+﻿import * as ts from "typescript";
 import Ast, {SourceFile, Directory, TypeGuards} from "./../src/main";
 
 export class BarrelFileMaintainer {
@@ -28,7 +27,7 @@ export class BarrelFileMaintainer {
             barrelFile = dir.createSourceFile(this.barrelFileName);
 
         this.removeNamespaceExports(barrelFile);
-        this.addNamespaceExports(barrelFile, sourceFiles.map(s => `./${path.basename(s.getFilePath()).replace(/\.(ts|js)$/, "")}`));
+        this.addNamespaceExports(barrelFile, sourceFiles.map(s => `./${s.getBaseName().replace(/\.(ts|js)$/, "")}`));
         this.updateParentDir(dir);
     }
 
@@ -42,7 +41,7 @@ export class BarrelFileMaintainer {
         if (parentBarrelFile == null)
             parentBarrelFile = parent.createSourceFile(this.barrelFileName);
 
-        this.addNamespaceExports(parentBarrelFile, [`./${path.basename(dir.getPath())}`]);
+        this.addNamespaceExports(parentBarrelFile, [`./${dir.getBaseName()}`]);
 
         if (wasCreated)
             this.updateParentDir(parent);

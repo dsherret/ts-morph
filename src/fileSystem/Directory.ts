@@ -56,6 +56,13 @@ export class Directory {
     }
 
     /**
+     * Gets the directory path's base name.
+     */
+    getBaseName() {
+        return this._pathParts[this._pathParts.length - 1];
+    }
+
+    /**
      * Gets the parent directory or throws if it doesn't exist or was never added to the AST.
      */
     getParentOrThrow() {
@@ -295,7 +302,8 @@ export class Directory {
 
     /** @internal */
     _addSourceFile(sourceFile: SourceFile) {
-        this._sourceFiles.push(sourceFile);
+        const baseName = sourceFile.getBaseName().toUpperCase();
+        ArrayUtils.binaryInsert(this._sourceFiles, sourceFile, item => item.getBaseName().toUpperCase() > baseName);
     }
 
     /** @internal */
@@ -310,7 +318,8 @@ export class Directory {
 
     /** @internal */
     _addDirectory(dir: Directory) {
-        this._directories.push(dir);
+        const baseName = dir.getBaseName().toUpperCase();
+        ArrayUtils.binaryInsert(this._directories, dir, item => item.getBaseName().toUpperCase() > baseName);
         dir._parent = this;
     }
 

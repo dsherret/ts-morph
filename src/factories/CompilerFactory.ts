@@ -203,7 +203,7 @@ export class CompilerFactory {
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
 
             // add to list of directories
-            const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirPath(sourceFile.getFilePath()));
+            const dirPath = sourceFile.getDirectoryPath();
             this.directoryCache.addIfNotExists(dirPath);
             this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
 

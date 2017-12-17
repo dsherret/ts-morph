@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import * as path from "path";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {Directory} from "./../../fileSystem";
@@ -74,6 +73,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the file path's base name.
+     */
+    getBaseName() {
+        return FileUtils.getBaseName(this.getFilePath());
+    }
+
+    /**
      * Gets the directory that the source file is contained in.
      */
     getDirectory(): Directory {
@@ -84,7 +90,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the directory path that the source file is contained in.
      */
     getDirectoryPath() {
-        return path.dirname(this.compilerNode.fileName);
+        return FileUtils.getDirPath(this.compilerNode.fileName);
     }
 
     /**
@@ -92,7 +98,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param filePath - A new file path. Can be relative to the original file or an absolute path.
      */
     copy(filePath: string): SourceFile {
-        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirPath(this.getFilePath()));
+        const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, this.getDirectoryPath());
         return this.global.compilerFactory.createSourceFileFromText(absoluteFilePath, this.getFullText());
     }
 
@@ -118,7 +124,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Asynchronously saves this file with any changes.
      */
     async save() {
-        await FileUtils.ensureDirectoryExists(this.global.fileSystem, FileUtils.getDirPath(this.getFilePath()));
+        await FileUtils.ensureDirectoryExists(this.global.fileSystem, this.getDirectoryPath());
         await this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
@@ -127,7 +133,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirPath(this.getFilePath()));
+        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, this.getDirectoryPath());
         this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
@@ -137,7 +143,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencedFiles() {
         // todo: add tests
-        const dirPath = FileUtils.getDirPath(this.getFilePath());
+        const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
             .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
@@ -148,7 +154,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getTypeReferenceDirectives() {
         // todo: add tests
-        const dirPath = FileUtils.getDirPath(this.getFilePath());
+        const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
             .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];

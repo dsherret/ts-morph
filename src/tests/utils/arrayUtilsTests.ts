@@ -88,4 +88,31 @@ describe(nameof(ArrayUtils), () => {
             doTest([1, 2, 3, 4, 5], 6, -1);
         });
     });
+
+    describe(`#${nameof(ArrayUtils.binaryInsert)}()`, () => {
+        function doTest(items: number[], value: number, expectedItems: number[]) {
+            ArrayUtils.binaryInsert(items, value, item => item > value);
+            expect(items).to.deep.equal(expectedItems);
+        }
+
+        it("should add a number in the correct place when equal", () => {
+            doTest([1, 2, 3], 2, [1, 2, 2, 3]);
+        });
+
+        it("should add a number in the correct place in an odd position", () => {
+            doTest([1, 2, 4], 3, [1, 2, 3, 4]);
+        });
+
+        it("should add a number in the correct place in an even position", () => {
+            doTest([1, 2, 3, 5], 4, [1, 2, 3, 4, 5]);
+        });
+
+        it("should add a number in the correct place at the beginning", () => {
+            doTest([1, 2, 3, 5], 0, [0, 1, 2, 3, 5]);
+        });
+
+        it("should add a number in the correct place at the end", () => {
+            doTest([1, 2, 3, 5], 6, [1, 2, 3, 5, 6]);
+        });
+    });
 });

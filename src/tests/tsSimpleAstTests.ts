@@ -263,8 +263,8 @@ describe(nameof(TsSimpleAst), () => {
             `import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().name;\n`
         );
 
-        it("should have 3 source files", () => {
-            expect(ast.getSourceFiles().length).to.equal(3);
+        it("should have 4 source files", () => {
+            expect(ast.getSourceFiles().length).to.equal(4);
         });
 
         it("should rename a name appropriately", () => {
