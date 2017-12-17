@@ -7,7 +7,7 @@ title: Emitting
 Emitting is easy. Here's an example:
 
 ```typescript
-const ast = new TsSimpleAst({ compilerOptions: { out: "dist", declaration: true } });
+const ast = new TsSimpleAst({ compilerOptions: { outDir: "dist", declaration: true } });
 ast.addSourceFile("MyFile.ts", "const num = 1;");
 ast.emit();
 ```
@@ -38,3 +38,15 @@ Specify the `emitOnlyDtsFiles` flag:
 ```typescript
 ast.emit({ emitOnlyDtsFiles: true });
 ```
+
+### Emit Diagnostics
+
+Diagnostics about the emit can be found on the result:
+
+```ts
+const emitResult = ast.emit();
+for (const diagnostic of emitResult.getDiagnostics())
+    console.log(diagnostic.getMessageText());
+```
+
+These are good to always check when emitting to ensure everything went smoothly. They will explain why files aren't being emitted.
