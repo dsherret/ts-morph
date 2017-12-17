@@ -5,7 +5,7 @@ export * from "./ArgumentTypeError";
 export * from "./BaseError";
 export * from "./DirectoryNotFoundError";
 export * from "./FileNotFoundError";
+export * from "./helpers";
 export * from "./InvalidOperationError";
 export * from "./NotImplementedError";
 export * from "./NotSupportedError";
-export * from "./helpers";

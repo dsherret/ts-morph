@@ -18,6 +18,6 @@ export * from "./ReturnTypedNodeStructure";
 export * from "./ScopeableNodeStructure";
 export * from "./ScopedNodeStructure";
 export * from "./StaticableNodeStructure";
-export * from "./TypeParameteredNodeStructure";
 export * from "./TypedNodeStructure";
+export * from "./TypeParameteredNodeStructure";
 export * from "./name";
