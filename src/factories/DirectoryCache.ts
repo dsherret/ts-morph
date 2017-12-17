@@ -1,4 +1,5 @@
-﻿import {GlobalContainer} from "./../GlobalContainer";
+﻿/* barrel:ignore */
+import {GlobalContainer} from "./../GlobalContainer";
 import {KeyValueCache, ArrayUtils, FileUtils, createHashSet} from "./../utils";
 import {Directory} from "./../fileSystem/Directory";
 
