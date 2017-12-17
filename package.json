@@ -47,7 +47,7 @@
     "gulp-typescript": "^2.13.3",
     "merge2": "^1.0.3",
     "mocha": "^3.3.0",
-    "ts-nameof": "^0.8.0",
+    "ts-nameof": "^0.10.3",
     "tslint": "^5.8.0"
   },
   "dependencies": {

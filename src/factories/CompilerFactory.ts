@@ -1,12 +1,14 @@
 ﻿import * as ts from "typescript";
 import * as compiler from "./../compiler";
 import * as errors from "./../errors";
-import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet} from "./../utils";
+import {SourceFileStructure} from "./../structures";
+import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
-import {VirtualFileSystemHost} from "./../fileSystem";
+import {Directory, VirtualFileSystemHost} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
+import {DirectoryCache} from "./DirectoryCache";
 
 /**
  * Factory for creating compiler wrappers.
@@ -14,23 +16,61 @@ import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
-    private readonly normalizedDirectories = createHashSet<string>();
     private readonly nodeCache = new ForgetfulNodeCache();
-    private readonly sourceFileAddedEventContainer = new EventContainer<{ addedSourceFile: compiler.SourceFile; }>();
+    private readonly directoryCache: DirectoryCache;
+    private readonly sourceFileAddedEventContainer = new EventContainer();
+    private readonly sourceFileRemovedEventContainer = new EventContainer();
 
     /**
      * Initializes a new instance of CompilerFactory.
      * @param global - Global container.
      */
     constructor(private readonly global: GlobalContainer) {
+        this.directoryCache = new DirectoryCache(global);
+    }
+
+    /**
+     * Gets the source files from the internal cache.
+     */
+    getSourceFiles() {
+        return ArrayUtils.from(this.sourceFileCacheByFilePath.getValues());
+    }
+
+    /**
+     * Gets the source file paths from the internal cache.
+     */
+    getSourceFilePaths() {
+        return ArrayUtils.from(this.sourceFileCacheByFilePath.getKeys());
     }
 
     /**
      * Occurs when a source file is added to the cache.
      * @param subscription - Subscripton.
      */
-    onSourceFileAdded(subscription: (arg: { addedSourceFile: compiler.SourceFile; }) => void) {
+    onSourceFileAdded(subscription: () => void) {
         this.sourceFileAddedEventContainer.subscribe(subscription);
+    }
+
+    /**
+     * Occurs when a source file is removed from the cache.
+     * @param subscription - Subscripton.
+     */
+    onSourceFileRemoved(subscription: () => void) {
+        this.sourceFileRemovedEventContainer.subscribe(subscription);
+    }
+
+    /**
+     * Adds a source file by structure or text.
+     * @param filePath - File path.
+     * @param structureOrText - Structure or text.
+     */
+    createSourceFile(filePath: string, structureOrText?: string | SourceFileStructure) {
+        if (structureOrText == null || typeof structureOrText === "string")
+            return this.createSourceFileFromText(filePath, structureOrText || "");
+
+        const sourceFile = this.createSourceFileFromText(filePath, "");
+        sourceFile.fill(structureOrText);
+        return sourceFile;
     }
 
     /**
@@ -39,7 +79,7 @@ export class CompilerFactory {
      * @param filePath - File path for the source file.
      * @param sourceText - Text to create the source file with.
      */
-    addSourceFileFromText(filePath: string, sourceText: string) {
+    createSourceFileFromText(filePath: string, sourceText: string) {
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
         if (this.containsSourceFileAtPath(absoluteFilePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${absoluteFilePath}`);
@@ -56,7 +96,7 @@ export class CompilerFactory {
     createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
         const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), this.global.compilerOptions, { createLanguageService });
-        return globalContainer.compilerFactory.addSourceFileFromText(filePath, sourceText);
+        return globalContainer.compilerFactory.createSourceFileFromText(filePath, sourceText);
     }
 
     /**
@@ -69,7 +109,7 @@ export class CompilerFactory {
         if (sourceFile == null) {
             if (this.global.fileSystem.fileExistsSync(absoluteFilePath)) {
                 Logger.log(`Loading file: ${absoluteFilePath}`);
-                sourceFile = this.addSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFileSync(absoluteFilePath));
+                sourceFile = this.createSourceFileFromText(absoluteFilePath, this.global.fileSystem.readFileSync(absoluteFilePath));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -98,7 +138,7 @@ export class CompilerFactory {
      */
     containsFileInDirectory(dirPath: string) {
         const normalizedDirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
-        return this.normalizedDirectories.has(normalizedDirPath);
+        return this.directoryCache.has(normalizedDirPath);
     }
 
     /**
@@ -162,17 +202,38 @@ export class CompilerFactory {
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
 
             // add to list of directories
-            const normalizedDir = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirPath(sourceFile.getFilePath()));
-            if (!this.normalizedDirectories.has(normalizedDir))
-                this.normalizedDirectories.add(normalizedDir);
+            const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.getDirPath(sourceFile.getFilePath()));
+            this.directoryCache.addIfNotExists(dirPath);
+            this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
 
             // fire the event
-            this.sourceFileAddedEventContainer.fire({
-                addedSourceFile: sourceFile
-            });
+            this.sourceFileAddedEventContainer.fire(undefined);
 
             return sourceFile;
         });
+    }
+
+    /**
+     * Creates a directory if it doesn't exist.
+     * @param dirPath - Directory path.
+     */
+    createDirectoryIfNotExists(dirPath: string) {
+        return this.directoryCache.addIfNotExists(dirPath);
+    }
+
+    /**
+     * Gets a directory.
+     * @param dirPath - Directory path.
+     */
+    getDirectory(dirPath: string) {
+        return this.directoryCache.get(dirPath);
+    }
+
+    /**
+     * Gets the directories without a parent.
+     */
+    getOrphanDirectories() {
+        return this.directoryCache.getOrphans();
     }
 
     /**
@@ -264,8 +325,18 @@ export class CompilerFactory {
 
         if (compilerNode.kind === ts.SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
+            this.directoryCache.get(FileUtils.getDirPath(sourceFile.fileName))!._removeSourceFile(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
+            this.sourceFileRemovedEventContainer.fire(undefined);
         }
+    }
+
+    /**
+     * Removes the directory from the cache.
+     * @param directory - Directory.
+     */
+    removeDirectoryFromCache(directory: Directory) {
+        this.directoryCache.remove(directory.getPath());
     }
 
     /**

@@ -10,6 +10,14 @@ export class KeyValueCache<T, U> {
             this.cacheItems = new Es5Map();
     }
 
+    getValues() {
+        return this.cacheItems.values();
+    }
+
+    getKeys() {
+        return this.cacheItems.keys();
+    }
+
     getEntries() {
         return this.cacheItems.entries();
     }

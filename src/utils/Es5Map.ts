@@ -1,24 +1,26 @@
-﻿export interface Dictionary<T, U> {
-    get(key: T): U | undefined;
-    set(key: T, value: U): void;
-    has(key: T): boolean;
-    delete(key: T): void;
-    entries(): IterableIterator<[T, U]>;
+﻿export interface Dictionary<K, V> {
+    get(key: K): V | undefined;
+    set(key: K, value: V): void;
+    has(key: K): boolean;
+    delete(key: K): void;
+    entries(): IterableIterator<[K, V]>;
+    keys(): IterableIterator<K>;
+    values(): IterableIterator<V>;
 }
 
-export class Es5Map<T, U> implements Dictionary<T, U> {
-    private readonly items: { [identifier: string]: [T, U]; } = {};
+export class Es5Map<K, V> implements Dictionary<K, V> {
+    private readonly items: { [identifier: string]: [K, V]; } = {};
     private readonly propName = `__key_${Es5Map.instanceCount++}`;
     private itemCount = 0;
 
     private static instanceCount = 0;
 
-    set(key: T, value: U) {
+    set(key: K, value: V) {
         const identifier = this.getIdentifier(key) || this.createIdentifier(key);
         this.items[identifier] = [key, value];
     }
 
-    get(key: T) {
+    get(key: K) {
         const identifier = this.getIdentifier(key);
         if (identifier == null)
             return undefined;
@@ -28,14 +30,14 @@ export class Es5Map<T, U> implements Dictionary<T, U> {
         return keyValue[1];
     }
 
-    has(key: T) {
+    has(key: K) {
         const identifier = this.getIdentifier(key);
         if (identifier == null)
             return false;
         return this.items.hasOwnProperty(identifier);
     }
 
-    delete(key: T) {
+    delete(key: K) {
         const identifier = this.getIdentifier(key);
         if (identifier != null)
             delete this.items[identifier];
@@ -46,13 +48,23 @@ export class Es5Map<T, U> implements Dictionary<T, U> {
             yield this.items[key];
     }
 
-    private getIdentifier(key: T) {
+    *keys() {
+        for (const entry of this.entries())
+            yield entry[0];
+    }
+
+    *values() {
+        for (const entry of this.entries())
+            yield entry[1];
+    }
+
+    private getIdentifier(key: K) {
         if (typeof key === "string")
             return key;
         return (key as any)[this.propName] as string | undefined;
     }
 
-    private createIdentifier(key: T) {
+    private createIdentifier(key: K) {
         if (typeof key === "string")
             return key;
 

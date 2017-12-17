@@ -53,13 +53,102 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.addExistingDirectory), () => {
+        it("should throw if the directory doesn't exist", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            expect(() => {
+                ast.addExistingDirectory("someDir");
+            }).to.throw(errors.DirectoryNotFoundError);
+        });
+
+        it("should add the directory if it exists", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const dir = ast.addExistingDirectory("someDir");
+            expect(dir).to.not.be.undefined;
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.createDirectory), () => {
+        it("should create the directory when it doesn't exist", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const createdDir = ast.createDirectory("someDir");
+            expect(createdDir).to.not.be.undefined;
+            expect(ast.getDirectoryOrThrow("someDir")).to.equal(createdDir);
+        });
+
+        it("should create the parent directory if it doesn't exist", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            ast.createSourceFile("file.txt");
+            const createdDir = ast.createDirectory("someDir");
+            expect(createdDir).to.not.be.undefined;
+            expect(ast.getDirectoryOrThrow("someDir")).to.equal(createdDir);
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.getDirectory), () => {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const ast = new TsSimpleAst(undefined, fileSystem);
+        ast.createSourceFile("dir/file.ts");
+
+        it("should get a directory if it exists", () => {
+            expect(ast.getDirectory("dir")).to.not.be.undefined;
+        });
+
+        it("should not get a directory that doesn't exist", () => {
+            expect(ast.getDirectory("otherDir")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.getDirectoryOrThrow), () => {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const ast = new TsSimpleAst(undefined, fileSystem);
+        ast.createSourceFile("dir/file.ts");
+
+        it("should get a directory if it exists", () => {
+            expect(ast.getDirectoryOrThrow("dir")).to.not.be.undefined;
+        });
+
+        it("should throw when it doesn't exist", () => {
+            expect(() => ast.getDirectoryOrThrow("otherDir")).to.throw();
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.getRootDirectories), () => {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const ast = new TsSimpleAst(undefined, fileSystem);
+        ast.createSourceFile("dir/file.ts");
+        ast.createSourceFile("dir/child/file.ts");
+        ast.createSourceFile("dir2/file2.ts");
+        ast.createSourceFile("dir2/child/file2.ts");
+        ast.createSourceFile("dir3/child/file2.ts");
+
+        it("should get all the directories without a parent", () => {
+            expect(ast.getRootDirectories().map(d => d.getPath())).to.deep.equal([
+                ast.getDirectoryOrThrow("dir"),
+                ast.getDirectoryOrThrow("dir2"),
+                ast.getDirectoryOrThrow("dir3/child")
+            ].map(d => d.getPath()));
+        });
+    });
+
     describe(nameof<TsSimpleAst>(ast => ast.addExistingSourceFile), () => {
-        it("should throw an exception if creating a source file at an existing path", () => {
+        it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             expect(() => {
                 ast.addExistingSourceFile("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("non-existent-file.ts")}`);
+        });
+
+        it("should add a source file that exists", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const sourceFile = ast.addExistingSourceFile("file.ts");
+            expect(sourceFile).to.not.be.undefined;
         });
     });
 

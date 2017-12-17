@@ -37,12 +37,6 @@ export class GlobalContainer {
             this._customTypeChecker = new TypeChecker(this);
             this._customTypeChecker.reset(opts.typeChecker);
         }
-
-        if (this._languageService != null) {
-            this.compilerFactory.onSourceFileAdded(args => {
-                this._languageService!.addSourceFile(args.addedSourceFile);
-            });
-        }
     }
 
     /** Gets the file system. */

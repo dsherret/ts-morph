@@ -73,6 +73,14 @@ export class FileUtils {
     }
 
     /**
+     * Gets the base name.
+     * @param fileOrDirPath - Path to get the base name from.
+     */
+    static getBaseName(fileOrDirPath: string) {
+        return path.basename(fileOrDirPath);
+    }
+
+    /**
      * Gets the absolute path when absolute, otherwise gets the relative path from the base dir.
      * @param filePath - File path.
      * @param baseDir - Base dir to use when file path is relative.

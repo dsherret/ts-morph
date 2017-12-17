@@ -11,6 +11,7 @@ export interface CustomFileSystemProps {
 }
 
 export function getFileSystemHostWithFiles(initialFiles: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
+    initialDirectories = initialDirectories.map(d => FileUtils.getStandardizedAbsolutePath(d));
     const writeLog: { filePath: string; fileText: string; }[] = [];
     const deleteLog: { path: string; }[] = [];
     const syncWriteLog: { filePath: string; fileText: string; }[] = [];

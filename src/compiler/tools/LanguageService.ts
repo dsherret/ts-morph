@@ -11,7 +11,6 @@ import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
-    private readonly sourceFiles: SourceFile[] = [];
     private readonly compilerHost: ts.CompilerHost;
     private program: Program;
     /** @internal */
@@ -34,7 +33,7 @@ export class LanguageService {
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => global.compilerOptions,
             getNewLine: () => global.manipulationSettings.getNewLineKind(),
-            getScriptFileNames: () => this.sourceFiles.map(s => s.getFilePath()),
+            getScriptFileNames: () => this.global.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
                 return (version++).toString();
             },
@@ -81,6 +80,9 @@ export class LanguageService {
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost);
+
+        this.global.compilerFactory.onSourceFileAdded(() => this.resetProgram());
+        this.global.compilerFactory.onSourceFileRemoved(() => this.resetProgram());
     }
 
     /**
@@ -89,7 +91,7 @@ export class LanguageService {
      */
     resetProgram() {
         if (this.program != null)
-            this.program.reset(this.sourceFiles.map(s => s.getFilePath()), this.compilerHost);
+            this.program.reset(this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
     }
 
     /**
@@ -97,7 +99,7 @@ export class LanguageService {
      */
     getProgram() {
         if (this.program == null)
-            this.program = new Program(this.global, this.sourceFiles.map(s => s.getFilePath()), this.compilerHost);
+            this.program = new Program(this.global, this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
         return this.program;
     }
 
@@ -240,35 +242,5 @@ export class LanguageService {
 
             return fullText;
         }
-    }
-
-    /**
-     * @internal
-     */
-    addSourceFile(sourceFile: SourceFile) {
-        // todo: these source files should be strictly stored in the factory cache
-        this.sourceFiles.push(sourceFile);
-        this.resetProgram();
-    }
-
-    /**
-     * @internal
-     */
-    removeSourceFile(sourceFile: SourceFile) {
-        const index = this.sourceFiles.indexOf(sourceFile);
-        if (index === -1)
-            return false;
-
-        this.sourceFiles.splice(index, 1);
-        this.resetProgram();
-        sourceFile.forget(); // todo: don't forget, just remove the language service for this node
-        return true;
-    }
-
-    /**
-     * @internal
-     */
-    getSourceFiles() {
-        return [...this.sourceFiles];
     }
 }

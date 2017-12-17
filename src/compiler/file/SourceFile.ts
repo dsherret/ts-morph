@@ -2,6 +2,7 @@
 import * as path from "path";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
+import {Directory} from "./../../fileSystem";
 import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting} from "./../../manipulation";
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
@@ -73,7 +74,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the directory path that the file is contained in.
+     * Gets the directory that the source file is contained in.
+     */
+    getDirectory(): Directory {
+        return this.global.compilerFactory.getDirectory(this.getDirectoryPath())!;
+    }
+
+    /**
+     * Gets the directory path that the source file is contained in.
      */
     getDirectoryPath() {
         return path.dirname(this.compilerNode.fileName);
@@ -85,7 +93,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     copy(filePath: string): SourceFile {
         const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getDirPath(this.getFilePath()));
-        return this.global.compilerFactory.addSourceFileFromText(absoluteFilePath, this.getFullText());
+        return this.global.compilerFactory.createSourceFileFromText(absoluteFilePath, this.getFullText());
     }
 
     /**
@@ -93,7 +101,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     async delete() {
         const filePath = this.getFilePath();
-        this.global.languageService.removeSourceFile(this);
+        this.forget();
         await this.global.fileSystem.delete(filePath);
     }
 
@@ -102,7 +110,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     deleteSync() {
         const filePath = this.getFilePath();
-        this.global.languageService.removeSourceFile(this);
+        this.forget();
         this.global.fileSystem.deleteSync(filePath);
     }
 
@@ -516,7 +524,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
         if (fileReadResult === false) {
-            this.global.languageService.removeSourceFile(this);
+            this.forget();
             return FileSystemRefreshResult.Deleted;
         }
 

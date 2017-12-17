@@ -5,7 +5,7 @@ import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
 import {getCompilerOptionsFromTsConfig, FileUtils, ArrayUtils} from "./utils";
-import {DefaultFileSystemHost, FileSystemHost} from "./fileSystem";
+import {DefaultFileSystemHost, FileSystemHost, Directory} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
 
@@ -39,6 +39,56 @@ export class TsSimpleAst {
     /** Gets the manipulation settings. */
     get manipulationSettings(): ManipulationSettingsContainer {
         return this.global.manipulationSettings;
+    }
+
+    /**
+     * Adds an existing directory from the path.
+     *
+     * Will return the directory if it was already added.
+     * @param dirPath - Path to add the directory at.
+     */
+    addExistingDirectory(dirPath: string): Directory {
+        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        if (!this.fileSystem.directoryExistsSync(dirPath))
+            throw new errors.DirectoryNotFoundError(dirPath);
+        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+    }
+
+    /**
+     * Creates a directory at the specified path.
+     *
+     * Will return the existing directory if it was already created.
+     * Note: Will not save the directory to disk until one of its source files is saved.
+     * @param dirPath
+     */
+    createDirectory(dirPath: string): Directory {
+        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        return this.global.compilerFactory.createDirectoryIfNotExists(dirPath);
+    }
+
+    /**
+     * Gets a directory by the specified path or throws it doesn't exist.
+     * @param dirPath - Directory path.
+     */
+    getDirectoryOrThrow(dirPath: string): Directory {
+        return errors.throwIfNullOrUndefined(this.getDirectory(dirPath),
+            () => `Could not find a directory at the specified path: ${FileUtils.getStandardizedAbsolutePath(dirPath)}`);
+    }
+
+    /**
+     * Gets a directory by the specified path or returns undefined if it doesn't exist.
+     * @param dirPath - Directory path.
+     */
+    getDirectory(dirPath: string): Directory | undefined {
+        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        return this.global.compilerFactory.getDirectory(dirPath);
+    }
+
+    /**
+     * Gets the directories without a parent.
+     */
+    getRootDirectories() {
+        return this.global.compilerFactory.getOrphanDirectories();
     }
 
     /**
@@ -103,12 +153,7 @@ export class TsSimpleAst {
      */
     createSourceFile(filePath: string, structure: SourceFileStructure): compiler.SourceFile;
     createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string): compiler.SourceFile {
-        if (structureOrText == null || typeof structureOrText === "string")
-            return this.global.compilerFactory.addSourceFileFromText(filePath, structureOrText || "");
-
-        const sourceFile = this.global.compilerFactory.addSourceFileFromText(filePath, "");
-        sourceFile.fill(structureOrText);
-        return sourceFile;
+        return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
     }
 
     /**
@@ -117,7 +162,9 @@ export class TsSimpleAst {
      * @returns True if removed.
      */
     removeSourceFile(sourceFile: compiler.SourceFile) {
-        return this.global.languageService.removeSourceFile(sourceFile);
+        const previouslyForgotten = sourceFile.wasForgotten();
+        sourceFile.forget();
+        return !previouslyForgotten;
     }
 
     /**
@@ -169,7 +216,7 @@ export class TsSimpleAst {
      * @param globPattern - Glob pattern for filtering out the source files.
      */
     getSourceFiles(globPattern?: string): compiler.SourceFile[] {
-        let sourceFiles = this.global.languageService.getSourceFiles();
+        let sourceFiles = this.global.compilerFactory.getSourceFiles();
         if (typeof globPattern === "string") {
             const mm = new Minimatch(globPattern, { matchBase: true });
             sourceFiles = sourceFiles.filter(s => mm.match(s.getFilePath()));
