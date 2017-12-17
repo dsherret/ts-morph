@@ -19,6 +19,7 @@ import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel} from "./view
 
 interface MethodInfo {
     name: string;
+    wrapperName: string;
     syntaxKinds: string[];
     isMixin: boolean;
 }
@@ -45,7 +46,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                     "@param node - Node to check."
             }],
             parameters: [{ name: "node", type: "compiler.Node" }],
-            returnType: `node is compiler.${method.name}` + (method.isMixin ? " & compiler.Node" : ""),
+            returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
             bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
                     for (const syntaxKindName of method.syntaxKinds) {
                         writer.writeLine(`case ts.SyntaxKind.${syntaxKindName}:`);
@@ -62,14 +63,26 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
     function getMethodInfos() {
         const methodInfos: { [name: string]: MethodInfo; } = {};
 
-        for (const classVM of classVMs.filter(c => nodeToWrapperVMs.some(vm => vm.wrapperName === c.name))) {
+        for (const classVM of classVMs.filter(c => c.name !== "Node" && nodeToWrapperVMs.some(vm => vm.wrapperName === c.name))) {
             methodInfos[classVM.name] = {
                 name: classVM.name,
+                wrapperName: classVM.name,
                 syntaxKinds: [...getSyntaxKindsForName(classVM.name)],
                 isMixin: false
             };
 
             fillMixinable(classVM, classVM);
+        }
+
+        for (const nodeToWrapperVM of nodeToWrapperVMs.filter(v => v.wrapperName === "Node")) {
+            for (const syntaxKindName of nodeToWrapperVM.syntaxKindNames) {
+                methodInfos[syntaxKindName] = {
+                    name: syntaxKindName,
+                    wrapperName: "Node",
+                    syntaxKinds: [syntaxKindName],
+                    isMixin: false
+                };
+            }
         }
 
         return Object.keys(methodInfos).sort().map(k => methodInfos[k]);
@@ -79,6 +92,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                 if (methodInfos[mixin.name] == null) {
                     methodInfos[mixin.name] = {
                         name: mixin.name,
+                        wrapperName: mixin.name,
                         syntaxKinds: [],
                         isMixin: true
                     };

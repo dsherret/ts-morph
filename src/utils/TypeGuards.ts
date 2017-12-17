@@ -600,12 +600,12 @@ export class TypeGuards {
     static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.PropertyAssignment:
-            case ts.SyntaxKind.ShorthandPropertyAssignment:
             case ts.SyntaxKind.EnumMember:
             case ts.SyntaxKind.Parameter:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.VariableDeclaration:
+            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -849,7 +849,6 @@ export class TypeGuards {
     static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.ShorthandPropertyAssignment:
             case ts.SyntaxKind.PropertyAccessExpression:
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
@@ -857,6 +856,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.TypeParameter:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -1018,10 +1018,10 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.PropertyAssignment:
             case ts.SyntaxKind.EnumMember:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.PropertyAssignment:
                 return true;
             default:
                 return false;
@@ -1062,11 +1062,11 @@ export class TypeGuards {
     static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.PropertyAssignment:
-            case ts.SyntaxKind.ShorthandPropertyAssignment:
             case ts.SyntaxKind.Parameter:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -1158,6 +1158,19 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodDeclaration:
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SemicolonToken.
+     * @param node - Node to check.
+     */
+    static isSemicolonToken(node: compiler.Node): node is compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SemicolonToken:
                 return true;
             default:
                 return false;

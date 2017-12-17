@@ -46,6 +46,9 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
     const structures: MethodDeclarationStructure[] = [];
 
     for (const nodeToWrapper of nodeToWrappers) {
+        if (nodeToWrapper.wrapperName === "Node")
+            continue;
+
         for (const syntaxKindName of nodeToWrapper.syntaxKindNames) {
             const typeText = `ts.SyntaxKind.${syntaxKindName}`;
 

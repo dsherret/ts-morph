@@ -64,5 +64,6 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag,
     [ts.SyntaxKind.JSDocTypeTag]: compiler.JSDocTypeTag,
     [ts.SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag,
-    [ts.SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag
+    [ts.SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag,
+    [ts.SyntaxKind.SemicolonToken]: compiler.Node
 };
