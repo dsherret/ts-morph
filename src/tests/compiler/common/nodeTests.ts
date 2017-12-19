@@ -651,6 +651,13 @@ describe(nameof(Node), () => {
             expect(result).to.equal(sourceFile);
         });
 
+        it("should replace the jsdoc text", () => {
+            const {firstChild, sourceFile} = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
+            const result = firstChild.replaceWithText("var t;");
+            expect(sourceFile.getFullText()).to.equal("var t;");
+            expect(result).to.equal(sourceFile.getStatements()[0]);
+        });
+
         it("should throw when replacing with more than one node", () => {
             const {sourceFile} = getInfoFromText("var t = Some.Prop.Access;");
             const varDeclaration = sourceFile.getVariableDeclarations()[0];

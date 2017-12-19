@@ -743,15 +743,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const childIndex = this.getChildIndex();
 
         try {
+            const nodes = getNodes(this);
+            const start = nodes[0].getStart();
             insertIntoParent({
                 parent,
                 childIndex,
                 insertItemsCount: 1,
-                insertPos: this.getStart(),
+                insertPos: start,
                 newText,
                 replacing: {
-                    nodes: [this],
-                    textLength: this.getWidth()
+                    nodes,
+                    textLength: this.getEnd() - start
                 }
             });
         } catch (err) {
@@ -760,6 +762,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
 
         return parent.getChildren()[childIndex];
+
+        function getNodes(node: Node) {
+            const nodes: Node[] = [];
+            if (TypeGuards.isDocumentationableNode(node) && node.getDocNodes().length > 0)
+                nodes.push(...node.getDocNodes());
+            nodes.push(node);
+            return nodes;
+        }
     }
 
     /**
