@@ -89,6 +89,22 @@ const parentDir = directory.getParent(); // or getParentOrThrow()
 const childDirs = directory.getDirectories();
 ```
 
+### Ancestor / Descendant
+
+Check if a directory is an ancestor or descendant of another directory:
+
+```typescript
+grandParentDir.isAncestorOf(childDir);   // true
+childDir.isDescendantOf(grandParentDir); // true
+```
+
+Or if a directory is an ancestor of a source file:
+
+```ts
+grandParentDir.isAncestorOf(childSourceFile); // true
+parentDir.isAncestorOf(childSourceFile);      // true
+```
+
 ### Source files
 
 ```ts
