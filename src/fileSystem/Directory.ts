@@ -24,15 +24,35 @@ export class Directory {
     }
 
     /**
-     * Checks if a directory is an ancestor of another directory.
-     * @internal
+     * Checks if this directory is an ancestor of the provided directory.
+     * @param possibleDescendant - Directory or source file that's a possible descendant.
      */
-    isAncestorOfDir(descendant: Directory) {
-        if (this._pathParts.length >= descendant._pathParts.length)
+    isAncestorOf(possibleDescendant: Directory | SourceFile) {
+        return Directory.isAncestorOfDir(this, possibleDescendant);
+    }
+
+    /**
+     * Checks if this directory is a descendant of the provided directory.
+     * @param possibleAncestor - Directory or source file that's a possible ancestor.
+     */
+    isDescendantOf(possibleAncestor: Directory) {
+        return Directory.isAncestorOfDir(possibleAncestor, this);
+    }
+
+    /** @internal */
+    private static isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
+        if (descendant instanceof SourceFile) {
+            descendant = descendant.getDirectory();
+            if (ancestor === descendant)
+                return true;
+        }
+
+        if (ancestor._pathParts.length >= descendant._pathParts.length)
             return false;
 
-        for (let i = 0; i < this._pathParts.length; i++) {
-            if (this._pathParts[i] !== descendant._pathParts[i])
+        // more likely to be a mistake at the end, so search backwards
+        for (let i = ancestor._pathParts.length - 1; i >= 0; i--) {
+            if (ancestor._pathParts[i] !== descendant._pathParts[i])
                 return false;
         }
 

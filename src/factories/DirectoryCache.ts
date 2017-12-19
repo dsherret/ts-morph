@@ -96,7 +96,7 @@ export class DirectoryCache {
         this.directoriesByPath.set(path, newDirectory);
 
         for (const orphanDir of this.orphanDirs.values()) {
-            if (newDirectory.isAncestorOfDir(orphanDir))
+            if (newDirectory.isAncestorOf(orphanDir))
                 this.fillParentsOfDirPath(orphanDir.getPath());
         }
 

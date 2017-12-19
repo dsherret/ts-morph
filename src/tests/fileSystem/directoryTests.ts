@@ -49,6 +49,63 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe("ancestor/descendant tests", () => {
+        const ast = getAst();
+        const root = ast.createDirectory("");
+        const child = ast.createDirectory("child");
+        const childChild = ast.createDirectory("child/child");
+        const otherChild = ast.createDirectory("otherChild");
+        const rootSourceFile = ast.createSourceFile("file.ts");
+
+        describe(nameof<Directory>(d => d.isAncestorOf), () => {
+            function doTest(ancestor: Directory, descendant: Directory | SourceFile, expectedValue: boolean) {
+                expect(ancestor.isAncestorOf(descendant)).to.equal(expectedValue);
+            }
+
+            it("should be an ancestor when is parent", () => {
+                doTest(root, child, true);
+            });
+
+            it("should be an ancestor when is ancestor", () => {
+                doTest(root, childChild, true);
+            });
+
+            it("should not be when a sibling", () => {
+                doTest(child, otherChild, false);
+            });
+
+            it("should not be when a child", () => {
+                doTest(child, root, false);
+            });
+
+            it("should be when a parent dir of a source file", () => {
+                doTest(root, rootSourceFile, true);
+            });
+        });
+
+        describe(nameof<Directory>(d => d.isDescendantOf), () => {
+            function doTest(descendant: Directory, ancestor: Directory, expectedValue: boolean) {
+                expect(descendant.isDescendantOf(ancestor)).to.equal(expectedValue);
+            }
+
+            it("should be a descendant when is child", () => {
+                doTest(child, root, true);
+            });
+
+            it("should be a descendant when is descendant", () => {
+                doTest(childChild, root, true);
+            });
+
+            it("should not be when a sibling", () => {
+                doTest(otherChild, child, false);
+            });
+
+            it("should not be when a parent", () => {
+                doTest(root, child, false);
+            });
+        });
+    });
+
     describe("getting parent, child directories, and source files in directory", () => {
         it("should not have a parent if no parent exists", () => {
             const ast = getAst();
