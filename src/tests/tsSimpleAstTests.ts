@@ -8,6 +8,9 @@ import {FileUtils} from "./../utils";
 import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
 
+console.log('');
+console.log('Typescript version: ', ts.version);
+
 describe(nameof(TsSimpleAst), () => {
     describe("constructor", () => {
         it("should set the manipulation settings if provided", () => {

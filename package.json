@@ -6,7 +6,10 @@
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && npm run code-verification && npm publish",
-    "test": "gulp test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test-ts-2.5.3": "npm install typescript@2.5.3 && npm run test-run",
+    "test-ts-2.6.2": "npm install typescript@2.6.2 && npm run test-run",
+    "test-run": "gulp test",
+    "test": "npm run test-ts-2.5.3 && npm run test-ts-2.6.2",
     "build": "gulp typescript",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
     "update-barrel-files": "node dist-cg/code-generation/updateBarrelFiles",
