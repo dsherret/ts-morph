@@ -26,7 +26,7 @@ describe(nameof(FileUtils), () => {
         });
     });
 
-    describe(nameof(FileUtils.getAbsoluteOrRelativePathFromPath), () => {
+    describe(nameof(FileUtils.getStandardizedAbsolutePath), () => {
         const isWindows = os.platform() === "win32";
 
         // too lazy to abstract this out because I'm pretty sure it works... my machine will get the windows tests and
@@ -34,28 +34,28 @@ describe(nameof(FileUtils), () => {
         if (isWindows) {
             // uses forward slashes in result because that's what the ts compiler does
             it("should get the absolute path when absolute on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("C:\\absolute\\path", "C:\\basedir")).to.equal("C:/absolute/path");
+                expect(FileUtils.getStandardizedAbsolutePath("C:\\absolute\\path", "C:\\basedir")).to.equal("C:/absolute/path");
             });
 
             it("should get the relative path when relative on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("relative\\path", "C:\\basedir")).to.equal("C:/basedir/relative/path");
+                expect(FileUtils.getStandardizedAbsolutePath("relative\\path", "C:\\basedir")).to.equal("C:/basedir/relative/path");
             });
 
             it("should get the relative path without dots on windows", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("..\\relative\\path", "C:\\basedir")).to.equal("C:/relative/path");
+                expect(FileUtils.getStandardizedAbsolutePath("..\\relative\\path", "C:\\basedir")).to.equal("C:/relative/path");
             });
         }
         else {
             it("should get the absolute path when absolute on linux", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("/absolute/path", "/basedir")).to.equal("/absolute/path");
+                expect(FileUtils.getStandardizedAbsolutePath("/absolute/path", "/basedir")).to.equal("/absolute/path");
             });
 
             it("should get the relative path when relative on linux", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("relative/path", "/basedir")).to.equal("/basedir/relative/path");
+                expect(FileUtils.getStandardizedAbsolutePath("relative/path", "/basedir")).to.equal("/basedir/relative/path");
             });
 
             it("should get the relative path without dots on linux", () => {
-                expect(FileUtils.getAbsoluteOrRelativePathFromPath("../relative/path", "/basedir")).to.equal("/relative/path");
+                expect(FileUtils.getStandardizedAbsolutePath("../relative/path", "/basedir")).to.equal("/relative/path");
             });
         }
     });

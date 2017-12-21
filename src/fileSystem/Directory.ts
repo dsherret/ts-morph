@@ -39,26 +39,6 @@ export class Directory {
         return Directory.isAncestorOfDir(possibleAncestor, this);
     }
 
-    /** @internal */
-    private static isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
-        if (descendant instanceof SourceFile) {
-            descendant = descendant.getDirectory();
-            if (ancestor === descendant)
-                return true;
-        }
-
-        if (ancestor._pathParts.length >= descendant._pathParts.length)
-            return false;
-
-        // more likely to be a mistake at the end, so search backwards
-        for (let i = ancestor._pathParts.length - 1; i >= 0; i--) {
-            if (ancestor._pathParts[i] !== descendant._pathParts[i])
-                return false;
-        }
-
-        return true;
-    }
-
     /**
      * Gets the directory depth.
      * @internal
@@ -216,10 +196,10 @@ export class Directory {
      * Adds an existing directory to the AST from the relative path or directory name.
      *
      * Will return the directory if it was already added.
-     * @param relativePath - Directory name or relative path to the directory that should be added.
+     * @param path - Directory name or path to the directory that should be added.
      */
-    addExistingDirectory(relativePath: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativePath));
+    addExistingDirectory(path: string) {
+        const dirPath = FileUtils.getStandardizedAbsolutePath(path, this.getPath());
         if (!this.global.fileSystem.directoryExistsSync(dirPath))
             throw new errors.DirectoryNotFoundError(dirPath);
         return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
@@ -227,10 +207,10 @@ export class Directory {
 
     /**
      * Creates a directory if it doesn't exist.
-     * @param relativePath - Directory name or relative path to the directory that should be created.
+     * @param path - Directory name or path to the directory that should be created.
      */
-    createDirectory(relativePath: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativePath));
+    createDirectory(path: string) {
+        const dirPath = FileUtils.getStandardizedAbsolutePath(path, this.getPath());
         return this.global.compilerFactory.createDirectory(dirPath);
     }
 
@@ -276,6 +256,23 @@ export class Directory {
         if (!this.global.fileSystem.fileExistsSync(filePath))
             throw new errors.FileNotFoundError(filePath);
         return this.global.compilerFactory.getSourceFileFromFilePath(filePath)!;
+    }
+
+    /**
+     * Copies a directory to a new directory.
+     * @param relativeOrAbsolutePath - The relative or absolute path to the new directory. Path is relative to the parent directory.
+     * @returns The directory the copy was made to.
+     */
+    copy(relativeOrAbsolutePath: string) {
+        const newPath = FileUtils.getStandardizedAbsolutePath(relativeOrAbsolutePath, FileUtils.getDirPath(this.getPath()));
+        const directory = this.global.compilerFactory.getOrCreateDirectory(newPath);
+
+        for (const sourceFile of this.getSourceFiles())
+            sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()));
+        for (const childDir of this.getDirectories())
+            childDir.copy(FileUtils.pathJoin(newPath, childDir.getBaseName()));
+
+        return directory;
     }
 
     /**
@@ -358,5 +355,25 @@ export class Directory {
     private throwIfDeletedOrRemoved() {
         if (this._wasRemoved())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted or removed.");
+    }
+
+    /** @internal */
+    private static isAncestorOfDir(ancestor: Directory, descendant: Directory | SourceFile) {
+        if (descendant instanceof SourceFile) {
+            descendant = descendant.getDirectory();
+            if (ancestor === descendant)
+                return true;
+        }
+
+        if (ancestor._pathParts.length >= descendant._pathParts.length)
+            return false;
+
+        // more likely to be a mistake at the end, so search backwards
+        for (let i = ancestor._pathParts.length - 1; i >= 0; i--) {
+            if (ancestor._pathParts[i] !== descendant._pathParts[i])
+                return false;
+        }
+
+        return true;
     }
 }

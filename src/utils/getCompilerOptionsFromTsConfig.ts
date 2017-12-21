@@ -11,7 +11,7 @@ import {FileUtils} from "./FileUtils";
 export function getCompilerOptionsFromTsConfig(filePath: string, fileSystemHost?: FileSystemHost) {
     fileSystemHost = fileSystemHost || new DefaultFileSystemHost();
 
-    const absoluteFilePath = FileUtils.getAbsoluteOrRelativePathFromPath(filePath, FileUtils.getCurrentDirectory());
+    const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath, FileUtils.getCurrentDirectory());
     verifyFileExists(fileSystemHost, absoluteFilePath);
     const result = ts.parseConfigFileTextToJson(absoluteFilePath, fileSystemHost.readFileSync(absoluteFilePath));
 

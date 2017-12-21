@@ -45,7 +45,7 @@ export class FileUtils {
      * Gets the current directory.
      */
     static getCurrentDirectory() {
-        return this.getStandardizedAbsolutePath(path.resolve());
+        return FileUtils.getStandardizedAbsolutePath(path.resolve());
     }
 
     /**
@@ -53,15 +53,19 @@ export class FileUtils {
      * @param paths - Paths to join.
      */
     static pathJoin(...paths: string[]) {
-        return path.join(...paths);
+        return FileUtils.standardizeSlashes(path.join(...paths));
     }
 
     /**
      * Gets the standardized absolute path.
      * @param fileOrDirPath - Path to standardize.
+     * @param relativeBase - Base path to be relative from.
      */
-    static getStandardizedAbsolutePath(fileOrDirPath: string) {
-        return this.standardizeSlashes(path.normalize(path.resolve(fileOrDirPath)));
+    static getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
+        if (relativeBase != null && !path.isAbsolute(fileOrDirPath))
+            fileOrDirPath = path.join(relativeBase, fileOrDirPath);
+
+        return FileUtils.standardizeSlashes(path.normalize(path.resolve(fileOrDirPath)));
     }
 
     /**
@@ -78,18 +82,6 @@ export class FileUtils {
      */
     static getBaseName(fileOrDirPath: string) {
         return path.basename(fileOrDirPath);
-    }
-
-    /**
-     * Gets the absolute path when absolute, otherwise gets the relative path from the base dir.
-     * @param filePath - File path.
-     * @param baseDir - Base dir to use when file path is relative.
-     */
-    static getAbsoluteOrRelativePathFromPath(filePath: string, baseDir: string) {
-        if (path.isAbsolute(filePath))
-            return FileUtils.getStandardizedAbsolutePath(filePath);
-
-        return FileUtils.getStandardizedAbsolutePath(path.join(baseDir, filePath));
     }
 
     /**

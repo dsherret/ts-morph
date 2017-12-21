@@ -434,6 +434,49 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.copy), () => {
+        it("should copy a directory to a new directory", () => {
+            const ast = getAst();
+            const mainDir = ast.createDirectory("mainDir");
+            const dir = mainDir.createDirectory("dir");
+            dir.createSourceFile("file.ts");
+            dir.createDirectory("dir2").createDirectory("nested").createSourceFile("file2.ts");
+
+            const newDir = dir.copy("newDir");
+            expect(newDir.getPath()).to.equal(FileUtils.pathJoin(mainDir.getPath(), newDir.getBaseName()));
+            testDirectoryTree(newDir, {
+                directory: newDir,
+                sourceFiles: [ast.getSourceFileOrThrow("mainDir/newDir/file.ts")],
+                children: [{
+                    directory: ast.getDirectoryOrThrow("mainDir/newDir/dir2"),
+                    children: [{
+                        directory: ast.getDirectoryOrThrow("mainDir/newDir/dir2/nested"),
+                        sourceFiles: [ast.getSourceFileOrThrow("mainDir/newDir/dir2/nested/file2.ts")]
+                    }]
+                }]
+            }, mainDir);
+        });
+
+        it("should copy a directory to an existing directory", () => {
+            const ast = getAst();
+            const mainDir = ast.createDirectory("mainDir");
+            const dir = mainDir.createDirectory("dir");
+            dir.createSourceFile("file.ts");
+            dir.createDirectory("child");
+            const newDir = mainDir.createDirectory("newDir");
+            const copyDir = dir.copy(newDir.getPath());
+
+            expect(copyDir).to.equal(newDir, "returned directory should equal the existing directory");
+            testDirectoryTree(copyDir, {
+                directory: copyDir,
+                sourceFiles: [ast.getSourceFileOrThrow("mainDir/newDir/file.ts")],
+                children: [{
+                    directory: ast.getDirectoryOrThrow("mainDir/newDir/child")
+                }]
+            }, mainDir);
+        });
+    });
+
     describe(nameof<Directory>(d => d.delete), () => {
         it("should delete the file and remove all its descendants", async () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
