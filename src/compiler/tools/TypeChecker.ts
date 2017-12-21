@@ -11,7 +11,7 @@ export class TypeChecker {
     /** @internal */
     private readonly global: GlobalContainer;
     /** @internal */
-    private _compilerObject: ts.TypeChecker;
+    private _getCompilerObject: () => ts.TypeChecker;
 
     /** @internal */
     constructor(global: GlobalContainer) {
@@ -22,15 +22,15 @@ export class TypeChecker {
      * Gets the compiler's TypeChecker.
      */
     get compilerObject() {
-        return this._compilerObject;
+        return this._getCompilerObject();
     }
 
     /**
      * Resets the type checker.
      * @internal
      */
-    reset(typeChecker: ts.TypeChecker) {
-        this._compilerObject = typeChecker;
+    reset(getTypeChecker: () => ts.TypeChecker) {
+        this._getCompilerObject = getTypeChecker;
     }
 
     /**

@@ -31,7 +31,9 @@ export class Program {
     /** @internal */
     private readonly typeChecker: TypeChecker;
     /** @internal */
-    private _compilerObject: ts.Program;
+    private _createdCompilerObject: ts.Program | undefined;
+    /** @internal */
+    private _getOrCreateCompilerObject: () => ts.Program;
 
     /** @internal */
     constructor(global: GlobalContainer, rootNames: string[], host: ts.CompilerHost) {
@@ -44,7 +46,7 @@ export class Program {
      * Gets the underlying compiler program.
      */
     get compilerObject() {
-        return this._compilerObject;
+        return this._getOrCreateCompilerObject();
     }
 
     /**
@@ -53,20 +55,14 @@ export class Program {
      */
     reset(rootNames: string[], host: ts.CompilerHost) {
         const compilerOptions = this.global.compilerOptions;
-        const oldProgram = this._compilerObject;
-        this._compilerObject = getNewProgram();
-        this.typeChecker.reset(this._compilerObject.getTypeChecker());
-
-        function getNewProgram() {
-            try {
-                // try to reuse the old compiler object
-                return ts.createProgram(rootNames, compilerOptions, host, oldProgram);
-            } catch (err) {
-                Logger.warn("Could not create new program from old program. " + err);
-                // if that fails, try without using the old program
-                return ts.createProgram(rootNames, compilerOptions, host);
-            }
-        }
+        this._getOrCreateCompilerObject = () => {
+            if (this._createdCompilerObject == null)
+                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
+            // this needs to be on a separate line in case the program was reset between the line above and here
+            return this._createdCompilerObject || this._getOrCreateCompilerObject();
+        };
+        this._createdCompilerObject = undefined;
+        this.typeChecker.reset(() => this.compilerObject.getTypeChecker());
     }
 
     /**

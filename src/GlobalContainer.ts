@@ -35,7 +35,7 @@ export class GlobalContainer {
         if (opts.typeChecker != null) {
             errors.throwIfTrue(opts.createLanguageService, "Cannot specify a type checker and create a language service.");
             this._customTypeChecker = new TypeChecker(this);
-            this._customTypeChecker.reset(opts.typeChecker);
+            this._customTypeChecker.reset(() => opts.typeChecker!);
         }
     }
 

@@ -80,6 +80,7 @@ export class LanguageService {
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost);
+        this.program = new Program(this.global, this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
 
         this.global.compilerFactory.onSourceFileAdded(() => this.resetProgram());
         this.global.compilerFactory.onSourceFileRemoved(() => this.resetProgram());
@@ -90,16 +91,13 @@ export class LanguageService {
      * @internal
      */
     resetProgram() {
-        if (this.program != null)
-            this.program.reset(this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
+        this.program.reset(this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
     }
 
     /**
      * Gets the language service's program.
      */
     getProgram() {
-        if (this.program == null)
-            this.program = new Program(this.global, this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
         return this.program;
     }
 
