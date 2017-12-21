@@ -63,7 +63,7 @@
     "typescript": "^2.4.x"
   },
   "peerDependencies": {
-    "typescript": "2.4.x"
+    "typescript": "^2.4.x"
   },
   "standard-version": {
     "tagPrefix": ""
