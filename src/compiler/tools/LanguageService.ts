@@ -7,7 +7,7 @@ import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
 import {FormatCodeSettings} from "./inputs";
-import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange} from "./results";
+import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput} from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -240,5 +240,17 @@ export class LanguageService {
 
             return fullText;
         }
+    }
+
+    /**
+     * Gets the emit output of a file.
+     * @param filePath - File path.
+     * @param emitOnlyDtsFiles - Whether to only emit the d.ts files.
+     */
+    getEmitOutput(filePath: string, emitOnlyDtsFiles?: boolean): EmitOutput {
+        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
+            throw new errors.FileNotFoundError(filePath);
+        return new EmitOutput(this.global, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
     }
 }

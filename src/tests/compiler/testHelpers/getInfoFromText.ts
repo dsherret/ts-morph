@@ -21,13 +21,14 @@ export interface GetInfoFromTextOptions {
     filePath?: string;
     host?: FileSystemHost;
     disableErrorCheck?: boolean;
+    compilerOptions?: ts.CompilerOptions;
 }
 
 /** @internal */
 export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
-    const {isDefinitionFile = false, filePath = undefined, host = defaultHost, disableErrorCheck = false} = opts || {};
-    const tsSimpleAst = new TsSimpleAst({ compilerOptions: { target: ts.ScriptTarget.ES2017 }}, host);
+    const {isDefinitionFile = false, filePath = undefined, host = defaultHost, disableErrorCheck = false, compilerOptions = { target: ts.ScriptTarget.ES2017 }} = opts || {};
+    const tsSimpleAst = new TsSimpleAst({ compilerOptions }, host);
     const sourceFile = tsSimpleAst.createSourceFile(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
     const firstChild = sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as TFirstChild;
 
