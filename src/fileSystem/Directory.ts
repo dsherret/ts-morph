@@ -317,6 +317,23 @@ export class Directory {
         this._global = undefined;
     }
 
+    /**
+     * Saves all the unsaved descendant source files.
+     */
+    saveUnsavedSourceFiles() {
+        return Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
+    }
+
+    /**
+     * Saves all the unsaved descendant source files synchronously.
+     *
+     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
+     */
+    saveUnsavedSourceFilesSync() {
+        for (const file of this._getUnsavedSourceFiles())
+            file.saveSync();
+    }
+
     /** @internal */
     _addSourceFile(sourceFile: SourceFile) {
         const baseName = sourceFile.getBaseName().toUpperCase();
@@ -355,6 +372,17 @@ export class Directory {
     private throwIfDeletedOrRemoved() {
         if (this._wasRemoved())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted or removed.");
+    }
+
+    private _getUnsavedSourceFiles() {
+        return ArrayUtils.from(getUnsavedIterator(this.getDescendantSourceFilesIterator()));
+
+        function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
+            for (const sourceFile of sourceFiles) {
+                if (!sourceFile.isSaved())
+                    yield sourceFile;
+            }
+        }
     }
 
     /** @internal */

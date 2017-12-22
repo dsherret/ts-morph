@@ -258,7 +258,14 @@ export class TsSimpleAst {
     }
 
     private getUnsavedSourceFiles() {
-        return this.getSourceFiles().filter(f => !f.isSaved());
+        return ArrayUtils.from(getUnsavedIterator(this.global.compilerFactory.getSourceFilesByDirectoryDepth()));
+
+        function *getUnsavedIterator(sourceFiles: IterableIterator<compiler.SourceFile>) {
+            for (const sourceFile of sourceFiles) {
+                if (!sourceFile.isSaved())
+                    yield sourceFile;
+            }
+        }
     }
 
     /**

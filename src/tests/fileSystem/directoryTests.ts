@@ -529,4 +529,39 @@ describe(nameof(Directory), () => {
             expect(otherSourceFile.wasForgotten()).to.be.false;
         });
     });
+
+    describe(nameof<Directory>(dir => dir.saveUnsavedSourceFiles), () => {
+        it("should save all the unsaved source files asynchronously", async () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const otherFile = ast.createSourceFile("file.ts");
+            const dir = ast.createDirectory("dir");
+            dir.createSourceFile("file1.ts", "").saveSync();
+            dir.createSourceFile("file2.ts", "");
+            dir.createSourceFile("child/file3.ts", "");
+            await dir.saveUnsavedSourceFiles();
+            expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
+            expect(otherFile.isSaved()).to.be.false;
+            expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
+            expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
+        });
+    });
+
+    describe(nameof<Directory>(dir => dir.saveUnsavedSourceFilesSync), () => {
+        it("should save all the unsaved source files synchronously", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const otherFile = ast.createSourceFile("file.ts");
+            const dir = ast.createDirectory("dir");
+            dir.createSourceFile("file1.ts", "").saveSync();
+            dir.createSourceFile("file2.ts", "");
+            dir.createSourceFile("child/file3.ts", "");
+            dir.saveUnsavedSourceFilesSync();
+
+            expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
+            expect(otherFile.isSaved()).to.be.false;
+            expect(fileSystem.getWriteLog().length).to.equal(0);
+            expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+        });
+    });
 });
