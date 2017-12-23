@@ -280,6 +280,13 @@ export class TsSimpleAst {
     }
 
     /**
+     * Gets the pre-emit diagnostics.
+     */
+    getPreEmitDiagnostics(): compiler.Diagnostic[] {
+        return this.global.program.getPreEmitDiagnostics();
+    }
+
+    /**
      * Gets the language service.
      */
     getLanguageService(): compiler.LanguageService {
