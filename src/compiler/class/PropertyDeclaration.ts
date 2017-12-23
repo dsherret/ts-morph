@@ -4,12 +4,12 @@ import {PropertyDeclarationStructure} from "./../../structures";
 import {removeClassMember, removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, DocumentationableNode, StaticableNode,
+import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, JSDocableNode, StaticableNode,
     ModifierableNode, ScopedNode, DecoratableNode, ChildOrderableNode} from "./../base";
 import {ClassDeclaration} from "./ClassDeclaration";
 import {AbstractableNode} from "./base";
 
-export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(DocumentationableNode(
+export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(
     ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node))))))
 ))))));
 export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {

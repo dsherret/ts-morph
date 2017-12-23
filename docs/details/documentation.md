@@ -16,22 +16,22 @@ function getName(person: Person) {
 }
 ```
 
-### Get all documentation nodes
+### Get all JS doc nodes
 
-Get all the documentation nodes by using `getDocNodes()`:
+Get all the JS doc nodes by using `getJsDocs()`:
 
 ```typescript
-functionDeclaration.getDocNodes(); // returns: JSDoc[]
+functionDeclaration.getJsDocs(); // returns: JSDoc[]
 ```
 
 ### Add/insert docs
 
-Add or insert documentation comments using the `addDoc()`, `addDocs()`, `insertDoc()`, and `insertDocs()` methods.
+Add or insert JS doc comments using the `addJsDoc()`, `addJsDocs()`, `insertJsDoc()`, and `insertJsDocs()` methods.
 
 For example:
 
 ```typescript
-const docNode = classDeclaration.addDoc({
+const docNode = classDeclaration.addJsDoc({
     description: "Some description..."
 });
 ```
@@ -44,8 +44,8 @@ Get the comment:
 
 ```typescript
 // getting the node from the original example above
-const jsDocNode = functionDeclaration.getDocNodes()[0];
-jsDocNode.getComment(); // returns string: "Gets the name."
+const jsDoc = functionDeclaration.getJsDocs()[0];
+jsDoc.getComment(); // returns string: "Gets the name."
 ```
 
 Get the tags:

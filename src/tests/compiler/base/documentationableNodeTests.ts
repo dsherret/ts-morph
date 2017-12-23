@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {DocumentationableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
-import {JSDocStructure, DocumentationableNodeStructure} from "./../../../structures";
+import {JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
+import {JSDocStructure, JSDocableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
-describe(nameof(DocumentationableNode), () => {
+describe(nameof(JSDocableNode), () => {
     describe(nameof(VariableStatement), () => {
         const {sourceFile} = getInfoFromText("/** Text */\nvar docedComment;\n/** First */\n/** Second */var multiCommented;\nvar nonDocedComment;");
         const statements = sourceFile.getVariableStatements();
@@ -12,9 +12,9 @@ describe(nameof(DocumentationableNode), () => {
         const multiDocedStatement = statements[1];
         const nonDocedStatement = statements[2];
 
-        describe(nameof<DocumentationableNode>(n => n.getDocNodes), () => {
+        describe(nameof<JSDocableNode>(n => n.getJsDocs), () => {
             describe("documentationed node", () => {
-                const nodes = docedStatement.getDocNodes();
+                const nodes = docedStatement.getJsDocs();
                 it("should have the right number of nodes", () => {
                     expect(nodes.length).to.equal(1);
                 });
@@ -30,13 +30,13 @@ describe(nameof(DocumentationableNode), () => {
 
             describe("multi documentationed node", () => {
                 it("should have the right number of nodes", () => {
-                    expect(multiDocedStatement.getDocNodes().length).to.equal(2);
+                    expect(multiDocedStatement.getJsDocs().length).to.equal(2);
                 });
             });
 
             describe("not documentationed node", () => {
                 it("should not have any doc comment nodes", () => {
-                    expect(nonDocedStatement.getDocNodes().length).to.equal(0);
+                    expect(nonDocedStatement.getJsDocs().length).to.equal(0);
                 });
             });
         });
@@ -44,17 +44,17 @@ describe(nameof(DocumentationableNode), () => {
 
     describe(nameof(FunctionDeclaration), () => {
         const {firstChild} = getInfoFromText<FunctionDeclaration>("/**\n * Test.\n * @name - Test\n */\nfunction myFunction(name: string) {}");
-        const doc = firstChild.getDocNodes()[0];
+        const doc = firstChild.getJsDocs()[0];
 
         it("should have the right node kind", () => {
             expect(doc.getKind()).to.equal(ts.SyntaxKind.JSDocComment);
         });
     });
 
-    describe(nameof<DocumentationableNode>(n => n.insertDocs), () => {
+    describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
         function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const result = firstChild.insertDocs(insertIndex, structures);
+            const result = firstChild.insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -83,10 +83,10 @@ describe(nameof(DocumentationableNode), () => {
         });
     });
 
-    describe(nameof<DocumentationableNode>(n => n.insertDoc), () => {
+    describe(nameof<JSDocableNode>(n => n.insertJsDoc), () => {
         function doTest(startCode: string, index: number, structure: JSDocStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const result = firstChild.insertDoc(index, structure);
+            const result = firstChild.insertJsDoc(index, structure);
             expect(result).to.be.instanceOf(Node);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -97,10 +97,10 @@ describe(nameof(DocumentationableNode), () => {
         });
     });
 
-    describe(nameof<DocumentationableNode>(n => n.addDocs), () => {
+    describe(nameof<JSDocableNode>(n => n.addJsDocs), () => {
         function doTest(startCode: string, structures: JSDocStructure[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const result = firstChild.addDocs(structures);
+            const result = firstChild.addJsDocs(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -111,10 +111,10 @@ describe(nameof(DocumentationableNode), () => {
         });
     });
 
-    describe(nameof<DocumentationableNode>(n => n.addDoc), () => {
+    describe(nameof<JSDocableNode>(n => n.addJsDoc), () => {
         function doTest(startCode: string, structure: JSDocStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const result = firstChild.addDoc(structure);
+            const result = firstChild.addJsDoc(structure);
             expect(result).to.be.instanceOf(Node);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -126,7 +126,7 @@ describe(nameof(DocumentationableNode), () => {
     });
 
     describe(nameof<ClassDeclaration>(n => n.fill), () => {
-        function doTest(startingCode: string, structure: DocumentationableNodeStructure, expectedCode: string) {
+        function doTest(startingCode: string, structure: JSDocableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.fill(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

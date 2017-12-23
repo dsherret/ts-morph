@@ -1,5 +1,5 @@
 ﻿import {NamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure,
-    AsyncableNodeStructure, GeneratorableNodeStructure, DocumentationableNodeStructure, BodiedNodeStructure, PropertyNamedNodeStructure} from "./../base";
+    AsyncableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure, BodiedNodeStructure, PropertyNamedNodeStructure} from "./../base";
 import {FunctionLikeDeclarationStructure, SignaturedDeclarationStructure} from "./../function";
 
 export interface GetAccessorDeclarationStructure

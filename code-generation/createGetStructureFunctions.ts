@@ -59,7 +59,7 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
         switch (extendsStructure.name) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
-            case "DocumentationableNodeStructure":
+            case "JSDocableNodeStructure":
             case "SignaturedDeclarationStructure":
             case "ReturnTypedNodeStructure":
             case "GeneratorableNodeStructure":
@@ -73,7 +73,7 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
         switch (extendsStructure.name) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
-            case "DocumentationableNodeStructure":
+            case "JSDocableNodeStructure":
             case "SignaturedDeclarationStructure":
             case "ReturnTypedNodeStructure":
             case "GeneratorableNodeStructure":
@@ -88,7 +88,7 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
         switch (extendsStructure.name) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
-            case "DocumentationableNodeStructure":
+            case "JSDocableNodeStructure":
             case "SignaturedDeclarationStructure":
             case "ReturnTypedNodeStructure":
                 return false;

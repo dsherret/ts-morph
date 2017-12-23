@@ -6,7 +6,7 @@ import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFu
 import * as structureToTexts from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, HeritageClauseableNode,
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
 import {ImplementationLocation} from "./../tools";
@@ -17,7 +17,7 @@ import {PropertySignature} from "./PropertySignature";
 export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration;
 
 export const InterfaceDeclarationBase = ChildOrderableNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(
-    DocumentationableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
+    JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
 )))));
 export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**

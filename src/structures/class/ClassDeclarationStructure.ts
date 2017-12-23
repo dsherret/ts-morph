@@ -1,5 +1,5 @@
 ﻿import {NamedNodeStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure,
-    DocumentationableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "./../base";
+    JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "./../base";
 import {PropertyDeclarationStructure} from "./PropertyDeclarationStructure";
 import {MethodDeclarationStructure} from "./MethodDeclarationStructure";
 import {ConstructorDeclarationStructure} from "./ConstructorDeclarationStructure";
@@ -8,7 +8,7 @@ import {SetAccessorDeclarationStructure} from "./SetAccessorDeclarationStructure
 
 export interface ClassDeclarationStructure
     extends NamedNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure,
-        TypeParameteredNodeStructure, DocumentationableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure
+        TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure
 {
 }
 

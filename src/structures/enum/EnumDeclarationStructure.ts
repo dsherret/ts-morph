@@ -1,8 +1,8 @@
-﻿import {NamedNodeStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure} from "./../base";
+﻿import {NamedNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure} from "./../base";
 import {EnumMemberStructure} from "./EnumMemberStructure";
 
 export interface EnumDeclarationStructure
-    extends NamedNodeStructure, EnumDeclarationSpecificStructure, DocumentationableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+    extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
 {
 }
 

@@ -1,5 +1,5 @@
 ﻿import {JSDocStructure} from "./../doc";
 
-export interface DocumentationableNodeStructure {
+export interface JSDocableNodeStructure {
     docs?: JSDocStructure[];
 }

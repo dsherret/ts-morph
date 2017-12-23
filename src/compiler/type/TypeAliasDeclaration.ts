@@ -3,10 +3,10 @@ import {TypeAliasDeclarationStructure} from "./../../structures";
 import {removeStatementedNodeChild} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, ChildOrderableNode} from "./../base";
+import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, ChildOrderableNode} from "./../base";
 
 // todo: type node should not be able to return undefined
-export const TypeAliasDeclarationBase = ChildOrderableNode(TypeParameteredNode(TypedNode(DocumentationableNode(AmbientableNode(
+export const TypeAliasDeclarationBase = ChildOrderableNode(TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
     ExportableNode(ModifierableNode(NamedNode(Node)))
 )))));
 export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {

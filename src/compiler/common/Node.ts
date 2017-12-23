@@ -765,8 +765,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
         function getNodes(node: Node) {
             const nodes: Node[] = [];
-            if (TypeGuards.isDocumentationableNode(node) && node.getDocNodes().length > 0)
-                nodes.push(...node.getDocNodes());
+            if (TypeGuards.isJSDocableNode(node) && node.getJsDocs().length > 0)
+                nodes.push(...node.getJsDocs());
             nodes.push(node);
             return nodes;
         }

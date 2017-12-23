@@ -1,70 +1,70 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
-import {JSDocStructure, DocumentationableNodeStructure} from "./../../structures";
+import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {JSDoc} from "./../doc/JSDoc";
 
-export type DocumentationableNodeExtensionType = Node<any>;
+export type JSDocableNodeExtensionType = Node<any>;
 
-export interface DocumentationableNode {
+export interface JSDocableNode {
     /**
-     * Gets the documentation nodes.
+     * Gets the JS doc nodes.
      */
-    getDocNodes(): JSDoc[];
+    getJsDocs(): JSDoc[];
     /**
-     * Adds a documentation comment.
+     * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addDoc(structure: JSDocStructure): JSDoc;
+    addJsDoc(structure: JSDocStructure): JSDoc;
     /**
-     * Adds documentation comments.
+     * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addDocs(structures: JSDocStructure[]): JSDoc[];
+    addJsDocs(structures: JSDocStructure[]): JSDoc[];
     /**
-     * Inserts a documentation comment.
+     * Inserts a JS doc.
      * @param index - Index to insert at.
      * @param structure - Structure to insert.
      */
-    insertDoc(index: number, structure: JSDocStructure): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure): JSDoc;
     /**
-     * Inserts documentation comments.
+     * Inserts JS docs.
      * @param index - Index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDocs(index: number, structures: JSDocStructure[]): JSDoc[];
+    insertJsDocs(index: number, structures: JSDocStructure[]): JSDoc[];
 }
 
-export function DocumentationableNode<T extends Constructor<DocumentationableNodeExtensionType>>(Base: T): Constructor<DocumentationableNode> & T {
-    return class extends Base implements DocumentationableNode {
-        getDocNodes(): JSDoc[] {
+export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
+    return class extends Base implements JSDocableNode {
+        getJsDocs(): JSDoc[] {
             const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
             return nodes.map(n => this.global.compilerFactory.getNodeFromCompilerNode(n, this.sourceFile) as JSDoc);
         }
 
-        addDoc(structure: JSDocStructure) {
-            return this.addDocs([structure])[0];
+        addJsDoc(structure: JSDocStructure) {
+            return this.addJsDocs([structure])[0];
         }
 
-        addDocs(structures: JSDocStructure[]) {
-            return this.insertDocs(getEndIndexFromArray((this.compilerNode as any).jsDoc), structures);
+        addJsDocs(structures: JSDocStructure[]) {
+            return this.insertJsDocs(getEndIndexFromArray((this.compilerNode as any).jsDoc), structures);
         }
 
-        insertDoc(index: number, structure: JSDocStructure) {
-            return this.insertDocs(index, [structure])[0];
+        insertJsDoc(index: number, structure: JSDocStructure) {
+            return this.insertJsDocs(index, [structure])[0];
         }
 
-        insertDocs(index: number, structures: JSDocStructure[]) {
+        insertJsDocs(index: number, structures: JSDocStructure[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
             const indentationText = this.getIndentationText();
             const newLineText = this.global.manipulationSettings.getNewLineKind();
             const code = `${getDocumentationCode(structures, indentationText, newLineText)}${newLineText}${indentationText}`;
-            const nodes = this.getDocNodes();
+            const nodes = this.getJsDocs();
             index = verifyAndGetIndex(index, nodes.length);
 
             const insertPos = index === nodes.length ? this.getStart() : nodes[index].getStart();
@@ -76,14 +76,14 @@ export function DocumentationableNode<T extends Constructor<DocumentationableNod
                 insertItemsCount: structures.length
             });
 
-            return this.getDocNodes().slice(index, index + structures.length);
+            return this.getJsDocs().slice(index, index + structures.length);
         }
 
-        fill(structure: Partial<DocumentationableNodeStructure>) {
+        fill(structure: Partial<JSDocableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.docs != null && structure.docs.length > 0)
-                this.addDocs(structure.docs);
+                this.addJsDocs(structure.docs);
 
             return this;
         }

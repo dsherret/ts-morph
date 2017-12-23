@@ -288,10 +288,10 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a DocumentationableNode.
+     * Gets if the node is a JSDocableNode.
      * @param node - Node to check.
      */
-    static isDocumentationableNode(node: compiler.Node): node is compiler.DocumentationableNode & compiler.Node {
+    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
             case ts.SyntaxKind.Constructor:

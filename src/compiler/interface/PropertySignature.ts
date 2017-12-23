@@ -3,10 +3,10 @@ import {removeInterfaceMember} from "./../../manipulation";
 import {PropertySignatureStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, DocumentationableNode, ModifierableNode,
+import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, JSDocableNode, ModifierableNode,
     ChildOrderableNode} from "./../base";
 
-export const PropertySignatureBase = ChildOrderableNode(DocumentationableNode(ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(
+export const PropertySignatureBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(
     PropertyNamedNode(ModifierableNode(Node))
 ))))));
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {

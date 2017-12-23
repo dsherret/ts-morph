@@ -7,7 +7,7 @@ import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDec
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
 import {Node} from "./../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {HeritageClause} from "./../general";
 import {AbstractableNode} from "./base";
@@ -29,7 +29,7 @@ export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyType
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ParameterDeclaration;
 
 export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    NamespaceChildableNode(DocumentationableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
+    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
 ))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**

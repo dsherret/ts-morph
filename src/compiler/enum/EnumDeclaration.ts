@@ -5,12 +5,12 @@ import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeStatementedNodeC
 import {EnumMemberStructureToText} from "./../../structureToTexts";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, DocumentationableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
+import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {Node} from "./../common";
 import {NamespaceChildableNode} from "./../namespace";
 import {EnumMember} from "./EnumMember";
 
-export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(DocumentationableNode(AmbientableNode(ExportableNode(
+export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Node))
 ))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {

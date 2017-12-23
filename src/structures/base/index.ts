@@ -4,7 +4,7 @@ export * from "./AsyncableNodeStructure";
 export * from "./BodiedNodeStructure";
 export * from "./BodyableNodeStructure";
 export * from "./DecoratableNodeStructure";
-export * from "./DocumentationableNodeStructure";
+export * from "./JSDocableNodeStructure";
 export * from "./ExportableNodeStructure";
 export * from "./ExtendsClauseableNodeStructure";
 export * from "./GeneratorableNodeStructure";

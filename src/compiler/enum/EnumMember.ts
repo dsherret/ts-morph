@@ -3,9 +3,9 @@ import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation
 import {EnumMemberStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {PropertyNamedNode, InitializerExpressionableNode, DocumentationableNode} from "./../base";
+import {PropertyNamedNode, InitializerExpressionableNode, JSDocableNode} from "./../base";
 
-export const EnumMemberBase = DocumentationableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
+export const EnumMemberBase = JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
      * Fills the node from a structure.
