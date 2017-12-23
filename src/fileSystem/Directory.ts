@@ -305,7 +305,6 @@ export class Directory {
 
     private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {})
     {
-        const {languageService} = this.global;
         const {emitOnlyDtsFiles = false} = options;
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
@@ -318,7 +317,7 @@ export class Directory {
 
         function *emitDirectory(directory: Directory, outDir?: string, declarationDir?: string): IterableIterator<false | { filePath: string; fileText: string; }> {
             for (const sourceFile of directory.getSourceFiles()) {
-                const output = languageService.getEmitOutput(sourceFile, emitOnlyDtsFiles);
+                const output = sourceFile.getEmitOutput({ emitOnlyDtsFiles });
                 if (output.getEmitSkipped()) {
                     yield false;
                     return;

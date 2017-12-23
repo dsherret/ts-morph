@@ -31,6 +31,18 @@ const sourceFile = ast.getSourceFileOrThrow("MyFile.ts");
 sourceFile.emit();
 ```
 
+Or get its emit output:
+
+```typescript
+const emitOutput = sourceFile.getEmitOutput();
+emitOutput.getEmitSkipped(); // returns: boolean
+for (const outputFile of emitOutput.getOutputFiles()) {
+    outputFile.getFilePath();
+    outputFile.getWriteByteOrderMark();
+    outputFile.getText();
+}
+```
+
 ### Emitting only declaration files (.d.ts)
 
 Specify the `emitOnlyDtsFiles` flag:

@@ -586,6 +586,31 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
+        it("should get the emit output for the source file", () => {
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ts.ScriptTarget.ES5 } });
+            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
+            const result = sourceFile.getEmitOutput();
+
+            expect(result.getEmitSkipped()).to.be.false;
+            expect(result.getOutputFiles().length).to.equal(1);
+            const outputFile = result.getOutputFiles()[0];
+            expect(outputFile.getText()).to.equal("var num1 = 1;\n");
+            expect(outputFile.getFilePath()).to.equal("dist/file1.js");
+        });
+
+        it("should only emit the declaration file when specified", () => {
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ts.ScriptTarget.ES5 } });
+            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
+            const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
+
+            expect(result.getEmitSkipped()).to.be.false;
+            expect(result.getOutputFiles().length).to.equal(1);
+            const outputFile = result.getOutputFiles()[0];
+            expect(outputFile.getFilePath()).to.equal("dist/file1.d.ts");
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.fill), () => {
         function doTest(startingCode: string, structure: SourceFileSpecificStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startingCode);

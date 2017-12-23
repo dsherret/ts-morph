@@ -12,7 +12,7 @@ import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol} from "./../common";
 import {StatementedNode} from "./../statement";
-import {Diagnostic, EmitResult, FormatCodeSettings} from "./../tools";
+import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 import {ExportAssignment} from "./ExportAssignment";
@@ -552,6 +552,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     emit(options?: { emitOnlyDtsFiles?: boolean; }): EmitResult {
         return this.global.program.emit({ targetSourceFile: this, ...options });
+    }
+
+    /**
+     * Gets the emit output of this source file.
+     * @param options - Emit options.
+     */
+    getEmitOutput(options: { emitOnlyDtsFiles?: boolean; } = {}): EmitOutput {
+        return this.global.languageService.getEmitOutput(this, options.emitOnlyDtsFiles || false);
     }
 
     /**
