@@ -374,12 +374,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the compiler diagnostics.
+     * Gets the syntactic, semantic, and declaration diagnostics.
      */
     getDiagnostics(): Diagnostic[] {
-        // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerObject, this.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return [
+            ...this.global.program.getSyntacticDiagnostics(this),
+            ...this.global.program.getSemanticDiagnostics(this),
+            ...this.global.program.getDeclarationDiagnostics(this)
+        ];
     }
 
     /**

@@ -272,9 +272,11 @@ export class TsSimpleAst {
      * Gets the compiler diagnostics.
      */
     getDiagnostics(): compiler.Diagnostic[] {
-        // todo: implement cancellation token
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.global.program.compilerObject);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return [
+            ...this.global.program.getSyntacticDiagnostics(),
+            ...this.global.program.getSemanticDiagnostics(),
+            ...this.global.program.getDeclarationDiagnostics()
+        ];
     }
 
     /**
