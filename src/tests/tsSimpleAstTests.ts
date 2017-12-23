@@ -460,6 +460,7 @@ describe(nameof(TsSimpleAst), () => {
         let interfaceNode2: Node;
         let interfaceNode3: Node;
         let interfaceNode4: Node;
+        let interfaceNode5: Node;
         ast.forgetNodesCreatedInBlock(remember => {
             sourceFile = ast.createSourceFile("test.ts", "class MyClass {} namespace MyNamespace { interface Interface1 {} interface Interface2 {} " +
                 "interface Interface3 {} interface Interface4 {} }");
@@ -471,6 +472,7 @@ describe(nameof(TsSimpleAst), () => {
                 interfaceNode2 = namespaceNode.getInterfaceOrThrow("Interface2");
                 interfaceNode3 = namespaceNode.getInterfaceOrThrow("Interface3");
                 interfaceNode4 = namespaceNode.getInterfaceOrThrow("Interface4");
+                interfaceNode5 = namespaceNode.addInterface({ name: "Interface5" });
                 remember2(interfaceNode3, interfaceNode4);
             });
 
@@ -511,8 +513,29 @@ describe(nameof(TsSimpleAst), () => {
             expect(interfaceNode3.wasForgotten()).to.be.false;
         });
 
-        it("should not have forgotten the third interface because it was remembered", () => {
+        it("should not have forgotten the fourth interface because it was remembered", () => {
             expect(interfaceNode4.wasForgotten()).to.be.false;
+        });
+
+        it("should have forgotten the created fifth interface because it was not remembered", () => {
+            expect(interfaceNode5.wasForgotten()).to.be.true;
+        });
+
+        it("should not throw if removing a created node in a block", () => {
+            const sourceFile = ast.createSourceFile("file3.ts", "class MyClass {}");
+            ast.forgetNodesCreatedInBlock(remember => {
+                const classDec = sourceFile.getClassOrThrow("MyClass");
+                classDec.remove();
+            });
+        });
+
+        it("should throw if attempting to remember a node that was forgotten", () => {
+            const sourceFile = ast.createSourceFile("file4.ts");
+            ast.forgetNodesCreatedInBlock(remember => {
+                const classDec = sourceFile.addClass({ name: "Class" });
+                classDec.forget();
+                expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
+            });
         });
     });
 

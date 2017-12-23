@@ -1,5 +1,6 @@
 ﻿/* barrel:ignore */
 import * as ts from "typescript";
+import * as errors from "./../errors";
 import {Node} from "./../compiler";
 import {KeyValueCache, createHashSet, HashSet} from "./../utils";
 
@@ -29,6 +30,9 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
     }
 
     rememberNode(node: Node) {
+        if (node.wasForgotten())
+            throw new errors.InvalidOperationError("Cannot remember a node that was removed or forgotten.");
+
         let wasInForgetStack = false;
         for (const stackItem of this.forgetStack) {
             if (stackItem.delete(node)) {
@@ -51,7 +55,7 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
 
     private forgetNodes(nodes: IterableIterator<Node>) {
         for (const node of nodes) {
-            if (node.getKind() === ts.SyntaxKind.SourceFile)
+            if (node.wasForgotten() || node.getKind() === ts.SyntaxKind.SourceFile)
                 continue;
             node.forgetOnlyThis();
         }
