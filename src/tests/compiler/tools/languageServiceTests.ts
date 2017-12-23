@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
-import {LanguageService, EmitOutput} from "./../../../compiler";
+import {LanguageService, EmitOutput, SourceFile} from "./../../../compiler";
 import {FileNotFoundError} from "./../../../errors";
 import {FileUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
@@ -13,15 +13,34 @@ describe(nameof(LanguageService), () => {
             for (let i = 0; i < expected.outputFiles.length; i++) {
                 const actualFile = output.getOutputFiles()[i];
                 const expectedFile = expected.outputFiles[i];
-                expect(actualFile.getName()).to.equal(FileUtils.getStandardizedAbsolutePath(expectedFile.fileName));
+                expect(actualFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath(expectedFile.fileName));
                 expect(actualFile.getText()).to.equal(expectedFile.text);
                 expect(actualFile.getWriteByteOrderMark()).to.equal(expectedFile.writeByteOrderMark);
             }
         }
 
         it("should get the emit output", () => {
+            function doTest(sourceFileOrFilePath: string | SourceFile) {
+                const output = sourceFile.global.languageService.getEmitOutput(sourceFileOrFilePath);
+                checkOutput(output, {
+                    emitSkipped: false,
+                    outputFiles: [{
+                        fileName: sourceFile.getBaseName().replace(".ts", ".js"),
+                        text: "var t = 5;\n",
+                        writeByteOrderMark: false
+                    }]
+                });
+            }
+
+            const {sourceFile} = getInfoFromText("const t = 5;", { compilerOptions: { target: ts.ScriptTarget.ES5 } });
+
+            doTest(sourceFile);
+            doTest(sourceFile.getFilePath());
+        });
+
+        it("should get the emit output when specifying a source file", () => {
             const {sourceFile, tsSimpleAst} = getInfoFromText("const t = 5;", { compilerOptions: { target: ts.ScriptTarget.ES5 } });
-            const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath());
+            const output = sourceFile.global.languageService.getEmitOutput(sourceFile);
             checkOutput(output, {
                 emitSkipped: false,
                 outputFiles: [{
@@ -52,8 +71,6 @@ describe(nameof(LanguageService), () => {
                 emitSkipped: true,
                 outputFiles: []
             });
-
-            expect(output.getDiagnostics().length).to.equal(1);
         });
 
         it("should throw when the specified file does not exist", () => {

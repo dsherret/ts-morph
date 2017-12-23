@@ -243,12 +243,21 @@ export class LanguageService {
     }
 
     /**
-     * Gets the emit output of a file.
+     * Gets the emit output of a source file.
+     * @param sourceFile - Source file.
+     * @param emitOnlyDtsFiles - Whether to only emit the d.ts files.
+     */
+    getEmitOutput(sourceFile: SourceFile, emitOnlyDtsFiles?: boolean): EmitOutput;
+    /**
+     * Gets the emit output of a source file.
      * @param filePath - File path.
      * @param emitOnlyDtsFiles - Whether to only emit the d.ts files.
      */
-    getEmitOutput(filePath: string, emitOnlyDtsFiles?: boolean): EmitOutput {
-        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+    getEmitOutput(filePath: string, emitOnlyDtsFiles?: boolean): EmitOutput;
+    /** @internal */
+    getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
+    getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
+        const filePath = typeof filePathOrSourceFile === "string" ? FileUtils.getStandardizedAbsolutePath(filePathOrSourceFile) : filePathOrSourceFile.getFilePath();
         if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
         return new EmitOutput(this.global, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));

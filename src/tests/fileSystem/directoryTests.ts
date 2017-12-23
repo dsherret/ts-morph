@@ -1,11 +1,12 @@
-﻿import {expect} from "chai";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
 import {SourceFile} from "./../../compiler";
 import * as errors from "./../../errors";
 import {TsSimpleAst} from "./../../TsSimpleAst";
 import {SourceFileStructure} from "./../../structures";
-import {Directory} from "./../../fileSystem";
+import {Directory, DirectoryEmitResult, FileSystemHost} from "./../../fileSystem";
 import {FileUtils} from "./../../utils";
-import {getFileSystemHostWithFiles} from "./../testHelpers";
+import {getFileSystemHostWithFiles, CustomFileSystemProps} from "./../testHelpers";
 
 describe(nameof(Directory), () => {
     interface TreeNode {
@@ -389,7 +390,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getSourceFile), () => {
-        const ast = new TsSimpleAst();
+        const ast = getAst();
         const directory = ast.createDirectory("dir");
         const child1 = directory.createSourceFile("child1.ts");
         const child2 = directory.createSourceFile("child2.ts");
@@ -412,7 +413,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getSourceFileOrThrow), () => {
-        const ast = new TsSimpleAst();
+        const ast = getAst();
         const directory = ast.createDirectory("dir");
         const child1 = directory.createSourceFile("child1.ts");
         const child2 = directory.createSourceFile("child2.ts");
@@ -515,7 +516,7 @@ describe(nameof(Directory), () => {
 
     describe(nameof<Directory>(d => d.remove), () => {
         it("should remove the file and all its descendants", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const directory = ast.createDirectory("dir");
             const childDir = directory.createDirectory("childDir");
             const sourceFile = directory.createSourceFile("file.ts");
@@ -562,6 +563,142 @@ describe(nameof(Directory), () => {
             expect(otherFile.isSaved()).to.be.false;
             expect(fileSystem.getWriteLog().length).to.equal(0);
             expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+        });
+    });
+
+    describe(nameof<Directory>(dir => dir.emit), () => {
+        function setup(compilerOptions: ts.CompilerOptions) {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions }, fileSystem);
+            const directory = ast.createDirectory("dir");
+
+            directory.createSourceFile("file1.ts", "const t = '';");
+            directory.createDirectory("subDir").createSourceFile("file2.ts");
+
+            return {directory, fileSystem};
+        }
+
+        function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
+            const writeLog = fileSystem.getWriteLog();
+
+            expect(result.getEmitSkipped()).to.be.false;
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+            expect(writeLog[0].filePath).to.equal(outDir + "/file1.js.map");
+            expect(writeLog[1].filePath).to.equal(outDir + "/file1.js");
+            expect(writeLog[1].fileText).to.equal("var t = '';\n//# sourceMappingURL=file1.js.map");
+            expect(writeLog[2].filePath).to.equal(declarationDir + "/file1.d.ts");
+            expect(writeLog[3].filePath).to.equal(outDir + "/subDir/file2.js.map");
+            expect(writeLog[4].filePath).to.equal(outDir + "/subDir/file2.js");
+            expect(writeLog[5].filePath).to.equal(declarationDir + "/subDir/file2.d.ts");
+            expect(writeLog.length).to.equal(6);
+        }
+
+        it("should emit correctly when not specifying anything", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const result = await directory.emit();
+            runChecks(fileSystem, result, "dist", "dist");
+        });
+
+        it("should emit correctly when specifying a different out dir and no declaration dir in compiler options", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const result = await directory.emit({ outDir: "../newOutDir" });
+            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("newOutDir"), FileUtils.getStandardizedAbsolutePath("newOutDir"));
+        });
+
+        it("should emit correctly when specifying a different out dir and a declaration dir in compiler options", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const result = await directory.emit({ outDir: "../newOutDir" });
+            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("newOutDir"), "dec");
+        });
+
+        it("should emit correctly when specifying a different declaration dir", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const result = await directory.emit({ declarationDir: "newDeclarationDir" });
+            runChecks(fileSystem, result, "dist", FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir"));
+        });
+
+        it("should emit correctly when specifying a different out and declaration dir", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir" });
+            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("dir"), FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir"));
+        });
+
+        it("should emit correctly when specifying to only emit declaration files", async () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
+            const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir", emitOnlyDtsFiles: true });
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir/file1.d.ts"));
+            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir/subDir/file2.d.ts"));
+            expect(writeLog.length).to.equal(2);
+        });
+
+        it("should stop emitting when it encounters a problem", async () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: { declaration: true }}, fileSystem);
+            const directory = ast.createDirectory("dir");
+            const subDir = directory.createDirectory("sub");
+            subDir.createSourceFile("file1.ts", "");
+            subDir.createSourceFile("file2.ts", "class Child {}\nexport class Parent extends Child {}");
+            const result = await directory.emit();
+            expect(result.getEmitSkipped()).to.be.true;
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => FileUtils.getStandardizedAbsolutePath(l.filePath)));
+            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.js"));
+            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.d.ts"));
+            expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Directory>(dir => dir.emitSync), () => {
+        function setup(compilerOptions: ts.CompilerOptions) {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions }, fileSystem);
+            const directory = ast.createDirectory("dir");
+
+            directory.createSourceFile("file1.ts", "const t = '';");
+            directory.createDirectory("subDir").createSourceFile("file2.ts");
+
+            return {directory, fileSystem};
+        }
+
+        function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
+            const writeLog = fileSystem.getSyncWriteLog();
+
+            expect(result.getEmitSkipped()).to.be.false;
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+            expect(writeLog[0].filePath).to.equal(outDir + "/file1.js.map");
+            expect(writeLog[1].filePath).to.equal(outDir + "/file1.js");
+            expect(writeLog[1].fileText).to.equal("var t = '';\n//# sourceMappingURL=file1.js.map");
+            expect(writeLog[2].filePath).to.equal(declarationDir + "/file1.d.ts");
+            expect(writeLog[3].filePath).to.equal(outDir + "/subDir/file2.js.map");
+            expect(writeLog[4].filePath).to.equal(outDir + "/subDir/file2.js");
+            expect(writeLog[5].filePath).to.equal(declarationDir + "/subDir/file2.d.ts");
+            expect(writeLog.length).to.equal(6);
+        }
+
+        it("should emit correctly when not specifying anything", () => {
+            const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
+            const result = directory.emitSync();
+            runChecks(fileSystem, result, "dist", "dist");
+        });
+
+        it("should stop emitting when it encounters a problem", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: { declaration: true }}, fileSystem);
+            const directory = ast.createDirectory("dir");
+            const subDir = directory.createDirectory("sub");
+            subDir.createSourceFile("file1.ts", "");
+            subDir.createSourceFile("file2.ts", "class Child {}\nexport class Parent extends Child {}");
+            const result = directory.emitSync();
+            expect(result.getEmitSkipped()).to.be.true;
+
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => FileUtils.getStandardizedAbsolutePath(l.filePath)));
+            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.js"));
+            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.d.ts"));
+            expect(writeLog.length).to.equal(2);
         });
     });
 });

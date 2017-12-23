@@ -145,4 +145,15 @@ export class FileUtils {
             return false;
         }
     }
+
+    /**
+     * Gets the text with a byte order mark.
+     * @param text - Text.
+     */
+    static getTextWithByteOrderMark(text: string) {
+        const bom = "\ufeff";
+        if (text[0] === bom)
+            return text;
+        return bom + text;
+    }
 }

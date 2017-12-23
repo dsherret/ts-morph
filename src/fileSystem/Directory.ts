@@ -1,8 +1,9 @@
-﻿import {SourceFile} from "./../compiler";
+﻿import {SourceFile, OutputFile} from "./../compiler";
 import * as errors from "./../errors";
 import {ArrayUtils, FileUtils} from "./../utils";
 import {SourceFileStructure} from "./../structures";
 import {GlobalContainer} from "./../GlobalContainer";
+import {DirectoryEmitResult} from "./DirectoryEmitResult";
 
 export class Directory {
     private _global: GlobalContainer | undefined;
@@ -256,6 +257,89 @@ export class Directory {
         if (!this.global.fileSystem.fileExistsSync(filePath))
             throw new errors.FileNotFoundError(filePath);
         return this.global.compilerFactory.getSourceFileFromFilePath(filePath)!;
+    }
+
+    /**
+     * Emits the files in the directory.
+     * @param options - Options for emitting.
+     */
+    async emit(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
+        const {fileSystem} = this.global;
+        const writeTasks: Promise<void>[] = [];
+        const outputFilePaths: string[] = [];
+
+        for (const emitResult of this._emitInternal(options)) {
+            if (emitResult === false) {
+                await writeTasks;
+                return new DirectoryEmitResult(true, outputFilePaths);
+            }
+
+            writeTasks.push(fileSystem.writeFile(emitResult.filePath, emitResult.fileText));
+            outputFilePaths.push(emitResult.filePath);
+        }
+
+        await writeTasks;
+        return new DirectoryEmitResult(false, outputFilePaths);
+    }
+
+    /**
+     * Emits the files in the directory synchronously.
+     *
+     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
+     * @param options - Options for emitting.
+     */
+    emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
+        const {fileSystem} = this.global;
+        const outputFilePaths: string[] = [];
+
+        for (const emitResult of this._emitInternal(options)) {
+            if (emitResult === false)
+                return new DirectoryEmitResult(true, outputFilePaths);
+
+            fileSystem.writeFileSync(emitResult.filePath, emitResult.fileText);
+            outputFilePaths.push(emitResult.filePath);
+        }
+
+        return new DirectoryEmitResult(false, outputFilePaths);
+    }
+
+    private _emitInternal(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {})
+    {
+        const {languageService} = this.global;
+        const {emitOnlyDtsFiles = false} = options;
+        const isJsFile = options.outDir == null ? undefined : /\.js$/i;
+        const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
+        const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
+        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : FileUtils.getStandardizedAbsolutePath(path, this.getPath());
+        const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
+        const hasDeclarationDir = this.global.compilerOptions.declarationDir != null || options.declarationDir != null;
+
+        return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
+
+        function *emitDirectory(directory: Directory, outDir?: string, declarationDir?: string): IterableIterator<false | { filePath: string; fileText: string; }> {
+            for (const sourceFile of directory.getSourceFiles()) {
+                const output = languageService.getEmitOutput(sourceFile, emitOnlyDtsFiles);
+                if (output.getEmitSkipped()) {
+                    yield false;
+                    return;
+                }
+
+                for (const outputFile of output.getOutputFiles()) {
+                    let filePath = outputFile.getFilePath();
+                    const fileText = outputFile.getWriteByteOrderMark() ? FileUtils.getTextWithByteOrderMark(outputFile.getText()) : outputFile.getText();
+
+                    if (outDir != null && (isJsFile!.test(filePath) || isMapFile!.test(filePath) || (!hasDeclarationDir && isDtsFile!.test(filePath))))
+                        filePath = FileUtils.pathJoin(outDir, FileUtils.getBaseName(filePath));
+                    else if (declarationDir != null && isDtsFile!.test(filePath))
+                        filePath = FileUtils.pathJoin(declarationDir, FileUtils.getBaseName(filePath));
+
+                    yield { filePath, fileText };
+                }
+            }
+
+            for (const dir of directory.getDirectories())
+                yield* emitDirectory(dir, getSubDirPath(outDir, dir), getSubDirPath(declarationDir, dir));
+        }
     }
 
     /**

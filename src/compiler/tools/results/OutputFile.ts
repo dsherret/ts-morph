@@ -22,9 +22,9 @@ export class OutputFile {
     }
 
     /**
-     * Gets the file name.
+     * Gets the file path.
      */
-    getName() {
+    getFilePath() {
         return this.compilerObject.name;
     }
 

@@ -1,8 +1,7 @@
 export * from "./compiler";
 export * from "./structures";
 export {TsSimpleAst as default} from "./TsSimpleAst";
-export * from "./fileSystem/FileSystemHost";
-export * from "./fileSystem/Directory";
+export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
 export {createWrappedNode} from "./createWrappedNode";
 export {getCompilerOptionsFromTsConfig} from "./utils/getCompilerOptionsFromTsConfig";
