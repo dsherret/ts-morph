@@ -128,7 +128,9 @@ directory.saveUnsavedSourceFilesSync(); // slow
 It's possible to only specific directories:
 
 ```ts
-directory.emit();
+// always check result.getEmitSkipped() to make sure the emit was successful
+const result = await directory.emit();
+directory.emitSync(); // slow
 ```
 
 Or specify the output directories (specify a path relative from the directory or an absolute paths):
