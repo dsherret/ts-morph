@@ -343,6 +343,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ExportAssignment.
+     * @param node - Node to check.
+     */
+    static isExportAssignment(node: compiler.Node): node is compiler.ExportAssignment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ExportAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ExportDeclaration.
      * @param node - Node to check.
      */

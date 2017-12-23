@@ -18,6 +18,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.Decorator]: compiler.Decorator,
     [ts.SyntaxKind.EnumDeclaration]: compiler.EnumDeclaration,
     [ts.SyntaxKind.EnumMember]: compiler.EnumMember,
+    [ts.SyntaxKind.ExportAssignment]: compiler.ExportAssignment,
     [ts.SyntaxKind.ExportDeclaration]: compiler.ExportDeclaration,
     [ts.SyntaxKind.ExportSpecifier]: compiler.ExportSpecifier,
     [ts.SyntaxKind.ExpressionWithTypeArguments]: compiler.ExpressionWithTypeArguments,

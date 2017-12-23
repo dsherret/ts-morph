@@ -1,8 +1,9 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, EmitResult, FormatCodeSettings, QuoteType, FileSystemRefreshResult} from "./../../../compiler";
+import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
+    FileSystemRefreshResult} from "./../../../compiler";
 import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
-import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure} from "./../../../structures";
+import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
@@ -289,10 +290,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertExports), () => {
+    describe(nameof<SourceFile>(n => n.insertExportDeclarations), () => {
         function doTest(startCode: string, index: number, structures: ExportDeclarationStructure[], expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.insertExports(index, structures);
+            const result = sourceFile.insertExportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -325,10 +326,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertExport), () => {
+    describe(nameof<SourceFile>(n => n.insertExportDeclaration), () => {
         function doTest(startCode: string, index: number, structure: ExportDeclarationStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.insertExport(index, structure);
+            const result = sourceFile.insertExportDeclaration(index, structure);
             expect(result).to.be.instanceOf(ExportDeclaration);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -339,10 +340,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.addExport), () => {
+    describe(nameof<SourceFile>(n => n.addExportDeclaration), () => {
         function doTest(startCode: string, structure: ExportDeclarationStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.addExport(structure);
+            const result = sourceFile.addExportDeclaration(structure);
             expect(result).to.be.instanceOf(ExportDeclaration);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -353,10 +354,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.addExports), () => {
+    describe(nameof<SourceFile>(n => n.addExportDeclarations), () => {
         function doTest(startCode: string, structures: ExportDeclarationStructure[], expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.addExports(structures);
+            const result = sourceFile.addExportDeclarations(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -367,30 +368,133 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getExports), () => {
+    describe(nameof<SourceFile>(n => n.getExportDeclarations), () => {
         it("should get the export declarations", () => {
             const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
-            expect(sourceFile.getExports().length).to.equal(2);
-            expect(sourceFile.getExports()[0]).to.be.instanceOf(ExportDeclaration);
+            expect(sourceFile.getExportDeclarations().length).to.equal(2);
+            expect(sourceFile.getExportDeclarations()[0]).to.be.instanceOf(ExportDeclaration);
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getExport), () => {
+    describe(nameof<SourceFile>(n => n.getExportDeclaration), () => {
         it("should get the export declaration", () => {
             const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
-            expect(sourceFile.getExport(e => e.isNamespaceExport())!.getText()).to.equal("export * from 'test';");
+            expect(sourceFile.getExportDeclaration(e => e.isNamespaceExport())!.getText()).to.equal("export * from 'test';");
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getExportOrThrow), () => {
+    describe(nameof<SourceFile>(n => n.getExportDeclarationOrThrow), () => {
         it("should get the export declaration", () => {
             const {sourceFile} = getInfoFromText("export * from 'test'; export {next} from './test';");
-            expect(sourceFile.getExportOrThrow(e => e.isNamespaceExport()).getText()).to.equal("export * from 'test';");
+            expect(sourceFile.getExportDeclarationOrThrow(e => e.isNamespaceExport()).getText()).to.equal("export * from 'test';");
         });
 
         it("should throw when not exists", () => {
             const {sourceFile} = getInfoFromText("");
-            expect(() => sourceFile.getExportOrThrow(e => false)).to.throw();
+            expect(() => sourceFile.getExportDeclarationOrThrow(e => false)).to.throw();
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertExportAssignments), () => {
+        function doTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertExportAssignments(index, structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert the different kinds of exports", () => {
+            doTest("", 0, [
+                { expression: "5" },
+                { isEqualsExport: true, expression: writer => writer.write("6") },
+                { isEqualsExport: false, expression: "name" }
+            ], [
+                `export = 5;`,
+                `export = 6;`,
+                `export default name;`
+            ].join("\n") + "\n");
+        });
+
+        it("should insert at the beginning", () => {
+            doTest(`export class Class {}\n`, 0, [{ expression: "5" }], `export = 5;\n\nexport class Class {}\n`);
+        });
+
+        it("should insert in the middle", () => {
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, [{ expression: "5" }],
+                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+        });
+
+        it("should insert at the end", () => {
+            doTest(`export class Class {}\n`, 1, [{ expression: "5" }], `export class Class {}\n\nexport = 5;\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.insertExportAssignment), () => {
+        function doTest(startCode: string, index: number, structure: ExportAssignmentStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.insertExportAssignment(index, structure);
+            expect(result).to.be.instanceOf(ExportAssignment);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should insert at the specified position", () => {
+            doTest(`export * from "./file1";\nexport = 6;\n`, 1, { expression: "5" },
+                `export * from "./file1";\n\nexport = 5;\nexport = 6;\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addExportAssignment), () => {
+        function doTest(startCode: string, structure: ExportAssignmentStructure, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addExportAssignment(structure);
+            expect(result).to.be.instanceOf(ExportAssignment);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should always add at the end of the file", () => {
+            doTest(`export class MyClass {}\n`, { expression: "5" },
+                `export class MyClass {}\n\nexport = 5;\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.addExportAssignments), () => {
+        function doTest(startCode: string, structures: ExportAssignmentStructure[], expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const result = sourceFile.addExportAssignments(structures);
+            expect(result.length).to.equal(structures.length);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should add multiple", () => {
+            doTest(`export class MyClass {}\n`, [{ expression: "5" }, { expression: "6" }],
+                `export class MyClass {}\n\nexport = 5;\nexport = 6;\n`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExportAssignments), () => {
+        it("should get the export declarations", () => {
+            const {sourceFile} = getInfoFromText("export = 5; export = 6;");
+            expect(sourceFile.getExportAssignments().length).to.equal(2);
+            expect(sourceFile.getExportAssignments()[0]).to.be.instanceOf(ExportAssignment);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExportAssignment), () => {
+        it("should get the export declaration", () => {
+            const {sourceFile} = getInfoFromText("export = 5; export default 6;");
+            expect(sourceFile.getExportAssignment(e => !e.isExportEquals())!.getText()).to.equal("export default 6;");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.getExportAssignmentOrThrow), () => {
+        it("should get the export declaration", () => {
+            const {sourceFile} = getInfoFromText("export = 5; export default 6;");
+            expect(sourceFile.getExportAssignmentOrThrow(e => !e.isExportEquals()).getText()).to.equal("export default 6;");
+        });
+
+        it("should throw when not exists", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(() => sourceFile.getExportAssignmentOrThrow(e => false)).to.throw();
         });
     });
 

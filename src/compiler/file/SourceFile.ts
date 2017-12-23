@@ -5,8 +5,8 @@ import {Directory} from "./../../fileSystem";
 import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting} from "./../../manipulation";
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
-import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileStructure} from "./../../structures";
-import {ImportDeclarationStructureToText} from "./../../structureToTexts";
+import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "./../../structures";
+import {ImportDeclarationStructureToText, ExportDeclarationStructureToText, ExportAssignmentStructureToText} from "./../../structureToTexts";
 import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
@@ -15,6 +15,7 @@ import {StatementedNode} from "./../statement";
 import {Diagnostic, EmitResult, FormatCodeSettings} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
+import {ExportAssignment} from "./ExportAssignment";
 import {FileSystemRefreshResult} from "./FileSystemRefreshResult";
 
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
@@ -49,7 +50,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (structure.imports != null)
             this.addImports(structure.imports);
         if (structure.exports != null)
-            this.addExports(structure.exports);
+            this.addExportDeclarations(structure.exports);
 
         return this;
     }
@@ -222,8 +223,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param structures - Structures that represent the imports to insert.
      */
     insertImports(index: number, structures: ImportDeclarationStructure[]) {
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const indentationText = this.getChildIndentationText();
         const texts = structures.map(structure => {
             // todo: pass the StructureToText to the method below
             const writer = this.getWriter();
@@ -264,65 +263,46 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add an export.
+     * Add export declarations.
      * @param structure - Structure that represents the export.
      */
-    addExport(structure: ExportDeclarationStructure) {
-        return this.addExports([structure])[0];
+    addExportDeclaration(structure: ExportDeclarationStructure) {
+        return this.addExportDeclarations([structure])[0];
     }
 
     /**
-     * Add exports.
+     * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExports(structures: ExportDeclarationStructure[]) {
+    addExportDeclarations(structures: ExportDeclarationStructure[]) {
         // always insert at end of file because of export {Identifier}; statements
-        return this.insertExports(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+        return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
 
     /**
-     * Insert an export.
+     * Insert an export declaration.
      * @param index - Index to insert at.
      * @param structure - Structure that represents the export.
      */
-    insertExport(index: number, structure: ExportDeclarationStructure) {
-        return this.insertExports(index, [structure])[0];
+    insertExportDeclaration(index: number, structure: ExportDeclarationStructure) {
+        return this.insertExportDeclarations(index, [structure])[0];
     }
 
     /**
-     * Insert exports into a file.
+     * Insert export declarations into a file.
      * @param index - Index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExports(index: number, structures: ExportDeclarationStructure[]) {
-        const newLineChar = this.global.manipulationSettings.getNewLineKind();
-        const quoteType = this.global.manipulationSettings.getQuoteType();
-        const indentationText = this.getChildIndentationText();
+    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]) {
         const texts = structures.map(structure => {
-            const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
-            let code = `${indentationText}export`;
-            if (structure.namedExports != null && structure.namedExports.length > 0) {
-                const namedExportsCode = structure.namedExports.map(n => {
-                    let namedExportCode = n.name;
-                    if (n.alias != null)
-                        namedExportCode += ` as ${n.alias}`;
-                    return namedExportCode;
-                }).join(", ");
-                code += ` {${namedExportsCode}}`;
-            }
-            else if (!hasModuleSpecifier)
-                code += " {}";
-            else
-                code += " *";
-
-            if (hasModuleSpecifier)
-                code += ` from ${quoteType}${structure.moduleSpecifier}${quoteType}`;
-
-            code += `;`;
-            return code;
+            // todo: pass the StructureToText to the method below
+            const writer = this.getWriter();
+            const structureToText = new ExportDeclarationStructureToText(writer);
+            structureToText.writeText(structure);
+            return writer.toString();
         });
 
-        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ExportDeclaration, undefined, {
+        return this._insertMainChildren<ExportDeclaration>(index, texts, structures, ts.SyntaxKind.ExportDeclaration, undefined, {
             previousBlanklineWhen: previousMember => !(TypeGuards.isExportDeclaration(previousMember)),
             nextBlanklineWhen: nextMember => !(TypeGuards.isExportDeclaration(nextMember)),
             separatorNewlineWhen: () => false
@@ -331,26 +311,95 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
-     * @param condition - Condition to get the export by.
+     * @param condition - Condition to get the export declaration by.
      */
-    getExport(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined {
-        return ArrayUtils.find(this.getExports(), condition);
+    getExportDeclaration(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration | undefined {
+        return ArrayUtils.find(this.getExportDeclarations(), condition);
     }
 
     /**
      * Gets the first export declaration that matches a condition, or throws if it doesn't exist.
-     * @param condition - Condition to get the export by.
+     * @param condition - Condition to get the export declaration by.
      */
-    getExportOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration {
-        return errors.throwIfNullOrUndefined(this.getExport(condition), "Expected to find an export with the provided condition.");
+    getExportDeclarationOrThrow(condition: (exportDeclaration: ExportDeclaration) => boolean): ExportDeclaration {
+        return errors.throwIfNullOrUndefined(this.getExportDeclaration(condition), "Expected to find an export declaration with the provided condition.");
     }
 
     /**
      * Get the file's export declarations.
      */
-    getExports(): ExportDeclaration[] {
-        // todo: remove type assertion
+    getExportDeclarations(): ExportDeclaration[] {
         return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration[];
+    }
+
+    /**
+     * Add export assignments.
+     * @param structure - Structure that represents the export.
+     */
+    addExportAssignment(structure: ExportAssignmentStructure) {
+        return this.addExportAssignments([structure])[0];
+    }
+
+    /**
+     * Add export assignments.
+     * @param structures - Structures that represent the exports.
+     */
+    addExportAssignments(structures: ExportAssignmentStructure[]) {
+        // always insert at end of file because of export {Identifier}; statements
+        return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+    }
+
+    /**
+     * Insert an export assignment.
+     * @param index - Index to insert at.
+     * @param structure - Structure that represents the export.
+     */
+    insertExportAssignment(index: number, structure: ExportAssignmentStructure) {
+        return this.insertExportAssignments(index, [structure])[0];
+    }
+
+    /**
+     * Insert export assignments into a file.
+     * @param index - Index to insert at.
+     * @param structures - Structures that represent the exports to insert.
+     */
+    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]) {
+        const texts = structures.map(structure => {
+            // todo: pass the StructureToText to the method below
+            const writer = this.getWriter();
+            const structureToText = new ExportAssignmentStructureToText(writer);
+            structureToText.writeText(structure);
+            return writer.toString();
+        });
+
+        return this._insertMainChildren<ExportAssignment>(index, texts, structures, ts.SyntaxKind.ExportAssignment, undefined, {
+            previousBlanklineWhen: previousMember => !(TypeGuards.isExportAssignment(previousMember)),
+            nextBlanklineWhen: nextMember => !(TypeGuards.isExportAssignment(nextMember)),
+            separatorNewlineWhen: () => false
+        });
+    }
+
+    /**
+     * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignment(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment | undefined {
+        return ArrayUtils.find(this.getExportAssignments(), condition);
+    }
+
+    /**
+     * Gets the first export assignment that matches a condition, or throws if it doesn't exist.
+     * @param condition - Condition to get the export assignment by.
+     */
+    getExportAssignmentOrThrow(condition: (exportAssignment: ExportAssignment) => boolean): ExportAssignment {
+        return errors.throwIfNullOrUndefined(this.getExportAssignment(condition), "Expected to find an export assignment with the provided condition.");
+    }
+
+    /**
+     * Get the file's export assignments.
+     */
+    getExportAssignments(): ExportAssignment[] {
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportAssignment) as ExportAssignment[];
     }
 
     /**

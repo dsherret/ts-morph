@@ -187,7 +187,7 @@ describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
-            sourceFile.getExports()[index].remove();
+            sourceFile.getExportDeclarations()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 

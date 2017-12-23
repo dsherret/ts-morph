@@ -1,3 +1,4 @@
+export * from "./ExportAssignmentStructure";
 export * from "./ExportDeclarationStructure";
 export * from "./ExportSpecifierStructure";
 export * from "./ImportDeclarationStructure";
