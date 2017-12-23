@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/dsherret/ts-simple-ast/compare/4.1.0...4.2.0) (2017-12-23)
+
+
+### Bug Fixes
+
+* **core:** add 2.4.2 version ([c2a4022](https://github.com/dsherret/ts-simple-ast/commit/c2a4022))
+* **core:** linting issue ([c231f9e](https://github.com/dsherret/ts-simple-ast/commit/c231f9e))
+* [#192](https://github.com/dsherret/ts-simple-ast/issues/192) - Fix forget block crashes when removing node. ([3f195ea](https://github.com/dsherret/ts-simple-ast/commit/3f195ea))
+* getDiagnostics() should return the syntactic, semantic, and declaration diagnostics. ([5ea5cfc](https://github.com/dsherret/ts-simple-ast/commit/5ea5cfc))
+* Lazily create program and type checker when necessary. ([77b3889](https://github.com/dsherret/ts-simple-ast/commit/77b3889))
+
+
+### Features
+
+* **core:** add 2.4.2 version ([15519b0](https://github.com/dsherret/ts-simple-ast/commit/15519b0))
+* **core:** support failing tests ([f23a7dc](https://github.com/dsherret/ts-simple-ast/commit/f23a7dc))
+* **core:** support multiple TypeScript versions ([c52ad48](https://github.com/dsherret/ts-simple-ast/commit/c52ad48)), closes [#144](https://github.com/dsherret/ts-simple-ast/issues/144)
+* [#184](https://github.com/dsherret/ts-simple-ast/issues/184) - Ability to copy directories. ([18f1e7b](https://github.com/dsherret/ts-simple-ast/commit/18f1e7b))
+* [#185](https://github.com/dsherret/ts-simple-ast/issues/185) - Ability to save all descendant files in a directory. ([334f20b](https://github.com/dsherret/ts-simple-ast/commit/334f20b))
+* Add ast.getPreEmitDiagnostics() ([a561994](https://github.com/dsherret/ts-simple-ast/commit/a561994))
+* Add SourceFile.getPreEmitDiagnostics ([d1ea9eb](https://github.com/dsherret/ts-simple-ast/commit/d1ea9eb))
+* Emit a directory. ([3cb455c](https://github.com/dsherret/ts-simple-ast/commit/3cb455c))
+* Program - getSyntacticDiagnostics, getSemanticDiagnostics, getDeclarationDiagnostics, getPreEmitDiagnostics ([56b5f58](https://github.com/dsherret/ts-simple-ast/commit/56b5f58))
+* Support TS 2.4, 2.5, and 2.6 ([57c87f8](https://github.com/dsherret/ts-simple-ast/commit/57c87f8))
+* Wrap LanguageService.getEmitOutput(...). ([40ecc32](https://github.com/dsherret/ts-simple-ast/commit/40ecc32))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/dsherret/ts-simple-ast/compare/4.0.1...4.1.0) (2017-12-19)
 
