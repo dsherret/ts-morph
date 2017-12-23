@@ -522,17 +522,17 @@ describe(nameof(TsSimpleAst), () => {
         });
 
         it("should not throw if removing a created node in a block", () => {
-            const sourceFile = ast.createSourceFile("file3.ts", "class MyClass {}");
+            const newSourceFile = ast.createSourceFile("file3.ts", "class MyClass {}");
             ast.forgetNodesCreatedInBlock(remember => {
-                const classDec = sourceFile.getClassOrThrow("MyClass");
+                const classDec = newSourceFile.getClassOrThrow("MyClass");
                 classDec.remove();
             });
         });
 
         it("should throw if attempting to remember a node that was forgotten", () => {
-            const sourceFile = ast.createSourceFile("file4.ts");
+            const newSourceFile = ast.createSourceFile("file4.ts");
             ast.forgetNodesCreatedInBlock(remember => {
-                const classDec = sourceFile.addClass({ name: "Class" });
+                const classDec = newSourceFile.addClass({ name: "Class" });
                 classDec.forget();
                 expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
             });
