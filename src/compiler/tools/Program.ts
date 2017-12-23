@@ -3,7 +3,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {Logger} from "./../../utils";
 import {TypeChecker} from "./TypeChecker";
 import {SourceFile} from "./../file";
-import {EmitResult} from "./results";
+import {EmitResult, Diagnostic} from "./results";
 
 /**
  * Options for emitting.
@@ -82,5 +82,41 @@ export class Program {
         const customTransformers = undefined; // todo: expose this
         const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
         return new EmitResult(this.global, emitResult);
+    }
+
+    /**
+     * Gets the syntactic diagnostics.
+     * @param sourceFile - Optional source file.
+     */
+    getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the semantic diagnostics.
+     * @param sourceFile - Optional source file.
+     */
+    getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the declaration diagnostics.
+     * @param sourceFile - Optional source file.
+     */
+    getDeclarationDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the pre-emit diagnostics.
+     * @param sourceFile - Source file.
+     */
+    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 }
