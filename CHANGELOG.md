@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/dsherret/ts-simple-ast/compare/4.2.0...4.2.1) (2017-12-23)
+
+
+### Bug Fixes
+
+* For consistency, directory path should be relative to its path and not the parent. ([f832035](https://github.com/dsherret/ts-simple-ast/commit/f832035))
+
+
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/dsherret/ts-simple-ast/compare/4.1.0...4.2.0) (2017-12-23)
 
