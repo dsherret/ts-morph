@@ -17,7 +17,5 @@ class Identifier {
         firstChild.rename("NewName");
         firstChild.getInstanceProperties()[0].rename("newPropName");
         expect(firstChild.getFullText()).to.equal(text.replace("Identifier", "NewName").replace("prop", "newPropName"));
-        expect(firstChild.getNameNode().compilerNode.escapedText).to.equal("NewName");
-        expect((firstChild.getInstanceProperties()[0].getNameNode()!.compilerNode as ts.Identifier).escapedText).to.equal("newPropName");
     });
 });
