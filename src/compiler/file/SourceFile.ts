@@ -385,6 +385,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the pre-emit diagnostics.
+     */
+    getPreEmitDiagnostics(): Diagnostic[] {
+        return this.global.program.getPreEmitDiagnostics(this);
+    }
+
+    /**
      * Removes any "export default";
      */
     removeDefaultExport(defaultExportSymbol?: Symbol | undefined): this {
