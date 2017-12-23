@@ -4,13 +4,16 @@ title: Diagnostics
 
 ## Diagnostics
 
-Diagnostics (compile errors) can be retrieved on the AST or on source files by using the `.getDiagnostics()` method:
+Diagnostics (compile errors) can be retrieved on the AST or on source files:
 
 ```typescript
 const diagnostics = ast.getDiagnostics();
-```
+const preEmitDiagnostics = ast.getPreEmitDiagnostics();
 
-Calling it on a source file will only give you the diagnostics for that source file.
+// or on a source file
+const sourceFileDiagnostics = sourceFile.getDiagnostics();
+const sourceFilePreEmitDiagnostics = sourceFile.getPreEmitDiagnostics();
+```
 
 ### Diagnostic
 

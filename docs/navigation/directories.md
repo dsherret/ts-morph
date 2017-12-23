@@ -114,6 +114,50 @@ const indexFile = directory.addExistingSourceFile("index.ts");
 const descendantSourceFiles = directory.getDescendantSourceFiles();
 ```
 
+### Saving
+
+Save all the unsaved source files:
+
+```ts
+directory.saveUnsavedSourceFiles();
+directory.saveUnsavedSourceFilesSync(); // slow
+```
+
+### Emitting
+
+It's possible to only specific directories:
+
+```ts
+directory.emit();
+```
+
+Or specify the output directories (specify a path relative from the directory or an absolute paths):
+
+```ts
+directory.emit({
+    outDir: "out",
+    declarationDir: "declarations"
+});
+```
+
+And of course, specify to only emit declaration files:
+
+```ts
+directory.emit({ emitOnlyDtsFiles: true });
+```
+
+### Copying
+
+Copy the directory to a new directory:
+
+```
+// ex. copies C:\MyProject\dir to C:\MyProject\newDir
+directory.copy("newDir"); // relative from the parent directory
+directory.copy("C:\\test"); // or absolute
+```
+
+Note that the directory and source files won't be created until calling save on them.
+
 ### Deleting
 
 Deletes the directory and all its descendants from the file system:
