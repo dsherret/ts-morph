@@ -443,7 +443,7 @@ describe(nameof(Directory), () => {
             dir.createSourceFile("file.ts");
             dir.createDirectory("dir2").createDirectory("nested").createSourceFile("file2.ts");
 
-            const newDir = dir.copy("newDir");
+            const newDir = dir.copy("../newDir");
             expect(newDir.getPath()).to.equal(FileUtils.pathJoin(mainDir.getPath(), newDir.getBaseName()));
             testDirectoryTree(newDir, {
                 directory: newDir,

@@ -344,11 +344,11 @@ export class Directory {
 
     /**
      * Copies a directory to a new directory.
-     * @param relativeOrAbsolutePath - The relative or absolute path to the new directory. Path is relative to the parent directory.
+     * @param relativeOrAbsolutePath - The relative or absolute path to the new directory.
      * @returns The directory the copy was made to.
      */
     copy(relativeOrAbsolutePath: string) {
-        const newPath = FileUtils.getStandardizedAbsolutePath(relativeOrAbsolutePath, FileUtils.getDirPath(this.getPath()));
+        const newPath = FileUtils.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
         const directory = this.global.compilerFactory.getOrCreateDirectory(newPath);
 
         for (const sourceFile of this.getSourceFiles())
