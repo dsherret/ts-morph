@@ -154,7 +154,7 @@ Copy the directory to a new directory:
 
 ```
 // ex. copies C:\MyProject\dir to C:\MyProject\newDir
-directory.copy("newDir"); // relative from the parent directory
+directory.copy("../newDir");
 directory.copy("C:\\test"); // or absolute
 ```
 
