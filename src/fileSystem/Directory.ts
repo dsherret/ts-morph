@@ -79,42 +79,42 @@ export class Directory {
     }
 
     /**
-     * Gets a child directory with the specified name or throws if not found.
-     * @param dirName - Directory name.
+     * Gets a child directory with the specified path or throws if not found.
+     * @param path - Relative path from this directory or absolute path.
      */
-    getDirectoryOrThrow(dirName: string): Directory;
+    getDirectoryOrThrow(path: string): Directory;
     /**
      * Gets a child directory by the specified condition or throws if not found.
      * @param condition - Condition to check the directory with.
      */
     getDirectoryOrThrow(condition: (directory: Directory) => boolean): Directory;
-    getDirectoryOrThrow(dirNameOrCondition: string | ((directory: Directory) => boolean)) {
-        return errors.throwIfNullOrUndefined(this.getDirectory(dirNameOrCondition), () => {
-            if (typeof dirNameOrCondition === "string")
-                return `Could not find child directory with name '${dirNameOrCondition}'.`;
+    getDirectoryOrThrow(pathOrCondition: string | ((directory: Directory) => boolean)) {
+        return errors.throwIfNullOrUndefined(this.getDirectory(pathOrCondition), () => {
+            if (typeof pathOrCondition === "string")
+                return `Could not find a directory at path '${FileUtils.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
             return "Could not find child directory that matched condition.";
         });
     }
 
     /**
-     * Gets a child directory with the specified name or undefined if not found.
-     * @param dirName - Directory name.
+     * Gets a directory with the specified path or undefined if not found.
+     * @param path - Relative path from this directory or absolute path.
      */
-    getDirectory(dirName: string): Directory | undefined;
+    getDirectory(path: string): Directory | undefined;
     /**
      * Gets a child directory by the specified condition or undefined if not found.
      * @param condition - Condition to check the directory with.
      */
     getDirectory(condition: (directory: Directory) => boolean): Directory | undefined;
     /** @internal */
-    getDirectory(dirNameOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
-    getDirectory(dirNameOrCondition: string | ((directory: Directory) => boolean)) {
-        if (typeof dirNameOrCondition === "string") {
-            const name = dirNameOrCondition;
-            dirNameOrCondition = directory => FileUtils.getBaseName(directory.getPath()) === name;
+    getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
+    getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)) {
+        if (typeof pathOrCondition === "string") {
+            const path = FileUtils.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
+            return this.global.compilerFactory.getDirectory(path);
         }
 
-        return ArrayUtils.find(this.getDirectories(), dirNameOrCondition);
+        return ArrayUtils.find(this.getDirectories(), pathOrCondition);
     }
 
     /**

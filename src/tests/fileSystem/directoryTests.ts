@@ -352,9 +352,18 @@ describe(nameof(Directory), () => {
         const directory = ast.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
         const child2 = directory.createDirectory("child2");
+        const grandChild1 = child1.createDirectory("grandChild1");
 
         it("should get the directory based on the name", () => {
             expect(directory.getDirectory("child2")!.getPath()).to.equal(child2.getPath());
+        });
+
+        it("should get the directory based on the relative path", () => {
+            expect(directory.getDirectory("child1/grandChild1")!.getPath()).to.equal(grandChild1.getPath());
+        });
+
+        it("should get the directory based on the absolute path", () => {
+            expect(directory.getDirectory(grandChild1.getPath())!.getPath()).to.equal(grandChild1.getPath());
         });
 
         it("should get the directory based on a condition", () => {
