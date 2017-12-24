@@ -270,7 +270,7 @@ export class Directory {
 
         for (const emitResult of this._emitInternal(options)) {
             if (emitResult === false) {
-                await writeTasks;
+                await Promise.all(writeTasks);
                 return new DirectoryEmitResult(true, outputFilePaths);
             }
 
@@ -278,7 +278,7 @@ export class Directory {
             outputFilePaths.push(emitResult.filePath);
         }
 
-        await writeTasks;
+        await Promise.all(writeTasks);
         return new DirectoryEmitResult(false, outputFilePaths);
     }
 

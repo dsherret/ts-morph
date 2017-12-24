@@ -67,7 +67,6 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
-            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirPath(filePath)]);
         });
     });
 
@@ -145,7 +144,6 @@ describe(nameof(SourceFile), () => {
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
             expect(writeLog.length).to.equal(1);
-            expect(host.getCreatedDirectories()).to.deep.equal([FileUtils.getDirPath(filePath)]);
         });
     });
 
@@ -574,15 +572,6 @@ describe(nameof(SourceFile), () => {
             expect(writeLog[0].filePath).to.equal("dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
-        });
-
-        it("should create the directories when emitting", () => {
-            const fileSystem = getFileSystemHostWithFiles([]);
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist/subdir" } }, fileSystem);
-            const sourceFile = ast.createSourceFile("/test.ts", "const num1 = 1;");
-            ast.emit();
-            const directories = fileSystem.getCreatedDirectories();
-            expect(directories).to.deep.equal(["dist", "dist/subdir"]);
         });
     });
 

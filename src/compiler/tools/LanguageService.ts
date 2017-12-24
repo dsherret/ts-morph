@@ -63,7 +63,6 @@ export class LanguageService {
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: ts.CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
             writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
-                FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, FileUtils.getDirPath(filePath));
                 this.global.fileSystem.writeFileSync(filePath, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),

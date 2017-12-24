@@ -34,8 +34,9 @@ export class DefaultFileSystemHost implements FileSystemHost {
         return fs.readFileSync(filePath, encoding);
     }
 
-    writeFile(filePath: string, fileText: string) {
-        return new Promise<void>((resolve, reject) => {
+    async writeFile(filePath: string, fileText: string) {
+        await FileUtils.ensureDirectoryExists(this, FileUtils.getDirPath(filePath));
+        await new Promise<void>((resolve, reject) => {
             fs.writeFile(filePath, fileText, err => {
                 if (err)
                     reject(err);
@@ -46,6 +47,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     writeFileSync(filePath: string, fileText: string) {
+        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
         fs.writeFileSync(filePath, fileText);
     }
 

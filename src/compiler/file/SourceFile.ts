@@ -134,7 +134,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        FileUtils.ensureDirectoryExistsSync(this.global.fileSystem, this.getDirectoryPath());
         this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }

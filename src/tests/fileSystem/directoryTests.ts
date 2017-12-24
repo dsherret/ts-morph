@@ -580,17 +580,18 @@ describe(nameof(Directory), () => {
 
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
             const writeLog = fileSystem.getWriteLog();
+            const createdDirectories = fileSystem.getCreatedDirectories();
 
             expect(result.getEmitSkipped()).to.be.false;
-            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
-            expect(writeLog[0].filePath).to.equal(outDir + "/file1.js.map");
-            expect(writeLog[1].filePath).to.equal(outDir + "/file1.js");
-            expect(writeLog[1].fileText).to.equal("var t = '';\n//# sourceMappingURL=file1.js.map");
-            expect(writeLog[2].filePath).to.equal(declarationDir + "/file1.d.ts");
-            expect(writeLog[3].filePath).to.equal(outDir + "/subDir/file2.js.map");
-            expect(writeLog[4].filePath).to.equal(outDir + "/subDir/file2.js");
-            expect(writeLog[5].filePath).to.equal(declarationDir + "/subDir/file2.d.ts");
-            expect(writeLog.length).to.equal(6);
+            expect(result.getOutputFilePaths().sort()).to.deep.equal(writeLog.map(l => l.filePath).sort());
+            expect(writeLog.map(l => l.filePath).sort()).to.deep.equal([
+                outDir + "/file1.js.map",
+                outDir + "/file1.js",
+                declarationDir + "/file1.d.ts",
+                outDir + "/subDir/file2.js.map",
+                outDir + "/subDir/file2.js",
+                declarationDir + "/subDir/file2.d.ts"
+            ].sort());
         }
 
         it("should emit correctly when not specifying anything", async () => {
