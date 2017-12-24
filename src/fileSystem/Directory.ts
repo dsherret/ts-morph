@@ -348,7 +348,7 @@ export class Directory {
      */
     copy(relativeOrAbsolutePath: string) {
         const newPath = FileUtils.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
-        const directory = this.global.compilerFactory.getOrCreateDirectory(newPath);
+        const directory = this.global.compilerFactory.addDirectoryIfNotExists(newPath);
 
         for (const sourceFile of this.getSourceFiles())
             sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()));

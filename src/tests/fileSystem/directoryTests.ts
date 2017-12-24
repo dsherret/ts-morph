@@ -485,6 +485,14 @@ describe(nameof(Directory), () => {
                 }]
             }, mainDir);
         });
+
+        it("should not throw when copying a directory to an existing directory on the file system", () => {
+            const ast = getAst([], ["mainDir/newDir"]);
+            const mainDir = ast.createDirectory("mainDir");
+            const dir = mainDir.createDirectory("dir");
+            dir.createSourceFile("file.ts");
+            expect(() => dir.copy("../newDir")).to.not.throw();
+        });
     });
 
     describe(nameof<Directory>(d => d.delete), () => {

@@ -242,14 +242,6 @@ export class CompilerFactory {
     }
 
     /**
-     * Gets or creates a directory.
-     * @param dirPath - Directory path.
-     */
-    getOrCreateDirectory(dirPath: string) {
-        return this.directoryCache.get(dirPath) || this.createDirectory(dirPath);
-    }
-
-    /**
      * Gets all the directories iterated by depth.
      */
     getDirectoriesByDepth() {
