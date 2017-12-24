@@ -97,3 +97,13 @@ namespaceDeclaration.getText(); // ok, was marked to remember in one of the bloc
 interfaceDeclaration.getText(); // throws, was forgotten
 classDeclaration.getText();     // throws, was forgotten
 ```
+
+#### Async
+
+This method supports async and await:
+
+```ts
+await ast.forgetNodesCreatedInBlock(async remember => {
+    // do stuff
+});
+```

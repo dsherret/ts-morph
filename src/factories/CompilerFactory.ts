@@ -362,13 +362,16 @@ export class CompilerFactory {
      * Forgets the nodes created in the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void) {
+    async forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)) {
         this.nodeCache.setForgetPoint();
         try {
-            block((...nodes) => {
+            const result = block((...nodes) => {
                 for (const node of nodes)
                     this.nodeCache.rememberNode(node);
             });
+
+            if (result != null && typeof result.then === "function")
+                await result;
         } finally {
             this.nodeCache.forgetLastPoint();
         }

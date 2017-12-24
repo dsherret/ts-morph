@@ -336,8 +336,16 @@ export class TsSimpleAst {
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void) {
-        this.global.compilerFactory.forgetNodesCreatedInBlock(block);
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void): void;
+    /**
+     * Forgets the nodes created in the scope of the passed in block asynchronously.
+     *
+     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => Promise<void>): void;
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)) {
+        return this.global.compilerFactory.forgetNodesCreatedInBlock(block);
     }
 }
 
