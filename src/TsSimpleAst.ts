@@ -5,7 +5,7 @@ import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
 import {getCompilerOptionsFromTsConfig, FileUtils, ArrayUtils} from "./utils";
-import {DefaultFileSystemHost, FileSystemHost, Directory} from "./fileSystem";
+import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, Directory} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
 
@@ -16,6 +16,8 @@ export interface Options {
     tsConfigFilePath?: string;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to use a virtual file system. */
+    useVirtualFileSystem?: boolean;
 }
 
 /**
@@ -30,7 +32,14 @@ export class TsSimpleAst {
      * @param options - Optional options.
      * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
-    constructor(options: Options = {}, private readonly fileSystem: FileSystemHost = new DefaultFileSystemHost()) {
+    constructor(options: Options = {}, fileSystem?: FileSystemHost) {
+        if (fileSystem != null && options.useVirtualFileSystem)
+            throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
+        else if (options.useVirtualFileSystem)
+            fileSystem = new VirtualFileSystemHost();
+        else if (fileSystem == null)
+            fileSystem = new DefaultFileSystemHost();
+
         this.global = new GlobalContainer(fileSystem, getCompilerOptionsFromOptions(options, fileSystem), { createLanguageService: true });
         if (options.manipulationSettings != null)
             this.global.manipulationSettings.set(options.manipulationSettings);
@@ -48,8 +57,8 @@ export class TsSimpleAst {
      * @param dirPath - Path to add the directory at.
      */
     addExistingDirectory(dirPath: string): Directory {
-        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
-        if (!this.fileSystem.directoryExistsSync(dirPath))
+        dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
+        if (!this.global.fileSystem.directoryExistsSync(dirPath))
             throw new errors.DirectoryNotFoundError(dirPath);
         return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
     }
@@ -61,7 +70,7 @@ export class TsSimpleAst {
      * @throws - InvalidOperationError if a directory already exists at the provided file path.
      */
     createDirectory(dirPath: string): Directory {
-        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
         return this.global.compilerFactory.createDirectory(dirPath);
     }
 
@@ -71,7 +80,7 @@ export class TsSimpleAst {
      */
     getDirectoryOrThrow(dirPath: string): Directory {
         return errors.throwIfNullOrUndefined(this.getDirectory(dirPath),
-            () => `Could not find a directory at the specified path: ${FileUtils.getStandardizedAbsolutePath(dirPath)}`);
+            () => `Could not find a directory at the specified path: ${FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath)}`);
     }
 
     /**
@@ -79,7 +88,7 @@ export class TsSimpleAst {
      * @param dirPath - Directory path.
      */
     getDirectory(dirPath: string): Directory | undefined {
-        dirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
         return this.global.compilerFactory.getDirectory(dirPath);
     }
 
@@ -105,7 +114,7 @@ export class TsSimpleAst {
     addExistingSourceFiles(...fileGlobs: string[]): compiler.SourceFile[] {
         const sourceFiles: compiler.SourceFile[] = [];
 
-        for (const filePath of this.fileSystem.glob(fileGlobs)) {
+        for (const filePath of this.global.fileSystem.glob(fileGlobs)) {
             // ignore any FileNotFoundErrors
             try {
                 sourceFiles.push(this.addExistingSourceFile(filePath));
@@ -126,8 +135,8 @@ export class TsSimpleAst {
      * @param filePath - File path to get the file from.
      */
     addExistingSourceFile(filePath: string): compiler.SourceFile {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
-        if (!this.fileSystem.fileExistsSync(absoluteFilePath))
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
+        if (!this.global.fileSystem.fileExistsSync(absoluteFilePath))
             throw new errors.FileNotFoundError(absoluteFilePath);
         return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath)!;
     }
@@ -311,7 +320,7 @@ export class TsSimpleAst {
      * Gets the file system.
      */
     getFileSystem(): FileSystemHost {
-        return this.fileSystem;
+        return this.global.fileSystem;
     }
 
     /**

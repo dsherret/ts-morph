@@ -14,7 +14,7 @@ describe(nameof(SourceFile), () => {
         const fileText = "    interface Identifier {}    ";
         const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
         const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
-        const absoluteSourceFile = sourceFile.copy(FileUtils.getStandardizedAbsolutePath("NewFile.ts"));
+        const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
 
         describe(nameof(tsSimpleAst), () => {
             it("should include the copied source files", () => {
@@ -32,7 +32,7 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(relativeSourceFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("NewFolder/NewFile.ts"));
+                expect(relativeSourceFile.getFilePath()).to.equal("/NewFolder/NewFile.ts");
             });
         });
 
@@ -46,14 +46,14 @@ describe(nameof(SourceFile), () => {
             });
 
             it("should have the expected path", () => {
-                expect(absoluteSourceFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("NewFile.ts"));
+                expect(absoluteSourceFile.getFilePath()).to.equal("/NewFile.ts");
             });
         });
     });
 
     describe(nameof<SourceFile>(n => n.save), () => {
         const fileText = "    interface Identifier {}    ";
-        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
@@ -71,7 +71,7 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.delete), () => {
-        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText("", { filePath, host });
         sourceFile.saveSync();
@@ -88,7 +88,7 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.deleteSync), () => {
-        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText("", { filePath, host });
         sourceFile.saveSync();
@@ -105,7 +105,7 @@ describe(nameof(SourceFile), () => {
     });
 
     describe(nameof<SourceFile>(n => n.isSaved), () => {
-        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const filePath = "/Folder/File.ts";
 
         it("should not be saved after doing an action that will replace the tree", () => {
             const host = getFileSystemHostWithFiles([]);
@@ -130,7 +130,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.saveSync), () => {
         const fileText = "    interface Identifier {}    ";
-        const filePath = FileUtils.getStandardizedAbsolutePath("/Folder/File.ts");
+        const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText(fileText, { filePath, host });
 
@@ -825,7 +825,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.refreshFromFileSystemSync), () => {
         it("should update the text", () => {
-            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const filePath = "/File.ts";
             const newText = "let t: string;";
             const host = getFileSystemHostWithFiles([]);
             const {sourceFile, firstChild} = getInfoFromText("class MyClass {}", { filePath, host });
@@ -841,7 +841,7 @@ function myFunction(param: MyClass) {
         });
 
         it("should throw when the read file throws an error other than file not found", () => {
-            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const filePath = "/File.ts";
             const host = getFileSystemHostWithFiles([]);
             const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
             sourceFile.saveSync();
@@ -855,7 +855,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.refreshFromFileSystem), () => {
         it("should update the text", async () => {
-            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const filePath = "/File.ts";
             const newText = "let t: string;";
             const host = getFileSystemHostWithFiles([]);
             const {sourceFile, firstChild} = getInfoFromText("class MyClass {}", { filePath, host });
@@ -871,7 +871,7 @@ function myFunction(param: MyClass) {
         });
 
         it("should throw when the read file throws an error other than file not found", async () => {
-            const filePath = FileUtils.getStandardizedAbsolutePath("File.ts");
+            const filePath = "/File.ts";
             const host = getFileSystemHostWithFiles([]);
             const {sourceFile} = getInfoFromText("class MyClass {}", { filePath, host });
             await sourceFile.save();

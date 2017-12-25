@@ -177,7 +177,7 @@ describe(nameof(TsSimpleAst), () => {
             const ast = new TsSimpleAst(undefined, fileSystem);
             expect(() => {
                 ast.addExistingSourceFile("non-existent-file.ts");
-            }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("non-existent-file.ts")}`);
+            }).to.throw(errors.FileNotFoundError, `File not found: /non-existent-file.ts`);
         });
 
         it("should add a source file that exists", () => {
@@ -194,7 +194,7 @@ describe(nameof(TsSimpleAst), () => {
         fileSystem.glob = patterns => {
             if (patterns.length !== 1 || patterns[0] !== "some-pattern")
                 throw new Error("Unexpected input!");
-            return ["file1.ts", "file2.ts", "file3.ts"].map(p => FileUtils.getStandardizedAbsolutePath(p));
+            return ["/file1.ts", "/file2.ts", "/file3.ts"];
         };
         const ast = new TsSimpleAst(undefined, fileSystem);
         const result = ast.addExistingSourceFiles("some-pattern");
@@ -203,19 +203,19 @@ describe(nameof(TsSimpleAst), () => {
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
-            expect(sourceFiles[0].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file1.ts"));
+            expect(sourceFiles[0].getFilePath()).to.equal("/file1.ts");
             expect(sourceFiles[0].isSaved()).to.be.true; // should be saved because it was read from the disk
-            expect(sourceFiles[1].getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("file2.ts"));
+            expect(sourceFiles[1].getFilePath()).to.equal("/file2.ts");
         });
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.createSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("file.ts", "");
             expect(() => {
                 ast.createSourceFile("file.ts", "");
-            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: /file.ts`);
         });
 
         it("should throw an exception if creating a source file at an existing path on the disk", () => {
@@ -249,11 +249,11 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(ast => ast.createSourceFile), () => {
         it("should throw an exception if creating a source file at an existing path", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("file.ts", "");
             expect(() => {
                 ast.createSourceFile("file.ts", {});
-            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: ${FileUtils.getStandardizedAbsolutePath("file.ts")}`);
+            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: /file.ts`);
         });
 
         it("should mark the source file as having not been saved", () => {
@@ -418,21 +418,21 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFiles), () => {
         it("should get all the source files added to the ast sorted by directory structure", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("dir/child/file.ts");
             ast.createSourceFile("dir/file.ts");
             ast.createSourceFile("file1.ts");
             ast.createSourceFile("file2.ts");
             expect(ast.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
-                FileUtils.getStandardizedAbsolutePath("file1.ts"),
-                FileUtils.getStandardizedAbsolutePath("file2.ts"),
-                FileUtils.getStandardizedAbsolutePath("dir/file.ts"),
-                FileUtils.getStandardizedAbsolutePath("dir/child/file.ts")
+                "/file1.ts",
+                "/file2.ts",
+                "/dir/file.ts",
+                "/dir/child/file.ts"
             ]);
         });
 
         it("should be able to do a file glob", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("file.ts", "");
             ast.createSourceFile("src/file.ts", "");
             ast.createSourceFile("src/test/file1.ts", "");
@@ -441,10 +441,10 @@ describe(nameof(TsSimpleAst), () => {
             ast.createSourceFile("src/test/file3.js", "");
             ast.createSourceFile("src/test/folder/file.ts", "");
             expect(ast.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
-                FileUtils.getStandardizedAbsolutePath("src/test/file1.ts"),
-                FileUtils.getStandardizedAbsolutePath("src/test/file2.ts"),
-                FileUtils.getStandardizedAbsolutePath("src/test/file3.ts"),
-                FileUtils.getStandardizedAbsolutePath("src/test/folder/file.ts")
+                "/src/test/file1.ts",
+                "/src/test/file2.ts",
+                "/src/test/file3.ts",
+                "/src/test/folder/file.ts"
             ]);
         });
     });

@@ -1,11 +1,12 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {Type, VariableStatement} from "./../../../compiler";
+import {VirtualFileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Type), () => {
     function getTypeFromText(text: string) {
-        const result = getInfoFromText<VariableStatement>(text);
+        const result = getInfoFromText<VariableStatement>(text, { host: new VirtualFileSystemHost(), includeLibDts: true });
         return {...result, firstType: result.firstChild.getDeclarations()[0].getType()};
     }
 

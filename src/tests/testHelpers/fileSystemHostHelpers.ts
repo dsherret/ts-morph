@@ -1,6 +1,6 @@
 ﻿import {FileNotFoundError} from "./../../errors";
 import {FileSystemHost} from "./../../fileSystem";
-import {FileUtils, ArrayUtils, KeyValueCache} from "./../../utils";
+import {ArrayUtils, KeyValueCache} from "./../../utils";
 
 export interface CustomFileSystemProps {
     getSyncWriteLog(): { filePath: string; fileText: string; }[];
@@ -11,7 +11,7 @@ export interface CustomFileSystemProps {
 }
 
 export function getFileSystemHostWithFiles(initialFiles: { filePath: string; text: string; }[], initialDirectories: string[] = []): FileSystemHost & CustomFileSystemProps {
-    initialDirectories = initialDirectories.map(d => FileUtils.getStandardizedAbsolutePath(d));
+    initialDirectories = initialDirectories.map(d => d[0] === "/" ? d : "/" + d);
     const writeLog: { filePath: string; fileText: string; }[] = [];
     const deleteLog: { path: string; }[] = [];
     const syncWriteLog: { filePath: string; fileText: string; }[] = [];
@@ -19,7 +19,8 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
     const files = new KeyValueCache<string, string>();
 
     initialFiles.forEach(file => {
-        files.set(FileUtils.getStandardizedAbsolutePath(file.filePath), file.text);
+        const filePath = file.filePath[0] === "/" ? file.filePath : "/" + file.filePath;
+        files.set(filePath, file.text);
     });
 
     return {
@@ -42,14 +43,12 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
             files.set(filePath, fileText);
         },
         fileExists: filePath => {
-            filePath = FileUtils.getStandardizedAbsolutePath(filePath);
             return Promise.resolve(files.has(filePath));
         },
         fileExistsSync: filePath => {
-            filePath = FileUtils.getStandardizedAbsolutePath(filePath);
             return files.has(filePath);
         },
-        getCurrentDirectory: () => FileUtils.getCurrentDirectory(),
+        getCurrentDirectory: () => "/",
         mkdir: dirPath => {
             directories.push(dirPath);
             return Promise.resolve();

@@ -58,6 +58,7 @@ export class Program {
         this._getOrCreateCompilerObject = () => {
             if (this._createdCompilerObject == null)
                 this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
+
             // this needs to be on a separate line in case the program was reset between the line above and here
             return this._createdCompilerObject || this._getOrCreateCompilerObject();
         };

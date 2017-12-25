@@ -2,6 +2,8 @@
 import {FileSystemHost} from "./../fileSystem";
 
 export class FileUtils {
+    private static standardizeSlashesRegex = /\\/g;
+
     private constructor() {
     }
 
@@ -42,13 +44,6 @@ export class FileUtils {
     }
 
     /**
-     * Gets the current directory.
-     */
-    static getCurrentDirectory() {
-        return FileUtils.getStandardizedAbsolutePath(path.resolve());
-    }
-
-    /**
      * Joins the paths.
      * @param paths - Paths to join.
      */
@@ -58,14 +53,18 @@ export class FileUtils {
 
     /**
      * Gets the standardized absolute path.
+     * @param fileSystem - File system.
      * @param fileOrDirPath - Path to standardize.
      * @param relativeBase - Base path to be relative from.
      */
-    static getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
-        if (relativeBase != null && !path.isAbsolute(fileOrDirPath))
+    static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string) {
+        const isAbsolutePath = path.isAbsolute(fileOrDirPath);
+        if (relativeBase != null && !isAbsolutePath)
             fileOrDirPath = path.join(relativeBase, fileOrDirPath);
+        else if (!isAbsolutePath)
+            fileOrDirPath = path.join(fileSystem.getCurrentDirectory(), fileOrDirPath);
 
-        return FileUtils.standardizeSlashes(path.normalize(path.resolve(fileOrDirPath)));
+        return FileUtils.standardizeSlashes(path.normalize(fileOrDirPath));
     }
 
     /**
@@ -89,7 +88,7 @@ export class FileUtils {
      * @param fileOrDirPath - Path.
      */
     static standardizeSlashes(fileOrDirPath: string) {
-        return fileOrDirPath.replace(/\\/g, "/");
+        return fileOrDirPath.replace(this.standardizeSlashesRegex, "/");
     }
 
     /**

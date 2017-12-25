@@ -99,7 +99,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param filePath - A new file path. Can be relative to the original file or an absolute path.
      */
     copy(filePath: string): SourceFile {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath, this.getDirectoryPath());
         return this.global.compilerFactory.createSourceFileFromText(absoluteFilePath, this.getFullText());
     }
 

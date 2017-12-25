@@ -81,7 +81,7 @@ export class CompilerFactory {
      * @param sourceText - Text to create the source file with.
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
-        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
         if (this.containsSourceFileAtPath(filePath) || this.global.fileSystem.fileExistsSync(filePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
         const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
@@ -105,7 +105,7 @@ export class CompilerFactory {
      * @param filePath - File path to get the file from.
      */
     getSourceFileFromFilePath(filePath: string): compiler.SourceFile | undefined {
-        filePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             if (this.global.fileSystem.fileExistsSync(filePath)) {
@@ -130,7 +130,7 @@ export class CompilerFactory {
      * @param filePath - File path to check.
      */
     containsSourceFileAtPath(filePath: string) {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(filePath);
+        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
         return this.sourceFileCacheByFilePath.has(absoluteFilePath);
     }
 
@@ -139,7 +139,7 @@ export class CompilerFactory {
      * @param dirPath - Directory path to check.
      */
     containsDirectoryAtPath(dirPath: string) {
-        const normalizedDirPath = FileUtils.getStandardizedAbsolutePath(dirPath);
+        const normalizedDirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
         return this.directoryCache.has(normalizedDirPath);
     }
 

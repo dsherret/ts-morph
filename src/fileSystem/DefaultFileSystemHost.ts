@@ -1,4 +1,5 @@
 ﻿import * as fs from "fs";
+import * as nodePath from "path";
 import * as globby from "globby";
 import {FileSystemHost} from "./FileSystemHost";
 import {FileUtils} from "./../utils";
@@ -104,8 +105,8 @@ export class DefaultFileSystemHost implements FileSystemHost {
         }
     }
 
-    getCurrentDirectory() {
-        return FileUtils.getCurrentDirectory();
+    getCurrentDirectory(): string {
+        return FileUtils.standardizeSlashes(nodePath.resolve());
     }
 
     glob(patterns: string[]) {

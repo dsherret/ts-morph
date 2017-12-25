@@ -2,6 +2,7 @@
 import {GlobalContainer} from "./../../GlobalContainer";
 import {replaceSourceFileTextForRename} from "./../../manipulation";
 import * as errors from "./../../errors";
+import {DefaultFileSystemHost} from "./../../fileSystem";
 import {KeyValueCache, FileUtils, StringUtils, fillDefaultFormatCodeSettings} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
@@ -43,7 +44,12 @@ export class LanguageService {
                 return ts.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => global.fileSystem.getCurrentDirectory(),
-            getDefaultLibFileName: options => ts.getDefaultLibFilePath(global.compilerOptions),
+            getDefaultLibFileName: options => {
+                if (this.global.fileSystem instanceof DefaultFileSystemHost)
+                    return ts.getDefaultLibFilePath(global.compilerOptions);
+                else
+                    return FileUtils.pathJoin(global.fileSystem.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions));
+            },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
                 if (this.global.compilerFactory.containsSourceFileAtPath(path))
@@ -72,7 +78,7 @@ export class LanguageService {
             },
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
-            getCanonicalFileName: (fileName: string) => FileUtils.getStandardizedAbsolutePath(fileName),
+            getCanonicalFileName: (fileName: string) => FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name]
@@ -256,7 +262,9 @@ export class LanguageService {
     /** @internal */
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
-        const filePath = typeof filePathOrSourceFile === "string" ? FileUtils.getStandardizedAbsolutePath(filePathOrSourceFile) : filePathOrSourceFile.getFilePath();
+        const filePath = typeof filePathOrSourceFile === "string"
+            ? FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePathOrSourceFile)
+            : filePathOrSourceFile.getFilePath();
         if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
         return new EmitOutput(this.global, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));

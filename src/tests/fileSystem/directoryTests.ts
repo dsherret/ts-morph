@@ -38,15 +38,15 @@ describe(nameof(Directory), () => {
             const ast = getAst();
             const sourceFile = ast.createSourceFile(filePath);
             const directory = sourceFile.getDirectory();
-            expect(directory.getPath()).to.equal(FileUtils.getStandardizedAbsolutePath(expectedDirPath));
+            expect(directory.getPath()).to.equal(expectedDirPath);
         }
 
         it("should get the directory path when just creating a file with no directory", () => {
-            doTest("file.ts", "");
+            doTest("test/file.ts", "/test");
         });
 
         it("should get the directory path in the root directory", () => {
-            doTest("./file.ts", "./");
+            doTest("/file.ts", "/");
         });
     });
 
@@ -250,7 +250,7 @@ describe(nameof(Directory), () => {
             else
                 sourceFile = directory.createSourceFile("sourceFile.ts", input);
             expect(directory.getSourceFiles()).to.deep.equal([sourceFile]);
-            expect(sourceFile.getFilePath()).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sourceFile.ts"));
+            expect(sourceFile.getFilePath()).to.equal("/dir/sourceFile.ts");
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
@@ -268,8 +268,8 @@ describe(nameof(Directory), () => {
         });
 
         it("should throw an exception if creating a source file at an existing path on the disk", () => {
-            const ast = getAst([{ filePath: "file.ts", text: "" }], [""]);
-            const directory = ast.addExistingDirectory("");
+            const ast = getAst([{ filePath: "/file.ts", text: "" }], ["/"]);
+            const directory = ast.addExistingDirectory("/");
             expect(() => directory.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
         });
     });
@@ -281,7 +281,7 @@ describe(nameof(Directory), () => {
             const directory = ast.createDirectory("dir");
             expect(() => {
                 directory .addExistingSourceFile("non-existent-file.ts");
-            }).to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("dir/non-existent-file.ts")}`);
+            }).to.throw(errors.FileNotFoundError, `File not found: /dir/non-existent-file.ts`);
         });
 
         it("should add a source file that exists", () => {
@@ -509,7 +509,7 @@ describe(nameof(Directory), () => {
             expect(childDir._wasRemoved()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
-            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: FileUtils.getStandardizedAbsolutePath("dir") }]);
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
         });
     });
 
@@ -527,7 +527,7 @@ describe(nameof(Directory), () => {
             expect(childDir._wasRemoved()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
-            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: FileUtils.getStandardizedAbsolutePath("dir") }]);
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
         });
     });
 
@@ -620,25 +620,25 @@ describe(nameof(Directory), () => {
         it("should emit correctly when specifying a different out dir and no declaration dir in compiler options", async () => {
             const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "../newOutDir" });
-            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("newOutDir"), FileUtils.getStandardizedAbsolutePath("newOutDir"));
+            runChecks(fileSystem, result, "/newOutDir", "/newOutDir");
         });
 
         it("should emit correctly when specifying a different out dir and a declaration dir in compiler options", async () => {
             const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "../newOutDir" });
-            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("newOutDir"), "dec");
+            runChecks(fileSystem, result, "/newOutDir", "dec");
         });
 
         it("should emit correctly when specifying a different declaration dir", async () => {
             const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ declarationDir: "newDeclarationDir" });
-            runChecks(fileSystem, result, "dist", FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir"));
+            runChecks(fileSystem, result, "dist", "/dir/newDeclarationDir");
         });
 
         it("should emit correctly when specifying a different out and declaration dir", async () => {
             const {directory, fileSystem} = setup({ target: ts.ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir" });
-            runChecks(fileSystem, result, FileUtils.getStandardizedAbsolutePath("dir"), FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir"));
+            runChecks(fileSystem, result, "/dir", "/dir/newDeclarationDir");
         });
 
         it("should emit correctly when specifying to only emit declaration files", async () => {
@@ -646,8 +646,8 @@ describe(nameof(Directory), () => {
             const result = await directory.emit({ outDir: "", declarationDir: "newDeclarationDir", emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
-            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir/file1.d.ts"));
-            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/newDeclarationDir/subDir/file2.d.ts"));
+            expect(writeLog[0].filePath).to.equal("/dir/newDeclarationDir/file1.d.ts");
+            expect(writeLog[1].filePath).to.equal("/dir/newDeclarationDir/subDir/file2.d.ts");
             expect(writeLog.length).to.equal(2);
         });
 
@@ -662,9 +662,9 @@ describe(nameof(Directory), () => {
             expect(result.getEmitSkipped()).to.be.true;
 
             const writeLog = fileSystem.getWriteLog();
-            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => FileUtils.getStandardizedAbsolutePath(l.filePath)));
-            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.js"));
-            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.d.ts"));
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+            expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
+            expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
             expect(writeLog.length).to.equal(2);
         });
     });
@@ -713,9 +713,9 @@ describe(nameof(Directory), () => {
             expect(result.getEmitSkipped()).to.be.true;
 
             const writeLog = fileSystem.getSyncWriteLog();
-            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => FileUtils.getStandardizedAbsolutePath(l.filePath)));
-            expect(writeLog[0].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.js"));
-            expect(writeLog[1].filePath).to.equal(FileUtils.getStandardizedAbsolutePath("dir/sub/file1.d.ts"));
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+            expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
+            expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
             expect(writeLog.length).to.equal(2);
         });
     });

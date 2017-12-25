@@ -91,7 +91,7 @@ export class Directory {
     getDirectoryOrThrow(pathOrCondition: string | ((directory: Directory) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getDirectory(pathOrCondition), () => {
             if (typeof pathOrCondition === "string")
-                return `Could not find a directory at path '${FileUtils.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
+                return `Could not find a directory at path '${FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath())}'.`;
             return "Could not find child directory that matched condition.";
         });
     }
@@ -110,7 +110,7 @@ export class Directory {
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)) {
         if (typeof pathOrCondition === "string") {
-            const path = FileUtils.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
+            const path = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath());
             return this.global.compilerFactory.getDirectory(path);
         }
 
@@ -200,7 +200,7 @@ export class Directory {
      * @param path - Directory name or path to the directory that should be added.
      */
     addExistingDirectory(path: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(path, this.getPath());
+        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
         if (!this.global.fileSystem.directoryExistsSync(dirPath))
             throw new errors.DirectoryNotFoundError(dirPath);
         return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
@@ -211,7 +211,7 @@ export class Directory {
      * @param path - Directory name or path to the directory that should be created.
      */
     createDirectory(path: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(path, this.getPath());
+        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
         return this.global.compilerFactory.createDirectory(dirPath);
     }
 
@@ -242,7 +242,7 @@ export class Directory {
      */
     createSourceFile(relativeFilePath: string, structure: SourceFileStructure): SourceFile;
     createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure) {
-        const filePath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativeFilePath));
+        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, FileUtils.pathJoin(this.getPath(), relativeFilePath));
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
     }
 
@@ -253,7 +253,7 @@ export class Directory {
      * @param relativeFilePath - Relative file path to add.
      */
     addExistingSourceFile(relativeFilePath: string) {
-        const filePath = FileUtils.getStandardizedAbsolutePath(FileUtils.pathJoin(this.getPath(), relativeFilePath));
+        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, FileUtils.pathJoin(this.getPath(), relativeFilePath));
         if (!this.global.fileSystem.fileExistsSync(filePath))
             throw new errors.FileNotFoundError(filePath);
         return this.global.compilerFactory.getSourceFileFromFilePath(filePath)!;
@@ -309,7 +309,7 @@ export class Directory {
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
-        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : FileUtils.getStandardizedAbsolutePath(path, this.getPath());
+        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
         const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this.global.compilerOptions.declarationDir != null || options.declarationDir != null;
 
@@ -347,7 +347,7 @@ export class Directory {
      * @returns The directory the copy was made to.
      */
     copy(relativeOrAbsolutePath: string) {
-        const newPath = FileUtils.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
+        const newPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeOrAbsolutePath, this.getPath());
         const directory = this.global.compilerFactory.addDirectoryIfNotExists(newPath);
 
         for (const sourceFile of this.getSourceFiles())

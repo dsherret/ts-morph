@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import * as os from "os";
+import {VirtualFileSystemHost} from "./../../fileSystem";
 import {FileUtils} from "./../../utils";
 import {getFileSystemHostWithFiles} from "./../testHelpers";
 
@@ -7,10 +7,10 @@ describe(nameof(FileUtils), () => {
     describe(nameof(FileUtils.ensureDirectoryExistsSync), () => {
         it("should ensure the specified directory exists and the parent directories", () => {
             const host = getFileSystemHostWithFiles([], ["/some"]);
-            FileUtils.ensureDirectoryExistsSync(host, FileUtils.getStandardizedAbsolutePath("/some/dir/path"));
+            FileUtils.ensureDirectoryExistsSync(host, "/some/dir/path");
             expect(host.getCreatedDirectories()).to.deep.equal([
-                FileUtils.getStandardizedAbsolutePath("/some/dir"),
-                FileUtils.getStandardizedAbsolutePath("/some/dir/path")
+                "/some/dir",
+                "/some/dir/path"
             ]);
         });
     });
@@ -18,46 +18,28 @@ describe(nameof(FileUtils), () => {
     describe(nameof(FileUtils.ensureDirectoryExists), () => {
         it("should ensure the specified directory exists and the parent directories", async () => {
             const host = getFileSystemHostWithFiles([], ["/some"]);
-            await FileUtils.ensureDirectoryExists(host, FileUtils.getStandardizedAbsolutePath("/some/dir/path"));
+            await FileUtils.ensureDirectoryExists(host, "/some/dir/path");
             expect(host.getCreatedDirectories()).to.deep.equal([
-                FileUtils.getStandardizedAbsolutePath("/some/dir"),
-                FileUtils.getStandardizedAbsolutePath("/some/dir/path")
+                "/some/dir",
+                "/some/dir/path"
             ]);
         });
     });
 
     describe(nameof(FileUtils.getStandardizedAbsolutePath), () => {
-        const isWindows = os.platform() === "win32";
+        const fileSystem = new VirtualFileSystemHost();
 
-        // too lazy to abstract this out because I'm pretty sure it works... my machine will get the windows tests and
-        // the CI linux machine will get the other tests
-        if (isWindows) {
-            // uses forward slashes in result because that's what the ts compiler does
-            it("should get the absolute path when absolute on windows", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("C:\\absolute\\path", "C:\\basedir")).to.equal("C:/absolute/path");
-            });
+        it("should get the absolute path when absolute", () => {
+            expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "/absolute/path", "/basedir")).to.equal("/absolute/path");
+        });
 
-            it("should get the relative path when relative on windows", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("relative\\path", "C:\\basedir")).to.equal("C:/basedir/relative/path");
-            });
+        it("should get the relative path when relative", () => {
+            expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "relative/path", "/basedir")).to.equal("/basedir/relative/path");
+        });
 
-            it("should get the relative path without dots on windows", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("..\\relative\\path", "C:\\basedir")).to.equal("C:/relative/path");
-            });
-        }
-        else {
-            it("should get the absolute path when absolute on linux", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("/absolute/path", "/basedir")).to.equal("/absolute/path");
-            });
-
-            it("should get the relative path when relative on linux", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("relative/path", "/basedir")).to.equal("/basedir/relative/path");
-            });
-
-            it("should get the relative path without dots on linux", () => {
-                expect(FileUtils.getStandardizedAbsolutePath("../relative/path", "/basedir")).to.equal("/relative/path");
-            });
-        }
+        it("should get the relative path without dots", () => {
+            expect(FileUtils.getStandardizedAbsolutePath(fileSystem, "../relative/path", "/basedir")).to.equal("/relative/path");
+        });
     });
 
     describe(nameof(FileUtils.standardizeSlashes), () => {

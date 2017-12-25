@@ -7,7 +7,7 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
     it("should throw an error when the path doesn't exist", () => {
         const host = testHelpers.getFileSystemHostWithFiles([]);
         expect(() => getCompilerOptionsFromTsConfig("tsconfig.json", host))
-            .to.throw(errors.FileNotFoundError, `File not found: ${FileUtils.getStandardizedAbsolutePath("tsconfig.json")}`);
+            .to.throw(errors.FileNotFoundError, `File not found: /tsconfig.json`);
     });
 
     it("should throw an error when the file doesn't parse", () => {
