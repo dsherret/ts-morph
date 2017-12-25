@@ -348,7 +348,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getDirectory), () => {
-        const ast = new TsSimpleAst();
+        const ast = new TsSimpleAst({ useVirtualFileSystem: true });
         const directory = ast.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
         const child2 = directory.createDirectory("child2");
@@ -376,7 +376,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.getDirectoryOrThrow), () => {
-        const ast = new TsSimpleAst();
+        const ast = new TsSimpleAst({ useVirtualFileSystem: true });
         const directory = ast.createDirectory("dir");
         const child1 = directory.createDirectory("child1");
         const child2 = directory.createDirectory("child2");

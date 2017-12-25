@@ -48,7 +48,7 @@ describe(nameof(createWrappedNode), () => {
     });
 
     it("should be able to provide a type checker", () => {
-        const ast = new TsSimpleAst();
+        const ast = new TsSimpleAst({ useVirtualFileSystem: true });
         const sourceFile = ast.createSourceFile("test.ts", "let s = '';");
         const typeChecker = ast.getTypeChecker();
         const wrappedSourceFile = createWrappedNode(sourceFile.compilerNode, { typeChecker: typeChecker.compilerObject }) as SourceFile;

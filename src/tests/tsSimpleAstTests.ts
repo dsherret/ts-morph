@@ -225,14 +225,14 @@ describe(nameof(TsSimpleAst), () => {
         });
 
         it("should mark the source file as having not been saved", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file.ts", "");
             expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("", () => {
             // todo: remove
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {\n    myMember\n}\nlet myEnum: MyEnum;\nlet myOtherEnum: MyNewEnum;");
             const enumDef = sourceFile.getEnums()[0];
             enumDef.rename("NewName");
@@ -257,14 +257,14 @@ describe(nameof(TsSimpleAst), () => {
         });
 
         it("should mark the source file as having not been saved", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file.ts", {});
             expect(sourceFile.isSaved()).to.be.false;
         });
 
         it("should add a source file based on a structure", () => {
             // basic test
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.ts", {
                 enums: [{
                     name: "MyEnum"
@@ -299,7 +299,7 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(ast => ast.removeSourceFile), () => {
         it("should remove the source file", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("myFile.ts", ``);
             expect(ast.removeSourceFile(sourceFile)).to.equal(true);
             expect(ast.removeSourceFile(sourceFile)).to.equal(false);
@@ -384,14 +384,14 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFile), () => {
         it("should get the first match based on the directory structure", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("dir/file.ts");
             const expectedFile = ast.createSourceFile("file.ts");
             expect(ast.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
         it("should get the first match based on the directory structure when swapping the order fo what was created first", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const expectedFile = ast.createSourceFile("file.ts");
             ast.createSourceFile("dir/file.ts");
             expect(ast.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
@@ -400,17 +400,17 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(ast => ast.getSourceFileOrThrow), () => {
         it("should throw when it can't find the source file based on a provided path", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             expect(() => ast.getSourceFileOrThrow("some path")).to.throw();
         });
 
         it("should throw when it can't find the source file based on a provided condition", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             expect(() => ast.getSourceFileOrThrow(s => false)).to.throw();
         });
 
         it("should not throw when it finds the file", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("myFile.ts", "");
             expect(ast.getSourceFileOrThrow("myFile.ts").getFilePath()).to.contain("myFile.ts");
         });
@@ -451,7 +451,7 @@ describe(nameof(TsSimpleAst), () => {
 
     describe(nameof<TsSimpleAst>(t => t.forgetNodesCreatedInBlock), () => {
         describe("synchronous", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             let sourceFile: SourceFile;
             let sourceFileNotNavigated: SourceFile;
             let classNode: Node;
@@ -541,7 +541,7 @@ describe(nameof(TsSimpleAst), () => {
         });
 
         describe("asynchronous", async () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file.ts");
             let interfaceDec: InterfaceDeclaration;
             let classDec: ClassDeclaration;
@@ -566,7 +566,7 @@ describe(nameof(TsSimpleAst), () => {
 
     describe("manipulating then getting something from the type checker", () => {
         it("should not error after manipulation", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
             const param = sourceFile.getFunctions()[0].getParameters()[0];
             expect(param.getType().getText()).to.equal("string");

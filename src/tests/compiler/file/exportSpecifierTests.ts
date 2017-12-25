@@ -5,6 +5,10 @@ import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
+    function getAst() {
+        return new TsSimpleAst({ useVirtualFileSystem: true });
+    }
+
     describe(nameof<ExportSpecifier>(n => n.getNameNode), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
@@ -27,7 +31,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.setName), () => {
         it("should change what's imported, but not change anything in the other files", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const myClassFile = ast.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });
@@ -42,7 +46,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should change it when there's an alias", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const exportsFile = ast.createSourceFile("Exports.ts", {
                 exports: [{ namedExports: [{ name: "MyClass", alias: "MyAlias" }], moduleSpecifier: "./MyClass" }]
             });
@@ -51,7 +55,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should rename in current file if exporting from current file", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const myClassFile = ast.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
                 exports: [{ namedExports: [{ name: "MyClass" }]}]
@@ -63,7 +67,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.renameName), () => {
         it("should rename in current file if exporting from current file", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const myClassFile = ast.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
                 exports: [{ namedExports: [{ name: "MyClass" }]}]
@@ -98,7 +102,7 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.setAlias), () => {
         it("should rename existing alias", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const myClassFile = ast.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });
@@ -112,7 +116,7 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should add new alias and update all usages to the new alias", () => {
-            const ast = new TsSimpleAst();
+            const ast = getAst();
             const myClassFile = ast.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });

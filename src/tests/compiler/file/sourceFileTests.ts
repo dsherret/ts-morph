@@ -149,13 +149,13 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.d.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.true;
         });
 
         it("should not be a source file when the file name ends with .ts", () => {
-            const ast = new TsSimpleAst();
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
