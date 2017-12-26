@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.2.0"></a>
+# [5.2.0](https://github.com/dsherret/ts-simple-ast/compare/5.1.0...5.2.0) (2017-12-26)
+
+
+### Features
+
+* Ability to get source file from directory based on relative or absolute path. ([fb72396](https://github.com/dsherret/ts-simple-ast/commit/fb72396))
+
+
+
 <a name="5.1.0"></a>
 # [5.1.0](https://github.com/dsherret/ts-simple-ast/compare/5.0.0...5.1.0) (2017-12-26)
 
