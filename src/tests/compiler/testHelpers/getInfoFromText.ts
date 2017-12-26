@@ -6,10 +6,10 @@ import {createWrappedNode} from "./../../../createWrappedNode";
 import {FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost} from "./../../../fileSystem";
 import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
 
-function getTextForLibFile(filePath: string) {
+function getTextForLibFile(fileName: string) {
     return {
-        filePath,
-        text: fs.readFileSync(path.join(__dirname, "../../../../node_modules/typescript/lib/", filePath), "utf-8")
+        filePath: path.join("node_modules/typescript/lib", fileName),
+        text: fs.readFileSync(path.join(__dirname, "../../../../node_modules/typescript/lib", fileName), "utf-8")
     };
 }
 
