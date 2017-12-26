@@ -9,30 +9,31 @@ import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
 function getTextForLibFile(filePath: string) {
     return {
         filePath,
-        text: fs.readFileSync(path.join(__dirname, "../../../../", filePath), "utf-8")
+        text: fs.readFileSync(path.join(__dirname, "../../../../node_modules/typescript/lib/", filePath), "utf-8")
     };
 }
 
-const libFiles = [
-    getTextForLibFile("node_modules/typescript/lib/lib.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2017.full.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2017.object.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2017.string.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2017.intl.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2016.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.core.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.collection.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.generator.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.promise.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.iterable.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.proxy.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.reflect.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.symbol.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts"),
-    getTextForLibFile("node_modules/typescript/lib/lib.es5.d.ts")
+const libFileNames = [
+    "lib.d.ts",
+    "lib.es2017.full.d.ts",
+    "lib.es2017.object.d.ts",
+    "lib.es2017.sharedmemory.d.ts",
+    "lib.es2017.string.d.ts",
+    "lib.es2017.intl.d.ts",
+    "lib.es2016.d.ts",
+    "lib.es2015.d.ts",
+    "lib.es2015.core.d.ts",
+    "lib.es2015.collection.d.ts",
+    "lib.es2015.generator.d.ts",
+    "lib.es2015.promise.d.ts",
+    "lib.es2015.iterable.d.ts",
+    "lib.es2015.proxy.d.ts",
+    "lib.es2015.reflect.d.ts",
+    "lib.es2015.symbol.d.ts",
+    "lib.es2015.symbol.wellknown.d.ts",
+    "lib.es5.d.ts"
 ];
+const libFiles = libFileNames.map(name => getTextForLibFile(name));
 
 /** @internal */
 export interface GetInfoFromTextOptions {
