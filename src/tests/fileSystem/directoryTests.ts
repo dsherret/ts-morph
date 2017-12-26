@@ -437,9 +437,15 @@ describe(nameof(Directory), () => {
         const directory = ast.createDirectory("dir");
         const child1 = directory.createSourceFile("child1.ts");
         const child2 = directory.createSourceFile("child2.ts");
+        const subDir = directory.createDirectory("subDir");
+        const child3 = subDir.createSourceFile("child3.ts");
 
         it("should get based on the name", () => {
             expect(directory.getSourceFile("child2.ts")!.getFilePath()).to.equal(child2.getFilePath());
+        });
+
+        it("should get based on the path", () => {
+            expect(directory.getSourceFile("subDir/child3.ts")!.getFilePath()).to.equal(child3.getFilePath());
         });
 
         it("should get based on a condition", () => {
@@ -460,9 +466,15 @@ describe(nameof(Directory), () => {
         const directory = ast.createDirectory("dir");
         const child1 = directory.createSourceFile("child1.ts");
         const child2 = directory.createSourceFile("child2.ts");
+        const subDir = directory.createDirectory("subDir");
+        const child3 = subDir.createSourceFile("child3.ts");
 
         it("should get based on the name", () => {
             expect(directory.getSourceFileOrThrow("child2.ts").getFilePath()).to.equal(child2.getFilePath());
+        });
+
+        it("should get based on the path", () => {
+            expect(directory.getSourceFileOrThrow("subDir/child3.ts").getFilePath()).to.equal(child3.getFilePath());
         });
 
         it("should get based on a condition", () => {

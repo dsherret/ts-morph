@@ -118,44 +118,44 @@ export class Directory {
     }
 
     /**
-     * Gets a child source file with the specified name or throws if not found.
-     * @param fileName - File name.
+     * Gets a child source file with the specified path or throws if not found.
+     * @param path - Relative or absolute path to the file.
      */
-    getSourceFileOrThrow(fileName: string): SourceFile;
+    getSourceFileOrThrow(path: string): SourceFile;
     /**
      * Gets a child source file by the specified condition or throws if not found.
      * @param condition - Condition to check the source file with.
      */
     getSourceFileOrThrow(condition: (sourceFile: SourceFile) => boolean): SourceFile;
     /** @internal */
-    getSourceFileOrThrow(fileNameOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile;
-    getSourceFileOrThrow(fileNameOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
-        return errors.throwIfNullOrUndefined(this.getSourceFile(fileNameOrCondition), () => {
-            if (typeof fileNameOrCondition === "string")
-                return `Could not find child source file with name '${fileNameOrCondition}'.`;
+    getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile;
+    getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
+        return errors.throwIfNullOrUndefined(this.getSourceFile(pathOrCondition), () => {
+            if (typeof pathOrCondition === "string")
+                return `Could not find child source file at path '${FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath())}'.`;
             return "Could not find child source file that matched condition.";
         });
     }
 
     /**
-     * Gets a child source file with the specified name or undefined if not found.
-     * @param fileName - File name.
+     * Gets a child source file with the specified path or undefined if not found.
+     * @param path - Relative or absolute path to the file.
      */
-    getSourceFile(fileName: string): SourceFile | undefined;
+    getSourceFile(path: string): SourceFile | undefined;
     /**
      * Gets a child source file by the specified condition or undefined if not found.
      * @param condition - Condition to check the source file with.
      */
     getSourceFile(condition: (sourceFile: SourceFile) => boolean): SourceFile | undefined;
     /** @internal */
-    getSourceFile(fileNameOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile | undefined;
-    getSourceFile(fileNameOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
-        if (typeof fileNameOrCondition === "string") {
-            const name = fileNameOrCondition;
-            fileNameOrCondition = sourceFile => FileUtils.getBaseName(sourceFile.getFilePath()) === name;
+    getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile | undefined;
+    getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
+        if (typeof pathOrCondition === "string") {
+            const path = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath());
+            return this.global.compilerFactory.getSourceFileFromFilePath(path);
         }
 
-        return ArrayUtils.find(this.getSourceFiles(), fileNameOrCondition);
+        return ArrayUtils.find(this.getSourceFiles(), pathOrCondition);
     }
 
     /**
@@ -221,7 +221,7 @@ export class Directory {
 
     /**
      * Creates a directory if it doesn't exist.
-     * @param path - Directory name or path to the directory that should be created.
+     * @param path - Relative or absolute path to the directory that should be created.
      */
     createDirectory(path: string) {
         const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
