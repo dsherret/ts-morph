@@ -48,7 +48,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         callBaseFill(SourceFileBase.prototype, this, structure);
 
         if (structure.imports != null)
-            this.addImports(structure.imports);
+            this.addImportDeclarations(structure.imports);
         if (structure.exports != null)
             this.addExportDeclarations(structure.exports);
 
@@ -193,18 +193,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add an import.
      * @param structure - Structure that represents the import.
      */
-    addImport(structure: ImportDeclarationStructure) {
-        return this.addImports([structure])[0];
+    addImportDeclaration(structure: ImportDeclarationStructure) {
+        return this.addImportDeclarations([structure])[0];
     }
 
     /**
      * Add imports.
      * @param structures - Structures that represent the imports.
      */
-    addImports(structures: ImportDeclarationStructure[]) {
-        const imports = this.getImports();
+    addImportDeclarations(structures: ImportDeclarationStructure[]) {
+        const imports = this.getImportDeclarations();
         const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
-        return this.insertImports(insertIndex, structures);
+        return this.insertImportDeclarations(insertIndex, structures);
     }
 
     /**
@@ -212,8 +212,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Index to insert at.
      * @param structure - Structure that represents the import.
      */
-    insertImport(index: number, structure: ImportDeclarationStructure) {
-        return this.insertImports(index, [structure])[0];
+    insertImportDeclaration(index: number, structure: ImportDeclarationStructure) {
+        return this.insertImportDeclarations(index, [structure])[0];
     }
 
     /**
@@ -221,7 +221,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImports(index: number, structures: ImportDeclarationStructure[]) {
+    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]) {
         const texts = structures.map(structure => {
             // todo: pass the StructureToText to the method below
             const writer = this.getWriter();
@@ -242,7 +242,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param condition - Condition to get the import by.
      */
     getImport(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
-        return ArrayUtils.find(this.getImports(), condition);
+        return ArrayUtils.find(this.getImportDeclarations(), condition);
     }
 
     /**
@@ -256,7 +256,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Get the file's import declarations.
      */
-    getImports(): ImportDeclaration[] {
+    getImportDeclarations(): ImportDeclaration[] {
         // todo: remove type assertion
         return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration[];
     }

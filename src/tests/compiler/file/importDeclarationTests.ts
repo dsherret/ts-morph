@@ -276,7 +276,7 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
-            sourceFile.getImports()[index].remove();
+            sourceFile.getImportDeclarations()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
@@ -288,7 +288,7 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(d => d.removeNamedImports), () => {
         function doTest(text: string, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
-            sourceFile.getImports()[0].removeNamedImports();
+            sourceFile.getImportDeclarations()[0].removeNamedImports();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 

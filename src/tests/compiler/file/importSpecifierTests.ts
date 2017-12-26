@@ -112,7 +112,7 @@ describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.remove), () => {
         function doTest(text: string, nameToRemove: string, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
-            const importSpecifier = ArrayUtils.find(sourceFile.getImports()[0].getNamedImports(), i => i.getNameNode().getText() === nameToRemove)!;
+            const importSpecifier = ArrayUtils.find(sourceFile.getImportDeclarations()[0].getNamedImports(), i => i.getNameNode().getText() === nameToRemove)!;
             importSpecifier.remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

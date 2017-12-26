@@ -161,12 +161,12 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertImports), () => {
+    describe(nameof<SourceFile>(n => n.insertImportDeclarations), () => {
         function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
             const {sourceFile, tsSimpleAst} = getInfoFromText(startCode);
             if (useSingleQuotes)
                 tsSimpleAst.manipulationSettings.set({ quoteType: QuoteType.Single });
-            const result = sourceFile.insertImports(index, structures);
+            const result = sourceFile.insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -193,7 +193,7 @@ describe(nameof(SourceFile), () => {
             const {sourceFile} = getInfoFromText("");
 
             expect(() => {
-                sourceFile.insertImports(0, [{ namespaceImport: "name", namedImports: [{ name: "name" }], moduleSpecifier: "file" }]);
+                sourceFile.insertImportDeclarations(0, [{ namespaceImport: "name", namedImports: [{ name: "name" }], moduleSpecifier: "file" }]);
             }).to.throw();
         });
 
@@ -210,10 +210,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.insertImport), () => {
+    describe(nameof<SourceFile>(n => n.insertImportDeclaration), () => {
         function doTest(startCode: string, index: number, structure: ImportDeclarationStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.insertImport(index, structure);
+            const result = sourceFile.insertImportDeclaration(index, structure);
             expect(result).to.be.instanceOf(ImportDeclaration);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -223,10 +223,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.addImport), () => {
+    describe(nameof<SourceFile>(n => n.addImportDeclaration), () => {
         function doTest(startCode: string, structure: ImportDeclarationStructure, expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.addImport(structure);
+            const result = sourceFile.addImportDeclaration(structure);
             expect(result).to.be.instanceOf(ImportDeclaration);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -242,10 +242,10 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.addImports), () => {
+    describe(nameof<SourceFile>(n => n.addImportDeclarations), () => {
         function doTest(startCode: string, structures: ImportDeclarationStructure[], expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);
-            const result = sourceFile.addImports(structures);
+            const result = sourceFile.addImportDeclarations(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -261,11 +261,11 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getImports), () => {
+    describe(nameof<SourceFile>(n => n.getImportDeclarations), () => {
         it("should get the import declarations", () => {
             const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImports().length).to.equal(2);
-            expect(sourceFile.getImports()[0]).to.be.instanceOf(ImportDeclaration);
+            expect(sourceFile.getImportDeclarations().length).to.equal(2);
+            expect(sourceFile.getImportDeclarations()[0]).to.be.instanceOf(ImportDeclaration);
         });
     });
 

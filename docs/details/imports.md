@@ -8,17 +8,17 @@ Imports of a source file can be retrieved by calling:
 
 ```typescript
 // get them all
-const imports = sourceFile.getImports();
+const imports = sourceFile.getImportDeclarations();
 // or get the first one that matches a condition
 const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() != null);
 ```
 
 ### Add/Insert
 
-Add or insert use `insertImport`, `insertImports`, `addImport`, or `addImports`:
+Add or insert use `insertImportDeclaration`, `insertImportDeclarations`, `addImportDeclaration`, or `addImportDeclarations`:
 
 ```typescript
-const importDeclaration = sourceFile.addImport({
+const importDeclaration = sourceFile.addImportDeclaration({
     defaultImport: "MyClass",
     moduleSpecifier: "./file"
 });
@@ -75,7 +75,7 @@ const instance = new MyClass();
 Doing the following:
 
 ```typescript
-const importDeclaration = sourceFile.getImports()[0];
+const importDeclaration = sourceFile.getImportDeclarations()[0];
 importDeclaration.setDefaultImport("NewName");
 ````
 
