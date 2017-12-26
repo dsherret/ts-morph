@@ -97,10 +97,23 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Copy this source file to a new file.
      * @param filePath - A new file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
      */
-    copy(filePath: string): SourceFile {
+    copy(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
+        const {overwrite = false} = options;
         const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath, this.getDirectoryPath());
-        return this.global.compilerFactory.createSourceFileFromText(absoluteFilePath, this.getFullText());
+
+        if (overwrite)
+            return this.global.compilerFactory.createOrOverwriteSourceFileFromText(absoluteFilePath, this.getFullText());
+
+        try {
+            return this.global.compilerFactory.createSourceFileFromText(absoluteFilePath, this.getFullText());
+        } catch (err) {
+            if (err instanceof errors.InvalidOperationError)
+                throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
+            else
+                throw err;
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import * as ts from "typescript";
+import * as errors from "./../../../errors";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
     FileSystemRefreshResult} from "./../../../compiler";
 import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
@@ -15,10 +16,25 @@ describe(nameof(SourceFile), () => {
         const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
         const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
         const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
+        const testFile = sourceFile.copy("/TestFile.ts");
+
+        it("should throw if the file already exists", () => {
+            expect(() => sourceFile.copy("/TestFile.ts")).to.throw(errors.InvalidOperationError,
+                "Did you mean to provide the overwrite option? A source file already exists at the provided file path: /TestFile.ts");
+        });
+
+        it("should overwrite if specifying to overwrite", () => {
+            const newText = "const t = 5;";
+            sourceFile.replaceWithText(newText);
+            const copiedFile = sourceFile.copy("/TestFile.ts", { overwrite: true });
+            expect(copiedFile).to.equal(testFile);
+            expect(copiedFile.getFullText()).to.equal(newText);
+            expect(testFile.getFullText()).to.equal(newText);
+        });
 
         describe(nameof(tsSimpleAst), () => {
             it("should include the copied source files", () => {
-                expect(tsSimpleAst.getSourceFiles().length).to.equal(3);
+                expect(tsSimpleAst.getSourceFiles().length).to.equal(4);
             });
         });
 

@@ -527,6 +527,23 @@ describe(nameof(Directory), () => {
             dir.createSourceFile("file.ts");
             expect(() => dir.copy("../newDir")).to.not.throw();
         });
+
+        it("should throw when copying a directory to an existing directory and a file exists in the other one", () => {
+            const ast = getAst([]);
+            const dir = ast.createDirectory("dir");
+            dir.createDirectory("subDir").createSourceFile("file.ts");
+            dir.createSourceFile("file.ts");
+            dir.copy("../newDir");
+            expect(() => dir.copy("../newDir")).to.throw();
+        });
+
+        it("should not throw when copying a directory to an existing directory with the overwrite option and a file exists in the other one", () => {
+            const ast = getAst([]);
+            const dir = ast.createDirectory("dir");
+            dir.createSourceFile("file.ts");
+            dir.copy("../newDir");
+            expect(() => dir.copy("../newDir", { overwrite: true })).to.not.throw();
+        });
     });
 
     describe(nameof<Directory>(d => d.delete), () => {

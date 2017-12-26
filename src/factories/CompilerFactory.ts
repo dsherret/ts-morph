@@ -79,13 +79,29 @@ export class CompilerFactory {
      * Adds it to the cache.
      * @param filePath - File path for the source file.
      * @param sourceText - Text to create the source file with.
+     * @throws InvalidOperationError if the file exists.
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
         filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
         if (this.containsSourceFileAtPath(filePath) || this.global.fileSystem.fileExistsSync(filePath))
             throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
-        return this.getSourceFile(compilerSourceFile);
+        return this.getSourceFileFromText(filePath, sourceText);
+    }
+
+    /**
+     * Creates or overwrites a source file and text.
+     * Adds it to the cache.
+     * @param filePath - File path for the source file.
+     * @param sourceText - Text to create the source file with.
+     */
+    createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
+        filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
+        const existingSourceFile = this.getSourceFileFromFilePath(filePath);
+        if (existingSourceFile != null) {
+            existingSourceFile.replaceWithText(sourceText);
+            return existingSourceFile;
+        }
+        return this.getSourceFileFromText(filePath, sourceText);
     }
 
     /**
@@ -110,8 +126,7 @@ export class CompilerFactory {
         if (sourceFile == null) {
             if (this.global.fileSystem.fileExistsSync(filePath)) {
                 Logger.log(`Loading file: ${filePath}`);
-                const compilerSourceFile = ts.createSourceFile(filePath, this.global.fileSystem.readFileSync(filePath), this.global.manipulationSettings.getScriptTarget(), true);
-                sourceFile = this.getSourceFile(compilerSourceFile);
+                sourceFile = this.getSourceFileFromText(filePath, this.global.fileSystem.readFileSync(filePath));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -192,6 +207,11 @@ export class CompilerFactory {
             return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
         else
             return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(compiler.Node));
+    }
+
+    private getSourceFileFromText(filePath: string, sourceText: string): compiler.SourceFile {
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+        return this.getSourceFile(compilerSourceFile);
     }
 
     /**

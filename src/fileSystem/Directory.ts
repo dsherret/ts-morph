@@ -369,16 +369,17 @@ export class Directory {
     /**
      * Copies a directory to a new directory.
      * @param relativeOrAbsolutePath - The relative or absolute path to the new directory.
+     * @param options - Options.
      * @returns The directory the copy was made to.
      */
-    copy(relativeOrAbsolutePath: string) {
+    copy(relativeOrAbsolutePath: string, options: { overwrite?: boolean; } = {}) {
         const newPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeOrAbsolutePath, this.getPath());
         const directory = this.global.compilerFactory.createOrAddDirectoryIfNotExists(newPath);
 
         for (const sourceFile of this.getSourceFiles())
-            sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()));
+            sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()), options);
         for (const childDir of this.getDirectories())
-            childDir.copy(FileUtils.pathJoin(newPath, childDir.getBaseName()));
+            childDir.copy(FileUtils.pathJoin(newPath, childDir.getBaseName()), options);
 
         return directory;
     }

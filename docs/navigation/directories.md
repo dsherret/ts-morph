@@ -155,10 +155,11 @@ Copy the directory to a new directory:
 ```
 // ex. copies C:\MyProject\dir to C:\MyProject\newDir
 directory.copy("../newDir");
+directory.copy("../newDir", { overwrite: true }); // don't throw if it will overwrite a file
 directory.copy("C:\\test"); // or absolute
 ```
 
-Note that the directory and source files won't be created until calling save on them.
+Note that the directory and source files, in all these cases, won't be created until calling save on them.
 
 ### Deleting
 
