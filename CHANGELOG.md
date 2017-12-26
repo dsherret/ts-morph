@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.1.0"></a>
+# [5.1.0](https://github.com/dsherret/ts-simple-ast/compare/5.0.0...5.1.0) (2017-12-26)
+
+
+### Features
+
+* Add overwrite option to source file and directory copy. ([0741180](https://github.com/dsherret/ts-simple-ast/commit/0741180))
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/dsherret/ts-simple-ast/compare/4.2.1...5.0.0) (2017-12-26)
 
