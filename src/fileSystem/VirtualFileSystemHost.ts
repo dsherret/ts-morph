@@ -1,5 +1,5 @@
 ﻿import * as errors from "./../errors";
-import {KeyValueCache, FileUtils, createHashSet} from "./../utils";
+import {KeyValueCache, FileUtils, createHashSet, StringUtils, ArrayUtils} from "./../utils";
 import {Minimatch} from "minimatch";
 import {FileSystemHost} from "./FileSystemHost";
 
@@ -17,11 +17,27 @@ export class VirtualFileSystemHost implements FileSystemHost {
     }
 
     deleteSync(path: string) {
-        this.files.removeByKey(path);
+        path = FileUtils.getStandardizedAbsolutePath(this, path);
+        if (this.directories.has(path)) {
+            for (const filePath of ArrayUtils.from(this.files.getKeys())) {
+                if (StringUtils.startsWith(filePath, path))
+                    this.files.removeByKey(filePath);
+            }
+            for (const directoryPath of ArrayUtils.from(this.directories.values())) {
+                if (StringUtils.startsWith(directoryPath, path))
+                    this.directories.delete(directoryPath);
+            }
+        }
+        else
+            this.files.removeByKey(path);
     }
 
     readFile(filePath: string, encoding = "utf-8") {
-        return Promise.resolve(this.readFileSync(filePath, encoding));
+        try {
+            return Promise.resolve(this.readFileSync(filePath, encoding));
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     readFileSync(filePath: string, encoding = "utf-8") {
@@ -38,8 +54,8 @@ export class VirtualFileSystemHost implements FileSystemHost {
     }
 
     writeFileSync(filePath: string, fileText: string) {
-        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
         filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
+        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
         this.files.set(filePath, fileText);
     }
 
@@ -82,7 +98,7 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
         for (const pattern of patterns) {
             const mm = new Minimatch(pattern, { matchBase: true });
-            for (const filePath of this.files.getValues()) {
+            for (const filePath of this.files.getKeys()) {
                 if (mm.match(filePath))
                     filePaths.push(filePath);
             }
