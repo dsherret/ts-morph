@@ -52,7 +52,6 @@ functionDeclaration.setIsExported(true); // be one
 functionDeclaration.setIsExported(false); // don't be one
 ```
 
-
 ## Export Declarations
 
 Export declarations look like this:
@@ -66,9 +65,9 @@ export {MyClass};
 Get the export declarations by calling:
 
 ```typescript
-const exports = sourceFile.getExports();
+const exports = sourceFile.getExportDeclarations();
 // or to get the first one that matches a condition
-const exportDeclaration = sourceFile.getExport(d => d.hasNamedExports());
+const exportDeclaration = sourceFile.getExportDeclaration(d => d.hasNamedExports());
 
 // tell if it has named exports
 exportDeclaration.hasNamedExports();
@@ -82,10 +81,10 @@ exportDeclaration.hasModuleSpecifier(); // returns: boolean
 
 ### Add/Insert
 
-Add or insert use `insertExport`, `insertExports`, `addExport`, or `addExports`:
+Add or insert use `insertExportDeclaration`, `insertExportDeclarations`, `addExportDeclaration`, or `addExportDeclarations`:
 
 ```typescript
-const exportDeclaration = sourceFile.addExport({
+const exportDeclaration = sourceFile.addExportDeclaration({
     defaultImport: "MyClass",
     moduleSpecifier: "./file"
 });
@@ -161,4 +160,45 @@ _Note:_ Setting the alias will rename any uses of the alias or identifier to the
 
 ```typescript
 namedExport.getExportDeclaration(); // returns: ExportDeclaration
+```
+
+## Export Assignments
+
+Export assignments look like the following:
+
+```typescript
+export = 5;
+export default name;
+```
+
+Get the export assignments by calling:
+
+```typescript
+const exportAssignments = sourceFile.getExportAssignments();
+// or to get the first one that matches a condition
+const exportAssignment = sourceFile.getExportAssignment(d => d.isExportEquals());
+
+// get if it's `export =` or `export default`
+const isExportEquals = exportAssignment.isExportEquals();
+// get the expression
+const expression = exportAssignment.getExpression();
+```
+
+### Add/Insert
+
+Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExportAssignment`, or `addExportAssignments`:
+
+```typescript
+const exportAssignment = sourceFile.addExportAssignment({
+    isExportEquals: true, // defaults to true
+    expression: "5"
+});
+```
+
+### Remove
+
+Call `.remove()`:
+
+```typescript
+exportAssignment.remove();
 ```
