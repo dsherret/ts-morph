@@ -1,14 +1,23 @@
 ﻿import * as ts from "typescript";
 import Ast, {SourceFile, Directory, TypeGuards} from "./../src/main";
 
+export interface BarrelFileMaintainerOptions {
+    includeRootDir?: boolean;
+}
+
 export class BarrelFileMaintainer {
     private readonly ignoreFileRegex = /\/\*\s*barrel:ignore\s*\*\//i;
     private readonly barrelFileName = "index.ts";
+    private readonly includeRootDir: boolean;
 
-    constructor(private readonly ast: Ast) {
+    constructor(private readonly rootDir: Directory, options: BarrelFileMaintainerOptions = {}) {
+        this.includeRootDir = options.includeRootDir || false;
     }
 
     updateDirAndSubDirs(dir: Directory) {
+        if (dir !== this.rootDir && !dir.isDescendantOf(this.rootDir))
+            throw new Error(`Provided directory of ${dir.getPath()} is not equal to or a descendant of the root directory (${this.rootDir.getPath()}).`);
+
         this.updateDir(dir);
         dir.getDirectories().forEach(d => this.updateDirAndSubDirs(d));
     }
@@ -33,7 +42,7 @@ export class BarrelFileMaintainer {
 
     private updateParentDir(dir: Directory) {
         const parent = dir.getParent();
-        if (parent == null || this.ast.getRootDirectories().indexOf(parent) >= 0)
+        if (parent == null || dir === this.rootDir || !this.includeRootDir && parent === this.rootDir)
             return;
 
         let parentBarrelFile = parent.getSourceFile(this.barrelFileName);
@@ -56,7 +65,7 @@ export class BarrelFileMaintainer {
 
         function hasExports() {
             for (const statement of sourceFile.getStatements()) {
-                if (statement.getKind() === ts.SyntaxKind.ExportDeclaration || statement.getKind() === ts.SyntaxKind.ExportAssignment)
+                if (TypeGuards.isExportDeclaration(statement) || TypeGuards.isExportAssignment(statement))
                     return true;
                 if (TypeGuards.isExportableNode(statement) && statement.isExported())
                     return true;
@@ -73,10 +82,10 @@ export class BarrelFileMaintainer {
     }
 
     private addNamespaceExports(sourceFile: SourceFile, moduleSpecifiers: string[]) {
-        sourceFile.addExports(moduleSpecifiers.map(moduleSpecifier => ({ moduleSpecifier })));
+        sourceFile.addExportDeclarations(moduleSpecifiers.map(moduleSpecifier => ({ moduleSpecifier })));
     }
 
     private removeNamespaceExports(sourceFile: SourceFile) {
-        sourceFile.getExports().filter(e => e.isNamespaceExport()).forEach(e => e.remove());
+        sourceFile.getExportDeclarations().filter(e => e.isNamespaceExport()).forEach(e => e.remove());
     }
 }

@@ -4,8 +4,10 @@ import {getAst, getDefinitionAst, getNodeToWrapperMappings} from "./common";
 
 // this file sets the overloads of methods that take a syntax kind and return a wrapped node
 
+console.log("Start: " + new Date());
 const ast = getDefinitionAst();
 setSyntaxKindOverloads(Array.from(getNodeToWrapperMappings(getAst())));
+console.log("End: " + new Date());
 
 export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[]) {
     const sourceFile = ast.getSourceFileOrThrow("Node.d.ts");
@@ -19,7 +21,7 @@ export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[])
     });
 
     console.log("Adding compiler import...");
-    sourceFile.addImport({
+    sourceFile.addImportDeclaration({
         namespaceImport: "compiler",
         moduleSpecifier: "./../../compiler"
     });
@@ -42,7 +44,7 @@ export function setSyntaxKindOverloads(nodeToWrappers: NodeToWrapperViewModel[])
 function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaration, nodeToWrappers: NodeToWrapperViewModel[]) {
     const isArrayType = method.getReturnType().isArrayType();
     const isNullableType = method.getReturnType().isUnionType();
-    const docs: JSDocStructure[] = method.getDocNodes().map(n => ({ description: n.getInnerText() }));
+    const docs: JSDocStructure[] = method.getJsDocs().map(n => ({ description: n.getInnerText() }));
     const structures: MethodDeclarationStructure[] = [];
 
     for (const nodeToWrapper of nodeToWrappers) {

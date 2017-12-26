@@ -36,11 +36,13 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/chokidar": "^1.7.4",
     "@types/minimatch": "^3.0.1",
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.48",
     "@types/object-assign": "^4.0.30",
     "chai": "^3.5.0",
+    "chokidar": "^1.7.0",
     "coveralls": "^2.13.1",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
