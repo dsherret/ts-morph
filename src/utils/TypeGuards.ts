@@ -288,35 +288,6 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a JSDocableNode.
-     * @param node - Node to check.
-     */
-    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.EnumDeclaration:
-            case ts.SyntaxKind.EnumMember:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.MethodSignature:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.VariableStatement:
-            case ts.SyntaxKind.TypeAliasDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Gets if the node is a EnumDeclaration.
      * @param node - Node to check.
      */
@@ -766,6 +737,35 @@ export class TypeGuards {
     static isJSDocUnknownTag(node: compiler.Node): node is compiler.JSDocUnknownTag {
         switch (node.getKind()) {
             case ts.SyntaxKind.JSDocTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JSDocableNode.
+     * @param node - Node to check.
+     */
+    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.EnumMember:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
