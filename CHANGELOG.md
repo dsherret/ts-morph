@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/dsherret/ts-simple-ast/compare/4.2.1...5.0.0) (2017-12-26)
+
+
+### Bug Fixes
+
+* [#195](https://github.com/dsherret/ts-simple-ast/issues/195) - Fixes emitting directory crashes when directory does not exist. ([57c3381](https://github.com/dsherret/ts-simple-ast/commit/57c3381))
+* [#196](https://github.com/dsherret/ts-simple-ast/issues/196) - Fixes directory.copy() crashing when directory already exists. ([def2992](https://github.com/dsherret/ts-simple-ast/commit/def2992))
+
+
+### Code Refactoring
+
+* [#181](https://github.com/dsherret/ts-simple-ast/issues/181) Rename DocumentationableNode to JSDocableNode. ([59a254e](https://github.com/dsherret/ts-simple-ast/commit/59a254e))
+* Getting and inserting/adding imports method names now includes "Declaration". ([97812cf](https://github.com/dsherret/ts-simple-ast/commit/97812cf))
+
+
+### Features
+
+* [#177](https://github.com/dsherret/ts-simple-ast/issues/177) - Ability to use virtual file system. ([ae27f5b](https://github.com/dsherret/ts-simple-ast/commit/ae27f5b))
+* [#191](https://github.com/dsherret/ts-simple-ast/issues/191) - Add SourceFile.getEmitOutput(). ([1707a7d](https://github.com/dsherret/ts-simple-ast/commit/1707a7d))
+* [#194](https://github.com/dsherret/ts-simple-ast/issues/194) - Add async version of forget block. ([c73dd05](https://github.com/dsherret/ts-simple-ast/commit/c73dd05))
+* Ability to get a directory from directory based on a relative path. ([b7714c5](https://github.com/dsherret/ts-simple-ast/commit/b7714c5))
+* Add addDirectoryIfExists and addSourceFileIfExists ([0ff4ff2](https://github.com/dsherret/ts-simple-ast/commit/0ff4ff2))
+* Add ast.getFileSystem() ([3364349](https://github.com/dsherret/ts-simple-ast/commit/3364349))
+* Add ExportAssignment. ([f2b346b](https://github.com/dsherret/ts-simple-ast/commit/f2b346b))
+
+
+### BREAKING CHANGES
+
+* All import methods on SourceFile have been renamed to include "declaration" (ex. getImports() -> getImportDeclarations()). This was done for consistency with getExports() -> getExportDeclarations().
+* getDocs(), insertDoc(), etc. have been renamed to getJsDocs(), insertJsDoc(), etc...
+* All export methods on SourceFile have been renamed to include "declaration" (ex. getExports() -> getExportDeclarations())
+
+
+
 <a name="4.2.1"></a>
 ## [4.2.1](https://github.com/dsherret/ts-simple-ast/compare/4.2.0...4.2.1) (2017-12-23)
 
