@@ -56,6 +56,21 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
+    describe(nameof<TsSimpleAst>(ast => ast.addDirectoryIfExists), () => {
+        it("should throw if the directory doesn't exist", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            expect(ast.addDirectoryIfExists("someDir")).to.be.undefined;
+        });
+
+        it("should add the directory if it exists", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const dir = ast.addDirectoryIfExists("someDir");
+            expect(dir).to.not.be.undefined;
+        });
+    });
+
     describe(nameof<TsSimpleAst>(ast => ast.addExistingDirectory), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
@@ -184,6 +199,20 @@ describe(nameof(TsSimpleAst), () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             const sourceFile = ast.addExistingSourceFile("file.ts");
+            expect(sourceFile).to.not.be.undefined;
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.addSourceFileIfExists), () => {
+        it("should return undefined if adding a source file at a non-existent path", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            expect(ast.addSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+        });
+
+        it("should add a source file that exists", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const sourceFile = ast.addSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
         });
     });

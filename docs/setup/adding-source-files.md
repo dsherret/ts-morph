@@ -18,7 +18,7 @@ ast.addExistingSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAn
 ### By file path
 
 ```typescript
-const sourceFile = ast.addExistingSourceFile("path/to/file.ts");
+const sourceFile = ast.addExistingSourceFile("path/to/file.ts"); // or addSourceFileIfExists
 ```
 
 ### By structure

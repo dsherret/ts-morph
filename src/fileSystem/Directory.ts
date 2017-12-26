@@ -194,16 +194,29 @@ export class Directory {
     }
 
     /**
-     * Adds an existing directory to the AST from the relative path or directory name.
+     * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param path - Directory name or path to the directory that should be added.
      */
+    addDirectoryIfExists(path: string) {
+        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
+        return this.global.compilerFactory.getDirectoryFromPath(dirPath);
+    }
+
+    /**
+     * Adds an existing directory to the AST from the relative path or directory name, or throws if it doesn't exist.
+     *
+     * Will return the directory if it was already added.
+     * @param path - Directory name or path to the directory that should be added.
+     * @throws DirectoryNotFoundError if the directory does not exist.
+     */
     addExistingDirectory(path: string) {
         const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
-        if (!this.global.fileSystem.directoryExistsSync(dirPath))
+        const directory = this.addDirectoryIfExists(dirPath);
+        if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
-        return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
+        return directory;
     }
 
     /**
@@ -242,21 +255,33 @@ export class Directory {
      */
     createSourceFile(relativeFilePath: string, structure: SourceFileStructure): SourceFile;
     createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure) {
-        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, FileUtils.pathJoin(this.getPath(), relativeFilePath));
+        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath());
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
     }
 
     /**
-     * Adds an existing source file to the AST, relative to this directory.
+     * Adds an existing source file to the AST, relative to this directory, or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
      */
-    addExistingSourceFile(relativeFilePath: string) {
-        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, FileUtils.pathJoin(this.getPath(), relativeFilePath));
-        if (!this.global.fileSystem.fileExistsSync(filePath))
-            throw new errors.FileNotFoundError(filePath);
-        return this.global.compilerFactory.getSourceFileFromFilePath(filePath)!;
+    addSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
+        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath());
+        return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
+    }
+
+    /**
+     * Adds an existing source file to the AST, relative to this directory, or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param relativeFilePath - Relative file path to add.
+     * @throws FileNotFoundError when the file doesn't exist.
+     */
+    addExistingSourceFile(relativeFilePath: string): SourceFile {
+        const sourceFile = this.addSourceFileIfExists(relativeFilePath);
+        if (sourceFile == null)
+            throw new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath()));
+        return sourceFile;
     }
 
     /**
@@ -348,7 +373,7 @@ export class Directory {
      */
     copy(relativeOrAbsolutePath: string) {
         const newPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeOrAbsolutePath, this.getPath());
-        const directory = this.global.compilerFactory.addDirectoryIfNotExists(newPath);
+        const directory = this.global.compilerFactory.createOrAddDirectoryIfNotExists(newPath);
 
         for (const sourceFile of this.getSourceFiles())
             sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()));

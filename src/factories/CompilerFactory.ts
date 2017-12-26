@@ -216,10 +216,24 @@ export class CompilerFactory {
     }
 
     /**
-     * Adds a directory if it doesn't exist.
+     * Gets a directory from a path.
      * @param dirPath - Directory path.
      */
-    addDirectoryIfNotExists(dirPath: string) {
+    getDirectoryFromPath(dirPath: string) {
+        dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
+        let directory = this.directoryCache.get(dirPath);
+
+        if (directory == null && this.global.fileSystem.directoryExistsSync(dirPath))
+            directory = this.directoryCache.createOrAddIfNotExists(dirPath);
+
+        return directory;
+    }
+
+    /**
+     * Creates or adds a directory if it doesn't exist.
+     * @param dirPath - Directory path.
+     */
+    createOrAddDirectoryIfNotExists(dirPath: string) {
         return this.directoryCache.createOrAddIfNotExists(dirPath);
     }
 

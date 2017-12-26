@@ -51,16 +51,28 @@ export class TsSimpleAst {
     }
 
     /**
-     * Adds an existing directory from the path.
+     * Adds an existing directory from the path or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
      * @param dirPath - Path to add the directory at.
      */
-    addExistingDirectory(dirPath: string): Directory {
+    addDirectoryIfExists(dirPath: string): Directory | undefined {
         dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath);
-        if (!this.global.fileSystem.directoryExistsSync(dirPath))
-            throw new errors.DirectoryNotFoundError(dirPath);
-        return this.global.compilerFactory.addDirectoryIfNotExists(dirPath);
+        return this.global.compilerFactory.getDirectoryFromPath(dirPath);
+    }
+
+    /**
+     * Adds an existing directory from the path or throws if it doesn't exist.
+     *
+     * Will return the directory if it was already added.
+     * @param dirPath - Path to add the directory at.
+     * @throws DirectoryNotFoundError when the directory does not exist.
+     */
+    addExistingDirectory(dirPath: string): Directory {
+        const directory = this.addDirectoryIfExists(dirPath);
+        if (directory == null)
+            throw new errors.DirectoryNotFoundError(FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, dirPath));
+        return directory;
     }
 
     /**
@@ -115,30 +127,38 @@ export class TsSimpleAst {
         const sourceFiles: compiler.SourceFile[] = [];
 
         for (const filePath of this.global.fileSystem.glob(fileGlobs)) {
-            // ignore any FileNotFoundErrors
-            try {
-                sourceFiles.push(this.addExistingSourceFile(filePath));
-            } catch (ex) {
-                /* istanbul ignore if */
-                if (!(ex instanceof errors.FileNotFoundError))
-                    throw ex;
-            }
+            const sourceFile = this.addSourceFileIfExists(filePath);
+            if (sourceFile != null)
+                sourceFiles.push(sourceFile);
         }
 
         return sourceFiles;
     }
 
     /**
-     * Adds an existing source file from a file path.
+     * Adds a source file from a file path if it exists or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      */
+    addSourceFileIfExists(filePath: string): compiler.SourceFile | undefined {
+        return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
+    }
+
+    /**
+     * Adds an existing source file from a file path or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @throws FileNotFoundError when the file is not found.
+     */
     addExistingSourceFile(filePath: string): compiler.SourceFile {
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
-        if (!this.global.fileSystem.fileExistsSync(absoluteFilePath))
+        const sourceFile = this.addSourceFileIfExists(filePath);
+        if (sourceFile == null) {
+            const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
             throw new errors.FileNotFoundError(absoluteFilePath);
-        return this.global.compilerFactory.getSourceFileFromFilePath(absoluteFilePath)!;
+        }
+        return sourceFile;
     }
 
     /**

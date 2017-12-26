@@ -42,13 +42,13 @@ ast.getDirectoryOrThrow("path/to/directory");
 On a directory:
 
 ```ts
-const childDirectory = directory.addExistingDirectory("childDir");
+const childDirectory = directory.addExistingDirectory("childDir"); // or addDirectoryIfExists
 ```
 
 Or main ast object:
 
 ```ts
-const directory = ast.addExistingDirectory("path/to/dir");
+const directory = ast.addExistingDirectory("path/to/dir"); // or addDirectoryIfExists
 ```
 
 ### Creating
@@ -110,7 +110,7 @@ parentDir.isAncestorOf(childSourceFile);      // true
 ```ts
 const sourceFiles = directory.getSourceFiles();
 const sourceFile = directory.getSourceFile("someFile.ts"); // or getSourceFileOrThrow
-const indexFile = directory.addExistingSourceFile("index.ts");
+const indexFile = directory.addExistingSourceFile("index.ts"); // or addSourceFileIfExists
 const descendantSourceFiles = directory.getDescendantSourceFiles();
 ```
 

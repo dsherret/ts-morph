@@ -274,13 +274,30 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.addSourceFileIfExists), () => {
+        it("should return undefined if adding a source file at a non-existent path", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.createDirectory("dir");
+            expect(directory.addSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+        });
+
+        it("should add a source file that exists", () => {
+            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.addExistingDirectory("dir");
+            const sourceFile = directory.addSourceFileIfExists("file.ts");
+            expect(sourceFile).to.not.be.undefined;
+        });
+    });
+
     describe(nameof<Directory>(d => d.addExistingSourceFile), () => {
         it("should throw an exception if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             const directory = ast.createDirectory("dir");
             expect(() => {
-                directory .addExistingSourceFile("non-existent-file.ts");
+                directory.addExistingSourceFile("non-existent-file.ts");
             }).to.throw(errors.FileNotFoundError, `File not found: /dir/non-existent-file.ts`);
         });
 
@@ -327,6 +344,23 @@ describe(nameof(Directory), () => {
 
         it("should throw when a directory already exists on the file system at the specified path", () => {
             expect(() => ast.addExistingDirectory("").createDirectory("childDir")).to.throw(errors.InvalidOperationError);
+        });
+    });
+
+    describe(nameof<Directory>(d => d.addDirectoryIfExists), () => {
+        it("should return undefined when the directory doesn't exist", () => {
+            const fileSystem = getFileSystemHostWithFiles([], ["dir"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.addExistingDirectory("dir");
+            expect(directory.addDirectoryIfExists("someDir")).to.be.undefined;
+        });
+
+        it("should add a directory relative to the specified directory", () => {
+            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir", "dir2", "dir/child"]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.addExistingDirectory("dir");
+            expect(directory.addDirectoryIfExists("child")).to.equal(ast.getDirectoryOrThrow("dir/child"));
+            expect(directory.addDirectoryIfExists("../dir2")).to.equal(ast.getDirectoryOrThrow("dir2"));
         });
     });
 
