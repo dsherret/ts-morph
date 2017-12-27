@@ -194,6 +194,25 @@ export class Directory {
     }
 
     /**
+     * Gets the descendant directories.
+     */
+    getDescendantDirectories() {
+        return ArrayUtils.from(this.getDescendantDirectoriesIterator());
+    }
+
+    /**
+     * Gets the descendant directories.
+     * @internal
+     */
+    *getDescendantDirectoriesIterator(): IterableIterator<Directory> {
+        this.throwIfDeletedOrRemoved();
+        for (const directory of this._directories) {
+            yield directory;
+            yield* directory.getDescendantDirectoriesIterator();
+        }
+    }
+
+    /**
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.

@@ -238,6 +238,24 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.getDescendantDirectories), () => {
+        it("should get all the descendant directories", () => {
+            const ast = getAst();
+            const rootDir = ast.createDirectory("");
+            const directories = [
+                rootDir.createDirectory("someDir"),
+                rootDir.createDirectory("someDir/inSomeFile"),
+                rootDir.createDirectory("someDir/inSomeFile/more"),
+                rootDir.createDirectory("someDir/otherDir"),
+                rootDir.createDirectory("someDir/otherDir/deeper"),
+                rootDir.createDirectory("someDir/test"),
+                rootDir.createDirectory("someDir/childDir")
+            ];
+
+            expect(rootDir.getDescendantDirectories().map(d => d.getPath()).sort()).to.deep.equal(directories.map(d => d.getPath()).sort());
+        });
+    });
+
     describe(nameof<Directory>(d => d.createSourceFile), () => {
         function doTest(input: string | SourceFileStructure | undefined, expectedText: string) {
             const ast = getAst();
