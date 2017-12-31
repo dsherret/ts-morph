@@ -1,3 +1,4 @@
+export * from "./BooleanLiteral";
 export * from "./NumericLiteral";
 export * from "./QuoteType";
 export * from "./RegularExpressionLiteral";

@@ -150,6 +150,20 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a BooleanLiteral.
+     * @param node - Node to check.
+     */
+    static isBooleanLiteral(node: compiler.Node): node is compiler.BooleanLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a CallExpression.
      * @param node - Node to check.
      */
@@ -365,6 +379,31 @@ export class TypeGuards {
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a Expression.
+     * @param node - Node to check.
+     */
+    static isExpression(node: compiler.Node): node is compiler.Expression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AnyKeyword:
+            case ts.SyntaxKind.BooleanKeyword:
+            case ts.SyntaxKind.ImportKeyword:
+            case ts.SyntaxKind.NeverKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.NumberKeyword:
+            case ts.SyntaxKind.ObjectKeyword:
+            case ts.SyntaxKind.StringKeyword:
+            case ts.SyntaxKind.SymbolKeyword:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.UndefinedKeyword:
+            case ts.SyntaxKind.VoidKeyword:
                 return true;
             default:
                 return false;
