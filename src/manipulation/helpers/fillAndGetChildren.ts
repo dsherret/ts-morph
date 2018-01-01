@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {Node, SourceFile} from "./../compiler";
+import {Node, SourceFile} from "./../../compiler";
 import {getRangeFromArray} from "./getRangeFromArray";
 
 export interface FillAndGetChildrenOptions<TNode extends Node, TStructure> {

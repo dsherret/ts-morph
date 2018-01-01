@@ -1,4 +1,4 @@
-﻿import {Node} from "./../compiler";
+﻿import {Node} from "./../../compiler";
 
 /* istanbul ignore next */
 export function getInsertErrorMessageText(preText: string, currentNode: Node, newNode: Node) {

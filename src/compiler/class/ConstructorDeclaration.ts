@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeOverloadableClassMember} from "./../../manipulation";
-import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
+import * as getStructureFuncs from "./../../manipulation/helpers/getStructureFunctions";
 import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";

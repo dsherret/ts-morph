@@ -13,7 +13,7 @@ const nodeToWrapperVMs = getNodeToWrapperMappings(getAst());
 
 // get structure functions
 const getStructureCode = createGetStructureFunctions(structureVMs);
-fs.writeFileSync(path.join(rootFolder, "src/manipulation/getStructureFunctions.ts"), getStructureCode, { encoding: "utf-8" });
+fs.writeFileSync(path.join(rootFolder, "src/manipulation/helpers/getStructureFunctions.ts"), getStructureCode, { encoding: "utf-8" });
 
 // create the TypeGuard class
 createTypeGuardsUtility(ast, classVMs, nodeToWrapperVMs);

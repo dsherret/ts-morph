@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
+import * as getStructureFuncs from "./../../manipulation/helpers/getStructureFunctions";
 import * as errors from "./../../errors";
 import {removeOverloadableClassMember} from "./../../manipulation";
 import {MethodDeclarationOverloadStructure, MethodDeclarationStructure} from "./../../structures";

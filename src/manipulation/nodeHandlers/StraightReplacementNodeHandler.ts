@@ -2,7 +2,7 @@
 import * as ts from "typescript";
 import {Node} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {getInsertErrorMessageText} from "./../getInsertErrorMessageText";
+import {getInsertErrorMessageText} from "./../helpers";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 

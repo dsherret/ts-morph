@@ -2,7 +2,7 @@
 import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
 import {verifyAndGetIndex, removeOverloadableStatementedNodeChild} from "./../../manipulation";
-import * as getStructureFuncs from "./../../manipulation/getStructureFunctions";
+import * as getStructureFuncs from "./../../manipulation/helpers/getStructureFunctions";
 import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode, TextInsertableNode,
     UnwrappableNode, ChildOrderableNode} from "./../base";
 import {StatementedNode} from "./../statement";

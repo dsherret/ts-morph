@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
-import * as errors from "./../errors";
-import {Node} from "./../compiler";
+import * as errors from "./../../errors";
+import {Node} from "./../../compiler";
 
 export function getRangeFromArray<T extends Node>(array: Node[], index: number, length: number, expectedKind: ts.SyntaxKind) {
     const children = array.slice(index, index + length);

@@ -1,6 +1,6 @@
 ﻿import {Node} from "./../../compiler";
 import {FormattingKind} from "./../formatting";
-import {doManipulation} from "./../doManipulation";
+import {doManipulation} from "./doManipulation";
 import {NodeHandlerFactory} from "./../nodeHandlers";
 import {ChangingChildOrderTextManipulator} from "./../textManipulators";
 

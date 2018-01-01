@@ -1,7 +1,7 @@
 ﻿/* barrel:ignore */
-import {SourceFile} from "./../compiler";
-import {NodeHandler} from "./nodeHandlers";
-import {TextManipulator} from "./textManipulators";
+import {SourceFile} from "./../../compiler";
+import {NodeHandler} from "./../nodeHandlers";
+import {TextManipulator} from "./../textManipulators";
 
 export function doManipulation(sourceFile: SourceFile, textManipulator: TextManipulator, nodeHandler: NodeHandler) {
     const newFileText = textManipulator.getNewText(sourceFile.getFullText());
