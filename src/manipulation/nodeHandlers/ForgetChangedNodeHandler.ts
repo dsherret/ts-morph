@@ -1,6 +1,6 @@
-﻿import * as errors from "./../../../errors";
-import {Node} from "./../../../compiler";
-import {CompilerFactory} from "./../../../factories";
+﻿import * as errors from "./../../errors";
+import {Node} from "./../../compiler";
+import {CompilerFactory} from "./../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 

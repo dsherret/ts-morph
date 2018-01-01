@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {Node, SourceFile} from "./../../../compiler";
-import {CompilerFactory} from "./../../../factories";
-import {AdvancedIterator} from "./../../../utils";
+import {Node, SourceFile} from "./../../compiler";
+import {CompilerFactory} from "./../../factories";
+import {AdvancedIterator} from "./../../utils";
 import {NodeHandler} from "./NodeHandler";
 
 export class NodeHandlerHelper {

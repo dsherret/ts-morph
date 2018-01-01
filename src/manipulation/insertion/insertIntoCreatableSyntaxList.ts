@@ -1,6 +1,4 @@
 ﻿import {Node} from "./../../compiler";
-import {replaceTreeCreatingSyntaxList, replaceTreeWithChildIndex} from "./../tree";
-import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
 import {insertSyntaxList} from "./insertSyntaxList";
 import {insertIntoParent} from "./insertIntoParent";
 

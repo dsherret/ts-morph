@@ -1,8 +1,8 @@
-﻿import * as errors from "./../../../errors";
+﻿import * as errors from "./../../errors";
 import * as ts from "typescript";
-import {Node} from "./../../../compiler";
-import {CompilerFactory} from "./../../../factories";
-import {getInsertErrorMessageText} from "./../../getInsertErrorMessageText";
+import {Node} from "./../../compiler";
+import {CompilerFactory} from "./../../factories";
+import {getInsertErrorMessageText} from "./../getInsertErrorMessageText";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 

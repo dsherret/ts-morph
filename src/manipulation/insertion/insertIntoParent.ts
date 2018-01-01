@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../../compiler";
-import {replaceTreeWithChildIndex} from "./../tree";
-import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
+import {InsertionTextManipulator} from "./../textManipulators";
+import {NodeHandlerFactory} from "./../nodeHandlers";
+import {doManipulation} from "./../doManipulation";
 
 export interface InsertIntoParentOptions {
     insertPos: number;
@@ -18,19 +19,16 @@ export interface InsertIntoParentOptions {
 
 export function insertIntoParent(opts: InsertIntoParentOptions) {
     const {insertPos, newText, parent, childIndex, insertItemsCount, customMappings} = opts;
-    const tempSourceFile = getNewReplacementSourceFile({
-        sourceFile: parent.getSourceFile(),
+
+    doManipulation(parent.sourceFile, new InsertionTextManipulator({
         insertPos,
         newText,
         replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
-    });
-
-    replaceTreeWithChildIndex({
+    }), new NodeHandlerFactory().getForChildIndex({
         parent,
         childCount: insertItemsCount,
         childIndex,
-        replacementSourceFile: tempSourceFile,
         replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
         customMappings
-    });
+    }));
 }

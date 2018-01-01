@@ -1,6 +1,5 @@
-﻿import {Node} from "./../../../compiler";
-import {CompilerFactory} from "./../../../factories";
-import {areNodesEqual} from "./../areNodesEqual";
+﻿import {Node} from "./../../compiler";
+import {CompilerFactory} from "./../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 
@@ -24,4 +23,14 @@ export class ParentFinderReplacementNodeHandler extends StraightReplacementNodeH
         else
             super.handleNode(currentNode, newNode);
     }
+}
+
+function areNodesEqual(a: Node | undefined, b: Node | undefined) {
+    if (a == null && b == null)
+        return true;
+    if (a == null || b == null)
+        return false;
+    if (a.getPos() === b.getPos() && a.getKind() === b.getKind())
+        return true;
+    return false;
 }

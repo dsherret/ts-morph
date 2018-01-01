@@ -1,6 +1,8 @@
 ﻿import * as ts from "typescript";
 import {SourceFile} from "./../../compiler";
-import {replaceTreeStraight} from "./../tree";
+import {doManipulation} from "./../doManipulation";
+import {FullReplacementTextManipulator} from "./../textManipulators";
+import {NodeHandlerFactory} from "./../nodeHandlers";
 
 /**
  * Replaces the text in a source file and assumes only the nodes will shift (no tree structure should change).
@@ -9,7 +11,7 @@ import {replaceTreeStraight} from "./../tree";
  */
 export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFile; newText: string; }) {
     const {sourceFile, newText} = opts;
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
-
-    replaceTreeStraight(sourceFile, tempSourceFile);
+    doManipulation(sourceFile,
+        new FullReplacementTextManipulator(newText),
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory));
 }

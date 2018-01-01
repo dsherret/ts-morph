@@ -4,8 +4,9 @@ import * as errors from "./../errors";
 import {SourceFileStructure} from "./../structures";
 import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
-import {Directory, VirtualFileSystemHost} from "./../fileSystem";
+import {Directory} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
+import {createTempSourceFile} from "./createTempSourceFile";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
 import {DirectoryCache} from "./DirectoryCache";
@@ -112,8 +113,7 @@ export class CompilerFactory {
      */
     createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
-        const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), this.global.compilerOptions, { createLanguageService });
-        return globalContainer.compilerFactory.createSourceFileFromText(filePath, sourceText);
+        return createTempSourceFile(filePath, sourceText, { createLanguageService, compilerOptions: this.global.compilerOptions });
     }
 
     /**

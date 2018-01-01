@@ -1,8 +1,8 @@
 ﻿import {Node} from "./../../compiler";
-import {FormattingKind, getFormattingKindText} from "./../formatting";
-import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "./../textSeek";
-import {replaceTreeWithChildIndex} from "./../tree";
-import {getSpacingBetweenNodes} from "./../text";
+import {FormattingKind} from "./../formatting";
+import {RemoveChildrenWithFormattingTextManipulator} from "./../textManipulators";
+import {doManipulation} from "./../doManipulation";
+import {NodeHandlerFactory} from "./../nodeHandlers";
 
 export interface RemoveChildrenWithFormattingOptions<TNode extends Node> {
     children: Node[];
@@ -30,68 +30,12 @@ export function removeChildrenWithFormatting<TNode extends Node>(opts: RemoveChi
     if (children.length === 0)
         return;
 
-    const parent = children[0].getParentOrThrow() as TNode;
-    const sourceFile = parent.getSourceFile();
-    const fullText = sourceFile.getFullText();
-    const newLineKind = sourceFile.global.manipulationSettings.getNewLineKind();
-    const previousSibling = children[0].getPreviousSibling();
-    const nextSibling = children[children.length - 1].getNextSibling();
-    const newText = getPrefix() + getSpacing() + getSuffix();
-    const tempSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(newText, { filePath: sourceFile.getFilePath() });
-
-    replaceTreeWithChildIndex({
-        replacementSourceFile: tempSourceFile,
+    doManipulation(children[0].sourceFile, new RemoveChildrenWithFormattingTextManipulator<TNode>({
+        children,
+        getSiblingFormatting
+    }), new NodeHandlerFactory().getForChildIndex({
         parent: children[0].getParentSyntaxList() || children[0].getParentOrThrow(),
         childIndex: children[0].getChildIndex(),
         childCount: -1 * children.length
-    });
-
-    function getPrefix() {
-        return fullText.substring(0, getRemovalPos());
-    }
-
-    function getSpacing() {
-        return getSpacingBetweenNodes({
-            parent,
-            previousSibling,
-            nextSibling,
-            newLineKind,
-            getSiblingFormatting
-        });
-    }
-
-    function getSuffix() {
-        return fullText.substring(getRemovalEnd());
-    }
-
-    function getRemovalPos() {
-        if (previousSibling != null && nextSibling != null)
-            return previousSibling.getEnd();
-
-        if (parent.getPos() === children[0].getPos())
-            return children[0].getNonWhitespaceStart(); // do not shift the parent
-
-        return children[0].isFirstNodeOnLine() ? getPosAfterPreviousNonBlankLine(fullText, children[0].getNonWhitespaceStart()) : children[0].getNonWhitespaceStart();
-    }
-
-    function getRemovalEnd() {
-        if (previousSibling != null && nextSibling != null) {
-            const nextSiblingFormatting = getSiblingFormatting(parent as TNode, nextSibling);
-            if (nextSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Newline) {
-                const nextSiblingStartLinePos = nextSibling.getStartLinePos();
-                if (nextSiblingStartLinePos !== children[children.length - 1].getStartLinePos())
-                    return nextSiblingStartLinePos;
-            }
-
-            return nextSibling.getStart();
-        }
-
-        if (parent.getEnd() === children[children.length - 1].getEnd())
-            return children[children.length - 1].getEnd(); // do not shift the parent
-
-        const nextNonSpaceOrTabChar = getNextMatchingPos(fullText, children[children.length - 1].getEnd(), char => char !== " " && char !== "\t");
-        if (fullText[nextNonSpaceOrTabChar] === "\r" || fullText[nextNonSpaceOrTabChar] === "\n")
-            return getPosAtNextNonBlankLine(fullText, nextNonSpaceOrTabChar);
-        return nextNonSpaceOrTabChar;
-    }
+    }));
 }

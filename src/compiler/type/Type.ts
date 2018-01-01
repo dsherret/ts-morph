@@ -35,7 +35,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * @param enclosingNode - The enclosing node.
      * @param typeFormatFlags - Format flags for the type text.
      */
-    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags) {
+    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags): string {
         return this.global.typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
     }
 

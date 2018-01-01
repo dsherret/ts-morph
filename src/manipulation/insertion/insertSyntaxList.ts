@@ -1,6 +1,7 @@
 ﻿import {Node} from "./../../compiler";
-import {replaceTreeCreatingSyntaxList} from "./../tree";
-import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
+import {doManipulation} from "./../doManipulation";
+import {InsertionTextManipulator} from "./../textManipulators";
+import {NodeHandlerFactory} from "./../nodeHandlers";
 
 export interface InsertSyntaxListOptions {
     insertPos: number;
@@ -10,15 +11,13 @@ export interface InsertSyntaxListOptions {
 
 export function insertSyntaxList(opts: InsertSyntaxListOptions) {
     const {insertPos, newText, parent} = opts;
-    const tempSourceFile = getNewReplacementSourceFile({
-        sourceFile: parent.getSourceFile(),
-        insertPos,
-        newText
-    });
 
-    replaceTreeCreatingSyntaxList({
-        parent,
-        replacementSourceFile: tempSourceFile,
-        insertPos
-    });
+    doManipulation(parent.sourceFile,
+        new InsertionTextManipulator({
+            insertPos,
+            newText
+        }), new NodeHandlerFactory().getForCreatingSyntaxList({
+            parent,
+            insertPos
+        }));
 }

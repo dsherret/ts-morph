@@ -1,6 +1,7 @@
 ﻿import {Node} from "./../../compiler";
-import {replaceTreeWithRange} from "./../tree";
-import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
+import {doManipulation} from "./../doManipulation";
+import {NodeHandlerFactory} from "./../nodeHandlers";
+import {InsertionTextManipulator} from "./../textManipulators";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -13,16 +14,14 @@ export interface InsertIntoParentTextRangeOptions {
  */
 export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions) {
     const {insertPos, newText, parent} = opts;
-    const tempSourceFile = getNewReplacementSourceFile({
-        sourceFile: parent.getSourceFile(),
-        insertPos,
-        newText
-    });
 
-    replaceTreeWithRange({
-        parent,
-        replacementSourceFile: tempSourceFile,
-        start: insertPos,
-        end: insertPos + newText.length
-    });
+    doManipulation(parent.sourceFile,
+        new InsertionTextManipulator({
+            insertPos,
+            newText
+        }), new NodeHandlerFactory().getForRange({
+            parent,
+            start: insertPos,
+            end: insertPos + newText.length
+        }));
 }

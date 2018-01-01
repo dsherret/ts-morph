@@ -1,6 +1,7 @@
 ﻿import {Node} from "./../../compiler";
-import {replaceTreeWithRange} from "./../tree";
-import {getNewReplacementSourceFile} from "./../getNewReplacementSourceFile";
+import {doManipulation} from "./../doManipulation";
+import {InsertionTextManipulator} from "./../textManipulators";
+import {NodeHandlerFactory} from "./../nodeHandlers";
 
 export interface ReplaceTextPossiblyCreatingChildNodesOptions {
     replacePos: number;
@@ -14,17 +15,14 @@ export interface ReplaceTextPossiblyCreatingChildNodesOptions {
  */
 export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyCreatingChildNodesOptions) {
     const {replacePos, replacingLength, newText, parent} = opts;
-    const tempSourceFile = getNewReplacementSourceFile({
-        sourceFile: parent.getSourceFile(),
+
+    doManipulation(parent.sourceFile, new InsertionTextManipulator({
         insertPos: replacePos,
         replacingLength,
         newText
-    });
-
-    replaceTreeWithRange({
+    }), new NodeHandlerFactory().getForRange({
         parent,
-        replacementSourceFile: tempSourceFile,
         start: replacePos,
         end: replacePos + newText.length
-    });
+    }));
 }
