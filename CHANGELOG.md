@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.3.0"></a>
+# [5.3.0](https://github.com/dsherret/ts-simple-ast/compare/5.2.0...5.3.0) (2018-01-02)
+
+
+### Bug Fixes
+
+* [#137](https://github.com/dsherret/ts-simple-ast/issues/137) - Improve error message when manipulation throws error. ([34620f0](https://github.com/dsherret/ts-simple-ast/commit/34620f0))
+* Changing from namespace to module keyword and vice versa will now change the node kind. ([38dc73b](https://github.com/dsherret/ts-simple-ast/commit/38dc73b))
+
+
+### Features
+
+* [#200](https://github.com/dsherret/ts-simple-ast/issues/200) - Add BooleanLiteral. ([6cc7917](https://github.com/dsherret/ts-simple-ast/commit/6cc7917))
+* [#201](https://github.com/dsherret/ts-simple-ast/issues/201) - Add BinaryExpression. ([71a75bf](https://github.com/dsherret/ts-simple-ast/commit/71a75bf))
+* Add Directory.getDescendantDirectories. ([d576acb](https://github.com/dsherret/ts-simple-ast/commit/d576acb))
+
+
+
 <a name="5.2.0"></a>
 # [5.2.0](https://github.com/dsherret/ts-simple-ast/compare/5.1.0...5.2.0) (2017-12-26)
 
