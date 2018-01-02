@@ -2,7 +2,6 @@
 import * as ts from "typescript";
 import {Node} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
-import {getInsertErrorMessageText} from "./../helpers";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
@@ -19,7 +18,8 @@ export class StraightReplacementNodeHandler implements NodeHandler {
     handleNode(currentNode: Node, newNode: Node) {
         /* istanbul ignore if */
         if (currentNode.getKind() !== newNode.getKind())
-            throw new errors.InvalidOperationError(getInsertErrorMessageText("Error replacing tree!", currentNode, newNode));
+            throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted ` +
+                `(Current: ${currentNode.getKindName()} -- New: ${newNode.getKindName()}).`);
 
         const newNodeChildren = newNode.getChildrenIterator();
 
@@ -28,7 +28,7 @@ export class StraightReplacementNodeHandler implements NodeHandler {
 
         /* istanbul ignore if */
         if (!newNodeChildren.next().done)
-            throw new Error("Error replacing tree: Should not have new children left over."); // todo: better error message
+            throw new Error("Error replacing tree: Should not have new children left over.");
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }

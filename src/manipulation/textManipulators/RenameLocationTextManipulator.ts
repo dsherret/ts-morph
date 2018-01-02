@@ -21,4 +21,11 @@ export class RenameLocationTextManipulator implements TextManipulator {
 
         return newFileText;
     }
+
+    getTextForError(newText: string) {
+        if (this.renameLocations.length === 0)
+            return newText;
+
+        return "..." + newText.substring(this.renameLocations[0].getTextSpan().getStart());
+    }
 }

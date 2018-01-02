@@ -1,6 +1,5 @@
 export * from "./fillAndGetChildren";
 export * from "./getEndIndexFromArray";
-export * from "./getInsertErrorMessageText";
 export * from "./getInsertPosFromIndex";
 export * from "./getMixinStructureFunctions";
 export * from "./getNodeOrNodesToReturn";

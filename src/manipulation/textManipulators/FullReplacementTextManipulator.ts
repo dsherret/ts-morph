@@ -7,4 +7,8 @@ export class FullReplacementTextManipulator implements TextManipulator {
     getNewText(inputText: string) {
         return this.newText;
     }
+
+    getTextForError(newText: string) {
+        return newText;
+    }
 }

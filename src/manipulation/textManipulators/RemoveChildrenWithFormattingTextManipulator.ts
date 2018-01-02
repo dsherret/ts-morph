@@ -73,4 +73,8 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
             return nextNonSpaceOrTabChar;
         }
     }
+
+    getTextForError(newText: string) {
+        return newText;
+    }
 }

@@ -57,4 +57,8 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
             return char !== " " && char !== "\t";
         }
     }
+
+    getTextForError(newText: string) {
+        return newText;
+    }
 }

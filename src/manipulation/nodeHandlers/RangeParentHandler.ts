@@ -39,7 +39,7 @@ export class RangeParentHandler implements NodeHandler {
 
         // ensure the new children iterator is done too
         if (!newNodeChildren.done)
-            throw new Error("Error replacing tree: Should not have more children left over."); // todo: better error message
+            throw new Error("Error replacing tree: Should not have more children left over.");
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
     }

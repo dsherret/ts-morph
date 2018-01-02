@@ -142,4 +142,8 @@ export class ChangingChildOrderTextManipulator<TParentNode extends Node> impleme
                 finalText += spacing;
         }
     }
+
+    getTextForError(newText: string) {
+        return newText;
+    }
 }
