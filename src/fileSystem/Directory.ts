@@ -152,7 +152,10 @@ export class Directory {
     getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         if (typeof pathOrCondition === "string") {
             const path = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath());
-            return this.global.compilerFactory.getSourceFileFromFilePath(path);
+            if (this.global.compilerFactory.containsSourceFileAtPath(path))
+                return this.global.compilerFactory.getSourceFileFromFilePath(path);
+            else
+                return undefined;
         }
 
         return ArrayUtils.find(this.getSourceFiles(), pathOrCondition);

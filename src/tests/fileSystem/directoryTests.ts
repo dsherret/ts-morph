@@ -453,10 +453,17 @@ describe(nameof(Directory), () => {
     describe(nameof<Directory>(d => d.getSourceFile), () => {
         const ast = getAst();
         const directory = ast.createDirectory("dir");
+        const existingFile = directory.createSourceFile("existing-file.ts");
+        existingFile.saveSync();
+        existingFile.forget();
         const child1 = directory.createSourceFile("child1.ts");
         const child2 = directory.createSourceFile("child2.ts");
         const subDir = directory.createDirectory("subDir");
         const child3 = subDir.createSourceFile("child3.ts");
+
+        it("should not return a file that doesn't exist internally", () => {
+            expect(directory.getSourceFile("existing-file.ts")).to.be.undefined;
+        });
 
         it("should get based on the name", () => {
             expect(directory.getSourceFile("child2.ts")!.getFilePath()).to.equal(child2.getFilePath());
