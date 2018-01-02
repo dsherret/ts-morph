@@ -5,7 +5,7 @@ title: File System
 ## File System
 
 By default, the library will use the local file system based on the current working directory. In most scenarios, you won't have to bother with what's outlined here, but it may
-by useful in some advanced scenarios.
+by useful in some scenarios (for example, using a virtual file system is useful for mocking the file system for testing purposes).
 
 ### Current File System Object
 
