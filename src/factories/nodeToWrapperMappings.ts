@@ -9,6 +9,7 @@ import * as compiler from "./../compiler";
 export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.SourceFile]: compiler.SourceFile,
     [ts.SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression,
+    [ts.SyntaxKind.BinaryExpression]: compiler.BinaryExpression,
     [ts.SyntaxKind.Block]: compiler.Block,
     [ts.SyntaxKind.CallExpression]: compiler.CallExpression,
     [ts.SyntaxKind.ClassDeclaration]: compiler.ClassDeclaration,

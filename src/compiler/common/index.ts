@@ -1,4 +1,5 @@
 export * from "./ArrayLiteralExpression";
+export * from "./BinaryExpression";
 export * from "./CallExpression";
 export * from "./ComputedPropertyName";
 export * from "./Expression";

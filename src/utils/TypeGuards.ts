@@ -93,6 +93,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a BinaryExpression.
+     * @param node - Node to check.
+     */
+    static isBinaryExpression(node: compiler.Node): node is compiler.BinaryExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.BinaryExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
      */
