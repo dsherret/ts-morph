@@ -2,6 +2,7 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "./../compiler";
+import {VirtualFileSystemHost} from "./../fileSystem";
 import {TsSimpleAst} from "./../TsSimpleAst";
 import {IndentationText} from "./../ManipulationSettings";
 import {FileUtils} from "./../utils";
@@ -21,6 +22,24 @@ describe(nameof(TsSimpleAst), () => {
             });
 
             expect(ast.manipulationSettings.getIndentationText()).to.equal(IndentationText.EightSpaces);
+        });
+
+        it("should add the files from tsconfig.json by default", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test/test2/file2.ts", "");
+            const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json" }, fs);
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
+        });
+
+        it("should not add the files from tsconfig.json when specifying not to", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test/test2/file2.ts", "");
+            const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json", addFilesFromTsConfig: false }, fs);
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([]);
         });
     });
 
@@ -43,16 +62,25 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.getCompilerOptions()).to.deep.equal({});
         });
 
-        it(`should override the tsconfig options`, () => {
+        function doTsConfigTest(addFilesFromTsConfig: boolean) {
             const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
             const ast = new TsSimpleAst({
                 tsConfigFilePath: "tsconfig.json",
                 compilerOptions: {
                     target: 2,
                     allowJs: true
-                }
+                },
+                addFilesFromTsConfig // the behaviour changes based on this value so it's good to test both of these
             }, host);
-            expect(ast.getCompilerOptions()).to.deep.equal({ rootDir: "test", target: 2, allowJs: true });
+            expect(ast.getCompilerOptions()).to.deep.equal({ rootDir: "/test", target: 2, allowJs: true });
+        }
+
+        it(`should override the tsconfig options when specifying to add files from tsconfig`, () => {
+            doTsConfigTest(true);
+        });
+
+        it(`should override the tsconfig options when specifying to not add files from tsconfig`, () => {
+            doTsConfigTest(false);
         });
     });
 
@@ -183,6 +211,25 @@ describe(nameof(TsSimpleAst), () => {
                 ast.getDirectoryOrThrow("dir/child"),
                 ast.getDirectoryOrThrow("dir2/child")
             ].map(d => d.getPath()));
+        });
+    });
+
+    describe(nameof<TsSimpleAst>(ast => ast.addSourceFilesFromTsConfig), () => {
+        it("should throw if the tsconfig doesn't exist", () => {
+            const fs = new VirtualFileSystemHost();
+            const ast = new TsSimpleAst({}, fs);
+            expect(() => ast.addSourceFilesFromTsConfig("tsconfig.json")).to.throw(errors.FileNotFoundError);
+        });
+
+        it("should add the files from tsconfig.json", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test/test2/file2.ts", "");
+            const ast = new TsSimpleAst({}, fs);
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([].sort());
+            ast.addSourceFilesFromTsConfig("tsconfig.json");
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
         });
     });
 

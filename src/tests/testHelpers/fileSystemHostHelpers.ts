@@ -38,6 +38,7 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
             files.set(filePath, fileText);
             return Promise.resolve();
         },
+        readDirSync: () => [],
         writeFileSync: (filePath, fileText) => {
             syncWriteLog.push({ filePath, fileText });
             files.set(filePath, fileText);

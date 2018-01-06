@@ -56,6 +56,22 @@ describe(nameof(VirtualFileSystemHost), () => {
         });
     });
 
+    describe(nameof<VirtualFileSystemHost>(h => h.readDirSync), () => {
+        it("should read a directory that exists", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/dir/file.ts", "");
+            fs.writeFileSync("/dir/subDir/file.ts", "");
+            fs.writeFileSync("/dir2/file.ts", "");
+            fs.writeFileSync("/file.ts", "");
+            expect(fs.readDirSync("/dir")).to.deep.equal(["/dir/subDir", "/dir/file.ts"]);
+        });
+
+        it("should read a directory that doesn't exists", () => {
+            const fs = new VirtualFileSystemHost();
+            expect(fs.readDirSync("/dir")).to.deep.equal([]);
+        });
+    });
+
     describe(nameof<VirtualFileSystemHost>(h => h.readFileSync), () => {
         it("should read a file that exists", () => {
             const fs = new VirtualFileSystemHost();

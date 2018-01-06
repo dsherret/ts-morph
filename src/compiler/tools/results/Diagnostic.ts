@@ -8,12 +8,12 @@ import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
  */
 export class Diagnostic {
     /** @internal */
-    readonly global: GlobalContainer;
+    readonly global: GlobalContainer | undefined;
     /** @internal */
     readonly _compilerObject: ts.Diagnostic;
 
     /** @internal */
-    constructor(global: GlobalContainer, compilerObject: ts.Diagnostic) {
+    constructor(global: GlobalContainer | undefined, compilerObject: ts.Diagnostic) {
         this.global = global;
         this._compilerObject = compilerObject;
     }
@@ -29,6 +29,8 @@ export class Diagnostic {
      * Gets the source file.
      */
     getSourceFile(): SourceFile | undefined {
+        if (this.global == null)
+            return undefined;
         const file = this.compilerObject.file;
         return file == null ? undefined : this.global.compilerFactory.getSourceFile(file);
     }
@@ -41,7 +43,7 @@ export class Diagnostic {
         if (typeof messageText === "string")
             return messageText;
 
-        return this.global.compilerFactory.getDiagnosticMessageChain(messageText);
+        return new DiagnosticMessageChain(messageText);
     }
 
     /**

@@ -4,5 +4,5 @@ export {TsSimpleAst as default} from "./TsSimpleAst";
 export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
 export {createWrappedNode} from "./createWrappedNode";
-export {getCompilerOptionsFromTsConfig} from "./utils/getCompilerOptionsFromTsConfig";
+export {getCompilerOptionsFromTsConfig} from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 export {TypeGuards} from "./utils/TypeGuards";

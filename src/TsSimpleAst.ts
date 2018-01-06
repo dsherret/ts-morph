@@ -4,7 +4,7 @@ import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
-import {getCompilerOptionsFromTsConfig, FileUtils, ArrayUtils} from "./utils";
+import {getInfoFromTsConfig, TsConfigInfo, FileUtils, ArrayUtils} from "./utils";
 import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, Directory} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
@@ -14,6 +14,8 @@ export interface Options {
     compilerOptions?: ts.CompilerOptions;
     /** File path to the tsconfig.json file */
     tsConfigFilePath?: string;
+    /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
+    addFilesFromTsConfig?: boolean;
     /** Manipulation settings */
     manipulationSettings?: Partial<ManipulationSettings>;
     /** Whether to use a virtual file system. */
@@ -33,6 +35,7 @@ export class TsSimpleAst {
      * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
      */
     constructor(options: Options = {}, fileSystem?: FileSystemHost) {
+        // setup file system
         if (fileSystem != null && options.useVirtualFileSystem)
             throw new errors.InvalidOperationError("Cannot provide a file system when specifying to use a virtual file system.");
         else if (options.useVirtualFileSystem)
@@ -40,9 +43,25 @@ export class TsSimpleAst {
         else if (fileSystem == null)
             fileSystem = new DefaultFileSystemHost();
 
-        this.global = new GlobalContainer(fileSystem, getCompilerOptionsFromOptions(options, fileSystem), { createLanguageService: true });
+        // get tsconfig info
+        const tsConfigInfo = getTsConfigInfo();
+
+        // setup global container
+        this.global = new GlobalContainer(fileSystem, getCompilerOptions(options, tsConfigInfo), { createLanguageService: true });
+
+        // initialize manipulation settings
         if (options.manipulationSettings != null)
             this.global.manipulationSettings.set(options.manipulationSettings);
+
+        // add any file paths from the tsconfig if necessary
+        if (tsConfigInfo != null && tsConfigInfo.filePaths != null)
+            tsConfigInfo.filePaths.forEach(filePath => this.addExistingSourceFile(filePath));
+
+        function getTsConfigInfo() {
+            if (options.tsConfigFilePath == null)
+                return undefined;
+            return getInfoFromTsConfig(options.tsConfigFilePath, fileSystem!, { shouldGetFilePaths: options.addFilesFromTsConfig !== false });
+        }
     }
 
     /** Gets the manipulation settings. */
@@ -159,6 +178,19 @@ export class TsSimpleAst {
             throw new errors.FileNotFoundError(absoluteFilePath);
         }
         return sourceFile;
+    }
+
+    /**
+     * Adds all the source files from the specified tsconfig.json.
+     *
+     * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
+     * addFilesFromTsConfig option to false.
+     * @param tsConfigFilePath - File path to the tsconfig.json file.
+     */
+    addSourceFilesFromTsConfig(tsConfigFilePath: string) {
+        const info = getInfoFromTsConfig(tsConfigFilePath, this.global.fileSystem, { shouldGetFilePaths: true });
+        for (const filePath of info.filePaths!)
+            this.addExistingSourceFile(filePath);
     }
 
     /**
@@ -354,7 +386,7 @@ export class TsSimpleAst {
     /**
      * Gets the compiler options.
      */
-    getCompilerOptions() {
+    getCompilerOptions(): ts.CompilerOptions {
         // return a copy
         return {...this.global.compilerOptions};
     }
@@ -378,9 +410,9 @@ export class TsSimpleAst {
     }
 }
 
-function getCompilerOptionsFromOptions(options: Options, fileSystem: FileSystemHost) {
+function getCompilerOptions(options: Options, tsConfigInfo: TsConfigInfo | undefined): ts.CompilerOptions {
     return {
-        ...(options.tsConfigFilePath == null ? {} : getCompilerOptionsFromTsConfig(options.tsConfigFilePath, fileSystem)),
+        ...(tsConfigInfo == null ? {} : tsConfigInfo.compilerOptions),
         ...(options.compilerOptions || {}) as ts.CompilerOptions
     };
 }

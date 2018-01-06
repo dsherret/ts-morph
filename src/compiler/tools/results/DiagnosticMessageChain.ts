@@ -1,21 +1,14 @@
 ﻿import * as ts from "typescript";
-import {GlobalContainer} from "./../../../GlobalContainer";
 
 /**
  * Diagnostic message chain.
  */
 export class DiagnosticMessageChain {
     /** @internal */
-    readonly global: GlobalContainer;
-    /** @internal */
     readonly _compilerObject: ts.DiagnosticMessageChain;
 
     /** @internal */
-    constructor(
-        global: GlobalContainer,
-        compilerObject: ts.DiagnosticMessageChain
-    ) {
-        this.global = global;
+    constructor(compilerObject: ts.DiagnosticMessageChain) {
         this._compilerObject = compilerObject;
     }
 
@@ -41,7 +34,7 @@ export class DiagnosticMessageChain {
         if (next == null)
             return undefined;
 
-        return this.global.compilerFactory.getDiagnosticMessageChain(next);
+        return new DiagnosticMessageChain(next);
     }
 
     /**

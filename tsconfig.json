@@ -5,7 +5,7 @@
         "declaration": true,
         "strict": true,
         "sourceMap": false,
-        "removeComments": false,
+        "removeComments": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,

@@ -338,14 +338,6 @@ export class CompilerFactory {
     }
 
     /**
-     * Gets a wrapped diagnostic message chain from a compiler diagnostic message chain.
-     * @param diagnostic - Compiler diagnostic message chain.
-     */
-    getDiagnosticMessageChain(diagnosticMessageChain: ts.DiagnosticMessageChain): compiler.DiagnosticMessageChain {
-        return new compiler.DiagnosticMessageChain(this.global, diagnosticMessageChain);
-    }
-
-    /**
      * Gets a warpped JS doc tag info from a compiler object.
      * @param jsDocTagInfo - Compiler object.
      */

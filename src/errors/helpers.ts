@@ -1,11 +1,13 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./../compiler";
+import {FileSystemHost} from "./../fileSystem";
 import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
 import {ArgumentOutOfRangeError} from "./ArgumentOutOfRangeError";
 import {InvalidOperationError} from "./InvalidOperationError";
 import {NotImplementedError} from "./NotImplementedError";
+import {FileNotFoundError} from "./FileNotFoundError";
 
 /**
  * Thows if not a type.
@@ -123,4 +125,14 @@ export function throwIfNotEqual<T>(actual: T, expected: T, description: string) 
 export function throwIfTrue(value: boolean | undefined, errorMessage: string) {
     if (value === true)
         throw new InvalidOperationError(errorMessage);
+}
+
+/**
+ * Throws if the file does not exist.
+ * @param fileSystem - File system host.
+ * @param filePath - File path.
+ */
+export function throwIfFileNotExists(fileSystem: FileSystemHost, filePath: string) {
+    if (!fileSystem.fileExistsSync(filePath))
+        throw new FileNotFoundError(filePath);
 }

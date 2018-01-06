@@ -1,14 +1,18 @@
 ﻿import * as errors from "./../errors";
-import {KeyValueCache, FileUtils, createHashSet, StringUtils, ArrayUtils} from "./../utils";
+import {KeyValueCache, FileUtils, StringUtils, ArrayUtils} from "./../utils";
 import {Minimatch} from "minimatch";
 import {FileSystemHost} from "./FileSystemHost";
 
+interface VirtualDirectory {
+    path: string;
+    files: KeyValueCache<string, string>;
+}
+
 export class VirtualFileSystemHost implements FileSystemHost {
-    private readonly files = new KeyValueCache<string, string>();
-    private readonly directories = createHashSet<string>();
+    private readonly directories = new KeyValueCache<string, VirtualDirectory>();
 
     constructor() {
-        this.directories.add("/");
+        this.getOrCreateDir("/");
     }
 
     delete(path: string) {
@@ -19,17 +23,36 @@ export class VirtualFileSystemHost implements FileSystemHost {
     deleteSync(path: string) {
         path = FileUtils.getStandardizedAbsolutePath(this, path);
         if (this.directories.has(path)) {
-            for (const filePath of ArrayUtils.from(this.files.getKeys())) {
-                if (StringUtils.startsWith(filePath, path))
-                    this.files.removeByKey(filePath);
-            }
-            for (const directoryPath of ArrayUtils.from(this.directories.values())) {
+            // remove descendant dirs
+            for (const directoryPath of ArrayUtils.from(this.directories.getKeys())) {
                 if (StringUtils.startsWith(directoryPath, path))
-                    this.directories.delete(directoryPath);
+                    this.directories.removeByKey(directoryPath);
+            }
+            // remove this dir
+            this.directories.removeByKey(path);
+            return;
+        }
+
+        const parentDir = this.directories.get(FileUtils.getDirPath(path));
+        if (parentDir != null)
+            parentDir.files.removeByKey(path);
+    }
+
+    readDirSync(dirPath: string) {
+        dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
+        const dir = this.directories.get(dirPath);
+        if (dir == null)
+            return [] as string[];
+
+        return [...getDirectories(this.directories.getKeys()), ...dir.files.getKeys()];
+
+        function* getDirectories(dirPaths: IterableIterator<string>) {
+            for (const path of dirPaths) {
+                const parentDir = FileUtils.getDirPath(path);
+                if (parentDir === dirPath && parentDir !== path)
+                    yield path;
             }
         }
-        else
-            this.files.removeByKey(path);
     }
 
     readFile(filePath: string, encoding = "utf-8") {
@@ -42,8 +65,12 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
     readFileSync(filePath: string, encoding = "utf-8") {
         filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        const fileText = this.files.get(filePath);
-        if (fileText == null)
+        const parentDir = this.directories.get(FileUtils.getDirPath(filePath));
+        if (parentDir == null)
+            throw new errors.FileNotFoundError(filePath);
+
+        const fileText = parentDir.files.get(filePath);
+        if (fileText === undefined)
             throw new errors.FileNotFoundError(filePath);
         return fileText;
     }
@@ -55,8 +82,8 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
     writeFileSync(filePath: string, fileText: string) {
         filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
-        this.files.set(filePath, fileText);
+        const dirPath = FileUtils.getDirPath(filePath);
+        this.getOrCreateDir(dirPath).files.set(filePath, fileText);
     }
 
     mkdir(dirPath: string) {
@@ -66,9 +93,7 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
     mkdirSync(dirPath: string) {
         dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
-        if (dirPath !== FileUtils.getDirPath(dirPath))
-            FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(dirPath));
-        this.directories.add(dirPath);
+        this.getOrCreateDir(dirPath);
     }
 
     fileExists(filePath: string) {
@@ -77,7 +102,12 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
     fileExistsSync(filePath: string) {
         filePath = FileUtils.getStandardizedAbsolutePath(this, filePath);
-        return this.files.has(filePath);
+        const dirPath = FileUtils.getDirPath(filePath);
+        const dir = this.directories.get(dirPath);
+        if (dir == null)
+            return false;
+
+        return dir.files.has(filePath);
     }
 
     directoryExists(dirPath: string) {
@@ -98,12 +128,28 @@ export class VirtualFileSystemHost implements FileSystemHost {
 
         for (const pattern of patterns) {
             const mm = new Minimatch(pattern, { matchBase: true });
-            for (const filePath of this.files.getKeys()) {
-                if (mm.match(filePath))
-                    filePaths.push(filePath);
+            for (const dir of this.directories.getValues()) {
+                for (const filePath of dir.files.getKeys()) {
+                    if (mm.match(filePath))
+                        filePaths.push(filePath);
+                }
             }
         }
 
         return filePaths;
+    }
+
+    private getOrCreateDir(dirPath: string) {
+        let dir = this.directories.get(dirPath);
+
+        if (dir == null) {
+            dir = { path: dirPath, files: new KeyValueCache<string, string>() };
+            this.directories.set(dirPath, dir);
+            const parentDirPath = FileUtils.getDirPath(dirPath);
+            if (parentDirPath !== dirPath)
+                this.getOrCreateDir(parentDirPath);
+        }
+
+        return dir;
     }
 }
