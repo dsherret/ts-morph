@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.3.2"></a>
+## [5.3.2](https://github.com/dsherret/ts-simple-ast/compare/5.3.1...5.3.2) (2018-01-06)
+
+
+### Bug Fixes
+
+* [#203](https://github.com/dsherret/ts-simple-ast/issues/203) - Source file will now be marked as "saved" when updating from file system. ([fa0dd2c](https://github.com/dsherret/ts-simple-ast/commit/fa0dd2c))
+
+
+
 <a name="5.3.1"></a>
 ## [5.3.1](https://github.com/dsherret/ts-simple-ast/compare/5.3.0...5.3.1) (2018-01-02)
 
