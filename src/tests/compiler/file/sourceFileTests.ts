@@ -850,6 +850,7 @@ function myFunction(param: MyClass) {
             host.writeFileSync(filePath, newText);
             expect(sourceFile.refreshFromFileSystemSync()).to.equal(FileSystemRefreshResult.Updated);
             expect(firstChild.wasForgotten()).to.be.true;
+            expect(sourceFile.isSaved()).to.be.true;
             expect(sourceFile.getFullText()).to.equal(newText);
             host.deleteSync(filePath);
             expect(sourceFile.refreshFromFileSystemSync()).to.equal(FileSystemRefreshResult.Deleted);
@@ -880,6 +881,7 @@ function myFunction(param: MyClass) {
             await host.writeFile(filePath, newText);
             expect(await sourceFile.refreshFromFileSystem()).to.equal(FileSystemRefreshResult.Updated);
             expect(firstChild.wasForgotten()).to.be.true;
+            expect(sourceFile.isSaved()).to.be.true;
             expect(sourceFile.getFullText()).to.equal(newText);
             await host.delete(filePath);
             expect(await sourceFile.refreshFromFileSystem()).to.equal(FileSystemRefreshResult.Deleted);

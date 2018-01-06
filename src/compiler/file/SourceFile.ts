@@ -617,6 +617,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return FileSystemRefreshResult.NoChange;
 
         this.replaceText([0, this.getEnd()], fileText);
+        this.setIsSaved(true); // saved when loaded from file system
         return FileSystemRefreshResult.Updated;
     }
 }
