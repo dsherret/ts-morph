@@ -33,7 +33,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
     private getStatSync(path: string) {
         try {
             return fs.lstatSync(path);
-        } catch {
+        } catch(err) {
             return undefined;
         }
     }
