@@ -1,6 +1,6 @@
 ﻿import * as errors from "./../errors";
 import {KeyValueCache, FileUtils, StringUtils, ArrayUtils} from "./../utils";
-import {Minimatch} from "minimatch";
+import * as multimatch from "multimatch";
 import {FileSystemHost} from "./FileSystemHost";
 
 interface VirtualDirectory {
@@ -126,17 +126,14 @@ export class VirtualFileSystemHost implements FileSystemHost {
     glob(patterns: string[]): string[] {
         const filePaths: string[] = [];
 
-        for (const pattern of patterns) {
-            const mm = new Minimatch(pattern, { matchBase: true });
-            for (const dir of this.directories.getValues()) {
-                for (const filePath of dir.files.getKeys()) {
-                    if (mm.match(filePath))
-                        filePaths.push(filePath);
-                }
+        const allFilePaths = ArrayUtils.from(getAllFilePaths(this.directories.getValues()));
+        return multimatch(allFilePaths, patterns);
+
+        function* getAllFilePaths(directories: IterableIterator<VirtualDirectory>) {
+            for (const dir of directories) {
+                yield* dir.files.getKeys();
             }
         }
-
-        return filePaths;
     }
 
     private getOrCreateDir(dirPath: string) {

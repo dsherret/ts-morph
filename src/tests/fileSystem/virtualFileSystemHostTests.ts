@@ -229,6 +229,7 @@ describe(nameof(VirtualFileSystemHost), () => {
     describe(nameof<VirtualFileSystemHost>(h => h.glob), () => {
         const fs = new VirtualFileSystemHost();
         fs.writeFileSync("/dir/file1.ts", "");
+        fs.writeFileSync("/dir/file1.d.ts", "");
         fs.writeFileSync("/dir/subDir/file2.ts", "");
         fs.writeFileSync("/dir/file3.js", "");
         fs.writeFileSync("/otherDir/file4.ts", "");
@@ -236,7 +237,7 @@ describe(nameof(VirtualFileSystemHost), () => {
         fs.writeFileSync("/dir2/file6.ts", "");
 
         it("should match all the patterns provided", () => {
-            expect(fs.glob(["/dir/**/*.ts", "/**/*.txt"])).to.deep.equal([
+            expect(fs.glob(["/dir/**/*.ts", "/**/*.txt", "!/**/*.d.ts"])).to.deep.equal([
                 "/dir/file1.ts",
                 "/dir/subDir/file2.ts",
                 "/dir2/file5.txt"
