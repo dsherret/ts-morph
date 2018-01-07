@@ -507,21 +507,35 @@ describe(nameof(TsSimpleAst), () => {
             ]);
         });
 
-        it("should be able to do a file glob", () => {
+        describe("globbing", () => {
             const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             ast.createSourceFile("file.ts", "");
             ast.createSourceFile("src/file.ts", "");
             ast.createSourceFile("src/test/file1.ts", "");
+            ast.createSourceFile("src/test/file1.d.ts", "");
             ast.createSourceFile("src/test/file2.ts", "");
             ast.createSourceFile("src/test/file3.ts", "");
             ast.createSourceFile("src/test/file3.js", "");
             ast.createSourceFile("src/test/folder/file.ts", "");
-            expect(ast.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
-                "/src/test/file1.ts",
-                "/src/test/file2.ts",
-                "/src/test/file3.ts",
-                "/src/test/folder/file.ts"
-            ]);
+
+            it("should be able to do a file glob", () => {
+                expect(ast.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
+                    "/src/test/file1.d.ts",
+                    "/src/test/file1.ts",
+                    "/src/test/file2.ts",
+                    "/src/test/file3.ts",
+                    "/src/test/folder/file.ts"
+                ]);
+            });
+
+            it("should be able to do a file glob with multiple patterns", () => {
+                expect(ast.getSourceFiles(["**/src/test/**/*.ts", "!**/*.d.ts"]).map(s => s.getFilePath())).to.deep.equal([
+                    "/src/test/file1.ts",
+                    "/src/test/file2.ts",
+                    "/src/test/file3.ts",
+                    "/src/test/folder/file.ts"
+                ]);
+            });
         });
     });
 

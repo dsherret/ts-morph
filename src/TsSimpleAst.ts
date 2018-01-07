@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {Minimatch} from "minimatch";
+import * as multimatch from "multimatch";
 import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
@@ -282,18 +282,35 @@ export class TsSimpleAst {
      * Gets all the source files contained in the compiler wrapper.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
-    getSourceFiles(globPattern?: string): compiler.SourceFile[] {
+    getSourceFiles(): compiler.SourceFile[];
+    /**
+     * Gets all the source files contained in the compiler wrapper that match a pattern.
+     * @param globPattern - Glob pattern for filtering out the source files.
+     */
+    getSourceFiles(globPattern: string): compiler.SourceFile[];
+    /**
+     * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
+     * @param globPatterns - Glob patterns for filtering out the source files.
+     */
+    getSourceFiles(globPatterns: string[]): compiler.SourceFile[];
+    getSourceFiles(globPatterns?: string | string[]): compiler.SourceFile[] {
+        const {compilerFactory} = this.global;
         const sourceFiles = this.global.compilerFactory.getSourceFilesByDirectoryDepth();
-        if (typeof globPattern === "string")
+        if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
         else
             return ArrayUtils.from(sourceFiles);
 
         function* getFilteredSourceFiles() {
-            const mm = new Minimatch(globPattern!, { matchBase: true });
-            for (const sourceFile of sourceFiles) {
-                if (mm.match(sourceFile.getFilePath()))
-                    yield sourceFile;
+            const sourceFilePaths = Array.from(getSourceFilePaths());
+            const matchedPaths = multimatch(sourceFilePaths, globPatterns!);
+
+            for (const matchedPath of matchedPaths)
+                yield compilerFactory.getSourceFileFromFilePath(matchedPath)!;
+
+            function* getSourceFilePaths() {
+                for (const sourceFile of sourceFiles)
+                    yield sourceFile.getFilePath();
             }
         }
     }

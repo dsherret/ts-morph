@@ -37,8 +37,8 @@
   "devDependencies": {
     "@types/chai": "^3.4.34",
     "@types/chokidar": "^1.7.4",
-    "@types/minimatch": "^3.0.1",
     "@types/mocha": "^2.2.33",
+    "@types/multimatch": "^2.1.2",
     "@types/node": "^6.0.48",
     "@types/object-assign": "^4.0.30",
     "chai": "^3.5.0",
@@ -60,7 +60,7 @@
   "dependencies": {
     "code-block-writer": "^6.2.0",
     "globby": "^6.1.0",
-    "minimatch": "^3.0.4",
+    "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
     "typescript": "^2.4.x"
   },
