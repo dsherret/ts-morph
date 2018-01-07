@@ -85,8 +85,5 @@ function getFileSystemEntries(path: string, fileSystem: FileSystemHost): FileSys
             directories.push(entry);
     }
 
-    return {
-        files,
-        directories
-    };
+    return {files, directories};
 }

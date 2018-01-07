@@ -20,24 +20,6 @@ export class DefaultFileSystemHost implements FileSystemHost {
         fs.unlinkSync(path);
     }
 
-    isDirectorySync(path: string) {
-        const stat = this.getStatSync(path);
-        return stat == null ? false : stat.isDirectory();
-    }
-
-    isFileSync(path: string) {
-        const stat = this.getStatSync(path);
-        return stat == null ? false : stat.isFile();
-    }
-
-    private getStatSync(path: string) {
-        try {
-            return fs.lstatSync(path);
-        } catch(err) {
-            return undefined;
-        }
-    }
-
     readDirSync(dirPath: string) {
         return fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
     }
