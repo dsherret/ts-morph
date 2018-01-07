@@ -265,23 +265,34 @@ describe(nameof(TsSimpleAst), () => {
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.addExistingSourceFiles), () => {
-        // todo: would be more ideal to use a mocking framework here
-        const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file1.ts", text: "" }, { filePath: "file2.ts", text: "" }]);
-        fileSystem.glob = patterns => {
-            if (patterns.length !== 1 || patterns[0] !== "some-pattern")
-                throw new Error("Unexpected input!");
-            return ["/file1.ts", "/file2.ts", "/file3.ts"];
-        };
-        const ast = new TsSimpleAst(undefined, fileSystem);
-        const result = ast.addExistingSourceFiles("some-pattern");
-
-        it("should have 2 source files", () => {
+        it("should add based on a string file glob", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const fs = ast.getFileSystem();
+            fs.writeFileSync("file1.ts", "");
+            fs.writeFileSync("dir/file.ts", "");
+            fs.writeFileSync("dir/subDir/file.ts", "");
+            const result = ast.addExistingSourceFiles("/dir/**/*.ts");
             const sourceFiles = ast.getSourceFiles();
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
-            expect(sourceFiles[0].getFilePath()).to.equal("/file1.ts");
+            expect(sourceFiles[0].getFilePath()).to.equal("/dir/file.ts");
             expect(sourceFiles[0].isSaved()).to.be.true; // should be saved because it was read from the disk
-            expect(sourceFiles[1].getFilePath()).to.equal("/file2.ts");
+            expect(sourceFiles[1].getFilePath()).to.equal("/dir/subDir/file.ts");
+        });
+
+        it("should add based on multiple file globs", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const fs = ast.getFileSystem();
+            fs.writeFileSync("file1.ts", "");
+            fs.writeFileSync("dir/file.ts", "");
+            fs.writeFileSync("dir/file.d.ts", "");
+            fs.writeFileSync("dir/subDir/file.ts", "");
+            const result = ast.addExistingSourceFiles(["/dir/**/*.ts", "!/dir/**/*.d.ts"]);
+            const sourceFiles = ast.getSourceFiles();
+            expect(sourceFiles.length).to.equal(2);
+            expect(result).to.deep.equal(sourceFiles);
+            expect(sourceFiles[0].getFilePath()).to.equal("/dir/file.ts");
+            expect(sourceFiles[1].getFilePath()).to.equal("/dir/subDir/file.ts");
         });
     });
 

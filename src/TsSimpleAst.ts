@@ -138,12 +138,22 @@ export class TsSimpleAst {
     }
 
     /**
+     * Add source files based on a file glob.
+     * @param fileGlobs - File glob to add files based on.
+     * @returns The matched source files.
+     */
+    addExistingSourceFiles(fileGlob: string): compiler.SourceFile[];
+    /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(...fileGlobs: string[]): compiler.SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string[]): compiler.SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[]): compiler.SourceFile[] {
         const sourceFiles: compiler.SourceFile[] = [];
+
+        if (typeof fileGlobs === "string")
+            fileGlobs = [fileGlobs];
 
         for (const filePath of this.global.fileSystem.glob(fileGlobs)) {
             const sourceFile = this.addSourceFileIfExists(filePath);

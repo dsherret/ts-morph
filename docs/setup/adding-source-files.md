@@ -12,7 +12,8 @@ Specify as many file globs or file paths as you wish:
 
 ```typescript
 ast.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
-ast.addExistingSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
+ast.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
+ast.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
 ```
 
 ### By file path
