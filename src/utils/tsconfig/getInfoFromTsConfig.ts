@@ -47,7 +47,7 @@ function getOnlyCompilerOptions(parseResult: ParseResult, filePath: string) {
     return { compilerOptions: settings.options, errors: (settings.errors || []).map(e => new Diagnostic(undefined, e)) };
 }
 
-// todo: remove in TS 2.7 (I have a pull request to expose this)
+// todo: move this somewhere common
 /* tslint:disable:align */
 function tsMatchFiles(this: any,
     path: string,
@@ -59,7 +59,11 @@ function tsMatchFiles(this: any,
     depth: number | undefined,
     getEntries: (path: string) => FileSystemEntries
 ): string[] {
-    return (ts as any).matchFiles.apply(this, arguments);
+    const version = ts.version.split(".");
+    if (version[0] === "2" && version[1] === "4")
+        return (ts as any).matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, getEntries);
+    else
+        return (ts as any).matchFiles.apply(this, arguments);
 }
 /* tslint:enable:align */
 
