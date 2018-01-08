@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node, Expression} from "./../common";
-import {Statement} from "./Statement"
+import {Statement} from "./Statement";
 import {ChildOrderableNode} from "./../base";
 
 export const ExpressionStatementBase = ChildOrderableNode(Statement);
