@@ -5,6 +5,7 @@ import {rootFolder} from "./../config";
 export function getAst() {
     const ast = new TsSimpleAst({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
+        addFilesFromTsConfig: false,
         manipulationSettings: {
             newLineKind: NewLineKind.CarriageReturnLineFeed
         }
