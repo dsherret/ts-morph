@@ -39,7 +39,7 @@ describe(nameof(IfStatement), () => {
     });
 
     describe(nameof<IfStatement>(n => n.getElseStatement), () => {
-        function doTest(text: string, expectedText: string | null) {
+        function doTest(text: string, expectedText: string | undefined) {
             const {ifStatement} = getInfoFromTextWithIfStatement(text);
             const value = ifStatement.getElseStatement();
             expect(value == null ? value : value.getText()).to.equal(expectedText);
@@ -49,8 +49,8 @@ describe(nameof(IfStatement), () => {
             doTest(statement, elseStatement);
         });
 
-        it("should get the correct null else statement", () => {
-            doTest("if (x) { x = 2 }", null);
+        it("should get the correct undefined else statement", () => {
+            doTest("if (x) { x = 2 }", undefined);
         });
     });
 });
