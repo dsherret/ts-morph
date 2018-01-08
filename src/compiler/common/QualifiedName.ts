@@ -9,13 +9,13 @@ export class QualifiedName extends Node<ts.QualifiedName> {
      * Gets the left side of the qualified name.
      */
     getLeft() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.left, this.sourceFile) as EntityName;
+        return this.getNodeFromCompilerNode(this.compilerNode.left) as EntityName;
     }
 
     /**
      * Gets the right identifier of the qualified name.
      */
     getRight() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.right, this.sourceFile) as Identifier;
+        return this.getNodeFromCompilerNode(this.compilerNode.right) as Identifier;
     }
 }

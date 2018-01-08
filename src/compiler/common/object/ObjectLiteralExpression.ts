@@ -61,7 +61,7 @@ export class ObjectLiteralExpression extends Expression<ts.ObjectLiteralExpressi
      */
     getProperties(): ObjectLiteralElementLike[] {
         const properties: ts.NodeArray<ts.ObjectLiteralElementLike> = this.compilerNode.properties; // explicit type for validation
-        return properties.map(p => this.global.compilerFactory.getNodeFromCompilerNode(p, this.sourceFile)) as ObjectLiteralElementLike[];
+        return properties.map(p => this.getNodeFromCompilerNode(p)) as ObjectLiteralElementLike[];
     }
 
     /* Property Assignments */

@@ -8,20 +8,20 @@ export class BinaryExpression extends BinaryExpressionBase<ts.BinaryExpression> 
      * Gets the left side of the binary expression.
      */
     getLeft() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.left, this.sourceFile) as Expression;
+        return this.getNodeFromCompilerNode(this.compilerNode.left) as Expression;
     }
 
     /**
      * Gets the operator token of the binary expression.
      */
     getOperatorToken() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.operatorToken, this.sourceFile);
+        return this.getNodeFromCompilerNode(this.compilerNode.operatorToken);
     }
 
     /**
      * Gets the right side of the binary expression.
      */
     getRight() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.right, this.sourceFile) as Expression;
+        return this.getNodeFromCompilerNode(this.compilerNode.right) as Expression;
     }
 }

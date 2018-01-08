@@ -11,7 +11,7 @@ export class CallExpression extends CallExpressionBase<ts.CallExpression> {
      */
     getExpression() {
         // todo: should return LeftHandSideExpression
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node as Expression;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Node as Expression;
     }
 
     /**

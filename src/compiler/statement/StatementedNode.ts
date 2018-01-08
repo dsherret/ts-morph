@@ -436,7 +436,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             else
                 throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
 
-            return statements.map(s => this.global.compilerFactory.getNodeFromCompilerNode(s, this.sourceFile));
+            return statements.map(s => this.getNodeFromCompilerNode(s));
         }
 
         addStatements(text: string): Node[];

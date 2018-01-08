@@ -37,7 +37,7 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             const nameNode = this.compilerNode.name;
             if (nameNode == null)
                 return undefined;
-            return this.global.compilerFactory.getNodeFromCompilerNode(nameNode, this.sourceFile) as Identifier;
+            return this.getNodeFromCompilerNode(nameNode) as Identifier;
         }
 
         getNameNodeOrThrow() {

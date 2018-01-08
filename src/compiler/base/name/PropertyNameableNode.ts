@@ -29,7 +29,7 @@ export function PropertyNameableNode<T extends Constructor<PropertyNameableNodeE
             const compilerNameNode: ts.PropertyName | undefined = this.compilerNode.name;
             if (compilerNameNode == null)
                 return undefined;
-            return this.global.compilerFactory.getNodeFromCompilerNode(compilerNameNode, this.sourceFile) as PropertyName;
+            return this.getNodeFromCompilerNode(compilerNameNode) as PropertyName;
         }
 
         getNameOrThrow() {

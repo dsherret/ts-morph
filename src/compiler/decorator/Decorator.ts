@@ -137,7 +137,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the expression.
      */
     getExpression(): Expression<ts.LeftHandSideExpression> {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression<ts.LeftHandSideExpression>;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression<ts.LeftHandSideExpression>;
     }
 
     /**

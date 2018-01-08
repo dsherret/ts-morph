@@ -70,7 +70,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
         }
 
         getParameters() {
-            return this.compilerNode.parameters.map(p => this.global.compilerFactory.getNodeFromCompilerNode(p, this.sourceFile) as ParameterDeclaration);
+            return this.compilerNode.parameters.map(p => this.getNodeFromCompilerNode(p) as ParameterDeclaration);
         }
 
         addParameter(structure: ParameterDeclarationStructure) {

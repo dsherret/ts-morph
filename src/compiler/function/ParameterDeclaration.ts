@@ -26,7 +26,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      * Gets the dot dot dot token (...) for a rest parameter.
      */
     getDotDotDotToken() {
-        return this.compilerNode.dotDotDotToken == null ? undefined : this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.dotDotDotToken, this.sourceFile);
+        return this.compilerNode.dotDotDotToken == null ? undefined : this.getNodeFromCompilerNode(this.compilerNode.dotDotDotToken);
     }
 
     /**

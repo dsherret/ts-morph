@@ -33,7 +33,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
         const initializer = this.compilerNode.objectAssignmentInitializer;
         if (initializer == null)
             return undefined;
-        return this.global.compilerFactory.getNodeFromCompilerNode(initializer, this.sourceFile) as Expression;
+        return this.getNodeFromCompilerNode(initializer) as Expression;
     }
 
     /**
@@ -50,7 +50,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
         const equalsToken = this.compilerNode.equalsToken;
         if (equalsToken == null)
             return undefined;
-        return this.global.compilerFactory.getNodeFromCompilerNode(equalsToken, this.sourceFile);
+        return this.getNodeFromCompilerNode(equalsToken);
     }
 
     /**

@@ -21,7 +21,7 @@ export class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
         const expression = this.compilerNode.expression;
         if (expression == null)
             return undefined;
-        return this.global.compilerFactory.getNodeFromCompilerNode(expression, this.sourceFile) as Expression;
+        return this.getNodeFromCompilerNode(expression) as Expression;
     }
 
     /**

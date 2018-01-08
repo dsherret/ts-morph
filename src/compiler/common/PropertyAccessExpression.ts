@@ -9,6 +9,6 @@ export class PropertyAccessExpression extends PropertyAccessExpressionBase<ts.Pr
      * Gets the expression node.
      */
     getExpression() {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression<ts.LeftHandSideExpression>;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression<ts.LeftHandSideExpression>;
     }
 }

@@ -1124,6 +1124,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             useSingleQuote: this.global.manipulationSettings.getQuoteType() === QuoteType.Single
         });
     }
+
+    /**
+     * Gets or creates a node from the internal cache.
+     * @internal
+     */
+    protected getNodeFromCompilerNode<LocalNodeType extends ts.Node>(compilerNode: LocalNodeType): Node<LocalNodeType> {
+        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
+    }
 }
 
 function getWrappedNode(thisNode: Node, compilerNode: ts.Node): Node {

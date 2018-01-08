@@ -112,7 +112,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getConstructSignatures(): ConstructSignatureDeclaration[] {
         return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
-            .map(m => this.global.compilerFactory.getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration, this.sourceFile)) as ConstructSignatureDeclaration[];
+            .map(m => this.getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration)) as ConstructSignatureDeclaration[];
     }
 
     /**
@@ -206,7 +206,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getMethods(): MethodSignature[] {
         return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.MethodSignature)
-            .map(m => this.global.compilerFactory.getNodeFromCompilerNode(m as ts.MethodSignature, this.sourceFile) as MethodSignature);
+            .map(m => this.getNodeFromCompilerNode(m as ts.MethodSignature) as MethodSignature);
     }
 
     /**
@@ -299,14 +299,14 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getProperties(): PropertySignature[] {
         return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.PropertySignature)
-            .map(m => this.global.compilerFactory.getNodeFromCompilerNode(m as ts.PropertySignature, this.sourceFile) as PropertySignature);
+            .map(m => this.getNodeFromCompilerNode(m as ts.PropertySignature) as PropertySignature);
     }
 
     /**
      * Gets all members.
      */
     getAllMembers(): InterfaceMemberTypes[] {
-        return this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as InterfaceMemberTypes[];
+        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as InterfaceMemberTypes[];
     }
 
     /**

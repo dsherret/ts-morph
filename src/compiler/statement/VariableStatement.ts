@@ -16,7 +16,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.compilerNode.declarationList.declarations.map(d => this.global.compilerFactory.getNodeFromCompilerNode(d, this.sourceFile) as VariableDeclaration);
+        return this.compilerNode.declarationList.declarations.map(d => this.getNodeFromCompilerNode(d) as VariableDeclaration);
     }
 
     /**

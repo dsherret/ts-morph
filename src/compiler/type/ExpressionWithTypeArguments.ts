@@ -7,7 +7,7 @@ export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeA
      * Gets the expression node.
      */
     getExpression(): Node<ts.LeftHandSideExpression> {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.LeftHandSideExpression>;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Node<ts.LeftHandSideExpression>;
     }
 
     /**
@@ -18,6 +18,6 @@ export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeA
         if (typeArguments == null)
             return [];
 
-        return typeArguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile) as TypeNode);
+        return typeArguments.map(a => this.getNodeFromCompilerNode(a) as TypeNode);
     }
 }

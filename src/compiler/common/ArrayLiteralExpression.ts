@@ -8,7 +8,7 @@ export class ArrayLiteralExpression extends Expression<ts.ArrayLiteralExpression
      * Gets the array's elements.
      */
     getElements(): Expression[] {
-        return this.compilerNode.elements.map(e => this.global.compilerFactory.getNodeFromCompilerNode(e, this.sourceFile)) as Expression[];
+        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode(e)) as Expression[];
     }
 
     /**

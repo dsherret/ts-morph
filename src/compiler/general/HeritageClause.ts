@@ -11,7 +11,7 @@ export class HeritageClause extends Node<ts.HeritageClause> {
         if (this.compilerNode.types == null)
             return [];
 
-        return this.compilerNode.types.map(t => this.global.compilerFactory.getNodeFromCompilerNode(t, this.sourceFile)) as ExpressionWithTypeArguments[];
+        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode(t)) as ExpressionWithTypeArguments[];
     }
 
     /**
