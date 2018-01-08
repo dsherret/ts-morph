@@ -209,6 +209,7 @@ export class TypeGuards {
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.ExpressionStatement:
+            case ts.SyntaxKind.IfStatement:
             case ts.SyntaxKind.ReturnStatement:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
@@ -567,6 +568,19 @@ export class TypeGuards {
     static isIdentifier(node: compiler.Node): node is compiler.Identifier {
         switch (node.getKind()) {
             case ts.SyntaxKind.Identifier:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a IfStatement.
+     * @param node - Node to check.
+     */
+    static isIfStatement(node: compiler.Node): node is compiler.IfStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.IfStatement:
                 return true;
             default:
                 return false;

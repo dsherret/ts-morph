@@ -8,8 +8,9 @@ import {NamespaceChildableNode} from "./../namespace";
 import {callBaseFill} from "./../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
 import {VariableDeclarationType} from "./VariableDeclarationType";
+import {Statement} from "./Statement";
 
-export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Node))))));
+export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
      * Get the variable declarations.
