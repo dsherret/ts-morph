@@ -9,46 +9,36 @@ import {callBaseFill} from "./../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 import {Statement} from "./Statement";
+import {VariableDeclarationList} from "./VariableDeclarationList";
 
 export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
+     * Get variable declaration list.
+     */
+    getDeclarationList(): VariableDeclarationList {
+        return this.getNodeFromCompilerNode(this.compilerNode.declarationList) as VariableDeclarationList;
+    }
+
+    /**
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.compilerNode.declarationList.declarations.map(d => this.getNodeFromCompilerNode(d) as VariableDeclaration);
+        return this.getDeclarationList().getDeclarations();
     }
 
     /**
      * Gets the variable declaration type.
      */
     getDeclarationType(): VariableDeclarationType {
-        const nodeFlags = this.compilerNode.declarationList.flags;
-
-        if (nodeFlags & ts.NodeFlags.Let)
-            return VariableDeclarationType.Let;
-        else if (nodeFlags & ts.NodeFlags.Const)
-            return VariableDeclarationType.Const;
-        else
-            return VariableDeclarationType.Var;
+        return this.getDeclarationList().getDeclarationType();
     }
 
     /**
      * Gets the variable declaration type keyword.
      */
     getDeclarationTypeKeyword(): Node {
-        const declarationType = this.getDeclarationType();
-        const declarationList = this.getNodeProperty("declarationList");
-        switch (declarationType) {
-            case VariableDeclarationType.Const:
-                return declarationList.getFirstChildByKindOrThrow(ts.SyntaxKind.ConstKeyword);
-            case VariableDeclarationType.Let:
-                return declarationList.getFirstChildByKindOrThrow(ts.SyntaxKind.LetKeyword);
-            case VariableDeclarationType.Var:
-                return declarationList.getFirstChildByKindOrThrow(ts.SyntaxKind.VarKeyword);
-            default:
-                throw errors.getNotImplementedForNeverValueError(declarationType);
-        }
+        return this.getDeclarationList().getDeclarationTypeKeyword();
     }
 
     /**
@@ -56,23 +46,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param type - Type to set.
      */
     setDeclarationType(type: VariableDeclarationType) {
-        if (this.getDeclarationType() === type)
-            return this;
-        const keyword = this.getDeclarationTypeKeyword();
-
-        insertIntoParent({
-            childIndex: keyword.getChildIndex(),
-            insertItemsCount: 1,
-            insertPos: keyword.getStart(),
-            newText: type,
-            parent: this.getNodeProperty("declarationList"),
-            replacing: {
-                nodes: [keyword],
-                textLength: keyword.getWidth()
-            }
-        });
-
-        return this;
+        return this.getDeclarationList().setDeclarationType(type);
     }
 
     /**
@@ -80,7 +54,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param structure - Structure representing the variable declaration to add.
      */
     addDeclaration(structure: VariableDeclarationStructure) {
-        return this.addDeclarations([structure])[0];
+        return this.getDeclarationList().addDeclaration(structure);
     }
 
     /**
@@ -88,7 +62,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param structures - Structures representing the variable declarations to add.
      */
     addDeclarations(structures: VariableDeclarationStructure[]) {
-        return this.insertDeclarations(this.getDeclarations().length, structures);
+        return this.getDeclarationList().addDeclarations(structures);
     }
 
     /**
@@ -97,7 +71,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param structure - Structure representing the variable declaration to insert.
      */
     insertDeclaration(index: number, structure: VariableDeclarationStructure) {
-        return this.insertDeclarations(index, [structure])[0];
+        return this.getDeclarationList().insertDeclaration(index, structure);
     }
 
     /**
@@ -106,29 +80,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-        const texts = structures.map(structure => {
-            let text = structure.name;
-            if (structure.type != null)
-                text += ": " + structure.type;
-            if (structure.initializer != null)
-                text += " = " + structure.initializer;
-            return text;
-        });
-
-        insertIntoCommaSeparatedNodes({
-            parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.VariableDeclarationList).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
-            currentNodes: this.getDeclarations(),
-            insertIndex: index,
-            newTexts: texts
-        });
-
-        const declarations = this.getDeclarations().slice(index, index + texts.length);
-
-        for (let i = 0; i < structures.length; i++)
-            declarations[i].fill(structures[i]);
-
-        return declarations;
+        return this.getDeclarationList().insertDeclarations(index, structures);
     }
 
     /**
