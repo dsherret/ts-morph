@@ -27,7 +27,6 @@ import Ast from "ts-simple-ast";
 const ast = new Ast();
 const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
 ast.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
-ast.addExistingSourceFiles("otherFolder/file.ts", "specifyAnotherFile.ts", "orAnotherGlob/**/*.ts");
 ast.createSourceFile("misc.ts", {
     classes: [{
         name: "SomeClass",
