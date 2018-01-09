@@ -9,6 +9,10 @@ export function getInsertPosFromIndex(index: number, parent: Node, children: Nod
     if (index === 0) {
         if (TypeGuards.isSourceFile(parent))
             return 0;
+        else if (TypeGuards.isCaseClause(parent) || TypeGuards.isDefaultClause(parent)) {
+            const colonToken = parent.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken);
+            return colonToken.getEnd();
+        }
         else {
             const parentContainer = getParentContainer(parent);
             const openBraceToken = parentContainer.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
