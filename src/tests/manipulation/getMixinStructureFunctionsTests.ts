@@ -49,6 +49,21 @@ describe(nameof(getMixinStructureFuncs.fromAsyncableNode), () => {
     });
 });
 
+describe(nameof(getMixinStructureFuncs.fromAwaitableNode), () => {
+    function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AwaitableNodeStructure>) {
+        const {firstChild} = getInfoFromText<compiler.ForOfStatement>(startingCode);
+        expect(getMixinStructureFuncs.fromAwaitableNode(firstChild)).to.deep.equal(expectedStructure);
+    }
+
+    it("should get when is a generator", () => {
+        doTest("for await (const x of []) {}", {isAwaited: true});
+    });
+
+    it("should get when not a generator", () => {
+        doTest("for (const x of []) {}", {isAwaited: false});
+    });
+});
+
 describe(nameof(getMixinStructureFuncs.fromExportableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ExportableNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.FunctionDeclaration>(startingCode);

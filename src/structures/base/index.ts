@@ -1,6 +1,7 @@
 export * from "./AbstractableNodeStructure";
 export * from "./AmbientableNodeStructure";
 export * from "./AsyncableNodeStructure";
+export * from "./AwaitableNodeStructure";
 export * from "./BodiedNodeStructure";
 export * from "./BodyableNodeStructure";
 export * from "./DecoratableNodeStructure";

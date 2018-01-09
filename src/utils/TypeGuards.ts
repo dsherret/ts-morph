@@ -93,6 +93,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an AwaitableNode.
+     * @param node - Node to check.
+     */
+    static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForOfStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a BinaryExpression.
      * @param node - Node to check.
      */
@@ -211,6 +224,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.IfStatement:
             case ts.SyntaxKind.ReturnStatement:
+            case ts.SyntaxKind.VariableDeclarationList:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -309,6 +323,19 @@ export class TypeGuards {
     static isDecorator(node: compiler.Node): node is compiler.Decorator {
         switch (node.getKind()) {
             case ts.SyntaxKind.Decorator:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a DoStatement.
+     * @param node - Node to check.
+     */
+    static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.DoStatement:
                 return true;
             default:
                 return false;
@@ -457,6 +484,45 @@ export class TypeGuards {
     static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.InterfaceDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ForInStatement.
+     * @param node - Node to check.
+     */
+    static isForInStatement(node: compiler.Node): node is compiler.ForInStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForInStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ForOfStatement.
+     * @param node - Node to check.
+     */
+    static isForOfStatement(node: compiler.Node): node is compiler.ForOfStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForOfStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ForStatement.
+     * @param node - Node to check.
+     */
+    static isForStatement(node: compiler.Node): node is compiler.ForStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForStatement:
                 return true;
             default:
                 return false;
@@ -900,6 +966,7 @@ export class TypeGuards {
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.VariableDeclarationList:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -1550,12 +1617,38 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a VariableDeclarationList.
+     * @param node - Node to check.
+     */
+    static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VariableDeclarationList:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a VariableStatement.
      * @param node - Node to check.
      */
     static isVariableStatement(node: compiler.Node): node is compiler.VariableStatement {
         switch (node.getKind()) {
             case ts.SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a WhileStatement.
+     * @param node - Node to check.
+     */
+    static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.WhileStatement:
                 return true;
             default:
                 return false;
