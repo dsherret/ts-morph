@@ -203,6 +203,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a CatchClause.
+     * @param node - Node to check.
+     */
+    static isCatchClause(node: compiler.Node): node is compiler.CatchClause {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CatchClause:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ChildOrderableNode.
      * @param node - Node to check.
      */
@@ -224,7 +237,6 @@ export class TypeGuards {
             case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.IfStatement:
             case ts.SyntaxKind.ReturnStatement:
-            case ts.SyntaxKind.VariableDeclarationList:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -1477,6 +1489,32 @@ export class TypeGuards {
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.Block:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ThrowStatement.
+     * @param node - Node to check.
+     */
+    static isThrowStatement(node: compiler.Node): node is compiler.ThrowStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ThrowStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TryStatement.
+     * @param node - Node to check.
+     */
+    static isTryStatement(node: compiler.Node): node is compiler.TryStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TryStatement:
                 return true;
             default:
                 return false;
