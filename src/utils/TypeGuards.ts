@@ -224,7 +224,6 @@ export class TypeGuards {
             case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.IfStatement:
             case ts.SyntaxKind.ReturnStatement:
-            case ts.SyntaxKind.VariableDeclarationList:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
@@ -286,6 +285,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a DebuggerStatement.
+     * @param node - Node to check.
+     */
+    static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.DebuggerStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a DeclarationNamedNode.
      * @param node - Node to check.
      */
@@ -336,6 +348,19 @@ export class TypeGuards {
     static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
         switch (node.getKind()) {
             case ts.SyntaxKind.DoStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a EmptyStatement.
+     * @param node - Node to check.
+     */
+    static isEmptyStatement(node: compiler.Node): node is compiler.EmptyStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.EmptyStatement:
                 return true;
             default:
                 return false;
@@ -1034,6 +1059,19 @@ export class TypeGuards {
     static isNamespaceDeclaration(node: compiler.Node): node is compiler.NamespaceDeclaration {
         switch (node.getKind()) {
             case ts.SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NotEmittedStatement.
+     * @param node - Node to check.
+     */
+    static isNotEmittedStatement(node: compiler.Node): node is compiler.NotEmittedStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NotEmittedStatement:
                 return true;
             default:
                 return false;
