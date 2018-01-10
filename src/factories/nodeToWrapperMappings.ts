@@ -81,6 +81,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag,
     [ts.SyntaxKind.SemicolonToken]: compiler.Node,
     [ts.SyntaxKind.WhileStatement]: compiler.WhileStatement,
+    [ts.SyntaxKind.WithStatement]: compiler.WithStatement,
     // literals
     [ts.SyntaxKind.AnyKeyword]: compiler.Expression,
     [ts.SyntaxKind.BooleanKeyword]: compiler.Expression,

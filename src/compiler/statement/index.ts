@@ -20,3 +20,4 @@ export * from "./VariableDeclarationList";
 export * from "./VariableDeclarationType";
 export * from "./VariableStatement";
 export * from "./WhileStatement";
+export * from "./WithStatement";
