@@ -1,5 +1,6 @@
 export * from "./Block";
 export * from "./DoStatement";
+export * from "./CatchClause";
 export * from "./ExpressionStatement";
 export * from "./DebuggerStatement";
 export * from "./EmptyStatement";
@@ -12,6 +13,8 @@ export * from "./NotEmittedStatement";
 export * from "./ReturnStatement";
 export * from "./Statement";
 export * from "./StatementedNode";
+export * from "./ThrowStatement";
+export * from "./TryStatement";
 export * from "./VariableDeclaration";
 export * from "./VariableDeclarationList";
 export * from "./VariableDeclarationType";
