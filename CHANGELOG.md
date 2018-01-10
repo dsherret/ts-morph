@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.4.0"></a>
+# [5.4.0](https://github.com/dsherret/ts-simple-ast/compare/5.3.2...5.4.0) (2018-01-10)
+
+
+### Features
+
+* [#204](https://github.com/dsherret/ts-simple-ast/issues/204) - Add IfStatement. ([095eb24](https://github.com/dsherret/ts-simple-ast/commit/095eb24))
+* [#204](https://github.com/dsherret/ts-simple-ast/issues/204) - Add IterationStatement, Do, ForIn, ForOf, For, While ([ce40dee](https://github.com/dsherret/ts-simple-ast/commit/ce40dee))
+* [#204](https://github.com/dsherret/ts-simple-ast/issues/204) - Add WithStatement. ([215383a](https://github.com/dsherret/ts-simple-ast/commit/215383a))
+
+
+
 <a name="5.3.2"></a>
 ## [5.3.2](https://github.com/dsherret/ts-simple-ast/compare/5.3.1...5.3.2) (2018-01-06)
 
