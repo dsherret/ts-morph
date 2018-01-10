@@ -36,11 +36,4 @@ describe(nameof(ForOfStatement), () => {
             doTest(statement, initializer);
         });
     });
-
-    describe(nameof<ForOfStatement>(n => n.fill), () => {
-        it("should set await", () => {
-            const {forOfStatement} = getInfoFromTextWithForOfStatement(statement);
-            expect(forOfStatement.fill({ isAwaited: true }).getText()).to.equal(`for await (${initializer} of ${expression}) {}`);
-        });
-    });
 });

@@ -1,7 +1,5 @@
 import * as ts from "typescript";
-import {callBaseFill} from "./../callBaseFill";
 import {Expression} from "./../common";
-import {ForOfStatementStructure} from "./../../structures";
 import {IterationStatement} from "./IterationStatement";
 import {VariableDeclarationList} from "./VariableDeclarationList";
 import {AwaitableNode} from "../base";
@@ -20,14 +18,5 @@ export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
      */
     getExpression() {
         return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
-    }
-
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<ForOfStatementStructure>) {
-        callBaseFill(ForOfStatementBase.prototype, this, structure);
-        return this;
     }
 }
