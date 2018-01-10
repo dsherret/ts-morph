@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
-import {Node, Expression} from "./../../common";
+import {Expression} from "./../../expression";
+import {Node} from "./../../common";
 
 export type InitializerGetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 

@@ -1,8 +1,7 @@
 ﻿import * as ts from "typescript";
-import {LiteralLikeNode} from "./../base";
-import {Expression} from "./../common";
+import {LiteralExpression} from "./../expression";
 
-export const NumericLiteralBase = LiteralLikeNode(Expression);
+export const NumericLiteralBase = LiteralExpression;
 export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {
     /**
      * Gets the literal value.

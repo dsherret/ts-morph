@@ -2,7 +2,8 @@
 import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParent} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
-import {Node, CallExpression, Expression, Identifier} from "./../common";
+import {CallExpression, Expression} from "./../expression";
+import {Node, Identifier} from "./../common";
 import {TypeNode} from "./../type";
 
 export const DecoratorBase = Node;

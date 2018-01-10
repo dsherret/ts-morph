@@ -1,5 +1,6 @@
 import * as ts from "typescript";
-import {Expression, Node} from "./../common";
+import {Expression} from "./../expression";
+import {Node} from "./../common";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
 import {CaseBlock} from "./CaseBlock";

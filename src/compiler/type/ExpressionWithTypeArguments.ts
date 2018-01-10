@@ -1,15 +1,10 @@
 ﻿import * as ts from "typescript";
+import {LeftHandSideExpressionedNode} from "./../expression";
 import {Node} from "./../common";
 import {TypeNode} from "./TypeNode";
 
-export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeArguments> {
-    /**
-     * Gets the expression node.
-     */
-    getExpression(): Node<ts.LeftHandSideExpression> {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Node<ts.LeftHandSideExpression>;
-    }
-
+export const ExpressionWithTypeArgumentsBase = LeftHandSideExpressionedNode(TypeNode);
+export class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
     /**
      * Gets the type arguments.
      */

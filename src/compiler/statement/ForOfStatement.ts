@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import {Expression} from "./../common";
+import {Expression} from "./../expression";
 import {IterationStatement} from "./IterationStatement";
 import {VariableDeclarationList} from "./VariableDeclarationList";
 import {AwaitableNode} from "../base";

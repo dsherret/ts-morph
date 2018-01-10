@@ -1,8 +1,7 @@
 ﻿import * as ts from "typescript";
-import {LiteralLikeNode} from "./../base";
-import {Expression} from "./../common";
+import {LiteralExpression} from "./../expression";
 
-export const RegularExpressionLiteralBase = LiteralLikeNode(Expression);
+export const RegularExpressionLiteralBase = LiteralExpression;
 export class RegularExpressionLiteral extends RegularExpressionLiteralBase<ts.RegularExpressionLiteral> {
     /**
      * Gets the literal value.

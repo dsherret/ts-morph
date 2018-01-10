@@ -1,9 +1,8 @@
 ﻿import * as ts from "typescript";
-import {LiteralLikeNode} from "./../base";
-import {Expression} from "./../common";
+import {LiteralExpression} from "./../expression";
 import {QuoteType} from "./QuoteType";
 
-export const StringLiteralBase = LiteralLikeNode(Expression);
+export const StringLiteralBase = LiteralExpression;
 export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
     /**
      * Gets the literal value.

@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeStatementedNodeChild} from "./../../manipulation";
-import {Node, Expression} from "./../common";
+import {Expression} from "./../expression";
+import {Node} from "./../common";
 
 export class ExportAssignment extends Node<ts.ExportAssignment> {
     /**
