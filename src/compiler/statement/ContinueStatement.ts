@@ -25,7 +25,7 @@ export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatemen
     }
 
     /**
-     * Removes this expression statement.
+     * Removes this continue statement.
      */
     remove() {
         removeStatementedNodeChild(this);

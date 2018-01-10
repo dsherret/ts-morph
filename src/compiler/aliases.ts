@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Identifier, ComputedPropertyName, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment} from "./common";
+import {CaseClause, DefaultClause} from "./statement";
 import {GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration} from "./class";
 import {StringLiteral, NumericLiteral} from "./literal";
 
@@ -45,6 +46,20 @@ function objectLiteralElementLikeAliasValidation() {
         case ts.SyntaxKind.MethodDeclaration:
         case ts.SyntaxKind.SetAccessor:
         case ts.SyntaxKind.GetAccessor:
+            return;
+        default:
+            const ensureNever: never = value;
+    }
+}
+
+export type CaseOrDefaultClause = CaseClause | DefaultClause;
+
+/* istanbul ignore next */
+function caseOrDefaultClauseValidation() {
+    const value: ts.CaseOrDefaultClause = null as any;
+    switch (value.kind) {
+        case ts.SyntaxKind.CaseClause:
+        case ts.SyntaxKind.DefaultClause:
             return;
         default:
             const ensureNever: never = value;

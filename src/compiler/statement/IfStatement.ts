@@ -1,5 +1,4 @@
 import * as ts from "typescript";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node, Expression} from "./../common";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
@@ -27,12 +26,5 @@ export class IfStatement extends IfStatementBase<ts.IfStatement> {
         return this.compilerNode.elseStatement == null
             ? undefined
             : this.getNodeFromCompilerNode(this.compilerNode.elseStatement) as Statement;
-    }
-
-    /**
-     * Removes this expression statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

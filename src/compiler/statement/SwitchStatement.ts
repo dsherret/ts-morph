@@ -1,9 +1,9 @@
 import * as ts from "typescript";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Expression, Node} from "./../common";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
 import {CaseBlock} from "./CaseBlock";
+import {CaseOrDefaultClause} from "./../aliases";
 
 export const SwitchStatementBase = ChildOrderableNode(Statement);
 export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
@@ -22,20 +22,26 @@ export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
     }
 
     /**
-     * Get if the switch statement is exhaustive. False means it may or may not be exhaustive. See isNotExhaustive.
+     * Gets the switch statement's case block's clauses.
      */
-    isExhaustive() {
-        return this.compilerNode.possiblyExhaustive === true;
+    getClauses(): CaseOrDefaultClause[] {
+        // convenience method
+        return this.getCaseBlock().getClauses();
     }
 
     /**
-     * Get if the switch statement is not exhaustive. False means it may or may not be exhausitve. See isExhaustive.
+     * Removes the specified clause based on the provided index.
+     * @param index - Index.
      */
-    isNotExhaustive() {
-        return this.compilerNode.possiblyExhaustive === false;
+    removeClause(index: number) {
+        return this.getCaseBlock().removeClause(index);
     }
 
-    remove() {
-        removeStatementedNodeChild(this);
+    /**
+     * Removes the specified clauses based on the provided index range.
+     * @param indexRange - Index range.
+     */
+    removeClauses(indexRange: [number, number]) {
+        return this.getCaseBlock().removeClauses(indexRange);
     }
 }

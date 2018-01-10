@@ -13,6 +13,9 @@ export class CaseClause extends CaseClauseBase<ts.CaseClause> {
         return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
     }
 
+    /**
+     * Removes this case clause.
+     */
     remove() {
         removeClausedNodeChild(this);
     }

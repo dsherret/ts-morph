@@ -142,10 +142,10 @@ export function removeStatementedNodeChild(node: Node) {
     removeStatementedNodeChildren([node]);
 }
 
-export function removeStatementedNodeChildren(node: Node[]) {
+export function removeStatementedNodeChildren(nodes: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getStatementedNodeChildFormatting,
-        children: node
+        children: nodes
     });
 }
 
@@ -153,10 +153,10 @@ export function removeClausedNodeChild(node: Node) {
     removeClausedNodeChildren([node]);
 }
 
-export function removeClausedNodeChildren(node: Node[]) {
+export function removeClausedNodeChildren(nodes: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getClausedNodeChildFormatting,
-        children: node
+        children: nodes
     });
 }
 

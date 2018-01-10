@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {ChildOrderableNode} from "./../base";
 import {Expression} from "./../common";
 import {Statement} from "./Statement";
@@ -18,12 +17,5 @@ export class WithStatement extends WithStatementBase<ts.WithStatement> {
      */
     getStatement() {
         return this.getNodeFromCompilerNode(this.compilerNode.statement) as Statement;
-    }
-
-    /**
-     * Removes this with statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

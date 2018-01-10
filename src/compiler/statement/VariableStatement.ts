@@ -1,5 +1,5 @@
 ﻿import * as ts from "typescript";
-import {removeStatementedNodeChild, insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {VariableStatementStructure, VariableDeclarationStructure} from "./../../structures";
@@ -96,12 +96,5 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
             this.addDeclarations(structure.declarations);
 
         return this;
-    }
-
-    /**
-     * Removes this variable statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

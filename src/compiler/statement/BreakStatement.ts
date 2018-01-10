@@ -1,6 +1,5 @@
 import * as ts from "typescript";
 import * as errors from "../../errors";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node, Expression} from "./../common";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
@@ -22,12 +21,5 @@ export class BreakStatement extends BreakStatementBase<ts.BreakStatement> {
      */
     getLabelOrThrow() {
         return errors.throwIfNullOrUndefined(this.getLabel(), "Expected to find a label.");
-    }
-
-    /**
-     * Removes this expression statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

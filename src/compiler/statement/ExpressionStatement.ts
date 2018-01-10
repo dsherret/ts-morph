@@ -1,5 +1,4 @@
 ﻿import * as ts from "typescript";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node, Expression} from "./../common";
 import {Statement} from "./Statement";
 import {ChildOrderableNode} from "./../base";
@@ -11,12 +10,5 @@ export class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionSt
      */
     getExpression() {
         return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
-    }
-
-    /**
-     * Removes this expression statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }
