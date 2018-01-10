@@ -10,6 +10,10 @@ export function getStatementedNodeChildFormatting(parent: Node, member: Node) {
     return FormattingKind.Newline;
 }
 
+export function getClausedNodeChildFormatting(parent: Node, member: Node) {
+    return FormattingKind.Newline;
+}
+
 function hasBody(node: Node) {
     if (TypeGuards.isBodyableNode(node) && node.getBody() != null)
         return true;

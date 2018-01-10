@@ -1,7 +1,18 @@
-﻿import {expect} from "chai";
-import {StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "./../../../compiler";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
+import {CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "./../../../compiler";
 import {StatementedNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
+
+function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: ts.SyntaxKind) {
+    const obj = getInfoFromText(text);
+    let firstChild = obj.firstChild as T;
+    if (kind != null) {
+        firstChild = obj.sourceFile.getFirstDescendantByKindOrThrow(kind) as T;
+    }
+
+    return {...obj, firstChild};
+}
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(s => s.getStatements), () => {
@@ -10,8 +21,8 @@ describe(nameof(StatementedNode), () => {
             expect(sourceFile.getStatements().map(s => s.getText())).to.deep.equal(["var t;", "var m;"]);
         });
 
-        function doFirstChildTest<T extends Node>(code: string, statements: string[]) {
-            const {firstChild} = getInfoFromText<T>(code);
+        function doFirstChildTest<T extends Node>(code: string, statements: string[], kind?: ts.SyntaxKind) {
+            const {firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
             expect((firstChild as any as StatementedNode).getStatements().map(s => s.getText())).to.deep.equal(statements);
         }
 
@@ -25,6 +36,14 @@ describe(nameof(StatementedNode), () => {
 
         it("should get the statements of a namespace that uses dot notation", () => {
             doFirstChildTest<NamespaceDeclaration>("namespace n.inner { var t; var m; }", ["var t;", "var m;"]);
+        });
+
+        it("should get statements of a case clause", () => {
+            doFirstChildTest<CaseClause>("switch (x) { case 1: x = 0; break; }", ["x = 0;", "break;"], ts.SyntaxKind.CaseClause);
+        });
+
+        it("should get statements of a default clause", () => {
+            doFirstChildTest<DefaultClause>("switch (x) { default: x = 0; break; }", ["x = 0;", "break;"], ts.SyntaxKind.DefaultClause);
         });
     });
 
@@ -77,8 +96,8 @@ describe(nameof(StatementedNode), () => {
                 "function a() {}\nfunction b() {}\nnewText;\nsecondText;");
         });
 
-        function doFirstChildTest<T extends Node>(code: string, index: number, statements: string, expectedLength: number, expectedCode: string) {
-            const {sourceFile, firstChild} = getInfoFromText<T>(code);
+        function doFirstChildTest<T extends Node>(code: string, index: number, statements: string, expectedLength: number, expectedCode: string, kind?: ts.SyntaxKind) {
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
             const nodes = (firstChild as any as StatementedNode).insertStatements(index, statements);
             expect(nodes.length).to.equal(expectedLength);
             expect(nodes[0]).to.be.instanceOf(Node);
@@ -108,6 +127,38 @@ describe(nameof(StatementedNode), () => {
         it("should insert between statements right beside each other", () => {
             doFirstChildTest<FunctionDeclaration>("function i() { var t;var m; }", 1, "newText;", 1,
                 "function i() { var t;\n    newText;var m; }");
+        });
+
+        const caseClause = "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        break;\n}";
+        it("should insert statements at the beginning and into a case clase", () => {
+            doFirstChildTest<CaseClause>(caseClause, 0, "newText;\nsecondText;", 2,
+                "switch (x) {\n    case 1:\n        newText;\n        secondText;\n        x = 0;\n        y = 1;\n        break;\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        it("should insert statements in the middle and into a case clause", () => {
+            doFirstChildTest<CaseClause>(caseClause, 2, "newText;\nsecondText;", 2,
+                "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        newText;\n        secondText;\n        break;\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        it("should insert statements at the end and into a case clause", () => {
+            doFirstChildTest<CaseClause>(caseClause, 3, "newText;\nsecondText;", 2,
+                "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        break;\n        newText;\n        secondText;\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        const defaultClause = "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n}";
+        it("should insert statements at the beginning and into a default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, 0, "newText;\nsecondText;", 2,
+                "switch (x) {\n    default:\n        newText;\n        secondText;\n        x = 0;\n        y = 1;\n        break;\n}", ts.SyntaxKind.DefaultClause);
+        });
+
+        it("should insert statements in the middle and into a default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, 2, "newText;\nsecondText;", 2,
+                "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        newText;\n        secondText;\n        break;\n}", ts.SyntaxKind.DefaultClause);
+        });
+
+        it("should insert statements at the end and into a default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, 3, "newText;\nsecondText;", 2,
+                "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n        newText;\n        secondText;\n}", ts.SyntaxKind.DefaultClause);
         });
     });
 
@@ -152,6 +203,38 @@ describe(nameof(StatementedNode), () => {
 
         it("should remove an if statement", () => {
             doSourceFileTest("if (true) {\n    console.log(6);\n}\n", [0, 0], "");
+        });
+
+        function doFirstChildTest<T extends Node>(code: string, range: [number, number], expectedCode: string, kind?: ts.SyntaxKind) {
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<T>(code, kind);
+            const nodes = (firstChild as any as StatementedNode).removeStatements(range);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        const caseClause = "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        break;\n}";
+        it("should remove statements at the beginning of a case clause", () => {
+            doFirstChildTest<CaseClause>(caseClause, [0, 1], "switch (x) {\n    case 1:\n        break;\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        it("should remove statements in the middle of a case clause", () => {
+            doFirstChildTest<CaseClause>(caseClause, [1, 1], "switch (x) {\n    case 1:\n        x = 0;\n        break;\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        it("should remove statements at the end case clause", () => {
+            doFirstChildTest<CaseClause>(caseClause, [1, 2], "switch (x) {\n    case 1:\n        x = 0;\n\n}", ts.SyntaxKind.CaseClause);
+        });
+
+        const defaultClause = "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n}";
+        it("should remove statements at the beginning of a default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, [0, 1], "switch (x) {\n    default:\n        break;\n}", ts.SyntaxKind.DefaultClause);
+        });
+
+        it("should remove statements in the middle of a default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, [1, 1], "switch (x) {\n    default:\n        x = 0;\n        break;\n}", ts.SyntaxKind.DefaultClause);
+        });
+
+        it("should remove statements at the end default clause", () => {
+            doFirstChildTest<DefaultClause>(defaultClause, [1, 2], "switch (x) {\n    default:\n        x = 0;\n\n}", ts.SyntaxKind.DefaultClause);
         });
     });
 

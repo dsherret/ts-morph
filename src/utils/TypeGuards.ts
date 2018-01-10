@@ -190,12 +190,51 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a BreakStatement.
+     * @param node - Node to check.
+     */
+    static isBreakStatement(node: compiler.Node): node is compiler.BreakStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.BreakStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a CallExpression.
      * @param node - Node to check.
      */
     static isCallExpression(node: compiler.Node): node is compiler.CallExpression {
         switch (node.getKind()) {
             case ts.SyntaxKind.CallExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CaseBlock.
+     * @param node - Node to check.
+     */
+    static isCaseBlock(node: compiler.Node): node is compiler.CaseBlock {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CaseBlock:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CaseClause.
+     * @param node - Node to check.
+     */
+    static isCaseClause(node: compiler.Node): node is compiler.CaseClause {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CaseClause:
                 return true;
             default:
                 return false;
@@ -234,10 +273,17 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.BreakStatement:
+            case ts.SyntaxKind.CaseClause:
+            case ts.SyntaxKind.ContinueStatement:
+            case ts.SyntaxKind.DefaultClause:
             case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.IfStatement:
+            case ts.SyntaxKind.LabeledStatement:
             case ts.SyntaxKind.ReturnStatement:
+            case ts.SyntaxKind.SwitchStatement:
             case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.WithStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
@@ -298,6 +344,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ContinueStatement.
+     * @param node - Node to check.
+     */
+    static isContinueStatement(node: compiler.Node): node is compiler.ContinueStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ContinueStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a DebuggerStatement.
      * @param node - Node to check.
      */
@@ -348,6 +407,19 @@ export class TypeGuards {
     static isDecorator(node: compiler.Node): node is compiler.Decorator {
         switch (node.getKind()) {
             case ts.SyntaxKind.Decorator:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a DefaultClause.
+     * @param node - Node to check.
+     */
+    static isDefaultClause(node: compiler.Node): node is compiler.DefaultClause {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -943,6 +1015,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a LabeledStatement.
+     * @param node - Node to check.
+     */
+    static isLabeledStatement(node: compiler.Node): node is compiler.LabeledStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.LabeledStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a LiteralLikeNode.
      * @param node - Node to check.
      */
@@ -1462,6 +1547,8 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.Block:
+            case ts.SyntaxKind.CaseClause:
+            case ts.SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -1491,6 +1578,19 @@ export class TypeGuards {
     static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
         switch (node.getKind()) {
             case ts.SyntaxKind.StringLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SwitchStatement.
+     * @param node - Node to check.
+     */
+    static isSwitchStatement(node: compiler.Node): node is compiler.SwitchStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SwitchStatement:
                 return true;
             default:
                 return false;
@@ -1528,6 +1628,9 @@ export class TypeGuards {
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.Block:
+            case ts.SyntaxKind.CaseBlock:
+            case ts.SyntaxKind.CaseClause:
+            case ts.SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -1726,6 +1829,19 @@ export class TypeGuards {
     static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
         switch (node.getKind()) {
             case ts.SyntaxKind.WhileStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a WithStatement.
+     * @param node - Node to check.
+     */
+    static isWithStatement(node: compiler.Node): node is compiler.WithStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.WithStatement:
                 return true;
             default:
                 return false;
