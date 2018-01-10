@@ -7,7 +7,6 @@ import {VariableDeclaration} from "./VariableDeclaration";
 
 export const CatchClauseBase = Node;
 export class CatchClause extends CatchClauseBase<ts.CatchClause> {
-
     /**
      * Gets this catch clause's block.
      */

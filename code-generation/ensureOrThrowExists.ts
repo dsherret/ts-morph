@@ -15,7 +15,7 @@ import {getAst} from "./common";
 const ast = getAst();
 const problems: string[] = [];
 
-for (const sourceFile of ast.getSourceFiles().filter(f => f.getFilePath().includes("/src/compiler"))) {
+for (const sourceFile of ast.getSourceFiles("src/compiler/**/*.ts")) {
     for (const c of sourceFile.getClasses()) {
         for (const method of c.getInstanceMethods()) {
             if (!doesReturnTypeRequireOrThrow(method.getReturnType()))

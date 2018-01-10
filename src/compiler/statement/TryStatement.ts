@@ -34,7 +34,7 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
      * Gets this try statement's finally block or undefined if none exists.
      */
     getFinallyBlock() {
-        return this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getText() === ""
+        return this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getFullWidth() === 0
             ? undefined
             : this.getNodeFromCompilerNode(this.compilerNode.finallyBlock) as Block;
     }

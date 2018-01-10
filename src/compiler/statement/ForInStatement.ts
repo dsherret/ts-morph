@@ -5,7 +5,6 @@ import {VariableDeclarationList} from "./VariableDeclarationList";
 
 export const ForInStatementBase = IterationStatement;
 export class ForInStatement extends ForInStatementBase<ts.ForInStatement> {
-
     /**
      * Gets this for in statement's initializer.
      */
