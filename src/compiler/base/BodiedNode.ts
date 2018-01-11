@@ -33,7 +33,7 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             if (body == null)
                 throw new errors.InvalidOperationError("Bodied node should have a body.");
 
-            return this.global.compilerFactory.getNodeFromCompilerNode(body, this.sourceFile);
+            return this.getNodeFromCompilerNode(body);
         }
 
         setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;

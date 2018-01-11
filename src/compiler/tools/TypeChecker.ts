@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {EnumMember} from "./../enum";
-import {Node, Symbol, Signature, Expression} from "./../common";
+import {Expression} from "./../expression";
+import {Node, Symbol, Signature} from "./../common";
 import {Type} from "./../type";
 
 /**

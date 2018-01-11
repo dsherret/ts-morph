@@ -1,10 +1,11 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {removeStatementedNodeChild} from "./../../manipulation";
-import {Node, Expression} from "./../common";
+import {Expression} from "./../expression";
+import {Node} from "./../common";
 import {ChildOrderableNode} from "./../base";
+import {Statement} from "./Statement";
 
-export const ReturnStatementBase = ChildOrderableNode(Node);
+export const ReturnStatementBase = ChildOrderableNode(Statement);
 export class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
     /**
      * Gets this return statement's expression if it exists or throws.
@@ -20,13 +21,6 @@ export class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
         const expression = this.compilerNode.expression;
         if (expression == null)
             return undefined;
-        return this.global.compilerFactory.getNodeFromCompilerNode(expression, this.sourceFile) as Expression;
-    }
-
-    /**
-     * Removes this return statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
+        return this.getNodeFromCompilerNode(expression) as Expression;
     }
 }

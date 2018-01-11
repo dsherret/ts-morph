@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node, OverloadableNode, ClassDeclaration} from "./../../compiler";
-import {FormattingKind, getClassMemberFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting} from "./../formatting";
+import {FormattingKind, getClausedNodeChildFormatting, getClassMemberFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting} from "./../formatting";
 import {doManipulation} from "./doManipulation";
 import {RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator} from "./../textManipulators";
 import {NodeHandlerFactory} from "./../nodeHandlers";
@@ -142,10 +142,21 @@ export function removeStatementedNodeChild(node: Node) {
     removeStatementedNodeChildren([node]);
 }
 
-export function removeStatementedNodeChildren(node: Node[]) {
+export function removeStatementedNodeChildren(nodes: Node[]) {
     removeChildrenWithFormatting({
         getSiblingFormatting: getStatementedNodeChildFormatting,
-        children: node
+        children: nodes
+    });
+}
+
+export function removeClausedNodeChild(node: Node) {
+    removeClausedNodeChildren([node]);
+}
+
+export function removeClausedNodeChildren(nodes: Node[]) {
+    removeChildrenWithFormatting({
+        getSiblingFormatting: getClausedNodeChildFormatting,
+        children: nodes
     });
 }
 

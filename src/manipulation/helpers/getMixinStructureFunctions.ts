@@ -19,6 +19,12 @@ export function fromAsyncableNode(node: compiler.AsyncableNode): MakeRequired<st
     };
 }
 
+export function fromAwaitableNode(node: compiler.AwaitableNode): MakeRequired<structures.AwaitableNodeStructure> {
+    return {
+        isAwaited: node.isAwaited()
+    };
+}
+
 export function fromExportableNode(node: compiler.ExportableNode): MakeRequired<structures.ExportableNodeStructure> {
     return {
         isDefaultExport: node.hasDefaultKeyword(),

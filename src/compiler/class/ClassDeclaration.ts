@@ -699,7 +699,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     private getBodyMembers() {
-        const members = this.compilerNode.members.map(m => this.global.compilerFactory.getNodeFromCompilerNode(m, this.sourceFile)) as ClassMemberTypes[];
+        const members = this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as ClassMemberTypes[];
 
         // filter out the method declarations or constructor declarations without a body if not ambient
         return this.isAmbient() ? members : members.filter(m => {

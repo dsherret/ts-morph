@@ -1,15 +1,10 @@
 ﻿import * as ts from "typescript";
+import {LeftHandSideExpressionedNode} from "./../expression";
 import {Node} from "./../common";
 import {TypeNode} from "./TypeNode";
 
-export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeArguments> {
-    /**
-     * Gets the expression node.
-     */
-    getExpression(): Node<ts.LeftHandSideExpression> {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Node<ts.LeftHandSideExpression>;
-    }
-
+export const ExpressionWithTypeArgumentsBase = LeftHandSideExpressionedNode(TypeNode);
+export class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
     /**
      * Gets the type arguments.
      */
@@ -18,6 +13,6 @@ export class ExpressionWithTypeArguments extends TypeNode<ts.ExpressionWithTypeA
         if (typeArguments == null)
             return [];
 
-        return typeArguments.map(a => this.global.compilerFactory.getNodeFromCompilerNode(a, this.sourceFile) as TypeNode);
+        return typeArguments.map(a => this.getNodeFromCompilerNode(a) as TypeNode);
     }
 }

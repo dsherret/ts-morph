@@ -7,7 +7,6 @@ export * from "./HashSet";
 export * from "./KeyValueCache";
 export * from "./Logger";
 export * from "./StringUtils";
-export * from "./tsconfig";
 export * from "./TypeGuards";
 export * from "./decorators";
 export * from "./fillDefaultFormatCodeSettings";

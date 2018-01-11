@@ -19,7 +19,7 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
     return class extends Base implements PropertyNamedNode {
         getNameNode() {
             const compilerNameNode: ts.PropertyName = this.compilerNode.name;
-            return this.global.compilerFactory.getNodeFromCompilerNode(compilerNameNode, this.sourceFile) as PropertyName;
+            return this.getNodeFromCompilerNode(compilerNameNode) as PropertyName;
         }
 
         getName() {

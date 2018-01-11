@@ -1,6 +1,7 @@
 export * from "./AmbientableNode";
 export * from "./ArgumentedNode";
 export * from "./AsyncableNode";
+export * from "./AwaitableNode";
 export * from "./BodiedNode";
 export * from "./BodyableNode";
 export * from "./ChildOrderableNode";

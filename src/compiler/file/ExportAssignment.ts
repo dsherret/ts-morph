@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {removeStatementedNodeChild} from "./../../manipulation";
-import {Node, Expression} from "./../common";
+import {Expression} from "./../expression";
+import {Node} from "./../common";
 
 export class ExportAssignment extends Node<ts.ExportAssignment> {
     /**
@@ -17,7 +18,7 @@ export class ExportAssignment extends Node<ts.ExportAssignment> {
      * Gets the export assignment expression.
      */
     getExpression(): Expression {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
     }
 
     /**

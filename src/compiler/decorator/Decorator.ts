@@ -2,7 +2,8 @@
 import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParent} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
-import {Node, CallExpression, Expression, Identifier} from "./../common";
+import {CallExpression, Expression} from "./../expression";
+import {Node, Identifier} from "./../common";
 import {TypeNode} from "./../type";
 
 export const DecoratorBase = Node;
@@ -137,7 +138,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the expression.
      */
     getExpression(): Expression<ts.LeftHandSideExpression> {
-        return this.global.compilerFactory.getNodeFromCompilerNode(this.compilerNode.expression, this.sourceFile) as Expression<ts.LeftHandSideExpression>;
+        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression<ts.LeftHandSideExpression>;
     }
 
     /**

@@ -19,7 +19,7 @@ import * as types from "./../type";
 import * as statement from "./../statement";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 
-export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration>;
+export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
 
 export interface StatementedNode {
     /**
@@ -419,7 +419,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* General */
         getStatements() {
             let statements: ts.NodeArray<ts.Statement>;
-            if (TypeGuards.isSourceFile(this))
+            if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
                 statements = this.compilerNode.statements;
             else if (TypeGuards.isNamespaceDeclaration(this)) {
                 // need to get the inner-most body for namespaces
@@ -436,7 +436,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             else
                 throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
 
-            return statements.map(s => this.global.compilerFactory.getNodeFromCompilerNode(s, this.sourceFile));
+            return statements.map(s => this.getNodeFromCompilerNode(s));
         }
 
         addStatements(text: string): Node[];

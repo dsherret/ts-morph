@@ -331,7 +331,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             } while ((TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) && (node.compilerNode as ts.Block).statements == null);
         }
 
-        if (TypeGuards.isSourceFile(node) || TypeGuards.isBodyableNode(this) || TypeGuards.isBodiedNode(this))
+        if (
+            TypeGuards.isSourceFile(node) ||
+            TypeGuards.isBodyableNode(this) ||
+            TypeGuards.isBodiedNode(this) ||
+            TypeGuards.isCaseBlock(this) ||
+            TypeGuards.isCaseClause(this) ||
+            TypeGuards.isDefaultClause(this)
+        )
             return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList) as SyntaxList | undefined;
 
         let passedBrace = false;
@@ -1123,6 +1130,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             useTabs: indentationText === IndentationText.Tab,
             useSingleQuote: this.global.manipulationSettings.getQuoteType() === QuoteType.Single
         });
+    }
+
+    /**
+     * Gets or creates a node from the internal cache.
+     * @internal
+     */
+    protected getNodeFromCompilerNode<LocalNodeType extends ts.Node>(compilerNode: LocalNodeType): Node<LocalNodeType> {
+        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
     }
 }
 
