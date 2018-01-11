@@ -23,7 +23,6 @@ export * from "./PrefixUnaryExpression";
 export * from "./PrimaryExpression";
 export * from "./PropertyAccessExpression";
 export * from "./SpreadElement";
-export * from "./SuperCall";
 export * from "./SuperElementAccessExpression";
 export * from "./SuperExpression";
 export * from "./SuperPropertyAccessExpression";
