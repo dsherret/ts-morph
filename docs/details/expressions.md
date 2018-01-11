@@ -9,7 +9,6 @@ These are found in certain areas. For example `extends` and `implements` express
 ### Getting expression
 
 ```typescript
-// returns: ts.LeftHandSideExpression
 const expression = expressionWithTypeArgs.getExpression(); // returns: Node
 ```
 
