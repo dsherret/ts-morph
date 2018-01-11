@@ -3,6 +3,7 @@ import * as errors from "./../../errors";
 import {verifyAndGetIndex, removeClausedNodeChildren} from "./../../manipulation";
 import {Node} from "./../common";
 import {TextInsertableNode} from "./../base";
+import {CaseClause} from "./CaseClause";
 import {CaseOrDefaultClause} from "./../aliases";
 import {DefaultClause} from "./DefaultClause";
 

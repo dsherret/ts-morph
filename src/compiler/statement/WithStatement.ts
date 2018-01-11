@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {ChildOrderableNode} from "./../base";
-import {Expression} from "./../common";
+import {Expression} from "./../expression";
 import {Statement} from "./Statement";
 
 export const WithStatementBase = ChildOrderableNode(Statement);

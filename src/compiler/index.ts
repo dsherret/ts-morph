@@ -5,6 +5,7 @@ export * from "./common";
 export * from "./decorator";
 export * from "./doc";
 export * from "./enum";
+export * from "./expression";
 export * from "./file";
 export * from "./function";
 export * from "./general";

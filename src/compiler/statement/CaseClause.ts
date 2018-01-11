@@ -1,6 +1,7 @@
 import * as ts from "typescript";
 import {removeClausedNodeChild} from "./../../manipulation";
-import {Expression, Node} from "./../common";
+import {Expression} from "./../expression";
+import {Node} from "./../common";
 import {ChildOrderableNode, TextInsertableNode} from "./../base";
 import {StatementedNode} from "./StatementedNode";
 

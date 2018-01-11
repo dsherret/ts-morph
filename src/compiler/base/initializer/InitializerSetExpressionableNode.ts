@@ -4,7 +4,8 @@ import * as errors from "./../../../errors";
 import {InitializerSetExpressionableNodeStructure} from "./../../../structures";
 import {callBaseFill} from "./../../callBaseFill";
 import {insertIntoParent, removeChildren} from "./../../../manipulation";
-import {Node, Expression} from "./../../common";
+import {Expression} from "./../../expression";
+import {Node} from "./../../common";
 import {InitializerGetExpressionableNode} from "./InitializerGetExpressionableNode";
 
 export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;

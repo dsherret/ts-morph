@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./Node";
-import {Expression} from "./Expression";
+import {Expression} from "./../expression";
 
 export class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
     /**

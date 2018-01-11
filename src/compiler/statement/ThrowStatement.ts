@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import {Expression} from "./../common";
+import {Expression} from "./../expression";
 import {Statement} from "./Statement";
 
 export const ThrowStatementBase = Statement;

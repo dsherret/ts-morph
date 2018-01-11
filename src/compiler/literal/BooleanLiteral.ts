@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
-import {Expression} from "./../common";
+import {PrimaryExpression} from "./../expression";
 
-export const BooleanLiteralBase = Expression;
+export const BooleanLiteralBase = PrimaryExpression;
 export class BooleanLiteral extends BooleanLiteralBase<ts.BooleanLiteral> {
     /**
      * Gets the literal value.
