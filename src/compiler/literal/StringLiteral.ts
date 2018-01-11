@@ -8,7 +8,7 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
      * Gets the literal value.
      */
     getLiteralValue() {
-        // for consistency with NumericLiteral and RegularExpressionLiteral
+        // for consistency with other literals
         return this.compilerNode.text;
     }
 

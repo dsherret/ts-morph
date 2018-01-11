@@ -62,6 +62,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.NewExpression]: compiler.NewExpression,
     [ts.SyntaxKind.NonNullExpression]: compiler.NonNullExpression,
     [ts.SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement,
+    [ts.SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral,
     [ts.SyntaxKind.NumericLiteral]: compiler.NumericLiteral,
     [ts.SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression,
     [ts.SyntaxKind.OmittedExpression]: compiler.OmittedExpression,

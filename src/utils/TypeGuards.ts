@@ -1331,6 +1331,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a NoSubstitutionTemplateLiteral.
+     * @param node - Node to check.
+     */
+    static isNoSubstitutionTemplateLiteral(node: compiler.Node): node is compiler.NoSubstitutionTemplateLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a NonNullExpression.
      * @param node - Node to check.
      */

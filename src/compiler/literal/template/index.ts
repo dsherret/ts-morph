@@ -1,3 +1,4 @@
+export * from "./NoSubstitutionTemplateLiteral";
 export * from "./TaggedTemplateExpression";
 export * from "./TemplateExpression";
 export * from "./TemplateHead";
