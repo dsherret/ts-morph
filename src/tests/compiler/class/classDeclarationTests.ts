@@ -824,10 +824,82 @@ class c {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getBaseTypes), () => {
+        function doTest(text: string, className: string, expectedNames: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            const types = sourceFile.getClassOrThrow(className).getBaseTypes();
+            expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
+        }
+
+        it("should get the base when it's a class", () => {
+            doTest("class Base {} class Child extends Base {}", "Child", ["Base"]);
+        });
+
+        it("should be empty when there is no base class", () => {
+            doTest("class Class {}", "Class", []);
+        });
+
+        it("should be empty when it implements a class", () => {
+            doTest("class Base { name: string; } class Child implements Base {}", "Child", []);
+        });
+
+        it("should get the mixin type", () => {
+            doTest(`
+type Constructor<T> = new (...args: any[]) => T;
+class Base {}
+interface Mixin {}
+
+function Mixin<T extends Constructor<{}>>(Base: T): Constructor<Mixin> & T {
+    return class extends Base implements Mixin {}
+}
+
+class Child extends Mixin(Base) {}
+`, "Child", ["Mixin & Base"]);
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getBaseClass), () => {
+        function doTest(text: string, className: string, expectedName: string | undefined) {
+            const {sourceFile} = getInfoFromText(text);
+            const c = sourceFile.getClassOrThrow(className).getBaseClass();
+            if (typeof expectedName === "undefined")
+                expect(c).to.be.undefined;
+            else {
+                expect(c).to.not.be.undefined;
+                expect(c!.getName()).to.equal(expectedName);
+            }
+        }
+
+        it("should get the base when it's a class", () => {
+            doTest("class Base {} class Child extends Base {}", "Child", "Base");
+        });
+
+        it("should be undefined when there is no base class", () => {
+            doTest("class Class {}", "Class", undefined);
+        });
+
+        it("should be undefined when it implements a class", () => {
+            doTest("class Base {} class Child implements Base {}", "Child", undefined);
+        });
+
+        it("should be undefined for a mixin", () => {
+            doTest(`
+type Constructor<T> = new (...args: any[]) => T;
+class Base {}
+
+function Mixin<T extends Constructor<{}>>(Base: T) {
+    return class extends Base {}
+}
+
+class Child extends Mixin(Base) {}
+`, "Child", undefined);
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getDerivedClasses), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
             const {sourceFile} = getInfoFromText(text);
-            const classes = sourceFile.getClass(className)!.getDerivedClasses();
+            const classes = sourceFile.getClassOrThrow(className).getDerivedClasses();
             expect(classes.map(c => c.getName())).to.deep.equal(expectedNames);
         }
 
