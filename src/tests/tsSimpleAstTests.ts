@@ -34,6 +34,16 @@ describe(nameof(TsSimpleAst), () => {
             expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
         });
 
+        it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "target": "ES5" } }`);
+            fs.writeFileSync("/otherFile.ts", "");
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test/test2/file2.ts", "");
+            const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json", compilerOptions: { rootDir: "/test/test2" } }, fs);
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/test2/file2.ts"].sort());
+        });
+
         it("should not add the files from tsconfig.json when specifying not to", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
@@ -225,12 +235,15 @@ describe(nameof(TsSimpleAst), () => {
         it("should add the files from tsconfig.json", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/otherFile.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             const ast = new TsSimpleAst({}, fs);
             expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([].sort());
-            ast.addSourceFilesFromTsConfig("tsconfig.json");
-            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
+            const returnedFiles = ast.addSourceFilesFromTsConfig("tsconfig.json");
+            const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts"].sort();
+            expect(ast.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
+            expect(returnedFiles.map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
         });
     });
 

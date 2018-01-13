@@ -6,6 +6,24 @@ title: Adding Source Files
 
 You will need to populate the `ast` object with source files.
 
+### By a *tsconfig.json*
+
+Source files will be added when instantiating with a `tsConfigFilePath`:
+
+```ts
+const ast = new Ast({
+    tsConfigFilePath: "path/to/tsconfig.json"
+});
+```
+
+...and this can be disabled by setting `addFilesFromTsConfig: false`.
+
+Alternatively, populate the `ast` object by calling `addSourceFilesFromTsConfig`:
+
+```ts
+ast.addSourceFilesFromTsConfig("path/to/tsconfig.json");
+```
+
 ### By file globs or file paths
 
 Specify as many file globs or file paths as you wish:

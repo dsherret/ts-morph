@@ -4,7 +4,8 @@ import * as errors from "./errors";
 import * as compiler from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
-import {getInfoFromTsConfig, TsConfigInfo, FileUtils, ArrayUtils} from "./utils";
+import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getFilePathsFromTsConfigParseResult, TsConfigParseResult,
+    FileUtils, ArrayUtils} from "./utils";
 import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, Directory} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
@@ -44,23 +45,33 @@ export class TsSimpleAst {
             fileSystem = new DefaultFileSystemHost();
 
         // get tsconfig info
-        const tsConfigInfo = getTsConfigInfo();
+        const tsConfigParseResult = options.tsConfigFilePath == null ? undefined : getTsConfigParseResult(options.tsConfigFilePath, fileSystem);
+        const compilerOptions = getCompilerOptions();
 
         // setup global container
-        this.global = new GlobalContainer(fileSystem, getCompilerOptions(options, tsConfigInfo), { createLanguageService: true });
+        this.global = new GlobalContainer(fileSystem, compilerOptions, { createLanguageService: true });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)
             this.global.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
-        if (tsConfigInfo != null && tsConfigInfo.filePaths != null)
-            tsConfigInfo.filePaths.forEach(filePath => this.addExistingSourceFile(filePath));
+        if (tsConfigParseResult != null && options.addFilesFromTsConfig !== false) {
+            for (const filePath of getFilePathsFromTsConfigParseResult(options.tsConfigFilePath!, fileSystem, tsConfigParseResult, compilerOptions))
+                this.addExistingSourceFile(filePath);
+        }
 
-        function getTsConfigInfo() {
-            if (options.tsConfigFilePath == null)
-                return undefined;
-            return getInfoFromTsConfig(options.tsConfigFilePath, fileSystem!, { shouldGetFilePaths: options.addFilesFromTsConfig !== false });
+        function getCompilerOptions(): ts.CompilerOptions {
+            return {
+                ...getTsConfigCompilerOptions(),
+                ...(options.compilerOptions || {}) as ts.CompilerOptions
+            };
+        }
+
+        function getTsConfigCompilerOptions() {
+            if (tsConfigParseResult == null)
+                return {};
+            return getCompilerOptionsFromTsConfigParseResult(options.tsConfigFilePath!, fileSystem!, tsConfigParseResult).options;
         }
     }
 
@@ -197,10 +208,13 @@ export class TsSimpleAst {
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string) {
-        const info = getInfoFromTsConfig(tsConfigFilePath, this.global.fileSystem, { shouldGetFilePaths: true });
-        for (const filePath of info.filePaths!)
-            this.addExistingSourceFile(filePath);
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): compiler.SourceFile[] {
+        tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, tsConfigFilePath);
+        const parseResult = getTsConfigParseResult(tsConfigFilePath, this.global.fileSystem);
+        const compilerOptions = getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath, this.global.fileSystem, parseResult);
+        const filePaths = getFilePathsFromTsConfigParseResult(tsConfigFilePath, this.global.fileSystem, parseResult, compilerOptions.options);
+
+        return filePaths.map(path => this.addExistingSourceFile(path));
     }
 
     /**
@@ -435,11 +449,4 @@ export class TsSimpleAst {
     forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)) {
         return this.global.compilerFactory.forgetNodesCreatedInBlock(block);
     }
-}
-
-function getCompilerOptions(options: Options, tsConfigInfo: TsConfigInfo | undefined): ts.CompilerOptions {
-    return {
-        ...(tsConfigInfo == null ? {} : tsConfigInfo.compilerOptions),
-        ...(options.compilerOptions || {}) as ts.CompilerOptions
-    };
 }

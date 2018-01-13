@@ -13,7 +13,10 @@ Get the compiler options from a file by using the `getCompilerOptionsFromTsConfi
 ```typescript
 import {getCompilerOptionsFromTsConfig} from "ts-simple-ast";
 
-const compilerOptions = getCompilerOptionsFromTsConfig("file/path/to/tsconfig.json");
+const result = getCompilerOptionsFromTsConfig("file/path/to/tsconfig.json");
+
+result.options; // compiler options
+result.errors;  // diagnostics
 ```
 
 ### Type Guards

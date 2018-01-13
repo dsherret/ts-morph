@@ -4,27 +4,32 @@ import {Diagnostic} from "./../../compiler";
 import {FileSystemHost} from "./../../fileSystem";
 import {ArrayUtils, FileUtils, createHashSet} from "./../../utils";
 
-export interface TsConfigInfo {
-    compilerOptions: ts.CompilerOptions;
-    errors: Diagnostic[];
-    filePaths?: string[];
+export interface TsConfigParseResult {
+    config?: any;
+    error?: ts.Diagnostic;
 }
 
-export function getInfoFromTsConfig(filePath: string, fileSystem: FileSystemHost, opts: { shouldGetFilePaths: boolean; }): TsConfigInfo {
-    filePath = FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
-    errors.throwIfFileNotExists(fileSystem, filePath);
+export function getTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost) {
+    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
+    errors.throwIfFileNotExists(fileSystem, tsConfigFilePath);
 
-    const parseResult: ParseResult = ts.parseConfigFileTextToJson(filePath, fileSystem.readFileSync(filePath));
+    const parseResult: TsConfigParseResult = ts.parseConfigFileTextToJson(tsConfigFilePath, fileSystem.readFileSync(tsConfigFilePath));
     if (parseResult.error != null)
         throw new Error(parseResult.error.messageText.toString());
-
-    if (opts.shouldGetFilePaths)
-        return getFilesAndCompilerOptions(fileSystem, parseResult, filePath);
-    else
-        return getOnlyCompilerOptions(parseResult, filePath);
+    return parseResult;
 }
 
-function getFilesAndCompilerOptions(fileSystem: FileSystemHost, parseResult: ParseResult, tsConfigFilePath: string) {
+export function getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult) {
+    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
+    const settings = ts.convertCompilerOptionsFromJson(parseResult.config.compilerOptions, FileUtils.getDirPath(tsConfigFilePath), tsConfigFilePath);
+    return {
+        options: settings.options,
+        errors: (settings.errors || []).map(e => new Diagnostic(undefined, e))
+    };
+}
+
+export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult, compilerOptions: ts.CompilerOptions) {
+    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
     const currentDir = fileSystem.getCurrentDirectory();
     const host: ts.ParseConfigHost = {
         useCaseSensitiveFileNames: true,
@@ -33,46 +38,33 @@ function getFilesAndCompilerOptions(fileSystem: FileSystemHost, parseResult: Par
         fileExists: path => fileSystem.fileExistsSync(path),
         readFile: path => fileSystem.readFileSync(path)
     };
-    const compilerOptionsResult = getOnlyCompilerOptions(parseResult, tsConfigFilePath);
-    return {
-        filePaths: getFiles(compilerOptionsResult.compilerOptions),
-        compilerOptions: compilerOptionsResult.compilerOptions,
-        errors: compilerOptionsResult.errors
-    };
 
-    function getFiles(compilerOptions: ts.CompilerOptions) {
-        const files = createHashSet<string>();
-        const tsConfigDir = FileUtils.getDirPath(tsConfigFilePath);
+    const files = createHashSet<string>();
+    const tsConfigDir = FileUtils.getDirPath(tsConfigFilePath);
 
-        for (const rootDir of getRootDirs()) {
-            for (const filePath of getFilesFromDir(FileUtils.getStandardizedAbsolutePath(fileSystem, rootDir, tsConfigDir)))
-                files.add(filePath);
-        }
-
-        return ArrayUtils.from(files.values());
-
-        function getRootDirs() {
-            const result: string[] = [];
-            if (typeof compilerOptions.rootDir === "string")
-                result.push(compilerOptions.rootDir);
-            if (compilerOptions.rootDirs != null)
-                result.push(...compilerOptions.rootDirs);
-            // use the tsconfig directory if no rootDir or rootDirs is specified
-            if (result.length === 0)
-                result.push(tsConfigDir);
-            return result;
-        }
-
-        function* getFilesFromDir(dirPath: string) {
-            for (const filePath of ts.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
-                yield FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
-        }
+    for (const rootDir of getRootDirs()) {
+        for (const filePath of getFilesFromDir(FileUtils.getStandardizedAbsolutePath(fileSystem, rootDir, tsConfigDir)))
+            files.add(filePath);
     }
-}
 
-function getOnlyCompilerOptions(parseResult: ParseResult, filePath: string) {
-    const settings = ts.convertCompilerOptionsFromJson(parseResult.config.compilerOptions, FileUtils.getDirPath(filePath), filePath);
-    return { compilerOptions: settings.options, errors: (settings.errors || []).map(e => new Diagnostic(undefined, e)) };
+    return ArrayUtils.from(files.values());
+
+    function getRootDirs() {
+        const result: string[] = [];
+        if (typeof compilerOptions.rootDir === "string")
+            result.push(compilerOptions.rootDir);
+        if (compilerOptions.rootDirs != null)
+            result.push(...compilerOptions.rootDirs);
+        // use the tsconfig directory if no rootDir or rootDirs is specified
+        if (result.length === 0)
+            result.push(tsConfigDir);
+        return result;
+    }
+
+    function* getFilesFromDir(dirPath: string) {
+        for (const filePath of ts.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
+            yield FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
+    }
 }
 
 // todo: move this somewhere common
@@ -94,11 +86,6 @@ function tsMatchFiles(this: any,
         return (ts as any).matchFiles.apply(this, arguments);
 }
 /* tslint:enable:align */
-
-interface ParseResult {
-    config?: any;
-    error?: ts.Diagnostic;
-}
 
 interface FileSystemEntries {
     readonly files: ReadonlyArray<string>;
