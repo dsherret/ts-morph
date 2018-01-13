@@ -4,6 +4,12 @@ title: Performance
 
 ## Performance
 
+There's a lot of opportunity for performance improvements. The library originally started off favouring correctness, but it's now starting to switch to improving performance.
+
+Issues: [#224](https://github.com/dsherret/ts-simple-ast/issues/224), [#141](https://github.com/dsherret/ts-simple-ast/issues/141), [#142](https://github.com/dsherret/ts-simple-ast/issues/142)
+
+## Overview
+
 This library makes manipulations easy for you by keeping track of how the underlying syntax tree changes between manipulations.
 
 Behind the scenes, when you manipulate the AST:
