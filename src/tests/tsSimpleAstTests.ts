@@ -27,6 +27,7 @@ describe(nameof(TsSimpleAst), () => {
         it("should add the files from tsconfig.json by default", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/otherFile.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
             const ast = new TsSimpleAst({ tsConfigFilePath: "tsconfig.json" }, fs);

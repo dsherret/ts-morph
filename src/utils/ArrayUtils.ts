@@ -28,7 +28,7 @@ export class ArrayUtils {
         return undefined;
     }
 
-    static from<T>(items: IterableIterator<T> | ts.Iterator<T>) {
+    static from<T>(items: Iterable<T> | ts.Iterator<T>) {
         const a: T[] = [];
         for (const item of items)
             a.push(item);

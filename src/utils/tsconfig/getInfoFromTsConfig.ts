@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {Diagnostic} from "./../../compiler";
 import {FileSystemHost} from "./../../fileSystem";
-import {FileUtils} from "./../../utils";
+import {ArrayUtils, FileUtils, createHashSet} from "./../../utils";
 
 export interface TsConfigInfo {
     compilerOptions: ts.CompilerOptions;
@@ -24,7 +24,7 @@ export function getInfoFromTsConfig(filePath: string, fileSystem: FileSystemHost
         return getOnlyCompilerOptions(parseResult, filePath);
 }
 
-function getFilesAndCompilerOptions(fileSystem: FileSystemHost, parseResult: ParseResult, filePath: string) {
+function getFilesAndCompilerOptions(fileSystem: FileSystemHost, parseResult: ParseResult, tsConfigFilePath: string) {
     const currentDir = fileSystem.getCurrentDirectory();
     const host: ts.ParseConfigHost = {
         useCaseSensitiveFileNames: true,
@@ -33,13 +33,41 @@ function getFilesAndCompilerOptions(fileSystem: FileSystemHost, parseResult: Par
         fileExists: path => fileSystem.fileExistsSync(path),
         readFile: path => fileSystem.readFileSync(path)
     };
-    const result = ts.parseJsonConfigFileContent(parseResult, host, fileSystem.getCurrentDirectory(), undefined, filePath);
-    const compilerOptionsResult = getOnlyCompilerOptions(parseResult, filePath); // doesn't seem like there's a way to get this from result
+    const compilerOptionsResult = getOnlyCompilerOptions(parseResult, tsConfigFilePath);
     return {
-        filePaths: result.fileNames,
+        filePaths: getFiles(compilerOptionsResult.compilerOptions),
         compilerOptions: compilerOptionsResult.compilerOptions,
         errors: compilerOptionsResult.errors
     };
+
+    function getFiles(compilerOptions: ts.CompilerOptions) {
+        const files = createHashSet<string>();
+        const tsConfigDir = FileUtils.getDirPath(tsConfigFilePath);
+
+        for (const rootDir of getRootDirs()) {
+            for (const filePath of getFilesFromDir(FileUtils.getStandardizedAbsolutePath(fileSystem, rootDir, tsConfigDir)))
+                files.add(filePath);
+        }
+
+        return ArrayUtils.from(files.values());
+
+        function getRootDirs() {
+            const result: string[] = [];
+            if (typeof compilerOptions.rootDir === "string")
+                result.push(compilerOptions.rootDir);
+            if (compilerOptions.rootDirs != null)
+                result.push(...compilerOptions.rootDirs);
+            // use the tsconfig directory if no rootDir or rootDirs is specified
+            if (result.length === 0)
+                result.push(tsConfigDir);
+            return result;
+        }
+
+        function* getFilesFromDir(dirPath: string) {
+            for (const filePath of ts.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
+                yield FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
+        }
+    }
 }
 
 function getOnlyCompilerOptions(parseResult: ParseResult, filePath: string) {
