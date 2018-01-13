@@ -3,6 +3,7 @@ import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression} from "./../../../compiler";
 import {TypeGuards} from "./../../../utils";
+import {NewLineKind} from "./../../../ManipulationSettings";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -665,6 +666,23 @@ describe(nameof(Node), () => {
             expect(() => {
                 propAccess.replaceWithText("SomeTest; Test");
             }).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.print), () => {
+        const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
+        const {sourceFile, firstChild} = getInfoFromText(nodeText);
+
+        it("should print the source file", () => {
+            expect(sourceFile.print()).to.equal(nodeText + "\n");
+        });
+
+        it("should print the node", () => {
+            expect(firstChild.print()).to.equal(nodeText);
+        });
+
+        it("should print the node with different newlines", () => {
+            expect(firstChild.print({ newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeText.replace(/\n/g, "\r\n"));
         });
     });
 });

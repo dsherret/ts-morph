@@ -5,7 +5,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {IndentationText} from "./../../ManipulationSettings";
 import {StructureToText} from "./../../structureToTexts";
 import {insertIntoParent, getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
@@ -82,7 +82,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets if the node was forgotten.
-     * @internal
+     *
+     * This will be true when the node was forgotten or removed.
      */
     wasForgotten() {
         return this._compilerNode == null;
@@ -100,6 +101,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getKindName() {
         return ts.SyntaxKind[this.compilerNode.kind];
+    }
+
+    /**
+     * Prints the node using the compiler's printer.
+     * @param options - Options.
+     */
+    print(options: PrintNodeOptions = {}): string {
+        if (options.newLineKind == null)
+            options.newLineKind = this.global.manipulationSettings.getNewLineKind();
+
+        if (this.getKind() === ts.SyntaxKind.SourceFile)
+            return printNode(this.compilerNode, options);
+        else
+            return printNode(this.compilerNode, this.sourceFile.compilerNode, options);
     }
 
     /**

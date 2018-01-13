@@ -29,3 +29,39 @@ if (TypeGuards.isClassDeclaration(node)) {
     // node is of type ClassDeclaration in here
 }
 ```
+
+### Printing a Node
+
+Usually with the library, you can print any node by calling the `.print()` method:
+
+```ts
+node.print(); // returns: string
+```
+
+But sometimes you might want to print a compiler node. There's a `printNode` utility function for doing that:
+
+```ts
+import * as ts from "typescript";
+import {printNode} from "ts-simple-ast";
+
+// Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
+const tsFunctionDeclaration = ts.createFunctionDeclaration(
+    /*decorators*/ undefined,
+    /*modifiers*/[ts.createToken(ts.SyntaxKind.ExportKeyword)],
+    /*asteriskToken*/ undefined,
+    "myFunction",
+    /*typeParameters*/ undefined,
+    /*parameters*/ [],
+    /*returnType*/ ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+    ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
+);
+// optionally provide a source file and there is some printing options on this
+const functionText = printNode(tsFunctionDeclaration);
+
+console.log(functionText);
+// outputs:
+// ========
+// export function myFunction(): number {
+//     return 5;
+// }
+````

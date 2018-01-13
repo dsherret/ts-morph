@@ -228,10 +228,11 @@ export class LanguageService {
             throw new errors.FileNotFoundError(filePath);
 
         let newText = getCompilerFormattedText(this);
-        if (settings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, settings.newLineCharacter!))
-            newText += settings.newLineCharacter;
+        const newLineChar = settings.newLineCharacter!; // this is filled in getFormattingEditsForDocument
+        if (settings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
+            newText += newLineChar;
 
-        return newText.replace(/\r?\n/g, settings.newLineCharacter!);
+        return newText.replace(/\r?\n/g, newLineChar);
 
         function getCompilerFormattedText(languageService: LanguageService) {
             const formattingEditsInReverseOrder = languageService.getFormattingEditsForDocument(filePath, settings)

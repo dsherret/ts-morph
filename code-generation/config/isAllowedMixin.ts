@@ -14,6 +14,7 @@ export function isAllowedMixin(mixin: MixinViewModel) {
         case "UnwrappableNode":
         case "ChildOrderableNode":
         case "InitializerGetExpressionableNode":
+        case "ExpressionedNode":
             return false;
         default:
             return true;
