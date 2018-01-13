@@ -17,7 +17,13 @@ const sourceFiles = ast.getSourceFiles();
 Or filter by glob:
 
 ```typescript
+// single
 const testSourceFiles = ast.getSourceFiles("**/src/test/**/*.ts");
+// or multiple
+const nonTestSourceFiles = ast.getSourceFiles([
+    "**/src/**/*.ts",
+    "!**/src/test/**/*.ts"
+);
 ```
 
 ### By file path

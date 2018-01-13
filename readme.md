@@ -21,6 +21,14 @@ Please open an issue if find a feature missing or bug that isn't in the issue tr
 
 Work in progress: https://dsherret.github.io/ts-simple-ast/
 
+## Getting Started
+
+1. [Instantiating](https://dsherret.github.io/ts-simple-ast/setup/)
+2. [Adding Source Files](https://dsherret.github.io/ts-simple-ast/setup/adding-source-files)
+3. [Getting Source Files](https://dsherret.github.io/ts-simple-ast/navigation/getting-source-files)
+4. [Navigating](https://dsherret.github.io/ts-simple-ast/navigation/example)
+5. [Manipulating](https://dsherret.github.io/ts-simple-ast/manipulation/)
+
 ## Example
 
 ```typescript
@@ -29,7 +37,7 @@ import Ast from "ts-simple-ast";
 // add source files to ast
 const ast = new Ast();
 const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
-ast.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
+ast.addExistingSourceFiles("**/folder/**/*.ts");
 ast.createSourceFile("misc.ts", {
     classes: [{
         name: "SomeClass",
@@ -57,7 +65,7 @@ enumDeclaration.setIsDefaultExport(false);
 
 // result
 sourceFile.getFullText(); // returns: "enum NewName {\n    myNewMember\n}\nlet myEnum: NewName;"
-sourceFile.save();        // save it to MyFile.ts
+sourceFile.save();        // save it asynchronously to MyFile.ts
 
 // get underlying compiler node from the typescript AST from any node
 const sourceFileCompilerNode = sourceFile.compilerNode;

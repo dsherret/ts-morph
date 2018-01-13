@@ -554,11 +554,8 @@ describe(nameof(TsSimpleAst), () => {
             });
 
             it("should be able to do a file glob with multiple patterns", () => {
-                expect(ast.getSourceFiles(["**/src/test/**/*.ts", "!**/*.d.ts"]).map(s => s.getFilePath())).to.deep.equal([
-                    "/src/test/file1.ts",
-                    "/src/test/file2.ts",
-                    "/src/test/file3.ts",
-                    "/src/test/folder/file.ts"
+                expect(ast.getSourceFiles(["**/src/**/*.ts", "!**/src/test/**/*.ts", "!**/*.d.ts"]).map(s => s.getFilePath())).to.deep.equal([
+                    "/src/file.ts"
                 ]);
             });
         });
