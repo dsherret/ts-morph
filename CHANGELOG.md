@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.1"></a>
+# [6.0.1](https://github.com/dsherret/ts-simple-ast/compare/6.0.0...6.0.1) (2018-01-13)
+
+
+### Bug Fixes
+
+* Accidentally released with no jsdocs. ([cf58690](https://github.com/dsherret/ts-simple-ast/commit/cf58690))
+
+
 <a name="6.0.0"></a>
 # [6.0.0](https://github.com/dsherret/ts-simple-ast/compare/5.6.0...6.0.0) (2018-01-13)
 
