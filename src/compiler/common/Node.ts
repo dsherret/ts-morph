@@ -48,6 +48,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         node: NodeType,
         sourceFile: SourceFile
     ) {
+        if (global == null || global.compilerFactory == null)
+            throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
+                "of the package and manipulate the source file from there.");
+
         this.global = global;
         this._compilerNode = node;
         this.sourceFile = sourceFile;

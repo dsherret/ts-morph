@@ -2,11 +2,24 @@
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression} from "./../../../compiler";
+import * as errors from "./../../../errors";
 import {TypeGuards} from "./../../../utils";
 import {NewLineKind} from "./../../../ManipulationSettings";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
+    describe("constructor", () => {
+        it("should throw if constructing a node outside the library", () => {
+            const ctor = Node as any;
+            expect(() => new ctor()).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should throw if constructing a node outside the library with other arguments", () => {
+            const ctor = Node as any;
+            expect(() => new ctor(1, 2, 3)).to.throw(errors.InvalidOperationError);
+        });
+    });
+
     describe(nameof<Node>(n => n.compilerNode), () => {
         it("should get the underlying compiler node", () => {
             const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
