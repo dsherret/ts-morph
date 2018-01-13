@@ -69,8 +69,8 @@ describe(nameof(MethodDeclaration), () => {
         }
 
         it("should be able to add multiple", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier() {}\n }", [{ returnType: "string" }, { returnType: "number" }],
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier(): number;\n  identifier() {}\n }");
+            doTest("class Identifier {\n  identifier();\n  identifier() {}\n}", [{ returnType: "string" }, { returnType: "number" }],
+                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier(): number;\n  identifier() {}\n}");
         });
     });
 

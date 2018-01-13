@@ -464,6 +464,11 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
                 "class c {\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
         });
+
+        it("should insert when the structure has everything the writer supports", () => {
+            doTest("class Identifier {\n}", 0, [{ name: "m1", parameters: [{ name: "p1" }, { name: "p2" }], returnType: "number" }],
+                "class Identifier {\n    m1(p1, p2): number {\n    }\n}");
+        });
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertMethod), () => {

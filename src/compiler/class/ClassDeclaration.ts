@@ -478,7 +478,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             nextBlanklineWhen: () => !isAmbient,
             separatorNewlineWhen: () => !isAmbient,
             expectedKind: ts.SyntaxKind.MethodDeclaration,
-            fillFunction: (node, structure) => node.fill(structure)
+            fillFunction: (node, structure) => {
+                // todo: remove filling when writing
+                const params = structure.parameters;
+                delete structure.parameters;
+                node.fill(structure);
+                if (params)
+                    node.getParameters().forEach((p, i) => p.fill(params[i]));
+            }
         });
     }
 

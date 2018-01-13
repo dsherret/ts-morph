@@ -584,7 +584,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return writer.toString();
             });
             const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
+                // todo: remove filling when writing
+                const params = structures[i].parameters;
+                delete structures[i].parameters;
                 child.fill(structures[i]);
+                if (params != null)
+                    child.getParameters().forEach((p, j) => p.fill(params[j]));
             });
 
             return newChildren;
