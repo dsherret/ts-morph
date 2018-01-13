@@ -13,7 +13,7 @@ import {HeritageClause} from "./../general";
 import {AbstractableNode} from "./base";
 import {SourceFile} from "./../file";
 import {ParameterDeclaration} from "./../function";
-import {ExpressionWithTypeArguments} from "./../type";
+import {ExpressionWithTypeArguments, Type} from "./../type";
 import {NamespaceChildableNode} from "./../namespace";
 import {callBaseFill} from "./../callBaseFill";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
@@ -478,7 +478,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             nextBlanklineWhen: () => !isAmbient,
             separatorNewlineWhen: () => !isAmbient,
             expectedKind: ts.SyntaxKind.MethodDeclaration,
-            fillFunction: (node, structure) => node.fill(structure)
+            fillFunction: (node, structure) => {
+                // todo: remove filling when writing
+                const params = structure.parameters;
+                delete structure.parameters;
+                node.fill(structure);
+                if (params)
+                    node.getParameters().forEach((p, i) => p.fill(params[i]));
+            }
         });
     }
 
@@ -650,6 +657,35 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         return members;
+    }
+
+    /**
+     * Gets the base types.
+     *
+     * This is useful to use if the base could possibly be a mixin.
+     */
+    getBaseTypes(): Type[] {
+        const typeChecker = this.global.typeChecker;
+        const type = typeChecker.getTypeAtLocation(this);
+        return type.getBaseTypes();
+    }
+
+    /**
+     * Gets the base class.
+     *
+     * Note: Use getBaseTypes if the base might be a mixin.
+     */
+    getBaseClass() {
+        const types = this.getBaseTypes().filter(t => t.getObjectFlags() & ts.ObjectFlags.Class);
+        if (types.length !== 1)
+            return undefined;
+        const symbol = types[0].getSymbol();
+        if (symbol == null)
+            return undefined;
+        const declaration = symbol.getDeclarations()[0];
+        if (declaration == null || declaration.getKind() !== ts.SyntaxKind.ClassDeclaration)
+            return undefined;
+        return declaration as ClassDeclaration;
     }
 
     /**

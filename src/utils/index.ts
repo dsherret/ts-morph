@@ -6,6 +6,7 @@ export * from "./FileUtils";
 export * from "./HashSet";
 export * from "./KeyValueCache";
 export * from "./Logger";
+export * from "./printNode";
 export * from "./StringUtils";
 export * from "./tsconfig";
 export * from "./decorators";

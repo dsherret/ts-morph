@@ -74,6 +74,26 @@ classDeclaration.removeImplements(0); // index
 classDeclaration.removeImplements(classDeclaration.getImplements()[0]); // node
 ```
 
+### Base Types
+
+Get the base types:
+
+```ts
+const baseTypes = classDeclaration.getBaseTypes(); // returns: Type[]
+```
+
+This is useful to use if you don't know if the class could possibly extend a mixin or a class.
+
+### Base Class
+
+Get the base class:
+
+```ts
+const baseClass = classDeclaration.getBaseClass(); // returns: ClassDeclaration | undefined
+```
+
+Note: This is not a useful method to use if the base could possibly be a mixin. If you expect mixins, then use `.getBaseTypes()`.
+
 ### Derived Classes
 
 Will return all the class declarations that derive from the current class:

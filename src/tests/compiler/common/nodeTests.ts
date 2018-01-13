@@ -2,10 +2,24 @@
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression} from "./../../../compiler";
+import * as errors from "./../../../errors";
 import {TypeGuards} from "./../../../utils";
+import {NewLineKind} from "./../../../ManipulationSettings";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
+    describe("constructor", () => {
+        it("should throw if constructing a node outside the library", () => {
+            const ctor = Node as any;
+            expect(() => new ctor()).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should throw if constructing a node outside the library with other arguments", () => {
+            const ctor = Node as any;
+            expect(() => new ctor(1, 2, 3)).to.throw(errors.InvalidOperationError);
+        });
+    });
+
     describe(nameof<Node>(n => n.compilerNode), () => {
         it("should get the underlying compiler node", () => {
             const {sourceFile} = getInfoFromText("enum MyEnum {}\n");
@@ -665,6 +679,23 @@ describe(nameof(Node), () => {
             expect(() => {
                 propAccess.replaceWithText("SomeTest; Test");
             }).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.print), () => {
+        const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
+        const {sourceFile, firstChild} = getInfoFromText(nodeText);
+
+        it("should print the source file", () => {
+            expect(sourceFile.print()).to.equal(nodeText + "\n");
+        });
+
+        it("should print the node", () => {
+            expect(firstChild.print()).to.equal(nodeText);
+        });
+
+        it("should print the node with different newlines", () => {
+            expect(firstChild.print({ newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeText.replace(/\n/g, "\r\n"));
         });
     });
 });

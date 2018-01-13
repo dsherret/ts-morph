@@ -3,6 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
+import {ParameterDeclarationStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
@@ -90,15 +91,22 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 return [];
 
             const parameters = this.getParameters();
-            const parameterCodes = structures.map(s => getStructureCode(s));
             const syntaxList = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList);
             index = verifyAndGetIndex(index, parameters.length);
+
+            const newTexts = structures.map(s => {
+                // todo: pass the structure to text to the function below
+                const writer = this.getWriter();
+                const structureToText = new ParameterDeclarationStructureToText(writer);
+                structureToText.writeText(s);
+                return writer.toString();
+            });
 
             insertIntoCommaSeparatedNodes({
                 parent: syntaxList,
                 currentNodes: parameters,
                 insertIndex: index,
-                newTexts: parameterCodes
+                newTexts
             });
 
             const newParameters = this.getParameters().slice(index, index + structures.length);
@@ -115,14 +123,4 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this;
         }
     };
-}
-
-function getStructureCode(structure: ParameterDeclarationStructure) {
-    let code = "";
-    if (structure.isRestParameter)
-        code += "...";
-    code += structure.name;
-    if (structure.type != null && structure.type.length > 0)
-        code += `: ${structure.type}`;
-    return code;
 }

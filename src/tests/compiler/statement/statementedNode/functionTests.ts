@@ -45,6 +45,11 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    function Identifier() {\n    }\n}\n");
         });
+
+        it("should insert when the structure has everything the writer supports", () => {
+            doTest("", 0, [{ name: "func", parameters: [{ name: "p1" }, { name: "p2" }] }],
+                "function func(p1, p2) {\n}\n");
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
