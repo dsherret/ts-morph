@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/dsherret/ts-simple-ast/compare/5.6.0...6.0.0) (2018-01-13)
+
+
+### Bug Fixes
+
+* [#203](https://github.com/dsherret/ts-simple-ast/issues/203) - Source file will now be marked as "saved" when updating from file system. ([65f22ac](https://github.com/dsherret/ts-simple-ast/commit/65f22ac))
+* [#218](https://github.com/dsherret/ts-simple-ast/issues/218) - Throw an error when a node is constructed outside the library. ([74fa8c1](https://github.com/dsherret/ts-simple-ast/commit/74fa8c1))
+* Virtual file system properly handles multiple globs. ([74aaca7](https://github.com/dsherret/ts-simple-ast/commit/74aaca7))
+
+
+### Code Refactoring
+
+* ast.addExistingSourceFiles now takes either a single glob or multiple globs passed as an array. ([fb5b930](https://github.com/dsherret/ts-simple-ast/commit/fb5b930))
+
+
+### Features
+
+* [#7](https://github.com/dsherret/ts-simple-ast/issues/7) - Ability to import files from tsconfig. ([b538537](https://github.com/dsherret/ts-simple-ast/commit/b538537))
+* [#7](https://github.com/dsherret/ts-simple-ast/issues/7) - Some fixes to importing files from tsconfig. ([2a95bc2](https://github.com/dsherret/ts-simple-ast/commit/2a95bc2))
+* [#7](https://github.com/dsherret/ts-simple-ast/issues/7) - Specified compiler options and tsconfig path are both used to determine added files. ([20e7b77](https://github.com/dsherret/ts-simple-ast/commit/20e7b77))
+* Support multiple globs when getting source files. ([bb935d9](https://github.com/dsherret/ts-simple-ast/commit/bb935d9))
+
+
+### BREAKING CHANGES
+
+* Use an array when passing in multiple file globs to ast.addExistingSourceFiles. This better expresses the intent of this method call.
+* Files are added based on the tsconfig by default. `getCompilerOptionsFromTsConfig` now returns an object that includes the diagnostics.
+
+
+
 <a name="5.6.0"></a>
 # [5.6.0](https://github.com/dsherret/ts-simple-ast/compare/5.3.2...5.6.0) (2018-01-13)
 
