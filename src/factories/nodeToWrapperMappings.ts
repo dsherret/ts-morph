@@ -94,6 +94,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.ThrowStatement]: compiler.ThrowStatement,
     [ts.SyntaxKind.TryStatement]: compiler.TryStatement,
     [ts.SyntaxKind.TypeAliasDeclaration]: compiler.TypeAliasDeclaration,
+    [ts.SyntaxKind.TypeAssertionExpression]: compiler.TypeAssertion,
     [ts.SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration,
     [ts.SyntaxKind.TypeReference]: compiler.TypeReferenceNode,
     [ts.SyntaxKind.VariableDeclaration]: compiler.VariableDeclaration,
