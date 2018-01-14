@@ -8,7 +8,10 @@ export class ParameterDeclarationStructureToText extends StructureToText<Paramet
         this.writer.conditionalWrite(structure.type != null && structure.type.length > 0, `: ${structure.type}`);
     }
 
-    writeParameters(structures: ParameterDeclarationStructure[]) {
+    writeParameters(structures: ParameterDeclarationStructure[] | undefined) {
+        if (structures == null)
+            return;
+
         for (let i = 0; i < structures.length; i++) {
             this.writer.conditionalWrite(i > 0, ", ");
             this.writeText(structures[i]);

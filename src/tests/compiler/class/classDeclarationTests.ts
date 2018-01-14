@@ -466,8 +466,13 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         it("should insert when the structure has everything the writer supports", () => {
-            doTest("class Identifier {\n}", 0, [{ name: "m1", parameters: [{ name: "p1" }, { name: "p2" }], returnType: "number" }],
-                "class Identifier {\n    m1(p1, p2): number {\n    }\n}");
+            const getJsDoc = (desc: string) => `    /**\n     * ${desc}\n     */\n`;
+            doTest("class Identifier {\n}", 0, [{
+                    docs: [{ description: "First." }, { description: "Second." }],
+                    name: "m1",
+                    parameters: [{ name: "p1" }, { name: "p2" }], returnType: "number"
+                }],
+                `class Identifier {\n${getJsDoc("First.")}${getJsDoc("Second.")}    m1(p1, p2): number {\n    }\n}`);
         });
     });
 

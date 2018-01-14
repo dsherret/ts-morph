@@ -11,7 +11,10 @@ export class JSDocStructureToText extends StructureToText<JSDocStructure> {
         this.writer.writeLine(" */");
     }
 
-    writeDocs(structures: JSDocStructure[]) {
+    writeDocs(structures: JSDocStructure[] | undefined) {
+        if (structures == null)
+            return;
+
         for (const structure of structures)
             this.writeText(structure);
     }

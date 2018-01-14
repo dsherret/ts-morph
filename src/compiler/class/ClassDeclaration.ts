@@ -480,6 +480,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             fillFunction: (node, structure) => {
                 // todo: remove filling when writing
                 const params = structure.parameters;
+                delete structure.docs;
                 delete structure.parameters;
                 node.fill(structure);
                 if (params)
