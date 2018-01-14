@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.1.0"></a>
+# [6.1.0](https://github.com/dsherret/ts-simple-ast/compare/6.0.1...6.1.0) (2018-01-14)
+
+
+### Bug Fixes
+
+* Fix JSDocParameterTag not being wrapped. ([7363481](https://github.com/dsherret/ts-simple-ast/commit/7363481))
+* Fix TypeAssertion not being wrapped. ([58fc48c](https://github.com/dsherret/ts-simple-ast/commit/58fc48c))
+* Less strict ClassDeclaration getBaseClass ([033deb8](https://github.com/dsherret/ts-simple-ast/commit/033deb8))
+* TypeGuards utility was missing some nodes. ([3ddca5d](https://github.com/dsherret/ts-simple-ast/commit/3ddca5d))
+
+
+### Features
+
+* [#187](https://github.com/dsherret/ts-simple-ast/issues/187) - Added TypeGuards.hasExpression. ([6e37480](https://github.com/dsherret/ts-simple-ast/commit/6e37480))
+* Add .getType() to InterfaceDeclaration and ClassDeclaration. ([3c8ca33](https://github.com/dsherret/ts-simple-ast/commit/3c8ca33))
+* Add JSDocableNode to ExpressionStatement and LabeledStatement. ([00c2a89](https://github.com/dsherret/ts-simple-ast/commit/00c2a89)), closes [#193](https://github.com/dsherret/ts-simple-ast/issues/193)
+
+
+
 <a name="6.0.1"></a>
 # [6.0.1](https://github.com/dsherret/ts-simple-ast/compare/6.0.0...6.0.1) (2018-01-13)
 
