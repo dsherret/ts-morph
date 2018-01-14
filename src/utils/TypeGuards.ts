@@ -206,6 +206,8 @@ export class TypeGuards {
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.ExpressionStatement:
+            case ts.SyntaxKind.LabeledStatement:
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
