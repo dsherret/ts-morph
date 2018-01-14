@@ -1,11 +1,11 @@
 import * as ts from "typescript";
 import {Expression} from "./../expression";
 import {Node} from "./../common";
-import {ChildOrderableNode} from "./../base";
+import {ChildOrderableNode, JSDocableNode} from "./../base";
 import {Statement} from "./Statement";
 import {Identifier} from "../../main";
 
-export const LabeledStatementBase = ChildOrderableNode(Statement);
+export const LabeledStatementBase = JSDocableNode(ChildOrderableNode(Statement));
 export class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> {
     /**
      * Gets this labeled statement's label
