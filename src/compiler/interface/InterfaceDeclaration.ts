@@ -73,7 +73,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.ConstructSignatureDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
@@ -151,7 +151,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.MethodSignatureStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
@@ -245,7 +245,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.PropertySignatureStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();

@@ -1,3 +1,4 @@
+export * from "./doc";
 export * from "./StructureToText";
 export * from "./class";
 export * from "./common";

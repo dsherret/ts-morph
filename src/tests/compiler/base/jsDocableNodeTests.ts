@@ -64,8 +64,8 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert at start when indentation is different", () => {
-            doTest("  /**\n   * Desc2\n   */\n  function identifier() {}", 0, [{ description: "Desc1" }],
-                "  /**\n   * Desc1\n   */\n  /**\n   * Desc2\n   */\n  function identifier() {}");
+            doTest("    /**\n     * Desc2\n     */\n    function identifier() {}", 0, [{ description: "Desc1" }],
+                "    /**\n     * Desc1\n     */\n    /**\n     * Desc2\n     */\n    function identifier() {}");
         });
 
         it("should insert multiple at end", () => {

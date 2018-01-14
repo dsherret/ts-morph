@@ -484,7 +484,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertClasses(index: number, structures: ClassDeclarationStructure[]): classes.ClassDeclaration[] {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.ClassDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -531,7 +531,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertEnums(index: number, structures: EnumDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.EnumDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -578,7 +578,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertFunctions(index: number, structures: FunctionDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.FunctionDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -631,7 +631,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.InterfaceDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -678,7 +678,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.NamespaceDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -724,7 +724,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.TypeAliasDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -788,7 +788,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertVariableStatements(index: number, structures: VariableStatementStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getChildWriter();
+                const writer = this.getWriterWithChildIndentation();
                 const structureToText = new structureToTexts.VariableStatementStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();

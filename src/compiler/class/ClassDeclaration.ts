@@ -143,11 +143,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
-        for (const c of this.getConstructors()) {
+        for (const c of this.getConstructors())
             c.remove();
-        }
 
-        const writer = this.getChildWriter();
+        const writer = this.getWriterWithChildIndentation();
         const structureToText = new structureToTexts.ConstructorDeclarationStructureToText(writer);
         structureToText.writeText(structure);
         const code = writer.toString();
@@ -209,7 +208,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.GetAccessorDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
@@ -267,7 +266,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.SetAccessorDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
@@ -324,7 +323,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.PropertyDeclarationStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();
@@ -460,7 +459,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         // create code
         const codes = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient });
             structureToText.writeText(s);
             return writer.toString();

@@ -69,7 +69,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // create member code
         const newTexts = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = new EnumMemberStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();

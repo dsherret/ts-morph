@@ -1128,10 +1128,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets a writer with the indentation text.
+     * @internal
+     */
+    getWriterWithIndentation() {
+        const writer = this.getWriter();
+        writer.setIndentationLevel(this.getIndentationText());
+        return writer;
+    }
+
+    /**
      * Gets a writer with the child indentation text.
      * @internal
      */
-    getChildWriter() {
+    getWriterWithChildIndentation() {
         const writer = this.getWriter();
         writer.setIndentationLevel(this.getChildIndentationText());
         return writer;

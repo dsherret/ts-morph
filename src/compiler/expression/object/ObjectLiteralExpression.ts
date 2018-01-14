@@ -289,7 +289,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         index = verifyAndGetIndex(index, this.compilerNode.properties.length);
         const newTexts = structures.map(s => {
             // todo: pass in the StructureToText to the function below
-            const writer = this.getChildWriter();
+            const writer = this.getWriterWithChildIndentation();
             const structureToText = createStructureToText(writer);
             structureToText.writeText(s);
             return writer.toString();

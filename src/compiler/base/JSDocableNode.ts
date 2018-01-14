@@ -2,6 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";
+import {JSDocStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
@@ -61,9 +62,10 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
-            const indentationText = this.getIndentationText();
-            const newLineText = this.global.manipulationSettings.getNewLineKind();
-            const code = `${getDocumentationCode(structures, indentationText, newLineText)}${newLineText}${indentationText}`;
+            const writer = this.getWriterWithIndentation();
+            const structureToText = new JSDocStructureToText(writer);
+            structureToText.writeDocs(structures);
+            const code = writer.toString().replace(/^\s+/, "") + this.getIndentationText();
             const nodes = this.getJsDocs();
             index = verifyAndGetIndex(index, nodes.length);
 
