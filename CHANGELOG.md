@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.2.0"></a>
+# [6.2.0](https://github.com/dsherret/ts-simple-ast/compare/6.1.0...6.2.0) (2018-01-14)
+
+
+### Bug Fixes
+
+* Removing a member throws when surrounding members have JS docs. ([fdc64c9](https://github.com/dsherret/ts-simple-ast/commit/fdc64c9))
+
+
+### Features
+
+* Node .getStart & .getStartLinePos - add includeJsDocComment. ([af8bb55](https://github.com/dsherret/ts-simple-ast/commit/af8bb55))
+
+
+
 <a name="6.1.0"></a>
 # [6.1.0](https://github.com/dsherret/ts-simple-ast/compare/6.0.1...6.1.0) (2018-01-14)
 
