@@ -1,4 +1,5 @@
 ﻿import {TextManipulator} from "./TextManipulator";
+import {getTextForError} from "./getTextForError";
 
 export interface InsertionTextManipulatorOptions {
     insertPos: number;
@@ -16,18 +17,6 @@ export class InsertionTextManipulator implements TextManipulator {
     }
 
     getTextForError(newText: string) {
-        const startPos = Math.max(0, newText.lastIndexOf("\n", this.opts.insertPos) - 50);
-        let text = "";
-        let endPos = Math.min(newText.length, newText.indexOf("\n", this.opts.insertPos + this.opts.newText.length) + 50);
-        if (endPos === -1)
-            endPos = newText.length;
-        text += newText.substring(startPos, endPos);
-
-        if (startPos !== 0)
-            text = "..." + text;
-        if (endPos !== newText.length)
-            text += "...";
-
-        return text;
+        return getTextForError(newText, this.opts.insertPos, this.opts.newText.length);
     }
 }

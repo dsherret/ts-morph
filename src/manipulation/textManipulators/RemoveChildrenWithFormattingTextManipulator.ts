@@ -3,6 +3,7 @@ import {Node} from "./../../compiler";
 import {FormattingKind, getFormattingKindText} from "./../formatting";
 import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "./../textSeek";
 import {getSpacingBetweenNodes} from "./getSpacingBetweenNodes";
+import {getTextForError} from "./getTextForError";
 
 export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extends Node> {
     children: Node[];
@@ -10,6 +11,8 @@ export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extend
 }
 
 export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
+    private removalPos: number;
+
     constructor(private readonly opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
     }
 
@@ -21,11 +24,13 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         const newLineKind = sourceFile.global.manipulationSettings.getNewLineKind();
         const previousSibling = children[0].getPreviousSibling();
         const nextSibling = children[children.length - 1].getNextSibling();
+        const removalPos = getRemovalPos();
+        this.removalPos = removalPos;
 
         return getPrefix() + getSpacing() + getSuffix();
 
         function getPrefix() {
-            return fullText.substring(0, getRemovalPos());
+            return fullText.substring(0, removalPos);
         }
 
         function getSpacing() {
@@ -56,8 +61,8 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
             if (previousSibling != null && nextSibling != null) {
                 const nextSiblingFormatting = getSiblingFormatting(parent as TNode, nextSibling);
                 if (nextSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Newline) {
-                    const nextSiblingStartLinePos = nextSibling.getStartLinePos();
-                    if (nextSiblingStartLinePos !== children[children.length - 1].getStartLinePos())
+                    const nextSiblingStartLinePos = nextSibling.getStartLinePos(true);
+                    if (nextSiblingStartLinePos !== children[children.length - 1].getStartLinePos(true))
                         return nextSiblingStartLinePos;
                 }
 
@@ -75,6 +80,6 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
     }
 
     getTextForError(newText: string) {
-        return newText;
+        return getTextForError(newText, this.removalPos);
     }
 }

@@ -1,6 +1,7 @@
 ﻿import {TextManipulator} from "./TextManipulator";
 import {Node} from "./../../compiler";
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../textSeek";
+import {getTextForError} from "./getTextForError";
 
 export interface RemoveChildrenTextManipulatorOptions {
     children: Node[];
@@ -11,6 +12,8 @@ export interface RemoveChildrenTextManipulatorOptions {
 }
 
 export class RemoveChildrenTextManipulator<TNode extends Node> implements TextManipulator {
+    private removalPos: number;
+
     constructor(private readonly opts: RemoveChildrenTextManipulatorOptions) {
     }
 
@@ -18,11 +21,13 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
         const {children, removePrecedingSpaces = false, removeFollowingSpaces = false, removePrecedingNewLines = false, removeFollowingNewLines = false} = this.opts;
         const sourceFile = children[0].getSourceFile();
         const fullText = sourceFile.getFullText();
+        const removalPos = getRemovalPos();
+        this.removalPos = removalPos;
 
         return getPrefix() + getSuffix();
 
         function getPrefix() {
-            return fullText.substring(0, getRemovalPos());
+            return fullText.substring(0, removalPos);
         }
 
         function getSuffix() {
@@ -59,6 +64,6 @@ export class RemoveChildrenTextManipulator<TNode extends Node> implements TextMa
     }
 
     getTextForError(newText: string) {
-        return newText;
+        return getTextForError(newText, this.removalPos);
     }
 }
