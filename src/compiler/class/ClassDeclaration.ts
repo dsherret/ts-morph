@@ -676,16 +676,15 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Note: Use getBaseTypes if the base might be a mixin.
      */
     getBaseClass() {
-        const types = this.getBaseTypes().filter(t => t.getObjectFlags() & ts.ObjectFlags.Class);
-        if (types.length !== 1)
+        const declarations = this.getBaseTypes()
+            .map(t => t.getSymbol())
+            .filter(s => s != null)
+            .map(s => s!.getDeclarations())
+            .reduce((a, b) => a.concat(b), [])
+            .filter(d => d.getKind() === ts.SyntaxKind.ClassDeclaration);
+        if (declarations.length !== 1)
             return undefined;
-        const symbol = types[0].getSymbol();
-        if (symbol == null)
-            return undefined;
-        const declaration = symbol.getDeclarations()[0];
-        if (declaration == null || declaration.getKind() !== ts.SyntaxKind.ClassDeclaration)
-            return undefined;
-        return declaration as ClassDeclaration;
+        return declarations[0] as ClassDeclaration;
     }
 
     /**
