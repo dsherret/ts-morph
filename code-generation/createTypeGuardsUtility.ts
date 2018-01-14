@@ -13,8 +13,8 @@
  */
 import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
-import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
-import {ArrayUtils, KeyValueCache} from "./../src/utils";
+import Ast, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
+import {ArrayUtils, KeyValueCache, StringUtils} from "./../src/utils";
 import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel, MixinViewModel} from "./view-models";
 
 interface MethodInfo {
@@ -24,39 +24,36 @@ interface MethodInfo {
     isMixin: boolean;
 }
 
-export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewModel[], nodeToWrapperVMs: NodeToWrapperViewModel[]) {
+export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], nodeToWrapperVMs: NodeToWrapperViewModel[]) {
     const file = ast.getSourceFileOrThrow("utils/TypeGuards.ts");
-    const typeGuardsClass = file.getClass("TypeGuards");
+    const typeGuardsClass = file.getClassOrThrow("TypeGuards");
 
-    if (typeGuardsClass != null)
-        typeGuardsClass.remove();
+    // remove all the static methods that start with "is"
+    typeGuardsClass.getStaticMethods()
+        .filter(m => StringUtils.startsWith(m.getName(), "is"))
+        .forEach(m => {
+            console.log(m.getName());
+            m.remove();
+        });
 
-    file.addClass({
-        name: "TypeGuards",
-        isExported: true,
-        ctor: { scope: Scope.Private },
+    typeGuardsClass.addMethods(getMethodInfos().map(method => ({
+        name: `is${method.name}`,
+        isStatic: true,
         docs: [{
-            description: "Type guards for checking the type of a node."
+            description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n` +
+                "@param node - Node to check."
         }],
-        methods: [...getMethodInfos().map(method => ({
-            name: `is${method.name}`,
-            isStatic: true,
-            docs: [{
-                description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n` +
-                    "@param node - Node to check."
-            }],
-            parameters: [{ name: "node", type: "compiler.Node" }],
-            returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
-            bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
-                    for (const syntaxKindName of method.syntaxKinds) {
-                        writer.writeLine(`case ts.SyntaxKind.${syntaxKindName}:`);
-                    }
-                    writer.indent().write("return true;").newLine();
-                    writer.writeLine("default:")
-                        .indent().write("return false;").newLine();
-                })
-        })), getHasExpressionTypeGuard()]
-    });
+        parameters: [{ name: "node", type: "compiler.Node" }],
+        returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
+        bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
+                for (const syntaxKindName of method.syntaxKinds) {
+                    writer.writeLine(`case ts.SyntaxKind.${syntaxKindName}:`);
+                }
+                writer.indent().write("return true;").newLine();
+                writer.writeLine("default:")
+                    .indent().write("return false;").newLine();
+            })
+    })));
 
     file.save();
 
@@ -130,21 +127,6 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                 return [] as string[];
             return nodeToWrapperVM.syntaxKindNames;
         }
-    }
-
-    function getHasExpressionTypeGuard(): MethodDeclarationStructure {
-        return {
-            docs: [{ description: "Gets if the node has an expression.\r\n@param node - Node to check." }],
-            isStatic: true,
-            name: "hasExpression",
-            returnType: "node is compiler.Node & { getExpression(): compiler.Expression; }",
-            parameters: [{ name: "node", type: "compiler.Node" }],
-            bodyText: writer => {
-                writer.writeLine("if ((node as any).getExpression == null)");
-                writer.indent().write("return false;");
-                writer.writeLine("return (node as any).getExpression() != null;");
-            }
-        };
     }
 }
 
