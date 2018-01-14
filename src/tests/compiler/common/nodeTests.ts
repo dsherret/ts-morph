@@ -283,14 +283,17 @@ describe(nameof(Node), () => {
     });
 
     describe(nameof<Node>(n => n.getStartLinePos), () => {
+        function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
+            const {firstChild} = getInfoFromText(text);
+            expect(firstChild.getStartLinePos(includeJsDocComment)).to.equal(expectedPos);
+        }
+
         it("should return the start of the file when it's on the first line", () => {
-            const {firstChild} = getInfoFromText("enum MyEnum {\n}\n");
-            expect(firstChild.getStartLinePos()).to.equal(0);
+            doTest("enum MyEnum {\n}\n", 0);
         });
 
         it("should return the start of the file when it's on the first line", () => {
-            const {firstChild} = getInfoFromText("    enum MyEnum {\n}\n");
-            expect(firstChild.getStartLinePos()).to.equal(0);
+            doTest("    enum MyEnum {\n}\n", 0);
         });
 
         it("should return the start of the line when it's not on the first line", () => {
@@ -300,15 +303,30 @@ describe(nameof(Node), () => {
         });
 
         it("should return the start of the line when the past line is a \\r\\n", () => {
-            const {firstChild} = getInfoFromText("\n  \t  \r\nenum MyEnum {\n}\n");
-            expect(firstChild.getStartLinePos()).to.equal(8);
+            doTest("\n  \t  \r\nenum MyEnum {\n}\n", 8);
+        });
+
+        it("should get the start line position of the JS doc when specified", () => {
+            doTest("/**\n * Test\n */\nenum MyEnum {\n}\n", 0, true);
+        });
+
+        it("should get the start line position of not the JS doc when not specified", () => {
+            doTest("/**\n * Test\n */\nenum MyEnum {\n}\n", 16);
         });
     });
 
     describe(nameof<Node>(n => n.getStart), () => {
+        function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
+            const {firstChild} = getInfoFromText(text);
+            expect(firstChild.getStart(includeJsDocComment)).to.equal(expectedPos);
+        }
+
         it("should return the pos without trivia", () => {
-            const {firstChild} = getInfoFromText("\n  \t  /* comment */ //comment  \r\n  \t enum MyEnum {\n}\n");
-            expect(firstChild.getStart()).to.equal(37);
+            doTest("\n  \t  /* comment */ //comment  \r\n  \t enum MyEnum {\n}\n", 37);
+        });
+
+        it("should return the pos at the start of the js doc comment if specified", () => {
+            doTest("/**\n * Test\n */\nenum MyEnum {\n}\n", 0, true);
         });
     });
 

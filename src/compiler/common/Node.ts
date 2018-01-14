@@ -464,9 +464,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the start position without leading trivia.
+     * @param includeJsDocComment - Whether to include the JS doc comment.
      */
-    getStart() {
-        return this.compilerNode.getStart(this.sourceFile.compilerNode);
+    getStart(includeJsDocComment?: boolean) {
+        // rare time a bool parameter will be used... it's because it's done in the ts compiler
+        return this.compilerNode.getStart(this.sourceFile.compilerNode, includeJsDocComment);
     }
 
     /**
@@ -715,10 +717,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the position of the start of the line that this node starts on.
+     * @param includeJsDocComment - Whether to include the JS doc comment or not.
      */
-    getStartLinePos() {
+    getStartLinePos(includeJsDocComment?: boolean) {
         const sourceFileText = this.sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(), char => char === "\n");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n");
     }
 
     /**
