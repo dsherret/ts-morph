@@ -4,6 +4,13 @@ import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, Proper
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
+    describe(nameof<InterfaceDeclaration>(d => d.getType), () => {
+        it("should get the interface's type", () => {
+            const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }");
+            expect(sourceFile.getInterfaceOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(d => d.insertConstructSignatures), () => {
         function doTest(startCode: string, insertIndex: number, structures: ConstructSignatureDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);

@@ -9,6 +9,7 @@ import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {NamespaceChildableNode} from "./../namespace";
+import {Type} from "./../type";
 import {ImplementationLocation} from "./../tools";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
@@ -35,6 +36,13 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             this.addMethods(structure.methods);
 
         return this;
+    }
+
+    /**
+     * Gets the interface's type.
+     */
+    getType(): Type {
+        return this.global.typeChecker.getTypeAtLocation(this);
     }
 
     /**

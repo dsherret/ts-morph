@@ -659,14 +659,19 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the type of the class.
+     */
+    getType(): Type {
+        return this.global.typeChecker.getTypeAtLocation(this);
+    }
+
+    /**
      * Gets the base types.
      *
      * This is useful to use if the base could possibly be a mixin.
      */
     getBaseTypes(): Type[] {
-        const typeChecker = this.global.typeChecker;
-        const type = typeChecker.getTypeAtLocation(this);
-        return type.getBaseTypes();
+        return this.getType().getBaseTypes();
     }
 
     /**

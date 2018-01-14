@@ -829,6 +829,13 @@ class c {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getType), () => {
+        it("should get the class' type", () => {
+            const {sourceFile} = getInfoFromText("class Identifier { prop: string; }");
+            expect(sourceFile.getClassOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getBaseTypes), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
             const {sourceFile} = getInfoFromText(text);
