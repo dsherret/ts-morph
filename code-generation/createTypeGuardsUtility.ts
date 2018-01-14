@@ -38,7 +38,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
         docs: [{
             description: "Type guards for checking the type of a node."
         }],
-        methods: getMethodInfos().map(method => ({
+        methods: [...getMethodInfos().map(method => ({
             name: `is${method.name}`,
             isStatic: true,
             docs: [{
@@ -55,7 +55,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                     writer.writeLine("default:")
                         .indent().write("return false;").newLine();
                 })
-        }))
+        })), getHasExpressionTypeGuard()]
     });
 
     file.save();
@@ -130,6 +130,21 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
                 return [] as string[];
             return nodeToWrapperVM.syntaxKindNames;
         }
+    }
+
+    function getHasExpressionTypeGuard(): MethodDeclarationStructure {
+        return {
+            docs: [{ description: "Gets if the node has an expression.\r\n@param node - Node to check." }],
+            isStatic: true,
+            name: "hasExpression",
+            returnType: "node is compiler.Node & { getExpression(): compiler.Expression; }",
+            parameters: [{ name: "node", type: "compiler.Node" }],
+            bodyText: writer => {
+                writer.writeLine("if ((node as any).getExpression == null)");
+                writer.indent().write("return false;");
+                writer.writeLine("return (node as any).getExpression() != null;");
+            }
+        };
     }
 }
 

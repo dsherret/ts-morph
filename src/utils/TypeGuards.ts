@@ -2599,4 +2599,14 @@ export class TypeGuards {
                 return false;
         }
     }
+
+    /**
+     * Gets if the node has an expression.
+     * @param node - Node to check.
+     */
+    static hasExpression(node: compiler.Node): node is compiler.Node & { getExpression(): compiler.Expression; } {
+        if ((node as any).getExpression == null)
+            return false;
+        return (node as any).getExpression() != null;
+    }
 }
