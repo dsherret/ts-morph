@@ -64,7 +64,7 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets the apparent type.
      */
-    getApparentType() {
+    getApparentType(): Type {
         return this.global.typeChecker.getApparentType(this);
     }
 
@@ -156,6 +156,21 @@ export class Type<TType extends ts.Type = ts.Type> {
     getStringIndexType(): Type | undefined {
         const stringIndexType = this.compilerType.getStringIndexType();
         return stringIndexType == null ? undefined : this.global.compilerFactory.getType(stringIndexType);
+    }
+
+    /**
+     * Gets the target type of a type reference if it exists.
+     */
+    getTargetType(): Type<ts.GenericType> | undefined {
+        const targetType = (this.compilerType as any as ts.TypeReference).target || undefined;
+        return targetType == null ? undefined : this.global.compilerFactory.getType(targetType);
+    }
+
+    /**
+     * Gets the target type of a type reference or throws if it doesn't exist.
+     */
+    getTargetTypeOrThrow(): Type<ts.GenericType> {
+        return errors.throwIfNullOrUndefined(this.getTargetType(), "Expected to find the target type.");
     }
 
     /**

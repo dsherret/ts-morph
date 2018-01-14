@@ -14,8 +14,8 @@
 import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import TsSimpleAst, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
-import {ArrayUtils} from "./../src/utils";
-import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel} from "./view-models";
+import {ArrayUtils, KeyValueCache} from "./../src/utils";
+import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel, MixinViewModel} from "./view-models";
 
 interface MethodInfo {
     name: string;
@@ -42,7 +42,7 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
             name: `is${method.name}`,
             isStatic: true,
             docs: [{
-                description: `Gets if the node is ${method.name[0] === "A" ? "an" : "a"} ${method.name}.\r\n` +
+                description: `Gets if the node is ${(method.name[0] === "A" || method.name[0] === "E") ? "an" : "a"} ${method.name}.\r\n` +
                     "@param node - Node to check."
             }],
             parameters: [{ name: "node", type: "compiler.Node" }],
@@ -61,52 +61,88 @@ export function createTypeGuardsUtility(ast: TsSimpleAst, classVMs: ClassViewMod
     file.save();
 
     function getMethodInfos() {
-        const methodInfos: { [name: string]: MethodInfo; } = {};
+        const methodInfos = new KeyValueCache<string, MethodInfo>();
 
-        for (const classVM of classVMs.filter(c => c.name !== "Node" && nodeToWrapperVMs.some(vm => vm.wrapperName === c.name))) {
-            methodInfos[classVM.name] = {
-                name: classVM.name,
-                wrapperName: classVM.name,
-                syntaxKinds: [...getSyntaxKindsForName(classVM.name)],
-                isMixin: false
-            };
-
+        for (const classVM of classVMs.filter(c => c.name !== "Node" && c.isNodeClass && isAllowedClass(c))) {
+            const methodInfo = getMethodInfoForClass(classVM);
+            if (classVM.base != null)
+                fillBase(classVM, classVM.base);
             fillMixinable(classVM, classVM);
         }
 
         for (const nodeToWrapperVM of nodeToWrapperVMs.filter(v => v.wrapperName === "Node")) {
             for (const syntaxKindName of nodeToWrapperVM.syntaxKindNames) {
-                methodInfos[syntaxKindName] = {
+                methodInfos.set(syntaxKindName, {
                     name: syntaxKindName,
                     wrapperName: "Node",
                     syntaxKinds: [syntaxKindName],
                     isMixin: false
-                };
+                });
             }
         }
 
-        return Object.keys(methodInfos).sort().map(k => methodInfos[k]);
+        return ArrayUtils.from(methodInfos.getValues());
+
+        function fillBase(classVM: ClassViewModel, baseVM: ClassViewModel) {
+            if (baseVM.base != null)
+                fillBase(classVM, baseVM.base);
+            const methodInfo = getMethodInfoForClass(baseVM);
+            methodInfo.syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
+            fillMixinable(classVM, baseVM);
+        }
 
         function fillMixinable(classVM: ClassViewModel, mixinable: MixinableViewModel) {
             for (const mixin of mixinable.mixins) {
-                if (methodInfos[mixin.name] == null) {
-                    methodInfos[mixin.name] = {
-                        name: mixin.name,
-                        wrapperName: mixin.name,
-                        syntaxKinds: [],
-                        isMixin: true
-                    };
-                }
-                methodInfos[mixin.name].syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
+                getMethodInfoForMixin(mixin).syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
                 fillMixinable(classVM, mixin);
             }
+        }
+
+        function getMethodInfoForClass(classVM: ClassViewModel) {
+            if (methodInfos.has(classVM.name))
+                return methodInfos.get(classVM.name)!;
+            const methodInfo: MethodInfo = {
+                name: classVM.name,
+                wrapperName: classVM.name,
+                syntaxKinds: [...getSyntaxKindsForName(classVM.name)],
+                isMixin: false
+            };
+            methodInfos.set(classVM.name, methodInfo);
+            return methodInfo;
+        }
+
+        function getMethodInfoForMixin(mixin: MixinViewModel) {
+            if (methodInfos.has(mixin.name))
+                return methodInfos.get(mixin.name)!;
+            const methodInfo: MethodInfo = {
+                name: mixin.name,
+                wrapperName: mixin.name,
+                syntaxKinds: [],
+                isMixin: true
+            };
+            methodInfos.set(mixin.name, methodInfo);
+            return methodInfo;
         }
 
         function getSyntaxKindsForName(name: string) {
             const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperVMs, n => n.wrapperName === name);
             if (nodeToWrapperVM == null)
-                throw new Error("Could not find: " + name);
+                return [] as string[];
             return nodeToWrapperVM.syntaxKindNames;
         }
+    }
+}
+
+function isAllowedClass(classVM: ClassViewModel) {
+    switch (classVM.name) {
+        // todo: should support these classes eventually (they probably need to be customly implemented)
+        case "ObjectDestructuringAssignment":
+        case "ArrayDestructuringAssignment":
+        case "AssignmentExpression":
+        case "SuperElementAccessExpression":
+        case "SuperPropertyAccessExpression":
+            return false;
+        default:
+            return true;
     }
 }

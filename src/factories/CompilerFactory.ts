@@ -301,8 +301,8 @@ export class CompilerFactory {
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
      */
-    getType(type: ts.Type): compiler.Type {
-        return new compiler.Type(this.global, type);
+    getType<TType extends ts.Type = TType>(type: TType): compiler.Type<TType> {
+        return new compiler.Type<TType>(this.global, type);
     }
 
     /**
