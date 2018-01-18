@@ -5,6 +5,10 @@
 
 $primary-color: #292b2c;
 
+body {
+    overflow-y: scroll;
+}
+
 .main {
     position: relative;
     margin-left: auto;
@@ -37,6 +41,9 @@ nav {
             padding-bottom: 5px;
             ul {
                 margin-top: 0px;
+            }
+            li {
+                margin-bottom: 2px;
             }
         }
 
