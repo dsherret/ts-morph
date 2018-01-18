@@ -23,11 +23,12 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 
 ## Getting Started
 
-1. [Instantiating](https://dsherret.github.io/ts-simple-ast/setup/)
-2. [Adding Source Files](https://dsherret.github.io/ts-simple-ast/setup/adding-source-files)
-3. [Getting Source Files](https://dsherret.github.io/ts-simple-ast/navigation/getting-source-files)
-4. [Navigating](https://dsherret.github.io/ts-simple-ast/navigation/example)
-5. [Manipulating](https://dsherret.github.io/ts-simple-ast/manipulation/)
+1. [Installing](https://dsherret.github.io/ts-simple-ast/)
+2. [Instantiating](https://dsherret.github.io/ts-simple-ast/setup/)
+3. [Adding source files](https://dsherret.github.io/ts-simple-ast/setup/adding-source-files)
+4. [Getting source files](https://dsherret.github.io/ts-simple-ast/navigation/getting-source-files)
+5. [Navigating](https://dsherret.github.io/ts-simple-ast/navigation/example)
+6. [Manipulating](https://dsherret.github.io/ts-simple-ast/manipulation/)
 
 ## Example
 

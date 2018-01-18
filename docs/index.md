@@ -4,7 +4,7 @@ title: Documentation
 
 ## Purpose
 
-Setup, navigation, and manipulation of the TypeScript AST can be a challenge. This library wraps the TypeScript compiler so it's simple.
+Setup, navigation, and manipulation of the TypeScript AST can be a challenge. This library wraps the TypeScript compiler API so it's simple.
 
 ## Installing
 
@@ -15,6 +15,6 @@ npm install --save-dev typescript@2.6.2
 npm install --save-dev ts-simple-ast
 ```
 
-## Documentation Progress (Updated: 22 July 2017)
+## Documentation Progress
 
 I've been still slowly updating the documentation. I'm keeping it up to date with any new features, but some existing features don't have documentation.
