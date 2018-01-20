@@ -1,14 +1,11 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {YieldExpression} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfoFromTextWithYieldExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const yieldExpression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.YieldExpression)
-    ) as YieldExpression;
-    return {...obj, yieldExpression};
+    const info = getInfoFromTextWithDescendant<YieldExpression>(text, ts.SyntaxKind.YieldExpression);
+    return {...info, yieldExpression: info.descendant};
 }
 
 describe(nameof(YieldExpression), () => {

@@ -1,14 +1,11 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ElementAccessExpression} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfoFromTextWithElementAccessExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const elementAccessExpression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ElementAccessExpression)
-    ) as ElementAccessExpression;
-    return {...obj, elementAccessExpression};
+    const info = getInfoFromTextWithDescendant<ElementAccessExpression>(text, ts.SyntaxKind.ElementAccessExpression);
+    return {...info, elementAccessExpression: info.descendant};
 }
 
 describe(nameof(ElementAccessExpression), () => {

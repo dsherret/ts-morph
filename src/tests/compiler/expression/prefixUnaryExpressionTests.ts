@@ -1,20 +1,12 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {PrefixUnaryExpression} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
-
-function getInfoFromTextWithPrefixUnaryExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const prefixUnaryExpression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.PrefixUnaryExpression)
-    ) as PrefixUnaryExpression;
-    return {...obj, prefixUnaryExpression};
-}
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(PrefixUnaryExpression), () => {
     const expression = "x";
     const expr = `++${expression}`;
-    const {prefixUnaryExpression} = getInfoFromTextWithPrefixUnaryExpression(expr);
+    const {descendant: prefixUnaryExpression} = getInfoFromTextWithDescendant<PrefixUnaryExpression>(expr, ts.SyntaxKind.PrefixUnaryExpression);
 
     describe(nameof<PrefixUnaryExpression>(n => n.getOperand), () => {
         it("should get the correct expression", () => {

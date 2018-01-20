@@ -47,6 +47,22 @@ export interface GetInfoFromTextOptions {
 
 /** @internal */
 export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: GetInfoFromTextOptions) {
+    const info = getInfoFromTextInternal(text, opts);
+    return {
+        ...info,
+        firstChild: info.sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as TFirstChild
+    };
+}
+
+export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: string, descendantKind: ts.SyntaxKind, opts?: GetInfoFromTextOptions) {
+    const info = getInfoFromTextInternal(text, opts);
+    return {
+        ...info,
+        descendant: info.sourceFile.getFirstDescendantByKindOrThrow(descendantKind) as TDescendant
+    };
+}
+
+function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false, compilerOptions = { target: ts.ScriptTarget.ES2017 },
         includeLibDts = false} = opts || {};
@@ -58,7 +74,6 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: G
 
     const tsSimpleAst = new TsSimpleAst({ compilerOptions }, host);
     const sourceFile = tsSimpleAst.createSourceFile(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
-    const firstChild = sourceFile.getChildSyntaxListOrThrow().getChildren()[0] as TFirstChild;
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)
     /*
@@ -66,7 +81,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: G
         ensureNoCompileErrorsInSourceFile(sourceFile);
     */
 
-    return {tsSimpleAst, sourceFile, firstChild};
+    return {tsSimpleAst, sourceFile};
 }
 
 function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile) {

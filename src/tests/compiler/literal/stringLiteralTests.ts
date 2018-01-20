@@ -1,18 +1,17 @@
-﻿import {expect} from "chai";
-import {VariableStatement, StringLiteral, QuoteType} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
+import {StringLiteral, QuoteType} from "./../../../compiler";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithInitializer(text: string) {
-    const obj = getInfoFromText<VariableStatement>(text);
-    const initializer = obj.firstChild.getDeclarations()[0].getInitializerOrThrow();
-    return { ...obj, initializer };
+function getStringLiteral(text: string) {
+    return getInfoFromTextWithDescendant<StringLiteral>(text, ts.SyntaxKind.StringLiteral).descendant;
 }
 
 describe(nameof(StringLiteral), () => {
     describe(nameof<StringLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: string) {
-            const {initializer} = getInfoFromTextWithInitializer(text);
-            expect((initializer as StringLiteral).getLiteralValue()).to.equal(expectedValue);
+            const literal = getStringLiteral(text);
+            expect(literal.getLiteralValue()).to.equal(expectedValue);
         }
 
         it("should get the correct literal value", () => {
@@ -22,8 +21,8 @@ describe(nameof(StringLiteral), () => {
 
     describe(nameof<StringLiteral>(n => n.isTerminated), () => {
         function doTest(text: string, expectedValue: boolean) {
-            const {initializer} = getInfoFromTextWithInitializer(text);
-            expect((initializer as StringLiteral).isTerminated()).to.equal(expectedValue);
+            const literal = getStringLiteral(text);
+            expect(literal.isTerminated()).to.equal(expectedValue);
         }
 
         it("should be terminated", () => {
@@ -37,8 +36,8 @@ describe(nameof(StringLiteral), () => {
 
     describe(nameof<StringLiteral>(n => n.hasExtendedUnicodeEscape), () => {
         function doTest(text: string, expectedValue: boolean) {
-            const {initializer} = getInfoFromTextWithInitializer(text);
-            expect((initializer as StringLiteral).hasExtendedUnicodeEscape()).to.equal(expectedValue);
+            const literal = getStringLiteral(text);
+            expect(literal.hasExtendedUnicodeEscape()).to.equal(expectedValue);
         }
 
         it("should not have extended unicode escape", () => {
@@ -52,8 +51,8 @@ describe(nameof(StringLiteral), () => {
 
     describe(nameof<StringLiteral>(n => n.getQuoteType), () => {
         function doTest(text: string, quoteType: QuoteType) {
-            const {initializer} = getInfoFromTextWithInitializer(text);
-            expect((initializer as StringLiteral).getQuoteType()).to.equal(quoteType);
+            const literal = getStringLiteral(text);
+            expect(literal.getQuoteType()).to.equal(quoteType);
         }
 
         it("should be a double when a double", () => {

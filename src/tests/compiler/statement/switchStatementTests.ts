@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {SwitchStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithSwitchStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const labeledStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.SwitchStatement)
-    ) as SwitchStatement;
-    return {...obj, labeledStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<SwitchStatement>(text, ts.SyntaxKind.SwitchStatement).descendant;
 }
 
 describe(nameof(SwitchStatement), () => {
@@ -19,7 +15,7 @@ describe(nameof(SwitchStatement), () => {
 
     describe(nameof<SwitchStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {labeledStatement} = getInfoFromTextWithSwitchStatement(text);
+            const labeledStatement = getStatement(text);
             expect(labeledStatement.getExpression().getText()).to.equal(expectedText);
         }
 
@@ -30,7 +26,7 @@ describe(nameof(SwitchStatement), () => {
 
     describe(nameof<SwitchStatement>(n => n.getCaseBlock), () => {
         function doTest(text: string, expectedText: string) {
-            const {labeledStatement} = getInfoFromTextWithSwitchStatement(text);
+            const labeledStatement = getStatement(text);
             expect(labeledStatement.getCaseBlock().getText()).to.equal(expectedText);
         }
 
@@ -41,7 +37,7 @@ describe(nameof(SwitchStatement), () => {
 
     describe(nameof<SwitchStatement>(n => n.getClauses), () => {
         function doTest(code: string, clauses: string[]) {
-            const {labeledStatement} = getInfoFromTextWithSwitchStatement(code);
+            const labeledStatement = getStatement(code);
             expect(labeledStatement.getClauses().map(s => s.getText())).to.deep.equal(clauses);
         }
 
@@ -52,7 +48,8 @@ describe(nameof(SwitchStatement), () => {
 
     describe(nameof<SwitchStatement>(n => n.removeClause), () => {
         function doTest(code: string, index: number, expectedCode: string) {
-            const {sourceFile, labeledStatement} = getInfoFromTextWithSwitchStatement(code);
+            const labeledStatement = getStatement(code);
+            const sourceFile = labeledStatement.getSourceFile();
             labeledStatement.removeClause(index);
             expect(sourceFile.getFullText()).to.deep.equal(expectedCode);
         }
@@ -65,7 +62,8 @@ describe(nameof(SwitchStatement), () => {
 
     describe(nameof<SwitchStatement>(n => n.removeClauses), () => {
         function doTest(code: string, range: [number, number], expectedCode: string) {
-            const {sourceFile, labeledStatement} = getInfoFromTextWithSwitchStatement(code);
+            const labeledStatement = getStatement(code);
+            const sourceFile = labeledStatement.getSourceFile();
             labeledStatement.removeClauses(range);
             expect(sourceFile.getFullText()).to.deep.equal(expectedCode);
         }

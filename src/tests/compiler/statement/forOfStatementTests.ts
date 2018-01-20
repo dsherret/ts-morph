@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ForOfStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithForOfStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const forOfStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ForOfStatement)
-    ) as ForOfStatement;
-    return {...obj, forOfStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<ForOfStatement>(text, ts.SyntaxKind.ForOfStatement).descendant;
 }
 
 describe(nameof(ForOfStatement), () => {
@@ -17,7 +13,7 @@ describe(nameof(ForOfStatement), () => {
     const statement = `for (${initializer} of ${expression}) {}`;
     describe(nameof<ForOfStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {forOfStatement} = getInfoFromTextWithForOfStatement(text);
+            const forOfStatement = getStatement(text);
             expect(forOfStatement.getExpression().getText()).to.equal(expectedText);
         }
 
@@ -28,7 +24,7 @@ describe(nameof(ForOfStatement), () => {
 
     describe(nameof<ForOfStatement>(n => n.getInitializer), () => {
         function doTest(text: string, expectedText: string) {
-            const {forOfStatement} = getInfoFromTextWithForOfStatement(text);
+            const forOfStatement = getStatement(text);
             expect(forOfStatement.getInitializer().getText()).to.equal(expectedText);
         }
 

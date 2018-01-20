@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {IfStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithIfStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const ifStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.IfStatement)
-    ) as IfStatement;
-    return {...obj, ifStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<IfStatement>(text, ts.SyntaxKind.IfStatement).descendant;
 }
 
 describe(nameof(IfStatement), () => {
@@ -16,9 +12,10 @@ describe(nameof(IfStatement), () => {
     const thenStatement = "{ x = 1; }";
     const elseStatement = "{ x = 2; }";
     const statement = `if (${expression}) ${thenStatement} else ${elseStatement}`;
+
     describe(nameof<IfStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {ifStatement} = getInfoFromTextWithIfStatement(text);
+            const ifStatement = getStatement(text);
             expect(ifStatement.getExpression().getText()).to.equal(expectedText);
         }
 
@@ -29,7 +26,7 @@ describe(nameof(IfStatement), () => {
 
     describe(nameof<IfStatement>(n => n.getThenStatement), () => {
         function doTest(text: string, expectedText: string) {
-            const {ifStatement} = getInfoFromTextWithIfStatement(text);
+            const ifStatement = getStatement(text);
             expect(ifStatement.getThenStatement().getText()).to.equal(expectedText);
         }
 
@@ -40,7 +37,7 @@ describe(nameof(IfStatement), () => {
 
     describe(nameof<IfStatement>(n => n.getElseStatement), () => {
         function doTest(text: string, expectedText: string | undefined) {
-            const {ifStatement} = getInfoFromTextWithIfStatement(text);
+            const ifStatement = getStatement(text);
             const value = ifStatement.getElseStatement();
             expect(value == null ? value : value.getText()).to.equal(expectedText);
         }

@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {TryStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithTryStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const tryStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.TryStatement)
-    ) as TryStatement;
-    return {...obj, tryStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<TryStatement>(text, ts.SyntaxKind.TryStatement).descendant;
 }
 
 describe(nameof(TryStatement), () => {
@@ -17,8 +13,8 @@ describe(nameof(TryStatement), () => {
     const finallyBlock = "{ let x = 1; }";
     const statement = `try ${tryBlock} ${catchClause} finally ${finallyBlock}`;
     const emptyStatement = `try ${tryBlock}`;
-    const {tryStatement} = getInfoFromTextWithTryStatement(statement);
-    const {tryStatement: emptyTryStatement} = getInfoFromTextWithTryStatement(emptyStatement);
+    const tryStatement = getStatement(statement);
+    const emptyTryStatement = getStatement(emptyStatement);
 
     describe(nameof<TryStatement>(n => n.getTryBlock), () => {
         it("should get the correct try block", () => {

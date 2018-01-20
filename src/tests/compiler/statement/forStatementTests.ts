@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ForStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithForStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const forStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ForStatement)
-    ) as ForStatement;
-    return {...obj, forStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<ForStatement>(text, ts.SyntaxKind.ForStatement).descendant;
 }
 
 describe(nameof(ForStatement), () => {
@@ -17,8 +13,8 @@ describe(nameof(ForStatement), () => {
     const incrementor = "x += 1";
     const statement = `for (${initializer}; ${condition}; ${incrementor}) {}`;
     const emptyStatement = "for (;;) {}";
-    const {forStatement} = getInfoFromTextWithForStatement(statement);
-    const {forStatement: emptyForStatement} = getInfoFromTextWithForStatement(emptyStatement);
+    const forStatement = getStatement(statement);
+    const emptyForStatement = getStatement(emptyStatement);
 
     describe(nameof<ForStatement>(n => n.getInitializer), () => {
         it("should get the correct initializer", () => {

@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {CaseClause} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithCaseClause(text: string) {
-    const obj = getInfoFromText(text);
-    const caseClause = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.CaseClause)
-    ) as CaseClause;
-    return {...obj, caseClause};
+function getCaseClause(text: string) {
+    return getInfoFromTextWithDescendant<CaseClause>(text, ts.SyntaxKind.CaseClause).descendant;
 }
 
 describe(nameof(CaseClause), () => {
@@ -17,7 +13,7 @@ describe(nameof(CaseClause), () => {
     const clause = `switch (y) { case ${expression}: ${statement} }`;
     describe(nameof<CaseClause>(n => n.getStatements), () => {
         function doTest(text: string, expectedText: string) {
-            const {caseClause} = getInfoFromTextWithCaseClause(text);
+            const caseClause = getCaseClause(text);
             expect(caseClause.getStatements()[0].getText()).to.equal(expectedText);
         }
 
@@ -28,7 +24,7 @@ describe(nameof(CaseClause), () => {
 
     describe(nameof<CaseClause>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {caseClause} = getInfoFromTextWithCaseClause(text);
+            const caseClause = getCaseClause(text);
             expect(caseClause.getExpression().getText()).to.equal(expectedText);
         }
 

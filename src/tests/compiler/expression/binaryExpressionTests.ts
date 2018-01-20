@@ -1,20 +1,16 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {BinaryExpression} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const expression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.BinaryExpression)
-    ) as BinaryExpression;
-    return { ...obj, expression };
+function getBinaryExpression(text: string) {
+     return getInfoFromTextWithDescendant<BinaryExpression>(text, ts.SyntaxKind.BinaryExpression).descendant;
 }
 
 describe(nameof(BinaryExpression), () => {
     describe(nameof<BinaryExpression>(n => n.getLeft), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
+            const expression = getBinaryExpression(text);
             expect(expression.getLeft().getText()).to.equal(expectedText);
         }
 
@@ -25,7 +21,7 @@ describe(nameof(BinaryExpression), () => {
 
     describe(nameof<BinaryExpression>(n => n.getOperatorToken), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
+            const expression = getBinaryExpression(text);
             expect(expression.getOperatorToken().getText()).to.equal(expectedText);
         }
 
@@ -36,7 +32,7 @@ describe(nameof(BinaryExpression), () => {
 
     describe(nameof<BinaryExpression>(n => n.getRight), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
+            const expression = getBinaryExpression(text);
             expect(expression.getRight().getText()).to.equal(expectedText);
         }
 

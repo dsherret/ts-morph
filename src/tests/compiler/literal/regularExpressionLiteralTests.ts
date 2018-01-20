@@ -1,21 +1,16 @@
-﻿import * as os from "os";
+﻿import * as ts from "typescript";
+import * as os from "os";
 import {expect} from "chai";
-import {VariableStatement, RegularExpressionLiteral} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
-
-function getInfoFromTextWithInitializer(text: string) {
-    const obj = getInfoFromText<VariableStatement>(text);
-    const initializer = obj.firstChild.getDeclarations()[0].getInitializerOrThrow() as RegularExpressionLiteral;
-    return { ...obj, initializer };
-}
+import {RegularExpressionLiteral} from "./../../../compiler";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(RegularExpressionLiteral), () => {
     const isWindows = os.platform() === "win32";
 
     describe(nameof<RegularExpressionLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, pattern: string, flags: string) {
-            const {initializer} = getInfoFromTextWithInitializer(text);
-            const regExpr = initializer.getLiteralValue();
+            const {descendant} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, ts.SyntaxKind.RegularExpressionLiteral);
+            const regExpr = descendant.getLiteralValue();
             expect(regExpr.source).to.equal(pattern);
 
             // this works on my machine, but not the CI for some reason... ignoring it for now

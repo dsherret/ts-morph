@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {BreakStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithBreakStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const breakStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.BreakStatement)
-    ) as BreakStatement;
-    return {...obj, breakStatement};
+function getBreakStatement(text: string) {
+    return getInfoFromTextWithDescendant<BreakStatement>(text, ts.SyntaxKind.BreakStatement).descendant;
 }
 
 describe(nameof(BreakStatement), () => {
@@ -17,7 +13,7 @@ describe(nameof(BreakStatement), () => {
     const emptyStatement = "break;";
     describe(nameof<BreakStatement>(n => n.getLabel), () => {
         function doTest(text: string, expectedText?: string) {
-            const {breakStatement} = getInfoFromTextWithBreakStatement(text);
+            const breakStatement = getBreakStatement(text);
             const value = breakStatement.getLabel();
             expect(value == null ? value : value.getText()).to.equal(expectedText);
         }
@@ -33,7 +29,7 @@ describe(nameof(BreakStatement), () => {
 
     describe(nameof<BreakStatement>(n => n.getLabelOrThrow), () => {
         function doTest(text: string, expectedText?: string) {
-            const {breakStatement} = getInfoFromTextWithBreakStatement(text);
+            const breakStatement = getBreakStatement(text);
             if (expectedText == null) {
                 expect(() => breakStatement.getLabelOrThrow()).to.throw();
             } else {

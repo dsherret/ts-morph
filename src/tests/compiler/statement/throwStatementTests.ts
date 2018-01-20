@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ThrowStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithThrowStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const doStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ThrowStatement)
-    ) as ThrowStatement;
-    return {...obj, doStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<ThrowStatement>(text, ts.SyntaxKind.ThrowStatement).descendant;
 }
 
 describe(nameof(ThrowStatement), () => {
@@ -16,7 +12,7 @@ describe(nameof(ThrowStatement), () => {
     const statement = `throw ${expression};`;
     describe(nameof<ThrowStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {doStatement} = getInfoFromTextWithThrowStatement(text);
+            const doStatement = getStatement(text);
             expect(doStatement.getExpression().getText()).to.equal(expectedText);
         }
 

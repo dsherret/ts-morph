@@ -1,23 +1,20 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {LabeledStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithLabeledStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const labeledStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.LabeledStatement)
-    ) as LabeledStatement;
-    return {...obj, labeledStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<LabeledStatement>(text, ts.SyntaxKind.LabeledStatement).descendant;
 }
 
 describe(nameof(LabeledStatement), () => {
     const statement = "let x = 1 + 2";
     const label = "foo";
     const labeled = `${label}: ${statement}`;
+
     describe(nameof<LabeledStatement>(n => n.getLabel), () => {
         function doTest(text: string, expectedText: string) {
-            const {labeledStatement} = getInfoFromTextWithLabeledStatement(text);
+            const labeledStatement = getStatement(text);
             expect(labeledStatement.getLabel().getText()).to.equal(expectedText);
         }
 
@@ -28,7 +25,7 @@ describe(nameof(LabeledStatement), () => {
 
     describe(nameof<LabeledStatement>(n => n.getStatement), () => {
         function doTest(text: string, expectedText: string) {
-            const {labeledStatement} = getInfoFromTextWithLabeledStatement(text);
+            const labeledStatement = getStatement(text);
             expect(labeledStatement.getStatement().getText()).to.equal(expectedText);
         }
 

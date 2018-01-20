@@ -1,23 +1,20 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ContinueStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithContinueStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const continueStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ContinueStatement)
-    ) as ContinueStatement;
-    return {...obj, continueStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<ContinueStatement>(text, ts.SyntaxKind.ContinueStatement).descendant;
 }
 
 describe(nameof(ContinueStatement), () => {
     const label = "foo";
     const statement = `continue ${label};`;
     const emptyStatement = "continue;";
+
     describe(nameof<ContinueStatement>(n => n.getLabel), () => {
         function doTest(text: string, expectedText?: string) {
-            const {continueStatement} = getInfoFromTextWithContinueStatement(text);
+            const continueStatement = getStatement(text);
             const value = continueStatement.getLabel();
             expect(value == null ? value : value.getText()).to.equal(expectedText);
         }
@@ -33,7 +30,7 @@ describe(nameof(ContinueStatement), () => {
 
     describe(nameof<ContinueStatement>(n => n.getLabelOrThrow), () => {
         function doTest(text: string, expectedText?: string) {
-            const {continueStatement} = getInfoFromTextWithContinueStatement(text);
+            const continueStatement = getStatement(text);
             if (expectedText == null) {
                 expect(() => continueStatement.getLabelOrThrow()).to.throw();
             } else {

@@ -1,20 +1,16 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {NoSubstitutionTemplateLiteral} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
-function getInfoFromTextWithLiteral(text: string) {
-    const obj = getInfoFromText(text);
-    const literal = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.NoSubstitutionTemplateLiteral)
-    ) as NoSubstitutionTemplateLiteral;
-    return {...obj, literal};
+function getLiteral(text: string) {
+    return getInfoFromTextWithDescendant<NoSubstitutionTemplateLiteral>(text, ts.SyntaxKind.NoSubstitutionTemplateLiteral).descendant;
 }
 
 describe(nameof(NoSubstitutionTemplateLiteral), () => {
     describe(nameof<NoSubstitutionTemplateLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: string) {
-            const {literal} = getInfoFromTextWithLiteral(text);
+            const literal = getLiteral(text);
             expect(literal.getLiteralValue()).to.equal(expectedValue);
         }
 

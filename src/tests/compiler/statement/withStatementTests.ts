@@ -1,20 +1,16 @@
 ﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {WithStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithForInStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const withStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.WithStatement)
-    ) as WithStatement;
-    return {...obj, withStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<WithStatement>(text, ts.SyntaxKind.WithStatement).descendant;
 }
 
 describe(nameof(WithStatement), () => {
     describe(nameof<WithStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {withStatement} = getInfoFromTextWithForInStatement(text);
+            const withStatement = getStatement(text);
             expect(withStatement.getExpression().getText()).to.equal(expectedText);
         }
 
@@ -25,7 +21,7 @@ describe(nameof(WithStatement), () => {
 
     describe(nameof<WithStatement>(n => n.getStatement), () => {
         function doTest(text: string, expectedText: string) {
-            const {withStatement} = getInfoFromTextWithForInStatement(text);
+            const withStatement = getStatement(text);
             expect(withStatement.getStatement().getText()).to.equal(expectedText);
         }
 

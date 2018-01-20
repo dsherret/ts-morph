@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {WhileStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithWhileStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const whileStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.WhileStatement)
-    ) as WhileStatement;
-    return {...obj, whileStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<WhileStatement>(text, ts.SyntaxKind.WhileStatement).descendant;
 }
 
 describe(nameof(WhileStatement), () => {
@@ -17,7 +13,7 @@ describe(nameof(WhileStatement), () => {
 
     describe(nameof<WhileStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText?: string) {
-            const {whileStatement} = getInfoFromTextWithWhileStatement(text);
+            const whileStatement = getStatement(text);
             expect(whileStatement.getExpression().getText()).to.equal(expectedText);
         }
 

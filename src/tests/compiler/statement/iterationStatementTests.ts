@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {IterationStatement, ForInStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithForInStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const forInStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ForInStatement)
-    ) as ForInStatement;
-    return {...obj, forInStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<ForInStatement>(text, ts.SyntaxKind.ForInStatement).descendant;
 }
 
 describe(nameof(IterationStatement), () => {
@@ -16,7 +12,7 @@ describe(nameof(IterationStatement), () => {
     const iterationStatement = `for (x in {}) ${statement}`;
     describe(nameof<IterationStatement>(n => n.getStatement), () => {
         function doTest(text: string, expectedText: string) {
-            const {forInStatement} = getInfoFromTextWithForInStatement(text);
+            const forInStatement = getStatement(text);
             expect(forInStatement.getStatement().getText()).to.equal(expectedText);
         }
 

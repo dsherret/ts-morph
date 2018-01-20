@@ -1,21 +1,13 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ObjectDestructuringAssignment} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
-
-function getInfoFromTextWithExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const expression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.BinaryExpression)
-    ) as ObjectDestructuringAssignment;
-    return {...obj, expression};
-}
+import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 describe(nameof(ObjectDestructuringAssignment), () => {
     describe(nameof<ObjectDestructuringAssignment>(n => n.getLeft), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
-            expect(expression.getLeft().getText()).to.equal(expectedText);
+            const {descendant} = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, ts.SyntaxKind.BinaryExpression);
+            expect(descendant.getLeft().getText()).to.equal(expectedText);
         }
 
         it("should get the correct left side", () => {

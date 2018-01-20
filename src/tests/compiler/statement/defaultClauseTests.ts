@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {DefaultClause} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithDefaultClause(text: string) {
-    const obj = getInfoFromText(text);
-    const defaultClause = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.DefaultClause)
-    ) as DefaultClause;
-    return {...obj, defaultClause};
+function getDefaultClause(text: string) {
+    return getInfoFromTextWithDescendant<DefaultClause>(text, ts.SyntaxKind.DefaultClause).descendant;
 }
 
 describe(nameof(DefaultClause), () => {
@@ -16,7 +12,7 @@ describe(nameof(DefaultClause), () => {
     const clause = `switch (x) { default: ${statement} }`;
     describe(nameof<DefaultClause>(n => n.getStatements), () => {
         function doTest(text: string, expectedText: string) {
-            const {defaultClause} = getInfoFromTextWithDefaultClause(text);
+            const defaultClause = getDefaultClause(text);
             expect(defaultClause.getStatements()[0].getText()).to.equal(expectedText);
         }
 

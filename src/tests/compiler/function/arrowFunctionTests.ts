@@ -1,14 +1,11 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {ArrowFunction} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfoFromTextWithExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const expression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ArrowFunction)
-    ) as ArrowFunction;
-    return {...obj, expression};
+    const info = getInfoFromTextWithDescendant<ArrowFunction>(text, ts.SyntaxKind.ArrowFunction);
+    return {...info, expression: info.descendant};
 }
 
 describe(nameof(ArrowFunction), () => {

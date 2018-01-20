@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {CatchClause} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithCatchClause(text: string) {
-    const obj = getInfoFromText(text);
-    const catchClause = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.CatchClause)
-    ) as CatchClause;
-    return {...obj, catchClause};
+function getCatchClause(text: string) {
+    return getInfoFromTextWithDescendant<CatchClause>(text, ts.SyntaxKind.CatchClause).descendant;
 }
 
 describe(nameof(CatchClause), () => {
@@ -16,8 +12,8 @@ describe(nameof(CatchClause), () => {
     const variableDeclaration = "x";
     const statement = `catch (${variableDeclaration}) ${block}`;
     const emptyStatement = `catch ${block}`;
-    const {catchClause} = getInfoFromTextWithCatchClause(statement);
-    const {catchClause: emptyCatchClause} = getInfoFromTextWithCatchClause(emptyStatement);
+    const catchClause = getCatchClause(statement);
+    const emptyCatchClause = getCatchClause(emptyStatement);
 
     describe(nameof<CatchClause>(n => n.getBlock), () => {
         it("should get the correct block", () => {

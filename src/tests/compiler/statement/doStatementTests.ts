@@ -1,23 +1,20 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {DoStatement} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
-function getInfoFromTextWithDoStatement(text: string) {
-    const obj = getInfoFromText(text);
-    const doStatement = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.DoStatement)
-    ) as DoStatement;
-    return {...obj, doStatement};
+function getStatement(text: string) {
+    return getInfoFromTextWithDescendant<DoStatement>(text, ts.SyntaxKind.DoStatement).descendant;
 }
 
 describe(nameof(DoStatement), () => {
     const statement = "do {}";
     const expression = "x > 0";
     const expressionStatement = `do {} while (${expression});`;
+
     describe(nameof<DoStatement>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {doStatement} = getInfoFromTextWithDoStatement(text);
+            const doStatement = getStatement(text);
             expect(doStatement.getExpression().getText()).to.equal(expectedText);
         }
 

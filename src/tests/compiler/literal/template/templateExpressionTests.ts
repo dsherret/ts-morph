@@ -1,14 +1,10 @@
 import * as ts from "typescript";
 import {expect} from "chai";
 import {TemplateExpression} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
-function getInfoFromTextWithExpression(text: string) {
-    const obj = getInfoFromText(text);
-    const expression = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.TemplateExpression)
-    ) as TemplateExpression;
-    return {...obj, expression};
+function getExpression(text: string) {
+    return getInfoFromTextWithDescendant<TemplateExpression>(text, ts.SyntaxKind.TemplateExpression).descendant;
 }
 
 describe(nameof(TemplateExpression), () => {
@@ -17,7 +13,7 @@ describe(nameof(TemplateExpression), () => {
     const expr = `${templateHead}${templateSpan}`;
     describe(nameof<TemplateExpression>(n => n.getHead), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
+            const expression = getExpression(text);
             expect(expression.getHead().getText()).to.equal(expectedText);
         }
 
@@ -28,7 +24,7 @@ describe(nameof(TemplateExpression), () => {
 
     describe(nameof<TemplateExpression>(n => n.getTemplateSpans), () => {
         function doTest(text: string, expectedText: string) {
-            const {expression} = getInfoFromTextWithExpression(text);
+            const expression = getExpression(text);
             expect(expression.getTemplateSpans()[0].getText()).to.equal(expectedText);
         }
 

@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration, PropertyDeclaration} from "./../../../compiler";
+import {Node, AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration, PropertyDeclaration} from "./../../../compiler";
 import {AmbientableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -41,14 +41,16 @@ describe(nameof(AmbientableNode), () => {
         });
 
         describe(nameof<AmbientableNode>(n => n.isAmbient), () => {
+            function doTest(text: string, expectedValue: boolean) {
+                const {firstChild} = getInfoFromText<AmbientableNode & Node>(text);
+                expect(firstChild.isAmbient()).to.equal(expectedValue);
+            }
             it("should not be ambient when not", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {}");
-                expect(firstChild.isAmbient()).to.be.false;
+                doTest("class Identifier {}", false);
             });
 
             it("should be ambient when it has a declare keyword", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("declare class Identifier {}");
-                expect(firstChild.isAmbient()).to.be.true;
+                doTest("declare class Identifier {}", true);
             });
 
             it("should be ambient when it's in a definition file", () => {
@@ -63,13 +65,11 @@ describe(nameof(AmbientableNode), () => {
             });
 
             it("should always be ambient for interfaces", () => {
-                const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier {}");
-                expect(firstChild.isAmbient()).to.be.true;
+                doTest("interface Identifier {}", true);
             });
 
             it("should always be ambient for type aliases", () => {
-                const {firstChild} = getInfoFromText<TypeAliasDeclaration>("type Identifier = string;");
-                expect(firstChild.isAmbient()).to.be.true;
+                doTest("type Identifier = string;", true);
             });
         });
     });
