@@ -240,12 +240,12 @@ describe(nameof(ExportableNode), () => {
                 doInnerTest("namespace Identifier { class Identifier {} }", true, "namespace Identifier { export class Identifier {} }");
             });
 
-            it("should remove it as a default export if one", () => {
+            it("should remove it as a default export keyword if one", () => {
                 doTest("export default class Identifier {}", true, "export class Identifier {}");
             });
 
-            it("should remove it as a default export if one and exported in a separate statement", () => {
-                doTest("class Identifier {}\nexport default Identifier;\n", true, "export class Identifier {}\n");
+            it("should not remove it as a default export if one and exported in a separate statement", () => {
+                doTest("class Identifier {}\nexport default Identifier;\n", true, "export class Identifier {}\nexport default Identifier;\n");
             });
         });
 
@@ -274,8 +274,12 @@ describe(nameof(ExportableNode), () => {
                 doTest("export default class Identifier {}", false, "class Identifier {}");
             });
 
-            it("should remove it as a default export if one and exported in a separate statement", () => {
-                doTest("class Identifier {}\nexport default Identifier;\n", false, "class Identifier {}\n");
+            it("should remove it as a default export if one and setting to true", () => {
+                doTest("export default class Identifier {}", true, "export class Identifier {}");
+            });
+
+            it("should not remove it as a default export if one and exported in a separate statement", () => {
+                doTest("class Identifier {}\nexport default Identifier;\n", false, "class Identifier {}\nexport default Identifier;\n");
             });
         });
     });

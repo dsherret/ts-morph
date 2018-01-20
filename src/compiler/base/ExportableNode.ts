@@ -54,6 +54,7 @@ export interface ExportableNode {
     setIsDefaultExport(value: boolean): this;
     /**
      * Sets if the node is exported.
+     *
      * Note: Will remove the default keyword if set.
      * @param value - If it should be exported or not.
      */
@@ -146,9 +147,9 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         }
 
         setIsExported(value: boolean) {
-            // remove the default export if it is one no matter what
+            // remove the default keyword if it exists
             if (TypeGuards.isSourceFile(this.getParentOrThrow()))
-                this.setIsDefaultExport(false);
+                this.toggleModifier("default", false);
 
             this.toggleModifier("export", value);
 
