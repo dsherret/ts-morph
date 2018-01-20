@@ -5,7 +5,7 @@ import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation
 import {ExportableNodeStructure} from "./../../structures";
 import {TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
+import {Node, SyntaxList} from "./../common";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;
@@ -54,7 +54,7 @@ export interface ExportableNode {
     setIsDefaultExport(value: boolean): this;
     /**
      * Sets if the node is exported.
-     * Note: Will always remove the default export if set.
+     * Note: Will remove the default keyword if set.
      * @param value - If it should be exported or not.
      */
     setIsExported(value: boolean): this;
@@ -129,8 +129,15 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (fileDefaultExportSymbol != null)
                 sourceFile.removeDefaultExport(fileDefaultExportSymbol);
 
+            if (!value)
+                return this;
+
             // set this node as the one to default export
-            if (value) {
+            if (TypeGuards.isAmbientableNode(this) && TypeGuards.hasName(this) && this.isAmbient()) {
+                const parentSyntaxList = this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.SyntaxList) as SyntaxList;
+                parentSyntaxList.insertChildText(this.getChildIndex() + 1, `export default ${this.getName()};`);
+            }
+            else {
                 this.addModifier("export");
                 this.addModifier("default");
             }

@@ -186,6 +186,12 @@ describe(nameof(ExportableNode), () => {
                 const innerChild = firstChild.getClasses()[0];
                 expect(() => innerChild.setIsDefaultExport(true)).to.throw(errors.InvalidOperationError);
             });
+
+            it("should add the default export on a new line when ambientable", () => {
+                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("/** Test */ export declare class Identifier {}");
+                firstChild.setIsDefaultExport(true);
+                expect(sourceFile.getFullText()).to.equal("/** Test */ export declare class Identifier {}\nexport default Identifier;");
+            });
         });
 
         describe("unsetting as the default export", () => {

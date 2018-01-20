@@ -545,18 +545,27 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Goes up the tree getting all the parents in ascending order.
      */
-    getAncestors() {
-        return ArrayUtils.from(this.getAncestorsIterator());
+    getAncestors(): Node[];
+    /**
+     * @internal - This is internal for now. I'm not sure what the correct behaviour should be.
+     */
+    getAncestors(includeSyntaxLists: boolean): Node[];
+    getAncestors(includeSyntaxLists = false) {
+        return ArrayUtils.from(this.getAncestorsIterator(includeSyntaxLists));
     }
 
     /**
      * @internal
      */
-    *getAncestorsIterator(): IterableIterator<Node> {
-        let parent = (this as Node).getParent();
+    *getAncestorsIterator(includeSyntaxLists: boolean): IterableIterator<Node> {
+        let parent = getParent(this);
         while (parent != null) {
             yield parent;
-            parent = parent!.getParent();
+            parent = getParent(parent!);
+        }
+
+        function getParent(node: Node) {
+            return includeSyntaxLists ? node.getParentSyntaxList() || node.getParent() : node.getParent();
         }
     }
 
@@ -957,7 +966,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKind(kind: ts.SyntaxKind): Node | undefined {
-        for (const parent of this.getAncestors()) {
+        for (const parent of this.getAncestors(kind === ts.SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
                 return parent;
         }
