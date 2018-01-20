@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.3.0"></a>
+# [6.3.0](https://github.com/dsherret/ts-simple-ast/compare/6.2.0...6.3.0) (2018-01-20)
+
+
+### Bug Fixes
+
+* ExportableNode.setIsExported should not remove a default export on a different line. ([fe0bcc0](https://github.com/dsherret/ts-simple-ast/commit/fe0bcc0))
+* Fixes setting node as a default export in ambientable situation would throw. ([66ac7e6](https://github.com/dsherret/ts-simple-ast/commit/66ac7e6))
+* Some interfaces were missing from being exported from the main file. ([5330aba](https://github.com/dsherret/ts-simple-ast/commit/5330aba))
+
+
+### Features
+
+* ExportSpecifier - getLocalTargetSymbol() and getLocalTargetDeclarations() ([30eff42](https://github.com/dsherret/ts-simple-ast/commit/30eff42))
+* ImportDeclaration & ExportDeclaration - getModuleSpecifierSourceFile ([a42d6a1](https://github.com/dsherret/ts-simple-ast/commit/a42d6a1))
+* SourceFile - getExportedDeclarations() ([61663aa](https://github.com/dsherret/ts-simple-ast/commit/61663aa))
+* TypeGuards.hasName(node) ([efed188](https://github.com/dsherret/ts-simple-ast/commit/efed188))
+
+
+
 <a name="6.2.0"></a>
 # [6.2.0](https://github.com/dsherret/ts-simple-ast/compare/6.1.0...6.2.0) (2018-01-14)
 
