@@ -7,15 +7,16 @@ import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/t
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "./../../structures";
 import {ImportDeclarationStructureToText, ExportDeclarationStructureToText, ExportAssignmentStructureToText} from "./../../structureToTexts";
-import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils} from "./../../utils";
+import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils, createHashSet} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
-import {Node, Symbol} from "./../common";
+import {Node, Symbol, Identifier} from "./../common";
 import {StatementedNode} from "./../statement";
 import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings} from "./../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 import {ExportAssignment} from "./ExportAssignment";
+import {ExportSpecifier} from "./ExportSpecifier";
 import {FileSystemRefreshResult} from "./FileSystemRefreshResult";
 
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
@@ -342,6 +343,52 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getExportDeclarations(): ExportDeclaration[] {
         return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration[];
+    }
+
+    /**
+     * Gets the export symbols of the source file.
+     */
+    getExportSymbols(): Symbol[] {
+        return this.global.typeChecker.getExportsOfModule(this.getSymbolOrThrow());
+    }
+
+    /**
+     * Gets all the declarations exported from the file.
+     */
+    getExportedDeclarations(): Node[] {
+        const exportSymbols = this.getExportSymbols();
+        return ArrayUtils.from(getDeclarationsForSymbols());
+
+        function* getDeclarationsForSymbols() {
+            const handledDeclarations = createHashSet<Node>();
+
+            for (const symbol of exportSymbols)
+                for (const declaration of symbol.getDeclarations())
+                    yield* getDeclarationHandlingExportSpecifiers(declaration);
+
+            function* getDeclarationHandlingExportSpecifiers(declaration: Node): IterableIterator<Node> {
+                if (handledDeclarations.has(declaration))
+                    return;
+                handledDeclarations.add(declaration);
+
+                if (declaration.getKind() === ts.SyntaxKind.ExportSpecifier) {
+                    for (const d of (declaration as ExportSpecifier).getLocalTargetDeclarations())
+                        yield* getDeclarationHandlingExportSpecifiers(d);
+                }
+                else if (declaration.getKind() === ts.SyntaxKind.ExportAssignment) {
+                    const identifier = (declaration as ExportAssignment).getExpression();
+                    if (identifier == null || identifier.getKind() !== ts.SyntaxKind.Identifier)
+                        return;
+                    const symbol = identifier.getSymbol();
+                    if (symbol == null)
+                        return;
+                    for (const d of symbol.getDeclarations())
+                        yield* getDeclarationHandlingExportSpecifiers(d);
+                }
+                else
+                    yield declaration;
+            }
+        }
     }
 
     /**

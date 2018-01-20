@@ -409,6 +409,33 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.getExportedDeclarations), () => {
+        it("should get the exported declarations", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
+                "export class MainFileClass {}\nexport default MainFileClass;");
+            ast.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
+            ast.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
+            ast.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
+            ast.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
+                `export {default as SubClass3} from "./subFile3"`);
+            ast.createSourceFile("subFile.ts", `export class SubClass {}`);
+            ast.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
+            ast.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
+                .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
+        });
+
+        it("should get the exported declaration when there's only a default export using an export assignment", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
+
+            expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
+                .to.deep.equal(["MainFileClass"].sort());
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.insertExportAssignments), () => {
         function doTest(startCode: string, index: number, structures: ExportAssignmentStructure[], expectedCode: string) {
             const {sourceFile} = getInfoFromText(startCode);

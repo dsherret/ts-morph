@@ -20,6 +20,10 @@ export class ArrayUtils {
         return true;
     }
 
+    static flatten<T>(items: T[][]) {
+        return items.reduce((a, b) => a.concat(b), []);
+    }
+
     static find<T>(items: T[] | IterableIterator<T>, condition: (item: T) => boolean) {
         for (const item of items) {
             if (condition(item))

@@ -186,3 +186,57 @@ function myFunction(param: MyClass) {
     return "";
 }
 ```
+
+## Getting Exported Declarations
+
+The exported declarations of a file can be retrieved via `.getExportedDeclarations()`.
+
+For example, given the following setup:
+
+```ts
+// main.ts
+export * from "./classes";
+export {Interface1} from "./interfaces";
+
+class MainClass {}
+export default MainClass;
+
+// classes.ts
+export * from "./Class1";
+export * from "./Class2";
+
+// Class1.ts
+export class Class1 {}
+
+// Class2.ts
+export class Class2 {}
+
+// interfaces.ts
+export interface Interface1 {}
+export interface Interface2 {}
+```
+
+The following code:
+
+```ts
+import Ast, {TypeGuards} from "ts-simple-ast";
+const ast = new Ast();
+ast.addExistingSourceFiles("**/*.ts");
+const mainFile = ast.getSourceFileOrThrow("main.ts");
+
+for (const declaration of mainFile.getExportedDeclarations()) {
+    if (TypeGuards.isClassDeclaration(declaration) || TypeGuards.isInterfaceDeclaration(declaration))
+        console.log(`Name: ${declaration.getName()}`);
+    else
+        throw new Error(`Not expected declaration kind: ${declaration.getKindName()}`);
+}
+```
+
+Outputs the following:
+
+```
+Name: MainClass
+Name: Class1
+Name: Class2
+Name: Interface1
+```

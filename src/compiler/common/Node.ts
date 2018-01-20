@@ -125,7 +125,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the symbol or throws an error if it doesn't exist.
      */
     getSymbolOrThrow(): Symbol {
-        return errors.throwIfNullOrUndefined(this.getSymbol(), "Could not find the node symbol.");
+        return errors.throwIfNullOrUndefined(this.getSymbol(), "Could not find the node's symbol.");
     }
 
     /**
