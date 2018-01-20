@@ -3,6 +3,7 @@ import {GlobalContainer} from "./../../GlobalContainer";
 import {EnumMember} from "./../enum";
 import {Expression} from "./../expression";
 import {Node, Symbol, Signature} from "./../common";
+import {ExportSpecifier} from "./../file";
 import {Type} from "./../type";
 
 /**
@@ -150,6 +151,24 @@ export class TypeChecker {
     getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
         const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
         return signature == null ? undefined : this.global.compilerFactory.getSignature(signature);
+    }
+
+    /**
+     * Gets the exports of a module.
+     * @param moduleSymbol - Module symbol.
+     */
+    getExportsOfModule(moduleSymbol: Symbol) {
+        const symbols = this.compilerObject.getExportsOfModule(moduleSymbol.compilerSymbol);
+        return (symbols || []).map(s => this.global.compilerFactory.getSymbol(s));
+    }
+
+    /**
+     * Gets the local target symbol of the provided export specifier.
+     * @param exportSpecifier - Export specifier.
+     */
+    getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier) {
+        const symbol = this.compilerObject.getExportSpecifierLocalTargetSymbol(exportSpecifier.compilerNode);
+        return symbol == null ? undefined : this.global.compilerFactory.getSymbol(symbol);
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {

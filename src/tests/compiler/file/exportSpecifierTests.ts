@@ -1,4 +1,5 @@
-﻿import {expect} from "chai";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
 import TsSimpleAst from "./../../../main";
 import {ExportDeclaration, ExportSpecifier} from "./../../../compiler";
 import {ArrayUtils} from "./../../../utils";
@@ -128,6 +129,49 @@ describe(nameof(ExportSpecifier), () => {
             expect(myClassFile.getFullText()).to.equal(`export class MyClass {\n}\n`);
             expect(exportsFile.getFullText()).to.equal(`export {MyClass as MyNewAlias} from "./MyClass";\n`);
             expect(mainFile.getFullText()).to.equal(`import {MyNewAlias} from "./Exports";\n\nconst t = MyNewAlias;\n`);
+        });
+    });
+
+    function setupLocalTargetSymbolTest() {
+        const ast = getAst();
+        const mainFile = ast.createSourceFile("main.ts", `export {MyClass, OtherClass} from "./MyClass";`);
+        const myClassFile = ast.createSourceFile("MyClass.ts", `export class MyClass {}`);
+        return mainFile.getExportDeclarations()[0].getNamedExports();
+    }
+
+    describe(nameof<ExportSpecifier>(n => n.getLocalTargetSymbol), () => {
+        it("should get the local target symbol when it exists", () => {
+            const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
+            expect(myClassExportSpecifier.getLocalTargetSymbol()!.getDeclarations()[0].getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+        });
+
+        it("should returned undefined when it doesn't exist", () => {
+            const otherClassExportSpecifier = setupLocalTargetSymbolTest()[1];
+            expect(otherClassExportSpecifier.getLocalTargetSymbol()).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ExportSpecifier>(n => n.getLocalTargetSymbolOrThrow), () => {
+        it("should get the local target symbol when it exists", () => {
+            const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
+            expect(myClassExportSpecifier.getLocalTargetSymbolOrThrow().getDeclarations()[0].getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+        });
+
+        it("should throw when it doesn't exist", () => {
+            const otherClassExportSpecifier = setupLocalTargetSymbolTest()[1];
+            expect(() => otherClassExportSpecifier.getLocalTargetSymbolOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<ExportSpecifier>(n => n.getLocalTargetDeclarations), () => {
+        it("should get the local target declarations when they exist", () => {
+            const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
+            expect(myClassExportSpecifier.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([ts.SyntaxKind.ClassDeclaration]);
+        });
+
+        it("should returned an empty array when they don't exist", () => {
+            const otherClassExportSpecifier = setupLocalTargetSymbolTest()[1];
+            expect(otherClassExportSpecifier.getLocalTargetDeclarations()).to.deep.equal([]);
         });
     });
 

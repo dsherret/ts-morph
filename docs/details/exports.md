@@ -157,6 +157,14 @@ namedExport.setAlias("NewAliasName");
 
 _Note:_ Setting the alias will rename any uses of the alias or identifier to the new value.
 
+##### Local Target Declarations
+
+The local target declarations are the declarations that the export specifier is referencing:
+
+```ts
+const declarations = namedExport.getLocalTargetDeclarations(); // returns: Node[]
+```
+
 ##### Parent export declaration
 
 ```typescript

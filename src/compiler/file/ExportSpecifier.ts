@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
+import * as errors from "./../../errors";
 import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
-import {TypeGuards} from "./../../utils";
-import {Node, Identifier} from "./../common";
+import {TypeGuards, Logger} from "./../../utils";
+import {Node, Identifier, Symbol} from "./../common";
 import {ExportDeclaration} from "./ExportDeclaration";
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
@@ -74,6 +75,28 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      */
     getExportDeclaration() {
         return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
+    }
+
+    /**
+     * Gets the local target symbol of the export specifier or throws if it doesn't exist.
+     */
+    getLocalTargetSymbolOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getLocalTargetSymbol(), `The export specifier's local target symbol was expected.`);
+    }
+
+    /**
+     * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
+     */
+    getLocalTargetSymbol(): Symbol | undefined {
+        return this.global.typeChecker.getExportSpecifierLocalTargetSymbol(this);
+    }
+
+    /**
+     * Gets all the declarations referenced by the export specifier.
+     */
+    getLocalTargetDeclarations(): Node[] {
+        const symbol = this.getLocalTargetSymbol();
+        return symbol == null ? [] : symbol.getDeclarations();
     }
 
     /**
