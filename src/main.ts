@@ -1,8 +1,11 @@
 export * from "./compiler";
 export * from "./structures";
 export {TsSimpleAst as default} from "./TsSimpleAst";
+export {Options} from "./TsSimpleAst";
 export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
-export {createWrappedNode} from "./createWrappedNode";
+export {createWrappedNode, CreateWrappedNodeOptions} from "./createWrappedNode";
 export {getCompilerOptionsFromTsConfig} from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
+export {printNode, PrintNodeOptions} from "./utils/printNode";
+export {Constructor} from "./Constructor";
 export {TypeGuards} from "./utils/TypeGuards";
