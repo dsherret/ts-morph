@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && npm run code-verification && npm publish",
+    "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/flattenDeclarationFiles && npm run code-verification && npm publish",
     "test-ts-2.4.2": "npm install typescript@2.4.2 && npm run test-run",
     "test-ts-2.5.3": "npm install typescript@2.5.3 && npm run test-run",
     "test-ts-2.6.2": "npm install typescript@2.6.2 && npm run test-run",

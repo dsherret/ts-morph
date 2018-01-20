@@ -10,13 +10,13 @@ import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFu
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
-import * as classes from "./../class";
-import * as enums from "./../enum";
-import * as functions from "./../function";
-import * as interfaces from "./../interface";
-import * as namespaces from "./../namespace";
-import * as types from "./../type";
-import * as statement from "./../statement";
+import {ClassDeclaration} from "./../class";
+import {EnumDeclaration} from "./../enum";
+import {FunctionDeclaration} from "./../function";
+import {InterfaceDeclaration} from "./../interface";
+import {NamespaceDeclaration} from "./../namespace";
+import {TypeAliasDeclaration} from "./../type";
+import {VariableStatement, VariableDeclaration} from "./../statement";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
@@ -66,336 +66,336 @@ export interface StatementedNode {
      * Adds an class declaration as a child.
      * @param structure - Structure of the class declaration to add.
      */
-    addClass(structure: ClassDeclarationStructure): classes.ClassDeclaration;
+    addClass(structure: ClassDeclarationStructure): ClassDeclaration;
     /**
      * Adds class declarations as a child.
      * @param structures - Structures of the class declarations to add.
      */
-    addClasses(structures: ClassDeclarationStructure[]): classes.ClassDeclaration[];
+    addClasses(structures: ClassDeclarationStructure[]): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
-    insertClass(index: number, structure: ClassDeclarationStructure): classes.ClassDeclaration;
+    insertClass(index: number, structure: ClassDeclarationStructure): ClassDeclaration;
     /**
      * Inserts class declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
-    insertClasses(index: number, structures: ClassDeclarationStructure[]): classes.ClassDeclaration[];
+    insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
-    getClasses(): classes.ClassDeclaration[];
+    getClasses(): ClassDeclaration[];
     /**
      * Gets a class.
      * @param name - Name of the class.
      */
-    getClass(name: string): classes.ClassDeclaration | undefined;
+    getClass(name: string): ClassDeclaration | undefined;
     /**
      * Gets a class.
      * @param findFunction - Function to use to find the class.
      */
-    getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
+    getClass(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration | undefined;
     /**
      * Gets a class or throws if it doesn't exist.
      * @param name - Name of the class.
      */
-    getClassOrThrow(name: string): classes.ClassDeclaration;
+    getClassOrThrow(name: string): ClassDeclaration;
     /**
      * Gets a class or throws if it doesn't exist.
      * @param findFunction - Function to use to find the class.
      */
-    getClassOrThrow(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration;
+    getClassOrThrow(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration;
     /**
      * Adds an enum declaration as a child.
      * @param structure - Structure of the enum declaration to add.
      */
-    addEnum(structure: EnumDeclarationStructure): enums.EnumDeclaration;
+    addEnum(structure: EnumDeclarationStructure): EnumDeclaration;
     /**
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
      */
-    addEnums(structures: EnumDeclarationStructure[]): enums.EnumDeclaration[];
+    addEnums(structures: EnumDeclarationStructure[]): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
-    insertEnum(index: number, structure: EnumDeclarationStructure): enums.EnumDeclaration;
+    insertEnum(index: number, structure: EnumDeclarationStructure): EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
-    insertEnums(index: number, structures: EnumDeclarationStructure[]): enums.EnumDeclaration[];
+    insertEnums(index: number, structures: EnumDeclarationStructure[]): EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
-    getEnums(): enums.EnumDeclaration[];
+    getEnums(): EnumDeclaration[];
     /**
      * Gets an enum.
      * @param name - Name of the enum.
      */
-    getEnum(name: string): enums.EnumDeclaration | undefined;
+    getEnum(name: string): EnumDeclaration | undefined;
     /**
      * Gets an enum.
      * @param findFunction - Function to use to find the enum.
      */
-    getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
+    getEnum(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration | undefined;
     /**
      * Gets an enum or throws if it doesn't exist.
      * @param name - Name of the enum.
      */
-    getEnumOrThrow(name: string): enums.EnumDeclaration;
+    getEnumOrThrow(name: string): EnumDeclaration;
     /**
      * Gets an enum or throws if it doesn't exist.
      * @param findFunction - Function to use to find the enum.
      */
-    getEnumOrThrow(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration;
+    getEnumOrThrow(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration;
     /**
      * Adds a function declaration as a child.
      * @param structure - Structure of the function declaration to add.
      */
-    addFunction(structure: FunctionDeclarationStructure): functions.FunctionDeclaration;
+    addFunction(structure: FunctionDeclarationStructure): FunctionDeclaration;
     /**
      * Adds function declarations as a child.
      * @param structures - Structures of the function declarations to add.
      */
-    addFunctions(structures: FunctionDeclarationStructure[]): functions.FunctionDeclaration[];
+    addFunctions(structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
-    insertFunction(index: number, structure: FunctionDeclarationStructure): functions.FunctionDeclaration;
+    insertFunction(index: number, structure: FunctionDeclarationStructure): FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
-    insertFunctions(index: number, structures: FunctionDeclarationStructure[]): functions.FunctionDeclaration[];
+    insertFunctions(index: number, structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
     /**
      * Gets the direct function declaration children.
      */
-    getFunctions(): functions.FunctionDeclaration[];
+    getFunctions(): FunctionDeclaration[];
     /**
      * Gets a function.
      * @param name - Name of the function.
      */
-    getFunction(name: string): functions.FunctionDeclaration | undefined;
+    getFunction(name: string): FunctionDeclaration | undefined;
     /**
      * Gets a function.
      * @param findFunction - Function to use to find the function.
      */
-    getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
+    getFunction(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration | undefined;
     /**
      * Gets a function or throws if it doesn't exist.
      * @param name - Name of the function.
      */
-    getFunctionOrThrow(name: string): functions.FunctionDeclaration;
+    getFunctionOrThrow(name: string): FunctionDeclaration;
     /**
      * Gets a function or throws if it doesn't exist.
      * @param findFunction - Function to use to find the function.
      */
-    getFunctionOrThrow(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration;
+    getFunctionOrThrow(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration;
     /**
      * Adds a interface declaration as a child.
      * @param structure - Structure of the interface declaration to add.
      */
-    addInterface(structure: InterfaceDeclarationStructure): interfaces.InterfaceDeclaration;
+    addInterface(structure: InterfaceDeclarationStructure): InterfaceDeclaration;
     /**
      * Adds interface declarations as a child.
      * @param structures - Structures of the interface declarations to add.
      */
-    addInterfaces(structures: InterfaceDeclarationStructure[]): interfaces.InterfaceDeclaration[];
+    addInterfaces(structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
-    insertInterface(index: number, structure: InterfaceDeclarationStructure): interfaces.InterfaceDeclaration;
+    insertInterface(index: number, structure: InterfaceDeclarationStructure): InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
-    insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]): interfaces.InterfaceDeclaration[];
+    insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
-    getInterfaces(): interfaces.InterfaceDeclaration[];
+    getInterfaces(): InterfaceDeclaration[];
     /**
      * Gets an interface.
      * @param name - Name of the interface.
      */
-    getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
+    getInterface(name: string): InterfaceDeclaration | undefined;
     /**
      * Gets an interface.
      * @param findFunction - Function to use to find the interface.
      */
-    getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
+    getInterface(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration | undefined;
     /**
      * Gets an interface or throws if it doesn't exist.
      * @param name - Name of the interface.
      */
-    getInterfaceOrThrow(name: string): interfaces.InterfaceDeclaration;
+    getInterfaceOrThrow(name: string): InterfaceDeclaration;
     /**
      * Gets an interface or throws if it doesn't exist.
      * @param findFunction - Function to use to find the interface.
      */
-    getInterfaceOrThrow(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration;
+    getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
     /**
      * Adds a namespace declaration as a child.
      * @param structure - Structure of the namespace declaration to add.
      */
-    addNamespace(structure: NamespaceDeclarationStructure): namespaces.NamespaceDeclaration;
+    addNamespace(structure: NamespaceDeclarationStructure): NamespaceDeclaration;
     /**
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: NamespaceDeclarationStructure[]): namespaces.NamespaceDeclaration[];
+    addNamespaces(structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
-    insertNamespace(index: number, structure: NamespaceDeclarationStructure): namespaces.NamespaceDeclaration;
+    insertNamespace(index: number, structure: NamespaceDeclarationStructure): NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): namespaces.NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
     /**
      * Gets the direct namespace declaration children.
      */
-    getNamespaces(): namespaces.NamespaceDeclaration[];
+    getNamespaces(): NamespaceDeclaration[];
     /**
      * Gets a namespace.
      * @param name - Name of the namespace.
      */
-    getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
+    getNamespace(name: string): NamespaceDeclaration | undefined;
     /**
      * Gets a namespace.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespace(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration | undefined;
+    getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
     /**
      * Gets a namespace or throws if it doesn't exist.
      * @param name - Name of the namespace.
      */
-    getNamespaceOrThrow(name: string): namespaces.NamespaceDeclaration;
+    getNamespaceOrThrow(name: string): NamespaceDeclaration;
     /**
      * Gets a namespace or throws if it doesn't exist.
      * @param findFunction - Function to use to find the namespace.
      */
-    getNamespaceOrThrow(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration;
+    getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
     /**
      * Adds a type alias declaration as a child.
      * @param structure - Structure of the type alias declaration to add.
      */
-    addTypeAlias(structure: TypeAliasDeclarationStructure): types.TypeAliasDeclaration;
+    addTypeAlias(structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
     /**
      * Adds type alias declarations as a child.
      * @param structures - Structures of the type alias declarations to add.
      */
-    addTypeAliases(structures: TypeAliasDeclarationStructure[]): types.TypeAliasDeclaration[];
+    addTypeAliases(structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
      * @param index - Index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
-    insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): types.TypeAliasDeclaration;
+    insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
      * @param index - Index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
-    insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): types.TypeAliasDeclaration[];
+    insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
     /**
      * Gets the direct type alias declaration children.
      */
-    getTypeAliases(): types.TypeAliasDeclaration[];
+    getTypeAliases(): TypeAliasDeclaration[];
     /**
      * Gets a type alias.
      * @param name - Name of the type alias.
      */
-    getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
+    getTypeAlias(name: string): TypeAliasDeclaration | undefined;
     /**
      * Gets a type alias.
      * @param findFunction - Function to use to find the type alias.
      */
-    getTypeAlias(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration | undefined;
+    getTypeAlias(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration | undefined;
     /**
      * Gets a type alias or throws if it doesn't exist.
      * @param name - Name of the type alias.
      */
-    getTypeAliasOrThrow(name: string): types.TypeAliasDeclaration;
+    getTypeAliasOrThrow(name: string): TypeAliasDeclaration;
     /**
      * Gets a type alias or throws if it doesn't exist.
      * @param findFunction - Function to use to find the type alias.
      */
-    getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
+    getTypeAliasOrThrow(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration;
     /**
      * Adds a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    addVariableStatement(structure: VariableStatementStructure): statement.VariableStatement;
+    addVariableStatement(structure: VariableStatementStructure): VariableStatement;
     /**
      * Adds variable statements.
      * @param structures - Structures of the variable statements.
      */
-    addVariableStatements(structures: VariableStatementStructure[]): statement.VariableStatement[];
+    addVariableStatements(structures: VariableStatementStructure[]): VariableStatement[];
     /**
      * Inserts a variable statement.
      * @param structure - Structure of the variable statement.
      */
-    insertVariableStatement(index: number, structure: VariableStatementStructure): statement.VariableStatement;
+    insertVariableStatement(index: number, structure: VariableStatementStructure): VariableStatement;
     /**
      * Inserts variable statements.
      * @param structures - Structures of the variable statements.
      */
-    insertVariableStatements(index: number, structures: VariableStatementStructure[]): statement.VariableStatement[];
+    insertVariableStatements(index: number, structures: VariableStatementStructure[]): VariableStatement[];
     /**
      * Gets the direct variable statement children.
      */
-    getVariableStatements(): statement.VariableStatement[];
+    getVariableStatements(): VariableStatement[];
     /**
      * Gets a variable statement.
      * @param findFunction - Function to use to find the variable statement.
      */
-    getVariableStatement(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement | undefined;
+    getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined;
     /**
      * Gets a variable statement or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable statement.
      */
-    getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement;
+    getVariableStatementOrThrow(findFunction: (declaration: VariableStatement) => boolean): VariableStatement;
     /**
      * Gets all the variable declarations within all the variable declarations of the direct variable statement children.
      */
-    getVariableDeclarations(): statement.VariableDeclaration[];
+    getVariableDeclarations(): VariableDeclaration[];
     /**
      * Gets a variable declaration.
      * @param name - Name of the variable declaration.
      */
-    getVariableDeclaration(name: string): statement.VariableDeclaration | undefined;
+    getVariableDeclaration(name: string): VariableDeclaration | undefined;
     /**
      * Gets a variable declaration.
      * @param findFunction - Function to use to find the variable declaration.
      */
-    getVariableDeclaration(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration | undefined;
+    getVariableDeclaration(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration | undefined;
     /**
      * Gets a variable declaration or throws if it doesn't exist.
      * @param name - Name of the variable declaration.
      */
-    getVariableDeclarationOrThrow(name: string): statement.VariableDeclaration;
+    getVariableDeclarationOrThrow(name: string): VariableDeclaration;
     /**
      * Gets a variable declaration or throws if it doesn't exist.
      * @param findFunction - Function to use to find the variable declaration.
      */
-    getVariableDeclarationOrThrow(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration;
+    getVariableDeclarationOrThrow(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration;
 
     /**
      * @internal
@@ -481,7 +481,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertClasses(index, [structure])[0];
         }
 
-        insertClasses(index: number, structures: ClassDeclarationStructure[]): classes.ClassDeclaration[] {
+        insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[] {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
                 const writer = this.getWriterWithChildIndentation();
@@ -489,28 +489,28 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<classes.ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
             return newChildren;
         }
 
-        getClasses(): classes.ClassDeclaration[] {
+        getClasses(): ClassDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ClassDeclaration) as classes.ClassDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration[];
         }
 
-        getClass(name: string): classes.ClassDeclaration | undefined;
-        getClass(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration | undefined;
-        getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined;
-        getClass(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration | undefined {
+        getClass(name: string): ClassDeclaration | undefined;
+        getClass(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration | undefined;
+        getClass(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration | undefined;
+        getClass(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
         }
 
-        getClassOrThrow(name: string): classes.ClassDeclaration;
-        getClassOrThrow(findFunction: (declaration: classes.ClassDeclaration) => boolean): classes.ClassDeclaration;
-        getClassOrThrow(nameOrFindFunction: string | ((declaration: classes.ClassDeclaration) => boolean)): classes.ClassDeclaration {
+        getClassOrThrow(name: string): ClassDeclaration;
+        getClassOrThrow(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration;
+        getClassOrThrow(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration {
             return errors.throwIfNullOrUndefined(this.getClass(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class", nameOrFindFunction));
         }
 
@@ -536,28 +536,28 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<enums.EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
             return newChildren;
         }
 
-        getEnums(): enums.EnumDeclaration[] {
+        getEnums(): EnumDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.EnumDeclaration) as enums.EnumDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.EnumDeclaration) as EnumDeclaration[];
         }
 
-        getEnum(name: string): enums.EnumDeclaration | undefined;
-        getEnum(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration | undefined;
-        getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined;
-        getEnum(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration | undefined {
+        getEnum(name: string): EnumDeclaration | undefined;
+        getEnum(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration | undefined;
+        getEnum(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration | undefined;
+        getEnum(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
         }
 
-        getEnumOrThrow(name: string): enums.EnumDeclaration;
-        getEnumOrThrow(findFunction: (declaration: enums.EnumDeclaration) => boolean): enums.EnumDeclaration;
-        getEnumOrThrow(nameOrFindFunction: string | ((declaration: enums.EnumDeclaration) => boolean)): enums.EnumDeclaration {
+        getEnumOrThrow(name: string): EnumDeclaration;
+        getEnumOrThrow(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration;
+        getEnumOrThrow(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration {
             return errors.throwIfNullOrUndefined(this.getEnum(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("enum", nameOrFindFunction));
         }
 
@@ -583,7 +583,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<functions.FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
                 // todo: remove filling when writing
                 const params = structures[i].parameters;
                 delete structures[i].parameters;
@@ -595,22 +595,22 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return newChildren;
         }
 
-        getFunctions(): functions.FunctionDeclaration[] {
+        getFunctions(): FunctionDeclaration[] {
             // todo: remove type assertion
-            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.FunctionDeclaration) as functions.FunctionDeclaration[])
+            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.FunctionDeclaration) as FunctionDeclaration[])
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
 
-        getFunction(name: string): functions.FunctionDeclaration | undefined;
-        getFunction(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration | undefined;
-        getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined;
-        getFunction(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration | undefined {
+        getFunction(name: string): FunctionDeclaration | undefined;
+        getFunction(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration | undefined;
+        getFunction(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration | undefined;
+        getFunction(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
         }
 
-        getFunctionOrThrow(name: string): functions.FunctionDeclaration;
-        getFunctionOrThrow(findFunction: (declaration: functions.FunctionDeclaration) => boolean): functions.FunctionDeclaration;
-        getFunctionOrThrow(nameOrFindFunction: string | ((declaration: functions.FunctionDeclaration) => boolean)): functions.FunctionDeclaration {
+        getFunctionOrThrow(name: string): FunctionDeclaration;
+        getFunctionOrThrow(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration;
+        getFunctionOrThrow(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration {
             return errors.throwIfNullOrUndefined(this.getFunction(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("function", nameOrFindFunction));
         }
 
@@ -636,28 +636,28 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<interfaces.InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
             return newChildren;
         }
 
-        getInterfaces(): interfaces.InterfaceDeclaration[] {
+        getInterfaces(): InterfaceDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.InterfaceDeclaration) as interfaces.InterfaceDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration[];
         }
 
-        getInterface(name: string): interfaces.InterfaceDeclaration | undefined;
-        getInterface(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration | undefined;
-        getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined;
-        getInterface(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration | undefined {
+        getInterface(name: string): InterfaceDeclaration | undefined;
+        getInterface(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration | undefined;
+        getInterface(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration | undefined;
+        getInterface(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
         }
 
-        getInterfaceOrThrow(name: string): interfaces.InterfaceDeclaration;
-        getInterfaceOrThrow(findFunction: (declaration: interfaces.InterfaceDeclaration) => boolean): interfaces.InterfaceDeclaration;
-        getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: interfaces.InterfaceDeclaration) => boolean)): interfaces.InterfaceDeclaration {
+        getInterfaceOrThrow(name: string): InterfaceDeclaration;
+        getInterfaceOrThrow(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration;
+        getInterfaceOrThrow(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration {
             return errors.throwIfNullOrUndefined(this.getInterface(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("interface", nameOrFindFunction));
         }
 
@@ -683,27 +683,27 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<namespaces.NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
             return newChildren;
         }
 
-        getNamespaces(): namespaces.NamespaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ModuleDeclaration) as namespaces.NamespaceDeclaration[];
+        getNamespaces(): NamespaceDeclaration[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ModuleDeclaration) as NamespaceDeclaration[];
         }
 
-        getNamespace(name: string): namespaces.NamespaceDeclaration | undefined;
-        getNamespace(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration | undefined;
-        getNamespace(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration | undefined {
+        getNamespace(name: string): NamespaceDeclaration | undefined;
+        getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
+        getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined;
+        getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
         }
 
-        getNamespaceOrThrow(name: string): namespaces.NamespaceDeclaration;
-        getNamespaceOrThrow(findFunction: (declaration: namespaces.NamespaceDeclaration) => boolean): namespaces.NamespaceDeclaration;
-        getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: namespaces.NamespaceDeclaration) => boolean)): namespaces.NamespaceDeclaration {
+        getNamespaceOrThrow(name: string): NamespaceDeclaration;
+        getNamespaceOrThrow(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration;
+        getNamespaceOrThrow(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration {
             return errors.throwIfNullOrUndefined(this.getNamespace(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("namespace", nameOrFindFunction));
         }
 
@@ -729,7 +729,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<types.TypeAliasDeclaration, TypeAliasDeclarationStructure>(
+            const newChildren = this._insertMainChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>(
                 index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
                     child.fill(structures[i]);
                 }, {
@@ -741,35 +741,35 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return newChildren;
         }
 
-        getTypeAliases(): types.TypeAliasDeclaration[] {
+        getTypeAliases(): TypeAliasDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.TypeAliasDeclaration) as types.TypeAliasDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.TypeAliasDeclaration) as TypeAliasDeclaration[];
         }
 
-        getTypeAlias(name: string): types.TypeAliasDeclaration | undefined;
-        getTypeAlias(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration | undefined;
-        getTypeAlias(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration | undefined;
-        getTypeAlias(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration | undefined {
+        getTypeAlias(name: string): TypeAliasDeclaration | undefined;
+        getTypeAlias(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration | undefined;
+        getTypeAlias(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration | undefined;
+        getTypeAlias(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
         }
 
-        getTypeAliasOrThrow(name: string): types.TypeAliasDeclaration;
-        getTypeAliasOrThrow(findFunction: (declaration: types.TypeAliasDeclaration) => boolean): types.TypeAliasDeclaration;
-        getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: types.TypeAliasDeclaration) => boolean)): types.TypeAliasDeclaration {
+        getTypeAliasOrThrow(name: string): TypeAliasDeclaration;
+        getTypeAliasOrThrow(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration;
+        getTypeAliasOrThrow(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration {
             return errors.throwIfNullOrUndefined(this.getTypeAlias(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("type alias", nameOrFindFunction));
         }
 
         /* Variable statements */
 
-        getVariableStatements(): statement.VariableStatement[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as statement.VariableStatement[];
+        getVariableStatements(): VariableStatement[] {
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as VariableStatement[];
         }
 
-        getVariableStatement(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement | undefined {
+        getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined {
             return ArrayUtils.find(this.getVariableStatements(), findFunction);
         }
 
-        getVariableStatementOrThrow(findFunction: (declaration: statement.VariableStatement) => boolean): statement.VariableStatement {
+        getVariableStatementOrThrow(findFunction: (declaration: VariableStatement) => boolean): VariableStatement {
             return errors.throwIfNullOrUndefined(this.getVariableStatement(findFunction), "Expected to find a variable statement that matched the provided condition.");
         }
 
@@ -793,7 +793,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<statement.VariableStatement>(index, texts, structures, ts.SyntaxKind.VariableStatement, (child, i) => {
+            const newChildren = this._insertMainChildren<VariableStatement>(index, texts, structures, ts.SyntaxKind.VariableStatement, (child, i) => {
                 const structure = {...structures[i]};
                 delete structure.declarations;
                 delete structure.declarationType;
@@ -809,8 +809,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         /* Variable declarations */
 
-        getVariableDeclarations(): statement.VariableDeclaration[] {
-            const variables: statement.VariableDeclaration[] = [];
+        getVariableDeclarations(): VariableDeclaration[] {
+            const variables: VariableDeclaration[] = [];
 
             for (const list of this.getVariableStatements()) {
                 variables.push(...list.getDeclarations());
@@ -819,16 +819,16 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return variables;
         }
 
-        getVariableDeclaration(name: string): statement.VariableDeclaration | undefined;
-        getVariableDeclaration(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration | undefined;
-        getVariableDeclaration(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration | undefined;
-        getVariableDeclaration(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration | undefined {
+        getVariableDeclaration(name: string): VariableDeclaration | undefined;
+        getVariableDeclaration(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration | undefined;
+        getVariableDeclaration(nameOrFindFunction: string | ((declaration: VariableDeclaration) => boolean)): VariableDeclaration | undefined;
+        getVariableDeclaration(nameOrFindFunction: string | ((declaration: VariableDeclaration) => boolean)): VariableDeclaration | undefined {
             return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
 
-        getVariableDeclarationOrThrow(name: string): statement.VariableDeclaration;
-        getVariableDeclarationOrThrow(findFunction: (declaration: statement.VariableDeclaration) => boolean): statement.VariableDeclaration;
-        getVariableDeclarationOrThrow(nameOrFindFunction: string | ((declaration: statement.VariableDeclaration) => boolean)): statement.VariableDeclaration {
+        getVariableDeclarationOrThrow(name: string): VariableDeclaration;
+        getVariableDeclarationOrThrow(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration;
+        getVariableDeclarationOrThrow(nameOrFindFunction: string | ((declaration: VariableDeclaration) => boolean)): VariableDeclaration {
             return errors.throwIfNullOrUndefined(this.getVariableDeclaration(nameOrFindFunction),
                 () => getNotFoundErrorMessageForNameOrFindFunction("variable declaration", nameOrFindFunction));
         }

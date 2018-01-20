@@ -8,7 +8,8 @@ export function getDefinitionAst() {
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         manipulationSettings: {
             newLineKind: NewLineKind.CarriageReturnLineFeed
-        }
+        },
+        addFilesFromTsConfig: false
     });
     ast.addExistingSourceFiles(path.join(rootFolder, "dist/**/*.d.ts"));
     return ast;
