@@ -27,6 +27,17 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node has a name.
+     * @param node - Node to check.
+     */
+    static hasName(node: compiler.Node): node is compiler.Node & { getName(): string; } {
+        // this method is manually maintained
+        if ((node as any).getName == null)
+            return false;
+        return typeof (node as any).getName() === "string";
+    }
+
+    /**
      * Gets if the node is a ClassDeclaration.
      * @param node - Node to check.
      */

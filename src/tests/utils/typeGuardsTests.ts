@@ -31,4 +31,18 @@ describe(nameof(TypeGuards), () => {
             expect(TypeGuards.hasExpression(firstChild)).to.be.false;
         });
     });
+
+    describe(nameof(TypeGuards.hasName), () => {
+        it("should have a name when it does", () => {
+            const {firstChild} = getInfoFromText("class MyClass {}");
+            expect(TypeGuards.hasName(firstChild)).to.be.true;
+            if (TypeGuards.hasName(firstChild))
+                expect(firstChild.getName()).to.equal("MyClass");
+        });
+
+        it("should not have a name when it doesn't", () => {
+            const {firstChild} = getInfoFromText("func()");
+            expect(TypeGuards.hasName(firstChild)).to.be.false;
+        });
+    });
 });
