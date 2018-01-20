@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration} from "./../../../compiler";
+import {TsSimpleAst} from "./../../../TsSimpleAst";
 import * as errors from "./../../../errors";
 import {ImportSpecifierStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -41,6 +42,40 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should get the module specifier when importing for side effects", () => {
             doTest(`import "./test"`, "./test");
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFileOrThrow), () => {
+        it("should get the source file", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
+            const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
+
+            expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.equal(classSourceFile);
+        });
+
+        it("should throw when it doesn't exist", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
+
+            expect(() => mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFile), () => {
+        it("should get the source file", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
+            const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
+
+            expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
+
+            expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;
         });
     });
 

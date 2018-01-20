@@ -77,6 +77,7 @@ exportDeclaration.isNamespaceExport();
 exportDeclaration.getModuleSpecifier(); // returns: string | undefined
 exportDeclaration.setModuleSpecifier("./new-file");
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
+exportDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
 ```
 
 ### Add/Insert

@@ -5,6 +5,7 @@ import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, remo
 import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportSpecifier} from "./ImportSpecifier";
+import {SourceFile} from "./SourceFile";
 
 export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     /**
@@ -34,6 +35,27 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
         const text = stringLiteral.getText();
         return text.substring(1, text.length - 1);
+    }
+
+    /**
+     * Gets the source file referenced in the module specifier or throws if it can't find it.
+     */
+    getModuleSpecifierSourceFileOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getModuleSpecifierSourceFile(), `A module specifier source file was expected.`);
+    }
+
+    /**
+     * Gets the source file referenced in the module specifier or returns undefined if it can't find it.
+     */
+    getModuleSpecifierSourceFile() {
+        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
+        const symbol = stringLiteral.getSymbol();
+        if (symbol == null)
+            return undefined;
+        const declarations = symbol.getDeclarations();
+        if (declarations.length === 0 || declarations[0].getKind() !== ts.SyntaxKind.SourceFile)
+            return undefined;
+        return declarations[0] as SourceFile;
     }
 
     /**

@@ -48,6 +48,12 @@ Set it:
 importDeclaration.setModuleSpecifier("./new-file");
 ```
 
+Get the referenced source file:
+
+```ts
+const sourceFile = importDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
+```
+
 ### Default import
 
 Get it:
