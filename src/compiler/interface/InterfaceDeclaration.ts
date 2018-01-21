@@ -8,8 +8,9 @@ import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, HeritageClauseableNode,
     ExtendsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
+import {ClassDeclaration} from "./../class";
 import {NamespaceChildableNode} from "./../namespace";
-import {Type} from "./../type";
+import {Type, TypeAliasDeclaration} from "./../type";
 import {ImplementationLocation} from "./../tools";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
@@ -43,6 +44,23 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getType(): Type {
         return this.global.typeChecker.getTypeAtLocation(this);
+    }
+
+    /**
+     * Gets the base types.
+     */
+    getBaseTypes(): Type[] {
+        return this.getType().getBaseTypes();
+    }
+
+    /**
+     * Gets the base declarations.
+     */
+    getBaseDeclarations(): (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[] {
+        return ArrayUtils.flatten(this.getType().getBaseTypes().map(t => {
+            const symbol = t.getSymbol();
+            return symbol == null ? [] : (symbol.getDeclarations() as (TypeAliasDeclaration | InterfaceDeclaration | ClassDeclaration)[]);
+        }));
     }
 
     /**

@@ -131,6 +131,20 @@ Remove a property signature:
 propertySignature.remove();
 ```
 
+### Base Types
+
+```ts
+const baseTypes = interfaceDeclaration.getBaseTypes();
+```
+
+### Base Declarations
+
+Gets the base interface, type alias, or class declarations:
+
+```ts
+const baseDeclarations = interfaceDeclaration.getBaseDeclarations();
+```
+
 ### Implementations
 
 Get the implementations.

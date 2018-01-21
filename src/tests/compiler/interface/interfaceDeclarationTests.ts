@@ -11,6 +11,51 @@ describe(nameof(InterfaceDeclaration), () => {
         });
     });
 
+    describe(nameof<InterfaceDeclaration>(d => d.getBaseTypes), () => {
+        function doTest(text: string, interfaceName: string, expectedNames: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            const types = sourceFile.getInterfaceOrThrow(interfaceName).getBaseTypes();
+            expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
+        }
+
+        it("should get the base when it's a interface", () => {
+            doTest("interface Base {} interface Child extends Base {}", "Child", ["Base"]);
+        });
+
+        it("should get the base when there are multiple", () => {
+            doTest("interface Base1 {} interface Base2 {} interface Child extends Base1, Base2 {}", "Child", ["Base1", "Base2"]);
+        });
+
+        it("should be empty when there is no base interface", () => {
+            doTest("interface Interface {}", "Interface", []);
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getBaseDeclarations), () => {
+        function doTest(text: string, interfaceName: string, expectedNames: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            const declarations = sourceFile.getInterfaceOrThrow(interfaceName).getBaseDeclarations();
+            expect(declarations.map(c => c.getName())).to.deep.equal(expectedNames);
+        }
+
+        it("should get the base when it's a interface", () => {
+            doTest("interface Base {} interface Child extends Base {}", "Child", ["Base"]);
+        });
+
+        it("should get the base when there are multiple", () => {
+            doTest("interface Base1 {} interface Base2 {} interface Child extends Base1, Base2 {}", "Child", ["Base1", "Base2"]);
+        });
+
+        it("should get the base when there are multiple with the same name", () => {
+            doTest("interface Base1 {} interface Base2 { prop: string; } interface Base2 { prop2: string; } interface Child extends Base1, Base2 {}",
+                "Child", ["Base1", "Base2", "Base2"]);
+        });
+
+        it("should be empty when there is no base interface", () => {
+            doTest("interface Interface {}", "Interface", []);
+        });
+    });
+
     describe(nameof<InterfaceDeclaration>(d => d.insertConstructSignatures), () => {
         function doTest(startCode: string, insertIndex: number, structures: ConstructSignatureDeclarationStructure[], expectedCode: string) {
             const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
