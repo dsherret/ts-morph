@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.4.0"></a>
+# [6.4.0](https://github.com/dsherret/ts-simple-ast/compare/6.3.0...6.4.0) (2018-01-21)
+
+
+### Features
+
+* [#231](https://github.com/dsherret/ts-simple-ast/issues/231) - Node.formatText() - Format individual nodes. ([34f61ea](https://github.com/dsherret/ts-simple-ast/commit/34f61ea))
+* InterfaceDeclaration - getBaseTypes() and getBaseDeclarations() ([9785eeb](https://github.com/dsherret/ts-simple-ast/commit/9785eeb))
+
+
+
 <a name="6.3.0"></a>
 # [6.3.0](https://github.com/dsherret/ts-simple-ast/compare/6.2.0...6.3.0) (2018-01-20)
 
