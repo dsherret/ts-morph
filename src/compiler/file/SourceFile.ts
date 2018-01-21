@@ -623,6 +623,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Formats the source file text using the internal TypeScript formatting API.
+     * @param settings - Format code settings.
      */
     formatText(settings: FormatCodeSettings = {}) {
         replaceSourceFileTextForFormatting({

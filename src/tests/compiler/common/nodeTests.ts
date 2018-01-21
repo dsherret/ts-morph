@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
-import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression} from "./../../../compiler";
+import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
+    SourceFile, FormatCodeSettings} from "./../../../compiler";
 import * as errors from "./../../../errors";
 import {TypeGuards} from "./../../../utils";
 import {NewLineKind} from "./../../../ManipulationSettings";
@@ -714,6 +715,27 @@ describe(nameof(Node), () => {
 
         it("should print the node with different newlines", () => {
             expect(firstChild.print({ newLineKind: NewLineKind.CarriageReturnLineFeed })).to.equal(nodeText.replace(/\n/g, "\r\n"));
+        });
+    });
+
+    describe(nameof<Node>(n => n.formatText), () => {
+        function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, expectedText: string, settings: FormatCodeSettings = {}) {
+            const {sourceFile} = getInfoFromText(text);
+            getNode(sourceFile).formatText(settings);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should format only the provided node", () => {
+            doTest("class Test{\n   prop:string;\n  }\nclass Test2{\n   prop:string;\n  }\n", f => f.getClassOrThrow("Test2"),
+                "class Test{\n   prop:string;\n  }\nclass Test2 {\n    prop: string;\n}\n");
+        });
+
+        it("should format only the provided node with the specified settings", () => {
+            doTest("class Test{\n\tprop:string;\n}\n       /** Testing */\nclass Test2{\n\t prop:string;\n\t}\n", f => f.getClassOrThrow("Test2"),
+                "class Test{\n\tprop:string;\n}\n/** Testing */\nclass Test2 {\n  prop: string;\n}\n", {
+                    convertTabsToSpaces: true,
+                    indentSize: 2
+                });
         });
     });
 });

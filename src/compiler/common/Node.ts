@@ -4,12 +4,14 @@ import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {IndentationText} from "./../../ManipulationSettings";
 import {StructureToText} from "./../../structureToTexts";
-import {insertIntoParent, getNextNonWhitespacePos, getPreviousMatchingPos} from "./../../manipulation";
+import {insertIntoParent, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
+    getTextFromFormattingEdits} from "./../../manipulation";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions} from "./../../utils";
 import {SourceFile} from "./../file";
 import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
+import {FormatCodeSettings} from "./../tools";
 import {TypeAliasDeclaration} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {QuoteType} from "./../literal/QuoteType";
@@ -807,6 +809,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             nodes.push(node);
             return nodes;
         }
+    }
+
+    /**
+     * Formats the node's text using the internal TypeScript formatting API.
+     * @param settings - Format code settings.
+     */
+    formatText(settings: FormatCodeSettings = {}) {
+        const formattingEdits = this.global.languageService.getFormattingEditsForRange(
+            this.sourceFile.getFilePath(),
+            [this.getStart(true), this.getEnd()],
+            settings);
+
+        replaceSourceFileTextForFormatting({
+            sourceFile: this.sourceFile,
+            newText: getTextFromFormattingEdits(this.sourceFile, formattingEdits)
+        });
     }
 
     /**

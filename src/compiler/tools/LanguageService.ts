@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {replaceSourceFileTextForRename} from "./../../manipulation";
+import {replaceSourceFileTextForRename, getTextFromFormattingEdits} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {DefaultFileSystemHost} from "./../../fileSystem";
 import {KeyValueCache, FileUtils, StringUtils, fillDefaultFormatCodeSettings} from "./../../utils";
@@ -206,6 +206,18 @@ export class LanguageService {
     }
 
     /**
+     * Gets the formatting edits for a range.
+     * @param filePath - File path.
+     * @param range - Position range.
+     * @param settings - Settings.
+     */
+    getFormattingEditsForRange(filePath: string, range: [number, number], settings: FormatCodeSettings) {
+        fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
+
+        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], settings) || []).map(e => new TextChange(e));
+    }
+
+    /**
      * Gets the formatting edits for a document.
      * @param filePath - File path of the source file.
      * @param settings - Format code settings.
@@ -213,8 +225,7 @@ export class LanguageService {
     getFormattingEditsForDocument(filePath: string, settings: FormatCodeSettings) {
         fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
 
-        const formattingEdits = this.compilerObject.getFormattingEditsForDocument(filePath, settings) || [];
-        return formattingEdits.map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForDocument(filePath, settings) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -227,25 +238,14 @@ export class LanguageService {
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePath);
 
-        let newText = getCompilerFormattedText(this);
+        const formattingEdits = this.getFormattingEditsForDocument(filePath, settings);
+        let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
         const newLineChar = settings.newLineCharacter!; // this is filled in getFormattingEditsForDocument
+
         if (settings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
             newText += newLineChar;
 
         return newText.replace(/\r?\n/g, newLineChar);
-
-        function getCompilerFormattedText(languageService: LanguageService) {
-            const formattingEditsInReverseOrder = languageService.getFormattingEditsForDocument(filePath, settings)
-                .sort((a, b) => b.getSpan().getStart() - a.getSpan().getStart());
-            let fullText = sourceFile!.getFullText();
-
-            for (const textChange of formattingEditsInReverseOrder) {
-                const span = textChange.getSpan();
-                fullText = fullText.slice(0, span.getStart()) + textChange.getNewText() + fullText.slice(span.getEnd());
-            }
-
-            return fullText;
-        }
     }
 
     /**

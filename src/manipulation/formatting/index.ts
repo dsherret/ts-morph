@@ -4,3 +4,4 @@ export * from "./getFormattingKindText";
 export * from "./getGeneralFormatting";
 export * from "./getInterfaceMemberFormatting";
 export * from "./getStatementedNodeChildFormatting";
+export * from "./getTextFromFormattingEdits";

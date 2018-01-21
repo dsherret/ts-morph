@@ -155,38 +155,6 @@ sourceFile.unindent(10, -1); // indent line containing position 10 (specify nega
 
 This will indent and unindent based on your [manipulation settings](../manipulation/settings).
 
-### Formatting Text
-
-Sometimes you might encounter code that looks terrible. For example:
-
-```typescript
-// BadlyFormattedFile.ts
-var myVariable     :      string |    number;
-function myFunction(param    : MyClass){
-return "";
-}
-```
-
-Automatically format the text of this file by calling format text on it:
-
-```typescript
-sourceFile.formatText();
-// or provide optional formatting settings
-sourceFile.formatText({
-    placeOpenBraceOnNewLineForFunctions: true
-});
-```
-
-This will run the source file's text through the TypeScript compiler's formatting API, which will change the source file to contain the following text:
-
-```typescript
-// BadlyFormattedFile.ts (not anymore!)
-var myVariable: string | number;
-function myFunction(param: MyClass) {
-    return "";
-}
-```
-
 ## Getting Exported Declarations
 
 The exported declarations of a file can be retrieved via `.getExportedDeclarations()`.
