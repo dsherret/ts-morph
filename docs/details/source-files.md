@@ -220,6 +220,7 @@ The following code:
 
 ```ts
 import Ast, {TypeGuards} from "ts-simple-ast";
+
 const ast = new Ast();
 ast.addExistingSourceFiles("**/*.ts");
 const mainFile = ast.getSourceFileOrThrow("main.ts");
