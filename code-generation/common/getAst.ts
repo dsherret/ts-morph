@@ -11,5 +11,6 @@ export function getAst() {
         }
     });
     ast.addExistingSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
+    ast.addExistingSourceFile(path.join(rootFolder, "node_modules/typescript/lib/typescript.d.ts"));
     return ast;
 }

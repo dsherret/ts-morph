@@ -31,10 +31,7 @@ export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], no
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
         .filter(m => StringUtils.startsWith(m.getName(), "is"))
-        .forEach(m => {
-            console.log(m.getName());
-            m.remove();
-        });
+        .forEach(m => m.remove());
 
     typeGuardsClass.addMethods(getMethodInfos().map(method => ({
         name: `is${method.name}`,

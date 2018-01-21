@@ -7,14 +7,14 @@ import {TypeNode} from "./TypeNode";
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
     /**
-     * Gets the constraint node.
+     * Gets the constraint node of the type parameter.
      */
     getConstraintNode(): TypeNode | undefined {
         return this.compilerNode.constraint == null ? undefined : (this.getNodeFromCompilerNode(this.compilerNode.constraint) as TypeNode);
     }
 
     /**
-     * Gets the default node.
+     * Gets the default node of the type parameter.
      */
     getDefaultNode(): TypeNode | undefined {
         return this.compilerNode.default == null ? undefined : (this.getNodeFromCompilerNode(this.compilerNode.default) as TypeNode);
