@@ -302,6 +302,8 @@ export class CompilerFactory {
      * @param type - Compiler type.
      */
     getType<TType extends ts.Type = TType>(type: TType): compiler.Type<TType> {
+        if ((type.flags & ts.TypeFlags.TypeParameter) === ts.TypeFlags.TypeParameter)
+            return this.getTypeParameter(type as any as ts.TypeParameter) as any as compiler.Type<TType>;
         return new compiler.Type<TType>(this.global, type);
     }
 
