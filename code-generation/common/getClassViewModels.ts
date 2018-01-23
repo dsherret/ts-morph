@@ -23,47 +23,12 @@ export function* getClassViewModels(ast: TsSimpleAst): IterableIterator<ClassVie
             mixins: Array.from(getMixinViewModels(c)),
             path: c.getSourceFile().getFilePath(),
             isNodeClass: isNodeClass(c),
-            base: undefined,
-            associatedTsNodes: getAssociatedTsNodes()
+            base: undefined
         };
         classesToVms.set(c, vm);
         const baseClass = c.getBaseClass();
         if (baseClass != null)
             vm.base = getViewModelForClass(baseClass);
         return vm;
-
-        function getAssociatedTsNodes(): Node[] {
-            return ArrayUtils.flatten([getFromExtends(), getFromTypeParam()]);
-
-            function getFromTypeParam() {
-                const typeParams = c.getTypeParameters();
-                if (typeParams.length === 0)
-                    return [];
-                const typeParam = typeParams[0];
-                const defaultNode = typeParam.getDefaultNode();
-                if (defaultNode == null)
-                    return [];
-                return getFromType(c.global.typeChecker.getTypeAtLocation(defaultNode));
-            }
-
-            function getFromExtends() {
-                const extendsExpr = c.getExtends();
-                if (extendsExpr == null)
-                    return [];
-                const typeArgs = extendsExpr!.getTypeArguments();
-                if (typeArgs.length === 0)
-                    return [];
-                return getFromType(c.global.typeChecker.getTypeAtLocation(typeArgs[0]));
-            }
-
-            function getFromType(type: Type | undefined) {
-                if (type == null)
-                    return [];
-                const symbol = type.getSymbol();
-                if (symbol == null)
-                    return [];
-                return symbol.getDeclarations();
-            }
-        }
     }
 }
