@@ -5,6 +5,7 @@ import {getSymbolByNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common/Node";
 import {Symbol} from "./../common/Symbol";
 import {Signature} from "./../common/Signature";
+import {TypeParameter} from "./TypeParameter";
 
 export class Type<TType extends ts.Type = ts.Type> {
     /** @internal */
@@ -266,6 +267,13 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     isObjectType() {
         return (this.compilerType.flags & ts.TypeFlags.Object) !== 0;
+    }
+
+    /**
+     * Gets if this is a type parameter.
+     */
+    isTypeParameter(): this is TypeParameter {
+        return (this.compilerType.flags & ts.TypeFlags.TypeParameter) !== 0;
     }
 
     /**
