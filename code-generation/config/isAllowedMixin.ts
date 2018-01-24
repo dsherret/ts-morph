@@ -1,7 +1,5 @@
-﻿import {MixinViewModel} from "./../view-models";
-
-export function isAllowedMixin(mixin: MixinViewModel) {
-    switch (mixin.name) {
+﻿export function isAllowedMixin(name: string) {
+    switch (name) {
         case "ModifierableNode":
         case "NamedNode":
         case "PropertyNamedNode":

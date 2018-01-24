@@ -1,7 +1,8 @@
-﻿import {ClassDeclaration, Type} from "./../../../src/main";
+﻿import {ClassDeclaration, InterfaceDeclaration, Type} from "./../../../src/main";
 import {Memoize, ArrayUtils, TypeGuards} from "./../../../src/utils";
 import {WrapperFactory} from "./../WrapperFactory";
 import {TsNode} from "./../ts";
+import {Mixin} from "./Mixin";
 
 export class WrappedNode {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: ClassDeclaration) {
@@ -19,6 +20,31 @@ export class WrappedNode {
     getBase() {
         const base = this.node.getBaseClass();
         return base == null ? undefined : this.wrapperFactory.getWrapperNode(base);
+    }
+
+    @Memoize
+    getMixins() {
+        const mixins: Mixin[] = [];
+        const baseTypes = this.node.getBaseTypes();
+        for (const intersectionType of ArrayUtils.flatten(baseTypes.map(t => t.getIntersectionTypes()))) {
+            const interfaces = intersectionType.getSymbolOrThrow().getDeclarations().filter(d => TypeGuards.isInterfaceDeclaration(d)) as InterfaceDeclaration[];
+            mixins.push(...interfaces.map(i => this.wrapperFactory.getMixin(i)));
+        }
+        return mixins;
+    }
+
+    @Memoize
+    getAllMixins() {
+        // todo: remove?
+        return ArrayUtils.from(getAllMixins(this));
+
+        function* getAllMixins(wrappedNode: WrappedNode): IterableIterator<Mixin> {
+            for (const mixin of wrappedNode.getMixins())
+                yield mixin;
+            const baseWrappedNode = wrappedNode.getBase();
+            if (baseWrappedNode != null)
+                yield* getAllMixins(baseWrappedNode);
+        }
     }
 
     @Memoize

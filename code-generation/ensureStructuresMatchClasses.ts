@@ -1,50 +1,56 @@
 ﻿import {ArrayUtils} from "./../src/utils";
-import {getAst, getClassViewModels, getStructureViewModels, getMixinsOfMixins} from "./common";
 import {ClassViewModel, MixinViewModel, InterfaceViewModel} from "./view-models";
 import {isAllowedMixin, isAllowedClass, isAllowedMixinForStructure} from "./config";
+import {InspectorFactory} from "./inspectors";
 
-const ast = getAst();
-const classVMs = ArrayUtils.from(getClassViewModels(ast));
-const structureVMs = ArrayUtils.from(getStructureViewModels(ast));
-const mixinsOfMixins = getMixinsOfMixins(classVMs);
+// setup
+const factory = new InspectorFactory();
+const inspector = factory.getTsSimpleAstInspector();
+
+// get info
+const nodes = inspector.getWrappedNodes();
+const structures = inspector.getStructures();
+
+// find problems
 const problems: string[] = [];
 
-for (const vm of [...classVMs.filter(c => isAllowedClass(c)), ...mixinsOfMixins.filter(m => m.mixins.length > 0)]) {
-    const structureName = getStructureName(vm);
-    const structureVM = ArrayUtils.find(structureVMs, s => s.name === structureName);
-    if (structureVM == null)
+for (const node of nodes) {
+    const structureName = getStructureName(node.getName());
+    const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
+    if (structure == null)
         continue;
 
-    for (const mixin of vm.mixins.filter(m => isAllowedMixin(m) && isAllowedMixinForStructure(m, structureVM))) {
-        const mixinStructureName = getStructureName(mixin);
-        const structureHasMixin = structureVM.extends.some(s => s.name === mixinStructureName);
+    for (const mixin of node.getMixins().filter(m => isAllowedMixin(m.getName()) && isAllowedMixinForStructure(m.getName(), structure.getName()))) {
+        const mixinStructureName = getStructureName(mixin.getName());
+        const structureHasMixin = structure.getBaseStructures().some(s => s.getName() === mixinStructureName);
         if (!structureHasMixin)
-            problems.push(`${structureVM.name} does not have ${mixinStructureName}.`);
+            problems.push(`${structure.getName()} does not have ${mixinStructureName}.`);
     }
 
-    for (const structureExtend of structureVM.extends.filter(e => !isStructureToIgnore(e))) {
-        const declarationName = structureExtend.name.replace(/Structure$/, "");
-        const mixin = ArrayUtils.find(vm.mixins, m => m.name === declarationName);
+    for (const baseStructure of structure.getBaseStructures().filter(s => !isStructureToIgnore(s.getName()))) {
+        const declarationName = baseStructure.getName().replace(/Structure$/, "");
+        const mixin = ArrayUtils.find(node.getMixins(), m => m.getName() === declarationName);
 
         if (mixin == null)
-            problems.push(`${structureVM.name} has ${structureExtend.name}, but it shouldn't.`);
+            problems.push(`${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`);
     }
 }
 
+// output
 if (problems.length > 0) {
     console.log(problems);
     throw new Error("Classes and structures did not match!");
 }
 
-function getStructureName(vm: ClassViewModel | MixinViewModel) {
-    return vm.name + "Structure";
+function getStructureName(name: string) {
+    return name + "Structure";
 }
 
-function isStructureToIgnore(structure: InterfaceViewModel) {
-    if (/SpecificStructure$/.test(structure.name))
+function isStructureToIgnore(name: string) {
+    if (/SpecificStructure$/.test(name))
         return true;
 
-    if (/OverloadStructure$/.test(structure.name))
+    if (/OverloadStructure$/.test(name))
         return true;
 
     return false;

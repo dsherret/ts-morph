@@ -1,7 +1,7 @@
 ﻿import TsSimpleAst, {Node, ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
-import {Memoize, ArrayUtils, TypeGuards} from "./../../src/utils";
+import {Memoize, ArrayUtils, TypeGuards, createHashSet} from "./../../src/utils";
 import {isNodeClass} from "./../common";
-import {WrappedNode, Structure} from "./tsSimpleAst";
+import {WrappedNode, Mixin, Structure} from "./tsSimpleAst";
 import {WrapperFactory} from "./WrapperFactory";
 
 export class TsSimpleAstInspector {
@@ -14,6 +14,16 @@ export class TsSimpleAstInspector {
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
         return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrapperNode(c));
+    }
+
+    @Memoize
+    getMixins(): Mixin[] {
+        const mixins = createHashSet<Mixin>();
+        for (const wrappedNode of this.getWrappedNodes()) {
+            for (const mixin of wrappedNode.getMixins())
+                mixins.add(mixin);
+        }
+        return ArrayUtils.from(mixins.values());
     }
 
     @Memoize
