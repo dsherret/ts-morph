@@ -11,11 +11,9 @@
  * 3. Forward support: Features we add in the future will be auto-implemented.
  * ------------------------------------------
  */
-import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
-import Ast, {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, Scope} from "./../src/main";
 import {ArrayUtils, KeyValueCache, StringUtils} from "./../src/utils";
-import {NodeToWrapperViewModel, ClassViewModel, MixinableViewModel, MixinViewModel} from "./view-models";
+import {TsSimpleAstInspector, WrappedNode, Mixin} from "./inspectors";
 
 interface MethodInfo {
     name: string;
@@ -24,9 +22,10 @@ interface MethodInfo {
     isMixin: boolean;
 }
 
-export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], nodeToWrapperVMs: NodeToWrapperViewModel[]) {
-    const file = ast.getSourceFileOrThrow("utils/TypeGuards.ts");
+export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
+    const file = inspector.getAst().getSourceFileOrThrow("utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
+    const nodeToWrapperInfos = inspector.getNodeToWrapperInfos();
 
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
@@ -57,14 +56,15 @@ export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], no
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 
-        for (const classVM of classVMs.filter(c => c.name !== "Node" && c.isNodeClass && isAllowedClass(c))) {
-            const methodInfo = getMethodInfoForClass(classVM);
-            if (classVM.base != null)
-                fillBase(classVM, classVM.base);
-            fillMixinable(classVM, classVM);
+        for (const node of inspector.getWrappedNodes().filter(n => n.getName() !== "Node" && isAllowedClass(n.getName()))) {
+            const methodInfo = getMethodInfoForNode(node);
+            const nodeBase = node.getBase();
+            if (nodeBase != null)
+                fillBase(node, nodeBase);
+            fillMixinable(node, node);
         }
 
-        for (const nodeToWrapperVM of nodeToWrapperVMs.filter(v => v.wrapperName === "Node")) {
+        for (const nodeToWrapperVM of nodeToWrapperInfos.filter(v => v.wrapperName === "Node")) {
             for (const syntaxKindName of nodeToWrapperVM.syntaxKindNames) {
                 methodInfos.set(syntaxKindName, {
                     name: syntaxKindName,
@@ -77,49 +77,52 @@ export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], no
 
         return ArrayUtils.from(methodInfos.getValues());
 
-        function fillBase(classVM: ClassViewModel, baseVM: ClassViewModel) {
-            if (baseVM.base != null)
-                fillBase(classVM, baseVM.base);
-            const methodInfo = getMethodInfoForClass(baseVM);
-            methodInfo.syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
-            fillMixinable(classVM, baseVM);
+        function fillBase(node: WrappedNode, nodeBase: WrappedNode) {
+            const nodeBaseBase = nodeBase.getBase();
+            if (nodeBaseBase != null)
+                fillBase(node, nodeBaseBase);
+            const methodInfo = getMethodInfoForNode(nodeBase);
+            methodInfo.syntaxKinds.push(...getSyntaxKindsForName(node.getName()));
+            fillMixinable(node, nodeBase);
         }
 
-        function fillMixinable(classVM: ClassViewModel, mixinable: MixinableViewModel) {
-            for (const mixin of mixinable.mixins) {
-                getMethodInfoForMixin(mixin).syntaxKinds.push(...getSyntaxKindsForName(classVM.name));
-                fillMixinable(classVM, mixin);
+        function fillMixinable(node: WrappedNode, mixinable: WrappedNode | Mixin) {
+            for (const mixin of mixinable.getMixins()) {
+                getMethodInfoForMixin(mixin).syntaxKinds.push(...getSyntaxKindsForName(node.getName()));
+                fillMixinable(node, mixin);
             }
         }
 
-        function getMethodInfoForClass(classVM: ClassViewModel) {
-            if (methodInfos.has(classVM.name))
-                return methodInfos.get(classVM.name)!;
+        function getMethodInfoForNode(node: WrappedNode) {
+            const nodeName = node.getName();
+            if (methodInfos.has(nodeName))
+                return methodInfos.get(nodeName)!;
             const methodInfo: MethodInfo = {
-                name: classVM.name,
-                wrapperName: classVM.name,
-                syntaxKinds: [...getSyntaxKindsForName(classVM.name)],
+                name: nodeName,
+                wrapperName: nodeName,
+                syntaxKinds: [...getSyntaxKindsForName(nodeName)],
                 isMixin: false
             };
-            methodInfos.set(classVM.name, methodInfo);
+            methodInfos.set(nodeName, methodInfo);
             return methodInfo;
         }
 
-        function getMethodInfoForMixin(mixin: MixinViewModel) {
-            if (methodInfos.has(mixin.name))
-                return methodInfos.get(mixin.name)!;
+        function getMethodInfoForMixin(mixin: Mixin) {
+            const mixinName = mixin.getName();
+            if (methodInfos.has(mixinName))
+                return methodInfos.get(mixinName)!;
             const methodInfo: MethodInfo = {
-                name: mixin.name,
-                wrapperName: mixin.name,
+                name: mixinName,
+                wrapperName: mixinName,
                 syntaxKinds: [],
                 isMixin: true
             };
-            methodInfos.set(mixin.name, methodInfo);
+            methodInfos.set(mixinName, methodInfo);
             return methodInfo;
         }
 
         function getSyntaxKindsForName(name: string) {
-            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperVMs, n => n.wrapperName === name);
+            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperInfos, n => n.wrapperName === name);
             if (nodeToWrapperVM == null)
                 return [] as string[];
             return nodeToWrapperVM.syntaxKindNames;
@@ -127,8 +130,8 @@ export function createTypeGuardsUtility(ast: Ast, classVMs: ClassViewModel[], no
     }
 }
 
-function isAllowedClass(classVM: ClassViewModel) {
-    switch (classVM.name) {
+function isAllowedClass(name: string) {
+    switch (name) {
         // todo: should support these classes eventually (they probably need to be customly implemented)
         case "ObjectDestructuringAssignment":
         case "ArrayDestructuringAssignment":

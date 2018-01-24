@@ -1,19 +1,17 @@
 ﻿import * as path from "path";
 import * as fs from "fs";
-import {rootFolder, isOverloadStructure} from "./config";
-import {getAst, getClassViewModels, getStructureViewModels, getNodeToWrapperMappings} from "./common";
+import {rootFolder} from "./config";
 import {createGetStructureFunctions} from "./createGetStructureFunctions";
 import {createTypeGuardsUtility} from "./createTypeGuardsUtility";
+import {InspectorFactory} from "./inspectors";
 
-const ast = getAst();
-const classVMs = Array.from(getClassViewModels(ast));
-const structureVMs = Array.from(getStructureViewModels(ast));
-// const overloadStructureVMs = structureVMs.filter(s => isOverloadStructure(s));
-const nodeToWrapperVMs = getNodeToWrapperMappings(getAst());
+// setup
+const factory = new InspectorFactory();
+const inspector = factory.getTsSimpleAstInspector();
 
 // get structure functions
-const getStructureCode = createGetStructureFunctions(structureVMs);
+const getStructureCode = createGetStructureFunctions(inspector.getStructures());
 fs.writeFileSync(path.join(rootFolder, "src/manipulation/helpers/getStructureFunctions.ts"), getStructureCode, { encoding: "utf-8" });
 
 // create the TypeGuard class
-createTypeGuardsUtility(ast, classVMs, nodeToWrapperVMs);
+createTypeGuardsUtility(inspector);

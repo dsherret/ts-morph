@@ -1,11 +1,15 @@
-﻿import TsSimpleAst, {Node, ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
+﻿import TsSimpleAst, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName} from "./../../src/main";
 import {Memoize, ArrayUtils, TypeGuards, createHashSet} from "./../../src/utils";
 import {isNodeClass} from "./../common";
-import {WrappedNode, Mixin, Structure} from "./tsSimpleAst";
+import {WrappedNode, Mixin, Structure, NodeToWrapperInfo} from "./tsSimpleAst";
 import {WrapperFactory} from "./WrapperFactory";
 
 export class TsSimpleAstInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly ast: TsSimpleAst) {
+    }
+
+    getAst() {
+        return this.ast;
     }
 
     @Memoize
@@ -52,5 +56,30 @@ export class TsSimpleAstInspector {
     @Memoize
     getOverloadStructures() {
         return this.getStructures().filter(s => s.isOverloadStructure());
+    }
+
+    @Memoize
+    getNodeToWrapperInfos(): NodeToWrapperInfo[] {
+        const sourceFile = this.ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
+        const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
+        const initializer = nodeToWrapperMappings.getInitializer()!;
+        const propertyAssignments = initializer.getDescendants().filter(d => TypeGuards.isPropertyAssignment(d)) as PropertyAssignment[];
+        const result: { [wrapperName: string]: NodeToWrapperInfo; } = {};
+
+        for (const assignment of propertyAssignments) {
+            const wrapperName = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getName();
+            if (result[wrapperName] == null)
+                result[wrapperName] = { wrapperName, syntaxKindNames: [] };
+
+            result[wrapperName].syntaxKindNames.push(getSyntaxKindName(assignment));
+        }
+
+        return Object.keys(result).map(k => result[k]);
+
+        function getSyntaxKindName(assignment: PropertyAssignment) {
+            const computedPropertyName = assignment.getNameNode() as ComputedPropertyName;
+            const propAccessExpr = computedPropertyName.getExpression() as PropertyAccessExpression;
+            return propAccessExpr.getNameNode().getText();
+        }
     }
 }

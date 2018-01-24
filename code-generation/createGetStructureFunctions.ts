@@ -1,9 +1,9 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {getFlattenedExtensions} from "./common";
-import {InterfaceViewModel} from "./view-models";
+import {Structure} from "./inspectors";
 
 // todo: a lot of this code was written before this library supported manipulation
-export function createGetStructureFunctions(structures: InterfaceViewModel[]) {
+export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new CodeBlockWriter();
 
     writer.writeLine("/* tslint:disable */");
@@ -13,7 +13,7 @@ export function createGetStructureFunctions(structures: InterfaceViewModel[]) {
     writer.writeLine(`import * as structures from "./../../structures";`);
     writer.writeLine(`import * as getMixinStructureFuncs from "./getMixinStructureFunctions";`);
 
-    for (const structure of structures.filter(s => shouldCreateForStructure(s))) {
+    for (const structure of structures.filter(s => shouldCreateForStructure(s.getName()))) {
         writer.newLine();
         write(writer, structure);
     }
@@ -24,27 +24,27 @@ export function createGetStructureFunctions(structures: InterfaceViewModel[]) {
 // todo: make this better... good enough for now
 // for example, it would be better to be able to get the structure from a node and specify what structures to ignore when calling it... that way the logic could be kept inside
 // the application and not here (basically... have a fromFunctionDeclaration(node, [nameof(ParameteredNodeStructure)]);)
-function write(writer: CodeBlockWriter, vm: InterfaceViewModel) {
-    const className = vm.name.replace(/Structure$/, "");
-    const functionHeader = `export function from${className}(node: compiler.${className.replace("Overload", "")}): structures.${vm.name}`;
+function write(writer: CodeBlockWriter, structure: Structure) {
+    const className = structure.getName().replace(/Structure$/, "");
+    const functionHeader = `export function from${className}(node: compiler.${className.replace("Overload", "")}): structures.${structure.getName()}`;
     writer.write(functionHeader).block(() => {
-        writeBody(writer, vm, getFlattenedExtensions(vm).filter(e => shouldAllowExtends(vm, e)));
+        writeBody(writer, structure, structure.getDescendantBaseStructures().filter(b => shouldAllowExtends(structure, b)));
     });
 }
 
-function writeBody(writer: CodeBlockWriter, vm: InterfaceViewModel, extendsStructures: InterfaceViewModel[]) {
-    writer.writeLine(`let structure: structures.${vm.name} = {} as any;`);
-    for (const extendsStructure of extendsStructures) {
+function writeBody(writer: CodeBlockWriter, structure: Structure, baseStructures: Structure[]) {
+    writer.writeLine(`let structure: structures.${structure.getName()} = {} as any;`);
+    for (const extendsStructure of baseStructures) {
         writer.write("objectAssign(structure, ");
         writer.write("getMixinStructureFuncs.");
-        const extendsClassName = extendsStructure.name.replace(/Structure$/, "");
+        const extendsClassName = extendsStructure.getName().replace(/Structure$/, "");
         writer.write(`from${extendsClassName}(node));`).newLine();
     }
     writer.writeLine("return structure;");
 }
 
-function shouldCreateForStructure(structure: InterfaceViewModel) {
-    switch (structure.name) {
+function shouldCreateForStructure(name: string) {
+    switch (name) {
         case "FunctionDeclarationOverloadStructure":
         case "MethodDeclarationOverloadStructure":
         case "ConstructorDeclarationOverloadStructure":
@@ -54,9 +54,9 @@ function shouldCreateForStructure(structure: InterfaceViewModel) {
     }
 }
 
-function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: InterfaceViewModel) {
-    if (structure.name === "FunctionDeclarationOverloadStructure") {
-        switch (extendsStructure.name) {
+function shouldAllowExtends(structure: Structure, baseStructure: Structure) {
+    if (structure.getName() === "FunctionDeclarationOverloadStructure") {
+        switch (baseStructure.getName()) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
@@ -69,8 +69,8 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
                 return true;
         }
     }
-    else if (structure.name === "MethodDeclarationOverloadStructure") {
-        switch (extendsStructure.name) {
+    else if (structure.getName() === "MethodDeclarationOverloadStructure") {
+        switch (baseStructure.getName()) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
@@ -84,8 +84,8 @@ function shouldAllowExtends(structure: InterfaceViewModel, extendsStructure: Int
                 return true;
         }
     }
-    else if (structure.name === "ConstructorDeclarationOverloadStructure") {
-        switch (extendsStructure.name) {
+    else if (structure.getName() === "ConstructorDeclarationOverloadStructure") {
+        switch (baseStructure.getName()) {
             case "ParameteredNodeStructure":
             case "TypeParameteredNodeStructure":
             case "JSDocableNodeStructure":
