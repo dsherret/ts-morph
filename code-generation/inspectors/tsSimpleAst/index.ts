@@ -1,4 +1,4 @@
 export * from "./Mixin";
-export * from "./NodeToWrapperInfo";
+export * from "./NodeToWrapperMapping";
 export * from "./Structure";
 export * from "./WrappedNode";

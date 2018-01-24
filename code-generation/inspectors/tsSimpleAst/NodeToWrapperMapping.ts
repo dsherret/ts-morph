@@ -1,4 +1,4 @@
-﻿export interface NodeToWrapperInfo {
+﻿export interface NodeToWrapperMapping {
     wrapperName: string;
     syntaxKindNames: string[];
 }

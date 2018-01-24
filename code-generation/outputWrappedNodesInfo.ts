@@ -1,4 +1,13 @@
-﻿import * as path from "path";
+﻿/**
+ * Code Analysis - Output wrapped nodes info.
+ * ------------------------------------------
+ * This outputs information into wrapped-nodes.md saying what nodes have been wrapped and which ones haven't been.
+ *
+ * In the future, this should check which properites in the compiler haven't been used in this library by doing a "find references" on
+ * all the compiler node properties.
+ * ------------------------------------------
+ */
+import * as path from "path";
 import * as fs from "fs";
 import {rootFolder} from "./config";
 import {InspectorFactory, TsNode} from "./inspectors";

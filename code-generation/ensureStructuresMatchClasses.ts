@@ -1,6 +1,14 @@
-﻿import {ArrayUtils} from "./../src/utils";
-import {ClassViewModel, MixinViewModel, InterfaceViewModel} from "./view-models";
-import {isAllowedMixin, isAllowedClass, isAllowedMixinForStructure} from "./config";
+﻿/**
+ * Code Verification - Ensure Structures Match Classes.
+ * ----------------------------------------------------
+ * Classes like ClassDeclaration can extend a mixin like ExportableNode. In this case, we need to then also make sure
+ * that ClassDeclarationStructure will extend ExportableNodeStructure.
+ *
+ * This code verification ensures the equivalent class' mixins match the equivalent structure's base structures.
+ * ----------------------------------------------------
+ */
+import {ArrayUtils} from "./../src/utils";
+import {isAllowedMixin, isAllowedMixinForStructure} from "./config";
 import {InspectorFactory} from "./inspectors";
 
 // setup

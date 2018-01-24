@@ -1,4 +1,13 @@
-﻿import {ArrayUtils} from "./../src/utils";
+﻿/**
+ * Code Verification - Ensure Overload Structures Match.
+ * -----------------------------------------------------
+ * When a developer adds another interface to a structure like MethodDeclaration (ex. ScopableNodeStructure),
+ * then we need to ensure that same structure was also added to MethodOverloadDeclaration.
+ *
+ * This code verification ensures that an overload structure matches its "implementation" structure.
+ * -----------------------------------------------------
+ */
+import {ArrayUtils} from "./../src/utils";
 import {InspectorFactory, Structure} from "./inspectors";
 
 // setup

@@ -1,8 +1,17 @@
-﻿import CodeBlockWriter from "code-block-writer";
-import {getFlattenedExtensions} from "./common";
+﻿/**
+ * Code generation: Create "get structure" functions
+ * -------------------------------------------------
+ * This file generations the functions found in getStructureFunctions.ts
+ *
+ * Right now these are only used to get the structure for populating new overloads. This code needs a lot of work and
+ * might be used to implement issue #45 (if it's decided that should be implemented).
+ * -------------------------------------------------
+ */
+import CodeBlockWriter from "code-block-writer";
 import {Structure} from "./inspectors";
 
 // todo: a lot of this code was written before this library supported manipulation
+
 export function createGetStructureFunctions(structures: Structure[]) {
     const writer = new CodeBlockWriter();
 

@@ -8,7 +8,6 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-
 import {Type} from "./../src/compiler";
 import {InspectorFactory} from "./inspectors";
 

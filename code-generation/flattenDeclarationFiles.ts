@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * Code Manipulation - Flatten declaration files.
  * ----------------------------------------------
  * This flattens the definition file output of the TypeScript compiler into one main.d.ts file.

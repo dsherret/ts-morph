@@ -25,7 +25,7 @@ interface MethodInfo {
 export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
     const file = inspector.getAst().getSourceFileOrThrow("utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
-    const nodeToWrapperInfos = inspector.getNodeToWrapperInfos();
+    const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
 
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
@@ -64,8 +64,8 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
             fillMixinable(node, node);
         }
 
-        for (const nodeToWrapperVM of nodeToWrapperInfos.filter(v => v.wrapperName === "Node")) {
-            for (const syntaxKindName of nodeToWrapperVM.syntaxKindNames) {
+        for (const nodeToWrapperMapping of nodeToWrapperMappings.filter(v => v.wrapperName === "Node")) {
+            for (const syntaxKindName of nodeToWrapperMapping.syntaxKindNames) {
                 methodInfos.set(syntaxKindName, {
                     name: syntaxKindName,
                     wrapperName: "Node",
@@ -122,7 +122,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         }
 
         function getSyntaxKindsForName(name: string) {
-            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperInfos, n => n.wrapperName === name);
+            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperMappings, n => n.wrapperName === name);
             if (nodeToWrapperVM == null)
                 return [] as string[];
             return nodeToWrapperVM.syntaxKindNames;

@@ -1,7 +1,7 @@
 ﻿import TsSimpleAst, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName} from "./../../src/main";
 import {Memoize, ArrayUtils, TypeGuards, createHashSet} from "./../../src/utils";
 import {isNodeClass} from "./../common";
-import {WrappedNode, Mixin, Structure, NodeToWrapperInfo} from "./tsSimpleAst";
+import {WrappedNode, Mixin, Structure, NodeToWrapperMapping} from "./tsSimpleAst";
 import {WrapperFactory} from "./WrapperFactory";
 
 export class TsSimpleAstInspector {
@@ -59,12 +59,12 @@ export class TsSimpleAstInspector {
     }
 
     @Memoize
-    getNodeToWrapperInfos(): NodeToWrapperInfo[] {
+    getNodeToWrapperMappings(): NodeToWrapperMapping[] {
         const sourceFile = this.ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
         const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
         const initializer = nodeToWrapperMappings.getInitializer()!;
         const propertyAssignments = initializer.getDescendants().filter(d => TypeGuards.isPropertyAssignment(d)) as PropertyAssignment[];
-        const result: { [wrapperName: string]: NodeToWrapperInfo; } = {};
+        const result: { [wrapperName: string]: NodeToWrapperMapping; } = {};
 
         for (const assignment of propertyAssignments) {
             const wrapperName = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getName();

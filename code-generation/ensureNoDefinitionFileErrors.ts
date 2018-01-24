@@ -1,4 +1,14 @@
-﻿import * as path from "path";
+﻿/**
+ * Code Verification: Ensure no definition file errors
+ * ---------------------------------------------------
+ * Does what it says. Goes through and find definition file errors.
+ *
+ * I had to implement this originally because I found the compiler wasn't always giving me emit errors
+ * when creating the definition file. Now it's especially useful because it will make sure the final manipulated
+ * definition file doesn't have errors.
+ * ---------------------------------------------------
+ */
+import * as path from "path";
 import * as ts from "typescript";
 import TsSimpleAst from "./../src/main";
 import {getDefinitionAst} from "./common";
