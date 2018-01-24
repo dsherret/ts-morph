@@ -7,12 +7,10 @@ export class WrappedNode {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: ClassDeclaration) {
     }
 
-    @Memoize
     getName() {
         return this.node.getName();
     }
 
-    @Memoize
     getFilePath() {
         return this.node.getSourceFile().getFilePath();
     }

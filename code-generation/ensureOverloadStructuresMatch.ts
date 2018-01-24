@@ -1,44 +1,49 @@
 ﻿import {ArrayUtils} from "./../src/utils";
-import {getAst, getStructureViewModels, getFlattenedExtensions} from "./common";
-import {InterfaceViewModel} from "./view-models";
-import {isOverloadStructure} from "./config";
+import {InspectorFactory, Structure} from "./inspectors";
 
-const ast = getAst();
-const structureVMs = ArrayUtils.from(getStructureViewModels(ast));
-const overloadVMs = structureVMs.filter(s => isOverloadStructure(s));
+// setup
+const factory = new InspectorFactory();
+const inspector = factory.getTsSimpleAstInspector();
+
+// get structures
+const structures = inspector.getStructures();
+const overloadStructures = inspector.getOverloadStructures();
+
+// find the problems
 const problems: string[] = [];
+for (const overloadStructure of overloadStructures) {
+    const structureName = overloadStructure.getName().replace("Overload", "");
+    const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
 
-for (const overloadVM of overloadVMs) {
-    const structureName = overloadVM.name.replace("Overload", "");
-    const structureVM = ArrayUtils.find(structureVMs, s => s.name === structureName)!;
+    if (structure == null)
+        throw new Error(`Could not find structure for overload: ${overloadStructure.getName()}`);
 
-    const flattenedOverloadExtensions = getFlattenedExtensions(overloadVM);
-    const flattenedStructureExtensions = getFlattenedExtensions(structureVM).filter(s => isAllowedStructure(s));
+    const overloadBaseStructures = overloadStructure.getDescendantBaseStructures();
+    const structureBaseStructures = structure.getDescendantBaseStructures().filter(s => isAllowedStructure(s));
 
-    for (let i = flattenedOverloadExtensions.length - 1; i >= 0; i--) {
-        const findIndex = flattenedStructureExtensions.map(s => s.name).indexOf(flattenedOverloadExtensions[i].name);
+    for (let i = overloadBaseStructures.length - 1; i >= 0; i--) {
+        const findIndex = structureBaseStructures.map(s => s.getName()).indexOf(overloadBaseStructures[i].getName());
         if (findIndex >= 0) {
-            flattenedOverloadExtensions.splice(i, 1);
-            flattenedStructureExtensions.splice(findIndex, 1);
+            overloadBaseStructures.splice(i, 1);
+            structureBaseStructures.splice(findIndex, 1);
         }
     }
 
-    for (const remainingOverloadExtension of flattenedOverloadExtensions) {
-        problems.push(`${overloadVM.name}: Overload extension of ${remainingOverloadExtension.name} does not exist on main structure.`);
-    }
+    for (const remainingOverload of overloadBaseStructures)
+        problems.push(`${overloadStructure.getName()}: Overload extension of ${remainingOverload.getName()} does not exist on main structure.`);
 
-    for (const remainingStructureExtension of flattenedStructureExtensions) {
-        problems.push(`${overloadVM.name}: Structure extension of ${remainingStructureExtension.name} does not exist on overload structure.`);
-    }
+    for (const remainingStructure of structureBaseStructures)
+        problems.push(`${overloadStructure.getName()}: Structure extension of ${remainingStructure.getName()} does not exist on overload structure.`);
 }
 
+// output
 if (problems.length > 0) {
     console.log(problems);
     throw new Error("Overload structure did not match main structure!");
 }
 
-function isAllowedStructure(vm: InterfaceViewModel) {
-    switch (vm.name) {
+function isAllowedStructure(structure: Structure) {
+    switch (structure.getName()) {
         case "NamedNodeStructure":
         case "PropertyNamedNodeStructure":
         case "FunctionLikeDeclarationStructure":
@@ -48,7 +53,7 @@ function isAllowedStructure(vm: InterfaceViewModel) {
             return false;
     }
 
-    if (vm.name.indexOf("SpecificStructure") > 0)
+    if (structure.getName().indexOf("SpecificStructure") > 0)
         return false;
 
     return true;

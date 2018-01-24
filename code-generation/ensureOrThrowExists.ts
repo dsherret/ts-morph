@@ -10,32 +10,30 @@
  */
 
 import {Type} from "./../src/compiler";
-import {getAst} from "./common";
+import {InspectorFactory} from "./inspectors";
 
-const ast = getAst();
+const inspector = new InspectorFactory().getTsSimpleAstInspector();
 const problems: string[] = [];
 
-for (const sourceFile of ast.getSourceFiles("src/compiler/**/*.ts")) {
-    for (const c of sourceFile.getClasses()) {
-        for (const method of c.getInstanceMethods()) {
-            if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
-                continue;
+for (const c of inspector.getPublicClasses()) {
+    for (const method of c.getInstanceMethods()) {
+        if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
+            continue;
 
-            const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
-            if (orThrowMethod == null)
-                problems.push(`Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
-        }
+        const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
+        if (orThrowMethod == null)
+            problems.push(`Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
     }
+}
 
-    for (const i of sourceFile.getInterfaces()) {
-        for (const method of i.getMethods()) {
-            if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
-                continue;
+for (const i of inspector.getPublicInterfaces()) {
+    for (const method of i.getMethods()) {
+        if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
+            continue;
 
-            const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
-            if (orThrowMethod == null)
-                problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
-        }
+        const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
+        if (orThrowMethod == null)
+            problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
     }
 }
 

@@ -1,4 +1,4 @@
-export * from "./ServiceFactory";
+export * from "./InspectorFactory";
 export * from "./ts";
 export * from "./TsInspector";
 export * from "./tsSimpleAst";

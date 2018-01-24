@@ -1,7 +1,5 @@
-﻿import {InterfaceViewModel} from "./../view-models";
-
-export function isOverloadStructure(vm: InterfaceViewModel) {
-    switch (vm.name) {
+﻿export function isOverloadStructure(name: string) {
+    switch (name) {
         case "FunctionDeclarationOverloadStructure":
         case "MethodDeclarationOverloadStructure":
         case "ConstructorDeclarationOverloadStructure":

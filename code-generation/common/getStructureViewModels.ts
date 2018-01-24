@@ -3,10 +3,6 @@ import {InterfaceViewModel} from "./../view-models";
 import TsSimpleAst, {ClassDeclaration, InterfaceDeclaration} from "./../../src/main";
 
 export function* getStructureViewModels(ast: TsSimpleAst): IterableIterator<InterfaceViewModel> {
-    const diagnostics = ast.getDiagnostics().map(m => m.getMessageText());
-    if (diagnostics.length > 0)
-        console.log(diagnostics);
-
     const compilerSourceFiles = ast.getSourceFiles().filter(f => f.getFilePath().indexOf("src/structures") >= 0);
     const interfaces = compilerSourceFiles.map(f => f.getInterfaces()).reduce((a, b) => a.concat(b), []);
 
