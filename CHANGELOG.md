@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.5.0"></a>
+# [6.5.0](https://github.com/dsherret/ts-simple-ast/compare/6.4.0...6.5.0) (2018-01-26)
+
+
+### Bug Fixes
+
+* The wrapped Type should be a TypeParameter when it is a ts.TypeParameter. ([23e7e94](https://github.com/dsherret/ts-simple-ast/commit/23e7e94))
+
+
+### Features
+
+* Add Node.getType() ([2f15bd9](https://github.com/dsherret/ts-simple-ast/commit/2f15bd9))
+* Add Type.isTypeParameter type guard. ([02c591f](https://github.com/dsherret/ts-simple-ast/commit/02c591f))
+
+
+
 <a name="6.4.0"></a>
 # [6.4.0](https://github.com/dsherret/ts-simple-ast/compare/6.3.0...6.4.0) (2018-01-21)
 
