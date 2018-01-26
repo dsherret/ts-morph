@@ -1,5 +1,6 @@
 ﻿import {ClassDeclaration, InterfaceDeclaration, Type} from "./../../../src/main";
 import {Memoize, ArrayUtils, TypeGuards} from "./../../../src/utils";
+import {hasDescendantBaseType} from "./../../common";
 import {WrapperFactory} from "./../WrapperFactory";
 import {TsNode} from "./../ts";
 import {Mixin} from "./Mixin";
@@ -52,35 +53,35 @@ export class WrappedNode {
         const node = this.node;
         const typeChecker = node.global.typeChecker;
 
-        return ArrayUtils.flatten([getFromExtends(), getFromTypeParam()]).map(n => {
+        return getFromExtends().map(n => {
             if (!TypeGuards.isInterfaceDeclaration(n))
                 throw new Error(`Unexpected node kind: ${n.getKindName()}`);
             return this.wrapperFactory.getTsNode(n);
         });
 
-        function getFromTypeParam() {
-            const typeParams = node.getTypeParameters();
-            if (typeParams.length === 0)
-                return [];
-            const typeParam = typeParams[0];
-            const defaultNode = typeParam.getDefaultNode();
-            if (defaultNode == null)
-                return [];
-            return getFromType(typeChecker.getTypeAtLocation(defaultNode));
+        function getFromExtends() {
+            const type = getCompilerType();
+            return type == null ? [] : getFromType(type);
         }
 
-        function getFromExtends() {
+        function getCompilerType() {
             const extendsExpr = node.getExtends();
             if (extendsExpr == null)
-                return [];
-            const typeArgs = extendsExpr!.getTypeArguments();
+                return undefined;
+            const extendsType = extendsExpr.getType();
+            const possibleTypes = extendsType.isIntersectionType() ? extendsType.getIntersectionTypes() : [extendsType];
+            const nodeType = ArrayUtils.find(possibleTypes, t => hasDescendantBaseType(t, baseType => baseType.getText() === "Node<NodeType>"));
+            if (nodeType == null)
+                return undefined;
+            const typeArgs = nodeType.getTypeArguments();
             if (typeArgs.length === 0)
-                return [];
-            return getFromType(typeChecker.getTypeAtLocation(typeArgs[0]));
+                return undefined;
+            const type = typeArgs[0];
+            return type.isTypeParameter() ? type.getDefaultOrThrow() : type;
         }
 
         function getFromType(type: Type | undefined) {
-            if (type == null || type.isTypeParameter())
+            if (type == null)
                 return [];
             const symbol = type.getSymbol();
             if (symbol == null)

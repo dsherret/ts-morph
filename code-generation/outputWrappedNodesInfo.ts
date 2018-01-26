@@ -14,15 +14,13 @@ import {InspectorFactory, TsNode} from "./inspectors";
 
 // setup
 const inspectorFactory = new InspectorFactory();
-const tsSimpleAstInspector = inspectorFactory.getTsSimpleAstInspector();
 const tsInspector = inspectorFactory.getTsInspector();
 
 // get info
-const wrappedNodes = tsSimpleAstInspector.getWrappedNodes();
 const tsNodes = tsInspector.getTsNodes();
 
 // figure out ts nodes that are wrapped and not wrapped
-const wrappedTsNodes = tsNodes.filter(i => wrappedNodes.some(c => c.getAssociatedTsNodes().some(n => n === i)) || isImplementedViaMixins(i));
+const wrappedTsNodes = tsNodes.filter(i => i.getAssociatedWrappedNode() != null || isImplementedViaMixins(i));
 const notWrappedTsNodes = tsNodes.filter(i => wrappedTsNodes.indexOf(i) === -1 && !isIgnoredNode(i));
 
 // output the results (todo: use a template for the output)
@@ -38,8 +36,17 @@ function outputCoverage(header: string, tsNodesForOutput: TsNode[], additionalTe
     output += `## ${header}\n\n`;
     if (additionalText != null)
         output += additionalText + "\n\n";
-    output += `**Total:** ${tsNodesForOutput.length}\n\n` +
-        tsNodesForOutput.map(n => "* " + n.getName() + (isImplementedViaMixins(n) ? " - Implemented via mixin." : "")).join("\n") + "\n";
+    output += `**Total:** ${tsNodesForOutput.length}\n\n`;
+
+    for (const tsNode of tsNodesForOutput) {
+        const wrappedNode = tsNode.getAssociatedWrappedNode();
+        if (wrappedNode == null)
+            output += "* " + tsNode.getName();
+        else
+            output += "* [" + tsNode.getName() + "](" + getRelativePath(wrappedNode.getFilePath()) + ")";
+        output += isImplementedViaMixins(tsNode) ? " - Implemented via mixin." : "";
+        output += "\n";
+    }
 }
 
 // config
@@ -63,4 +70,11 @@ function isImplementedViaMixins(node: TsNode) {
         default:
             return false;
     }
+}
+
+function getRelativePath(absolutePath: string) {
+    const index = absolutePath.indexOf("src/compiler");
+    if (index === -1)
+        throw new Error(`Unexpected path: ${absolutePath}`);
+    return absolutePath.substring(index);
 }
