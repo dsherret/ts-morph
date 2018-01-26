@@ -16,6 +16,8 @@ export class TsInspector {
             if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => checkingType.getText() === "ts.Node")))
                 interfaces.push(interfaceDec);
         }
-        return interfaces.map(i => this.wrapperFactory.getTsNode(i));
+        const tsNodes = interfaces.map(i => this.wrapperFactory.getTsNode(i));
+        tsNodes.sort((a, b) => a.getName() < b.getName() ? -1 : 1);
+        return tsNodes;
     }
 }
