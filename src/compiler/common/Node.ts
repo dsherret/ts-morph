@@ -12,7 +12,7 @@ import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {FormatCodeSettings} from "./../tools";
-import {TypeAliasDeclaration} from "./../type";
+import {TypeAliasDeclaration, Type} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {QuoteType} from "./../literal/QuoteType";
 import {NamespaceDeclaration} from "./../namespace";
@@ -148,6 +148,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return getWrappedNode(this, nameNode).getSymbol();
 
         return undefined;
+    }
+
+    /**
+     * Gets the type of the node.
+     */
+    getType(): Type {
+        return this.global.typeChecker.getTypeAtLocation(this);
     }
 
     /**

@@ -13,10 +13,6 @@ export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
 export interface TypedNode {
     /**
-     * Gets the type.
-     */
-    getType(): Type;
-    /**
      * Gets the type node or undefined if none exists.
      */
     getTypeNode(): TypeNode | undefined;
@@ -37,10 +33,6 @@ export interface TypedNode {
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
-        getType() {
-            return this.global.typeChecker.getTypeAtLocation(this);
-        }
-
         getTypeNode() {
             return this.compilerNode.type == null ? undefined : (this.getNodeFromCompilerNode(this.compilerNode.type) as TypeNode);
         }

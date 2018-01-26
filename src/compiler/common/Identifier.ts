@@ -43,11 +43,4 @@ export class Identifier extends Node<ts.Identifier> {
     getImplementations(): ImplementationLocation[] {
         return this.global.languageService.getImplementations(this);
     }
-
-    /**
-     * Gets the type of the identifier.
-     */
-    getType(): Type {
-        return this.global.typeChecker.getTypeAtLocation(this);
-    }
 }

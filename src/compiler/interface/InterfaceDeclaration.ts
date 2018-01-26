@@ -40,13 +40,6 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     }
 
     /**
-     * Gets the interface's type.
-     */
-    getType(): Type {
-        return this.global.typeChecker.getTypeAtLocation(this);
-    }
-
-    /**
      * Gets the base types.
      */
     getBaseTypes(): Type[] {
