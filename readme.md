@@ -37,7 +37,7 @@ import Ast from "ts-simple-ast";
 
 // add source files to ast
 const ast = new Ast();
-const sourceFile = ast.createSourceFile("MyFile.ts", "enum MyEnum {}\nlet myEnum: MyEnum;\nexport default MyEnum;");
+const sourceFile = ast.createSourceFile("MyClass.ts", "class MyClass {}\nlet myClass: MyClass;\nexport default MyClass;");
 ast.addExistingSourceFiles("**/folder/**/*.ts");
 ast.createSourceFile("misc.ts", {
     classes: [{
@@ -52,20 +52,21 @@ ast.createSourceFile("misc.ts", {
 });
 
 // get information from ast
-const enumDeclaration = sourceFile.getEnumOrThrow("MyEnum");
-enumDeclaration.getName();          // returns: "MyEnum"
-enumDeclaration.hasExportKeyword(); // returns: false
-enumDeclaration.isDefaultExport();  // returns: true
+const classDeclaration = sourceFile.getClassOrThrow("MyClass");
+classDeclaration.getName();          // returns: "MyClass"
+classDeclaration.hasExportKeyword(); // returns: false
+classDeclaration.isDefaultExport();  // returns: true
 
 // manipulate ast
-enumDeclaration.rename("NewName");
-enumDeclaration.addMember({
-    name: "myNewMember"
+classDeclaration.rename("NewName");
+classDeclaration.addProperty({
+    name: "myProp",
+    initializer: "5"
 });
-enumDeclaration.setIsDefaultExport(false);
+classDeclaration.setIsDefaultExport(false);
 
 // result
-sourceFile.getFullText(); // returns: "enum NewName {\n    myNewMember\n}\nlet myEnum: NewName;"
+sourceFile.getFullText(); // returns: "class NewName {\n    myProp = 5;\n}\nlet myClass: MyClass;\n"
 sourceFile.save();        // save it asynchronously to MyFile.ts
 
 // get underlying compiler node from the typescript AST from any node
