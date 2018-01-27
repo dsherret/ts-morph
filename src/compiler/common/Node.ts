@@ -589,7 +589,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the parent or throws an error if it doesn't exist.
      */
     getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), "A parent is required to do this operation.");
+        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
     }
 
     /**
@@ -983,7 +983,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the parent if it's a certain syntax kind of throws.
      */
     getParentIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `A parent with a syntax kind of ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${ts.SyntaxKind[kind]}.`);
     }
 
     /**
@@ -991,7 +991,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `A parent of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${ts.SyntaxKind[kind]}.`);
     }
 
     /**
