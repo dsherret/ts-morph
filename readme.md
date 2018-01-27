@@ -8,9 +8,9 @@
 
 TypeScript compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (21 January 2018)
+## Library Development - Progress Update (26 January 2018)
 
-Navigation through statements and expressions is mostly implemented thanks to [@dicarlo2](https://github.com/dicarlo2)! I'm going to soon use this library to identify and make a list of missing navigation features, but it shouldn't be too much at this point (see [#93](https://github.com/dsherret/ts-simple-ast/issues/93) and [wrapped-nodes.md](https://github.com/dsherret/ts-simple-ast/blob/master/wrapped-nodes.md)).
+A report has been generated, using this library, that identifies nodes and properties from the TypeScript compiler API that haven't been wrapped. This has helped identify gaps and shortcommings of the library. The report can be viewed in the [wrapped-nodes.md](wrapped-nodes.md) file.
 
 Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
