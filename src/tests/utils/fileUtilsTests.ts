@@ -97,4 +97,30 @@ describe(nameof(FileUtils), () => {
             expect(FileUtils.filePathMatches("V:/dir/test.ts", "ir/test.ts")).to.be.false;
         });
     });
+
+    describe(nameof(FileUtils.getRelativePathTo), () => {
+        function doTest(from: string, to: string, expected: string) {
+            expect(FileUtils.getRelativePathTo(from, to)).to.equal(expected);
+        }
+
+        it("should get the relative path when the file is in the parent directory", () => {
+            doTest("V:/testing/this/out/from.ts", "V:/testing/this/to.ts", "../to.ts");
+        });
+
+        it("should get the relative path when the file is in a child directory", () => {
+            doTest("V:/testing/this/from.ts", "V:/testing/this/out/to.ts", "out/to.ts");
+        });
+
+        it("should get the relative path when the files are in different child directories", () => {
+            doTest("V:/testing/this/child1/from.ts", "V:/testing/this/child2/to.ts", "../child2/to.ts");
+        });
+
+        it("should get the relative path when the files are in the same directory", () => {
+            doTest("V:/testing/this/out/from.ts", "V:/testing/this/out/to.ts", "to.ts");
+        });
+
+        it("should get the relative path when the files are the same", () => {
+            doTest("V:/testing/this/out/to.ts", "V:/testing/this/out/to.ts", "to.ts");
+        });
+    });
 });

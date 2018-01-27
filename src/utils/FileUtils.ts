@@ -155,4 +155,14 @@ export class FileUtils {
             return text;
         return bom + text;
     }
+
+    /**
+     * Gets the relative path from one absolute path to another.
+     * @param absolutePathFrom - Absolute path from.
+     * @param absolutePathTo - Absolute path to.
+     */
+    static getRelativePathTo(absolutePathFrom: string, absolutePathTo: string) {
+        const relativePath = path.relative(path.dirname(absolutePathFrom), path.dirname(absolutePathTo));
+        return FileUtils.standardizeSlashes(path.join(relativePath, path.basename(absolutePathTo)));
+    }
 }

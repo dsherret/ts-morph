@@ -155,7 +155,7 @@ sourceFile.unindent(10, -1); // indent line containing position 10 (specify nega
 
 This will indent and unindent based on your [manipulation settings](../manipulation/settings).
 
-## Getting Exported Declarations
+### Getting Exported Declarations
 
 The exported declarations of a file can be retrieved via `.getExportedDeclarations()`.
 
@@ -208,4 +208,18 @@ Name: MainClass
 Name: Class1
 Name: Class2
 Name: Interface1
+```
+
+### Relative File Paths
+
+It might be useful to get the relative path from one source file to another.
+
+```ts
+const relativePath = sourceFileFrom.getRelativePathToSourceFile(sourceFileTo);
+```
+
+Or to get the module specifier text from one source file to another.
+
+```ts
+const moduleSpecifier = sourceFileFrom.getRelativePathToSourceFileAsModuleSpecifier(sourceFileTo);
 ```

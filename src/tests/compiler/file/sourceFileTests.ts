@@ -934,4 +934,64 @@ function myFunction(param: MyClass) {
             expect(didThrow).to.be.true;
         });
     });
+
+    describe(nameof<SourceFile>(s => s.getRelativePathToSourceFile), () => {
+        function doTest(from: string, to: string, expected: string) {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const fromFile = ast.createSourceFile(from);
+            const toFile = ast.createSourceFile(to);
+            expect(fromFile.getRelativePathToSourceFile(toFile)).to.equal(expected);
+        }
+
+        // most of these tests are in fileUtilsTests
+
+        it("should get the relative path to a source file in a different directory", () => {
+            doTest("/dir/from.ts", "/dir2/to.ts", "../dir2/to.ts");
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getRelativePathToSourceFileAsModuleSpecifier), () => {
+        function doTest(from: string, to: string, expected: string) {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const fromFile = ast.createSourceFile(from);
+            const toFile = from === to ? fromFile : ast.createSourceFile(to);
+            expect(fromFile.getRelativePathToSourceFileAsModuleSpecifier(toFile)).to.equal(expected);
+        }
+
+        it("should get the module specifier to a source file in a different directory", () => {
+            doTest("/dir/from.ts", "/dir2/to.ts", "./../dir2/to");
+        });
+
+        it("should get the module specifier to a source file in the same directory", () => {
+            doTest("/dir/from.ts", "/dir/to.ts", "./to");
+        });
+
+        it("should get the module specifier to the same source file", () => {
+            doTest("/dir/file.ts", "/dir/file.ts", "./file");
+        });
+
+        it("should get the module specifier to a definition file", () => {
+            doTest("/dir/from.ts", "/dir2/to.d.ts", "./../dir2/to");
+        });
+
+        it("should get the module specifier to a definition file that doing use a lower case extension", () => {
+            doTest("/dir/from.ts", "/dir2/to.D.TS", "./../dir2/to");
+        });
+
+        it("should use an implicit index when specifying the index file in a different directory", () => {
+            doTest("/dir/file.ts", "/dir2/index.ts", "./dir2");
+        });
+
+        it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
+            doTest("/dir/file.ts", "/dir2/INDEX.ts", "./dir2");
+        });
+
+        it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
+            doTest("/dir/file.ts", "/dir2/index.d.ts", "./dir2");
+        });
+
+        it("should use an implicit index when specifying the index file in the same directory", () => {
+            doTest("/dir/file.ts", "/dir/index.ts", ".");
+        });
+    });
 });
