@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
-import {TypeGuards, Logger} from "./../../utils";
+import {TypeGuards} from "./../../utils";
 import {Node, Identifier, Symbol} from "./../common";
 import {ExportDeclaration} from "./ExportDeclaration";
 

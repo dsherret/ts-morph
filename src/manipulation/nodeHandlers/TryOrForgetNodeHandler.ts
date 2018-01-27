@@ -1,6 +1,6 @@
 ﻿import {Node} from "./../../compiler";
 import * as errors from "./../../errors";
-import {Logger, TypeGuards} from "./../../utils";
+import {TypeGuards} from "./../../utils";
 import {NodeHandler} from "./NodeHandler";
 
 /**
@@ -18,7 +18,7 @@ export class TryOrForgetNodeHandler implements NodeHandler {
         try {
             this.handler.handleNode(currentNode, newNode);
         } catch (ex) {
-            Logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
+            currentNode.global.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
             // forget all the source file's nodes
             currentNode.getChildSyntaxListOrThrow().forget();
             // replace the source file with the temporary source file

@@ -5,7 +5,7 @@ export * from "./EventContainer";
 export * from "./FileUtils";
 export * from "./HashSet";
 export * from "./KeyValueCache";
-export * from "./Logger";
+export * from "./logging";
 export * from "./printNode";
 export * from "./StringUtils";
 export * from "./tsconfig";

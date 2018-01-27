@@ -359,6 +359,14 @@ export class TsSimpleAst {
             file.saveSync();
     }
 
+    /**
+     * Enables logging to the console.
+     * @param enabled - Enabled.
+     */
+    enableLogging(enabled = true) {
+        this.global.logger.setEnabled(enabled);
+    }
+
     private getUnsavedSourceFiles() {
         return ArrayUtils.from(getUnsavedIterator(this.global.compilerFactory.getSourceFilesByDirectoryDepth()));
 

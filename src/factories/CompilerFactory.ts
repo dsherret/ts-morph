@@ -2,7 +2,7 @@
 import * as compiler from "./../compiler";
 import * as errors from "./../errors";
 import {SourceFileStructure} from "./../structures";
-import {KeyValueCache, Logger, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
+import {KeyValueCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
 import {Directory} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
@@ -125,7 +125,7 @@ export class CompilerFactory {
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             if (this.global.fileSystem.fileExistsSync(filePath)) {
-                Logger.log(`Loading file: ${filePath}`);
+                this.global.logger.log(`Loading file: ${filePath}`);
                 sourceFile = this.getSourceFileFromText(filePath, this.global.fileSystem.readFileSync(filePath));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }

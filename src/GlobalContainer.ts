@@ -5,6 +5,7 @@ import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
 import {FileSystemHost} from "./fileSystem";
+import {Logger, ConsoleLogger} from "./utils";
 
 /**
  * @internal
@@ -25,6 +26,7 @@ export class GlobalContainer {
     private readonly _fileSystem: FileSystemHost;
     private readonly _compilerOptions: ts.CompilerOptions;
     private readonly _customTypeChecker: TypeChecker | undefined;
+    private readonly _logger = new ConsoleLogger();
 
     constructor(fileSystem: FileSystemHost, compilerOptions: ts.CompilerOptions, opts: GlobalContainerOptions) {
         this._fileSystem = fileSystem;
@@ -87,6 +89,13 @@ export class GlobalContainer {
             throw this.getToolRequiredError("type checker");
 
         return this.program.getTypeChecker();
+    }
+
+    /**
+     * Gets the logger.
+     */
+    get logger() {
+        return this._logger;
     }
 
     /**

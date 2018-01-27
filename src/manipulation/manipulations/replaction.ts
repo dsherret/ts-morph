@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Node, SourceFile, RenameLocation} from "./../../compiler";
-import {Logger, TypeGuards} from "./../../utils";
+import {TypeGuards} from "./../../utils";
 import {doManipulation} from "./doManipulation";
 import {NodeHandlerFactory} from "./../nodeHandlers";
 import {InsertionTextManipulator, FullReplacementTextManipulator, RenameLocationTextManipulator} from "./../textManipulators";

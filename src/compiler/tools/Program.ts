@@ -1,6 +1,5 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
-import {Logger} from "./../../utils";
 import {TypeChecker} from "./TypeChecker";
 import {SourceFile} from "./../file";
 import {EmitResult, Diagnostic} from "./results";
