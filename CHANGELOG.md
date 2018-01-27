@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.6.0"></a>
+# [6.6.0](https://github.com/dsherret/ts-simple-ast/compare/6.5.0...6.6.0) (2018-01-27)
+
+
+### Bug Fixes
+
+* ClassDeclaration.getBaseClass should return the base class when using mixins. ([b455c60](https://github.com/dsherret/ts-simple-ast/commit/b455c60))
+* Exceptions occurring when synchronously calling forgetNodesCreatedInBlock weren't being thrown. ([82798c1](https://github.com/dsherret/ts-simple-ast/commit/82798c1))
+
+
+### Features
+
+* [#138](https://github.com/dsherret/ts-simple-ast/issues/138) - getInitializerIfKind improvement. ([e0b88ba](https://github.com/dsherret/ts-simple-ast/commit/e0b88ba))
+* Add SourceFile getRelativePathToSourceFile and getRelativePathToSourceFileAsModuleSpecifier. ([99e8585](https://github.com/dsherret/ts-simple-ast/commit/99e8585))
+* Node.getStartLineNumber and SourceFile.getLineNumberFromPos. ([64178fa](https://github.com/dsherret/ts-simple-ast/commit/64178fa))
+
+
+
 <a name="6.5.0"></a>
 # [6.5.0](https://github.com/dsherret/ts-simple-ast/compare/6.4.0...6.5.0) (2018-01-26)
 
