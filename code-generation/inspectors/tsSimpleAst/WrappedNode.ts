@@ -35,20 +35,6 @@ export class WrappedNode {
     }
 
     @Memoize
-    getAllMixins() {
-        // todo: remove?
-        return ArrayUtils.from(getAllMixins(this));
-
-        function* getAllMixins(wrappedNode: WrappedNode): IterableIterator<Mixin> {
-            for (const mixin of wrappedNode.getMixins())
-                yield mixin;
-            const baseWrappedNode = wrappedNode.getBase();
-            if (baseWrappedNode != null)
-                yield* getAllMixins(baseWrappedNode);
-        }
-    }
-
-    @Memoize
     getAssociatedTsNodes(): TsNode[] {
         const node = this.node;
         const typeChecker = node.global.typeChecker;

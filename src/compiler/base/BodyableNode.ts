@@ -7,7 +7,7 @@ import {Node} from "./../common";
 import {callBaseFill} from "./../callBaseFill";
 import {setBodyTextForNode} from "./helpers/setBodyTextForNode";
 
-export type BodyableNodeExtensionType = Node<ts.Node>;
+export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 
 export interface BodyableNode {
     /**
@@ -37,7 +37,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getBody() {
-            const body = (this.compilerNode as any).body as ts.Node;
+            const body = this.compilerNode.body;
             return body == null ? undefined : this.getNodeFromCompilerNode(body);
         }
 

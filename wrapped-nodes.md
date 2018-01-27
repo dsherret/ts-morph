@@ -6,144 +6,336 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 132
+**Total:** 131
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
+    * :heavy_check_mark: left
 * [ArrayLiteralExpression](src/compiler/expression/array/ArrayLiteralExpression.ts)
+    * :heavy_check_mark: elements
 * [ArrowFunction](src/compiler/function/ArrowFunction.ts)
+    * :heavy_check_mark: equalsGreaterThanToken
+    * :heavy_check_mark: body
 * [AsExpression](src/compiler/expression/AsExpression.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: type
 * [AssignmentExpression](src/compiler/expression/AssignmentExpression.ts)
+    * :heavy_check_mark: left
+    * :heavy_check_mark: operatorToken
 * [AwaitExpression](src/compiler/expression/AwaitExpression.ts)
+    * :heavy_check_mark: expression
 * [BinaryExpression](src/compiler/expression/BinaryExpression.ts)
+    * :heavy_check_mark: left
+    * :heavy_check_mark: operatorToken
+    * :heavy_check_mark: right
 * [Block](src/compiler/statement/Block.ts)
+    * :heavy_check_mark: statements
 * [BooleanLiteral](src/compiler/literal/BooleanLiteral.ts)
 * [BreakStatement](src/compiler/statement/BreakStatement.ts)
+    * :heavy_check_mark: label
 * [CallExpression](src/compiler/expression/CallExpression.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: typeArguments
+    * :heavy_check_mark: arguments
 * [CaseBlock](src/compiler/statement/CaseBlock.ts)
+    * :heavy_check_mark: clauses
 * [CaseClause](src/compiler/statement/CaseClause.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: statements
 * [CatchClause](src/compiler/statement/CatchClause.ts)
+    * :heavy_check_mark: variableDeclaration
+    * :heavy_check_mark: block
 * [ClassDeclaration](src/compiler/class/ClassDeclaration.ts)
+    * :heavy_check_mark: name
 * [CommaListExpression](src/compiler/expression/CommaListExpression.ts)
+    * :heavy_check_mark: elements
 * [ComputedPropertyName](src/compiler/common/ComputedPropertyName.ts)
+    * :heavy_check_mark: expression
 * [ConditionalExpression](src/compiler/expression/ConditionalExpression.ts)
+    * :heavy_check_mark: condition
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: whenTrue
+    * :heavy_check_mark: colonToken
+    * :heavy_check_mark: whenFalse
 * [ConstructSignatureDeclaration](src/compiler/interface/ConstructSignatureDeclaration.ts)
 * [ConstructorDeclaration](src/compiler/class/ConstructorDeclaration.ts)
+    * :heavy_check_mark: body
 * [ContinueStatement](src/compiler/statement/ContinueStatement.ts)
+    * :heavy_check_mark: label
 * [DebuggerStatement](src/compiler/statement/DebuggerStatement.ts)
 * [Decorator](src/compiler/decorator/Decorator.ts)
+    * :heavy_check_mark: expression
 * [DefaultClause](src/compiler/statement/DefaultClause.ts)
+    * :heavy_check_mark: statements
 * [DeleteExpression](src/compiler/expression/DeleteExpression.ts)
+    * :heavy_check_mark: expression
 * [DoStatement](src/compiler/statement/DoStatement.ts)
+    * :heavy_check_mark: expression
 * [ElementAccessExpression](src/compiler/expression/ElementAccessExpression.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: argumentExpression
 * [EmptyStatement](src/compiler/statement/EmptyStatement.ts)
 * [EnumDeclaration](src/compiler/enum/EnumDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: members
 * [EnumMember](src/compiler/enum/EnumMember.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: initializer
 * [ExportAssignment](src/compiler/file/ExportAssignment.ts)
+    * :heavy_check_mark: isExportEquals
+    * :heavy_check_mark: expression
 * [ExportDeclaration](src/compiler/file/ExportDeclaration.ts)
+    * :heavy_check_mark: exportClause
+    * :heavy_check_mark: moduleSpecifier
 * [ExportSpecifier](src/compiler/file/ExportSpecifier.ts)
+    * :x: propertyName
+    * :heavy_check_mark: name
 * [Expression](src/compiler/expression/Expression.ts)
 * [ExpressionStatement](src/compiler/statement/ExpressionStatement.ts)
+    * :heavy_check_mark: expression
 * [ExpressionWithTypeArguments](src/compiler/type/ExpressionWithTypeArguments.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: typeArguments
 * [ForInStatement](src/compiler/statement/ForInStatement.ts)
+    * :heavy_check_mark: initializer
+    * :heavy_check_mark: expression
 * [ForOfStatement](src/compiler/statement/ForOfStatement.ts)
+    * :heavy_check_mark: awaitModifier
+    * :heavy_check_mark: initializer
+    * :heavy_check_mark: expression
 * [ForStatement](src/compiler/statement/ForStatement.ts)
+    * :heavy_check_mark: initializer
+    * :heavy_check_mark: condition
+    * :heavy_check_mark: incrementor
 * [FunctionDeclaration](src/compiler/function/FunctionDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * [FunctionExpression](src/compiler/function/FunctionExpression.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * FunctionLikeDeclarationBase - Implemented via mixin.
 * [GetAccessorDeclaration](src/compiler/class/GetAccessorDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * [HeritageClause](src/compiler/general/HeritageClause.ts)
+    * :heavy_check_mark: token
+    * :heavy_check_mark: types
 * [Identifier](src/compiler/common/Identifier.ts)
+    * :x: escapedText
+    * :x: originalKeywordKind
+    * :x: isInJSDocNamespace
 * [Identifier](src/compiler/common/Identifier.ts)
+    * :heavy_check_mark: text
 * [IfStatement](src/compiler/statement/IfStatement.ts)
-* [ImportClause](src/compiler/file/ImportDeclaration.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: thenStatement
+    * :heavy_check_mark: elseStatement
 * [ImportDeclaration](src/compiler/file/ImportDeclaration.ts)
+    * :heavy_check_mark: importClause
+    * :heavy_check_mark: moduleSpecifier
 * [ImportExpression](src/compiler/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/file/ImportSpecifier.ts)
+    * :x: propertyName
+    * :heavy_check_mark: name
 * [InterfaceDeclaration](src/compiler/interface/InterfaceDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: typeParameters
+    * :heavy_check_mark: heritageClauses
+    * :heavy_check_mark: members
 * [IterationStatement](src/compiler/statement/IterationStatement.ts)
+    * :heavy_check_mark: statement
 * [JSDoc](src/compiler/doc/JSDoc.ts)
+    * :heavy_check_mark: tags
+    * :heavy_check_mark: comment
 * [JSDocAugmentsTag](src/compiler/doc/JSDocAugmentsTag.ts)
+    * :x: class
 * [JSDocClassTag](src/compiler/doc/JSDocClassTag.ts)
 * [JSDocParameterTag](src/compiler/doc/JSDocParameterTag.ts)
 * [JSDocPropertyTag](src/compiler/doc/JSDocPropertyTag.ts)
 * [JSDocReturnTag](src/compiler/doc/JSDocReturnTag.ts)
+    * :x: typeExpression
 * [JSDocTag](src/compiler/doc/JSDocTag.ts)
+    * :heavy_check_mark: atToken
+    * :heavy_check_mark: tagName
+    * :heavy_check_mark: comment
 * [JSDocTypeTag](src/compiler/doc/JSDocTypeTag.ts)
+    * :x: typeExpression
 * [JSDocTypedefTag](src/compiler/doc/JSDocTypedefTag.ts)
+    * :x: fullName
+    * :heavy_check_mark: name
+    * :x: typeExpression
 * [JSDocUnknownTag](src/compiler/doc/JSDocUnknownTag.ts)
 * [LabeledStatement](src/compiler/statement/LabeledStatement.ts)
+    * :heavy_check_mark: label
+    * :heavy_check_mark: statement
 * [LeftHandSideExpression](src/compiler/expression/LeftHandSideExpression.ts)
 * [LiteralExpression](src/compiler/expression/LiteralExpression.ts)
 * [MemberExpression](src/compiler/expression/MemberExpression.ts)
 * [MetaProperty](src/compiler/expression/MetaProperty.ts)
+    * :heavy_check_mark: keywordToken
+    * :heavy_check_mark: name
 * [MethodDeclaration](src/compiler/class/MethodDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * [MethodSignature](src/compiler/interface/MethodSignature.ts)
+    * :heavy_check_mark: name
 * NamedDeclaration - Implemented via mixin.
 * [NamespaceDeclaration](src/compiler/namespace/NamespaceDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * [NewExpression](src/compiler/expression/NewExpression.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: typeArguments
+    * :heavy_check_mark: arguments
 * [NoSubstitutionTemplateLiteral](src/compiler/literal/template/NoSubstitutionTemplateLiteral.ts)
 * [NonNullExpression](src/compiler/expression/NonNullExpression.ts)
+    * :heavy_check_mark: expression
 * [NotEmittedStatement](src/compiler/statement/NotEmittedStatement.ts)
 * [NullLiteral](src/compiler/literal/NullLiteral.ts)
 * [NumericLiteral](src/compiler/literal/NumericLiteral.ts)
 * [ObjectDestructuringAssignment](src/compiler/expression/object/ObjectDestructuringAssignment.ts)
+    * :heavy_check_mark: left
 * [ObjectLiteralExpression](src/compiler/expression/object/ObjectLiteralExpression.ts)
 * [OmittedExpression](src/compiler/expression/OmittedExpression.ts)
 * [ParameterDeclaration](src/compiler/function/ParameterDeclaration.ts)
+    * :heavy_check_mark: dotDotDotToken
+    * :heavy_check_mark: name
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: type
+    * :heavy_check_mark: initializer
 * [ParenthesizedExpression](src/compiler/expression/ParenthesizedExpression.ts)
+    * :heavy_check_mark: expression
 * [PartiallyEmittedExpression](src/compiler/expression/PartiallyEmittedExpression.ts)
+    * :heavy_check_mark: expression
 * [PostfixUnaryExpression](src/compiler/expression/PostfixUnaryExpression.ts)
+    * :heavy_check_mark: operand
+    * :heavy_check_mark: operator
 * [PrefixUnaryExpression](src/compiler/expression/PrefixUnaryExpression.ts)
+    * :heavy_check_mark: operator
+    * :heavy_check_mark: operand
 * [PrimaryExpression](src/compiler/expression/PrimaryExpression.ts)
 * [PropertyAccessExpression](src/compiler/expression/PropertyAccessExpression.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: name
 * [PropertyAssignment](src/compiler/expression/object/PropertyAssignment.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: initializer
 * [PropertyDeclaration](src/compiler/class/PropertyDeclaration.ts)
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: name
+    * :heavy_check_mark: type
+    * :heavy_check_mark: initializer
 * [PropertySignature](src/compiler/interface/PropertySignature.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: type
+    * :heavy_check_mark: initializer
 * [QualifiedName](src/compiler/common/QualifiedName.ts)
+    * :heavy_check_mark: left
+    * :heavy_check_mark: right
 * [RegularExpressionLiteral](src/compiler/literal/RegularExpressionLiteral.ts)
 * [ReturnStatement](src/compiler/statement/ReturnStatement.ts)
+    * :heavy_check_mark: expression
 * [SetAccessorDeclaration](src/compiler/class/SetAccessorDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: body
 * [ShorthandPropertyAssignment](src/compiler/expression/object/ShorthandPropertyAssignment.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: questionToken
+    * :heavy_check_mark: equalsToken
+    * :heavy_check_mark: objectAssignmentInitializer
 * SignatureDeclarationBase - Implemented via mixin.
 * [SourceFile](src/compiler/file/SourceFile.ts)
 * [SourceFile](src/compiler/file/SourceFile.ts)
+    * :heavy_check_mark: statements
+    * :x: endOfFileToken
+    * :heavy_check_mark: fileName
+    * :x: text
+    * :x: amdDependencies
+    * :x: moduleName
+    * :heavy_check_mark: referencedFiles
+    * :heavy_check_mark: typeReferenceDirectives
+    * :heavy_check_mark: languageVariant
+    * :heavy_check_mark: isDeclarationFile
+    * :x: hasNoDefaultLib
+    * :x: languageVersion
 * [SpreadAssignment](src/compiler/expression/object/SpreadAssignment.ts)
+    * :heavy_check_mark: expression
 * [SpreadElement](src/compiler/expression/SpreadElement.ts)
+    * :heavy_check_mark: expression
 * [Statement](src/compiler/statement/Statement.ts)
 * [StringLiteral](src/compiler/literal/StringLiteral.ts)
 * [SuperElementAccessExpression](src/compiler/expression/SuperElementAccessExpression.ts)
+    * :heavy_check_mark: expression
 * [SuperExpression](src/compiler/expression/SuperExpression.ts)
 * [SuperPropertyAccessExpression](src/compiler/expression/SuperPropertyAccessExpression.ts)
+    * :heavy_check_mark: expression
 * [SwitchStatement](src/compiler/statement/SwitchStatement.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: caseBlock
+    * :x: possiblyExhaustive
 * [SyntaxList](src/compiler/common/SyntaxList.ts)
 * [TaggedTemplateExpression](src/compiler/literal/template/TaggedTemplateExpression.ts)
+    * :heavy_check_mark: tag
+    * :heavy_check_mark: template
 * [TemplateExpression](src/compiler/literal/template/TemplateExpression.ts)
+    * :heavy_check_mark: head
+    * :heavy_check_mark: templateSpans
 * [TemplateHead](src/compiler/literal/template/TemplateHead.ts)
 * [TemplateMiddle](src/compiler/literal/template/TemplateMiddle.ts)
 * [TemplateSpan](src/compiler/literal/template/TemplateSpan.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: literal
 * [TemplateTail](src/compiler/literal/template/TemplateTail.ts)
 * [ThisExpression](src/compiler/expression/ThisExpression.ts)
 * [ThrowStatement](src/compiler/statement/ThrowStatement.ts)
+    * :heavy_check_mark: expression
 * [TryStatement](src/compiler/statement/TryStatement.ts)
+    * :heavy_check_mark: tryBlock
+    * :heavy_check_mark: catchClause
+    * :heavy_check_mark: finallyBlock
 * [TypeAliasDeclaration](src/compiler/type/TypeAliasDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: typeParameters
+    * :heavy_check_mark: type
 * [TypeAssertion](src/compiler/expression/TypeAssertion.ts)
+    * :heavy_check_mark: type
+    * :heavy_check_mark: expression
 * [TypeNode](src/compiler/type/TypeNode.ts)
 * [TypeOfExpression](src/compiler/expression/TypeOfExpression.ts)
+    * :heavy_check_mark: expression
 * [TypeParameterDeclaration](src/compiler/type/TypeParameterDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: constraint
+    * :heavy_check_mark: default
+    * :x: expression
 * [TypeReferenceNode](src/compiler/type/TypeReferenceNode.ts)
+    * :heavy_check_mark: typeName
+    * :heavy_check_mark: typeArguments
 * [UnaryExpression](src/compiler/expression/UnaryExpression.ts)
 * [UpdateExpression](src/compiler/expression/UpdateExpression.ts)
 * [VariableDeclaration](src/compiler/statement/VariableDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: type
+    * :heavy_check_mark: initializer
 * [VariableDeclarationList](src/compiler/statement/VariableDeclarationList.ts)
+    * :heavy_check_mark: declarations
 * [VariableStatement](src/compiler/statement/VariableStatement.ts)
+    * :heavy_check_mark: declarationList
 * [VoidExpression](src/compiler/expression/VoidExpression.ts)
+    * :heavy_check_mark: expression
 * [WhileStatement](src/compiler/statement/WhileStatement.ts)
+    * :heavy_check_mark: expression
 * [WithStatement](src/compiler/statement/WithStatement.ts)
+    * :heavy_check_mark: expression
+    * :heavy_check_mark: statement
 * [YieldExpression](src/compiler/expression/YieldExpression.ts)
+    * :heavy_check_mark: asteriskToken
+    * :heavy_check_mark: expression
 
 ## Not Exist
 
-**Total:** 73
+**Total:** 74
 
 * ArrayBindingPattern
 * ArrayTypeNode
@@ -158,6 +350,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ExternalModuleReference
 * FunctionTypeNode
 * ImportCall
+* ImportClause
 * ImportEqualsDeclaration
 * IndexSignatureDeclaration
 * IndexedAccessTypeNode

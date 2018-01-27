@@ -47,10 +47,10 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
      * Gets the module specifier or undefined if it doesn't exist.
      */
     getModuleSpecifier() {
-        const stringLiteral = this.getLastChildByKind(ts.SyntaxKind.StringLiteral);
-        if (stringLiteral == null)
+        const moduleSpecifier = this.compilerNode.moduleSpecifier;
+        if (moduleSpecifier == null)
             return undefined;
-        const text = stringLiteral.getText();
+        const text = this.getNodeFromCompilerNode(moduleSpecifier).getText();
         return text.substring(1, text.length - 1);
     }
 
@@ -95,7 +95,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
      * Gets if the export declaration has named exports.
      */
     hasNamedExports() {
-        return this.getFirstChildByKind(ts.SyntaxKind.NamedExports) != null;
+        return this.compilerNode.exportClause != null;
     }
 
     /**
@@ -171,10 +171,10 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
      * Gets the named exports.
      */
     getNamedExports(): ExportSpecifier[] {
-        const namedExports = this.getFirstChildByKind(ts.SyntaxKind.NamedExports);
+        const namedExports = this.compilerNode.exportClause;
         if (namedExports == null)
             return [];
-        return namedExports.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isExportSpecifier(c)) as ExportSpecifier[];
+        return namedExports.elements.map(e => this.getNodeFromCompilerNode(e) as ExportSpecifier);
     }
 
     /**

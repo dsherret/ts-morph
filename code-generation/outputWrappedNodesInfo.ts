@@ -7,10 +7,13 @@
  * all the compiler node properties.
  * ------------------------------------------
  */
+import * as ts from "typescript";
 import * as path from "path";
 import * as fs from "fs";
 import {rootFolder} from "./config";
-import {InspectorFactory, TsNode} from "./inspectors";
+import {InspectorFactory, TsNode, TsNodeProperty} from "./inspectors";
+import {MethodDeclaration} from "./../src/compiler";
+import {ArrayUtils} from "./../src/utils";
 
 // setup
 const inspectorFactory = new InspectorFactory();
@@ -35,6 +38,7 @@ outputCoverage("Exist", wrappedTsNodes);
 output += "\n";
 outputCoverage("Not Exist", notWrappedTsNodes);
 fs.writeFileSync(path.join(rootFolder, "wrapped-nodes.md"), output);
+console.log("\x07");
 
 function outputCoverage(header: string, tsNodesForOutput: TsNode[], additionalText?: string) {
     output += `## ${header}\n\n`;
@@ -43,17 +47,35 @@ function outputCoverage(header: string, tsNodesForOutput: TsNode[], additionalTe
     output += `**Total:** ${tsNodesForOutput.length}\n\n`;
 
     for (const tsNode of tsNodesForOutput) {
+        console.log("Examining: " + tsNode.getName());
         const wrappedNode = tsNode.getAssociatedWrappedNode();
         if (wrappedNode == null)
-            output += "* " + tsNode.getName();
+            output += `* ${tsNode.getName()}`;
         else
-            output += "* [" + tsNode.getName() + "](" + getRelativePath(wrappedNode.getFilePath()) + ")";
+            output += `* [${tsNode.getName()}](${getRelativePath(wrappedNode.getFilePath())})`;
         output += isImplementedViaMixins(tsNode) ? " - Implemented via mixin." : "";
         output += "\n";
+        if (wrappedNode != null) {
+            const properties = tsNode.getProperties();
+            for (const prop of properties) {
+                if (!isPropertyToIgnore(prop))
+                    outputProperty(prop);
+            }
+        }
+    }
+
+    function outputProperty(prop: TsNodeProperty) {
+        output += `    * ${prop.isReferenced() ? ":heavy_check_mark:" : ":x:"} ${prop.getName()}\n`;
     }
 }
 
 // config
+
+function isPropertyToIgnore(prop: TsNodeProperty) {
+    return prop.getName() === "kind" ||
+        prop.getName() === "parent" ||
+        prop.getName()[0] === "_";
+}
 
 function isIgnoredNode(node: TsNode) {
     switch (node.getName()) {

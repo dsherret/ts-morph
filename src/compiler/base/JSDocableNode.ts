@@ -8,7 +8,7 @@ import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {JSDoc} from "./../doc/JSDoc";
 
-export type JSDocableNodeExtensionType = Node<any>;
+export type JSDocableNodeExtensionType = Node<ts.Node & { jsDoc?: ts.NodeArray<ts.JSDoc>; }>;
 
 export interface JSDocableNode {
     /**
@@ -42,7 +42,9 @@ export interface JSDocableNode {
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
     return class extends Base implements JSDocableNode {
         getJsDocs(): JSDoc[] {
-            const nodes = (this.compilerNode as any).jsDoc as ts.JSDoc[] || [];
+            const nodes = this.compilerNode.jsDoc;
+            if (nodes == null)
+                return [];
             return nodes.map(n => this.getNodeFromCompilerNode(n) as JSDoc);
         }
 
@@ -51,7 +53,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
         }
 
         addJsDocs(structures: JSDocStructure[]) {
-            return this.insertJsDocs(getEndIndexFromArray((this.compilerNode as any).jsDoc), structures);
+            return this.insertJsDocs(getEndIndexFromArray(this.compilerNode.jsDoc), structures);
         }
 
         insertJsDoc(index: number, structure: JSDocStructure) {

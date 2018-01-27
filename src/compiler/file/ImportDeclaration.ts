@@ -32,8 +32,8 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
      * Gets the module specifier.
      */
     getModuleSpecifier() {
-        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
-        const text = stringLiteral.getText();
+        const moduleSpecifier = this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
+        const text = moduleSpecifier.getText();
         return text.substring(1, text.length - 1);
     }
 
@@ -48,8 +48,8 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
      * Gets the source file referenced in the module specifier or returns undefined if it can't find it.
      */
     getModuleSpecifierSourceFile() {
-        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
-        const symbol = stringLiteral.getSymbol();
+        const moduleSpecifier = this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
+        const symbol = moduleSpecifier.getSymbol();
         if (symbol == null)
             return undefined;
         const declarations = symbol.getDeclarations();
@@ -289,6 +289,6 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
     }
 
     private getImportClause() {
-        return this.getFirstChildByKind(ts.SyntaxKind.ImportClause) as Node<ts.ImportClause> | undefined;
+        return this.compilerNode.importClause == null ? undefined : this.getNodeFromCompilerNode(this.compilerNode.importClause);
     }
 }
