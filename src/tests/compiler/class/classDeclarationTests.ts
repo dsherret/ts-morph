@@ -899,7 +899,7 @@ class Child extends Mixin(Base) {}
             doTest("class Base {} class Child implements Base {}", "Child", undefined);
         });
 
-        it("should be undefined for a mixin", () => {
+        it("should get the base class that's mixined", () => {
             doTest(`
 type Constructor<T> = new (...args: any[]) => T;
 class Base {}
@@ -909,7 +909,7 @@ function Mixin<T extends Constructor<{}>>(Base: T) {
 }
 
 class Child extends Mixin(Base) {}
-`, "Child", undefined);
+`, "Child", "Base");
         });
     });
 

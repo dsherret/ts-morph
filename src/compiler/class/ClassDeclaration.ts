@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
     removeStatementedNodeChild} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils} from "./../../utils";
+import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
@@ -674,7 +674,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Note: Use getBaseTypes if the base might be a mixin.
      */
     getBaseClass() {
-        const declarations = this.getBaseTypes()
+        const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersectionType() ? t.getIntersectionTypes() : [t]));
+        const declarations = baseTypes
             .map(t => t.getSymbol())
             .filter(s => s != null)
             .map(s => s!.getDeclarations())
