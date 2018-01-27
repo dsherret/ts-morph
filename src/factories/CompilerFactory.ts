@@ -390,18 +390,24 @@ export class CompilerFactory {
      * Forgets the nodes created in the block.
      * @param block - Block of code to run.
      */
-    async forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)) {
+    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)): Promise<void> {
+        // can't use the async keyword here because exceptions that happen when doing this synchronously need to be thrown
         this.nodeCache.setForgetPoint();
+        let wasPromise = false;
         try {
             const result = block((...nodes) => {
                 for (const node of nodes)
                     this.nodeCache.rememberNode(node);
             });
 
-            if (result != null && typeof result.then === "function")
-                await result;
+            if (result != null && typeof result.then === "function") {
+                wasPromise = true;
+                return result.then(() => this.nodeCache.forgetLastPoint());
+            }
         } finally {
-            this.nodeCache.forgetLastPoint();
+            if (!wasPromise)
+                this.nodeCache.forgetLastPoint();
         }
+        return Promise.resolve();
     }
 }

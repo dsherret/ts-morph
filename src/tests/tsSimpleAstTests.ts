@@ -650,6 +650,10 @@ describe(nameof(TsSimpleAst), () => {
                     expect(() => remember(classDec)).to.throw(errors.InvalidOperationError);
                 });
             });
+
+            it("should get exceptions thrown in the body", () => {
+                expect(() => ast.forgetNodesCreatedInBlock(() => { throw new Error(""); })).to.throw();
+            });
         });
 
         describe("asynchronous", async () => {
