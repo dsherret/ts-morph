@@ -60,6 +60,7 @@ export class TsSimpleAstInspector {
 
     @Memoize
     getNodeToWrapperMappings(): NodeToWrapperMapping[] {
+        const wrappedNodes = this.getWrappedNodes();
         const sourceFile = this.ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
         const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
         const initializer = nodeToWrapperMappings.getInitializer()!;
@@ -67,9 +68,14 @@ export class TsSimpleAstInspector {
         const result: { [wrapperName: string]: NodeToWrapperMapping; } = {};
 
         for (const assignment of propertyAssignments) {
-            const wrapperName = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getName();
-            if (result[wrapperName] == null)
-                result[wrapperName] = { wrapperName, syntaxKindNames: [] };
+            const nameNode = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getNameNode();
+            const wrapperName = nameNode.getText();
+            if (result[wrapperName] == null) {
+                const wrappedNode = ArrayUtils.find(wrappedNodes, n => n.getName() === wrapperName);
+                if (wrappedNode == null)
+                    throw new Error(`Could not find the wrapped node for ${wrapperName}.`);
+                result[wrapperName] = { wrapperName, wrappedNode, syntaxKindNames: [] };
+            }
 
             result[wrapperName].syntaxKindNames.push(getSyntaxKindName(assignment));
         }

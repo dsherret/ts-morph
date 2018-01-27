@@ -1,6 +1,6 @@
 ﻿import {ClassDeclaration, InterfaceDeclaration, Type} from "./../../../src/main";
 import {Memoize, ArrayUtils, TypeGuards} from "./../../../src/utils";
-import {hasDescendantBaseType} from "./../../common";
+import {hasDescendantNodeType} from "./../../common";
 import {WrapperFactory} from "./../WrapperFactory";
 import {TsNode} from "./../ts";
 import {Mixin} from "./Mixin";
@@ -15,6 +15,14 @@ export class WrappedNode {
 
     getFilePath() {
         return this.node.getSourceFile().getFilePath();
+    }
+
+    @Memoize
+    getBases(): WrappedNode[] {
+        const base = this.getBase();
+        if (base == null)
+            return [];
+        return [base, ...base.getBases()];
     }
 
     @Memoize
@@ -56,7 +64,7 @@ export class WrappedNode {
                 return undefined;
             const extendsType = extendsExpr.getType();
             const possibleTypes = extendsType.isIntersectionType() ? extendsType.getIntersectionTypes() : [extendsType];
-            const nodeType = ArrayUtils.find(possibleTypes, t => hasDescendantBaseType(t, baseType => baseType.getText() === "Node<NodeType>"));
+            const nodeType = ArrayUtils.find(possibleTypes, t => hasDescendantNodeType(t));
             if (nodeType == null)
                 return undefined;
             const typeArgs = nodeType.getTypeArguments();

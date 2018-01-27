@@ -16,8 +16,9 @@
  *
  * ----------------------------------------------
  */
-import {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, JSDocStructure} from "./../src/main";
-import {getDefinitionAst} from "./common";
+import {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
+    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards} from "./../src/main";
+import {getDefinitionAst, hasDescendantNodeType} from "./common";
 import {InspectorFactory} from "./inspectors";
 
 // setup
@@ -26,34 +27,26 @@ const inspector = factory.getTsSimpleAstInspector();
 
 console.log("Start: " + new Date());
 const ast = getDefinitionAst();
+const compilerSourceFile = ast.getSourceFileOrThrow("compiler/index.d.ts");
 const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
-setSyntaxKindOverloads();
+
+modifyFile(ast.getSourceFileOrThrow("Node.d.ts"));
+modifyFile(ast.getSourceFileOrThrow("InitializerGetExpressionableNode.d.ts"));
+
 console.log("End: " + new Date());
 
-export function setSyntaxKindOverloads() {
-    const sourceFile = ast.getSourceFileOrThrow("Node.d.ts");
-    const nodeClass = sourceFile.getClass("Node")!;
-    const syntaxKindMethods: MethodDeclaration[] = [];
-
-    ast.forgetNodesCreatedInBlock(remember => {
-        const methods = nodeClass.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
-        remember(...methods);
-        syntaxKindMethods.push(...methods);
-    });
-
+function modifyFile(sourceFile: SourceFile) {
     console.log("Adding compiler import...");
     sourceFile.addImportDeclaration({
         namespaceImport: "compiler",
-        moduleSpecifier: "./../../compiler"
+        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(compilerSourceFile)
     });
 
-    for (const method of syntaxKindMethods) {
-        console.log("Modifying method: " + method.getName() + "...");
-        ast.forgetNodesCreatedInBlock(() => {
-            addMethods(nodeClass, method);
-        });
-        method.forget();
-    }
+    for (const classDec of sourceFile.getClasses())
+        setClassSyntaxKindOverloads(classDec);
+
+    for (const interfaceDec of sourceFile.getInterfaces())
+        setInterfaceSyntaxKindOverloads(interfaceDec);
 
     const diagnostics = sourceFile.getDiagnostics();
     if (diagnostics.length > 0)
@@ -62,29 +55,72 @@ export function setSyntaxKindOverloads() {
     sourceFile.saveSync();
 }
 
-function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaration) {
-    const isArrayType = method.getReturnType().isArrayType();
+function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {
+    // todo: merge this with setInterfaceSyntaxKindOverloads (just need to separate out common parts)
+    const syntaxKindMethods: MethodDeclaration[] = [];
+
+    ast.forgetNodesCreatedInBlock(remember => {
+        const methods = classDec.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
+        remember(...methods);
+        syntaxKindMethods.push(...methods);
+    });
+
+    for (const method of syntaxKindMethods) {
+        console.log("Modifying method: " + method.getName() + "...");
+        ast.forgetNodesCreatedInBlock(() => {
+            classDec.insertMethods(method.getChildIndex(), getMethodStructures(method));
+        });
+        method.forget();
+    }
+}
+
+function setInterfaceSyntaxKindOverloads(interfaceDec: InterfaceDeclaration) {
+    const syntaxKindMethods: MethodSignature[] = [];
+
+    ast.forgetNodesCreatedInBlock(remember => {
+        const methods = interfaceDec.getMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
+        remember(...methods);
+        syntaxKindMethods.push(...methods);
+    });
+
+    for (const method of syntaxKindMethods) {
+        console.log("Modifying method: " + method.getName() + "...");
+        ast.forgetNodesCreatedInBlock(() => {
+            interfaceDec.insertMethods(method.getChildIndex(), getMethodStructures(method));
+        });
+        method.forget();
+    }
+}
+
+function getMethodStructures(method: MethodDeclaration | MethodSignature) {
+    const returnType = method.getReturnType();
+    const isArrayType = returnType.isArrayType();
     const isNullableType = method.getReturnType().isUnionType();
     const docs: JSDocStructure[] = method.getJsDocs().map(n => ({ description: n.getInnerText() }));
-    const structures: MethodDeclarationStructure[] = [];
+    const structures: { name: string; returnType: string; parameters: ParameterDeclarationStructure[]; docs: JSDocStructure[] }[] = [];
+    const nodeReturnType = isArrayType ? returnType.getArrayType()! : (isNullableType ? returnType.getUnionTypes().find(t => hasDescendantNodeType(t))! : returnType);
+    const nodeReturnTypeDeclaration = nodeReturnType.getSymbolOrThrow().getDeclarations()[0];
+    if (nodeReturnTypeDeclaration == null || !TypeGuards.isClassDeclaration(nodeReturnTypeDeclaration))
+        throw new Error("Expected the return type to be a class.");
 
     for (const nodeToWrapper of nodeToWrapperMappings) {
-        if (nodeToWrapper.wrapperName === "Node")
+        if (nodeToWrapper.wrapperName === "Node" || !nodeToWrapper.wrappedNode.getBases().some(b => b.getName() === nodeReturnTypeDeclaration.getName()))
             continue;
 
         for (const syntaxKindName of nodeToWrapper.syntaxKindNames) {
             const typeText = `ts.SyntaxKind.${syntaxKindName}`;
 
-            const methodStructure: MethodDeclarationStructure = {
+            const methodStructure = {
                 name: method.getName(),
-                parameters: [],
+                parameters: [] as ParameterDeclarationStructure[],
                 returnType: "compiler." + nodeToWrapper.wrapperName + (isArrayType ? "[]" : "") + (isNullableType ? " | undefined" : ""),
                 docs
             };
+
             for (const param of method.getParameters()) {
                 const name = param.getName()!;
                 const type = param.getTypeNodeOrThrow().getText();
-                methodStructure.parameters!.push({
+                methodStructure.parameters.push({
                     name,
                     type: type === "ts.SyntaxKind" ? `ts.SyntaxKind.${syntaxKindName}` : type
                 });
@@ -92,6 +128,5 @@ function addMethods(classDeclaration: ClassDeclaration, method: MethodDeclaratio
             structures.push(methodStructure);
         }
     }
-
-    classDeclaration.insertMethods(method.getChildIndex(), structures);
+    return structures;
 }

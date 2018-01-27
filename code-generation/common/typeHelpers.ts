@@ -1,6 +1,14 @@
 ﻿import {Type} from "./../../src/compiler";
 import {ArrayUtils} from "./../../src/utils";
 
+export function isNodeType(type: Type) {
+    return type.getText() === "Node<NodeType>";
+}
+
+export function hasDescendantNodeType(type: Type) {
+    return hasDescendantBaseType(type, isNodeType);
+}
+
 export function hasDescendantBaseType(type: Type, isMatch: (type: Type) => boolean): boolean {
     return getDescendantBaseType(type, isMatch) != null;
 }

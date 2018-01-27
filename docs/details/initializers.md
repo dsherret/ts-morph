@@ -21,8 +21,6 @@ variableDeclaration.getInitializerIfKind(ts.SyntaxKind.FunctionExpression); // r
 variableDeclaration.getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression); // returns: Expression
 ```
 
-In a future release, `getInitializerIfKind` will be limited to only the supported syntax kinds of `Expression` and will return the type of the provided syntax kind (follow issue #138 for details).
-
 ### Removing
 
 Use `.removeInitializer()` on the parent node. For example:
