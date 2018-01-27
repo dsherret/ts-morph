@@ -1,4 +1,6 @@
-﻿export class StringUtils {
+﻿import * as errors from "./../errors";
+
+export class StringUtils {
     private constructor() {
     }
 
@@ -19,5 +21,18 @@
 
     static endsWith(str: string, endsWithString: string) {
         return str.substr(str.length - endsWithString.length, endsWithString.length) === endsWithString;
+    }
+
+    static getLineNumberFromPos(str: string, pos: number) {
+        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        // do not allocate a string in this method
+        let count = 0;
+
+        for (let i = 0; i < pos; i++) {
+            if (str[i] === "\n" || (str[i] === "\r" && str[i + 1] !== "\n"))
+                count++;
+        }
+
+        return count + 1; // convert count to line number
     }
 }

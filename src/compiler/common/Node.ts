@@ -743,6 +743,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the line number at the start of the node.
+     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     */
+    getStartLineNumber(includeJsDocComment?: boolean) {
+        return this.getSourceFile().getLineNumberFromPos(this.getStartLinePos(includeJsDocComment));
+    }
+
+    /**
      * Gets if this is the first node on the current line.
      */
     isFirstNodeOnLine() {

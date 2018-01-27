@@ -316,6 +316,13 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getStartLineNumber), () => {
+        it("should get the start line number of the node", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("\n\nclass MyClass {\n\n    prop: string;\n}");
+            expect(firstChild.getInstanceProperties()[0].getStartLineNumber()).to.equal(5);
+        });
+    });
+
     describe(nameof<Node>(n => n.getStart), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const {firstChild} = getInfoFromText(text);

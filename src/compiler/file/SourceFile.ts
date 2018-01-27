@@ -96,6 +96,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the line number of the provided position.
+     * @param pos - Position
+     */
+    getLineNumberFromPos(pos: number) {
+        return StringUtils.getLineNumberFromPos(this.getFullText(), pos);
+    }
+
+    /**
      * Copy this source file to a new file.
      * @param filePath - A new file path. Can be relative to the original file or an absolute path.
      * @param options - Options for copying.
