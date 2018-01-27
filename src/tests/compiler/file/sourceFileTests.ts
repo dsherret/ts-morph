@@ -979,19 +979,23 @@ function myFunction(param: MyClass) {
         });
 
         it("should use an implicit index when specifying the index file in a different directory", () => {
-            doTest("/dir/file.ts", "/dir2/index.ts", "./dir2");
+            doTest("/dir/file.ts", "/dir2/index.ts", "./../dir2");
+        });
+
+        it("should use an implicit index when specifying the index file in a parent directory", () => {
+            doTest("/dir/parent/file.ts", "/dir/index.ts", "./../../dir");
         });
 
         it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
-            doTest("/dir/file.ts", "/dir2/INDEX.ts", "./dir2");
+            doTest("/dir/file.ts", "/dir2/INDEX.ts", "./../dir2");
         });
 
         it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
-            doTest("/dir/file.ts", "/dir2/index.d.ts", "./dir2");
+            doTest("/dir/file.ts", "/dir2/index.d.ts", "./../dir2");
         });
 
         it("should use an implicit index when specifying the index file in the same directory", () => {
-            doTest("/dir/file.ts", "/dir/index.ts", ".");
+            doTest("/dir/file.ts", "/dir/index.ts", "./../dir");
         });
     });
 });
