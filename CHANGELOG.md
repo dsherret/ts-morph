@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.7.0"></a>
+# [6.7.0](https://github.com/dsherret/ts-simple-ast/compare/6.6.0...6.7.0) (2018-01-28)
+
+
+### Bug Fixes
+
+* **type-guards:** A few nodes were not returning true for some type guards. ([f2f64b6](https://github.com/dsherret/ts-simple-ast/commit/f2f64b6))
+
+
+### Features
+
+* Add CallSignatureDeclaration. ([3067c2b](https://github.com/dsherret/ts-simple-ast/commit/3067c2b))
+* Add ClassDeclaration - getExtendsOrThrow() and getBaseClassOrThrow. ([3e24db4](https://github.com/dsherret/ts-simple-ast/commit/3e24db4))
+* Add ExternalModuleReference and ImportEqualsDeclaration. ([c140982](https://github.com/dsherret/ts-simple-ast/commit/c140982)), closes [#225](https://github.com/dsherret/ts-simple-ast/issues/225)
+* StatementedNode - getStatement(condition) and getStatementByKind(kind). ([db34a13](https://github.com/dsherret/ts-simple-ast/commit/db34a13))
+
+
+
 <a name="6.6.0"></a>
 # [6.6.0](https://github.com/dsherret/ts-simple-ast/compare/6.5.0...6.6.0) (2018-01-27)
 
