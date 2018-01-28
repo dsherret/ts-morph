@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import {Type} from "./../src/compiler";
+import TsSimpleAst, {Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory} from "./../src/main";
 import {InspectorFactory} from "./inspectors";
 
 const inspector = new InspectorFactory().getTsSimpleAstInspector();
@@ -20,7 +20,7 @@ for (const c of inspector.getPublicClasses()) {
             continue;
 
         const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
-        if (orThrowMethod == null)
+        if (orThrowMethod == null && !isIgnoredMethod(c, method))
             problems.push(`Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
     }
 }
@@ -31,7 +31,7 @@ for (const i of inspector.getPublicInterfaces()) {
             continue;
 
         const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
-        if (orThrowMethod == null)
+        if (orThrowMethod == null && !isIgnoredMethod(c, method))
             problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
     }
 }
@@ -41,4 +41,25 @@ problems.forEach(p => console.error(p));
 function doesReturnTypeRequireOrThrow(returnType: Type) {
     const unionTypes = returnType.getUnionTypes();
     return unionTypes.some(t => t.isUndefinedType());
+}
+
+function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {
+    switch (parent.getName()) {
+        case nameof(TsSimpleAst):
+            return matches(method.getName(), [
+                    nameof<TsSimpleAst>(a => a.addDirectoryIfExists),
+                    nameof<TsSimpleAst>(a => a.addSourceFileIfExists)
+                ]);
+        case nameof(Directory):
+            return matches(method.getName(), [
+                    nameof<Directory>(a => a.addDirectoryIfExists),
+                    nameof<Directory>(a => a.addSourceFileIfExists)
+                ]);
+        default:
+            return false;
+    }
+}
+
+function matches(name: string, names: string[]) {
+    return names.indexOf(name) >= 0;
 }

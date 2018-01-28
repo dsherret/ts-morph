@@ -119,7 +119,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the extends expression.
+     * Gets the extends expression or throws if it doesn't exist.
+     */
+    getExtendsOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getExtends(), `Expected to find the extends expression for the class ${this.getName()}.`);
+    }
+
+    /**
+     * Gets the extends expression or return sundefined if it doesn't exist.
      */
     getExtends(): ExpressionWithTypeArguments | undefined {
         const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
@@ -670,9 +677,18 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the base class or throws.
+     *
+     * Note: Use getBaseTypes if you need to get the mixins.
+     */
+    getBaseClassOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getBaseClass(), `Expected to find the base class of ${this.getName()}.`);
+    }
+
+    /**
      * Gets the base class.
      *
-     * Note: Use getBaseTypes if the base might be a mixin.
+     * Note: Use getBaseTypes if you need to get the mixins.
      */
     getBaseClass() {
         const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersectionType() ? t.getIntersectionTypes() : [t]));

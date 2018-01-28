@@ -43,6 +43,18 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getExtendsOrThrow), () => {
+        it("should throw when no extends clause exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            expect(() => firstChild.getExtendsOrThrow()).to.throw();
+        });
+
+        it("should return a heritage clause when an extends clause exists", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
+            expect(firstChild.getExtendsOrThrow()).to.be.instanceOf(ExpressionWithTypeArguments);
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.setExtends), () => {
         function doTest(startCode: string, extendsText: string, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
@@ -910,6 +922,25 @@ function Mixin<T extends Constructor<{}>>(Base: T) {
 
 class Child extends Mixin(Base) {}
 `, "Child", "Base");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getBaseClassOrThrow), () => {
+        function doTest(text: string, className: string, expectedName: string | undefined) {
+            const {sourceFile} = getInfoFromText(text);
+            if (typeof expectedName === "undefined")
+                expect(() => sourceFile.getClassOrThrow(className).getBaseClassOrThrow()).to.throw();
+            else {
+                expect(sourceFile.getClassOrThrow(className).getBaseClassOrThrow().getName()).to.equal(expectedName);
+            }
+        }
+
+        it("should get the base when it's a class", () => {
+            doTest("class Base {} class Child extends Base {}", "Child", "Base");
+        });
+
+        it("should throw when there is no base class", () => {
+            doTest("class Class {}", "Class", undefined);
         });
     });
 
