@@ -16,7 +16,7 @@ import {FunctionDeclaration} from "./../function";
 import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {TypeAliasDeclaration} from "./../type";
-import {VariableStatement, VariableDeclaration} from "./../statement";
+import {Statement, VariableStatement, VariableDeclaration} from "./../statement";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
@@ -25,33 +25,53 @@ export interface StatementedNode {
     /**
      * Gets the node's statements.
      */
-    getStatements(): Node[];
+    getStatements(): Statement[];
+    /**
+     * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
+    getStatement(findFunction: (statement: Node) => boolean): Statement | undefined;
+    /**
+     * Gets the first statement that matches the provided condition or throws if it doesn't exist.
+     * @param findFunction - Function to find the statement by.
+     */
+    getStatementOrThrow(findFunction: (statement: Node) => boolean): Statement;
+    /**
+     * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
+     * @param kind - Syntax kind to find the node by.
+     */
+    getStatementByKind(kind: ts.SyntaxKind): Statement | undefined;
+    /**
+     * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
+     * @param kind - Syntax kind to find the node by.
+     */
+    getStatementByKindOrThrow(kind: ts.SyntaxKind): Statement;
     /**
      * Adds statements.
      * @param text - Text of the statement or statements to add.
      * @returns The statements that were added.
      */
-    addStatements(text: string): Node[];
+    addStatements(text: string): Statement[];
     /**
      * Add statements.
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were added.
      */
-    addStatements(writerFunction: (writer: CodeBlockWriter) => void): Node[];
+    addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Index to insert at.
      * @param text - Text of the statement or statements to insert.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, text: string): Node[];
+    insertStatements(index: number, text: string): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Index to insert at.
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Node[];
+    insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Index to remove the statement at.
@@ -418,37 +438,36 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            let statements: ts.NodeArray<ts.Statement>;
-            if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
-                statements = this.compilerNode.statements;
-            else if (TypeGuards.isNamespaceDeclaration(this)) {
-                // need to get the inner-most body for namespaces
-                let node = this as Node;
-                while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null) {
-                    node = node.getBody();
-                }
-                statements = (node.compilerNode as ts.Block).statements;
-            }
-            else if (TypeGuards.isBodyableNode(this))
-                statements = (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
-            else if (TypeGuards.isBodiedNode(this))
-                statements = (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
-            else
-                throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
-
-            return statements.map(s => this.getNodeFromCompilerNode(s));
+            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode<Statement>(s));
         }
 
-        addStatements(text: string): Node[];
-        addStatements(writerFunction: (writer: CodeBlockWriter) => void): Node[];
+        getStatement(findFunction: (statement: Node) => boolean) {
+            return ArrayUtils.find(this.getStatements(), findFunction);
+        }
+
+        getStatementOrThrow(findFunction: (statement: Node) => boolean) {
+            return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
+        }
+
+        getStatementByKind(kind: ts.SyntaxKind): Statement | undefined {
+            const statement = ArrayUtils.find(this.getCompilerStatements(), s => s.kind === kind);
+            return this.getNodeFromCompilerNodeIfExists<Statement>(statement);
+        }
+
+        getStatementByKindOrThrow(kind: ts.SyntaxKind): Statement {
+            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${ts.SyntaxKind[kind]}.`);
+        }
+
+        addStatements(text: string): Statement[];
+        addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
         addStatements(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             const childSyntaxList = this.getChildSyntaxListOrThrow();
             return this.insertStatements(childSyntaxList.getChildCount(), textOrWriterFunction);
         }
 
-        insertStatements(index: number, text: string): Node[];
-        insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Node[];
-        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Node[];
+        insertStatements(index: number, text: string): Statement[];
+        insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Statement[];
+        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             return this.getChildSyntaxListOrThrow().insertChildText(index, textOrWriterFunction);
         }
@@ -852,7 +871,32 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this;
         }
 
+        /**
+         * @internal
+         */
+        private getCompilerStatements(): ts.NodeArray<ts.Statement> {
+            if (TypeGuards.isSourceFile(this) || TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this))
+                return this.compilerNode.statements;
+            else if (TypeGuards.isNamespaceDeclaration(this)) {
+                // need to get the inner-most body for namespaces
+                let node = this as Node;
+                while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null) {
+                    node = node.getBody();
+                }
+                return (node.compilerNode as ts.Block).statements;
+            }
+            else if (TypeGuards.isBodyableNode(this))
+                return (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else if (TypeGuards.isBodiedNode(this))
+                return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else
+                throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
+        }
+
         // todo: make this passed an object
+        /**
+         * @internal
+         */
         _insertMainChildren<U extends Node, TStructure = {}>(
             index: number,
             childCodes: string[],

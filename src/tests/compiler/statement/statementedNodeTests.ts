@@ -2,6 +2,7 @@
 import {expect} from "chai";
 import {CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "./../../../compiler";
 import {StatementedNodeStructure} from "./../../../structures";
+import {TypeGuards} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: ts.SyntaxKind) {
@@ -44,6 +45,54 @@ describe(nameof(StatementedNode), () => {
 
         it("should get statements of a default clause", () => {
             doFirstChildTest<DefaultClause>("switch (x) { default: x = 0; break; }", ["x = 0;", "break;"], ts.SyntaxKind.DefaultClause);
+        });
+    });
+
+    describe(nameof<StatementedNode>(s => s.getStatement), () => {
+        it("should get the statement when it exists", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatement(s => TypeGuards.isClassDeclaration(s))!.getText()).to.equal("class T {}");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatement(s => TypeGuards.isInterfaceDeclaration(s))).to.be.undefined;
+        });
+    });
+
+    describe(nameof<StatementedNode>(s => s.getStatementOrThrow), () => {
+        it("should get the statement when it exists", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatementOrThrow(s => TypeGuards.isClassDeclaration(s)).getText()).to.equal("class T {}");
+        });
+
+        it("should throw when it doesn't exist", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(() => sourceFile.getStatementOrThrow(s => TypeGuards.isInterfaceDeclaration(s))).to.throw();
+        });
+    });
+
+    describe(nameof<StatementedNode>(s => s.getStatementByKind), () => {
+        it("should get the statement when it exists", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatementByKind(ts.SyntaxKind.ClassDeclaration)!.getText()).to.equal("class T {}");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatementByKind(ts.SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<StatementedNode>(s => s.getStatementByKindOrThrow), () => {
+        it("should get the statement when it exists", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(sourceFile.getStatementByKindOrThrow(ts.SyntaxKind.ClassDeclaration).getText()).to.equal("class T {}");
+        });
+
+        it("should throw when it doesn't exist", () => {
+            const {sourceFile} = getInfoFromText("var t; class T {}");
+            expect(() => sourceFile.getStatementByKindOrThrow(ts.SyntaxKind.InterfaceDeclaration)).to.throw();
         });
     });
 
