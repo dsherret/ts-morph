@@ -31,7 +31,7 @@ for (const i of inspector.getPublicInterfaces()) {
             continue;
 
         const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
-        if (orThrowMethod == null && !isIgnoredMethod(c, method))
+        if (orThrowMethod == null && !isIgnoredMethod(i, method))
             problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
     }
 }
