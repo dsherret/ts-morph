@@ -1,8 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Node} from "./Node";
 import {Identifier} from "./Identifier";
-
-export type EntityName = Identifier | QualifiedName;
+import {EntityName} from "./../aliases";
 
 export class QualifiedName extends Node<ts.QualifiedName> {
     /**

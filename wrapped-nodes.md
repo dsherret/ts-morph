@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 131
+**Total:** 133
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
@@ -95,6 +95,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ExpressionWithTypeArguments](src/compiler/type/ExpressionWithTypeArguments.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: typeArguments
+* [ExternalModuleReference](src/compiler/file/ExternalModuleReference.ts)
+    * :heavy_check_mark: expression
 * [ForInStatement](src/compiler/statement/ForInStatement.ts)
     * :heavy_check_mark: initializer
     * :heavy_check_mark: expression
@@ -132,6 +134,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ImportDeclaration](src/compiler/file/ImportDeclaration.ts)
     * :heavy_check_mark: importClause
     * :heavy_check_mark: moduleSpecifier
+* [ImportEqualsDeclaration](src/compiler/file/ImportEqualsDeclaration.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: moduleReference
 * [ImportExpression](src/compiler/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/file/ImportSpecifier.ts)
     * :x: propertyName
@@ -335,7 +340,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 74
+**Total:** 72
 
 * ArrayBindingPattern
 * ArrayTypeNode
@@ -347,11 +352,9 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ClassLikeDeclarationBase
 * ConstructorTypeNode
 * DeclarationStatement
-* ExternalModuleReference
 * FunctionTypeNode
 * ImportCall
 * ImportClause
-* ImportEqualsDeclaration
 * IndexSignatureDeclaration
 * IndexedAccessTypeNode
 * IntersectionTypeNode

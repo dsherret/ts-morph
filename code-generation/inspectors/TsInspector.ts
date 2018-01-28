@@ -1,6 +1,6 @@
 ﻿import TsSimpleAst, {InterfaceDeclaration} from "./../../src/main";
 import {Memoize, ArrayUtils} from "./../../src/utils";
-import {hasDescendantNodeType} from "./../common";
+import {hasDescendantBaseType} from "./../common";
 import {TsNode} from "./ts";
 import {WrapperFactory} from "./WrapperFactory";
 
@@ -13,11 +13,9 @@ export class TsInspector {
         const compilerApiFile = this.ast.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
         const interfaces: InterfaceDeclaration[] = [];
         for (const interfaceDec of ArrayUtils.flatten(compilerApiFile.getNamespaces().map(n => n.getInterfaces()))) {
-            if (interfaceDec.getBaseTypes().some(t => hasDescendantNodeType(t)))
+            if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => checkingType.getText() === "ts.Node")))
                 interfaces.push(interfaceDec);
         }
-        const tsNodes = interfaces.map(i => this.wrapperFactory.getTsNode(i));
-        tsNodes.sort((a, b) => a.getName() < b.getName() ? -1 : 1);
-        return tsNodes;
+        return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());
     }
 }

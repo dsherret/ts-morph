@@ -45,6 +45,11 @@ export class ArrayUtils {
         }
     }
 
+    static sortByProperty<T>(items: T[], getProp: (item: T) => string | number) {
+        items.sort((a, b) => getProp(a) < getProp(b) ? -1 : 1);
+        return items;
+    }
+
     static binaryInsert<T>(items: T[], newItem: T, isGreaterThan: (item: T) => boolean) {
         let top = items.length - 1;
         let bottom = 0;

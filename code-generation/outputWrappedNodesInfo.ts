@@ -38,6 +38,8 @@ outputCoverage("Exist", wrappedTsNodes);
 output += "\n";
 outputCoverage("Not Exist", notWrappedTsNodes);
 fs.writeFileSync(path.join(rootFolder, "wrapped-nodes.md"), output);
+
+// play a tone to indicate it's done
 console.log("\x07");
 
 function outputCoverage(header: string, tsNodesForOutput: TsNode[], additionalText?: string) {
