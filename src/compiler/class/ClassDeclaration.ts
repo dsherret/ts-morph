@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, verifyAndGetIndex,
-    removeStatementedNodeChild} from "./../../manipulation";
+import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
+    verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
@@ -15,6 +15,7 @@ import {SourceFile} from "./../file";
 import {ParameterDeclaration} from "./../function";
 import {ExpressionWithTypeArguments, Type} from "./../type";
 import {NamespaceChildableNode} from "./../namespace";
+import {Statement} from "./../statement";
 import {callBaseFill} from "./../callBaseFill";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
@@ -29,7 +30,7 @@ export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyType
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ParameterDeclaration;
 
 export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
+    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
 ))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -704,13 +705,6 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         return classes;
     }
 
-    /**
-     * Removes this class declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
-    }
-
     private getImmediateDerivedClasses() {
         const references = this.getNameNode().findReferences();
         const classes: ClassDeclaration[] = [];
@@ -733,7 +727,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     private getBodyMembers() {
-        const members = this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as ClassMemberTypes[];
+        const members = this.compilerNode.members.map(m => this.getNodeFromCompilerNode<ClassMemberTypes>(m));
 
         // filter out the method declarations or constructor declarations without a body if not ambient
         return this.isAmbient() ? members : members.filter(m => {

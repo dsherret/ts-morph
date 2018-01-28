@@ -24,7 +24,7 @@ export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtension
 
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:
-                    return this.getNodeFromCompilerNode(compilerNameNode) as Identifier;
+                    return this.getNodeFromCompilerNode<Identifier>(compilerNameNode);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);

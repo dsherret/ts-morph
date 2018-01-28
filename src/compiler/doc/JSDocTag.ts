@@ -9,14 +9,14 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<N
      * Gets the at token.
      */
     getAtToken() {
-        return this.getNodeFromCompilerNode(this.compilerNode.atToken) as Node;
+        return this.getNodeFromCompilerNode<Node>(this.compilerNode.atToken);
     }
 
     /**
      * Gets the tag name node.
      */
     getTagNameNode() {
-        return this.getNodeFromCompilerNode(this.compilerNode.tagName) as Identifier;
+        return this.getNodeFromCompilerNode<Identifier>(this.compilerNode.tagName);
     }
 
     /**

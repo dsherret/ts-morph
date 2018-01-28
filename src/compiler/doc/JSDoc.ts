@@ -4,6 +4,7 @@ import {removeChildren, replaceTextPossiblyCreatingChildNodes} from "./../../man
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
+import {JSDocTag} from "./JSDocTag";
 
 /**
  * JS doc node.
@@ -12,11 +13,11 @@ export class JSDoc extends Node<ts.JSDoc> {
     /**
      * Gets the tags of the JSDoc.
      */
-    getTags(): Node[] {
+    getTags(): JSDocTag[] {
         const tags = this.compilerNode.tags;
         if (tags == null)
             return [];
-        return tags.map(t => this.getNodeFromCompilerNode(t)) as Node[];
+        return tags.map(t => this.getNodeFromCompilerNode<JSDocTag>(t));
     }
 
     /**

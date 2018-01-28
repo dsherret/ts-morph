@@ -10,6 +10,6 @@ export class TemplateSpan extends TemplateSpanBase<ts.TemplateSpan> {
      * Gets the template literal.
      */
     getLiteral() {
-        return this.getNodeFromCompilerNode(this.compilerNode.literal) as (TemplateMiddle | TemplateTail);
+        return this.getNodeFromCompilerNode<TemplateMiddle | TemplateTail>(this.compilerNode.literal);
     }
 }

@@ -1,13 +1,14 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils, TypeGuards} from "./../../utils";
-import {Node, Identifier} from "./../common";
+import {Identifier} from "./../common";
+import {Statement} from "./../statement";
 import {ExportSpecifier} from "./ExportSpecifier";
 import {SourceFile} from "./SourceFile";
 
-export class ExportDeclaration extends Node<ts.ExportDeclaration> {
+export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the import specifier.
@@ -174,7 +175,7 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
         const namedExports = this.compilerNode.exportClause;
         if (namedExports == null)
             return [];
-        return namedExports.elements.map(e => this.getNodeFromCompilerNode(e) as ExportSpecifier);
+        return namedExports.elements.map(e => this.getNodeFromCompilerNode<ExportSpecifier>(e));
     }
 
     /**
@@ -200,12 +201,5 @@ export class ExportDeclaration extends Node<ts.ExportDeclaration> {
             }
         });
         return this;
-    }
-
-    /**
-     * Removes this export declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

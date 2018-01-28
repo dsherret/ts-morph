@@ -9,13 +9,13 @@ export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpres
      * Gets the template head.
      */
     getHead() {
-        return this.getNodeFromCompilerNode(this.compilerNode.head) as TemplateHead;
+        return this.getNodeFromCompilerNode<TemplateHead>(this.compilerNode.head);
     }
 
     /**
      * Gets the template spans.
      */
     getTemplateSpans() {
-        return this.compilerNode.templateSpans.map(s => this.getNodeFromCompilerNode(s) as TemplateSpan);
+        return this.compilerNode.templateSpans.map(s => this.getNodeFromCompilerNode<TemplateSpan>(s));
     }
 }

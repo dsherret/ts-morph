@@ -35,9 +35,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
         }
 
         getQuestionTokenNode(): Node<ts.QuestionToken> | undefined {
-            if (this.compilerNode.questionToken == null)
-                return undefined;
-            return this.getNodeFromCompilerNode(this.compilerNode.questionToken) as Node<ts.QuestionToken>;
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.questionToken);
         }
 
         getQuestionTokenNodeOrThrow(): Node<ts.QuestionToken> {

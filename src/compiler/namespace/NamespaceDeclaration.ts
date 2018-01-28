@@ -1,16 +1,16 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {replaceNodeText, removeStatementedNodeChild} from "./../../manipulation";
+import {replaceNodeText} from "./../../manipulation";
 import {NamespaceDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node, Identifier} from "./../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, BodiedNode, TextInsertableNode, UnwrappableNode,
     ChildOrderableNode} from "./../base";
-import {StatementedNode} from "./../statement";
+import {StatementedNode, Statement} from "./../statement";
 import {NamespaceChildableNode} from "./NamespaceChildableNode";
 
 export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(
-    AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Node))))
+    AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))
 )))))));
 export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
@@ -69,7 +69,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         const nodes: Identifier[] = [];
         let current: Node<ts.NamespaceDeclaration> | undefined = this;
         do {
-            nodes.push(this.getNodeFromCompilerNode(current.compilerNode.name) as Identifier);
+            nodes.push(this.getNodeFromCompilerNode<Identifier>(current.compilerNode.name));
             current = current.getFirstChildByKind(ts.SyntaxKind.ModuleDeclaration) as Node<ts.NamespaceDeclaration>;
         } while (current != null);
         return nodes;
@@ -121,12 +121,5 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         return this.getFirstChild(child =>
             child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
             child.getKind() === ts.SyntaxKind.ModuleKeyword);
-    }
-
-    /**
-     * Removes this namespace declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

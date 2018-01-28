@@ -30,10 +30,7 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      * Gets the object assignment initializer if it exists.
      */
     getObjectAssignmentInitializer() {
-        const initializer = this.compilerNode.objectAssignmentInitializer;
-        if (initializer == null)
-            return undefined;
-        return this.getNodeFromCompilerNode(initializer) as Expression;
+        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.objectAssignmentInitializer);
     }
 
     /**

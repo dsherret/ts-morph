@@ -12,14 +12,14 @@ export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
      * Gets this switch statement's expression.
      */
     getExpression() {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
+        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
     }
 
     /**
      * Gets this switch statement's case block.
      */
     getCaseBlock() {
-        return this.getNodeFromCompilerNode(this.compilerNode.caseBlock) as CaseBlock;
+        return this.getNodeFromCompilerNode<CaseBlock>(this.compilerNode.caseBlock);
     }
 
     /**

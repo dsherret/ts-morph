@@ -53,7 +53,7 @@ export interface ArgumentedNode {
 export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType>>(Base: T): Constructor<ArgumentedNode> & T {
     return class extends Base implements ArgumentedNode {
         getArguments() {
-            return this.compilerNode.arguments.map(a => this.getNodeFromCompilerNode(a)) as Node[];
+            return this.compilerNode.arguments.map(a => this.getNodeFromCompilerNode(a));
         }
 
         addArgument(argumentText: string) {

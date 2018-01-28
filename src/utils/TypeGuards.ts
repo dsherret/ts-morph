@@ -2106,7 +2106,14 @@ export class TypeGuards {
      */
     static isStatement(node: compiler.Node): node is compiler.Statement {
         switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.ExportAssignment:
+            case ts.SyntaxKind.ExportDeclaration:
+            case ts.SyntaxKind.ImportDeclaration:
             case ts.SyntaxKind.ImportEqualsDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.Block:
             case ts.SyntaxKind.BreakStatement:
             case ts.SyntaxKind.ContinueStatement:
@@ -2127,6 +2134,7 @@ export class TypeGuards {
             case ts.SyntaxKind.VariableStatement:
             case ts.SyntaxKind.WhileStatement:
             case ts.SyntaxKind.WithStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;

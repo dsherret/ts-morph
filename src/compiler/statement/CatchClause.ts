@@ -11,16 +11,14 @@ export class CatchClause extends CatchClauseBase<ts.CatchClause> {
      * Gets this catch clause's block.
      */
     getBlock() {
-        return this.getNodeFromCompilerNode(this.compilerNode.block) as Block;
+        return this.getNodeFromCompilerNode<Block>(this.compilerNode.block);
     }
 
     /**
      * Gets this catch clause's variable declaration or undefined if none exists.
      */
     getVariableDeclaration() {
-        return this.compilerNode.variableDeclaration == null
-            ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.variableDeclaration) as VariableDeclaration;
+        return this.getNodeFromCompilerNodeIfExists<VariableDeclaration>(this.compilerNode.variableDeclaration);
     }
 
     /**

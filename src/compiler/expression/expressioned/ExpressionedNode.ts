@@ -15,7 +15,7 @@ export interface ExpressionedNode {
 export function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T {
     return class extends Base implements ExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
+            return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
         }
     };
 }

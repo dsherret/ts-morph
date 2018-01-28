@@ -15,7 +15,7 @@ export interface SuperExpressionedNode {
 export function SuperExpressionedNode<T extends Constructor<SuperExpressionedNodeExtensionType>>(Base: T): Constructor<SuperExpressionedNode> & T {
     return class extends Base implements SuperExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode(this.compilerNode.expression) as SuperExpression;
+            return this.getNodeFromCompilerNode<SuperExpression>(this.compilerNode.expression);
         }
     };
 }

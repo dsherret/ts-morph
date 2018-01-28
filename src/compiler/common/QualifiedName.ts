@@ -8,13 +8,13 @@ export class QualifiedName extends Node<ts.QualifiedName> {
      * Gets the left side of the qualified name.
      */
     getLeft() {
-        return this.getNodeFromCompilerNode(this.compilerNode.left) as EntityName;
+        return this.getNodeFromCompilerNode<EntityName>(this.compilerNode.left);
     }
 
     /**
      * Gets the right identifier of the qualified name.
      */
     getRight() {
-        return this.getNodeFromCompilerNode(this.compilerNode.right) as Identifier;
+        return this.getNodeFromCompilerNode<Identifier>(this.compilerNode.right);
     }
 }

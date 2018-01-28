@@ -10,22 +10,20 @@ export class IfStatement extends IfStatementBase<ts.IfStatement> {
      * Gets this if statement's expression.
      */
     getExpression() {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
+        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
     }
 
     /**
      * Gets this if statement's then statement.
      */
     getThenStatement() {
-        return this.getNodeFromCompilerNode(this.compilerNode.thenStatement) as Statement;
+        return this.getNodeFromCompilerNode<Statement>(this.compilerNode.thenStatement);
     }
 
     /**
      * Gets this if statement's else statement.
      */
     getElseStatement() {
-        return this.compilerNode.elseStatement == null
-            ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.elseStatement) as Statement;
+        return this.getNodeFromCompilerNodeIfExists<Statement>(this.compilerNode.elseStatement);
     }
 }

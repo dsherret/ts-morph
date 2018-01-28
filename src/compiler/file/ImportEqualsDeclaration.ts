@@ -10,6 +10,6 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      * Gets the module reference of the import equals declaration.
      */
     getModuleReference(): ModuleReference {
-        return this.getNodeFromCompilerNode(this.compilerNode.moduleReference) as ModuleReference;
+        return this.getNodeFromCompilerNode<ModuleReference>(this.compilerNode.moduleReference);
     }
 }

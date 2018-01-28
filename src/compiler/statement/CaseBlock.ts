@@ -14,7 +14,7 @@ export class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
      */
     getClauses() {
         const clauses: ts.NodeArray<ts.CaseOrDefaultClause> = this.compilerNode.clauses || [];
-        return clauses.map(s => this.getNodeFromCompilerNode(s)) as CaseOrDefaultClause[];
+        return clauses.map(s => this.getNodeFromCompilerNode<CaseOrDefaultClause>(s));
     }
 
     /**

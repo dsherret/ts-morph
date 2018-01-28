@@ -8,6 +8,6 @@ export class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBa
      * Gets the left array literal expression of the array destructuring assignment.
      */
     getLeft() {
-        return this.getNodeFromCompilerNode(this.compilerNode.left) as ArrayLiteralExpression;
+        return this.getNodeFromCompilerNode<ArrayLiteralExpression>(this.compilerNode.left);
     }
 }

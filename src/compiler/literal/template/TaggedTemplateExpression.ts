@@ -8,13 +8,13 @@ export class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.Ta
      * Gets the tag.
      */
     getTag() {
-        return this.getNodeFromCompilerNode(this.compilerNode.tag) as LeftHandSideExpression;
+        return this.getNodeFromCompilerNode<LeftHandSideExpression>(this.compilerNode.tag);
     }
 
     /**
      * Gets the template literal.
      */
     getTemplate() {
-        return this.getNodeFromCompilerNode(this.compilerNode.template) as TemplateExpression;
+        return this.getNodeFromCompilerNode<TemplateExpression>(this.compilerNode.template);
     }
 }

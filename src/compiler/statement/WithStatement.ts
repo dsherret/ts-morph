@@ -9,13 +9,13 @@ export class WithStatement extends WithStatementBase<ts.WithStatement> {
      * Gets this with statement's expression.
      */
     getExpression() {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
+        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
     }
 
     /**
      * Gets this with statement's statement.
      */
     getStatement() {
-        return this.getNodeFromCompilerNode(this.compilerNode.statement) as Statement;
+        return this.getNodeFromCompilerNode<Statement>(this.compilerNode.statement);
     }
 }

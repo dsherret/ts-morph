@@ -14,7 +14,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.compilerNode.declarations.map(d => this.getNodeFromCompilerNode(d) as VariableDeclaration);
+        return this.compilerNode.declarations.map(d => this.getNodeFromCompilerNode<VariableDeclaration>(d));
     }
 
     /**

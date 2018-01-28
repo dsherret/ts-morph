@@ -18,8 +18,7 @@ export interface PropertyNamedNode {
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
     return class extends Base implements PropertyNamedNode {
         getNameNode() {
-            const compilerNameNode: ts.PropertyName = this.compilerNode.name;
-            return this.getNodeFromCompilerNode(compilerNameNode) as PropertyName;
+            return this.getNodeFromCompilerNode<PropertyName>(this.compilerNode.name);
         }
 
         getName() {

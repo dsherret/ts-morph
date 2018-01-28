@@ -34,10 +34,7 @@ export interface NameableNode {
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
     return class extends Base implements NameableNode {
         getNameNode() {
-            const nameNode = this.compilerNode.name;
-            if (nameNode == null)
-                return undefined;
-            return this.getNodeFromCompilerNode(nameNode) as Identifier;
+            return this.getNodeFromCompilerNodeIfExists<Identifier>(this.compilerNode.name);
         }
 
         getNameNodeOrThrow() {

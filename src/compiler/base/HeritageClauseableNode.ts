@@ -30,7 +30,7 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
             const heritageClauses = this.compilerNode.heritageClauses;
             if (heritageClauses == null)
                 return [];
-            return heritageClauses.map(c => this.getNodeFromCompilerNode(c) as HeritageClause);
+            return heritageClauses.map(c => this.getNodeFromCompilerNode<HeritageClause>(c));
         }
 
         getHeritageClauseByKindOrThrow(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword) {

@@ -7,6 +7,6 @@ export class CommaListExpression extends CommaListExpressionBase<ts.CommaListExp
      * Gets the elements.
      */
     getElements() {
-        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode(e) as Expression);
+        return this.compilerNode.elements.map(e => this.getNodeFromCompilerNode<Expression>(e));
     }
 }

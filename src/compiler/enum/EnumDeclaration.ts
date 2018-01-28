@@ -1,17 +1,18 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeStatementedNodeChild} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
 import {EnumMemberStructureToText} from "./../../structureToTexts";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {Node} from "./../common";
 import {NamespaceChildableNode} from "./../namespace";
+import {Statement} from "./../statement";
 import {EnumMember} from "./EnumMember";
 
 export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
-    ModifierableNode(NamedNode(Node))
+    ModifierableNode(NamedNode(Statement))
 ))))));
 export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
@@ -125,7 +126,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the enum's members.
      */
     getMembers() {
-        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m) as EnumMember);
+        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode<EnumMember>(m));
     }
 
     /**
@@ -147,12 +148,5 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     getConstKeyword() {
         return this.getFirstModifierByKind(ts.SyntaxKind.ConstKeyword);
-    }
-
-    /**
-     * Removes this enum declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

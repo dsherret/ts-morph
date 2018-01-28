@@ -1,13 +1,14 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeStatementedNodeChild, removeChildren} from "./../../manipulation";
+import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren} from "./../../manipulation";
 import {ArrayUtils, TypeGuards} from "./../../utils";
-import {Node, Identifier} from "./../common";
+import {Identifier} from "./../common";
+import {Statement} from "./../statement";
 import {ImportSpecifier} from "./ImportSpecifier";
 import {SourceFile} from "./SourceFile";
 
-export class ImportDeclaration extends Node<ts.ImportDeclaration> {
+export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Sets the import specifier.
      * @param text - Text to set as the import specifier.
@@ -281,14 +282,7 @@ export class ImportDeclaration extends Node<ts.ImportDeclaration> {
         return this;
     }
 
-    /**
-     * Removes this import declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
-    }
-
     private getImportClause() {
-        return this.compilerNode.importClause == null ? undefined : this.getNodeFromCompilerNode(this.compilerNode.importClause);
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
 }

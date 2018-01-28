@@ -9,9 +9,7 @@ export class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
      * Gets the expression or undefined of the yield expression.
      */
     getExpression() {
-        return this.compilerNode.expression == null
-            ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
+        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
     }
 
     /**

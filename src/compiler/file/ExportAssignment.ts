@@ -1,10 +1,9 @@
 ﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Expression} from "./../expression";
-import {Node} from "./../common";
+import {Statement} from "./../statement";
 
-export class ExportAssignment extends Node<ts.ExportAssignment> {
+export class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**
      * Gets if this is an export equals assignemnt.
      *
@@ -18,13 +17,6 @@ export class ExportAssignment extends Node<ts.ExportAssignment> {
      * Gets the export assignment expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode(this.compilerNode.expression) as Expression;
-    }
-
-    /**
-     * Removes this export assignment.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
+        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
     }
 }

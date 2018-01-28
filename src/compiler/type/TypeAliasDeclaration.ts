@@ -1,13 +1,12 @@
 ﻿import * as ts from "typescript";
 import {TypeAliasDeclarationStructure} from "./../../structures";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
+import {Statement} from "./../statement";
 import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, ChildOrderableNode} from "./../base";
 
 // todo: type node should not be able to return undefined
 export const TypeAliasDeclarationBase = ChildOrderableNode(TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(
-    ExportableNode(ModifierableNode(NamedNode(Node)))
+    ExportableNode(ModifierableNode(NamedNode(Statement)))
 )))));
 export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
@@ -18,12 +17,5 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
         callBaseFill(TypeAliasDeclarationBase.prototype, this, structure);
 
         return this;
-    }
-
-    /**
-     * Removes this type alias declaration.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

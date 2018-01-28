@@ -36,8 +36,7 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
         }
 
         getAsteriskToken(): Node<ts.AsteriskToken> | undefined {
-            const asteriskToken = this.compilerNode.asteriskToken;
-            return asteriskToken == null ? undefined : this.getNodeFromCompilerNode(asteriskToken);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.asteriskToken);
         }
 
         getAsteriskTokenOrThrow(): Node<ts.AsteriskToken> {

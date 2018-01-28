@@ -13,6 +13,6 @@ export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
      * Gets the equals greater than token of the arrow function.
      */
     getEqualsGreaterThan() {
-        return this.getNodeFromCompilerNode(this.compilerNode.equalsGreaterThanToken) as Node<ts.EqualsGreaterThanToken>;
+        return this.getNodeFromCompilerNode(this.compilerNode.equalsGreaterThanToken);
     }
 }

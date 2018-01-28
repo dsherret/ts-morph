@@ -37,8 +37,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getBody() {
-            const body = this.compilerNode.body;
-            return body == null ? undefined : this.getNodeFromCompilerNode(body);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.body);
         }
 
         setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;

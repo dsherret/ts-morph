@@ -8,7 +8,7 @@ export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
      * Gets the expression or undefined of the yield expression.
      */
     getExpression() {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression) as Expression | undefined;
+        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
     }
 
     /**

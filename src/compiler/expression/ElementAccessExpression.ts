@@ -11,9 +11,7 @@ export class ElementAccessExpression<T extends ts.ElementAccessExpression = ts.E
      * Gets this element access expression's argument expression or undefined if none exists.
      */
     getArgumentExpression() {
-        return this.compilerNode.argumentExpression == null
-            ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.argumentExpression) as Expression;
+        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.argumentExpression);
     }
 
     /**

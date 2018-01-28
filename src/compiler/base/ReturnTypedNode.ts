@@ -44,7 +44,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
         }
 
         getReturnTypeNode() {
-            return this.compilerNode.type == null ? undefined : (this.getNodeFromCompilerNode(this.compilerNode.type) as TypeNode);
+            return this.getNodeFromCompilerNodeIfExists<TypeNode>(this.compilerNode.type);
         }
 
         getReturnTypeNodeOrThrow() {

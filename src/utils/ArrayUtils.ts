@@ -24,7 +24,9 @@ export class ArrayUtils {
         return items.reduce((a, b) => a.concat(b), []);
     }
 
-    static find<T>(items: T[] | IterableIterator<T>, condition: (item: T) => boolean) {
+    static find<T extends ts.Node>(items: ts.NodeArray<T>, condition: (item: T) => boolean): T | undefined;
+    static find<T>(items: T[] | IterableIterator<T>, condition: (item: T) => boolean): T | undefined;
+    static find<T>(items: T[] | IterableIterator<T> | ts.NodeArray<any>, condition: (item: T) => boolean) {
         for (const item of items) {
             if (condition(item))
                 return item;

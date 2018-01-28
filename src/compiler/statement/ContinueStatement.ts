@@ -1,6 +1,5 @@
 import * as ts from "typescript";
 import * as errors from "../../errors";
-import {removeStatementedNodeChild} from "./../../manipulation";
 import {Node} from "./../common";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
@@ -14,7 +13,7 @@ export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatemen
     getLabel() {
         return this.compilerNode.label == null
             ? undefined
-            : this.getNodeFromCompilerNode(this.compilerNode.label) as Identifier;
+            : this.getNodeFromCompilerNode<Identifier>(this.compilerNode.label);
     }
 
     /**
@@ -22,12 +21,5 @@ export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatemen
      */
     getLabelOrThrow() {
         return errors.throwIfNullOrUndefined(this.getLabel(), "Expected to find a label.");
-    }
-
-    /**
-     * Removes this continue statement.
-     */
-    remove() {
-        removeStatementedNodeChild(this);
     }
 }

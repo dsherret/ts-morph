@@ -49,7 +49,7 @@ export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeE
 
             switch (compilerNameNode.kind) {
                 case ts.SyntaxKind.Identifier:
-                    return this.getNodeFromCompilerNode(compilerNameNode) as Identifier;
+                    return this.getNodeFromCompilerNode<Identifier>(compilerNameNode);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);
