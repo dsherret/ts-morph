@@ -38,12 +38,280 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ClassDeclaration.
+     * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
-    static isClassDeclaration(node: compiler.Node): node is compiler.ClassDeclaration {
+    static isAbstractableNode(node: compiler.Node): node is compiler.AbstractableNode & compiler.Node {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an AmbientableNode.
+     * @param node - Node to check.
+     */
+    static isAmbientableNode(node: compiler.Node): node is compiler.AmbientableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ArgumentedNode.
+     * @param node - Node to check.
+     */
+    static isArgumentedNode(node: compiler.Node): node is compiler.ArgumentedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.NewExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ArrayLiteralExpression.
+     * @param node - Node to check.
+     */
+    static isArrayLiteralExpression(node: compiler.Node): node is compiler.ArrayLiteralExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ArrayLiteralExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ArrowFunction.
+     * @param node - Node to check.
+     */
+    static isArrowFunction(node: compiler.Node): node is compiler.ArrowFunction {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ArrowFunction:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an AsExpression.
+     * @param node - Node to check.
+     */
+    static isAsExpression(node: compiler.Node): node is compiler.AsExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AsExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an AsyncableNode.
+     * @param node - Node to check.
+     */
+    static isAsyncableNode(node: compiler.Node): node is compiler.AsyncableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an AwaitExpression.
+     * @param node - Node to check.
+     */
+    static isAwaitExpression(node: compiler.Node): node is compiler.AwaitExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AwaitExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an AwaitableNode.
+     * @param node - Node to check.
+     */
+    static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForOfStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BinaryExpression.
+     * @param node - Node to check.
+     */
+    static isBinaryExpression(node: compiler.Node): node is compiler.BinaryExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.BinaryExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BindingNamedNode.
+     * @param node - Node to check.
+     */
+    static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a Block.
+     * @param node - Node to check.
+     */
+    static isBlock(node: compiler.Node): node is compiler.Block {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Block:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BodiedNode.
+     * @param node - Node to check.
+     */
+    static isBodiedNode(node: compiler.Node): node is compiler.BodiedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BodyableNode.
+     * @param node - Node to check.
+     */
+    static isBodyableNode(node: compiler.Node): node is compiler.BodyableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BooleanLiteral.
+     * @param node - Node to check.
+     */
+    static isBooleanLiteral(node: compiler.Node): node is compiler.BooleanLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a BreakStatement.
+     * @param node - Node to check.
+     */
+    static isBreakStatement(node: compiler.Node): node is compiler.BreakStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.BreakStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CallExpression.
+     * @param node - Node to check.
+     */
+    static isCallExpression(node: compiler.Node): node is compiler.CallExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CallExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CaseBlock.
+     * @param node - Node to check.
+     */
+    static isCaseBlock(node: compiler.Node): node is compiler.CaseBlock {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CaseBlock:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CaseClause.
+     * @param node - Node to check.
+     */
+    static isCaseClause(node: compiler.Node): node is compiler.CaseClause {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CaseClause:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CatchClause.
+     * @param node - Node to check.
+     */
+    static isCatchClause(node: compiler.Node): node is compiler.CatchClause {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CatchClause:
                 return true;
             default:
                 return false;
@@ -76,6 +344,7 @@ export class TypeGuards {
             case ts.SyntaxKind.DoStatement:
             case ts.SyntaxKind.ExpressionStatement:
             case ts.SyntaxKind.ForInStatement:
+            case ts.SyntaxKind.ForOfStatement:
             case ts.SyntaxKind.ForStatement:
             case ts.SyntaxKind.IfStatement:
             case ts.SyntaxKind.LabeledStatement:
@@ -92,27 +361,77 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a TextInsertableNode.
+     * Gets if the node is a ClassDeclaration.
      * @param node - Node to check.
      */
-    static isTextInsertableNode(node: compiler.Node): node is compiler.TextInsertableNode & compiler.Node {
+    static isClassDeclaration(node: compiler.Node): node is compiler.ClassDeclaration {
         switch (node.getKind()) {
             case ts.SyntaxKind.ClassDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a CommaListExpression.
+     * @param node - Node to check.
+     */
+    static isCommaListExpression(node: compiler.Node): node is compiler.CommaListExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CommaListExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ComputedPropertyName.
+     * @param node - Node to check.
+     */
+    static isComputedPropertyName(node: compiler.Node): node is compiler.ComputedPropertyName {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ComputedPropertyName:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ConditionalExpression.
+     * @param node - Node to check.
+     */
+    static isConditionalExpression(node: compiler.Node): node is compiler.ConditionalExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ConditionalExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ConstructSignatureDeclaration.
+     * @param node - Node to check.
+     */
+    static isConstructSignatureDeclaration(node: compiler.Node): node is compiler.ConstructSignatureDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ConstructSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ConstructorDeclaration.
+     * @param node - Node to check.
+     */
+    static isConstructorDeclaration(node: compiler.Node): node is compiler.ConstructorDeclaration {
+        switch (node.getKind()) {
             case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.EnumDeclaration:
-            case ts.SyntaxKind.SourceFile:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.Block:
-            case ts.SyntaxKind.CaseBlock:
-            case ts.SyntaxKind.CaseClause:
-            case ts.SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -120,12 +439,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ImplementsClauseableNode.
+     * Gets if the node is a ContinueStatement.
      * @param node - Node to check.
      */
-    static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.Node {
+    static isContinueStatement(node: compiler.Node): node is compiler.ContinueStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.ContinueStatement:
                 return true;
             default:
                 return false;
@@ -133,13 +452,25 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a HeritageClauseableNode.
+     * Gets if the node is a DebuggerStatement.
      * @param node - Node to check.
      */
-    static isHeritageClauseableNode(node: compiler.Node): node is compiler.HeritageClauseableNode & compiler.Node {
+    static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.DebuggerStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a DeclarationNamedNode.
+     * @param node - Node to check.
+     */
+    static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Parameter:
                 return true;
             default:
                 return false;
@@ -165,23 +496,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a TypeParameteredNode.
+     * Gets if the node is a Decorator.
      * @param node - Node to check.
      */
-    static isTypeParameteredNode(node: compiler.Node): node is compiler.TypeParameteredNode & compiler.Node {
+    static isDecorator(node: compiler.Node): node is compiler.Decorator {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.MethodSignature:
-            case ts.SyntaxKind.TypeAliasDeclaration:
+            case ts.SyntaxKind.Decorator:
                 return true;
             default:
                 return false;
@@ -189,17 +509,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a NamespaceChildableNode.
+     * Gets if the node is a DefaultClause.
      * @param node - Node to check.
      */
-    static isNamespaceChildableNode(node: compiler.Node): node is compiler.NamespaceChildableNode & compiler.Node {
+    static isDefaultClause(node: compiler.Node): node is compiler.DefaultClause {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.EnumDeclaration:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.DefaultClause:
                 return true;
             default:
                 return false;
@@ -207,31 +522,77 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a JSDocableNode.
+     * Gets if the node is a DeleteExpression.
      * @param node - Node to check.
      */
-    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
+    static isDeleteExpression(node: compiler.Node): node is compiler.DeleteExpression {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.DeleteExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a DoStatement.
+     * @param node - Node to check.
+     */
+    static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.DoStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ElementAccessExpression.
+     * @param node - Node to check.
+     */
+    static isElementAccessExpression(node: compiler.Node): node is compiler.ElementAccessExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ElementAccessExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an EmptyStatement.
+     * @param node - Node to check.
+     */
+    static isEmptyStatement(node: compiler.Node): node is compiler.EmptyStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.EmptyStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an EnumDeclaration.
+     * @param node - Node to check.
+     */
+    static isEnumDeclaration(node: compiler.Node): node is compiler.EnumDeclaration {
+        switch (node.getKind()) {
             case ts.SyntaxKind.EnumDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an EnumMember.
+     * @param node - Node to check.
+     */
+    static isEnumMember(node: compiler.Node): node is compiler.EnumMember {
+        switch (node.getKind()) {
             case ts.SyntaxKind.EnumMember:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.MethodSignature:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.ExpressionStatement:
-            case ts.SyntaxKind.LabeledStatement:
-            case ts.SyntaxKind.VariableStatement:
-            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -239,18 +600,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an AmbientableNode.
+     * Gets if the node is an ExportAssignment.
      * @param node - Node to check.
      */
-    static isAmbientableNode(node: compiler.Node): node is compiler.AmbientableNode & compiler.Node {
+    static isExportAssignment(node: compiler.Node): node is compiler.ExportAssignment {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.EnumDeclaration:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.VariableStatement:
-            case ts.SyntaxKind.TypeAliasDeclaration:
+            case ts.SyntaxKind.ExportAssignment:
                 return true;
             default:
                 return false;
@@ -258,16 +613,25 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an AbstractableNode.
+     * Gets if the node is an ExportDeclaration.
      * @param node - Node to check.
      */
-    static isAbstractableNode(node: compiler.Node): node is compiler.AbstractableNode & compiler.Node {
+    static isExportDeclaration(node: compiler.Node): node is compiler.ExportDeclaration {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ExportDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ExportSpecifier.
+     * @param node - Node to check.
+     */
+    static isExportSpecifier(node: compiler.Node): node is compiler.ExportSpecifier {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ExportSpecifier:
                 return true;
             default:
                 return false;
@@ -294,51 +658,116 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ModifierableNode.
+     * Gets if the node is an Expression.
      * @param node - Node to check.
      */
-    static isModifierableNode(node: compiler.Node): node is compiler.ModifierableNode & compiler.Node {
+    static isExpression(node: compiler.Node): node is compiler.Expression {
         switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.EnumDeclaration:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.Parameter:
-            case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.VariableDeclarationList:
-            case ts.SyntaxKind.VariableStatement:
-            case ts.SyntaxKind.TypeAliasDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NamedNode.
-     * @param node - Node to check.
-     */
-    static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
-            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.AnyKeyword:
+            case ts.SyntaxKind.BooleanKeyword:
+            case ts.SyntaxKind.NeverKeyword:
+            case ts.SyntaxKind.NumberKeyword:
+            case ts.SyntaxKind.ObjectKeyword:
+            case ts.SyntaxKind.StringKeyword:
+            case ts.SyntaxKind.SymbolKeyword:
+            case ts.SyntaxKind.UndefinedKeyword:
+            case ts.SyntaxKind.AsExpression:
+            case ts.SyntaxKind.AwaitExpression:
+            case ts.SyntaxKind.BinaryExpression:
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.CommaListExpression:
+            case ts.SyntaxKind.ConditionalExpression:
+            case ts.SyntaxKind.DeleteExpression:
+            case ts.SyntaxKind.ElementAccessExpression:
+            case ts.SyntaxKind.ImportKeyword:
             case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.NonNullExpression:
+            case ts.SyntaxKind.OmittedExpression:
+            case ts.SyntaxKind.ParenthesizedExpression:
+            case ts.SyntaxKind.PartiallyEmittedExpression:
+            case ts.SyntaxKind.PostfixUnaryExpression:
+            case ts.SyntaxKind.PrefixUnaryExpression:
             case ts.SyntaxKind.PropertyAccessExpression:
-            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.SpreadElement:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.TypeAssertionExpression:
+            case ts.SyntaxKind.TypeOfExpression:
+            case ts.SyntaxKind.VoidKeyword:
+            case ts.SyntaxKind.YieldExpression:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+            case ts.SyntaxKind.ArrayLiteralExpression:
+            case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.TaggedTemplateExpression:
+            case ts.SyntaxKind.TemplateExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ExpressionStatement.
+     * @param node - Node to check.
+     */
+    static isExpressionStatement(node: compiler.Node): node is compiler.ExpressionStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ExpressionStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ExpressionWithTypeArguments.
+     * @param node - Node to check.
+     */
+    static isExpressionWithTypeArguments(node: compiler.Node): node is compiler.ExpressionWithTypeArguments {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ExpressionWithTypeArguments:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ExpressionedNode.
+     * @param node - Node to check.
+     */
+    static isExpressionedNode(node: compiler.Node): node is compiler.ExpressionedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AsExpression:
+            case ts.SyntaxKind.NonNullExpression:
+            case ts.SyntaxKind.ParenthesizedExpression:
+            case ts.SyntaxKind.PartiallyEmittedExpression:
+            case ts.SyntaxKind.SpreadElement:
+            case ts.SyntaxKind.SpreadAssignment:
+            case ts.SyntaxKind.TemplateSpan:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is an ExtendsClauseableNode.
+     * @param node - Node to check.
+     */
+    static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.Node {
+        switch (node.getKind()) {
             case ts.SyntaxKind.InterfaceDeclaration:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
-            case ts.SyntaxKind.TypeParameter:
-            case ts.SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;
@@ -346,12 +775,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ConstructorDeclaration.
+     * Gets if the node is an ExternalModuleReference.
      * @param node - Node to check.
      */
-    static isConstructorDeclaration(node: compiler.Node): node is compiler.ConstructorDeclaration {
+    static isExternalModuleReference(node: compiler.Node): node is compiler.ExternalModuleReference {
         switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.ExternalModuleReference:
                 return true;
             default:
                 return false;
@@ -359,13 +788,50 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a OverloadableNode.
+     * Gets if the node is a ForInStatement.
      * @param node - Node to check.
      */
-    static isOverloadableNode(node: compiler.Node): node is compiler.OverloadableNode & compiler.Node {
+    static isForInStatement(node: compiler.Node): node is compiler.ForInStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.ForInStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ForOfStatement.
+     * @param node - Node to check.
+     */
+    static isForOfStatement(node: compiler.Node): node is compiler.ForOfStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForOfStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ForStatement.
+     * @param node - Node to check.
+     */
+    static isForStatement(node: compiler.Node): node is compiler.ForStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ForStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a FunctionDeclaration.
+     * @param node - Node to check.
+     */
+    static isFunctionDeclaration(node: compiler.Node): node is compiler.FunctionDeclaration {
+        switch (node.getKind()) {
             case ts.SyntaxKind.FunctionDeclaration:
                 return true;
             default:
@@ -374,16 +840,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ScopedNode.
+     * Gets if the node is a FunctionExpression.
      * @param node - Node to check.
      */
-    static isScopedNode(node: compiler.Node): node is compiler.ScopedNode & compiler.Node {
+    static isFunctionExpression(node: compiler.Node): node is compiler.FunctionExpression {
         switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.FunctionExpression:
                 return true;
             default:
                 return false;
@@ -408,102 +870,15 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a SignaturedDeclaration.
+     * Gets if the node is a GeneratorableNode.
      * @param node - Node to check.
      */
-    static isSignaturedDeclaration(node: compiler.Node): node is compiler.SignaturedDeclaration & compiler.Node {
+    static isGeneratorableNode(node: compiler.Node): node is compiler.GeneratorableNode & compiler.Node {
         switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
             case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.YieldExpression:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ParameteredNode.
-     * @param node - Node to check.
-     */
-    static isParameteredNode(node: compiler.Node): node is compiler.ParameteredNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ReturnTypedNode.
-     * @param node - Node to check.
-     */
-    static isReturnTypedNode(node: compiler.Node): node is compiler.ReturnTypedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ConstructSignature:
-            case ts.SyntaxKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a StatementedNode.
-     * @param node - Node to check.
-     */
-    static isStatementedNode(node: compiler.Node): node is compiler.StatementedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.SourceFile:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ModuleDeclaration:
-            case ts.SyntaxKind.Block:
-            case ts.SyntaxKind.CaseClause:
-            case ts.SyntaxKind.DefaultClause:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a BodyableNode.
-     * @param node - Node to check.
-     */
-    static isBodyableNode(node: compiler.Node): node is compiler.BodyableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Constructor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.FunctionDeclaration:
                 return true;
             default:
                 return false;
@@ -524,15 +899,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a StaticableNode.
+     * Gets if the node is a HeritageClause.
      * @param node - Node to check.
      */
-    static isStaticableNode(node: compiler.Node): node is compiler.StaticableNode & compiler.Node {
+    static isHeritageClause(node: compiler.Node): node is compiler.HeritageClause {
         switch (node.getKind()) {
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.HeritageClause:
                 return true;
             default:
                 return false;
@@ -540,16 +912,13 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a BodiedNode.
+     * Gets if the node is a HeritageClauseableNode.
      * @param node - Node to check.
      */
-    static isBodiedNode(node: compiler.Node): node is compiler.BodiedNode & compiler.Node {
+    static isHeritageClauseableNode(node: compiler.Node): node is compiler.HeritageClauseableNode & compiler.Node {
         switch (node.getKind()) {
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionExpression:
-            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
                 return true;
             default:
                 return false;
@@ -557,19 +926,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a PropertyNamedNode.
+     * Gets if the node is a Identifier.
      * @param node - Node to check.
      */
-    static isPropertyNamedNode(node: compiler.Node): node is compiler.PropertyNamedNode & compiler.Node {
+    static isIdentifier(node: compiler.Node): node is compiler.Identifier {
         switch (node.getKind()) {
-            case ts.SyntaxKind.GetAccessor:
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.SetAccessor:
-            case ts.SyntaxKind.EnumMember:
-            case ts.SyntaxKind.MethodSignature:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.Identifier:
                 return true;
             default:
                 return false;
@@ -577,12 +939,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a MethodDeclaration.
+     * Gets if the node is a IfStatement.
      * @param node - Node to check.
      */
-    static isMethodDeclaration(node: compiler.Node): node is compiler.MethodDeclaration {
+    static isIfStatement(node: compiler.Node): node is compiler.IfStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.IfStatement:
                 return true;
             default:
                 return false;
@@ -590,15 +952,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an AsyncableNode.
+     * Gets if the node is a ImplementsClauseableNode.
      * @param node - Node to check.
      */
-    static isAsyncableNode(node: compiler.Node): node is compiler.AsyncableNode & compiler.Node {
+    static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.Node {
         switch (node.getKind()) {
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.ArrowFunction:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ClassDeclaration:
                 return true;
             default:
                 return false;
@@ -606,15 +965,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a GeneratorableNode.
+     * Gets if the node is a ImportDeclaration.
      * @param node - Node to check.
      */
-    static isGeneratorableNode(node: compiler.Node): node is compiler.GeneratorableNode & compiler.Node {
+    static isImportDeclaration(node: compiler.Node): node is compiler.ImportDeclaration {
         switch (node.getKind()) {
-            case ts.SyntaxKind.MethodDeclaration:
-            case ts.SyntaxKind.YieldExpression:
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ImportDeclaration:
                 return true;
             default:
                 return false;
@@ -622,12 +978,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a PropertyDeclaration.
+     * Gets if the node is a ImportEqualsDeclaration.
      * @param node - Node to check.
      */
-    static isPropertyDeclaration(node: compiler.Node): node is compiler.PropertyDeclaration {
+    static isImportEqualsDeclaration(node: compiler.Node): node is compiler.ImportEqualsDeclaration {
         switch (node.getKind()) {
-            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.ImportEqualsDeclaration:
                 return true;
             default:
                 return false;
@@ -635,14 +991,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a ReadonlyableNode.
+     * Gets if the node is a ImportExpression.
      * @param node - Node to check.
      */
-    static isReadonlyableNode(node: compiler.Node): node is compiler.ReadonlyableNode & compiler.Node {
+    static isImportExpression(node: compiler.Node): node is compiler.ImportExpression {
         switch (node.getKind()) {
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.Parameter:
-            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.ImportKeyword:
                 return true;
             default:
                 return false;
@@ -650,17 +1004,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a QuestionTokenableNode.
+     * Gets if the node is a ImportSpecifier.
      * @param node - Node to check.
      */
-    static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.Node {
+    static isImportSpecifier(node: compiler.Node): node is compiler.ImportSpecifier {
         switch (node.getKind()) {
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.Parameter:
-            case ts.SyntaxKind.MethodSignature:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.PropertyAssignment:
-            case ts.SyntaxKind.ShorthandPropertyAssignment:
+            case ts.SyntaxKind.ImportSpecifier:
                 return true;
             default:
                 return false;
@@ -721,18 +1070,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a TypedNode.
+     * Gets if the node is a InterfaceDeclaration.
      * @param node - Node to check.
      */
-    static isTypedNode(node: compiler.Node): node is compiler.TypedNode & compiler.Node {
+    static isInterfaceDeclaration(node: compiler.Node): node is compiler.InterfaceDeclaration {
         switch (node.getKind()) {
-            case ts.SyntaxKind.PropertyDeclaration:
-            case ts.SyntaxKind.AsExpression:
-            case ts.SyntaxKind.TypeAssertionExpression:
-            case ts.SyntaxKind.Parameter:
-            case ts.SyntaxKind.PropertySignature:
-            case ts.SyntaxKind.VariableDeclaration:
-            case ts.SyntaxKind.TypeAliasDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
                 return true;
             default:
                 return false;
@@ -740,143 +1083,16 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a SetAccessorDeclaration.
+     * Gets if the node is a IterationStatement.
      * @param node - Node to check.
      */
-    static isSetAccessorDeclaration(node: compiler.Node): node is compiler.SetAccessorDeclaration {
+    static isIterationStatement(node: compiler.Node): node is compiler.IterationStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.SetAccessor:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ComputedPropertyName.
-     * @param node - Node to check.
-     */
-    static isComputedPropertyName(node: compiler.Node): node is compiler.ComputedPropertyName {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ComputedPropertyName:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Node.
-     * @param node - Node to check.
-     */
-    static isNode(node: compiler.Node): node is compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SemicolonToken:
-            case ts.SyntaxKind.ComputedPropertyName:
-            case ts.SyntaxKind.Identifier:
-            case ts.SyntaxKind.FirstNode:
-            case ts.SyntaxKind.QualifiedName:
-            case ts.SyntaxKind.SyntaxList:
-            case ts.SyntaxKind.Decorator:
-            case ts.SyntaxKind.JSDocComment:
-            case ts.SyntaxKind.JSDocAugmentsTag:
-            case ts.SyntaxKind.JSDocClassTag:
-            case ts.SyntaxKind.JSDocReturnTag:
-            case ts.SyntaxKind.JSDocTypedefTag:
-            case ts.SyntaxKind.JSDocTypeTag:
-            case ts.SyntaxKind.JSDocTag:
-            case ts.SyntaxKind.BinaryExpression:
-            case ts.SyntaxKind.CommaListExpression:
-            case ts.SyntaxKind.ConditionalExpression:
-            case ts.SyntaxKind.AnyKeyword:
-            case ts.SyntaxKind.BooleanKeyword:
-            case ts.SyntaxKind.NeverKeyword:
-            case ts.SyntaxKind.NumberKeyword:
-            case ts.SyntaxKind.ObjectKeyword:
-            case ts.SyntaxKind.StringKeyword:
-            case ts.SyntaxKind.SymbolKeyword:
-            case ts.SyntaxKind.UndefinedKeyword:
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.OmittedExpression:
-            case ts.SyntaxKind.PostfixUnaryExpression:
-            case ts.SyntaxKind.PrefixUnaryExpression:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.ExportAssignment:
-            case ts.SyntaxKind.ExportDeclaration:
-            case ts.SyntaxKind.ExportSpecifier:
-            case ts.SyntaxKind.ImportDeclaration:
-            case ts.SyntaxKind.ImportSpecifier:
-            case ts.SyntaxKind.HeritageClause:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.CatchClause:
-            case ts.SyntaxKind.DebuggerStatement:
-            case ts.SyntaxKind.EmptyStatement:
-            case ts.SyntaxKind.NotEmittedStatement:
-            case ts.SyntaxKind.ThrowStatement:
-            case ts.SyntaxKind.TryStatement:
-            case ts.SyntaxKind.FirstTypeNode:
-            case ts.SyntaxKind.LastTypeNode:
-            case ts.SyntaxKind.TypeReference:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TaggedTemplateExpression:
-            case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Identifier.
-     * @param node - Node to check.
-     */
-    static isIdentifier(node: compiler.Node): node is compiler.Identifier {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Identifier:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a QualifiedName.
-     * @param node - Node to check.
-     */
-    static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FirstNode:
-            case ts.SyntaxKind.QualifiedName:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a SyntaxList.
-     * @param node - Node to check.
-     */
-    static isSyntaxList(node: compiler.Node): node is compiler.SyntaxList {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SyntaxList:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Decorator.
-     * @param node - Node to check.
-     */
-    static isDecorator(node: compiler.Node): node is compiler.Decorator {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Decorator:
+            case ts.SyntaxKind.DoStatement:
+            case ts.SyntaxKind.ForInStatement:
+            case ts.SyntaxKind.ForOfStatement:
+            case ts.SyntaxKind.ForStatement:
+            case ts.SyntaxKind.WhileStatement:
                 return true;
             default:
                 return false;
@@ -903,24 +1119,6 @@ export class TypeGuards {
     static isJSDocAugmentsTag(node: compiler.Node): node is compiler.JSDocAugmentsTag {
         switch (node.getKind()) {
             case ts.SyntaxKind.JSDocAugmentsTag:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a JSDocTag.
-     * @param node - Node to check.
-     */
-    static isJSDocTag(node: compiler.Node): node is compiler.JSDocTag {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.JSDocAugmentsTag:
-            case ts.SyntaxKind.JSDocClassTag:
-            case ts.SyntaxKind.JSDocReturnTag:
-            case ts.SyntaxKind.JSDocTypedefTag:
-            case ts.SyntaxKind.JSDocTypeTag:
-            case ts.SyntaxKind.JSDocTag:
                 return true;
             default:
                 return false;
@@ -994,12 +1192,19 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a JSDocTypedefTag.
+     * Gets if the node is a JSDocTag.
      * @param node - Node to check.
      */
-    static isJSDocTypedefTag(node: compiler.Node): node is compiler.JSDocTypedefTag {
+    static isJSDocTag(node: compiler.Node): node is compiler.JSDocTag {
         switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocAugmentsTag:
+            case ts.SyntaxKind.JSDocClassTag:
+            case ts.SyntaxKind.JSDocParameterTag:
+            case ts.SyntaxKind.JSDocPropertyTag:
+            case ts.SyntaxKind.JSDocReturnTag:
             case ts.SyntaxKind.JSDocTypedefTag:
+            case ts.SyntaxKind.JSDocTypeTag:
+            case ts.SyntaxKind.JSDocTag:
                 return true;
             default:
                 return false;
@@ -1020,6 +1225,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JSDocTypedefTag.
+     * @param node - Node to check.
+     */
+    static isJSDocTypedefTag(node: compiler.Node): node is compiler.JSDocTypedefTag {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JSDocTypedefTag:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a JSDocUnknownTag.
      * @param node - Node to check.
      */
@@ -1033,25 +1251,32 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an EnumDeclaration.
+     * Gets if the node is a JSDocableNode.
      * @param node - Node to check.
      */
-    static isEnumDeclaration(node: compiler.Node): node is compiler.EnumDeclaration {
+    static isJSDocableNode(node: compiler.Node): node is compiler.JSDocableNode & compiler.Node {
         switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.EnumDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an EnumMember.
-     * @param node - Node to check.
-     */
-    static isEnumMember(node: compiler.Node): node is compiler.EnumMember {
-        switch (node.getKind()) {
             case ts.SyntaxKind.EnumMember:
+            case ts.SyntaxKind.ImportEqualsDeclaration:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.ExpressionStatement:
+            case ts.SyntaxKind.LabeledStatement:
+            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
                 return false;
@@ -1059,12 +1284,12 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an AsExpression.
+     * Gets if the node is a LabeledStatement.
      * @param node - Node to check.
      */
-    static isAsExpression(node: compiler.Node): node is compiler.AsExpression {
+    static isLabeledStatement(node: compiler.Node): node is compiler.LabeledStatement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.AsExpression:
+            case ts.SyntaxKind.LabeledStatement:
                 return true;
             default:
                 return false;
@@ -1072,138 +1297,33 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is an ExpressionedNode.
+     * Gets if the node is a LeftHandSideExpression.
      * @param node - Node to check.
      */
-    static isExpressionedNode(node: compiler.Node): node is compiler.ExpressionedNode & compiler.Node {
+    static isLeftHandSideExpression(node: compiler.Node): node is compiler.LeftHandSideExpression {
         switch (node.getKind()) {
-            case ts.SyntaxKind.AsExpression:
-            case ts.SyntaxKind.NonNullExpression:
-            case ts.SyntaxKind.ParenthesizedExpression:
-            case ts.SyntaxKind.PartiallyEmittedExpression:
-            case ts.SyntaxKind.SpreadElement:
-            case ts.SyntaxKind.SpreadAssignment:
-            case ts.SyntaxKind.TemplateSpan:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an AwaitExpression.
-     * @param node - Node to check.
-     */
-    static isAwaitExpression(node: compiler.Node): node is compiler.AwaitExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.AwaitExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a UnaryExpressionedNode.
-     * @param node - Node to check.
-     */
-    static isUnaryExpressionedNode(node: compiler.Node): node is compiler.UnaryExpressionedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.AwaitExpression:
-            case ts.SyntaxKind.DeleteExpression:
-            case ts.SyntaxKind.TypeAssertionExpression:
-            case ts.SyntaxKind.TypeOfExpression:
-            case ts.SyntaxKind.VoidKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a BinaryExpression.
-     * @param node - Node to check.
-     */
-    static isBinaryExpression(node: compiler.Node): node is compiler.BinaryExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.BinaryExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an Expression.
-     * @param node - Node to check.
-     */
-    static isExpression(node: compiler.Node): node is compiler.Expression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.AnyKeyword:
-            case ts.SyntaxKind.BooleanKeyword:
-            case ts.SyntaxKind.NeverKeyword:
-            case ts.SyntaxKind.NumberKeyword:
-            case ts.SyntaxKind.ObjectKeyword:
-            case ts.SyntaxKind.StringKeyword:
-            case ts.SyntaxKind.SymbolKeyword:
-            case ts.SyntaxKind.UndefinedKeyword:
-            case ts.SyntaxKind.BinaryExpression:
-            case ts.SyntaxKind.CommaListExpression:
-            case ts.SyntaxKind.ConditionalExpression:
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.ElementAccessExpression:
             case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.OmittedExpression:
-            case ts.SyntaxKind.PostfixUnaryExpression:
-            case ts.SyntaxKind.PrefixUnaryExpression:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.NonNullExpression:
+            case ts.SyntaxKind.PropertyAccessExpression:
             case ts.SyntaxKind.SuperKeyword:
             case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
             case ts.SyntaxKind.ArrayLiteralExpression:
             case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
             case ts.SyntaxKind.TaggedTemplateExpression:
             case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a CallExpression.
-     * @param node - Node to check.
-     */
-    static isCallExpression(node: compiler.Node): node is compiler.CallExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CallExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeArgumentedNode.
-     * @param node - Node to check.
-     */
-    static isTypeArgumentedNode(node: compiler.Node): node is compiler.TypeArgumentedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CallExpression:
-            case ts.SyntaxKind.NewExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ArgumentedNode.
-     * @param node - Node to check.
-     */
-    static isArgumentedNode(node: compiler.Node): node is compiler.ArgumentedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CallExpression:
-            case ts.SyntaxKind.NewExpression:
                 return true;
             default:
                 return false;
@@ -1221,182 +1341,6 @@ export class TypeGuards {
             case ts.SyntaxKind.NewExpression:
             case ts.SyntaxKind.PropertyAccessExpression:
             case ts.SyntaxKind.ExpressionWithTypeArguments:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a CommaListExpression.
-     * @param node - Node to check.
-     */
-    static isCommaListExpression(node: compiler.Node): node is compiler.CommaListExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CommaListExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ConditionalExpression.
-     * @param node - Node to check.
-     */
-    static isConditionalExpression(node: compiler.Node): node is compiler.ConditionalExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ConditionalExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a DeleteExpression.
-     * @param node - Node to check.
-     */
-    static isDeleteExpression(node: compiler.Node): node is compiler.DeleteExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DeleteExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ElementAccessExpression.
-     * @param node - Node to check.
-     */
-    static isElementAccessExpression(node: compiler.Node): node is compiler.ElementAccessExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ElementAccessExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ImportExpression.
-     * @param node - Node to check.
-     */
-    static isImportExpression(node: compiler.Node): node is compiler.ImportExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a UnaryExpression.
-     * @param node - Node to check.
-     */
-    static isUnaryExpression(node: compiler.Node): node is compiler.UnaryExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.PostfixUnaryExpression:
-            case ts.SyntaxKind.PrefixUnaryExpression:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TaggedTemplateExpression:
-            case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a UpdateExpression.
-     * @param node - Node to check.
-     */
-    static isUpdateExpression(node: compiler.Node): node is compiler.UpdateExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TaggedTemplateExpression:
-            case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a LeftHandSideExpression.
-     * @param node - Node to check.
-     */
-    static isLeftHandSideExpression(node: compiler.Node): node is compiler.LeftHandSideExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TaggedTemplateExpression:
-            case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a MemberExpression.
-     * @param node - Node to check.
-     */
-    static isMemberExpression(node: compiler.Node): node is compiler.MemberExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TaggedTemplateExpression:
-            case ts.SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a PrimaryExpression.
-     * @param node - Node to check.
-     */
-    static isPrimaryExpression(node: compiler.Node): node is compiler.PrimaryExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportKeyword:
-            case ts.SyntaxKind.SuperKeyword:
-            case ts.SyntaxKind.ThisKeyword:
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-            case ts.SyntaxKind.NullKeyword:
-            case ts.SyntaxKind.ArrayLiteralExpression:
-            case ts.SyntaxKind.ObjectLiteralExpression:
-            case ts.SyntaxKind.TemplateExpression:
                 return true;
             default:
                 return false;
@@ -1441,12 +1385,167 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a MemberExpression.
+     * @param node - Node to check.
+     */
+    static isMemberExpression(node: compiler.Node): node is compiler.MemberExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ElementAccessExpression:
+            case ts.SyntaxKind.ImportKeyword:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.PropertyAccessExpression:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+            case ts.SyntaxKind.ArrayLiteralExpression:
+            case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.TaggedTemplateExpression:
+            case ts.SyntaxKind.TemplateExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a MetaProperty.
      * @param node - Node to check.
      */
     static isMetaProperty(node: compiler.Node): node is compiler.MetaProperty {
         switch (node.getKind()) {
             case ts.SyntaxKind.MetaProperty:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a MethodDeclaration.
+     * @param node - Node to check.
+     */
+    static isMethodDeclaration(node: compiler.Node): node is compiler.MethodDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.MethodDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a MethodSignature.
+     * @param node - Node to check.
+     */
+    static isMethodSignature(node: compiler.Node): node is compiler.MethodSignature {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.MethodSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ModifierableNode.
+     * @param node - Node to check.
+     */
+    static isModifierableNode(node: compiler.Node): node is compiler.ModifierableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.VariableDeclarationList:
+            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NameableNode.
+     * @param node - Node to check.
+     */
+    static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NamedNode.
+     * @param node - Node to check.
+     */
+    static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.PropertyAccessExpression:
+            case ts.SyntaxKind.ImportEqualsDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.TypeAliasDeclaration:
+            case ts.SyntaxKind.TypeParameter:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NamespaceChildableNode.
+     * @param node - Node to check.
+     */
+    static isNamespaceChildableNode(node: compiler.Node): node is compiler.NamespaceChildableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NamespaceDeclaration.
+     * @param node - Node to check.
+     */
+    static isNamespaceDeclaration(node: compiler.Node): node is compiler.NamespaceDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ModuleDeclaration:
                 return true;
             default:
                 return false;
@@ -1467,6 +1566,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a NoSubstitutionTemplateLiteral.
+     * @param node - Node to check.
+     */
+    static isNoSubstitutionTemplateLiteral(node: compiler.Node): node is compiler.NoSubstitutionTemplateLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a NonNullExpression.
      * @param node - Node to check.
      */
@@ -1480,12 +1592,114 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a NotEmittedStatement.
+     * @param node - Node to check.
+     */
+    static isNotEmittedStatement(node: compiler.Node): node is compiler.NotEmittedStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NotEmittedStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NullLiteral.
+     * @param node - Node to check.
+     */
+    static isNullLiteral(node: compiler.Node): node is compiler.NullLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.NullKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a NumericLiteral.
+     * @param node - Node to check.
+     */
+    static isNumericLiteral(node: compiler.Node): node is compiler.NumericLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ObjectLiteralExpression.
+     * @param node - Node to check.
+     */
+    static isObjectLiteralExpression(node: compiler.Node): node is compiler.ObjectLiteralExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ObjectLiteralExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a OmittedExpression.
      * @param node - Node to check.
      */
     static isOmittedExpression(node: compiler.Node): node is compiler.OmittedExpression {
         switch (node.getKind()) {
             case ts.SyntaxKind.OmittedExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a OverloadableNode.
+     * @param node - Node to check.
+     */
+    static isOverloadableNode(node: compiler.Node): node is compiler.OverloadableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ParameterDeclaration.
+     * @param node - Node to check.
+     */
+    static isParameterDeclaration(node: compiler.Node): node is compiler.ParameterDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Parameter:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ParameteredNode.
+     * @param node - Node to check.
+     */
+    static isParameteredNode(node: compiler.Node): node is compiler.ParameteredNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.MethodSignature:
                 return true;
             default:
                 return false;
@@ -1545,934 +1759,41 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a PrimaryExpression.
+     * @param node - Node to check.
+     */
+    static isPrimaryExpression(node: compiler.Node): node is compiler.PrimaryExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ImportKeyword:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+            case ts.SyntaxKind.ArrayLiteralExpression:
+            case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.TemplateExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a PropertyAccessExpression.
      * @param node - Node to check.
      */
     static isPropertyAccessExpression(node: compiler.Node): node is compiler.PropertyAccessExpression {
         switch (node.getKind()) {
             case ts.SyntaxKind.PropertyAccessExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a SpreadElement.
-     * @param node - Node to check.
-     */
-    static isSpreadElement(node: compiler.Node): node is compiler.SpreadElement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SpreadElement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a SuperExpression.
-     * @param node - Node to check.
-     */
-    static isSuperExpression(node: compiler.Node): node is compiler.SuperExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SuperKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ThisExpression.
-     * @param node - Node to check.
-     */
-    static isThisExpression(node: compiler.Node): node is compiler.ThisExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ThisKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeAssertion.
-     * @param node - Node to check.
-     */
-    static isTypeAssertion(node: compiler.Node): node is compiler.TypeAssertion {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TypeAssertionExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeOfExpression.
-     * @param node - Node to check.
-     */
-    static isTypeOfExpression(node: compiler.Node): node is compiler.TypeOfExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TypeOfExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a VoidExpression.
-     * @param node - Node to check.
-     */
-    static isVoidExpression(node: compiler.Node): node is compiler.VoidExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VoidKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a YieldExpression.
-     * @param node - Node to check.
-     */
-    static isYieldExpression(node: compiler.Node): node is compiler.YieldExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.YieldExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExportAssignment.
-     * @param node - Node to check.
-     */
-    static isExportAssignment(node: compiler.Node): node is compiler.ExportAssignment {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ExportAssignment:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExportDeclaration.
-     * @param node - Node to check.
-     */
-    static isExportDeclaration(node: compiler.Node): node is compiler.ExportDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ExportDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExportSpecifier.
-     * @param node - Node to check.
-     */
-    static isExportSpecifier(node: compiler.Node): node is compiler.ExportSpecifier {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ExportSpecifier:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ImportDeclaration.
-     * @param node - Node to check.
-     */
-    static isImportDeclaration(node: compiler.Node): node is compiler.ImportDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ImportSpecifier.
-     * @param node - Node to check.
-     */
-    static isImportSpecifier(node: compiler.Node): node is compiler.ImportSpecifier {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ImportSpecifier:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a SourceFile.
-     * @param node - Node to check.
-     */
-    static isSourceFile(node: compiler.Node): node is compiler.SourceFile {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SourceFile:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ArrowFunction.
-     * @param node - Node to check.
-     */
-    static isArrowFunction(node: compiler.Node): node is compiler.ArrowFunction {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ArrowFunction:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a FunctionDeclaration.
-     * @param node - Node to check.
-     */
-    static isFunctionDeclaration(node: compiler.Node): node is compiler.FunctionDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FunctionDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a UnwrappableNode.
-     * @param node - Node to check.
-     */
-    static isUnwrappableNode(node: compiler.Node): node is compiler.UnwrappableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FunctionDeclaration:
-            case ts.SyntaxKind.ModuleDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a FunctionExpression.
-     * @param node - Node to check.
-     */
-    static isFunctionExpression(node: compiler.Node): node is compiler.FunctionExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FunctionExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NameableNode.
-     * @param node - Node to check.
-     */
-    static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FunctionExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ParameterDeclaration.
-     * @param node - Node to check.
-     */
-    static isParameterDeclaration(node: compiler.Node): node is compiler.ParameterDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ScopeableNode.
-     * @param node - Node to check.
-     */
-    static isScopeableNode(node: compiler.Node): node is compiler.ScopeableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a DeclarationNamedNode.
-     * @param node - Node to check.
-     */
-    static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a HeritageClause.
-     * @param node - Node to check.
-     */
-    static isHeritageClause(node: compiler.Node): node is compiler.HeritageClause {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.HeritageClause:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ConstructSignatureDeclaration.
-     * @param node - Node to check.
-     */
-    static isConstructSignatureDeclaration(node: compiler.Node): node is compiler.ConstructSignatureDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ConstructSignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a InterfaceDeclaration.
-     * @param node - Node to check.
-     */
-    static isInterfaceDeclaration(node: compiler.Node): node is compiler.InterfaceDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.InterfaceDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExtendsClauseableNode.
-     * @param node - Node to check.
-     */
-    static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.InterfaceDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a MethodSignature.
-     * @param node - Node to check.
-     */
-    static isMethodSignature(node: compiler.Node): node is compiler.MethodSignature {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a PropertySignature.
-     * @param node - Node to check.
-     */
-    static isPropertySignature(node: compiler.Node): node is compiler.PropertySignature {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.PropertySignature:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a BooleanLiteral.
-     * @param node - Node to check.
-     */
-    static isBooleanLiteral(node: compiler.Node): node is compiler.BooleanLiteral {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FalseKeyword:
-            case ts.SyntaxKind.TrueKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NullLiteral.
-     * @param node - Node to check.
-     */
-    static isNullLiteral(node: compiler.Node): node is compiler.NullLiteral {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.NullKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NumericLiteral.
-     * @param node - Node to check.
-     */
-    static isNumericLiteral(node: compiler.Node): node is compiler.NumericLiteral {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FirstLiteralToken:
-            case ts.SyntaxKind.NumericLiteral:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a RegularExpressionLiteral.
-     * @param node - Node to check.
-     */
-    static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.RegularExpressionLiteral:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a StringLiteral.
-     * @param node - Node to check.
-     */
-    static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.StringLiteral:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NamespaceDeclaration.
-     * @param node - Node to check.
-     */
-    static isNamespaceDeclaration(node: compiler.Node): node is compiler.NamespaceDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ModuleDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Block.
-     * @param node - Node to check.
-     */
-    static isBlock(node: compiler.Node): node is compiler.Block {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.Block:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a BreakStatement.
-     * @param node - Node to check.
-     */
-    static isBreakStatement(node: compiler.Node): node is compiler.BreakStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.BreakStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a CaseBlock.
-     * @param node - Node to check.
-     */
-    static isCaseBlock(node: compiler.Node): node is compiler.CaseBlock {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CaseBlock:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a CaseClause.
-     * @param node - Node to check.
-     */
-    static isCaseClause(node: compiler.Node): node is compiler.CaseClause {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CaseClause:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a CatchClause.
-     * @param node - Node to check.
-     */
-    static isCatchClause(node: compiler.Node): node is compiler.CatchClause {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.CatchClause:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ContinueStatement.
-     * @param node - Node to check.
-     */
-    static isContinueStatement(node: compiler.Node): node is compiler.ContinueStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ContinueStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a DebuggerStatement.
-     * @param node - Node to check.
-     */
-    static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DebuggerStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a Statement.
-     * @param node - Node to check.
-     */
-    static isStatement(node: compiler.Node): node is compiler.Statement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DebuggerStatement:
-            case ts.SyntaxKind.EmptyStatement:
-            case ts.SyntaxKind.NotEmittedStatement:
-            case ts.SyntaxKind.ThrowStatement:
-            case ts.SyntaxKind.TryStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a DefaultClause.
-     * @param node - Node to check.
-     */
-    static isDefaultClause(node: compiler.Node): node is compiler.DefaultClause {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DefaultClause:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a DoStatement.
-     * @param node - Node to check.
-     */
-    static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DoStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a IterationStatement.
-     * @param node - Node to check.
-     */
-    static isIterationStatement(node: compiler.Node): node is compiler.IterationStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.DoStatement:
-            case ts.SyntaxKind.ForInStatement:
-            case ts.SyntaxKind.ForStatement:
-            case ts.SyntaxKind.WhileStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an EmptyStatement.
-     * @param node - Node to check.
-     */
-    static isEmptyStatement(node: compiler.Node): node is compiler.EmptyStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.EmptyStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExpressionStatement.
-     * @param node - Node to check.
-     */
-    static isExpressionStatement(node: compiler.Node): node is compiler.ExpressionStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ExpressionStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ForInStatement.
-     * @param node - Node to check.
-     */
-    static isForInStatement(node: compiler.Node): node is compiler.ForInStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ForInStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ForOfStatement.
-     * @param node - Node to check.
-     */
-    static isForOfStatement(node: compiler.Node): node is compiler.ForOfStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ForOfStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an AwaitableNode.
-     * @param node - Node to check.
-     */
-    static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ForOfStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ForStatement.
-     * @param node - Node to check.
-     */
-    static isForStatement(node: compiler.Node): node is compiler.ForStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ForStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a IfStatement.
-     * @param node - Node to check.
-     */
-    static isIfStatement(node: compiler.Node): node is compiler.IfStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.IfStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a LabeledStatement.
-     * @param node - Node to check.
-     */
-    static isLabeledStatement(node: compiler.Node): node is compiler.LabeledStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.LabeledStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a NotEmittedStatement.
-     * @param node - Node to check.
-     */
-    static isNotEmittedStatement(node: compiler.Node): node is compiler.NotEmittedStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.NotEmittedStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ReturnStatement.
-     * @param node - Node to check.
-     */
-    static isReturnStatement(node: compiler.Node): node is compiler.ReturnStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ReturnStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a SwitchStatement.
-     * @param node - Node to check.
-     */
-    static isSwitchStatement(node: compiler.Node): node is compiler.SwitchStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.SwitchStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ThrowStatement.
-     * @param node - Node to check.
-     */
-    static isThrowStatement(node: compiler.Node): node is compiler.ThrowStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ThrowStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TryStatement.
-     * @param node - Node to check.
-     */
-    static isTryStatement(node: compiler.Node): node is compiler.TryStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TryStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a VariableDeclaration.
-     * @param node - Node to check.
-     */
-    static isVariableDeclaration(node: compiler.Node): node is compiler.VariableDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a BindingNamedNode.
-     * @param node - Node to check.
-     */
-    static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.Node {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a VariableDeclarationList.
-     * @param node - Node to check.
-     */
-    static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VariableDeclarationList:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a VariableStatement.
-     * @param node - Node to check.
-     */
-    static isVariableStatement(node: compiler.Node): node is compiler.VariableStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.VariableStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a WhileStatement.
-     * @param node - Node to check.
-     */
-    static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.WhileStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a WithStatement.
-     * @param node - Node to check.
-     */
-    static isWithStatement(node: compiler.Node): node is compiler.WithStatement {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.WithStatement:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ExpressionWithTypeArguments.
-     * @param node - Node to check.
-     */
-    static isExpressionWithTypeArguments(node: compiler.Node): node is compiler.ExpressionWithTypeArguments {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ExpressionWithTypeArguments:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeAliasDeclaration.
-     * @param node - Node to check.
-     */
-    static isTypeAliasDeclaration(node: compiler.Node): node is compiler.TypeAliasDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TypeAliasDeclaration:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeNode.
-     * @param node - Node to check.
-     */
-    static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.FirstTypeNode:
-            case ts.SyntaxKind.LastTypeNode:
-            case ts.SyntaxKind.TypeReference:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeParameterDeclaration.
-     * @param node - Node to check.
-     */
-    static isTypeParameterDeclaration(node: compiler.Node): node is compiler.TypeParameterDeclaration {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TypeParameter:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a TypeReferenceNode.
-     * @param node - Node to check.
-     */
-    static isTypeReferenceNode(node: compiler.Node): node is compiler.TypeReferenceNode {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.TypeReference:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is an ArrayLiteralExpression.
-     * @param node - Node to check.
-     */
-    static isArrayLiteralExpression(node: compiler.Node): node is compiler.ArrayLiteralExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ArrayLiteralExpression:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a ObjectLiteralExpression.
-     * @param node - Node to check.
-     */
-    static isObjectLiteralExpression(node: compiler.Node): node is compiler.ObjectLiteralExpression {
-        switch (node.getKind()) {
-            case ts.SyntaxKind.ObjectLiteralExpression:
                 return true;
             default:
                 return false;
@@ -2493,12 +1814,242 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a PropertyDeclaration.
+     * @param node - Node to check.
+     */
+    static isPropertyDeclaration(node: compiler.Node): node is compiler.PropertyDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a PropertyNamedNode.
+     * @param node - Node to check.
+     */
+    static isPropertyNamedNode(node: compiler.Node): node is compiler.PropertyNamedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.EnumMember:
+            case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.PropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a PropertySignature.
+     * @param node - Node to check.
+     */
+    static isPropertySignature(node: compiler.Node): node is compiler.PropertySignature {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a QualifiedName.
+     * @param node - Node to check.
+     */
+    static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FirstNode:
+            case ts.SyntaxKind.QualifiedName:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a QuestionTokenableNode.
+     * @param node - Node to check.
+     */
+    static isQuestionTokenableNode(node: compiler.Node): node is compiler.QuestionTokenableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.PropertyAssignment:
+            case ts.SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ReadonlyableNode.
+     * @param node - Node to check.
+     */
+    static isReadonlyableNode(node: compiler.Node): node is compiler.ReadonlyableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a RegularExpressionLiteral.
+     * @param node - Node to check.
+     */
+    static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.RegularExpressionLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ReturnStatement.
+     * @param node - Node to check.
+     */
+    static isReturnStatement(node: compiler.Node): node is compiler.ReturnStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ReturnStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ReturnTypedNode.
+     * @param node - Node to check.
+     */
+    static isReturnTypedNode(node: compiler.Node): node is compiler.ReturnTypedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.MethodSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ScopeableNode.
+     * @param node - Node to check.
+     */
+    static isScopeableNode(node: compiler.Node): node is compiler.ScopeableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Parameter:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ScopedNode.
+     * @param node - Node to check.
+     */
+    static isScopedNode(node: compiler.Node): node is compiler.ScopedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SemicolonToken.
+     * @param node - Node to check.
+     */
+    static isSemicolonToken(node: compiler.Node): node is compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SemicolonToken:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SetAccessorDeclaration.
+     * @param node - Node to check.
+     */
+    static isSetAccessorDeclaration(node: compiler.Node): node is compiler.SetAccessorDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ShorthandPropertyAssignment.
      * @param node - Node to check.
      */
     static isShorthandPropertyAssignment(node: compiler.Node): node is compiler.ShorthandPropertyAssignment {
         switch (node.getKind()) {
             case ts.SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SignaturedDeclaration.
+     * @param node - Node to check.
+     */
+    static isSignaturedDeclaration(node: compiler.Node): node is compiler.SignaturedDeclaration & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.MethodSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SourceFile.
+     * @param node - Node to check.
+     */
+    static isSourceFile(node: compiler.Node): node is compiler.SourceFile {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SourceFile:
                 return true;
             default:
                 return false;
@@ -2519,12 +2070,138 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a NoSubstitutionTemplateLiteral.
+     * Gets if the node is a SpreadElement.
      * @param node - Node to check.
      */
-    static isNoSubstitutionTemplateLiteral(node: compiler.Node): node is compiler.NoSubstitutionTemplateLiteral {
+    static isSpreadElement(node: compiler.Node): node is compiler.SpreadElement {
         switch (node.getKind()) {
-            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.SpreadElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a Statement.
+     * @param node - Node to check.
+     */
+    static isStatement(node: compiler.Node): node is compiler.Statement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ImportEqualsDeclaration:
+            case ts.SyntaxKind.Block:
+            case ts.SyntaxKind.BreakStatement:
+            case ts.SyntaxKind.ContinueStatement:
+            case ts.SyntaxKind.DebuggerStatement:
+            case ts.SyntaxKind.DoStatement:
+            case ts.SyntaxKind.EmptyStatement:
+            case ts.SyntaxKind.ExpressionStatement:
+            case ts.SyntaxKind.ForInStatement:
+            case ts.SyntaxKind.ForOfStatement:
+            case ts.SyntaxKind.ForStatement:
+            case ts.SyntaxKind.IfStatement:
+            case ts.SyntaxKind.LabeledStatement:
+            case ts.SyntaxKind.NotEmittedStatement:
+            case ts.SyntaxKind.ReturnStatement:
+            case ts.SyntaxKind.SwitchStatement:
+            case ts.SyntaxKind.ThrowStatement:
+            case ts.SyntaxKind.TryStatement:
+            case ts.SyntaxKind.VariableStatement:
+            case ts.SyntaxKind.WhileStatement:
+            case ts.SyntaxKind.WithStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a StatementedNode.
+     * @param node - Node to check.
+     */
+    static isStatementedNode(node: compiler.Node): node is compiler.StatementedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.SourceFile:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.Block:
+            case ts.SyntaxKind.CaseClause:
+            case ts.SyntaxKind.DefaultClause:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a StaticableNode.
+     * @param node - Node to check.
+     */
+    static isStaticableNode(node: compiler.Node): node is compiler.StaticableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a StringLiteral.
+     * @param node - Node to check.
+     */
+    static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.StringLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SuperExpression.
+     * @param node - Node to check.
+     */
+    static isSuperExpression(node: compiler.Node): node is compiler.SuperExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SuperKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SwitchStatement.
+     * @param node - Node to check.
+     */
+    static isSwitchStatement(node: compiler.Node): node is compiler.SwitchStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SwitchStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a SyntaxList.
+     * @param node - Node to check.
+     */
+    static isSyntaxList(node: compiler.Node): node is compiler.SyntaxList {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.SyntaxList:
                 return true;
             default:
                 return false;
@@ -2610,12 +2287,401 @@ export class TypeGuards {
     }
 
     /**
-     * Gets if the node is a SemicolonToken.
+     * Gets if the node is a TextInsertableNode.
      * @param node - Node to check.
      */
-    static isSemicolonToken(node: compiler.Node): node is compiler.Node {
+    static isTextInsertableNode(node: compiler.Node): node is compiler.TextInsertableNode & compiler.Node {
         switch (node.getKind()) {
-            case ts.SyntaxKind.SemicolonToken:
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.EnumDeclaration:
+            case ts.SyntaxKind.SourceFile:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+            case ts.SyntaxKind.Block:
+            case ts.SyntaxKind.CaseBlock:
+            case ts.SyntaxKind.CaseClause:
+            case ts.SyntaxKind.DefaultClause:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ThisExpression.
+     * @param node - Node to check.
+     */
+    static isThisExpression(node: compiler.Node): node is compiler.ThisExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ThisKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ThrowStatement.
+     * @param node - Node to check.
+     */
+    static isThrowStatement(node: compiler.Node): node is compiler.ThrowStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ThrowStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TryStatement.
+     * @param node - Node to check.
+     */
+    static isTryStatement(node: compiler.Node): node is compiler.TryStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TryStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeAliasDeclaration.
+     * @param node - Node to check.
+     */
+    static isTypeAliasDeclaration(node: compiler.Node): node is compiler.TypeAliasDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeArgumentedNode.
+     * @param node - Node to check.
+     */
+    static isTypeArgumentedNode(node: compiler.Node): node is compiler.TypeArgumentedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.NewExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeAssertion.
+     * @param node - Node to check.
+     */
+    static isTypeAssertion(node: compiler.Node): node is compiler.TypeAssertion {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeAssertionExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeNode.
+     * @param node - Node to check.
+     */
+    static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FirstTypeNode:
+            case ts.SyntaxKind.LastTypeNode:
+            case ts.SyntaxKind.ExpressionWithTypeArguments:
+            case ts.SyntaxKind.TypeReference:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeOfExpression.
+     * @param node - Node to check.
+     */
+    static isTypeOfExpression(node: compiler.Node): node is compiler.TypeOfExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeOfExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeParameterDeclaration.
+     * @param node - Node to check.
+     */
+    static isTypeParameterDeclaration(node: compiler.Node): node is compiler.TypeParameterDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeParameter:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeParameteredNode.
+     * @param node - Node to check.
+     */
+    static isTypeParameteredNode(node: compiler.Node): node is compiler.TypeParameteredNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ClassDeclaration:
+            case ts.SyntaxKind.Constructor:
+            case ts.SyntaxKind.GetAccessor:
+            case ts.SyntaxKind.MethodDeclaration:
+            case ts.SyntaxKind.SetAccessor:
+            case ts.SyntaxKind.ArrowFunction:
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeReferenceNode.
+     * @param node - Node to check.
+     */
+    static isTypeReferenceNode(node: compiler.Node): node is compiler.TypeReferenceNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TypeReference:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypedNode.
+     * @param node - Node to check.
+     */
+    static isTypedNode(node: compiler.Node): node is compiler.TypedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.PropertyDeclaration:
+            case ts.SyntaxKind.AsExpression:
+            case ts.SyntaxKind.TypeAssertionExpression:
+            case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.PropertySignature:
+            case ts.SyntaxKind.VariableDeclaration:
+            case ts.SyntaxKind.TypeAliasDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UnaryExpression.
+     * @param node - Node to check.
+     */
+    static isUnaryExpression(node: compiler.Node): node is compiler.UnaryExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AwaitExpression:
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.DeleteExpression:
+            case ts.SyntaxKind.ElementAccessExpression:
+            case ts.SyntaxKind.ImportKeyword:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.NonNullExpression:
+            case ts.SyntaxKind.PostfixUnaryExpression:
+            case ts.SyntaxKind.PrefixUnaryExpression:
+            case ts.SyntaxKind.PropertyAccessExpression:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.TypeAssertionExpression:
+            case ts.SyntaxKind.TypeOfExpression:
+            case ts.SyntaxKind.VoidKeyword:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+            case ts.SyntaxKind.ArrayLiteralExpression:
+            case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.TaggedTemplateExpression:
+            case ts.SyntaxKind.TemplateExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UnaryExpressionedNode.
+     * @param node - Node to check.
+     */
+    static isUnaryExpressionedNode(node: compiler.Node): node is compiler.UnaryExpressionedNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.AwaitExpression:
+            case ts.SyntaxKind.DeleteExpression:
+            case ts.SyntaxKind.TypeAssertionExpression:
+            case ts.SyntaxKind.TypeOfExpression:
+            case ts.SyntaxKind.VoidKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UnwrappableNode.
+     * @param node - Node to check.
+     */
+    static isUnwrappableNode(node: compiler.Node): node is compiler.UnwrappableNode & compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.ModuleDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UpdateExpression.
+     * @param node - Node to check.
+     */
+    static isUpdateExpression(node: compiler.Node): node is compiler.UpdateExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CallExpression:
+            case ts.SyntaxKind.ElementAccessExpression:
+            case ts.SyntaxKind.ImportKeyword:
+            case ts.SyntaxKind.MetaProperty:
+            case ts.SyntaxKind.NewExpression:
+            case ts.SyntaxKind.NonNullExpression:
+            case ts.SyntaxKind.PropertyAccessExpression:
+            case ts.SyntaxKind.SuperKeyword:
+            case ts.SyntaxKind.ThisKeyword:
+            case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.FalseKeyword:
+            case ts.SyntaxKind.TrueKeyword:
+            case ts.SyntaxKind.NullKeyword:
+            case ts.SyntaxKind.FirstLiteralToken:
+            case ts.SyntaxKind.NumericLiteral:
+            case ts.SyntaxKind.RegularExpressionLiteral:
+            case ts.SyntaxKind.StringLiteral:
+            case ts.SyntaxKind.ArrayLiteralExpression:
+            case ts.SyntaxKind.ObjectLiteralExpression:
+            case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+            case ts.SyntaxKind.TaggedTemplateExpression:
+            case ts.SyntaxKind.TemplateExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a VariableDeclaration.
+     * @param node - Node to check.
+     */
+    static isVariableDeclaration(node: compiler.Node): node is compiler.VariableDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a VariableDeclarationList.
+     * @param node - Node to check.
+     */
+    static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VariableDeclarationList:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a VariableStatement.
+     * @param node - Node to check.
+     */
+    static isVariableStatement(node: compiler.Node): node is compiler.VariableStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VariableStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a VoidExpression.
+     * @param node - Node to check.
+     */
+    static isVoidExpression(node: compiler.Node): node is compiler.VoidExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.VoidKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a WhileStatement.
+     * @param node - Node to check.
+     */
+    static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.WhileStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a WithStatement.
+     * @param node - Node to check.
+     */
+    static isWithStatement(node: compiler.Node): node is compiler.WithStatement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.WithStatement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a YieldExpression.
+     * @param node - Node to check.
+     */
+    static isYieldExpression(node: compiler.Node): node is compiler.YieldExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.YieldExpression:
                 return true;
             default:
                 return false;
