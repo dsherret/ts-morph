@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 133
+**Total:** 134
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
@@ -36,6 +36,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: expression
     * :heavy_check_mark: typeArguments
     * :heavy_check_mark: arguments
+* [CallSignatureDeclaration](src/compiler/interface/CallSignatureDeclaration.ts)
 * [CaseBlock](src/compiler/statement/CaseBlock.ts)
     * :heavy_check_mark: clauses
 * [CaseClause](src/compiler/statement/CaseClause.ts)
@@ -340,13 +341,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 72
+**Total:** 71
 
 * ArrayBindingPattern
 * ArrayTypeNode
 * BindingElement
 * Bundle
-* CallSignatureDeclaration
 * ClassElement
 * ClassExpression
 * ClassLikeDeclarationBase

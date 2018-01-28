@@ -1,7 +1,8 @@
 ﻿import * as ts from "typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren, removeStatementedNodeChild} from "./../../manipulation";
 import * as errors from "./../../errors";
-import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure} from "./../../structures";
+import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure,
+    CallSignatureDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
 import * as structureToTexts from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
@@ -13,10 +14,11 @@ import {NamespaceChildableNode} from "./../namespace";
 import {Type, TypeAliasDeclaration} from "./../type";
 import {ImplementationLocation} from "./../tools";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
+import {CallSignatureDeclaration} from "./CallSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
 
-export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration;
+export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration;
 
 export const InterfaceDeclarationBase = ChildOrderableNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(
     JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node))))))
@@ -127,11 +129,89 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     }
 
     /**
-     * Gets the interface method signatures.
+     * Gets the interface construct signatures.
      */
     getConstructSignatures(): ConstructSignatureDeclaration[] {
         return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
             .map(m => this.getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration)) as ConstructSignatureDeclaration[];
+    }
+
+    /**
+     * Add call signature.
+     * @param structure - Structure representing the call signature.
+     */
+    addCallSignature(structure: CallSignatureDeclarationStructure) {
+        return this.addCallSignatures([structure])[0];
+    }
+
+    /**
+     * Add call signatures.
+     * @param structures - Structures representing the call signatures.
+     */
+    addCallSignatures(structures: CallSignatureDeclarationStructure[]) {
+        return this.insertCallSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
+    }
+
+    /**
+     * Insert call signature.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the call signature.
+     */
+    insertCallSignature(index: number, structure: CallSignatureDeclarationStructure) {
+        return this.insertCallSignatures(index, [structure])[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the call signatures.
+     */
+    insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+
+        // create code
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getWriterWithChildIndentation();
+            const structureToText = new structureToTexts.CallSignatureDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
+            getIndexedChildren: () => this.getAllMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            expectedKind: ts.SyntaxKind.CallSignature,
+            fillFunction: (node, structure) => node.fill(structure)
+        });
+    }
+
+    /**
+     * Gets the first call signature by a find function.
+     * @param findFunction - Function to find the call signature by.
+     */
+    getCallSignature(findFunction: (member: CallSignatureDeclaration) => boolean): CallSignatureDeclaration | undefined {
+        return ArrayUtils.find(this.getCallSignatures(), findFunction);
+    }
+
+    /**
+     * Gets the first call signature by a find function or throws if not found.
+     * @param findFunction - Function to find the call signature by.
+     */
+    getCallSignatureOrThrow(findFunction: (member: CallSignatureDeclaration) => boolean): CallSignatureDeclaration {
+        return errors.throwIfNullOrUndefined(this.getCallSignature(findFunction), "Expected to find a call signature with the provided condition.");
+    }
+
+    /**
+     * Gets the interface call signatures.
+     */
+    getCallSignatures(): CallSignatureDeclaration[] {
+        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.CallSignature)
+            .map(m => this.getNodeFromCompilerNode(m as ts.CallSignatureDeclaration)) as CallSignatureDeclaration[];
     }
 
     /**

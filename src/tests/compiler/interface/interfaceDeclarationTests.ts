@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
-import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, ClassDeclaration} from "./../../../compiler";
-import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationSpecificStructure} from "./../../../structures";
+import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, CallSignatureDeclaration, ClassDeclaration} from "./../../../compiler";
+import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationSpecificStructure,
+    CallSignatureDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -155,6 +156,119 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should throw when none match", () => {
             expect(() => firstChild.getConstructSignatureOrThrow(c => c.getParameters().length > 5)).to.throw();
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.insertCallSignatures), () => {
+        function doTest(startCode: string, insertIndex: number, structures: CallSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertCallSignatures(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("interface i {\n}", 0, [{ }], "interface i {\n    (): void;\n}");
+        });
+
+        it("should insert multiple into other", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, { }],
+                "interface i {\n    method1();\n    (): string;\n    (): void;\n    method2();\n}");
+        });
+
+        it("should insert when the structure has everything", () => {
+            const structure: MakeRequired<CallSignatureDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                parameters: [{ name: "param" }],
+                returnType: "T",
+                typeParameters: [{ name: "T" }]
+            };
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    <T>(param): T;\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.insertCallSignature), () => {
+        function doTest(startCode: string, insertIndex: number, structure: CallSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertCallSignature(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(CallSignatureDeclaration);
+        }
+
+        it("should insert at index", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, { }, "interface i {\n    method1();\n    (): void;\n    method2();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addCallSignatures), () => {
+        function doTest(startCode: string, structures: CallSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addCallSignatures(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple at end", () => {
+            doTest("interface i {\n    method1();\n}", [{ }, { }], "interface i {\n    method1();\n    (): void;\n    (): void;\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addCallSignature), () => {
+        function doTest(startCode: string, structure: CallSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addCallSignature(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(CallSignatureDeclaration);
+        }
+
+        it("should add at end", () => {
+            doTest("interface i {\n    method1();\n}", { }, "interface i {\n    method1();\n    (): void;\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getCallSignatures), () => {
+        describe("none", () => {
+            it("should not have any", () => {
+                const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
+                expect(firstChild.getCallSignatures().length).to.equal(0);
+            });
+        });
+
+        describe("has call signatures", () => {
+            const code = "interface Identifier {\n    prop: string;\n    new(): string;\n    (): number;\n    method1():void;\n    method2():string;\n}\n";
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(code);
+
+            it("should get the right number of call signatures", () => {
+                expect(firstChild.getCallSignatures().length).to.equal(1);
+            });
+
+            it("should get a call signature of the right instance of", () => {
+                expect(firstChild.getCallSignatures()[0]).to.be.instanceOf(CallSignatureDeclaration);
+            });
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getCallSignature), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { (): string; (str: string): string; }");
+
+        it("should get the first that matches", () => {
+            expect(firstChild.getCallSignature(c => c.getParameters().length > 0)).to.equal(firstChild.getCallSignatures()[1]);
+        });
+
+        it("should return undefined when none match", () => {
+            expect(firstChild.getCallSignature(c => c.getParameters().length > 5)).to.be.undefined;
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getCallSignatureOrThrow), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { (): string; (str: string): string; }");
+
+        it("should get the first that matches", () => {
+            expect(firstChild.getCallSignatureOrThrow(c => c.getParameters().length > 0)).to.equal(firstChild.getCallSignatures()[1]);
+        });
+
+        it("should throw when none match", () => {
+            expect(() => firstChild.getCallSignatureOrThrow(c => c.getParameters().length > 5)).to.throw();
         });
     });
 

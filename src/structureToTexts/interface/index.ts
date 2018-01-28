@@ -1,3 +1,4 @@
+export * from "./CallSignatureDeclarationStructureToText";
 export * from "./ConstructSignatureDeclarationStructureToText";
 export * from "./InterfaceDeclarationStructureToText";
 export * from "./MethodSignatureStructureToText";

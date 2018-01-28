@@ -280,6 +280,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a CallSignatureDeclaration.
+     * @param node - Node to check.
+     */
+    static isCallSignatureDeclaration(node: compiler.Node): node is compiler.CallSignatureDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.CallSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a CaseBlock.
      * @param node - Node to check.
      */
@@ -332,6 +345,7 @@ export class TypeGuards {
             case ts.SyntaxKind.SetAccessor:
             case ts.SyntaxKind.EnumDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
@@ -1268,6 +1282,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
@@ -1698,6 +1713,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -1945,6 +1961,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -2035,6 +2052,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
                 return true;
@@ -2449,6 +2467,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:

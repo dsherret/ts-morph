@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParent} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
-import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
+import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
@@ -96,10 +96,10 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
-                const nameNode = getNamedNode(this).getNameNode();
+                const {insertPos, childIndex} = getInsertInfo(this);
                 insertIntoParent({
-                    insertPos: nameNode.getEnd(),
-                    childIndex: nameNode.getChildIndex() + 1,
+                    insertPos,
+                    childIndex,
                     insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
                     parent: this,
                     newText: `<${typeParamCodes.join(", ")}>`
@@ -135,12 +135,16 @@ function getStructureCode(structure: TypeParameterDeclarationStructure) {
     return code;
 }
 
-function getNamedNode(node: TypeParameteredNode) {
-    const namedNode = node as any as NamedNode;
-
-    /* istanbul ignore if */
-    if (namedNode.getNameNode == null)
-        throw new errors.NotImplementedError("Not implemented scenario. Type parameters can only be added to a node with a name.");
-
-    return namedNode;
+function getInsertInfo(node: TypeParameteredNode & Node) {
+    const namedNode = node as any as (NamedNode & Node);
+    if (namedNode.getNameNode != null) {
+        const nameNode = namedNode.getNameNode();
+        return { insertPos: nameNode.getEnd(), childIndex: nameNode.getChildIndex() + 1 };
+    }
+    else if (TypeGuards.isCallSignatureDeclaration(node)) {
+        const openParenToken = node.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken);
+        return { insertPos: openParenToken.getStart(), childIndex: openParenToken.getChildIndex() };
+    }
+    else
+        throw new errors.NotImplementedError(`Not implemented scenario inserting type parameters for node with kind ${node.getKindName()}.`);
 }

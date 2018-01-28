@@ -54,6 +54,14 @@ interfaceDeclaration.removeExtends(0); // index
 interfaceDeclaration.removeExtends(interfaceDeclaration.getExtends()[0]); // node
 ```
 
+### Members
+
+Get all the members of the interface:
+
+```ts
+const members = interfaceDeclaration.getAllMembers();
+```
+
 ### Construct signatures
 
 Use:
@@ -77,6 +85,31 @@ Remove a construct signature:
 
 ```typescript
 constructSignature.remove();
+```
+
+### Call signatures
+
+Use:
+
+```typescript
+const callSignatures = interfaceDeclaration.getCallSignatures();
+const callSignature = interfaceDeclaration.getCallSignature(c => c.getParameters().length > 2);
+```
+
+#### Add/Insert
+
+To add or insert use `addCallSignature()`, `addCallSignatures()`, `insertCallSignature`, or `insertCallSignatures()`:
+
+```typescript
+const callSignature = interfaceDeclaration.addCallSignature({ returnType: "SomeClass" });
+```
+
+#### Remove
+
+Remove a call signature:
+
+```typescript
+callSignature.remove();
 ```
 
 ### Method signatures

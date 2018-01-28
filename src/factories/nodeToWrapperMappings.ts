@@ -16,6 +16,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [ts.SyntaxKind.Block]: compiler.Block,
     [ts.SyntaxKind.BreakStatement]: compiler.BreakStatement,
     [ts.SyntaxKind.CallExpression]: compiler.CallExpression,
+    [ts.SyntaxKind.CallSignature]: compiler.CallSignatureDeclaration,
     [ts.SyntaxKind.CaseBlock]: compiler.CaseBlock,
     [ts.SyntaxKind.CaseClause]: compiler.CaseClause,
     [ts.SyntaxKind.CatchClause]: compiler.CatchClause,

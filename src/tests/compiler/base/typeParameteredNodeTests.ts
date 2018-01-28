@@ -1,7 +1,8 @@
-﻿import {expect} from "chai";
+﻿import * as ts from "typescript";
+import {expect} from "chai";
 import {TypeParameterDeclarationStructure, TypeParameteredNodeStructure} from "./../../../structures";
-import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration, CallSignatureDeclaration} from "./../../../compiler";
+import {getInfoFromText, getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(d => d.getTypeParameter), () => {
@@ -89,6 +90,13 @@ describe(nameof(TypeParameteredNode), () => {
     });
 
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameter), () => {
+        it("should insert when none exists for a call signature declaration", () => {
+            const startCode = "interface Identifier {\n    (): void;\n}\n";
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<CallSignatureDeclaration>(startCode, ts.SyntaxKind.CallSignature);
+            descendant.insertTypeParameter(0, { name: "T" });
+            expect(sourceFile.getFullText()).to.equal("interface Identifier {\n    <T>(): void;\n}\n");
+        });
+
         function doTest(startCode: string, insertIndex: number, structure: TypeParameterDeclarationStructure, expectedCode: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.insertTypeParameter(insertIndex, structure);
