@@ -32,6 +32,7 @@ const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
 
 modifyFile(ast.getSourceFileOrThrow("Node.d.ts"));
 modifyFile(ast.getSourceFileOrThrow("InitializerGetExpressionableNode.d.ts"));
+modifyFile(ast.getSourceFileOrThrow("StatementedNode.d.ts"));
 
 console.log("End: " + new Date());
 
