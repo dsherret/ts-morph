@@ -481,6 +481,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the end position of the last significant token.
+     */
+    getFullStart() {
+        return this.compilerNode.getFullStart();
+    }
+
+    /**
      * Gets the first position from the pos that is not whitespace.
      */
     getNonWhitespaceStart() {
