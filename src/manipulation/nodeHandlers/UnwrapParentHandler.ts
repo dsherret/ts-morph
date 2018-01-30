@@ -6,7 +6,7 @@ import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
 /**
- * Parent handler used to unwrap the
+ * Parent handler used to unwrap a node.
  */
 export class UnwrapParentHandler implements NodeHandler {
     private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
