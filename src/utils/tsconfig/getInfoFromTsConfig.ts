@@ -2,7 +2,7 @@
 import * as errors from "./../../errors";
 import {Diagnostic} from "./../../compiler";
 import {FileSystemHost} from "./../../fileSystem";
-import {ArrayUtils, FileUtils, createHashSet} from "./../../utils";
+import {ArrayUtils, FileUtils, createHashSet, TsVersion} from "./../../utils";
 
 export interface TsConfigParseResult {
     config?: any;
@@ -33,7 +33,7 @@ export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fi
     const currentDir = fileSystem.getCurrentDirectory();
     const host: ts.ParseConfigHost = {
         useCaseSensitiveFileNames: true,
-        readDirectory: (rootDir, extensions, excludes, includes) => tsMatchFiles(rootDir, extensions, excludes, includes, false, currentDir, undefined,
+        readDirectory: (rootDir, extensions, excludes, includes) => tsMatchFiles(rootDir, extensions, excludes || [], includes, false, currentDir, undefined,
             path => getFileSystemEntries(path, fileSystem)),
         fileExists: path => fileSystem.fileExistsSync(path),
         readFile: path => fileSystem.readFileSync(path)
@@ -79,8 +79,7 @@ function tsMatchFiles(this: any,
     depth: number | undefined,
     getEntries: (path: string) => FileSystemEntries
 ): string[] {
-    const version = ts.version.split(".");
-    if (version[0] === "2" && version[1] === "4")
+    if (TsVersion.getMajor() === 2 && TsVersion.getMinor() === 4)
         return (ts as any).matchFiles(path, extensions, excludes, includes, useCaseSensitiveFileNames, currentDirectory, getEntries);
     else
         return (ts as any).matchFiles.apply(this, arguments);

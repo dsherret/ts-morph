@@ -550,12 +550,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.
      */
-    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node<NodeType[KeyType]> {
-        // todo: once filtering keys by type is supported need to (1) make this only show keys that are of type ts.Node and (2) have ability to return an array of nodes.
+    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node {
+        // todo: this method should use conditional types in TS 2.8 so that it maps the KeyType to the correct node property
         if ((this.compilerNode[propertyName] as any).kind == null)
             throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} ` +
                 `only works with properties that return a node.`);
-        return getWrappedNode(this, this.compilerNode[propertyName]) as Node<NodeType[KeyType]>;
+        return getWrappedNode(this, this.compilerNode[propertyName] as any as ts.Node) as Node;
     }
 
     /**

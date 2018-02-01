@@ -8,10 +8,10 @@ Setup, navigation, and manipulation of the TypeScript AST can be a challenge. Th
 
 ## Installing
 
-You must additionally install a supported version of the TypeScript compiler as specified in the library's peer dependencies.
+You must additionally install a supported version of the TypeScript compiler (v2.4+).
 
 ```
-npm install --save-dev typescript@2.6.2
+npm install --save-dev typescript@2.7.1
 npm install --save-dev ts-simple-ast
 ```
 

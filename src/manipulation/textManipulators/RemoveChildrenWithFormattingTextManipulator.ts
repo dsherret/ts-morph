@@ -11,7 +11,7 @@ export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extend
 }
 
 export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> implements TextManipulator {
-    private removalPos: number;
+    private removalPos: number | undefined;
 
     constructor(private readonly opts: RemoveChildrenWithFormattingTextManipulatorOptions<TNode>) {
     }
@@ -80,6 +80,6 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
     }
 
     getTextForError(newText: string) {
-        return getTextForError(newText, this.removalPos);
+        return getTextForError(newText, this.removalPos!);
     }
 }

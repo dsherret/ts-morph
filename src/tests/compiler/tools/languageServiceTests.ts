@@ -2,7 +2,7 @@
 import {expect} from "chai";
 import {LanguageService, EmitOutput, SourceFile} from "./../../../compiler";
 import {FileNotFoundError} from "./../../../errors";
-import {FileUtils} from "./../../../utils";
+import {FileUtils, TsVersion} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(LanguageService), () => {
@@ -67,10 +67,21 @@ describe(nameof(LanguageService), () => {
         it("should not emit if there is a declaraton file error", () => {
             const {sourceFile, tsSimpleAst} = getInfoFromText("class MyClass {}\n export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath(), true);
-            checkOutput(output, {
-                emitSkipped: true,
-                outputFiles: []
-            });
+
+            if (TsVersion.greaterThanEqualToVersion(2, 7))
+                checkOutput(output, {
+                    emitSkipped: true,
+                    outputFiles: [{
+                        fileName: "/" + sourceFile.getBaseName().replace(".ts", ".d.ts"),
+                        text: "export declare class Test extends MyClass {\n}\n",
+                        writeByteOrderMark: false
+                    }]
+                });
+            else
+                checkOutput(output, {
+                    emitSkipped: true,
+                    outputFiles: []
+                });
         });
 
         it("should throw when the specified file does not exist", () => {

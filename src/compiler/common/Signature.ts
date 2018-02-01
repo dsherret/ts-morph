@@ -55,7 +55,7 @@ export class Signature {
      * Get the documentation comments.
      */
     getDocumentationComments(): SymbolDisplayPart[] {
-        const docs = this.compilerSignature.getDocumentationComment();
+        const docs = this.compilerSignature.getDocumentationComment(this.global.typeChecker.compilerObject);
         return docs.map(d => this.global.compilerFactory.getSymbolDisplayPart(d));
     }
 

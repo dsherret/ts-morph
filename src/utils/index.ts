@@ -16,4 +16,5 @@ export * from "./getNamedNodeByNameOrFindFunction";
 export * from "./getSymbolByNameOrFindFunction";
 export * from "./isStringKind";
 export * from "./newLineKindToTs";
+export * from "./TsVersion";
 export * from "./TypeGuards";

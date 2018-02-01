@@ -10,6 +10,7 @@ var replace = require("gulp-replace");
 var p = require("./package.json");
 var tsNameOf = require("ts-nameof");
 var merge = require("merge2");
+var runSequence = require('run-sequence');
 
 var unusedDefinitionsFilter = filter([
     "**", "!*/factories/CompilerFactory.d.ts", "!*/factories/index.d.ts", "!*/tests/**/*.d.ts", "!*/manipulation/**/*.d.ts"
@@ -35,13 +36,17 @@ gulp.task("typescript", ["clean-scripts"], function() {
     ]);
 });
 
-gulp.task("pre-test", ["typescript"], function () {
+gulp.task("test", function() {
+    runSequence("typescript", "test-run");
+});
+
+gulp.task("pre-test", function () {
     return gulp.src(["dist/**/*.js", "!dist/tests/**/*.js", , "!dist/utils/TypeGuards.js"])
         .pipe(istanbul())
         .pipe(istanbul.hookRequire());
 });
 
-gulp.task("test", ["pre-test"], function() {
+gulp.task("test-run", ["pre-test"], function() {
     return gulp.src("dist/tests/**/*.js")
         .pipe(mocha({ reporter: "progress", timeout: 10000 }))
         .on('error', process.exit.bind(process, 1))

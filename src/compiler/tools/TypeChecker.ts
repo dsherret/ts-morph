@@ -13,7 +13,7 @@ export class TypeChecker {
     /** @internal */
     private readonly global: GlobalContainer;
     /** @internal */
-    private _getCompilerObject: () => ts.TypeChecker;
+    private _getCompilerObject!: () => ts.TypeChecker;
 
     /** @internal */
     constructor(global: GlobalContainer) {

@@ -32,7 +32,7 @@ export class Program {
     /** @internal */
     private _createdCompilerObject: ts.Program | undefined;
     /** @internal */
-    private _getOrCreateCompilerObject: () => ts.Program;
+    private _getOrCreateCompilerObject!: () => ts.Program;
 
     /** @internal */
     constructor(global: GlobalContainer, rootNames: string[], host: ts.CompilerHost) {
