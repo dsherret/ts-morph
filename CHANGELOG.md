@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.8.0"></a>
+# [6.8.0](https://github.com/dsherret/ts-simple-ast/compare/6.7.0...6.8.0) (2018-02-01)
+
+
+### Features
+
+* Add Node.getFullStart ([9d44185](https://github.com/dsherret/ts-simple-ast/commit/9d44185))
+* Upgrade support to TypeScript 2.7. ([dab428a](https://github.com/dsherret/ts-simple-ast/commit/dab428a))
+
+
+
 <a name="6.7.0"></a>
 # [6.7.0](https://github.com/dsherret/ts-simple-ast/compare/6.6.0...6.7.0) (2018-01-28)
 
