@@ -10,7 +10,7 @@ Certain nodes in TypeScript can be [exported](https://www.typescriptlang.org/doc
 
 Use `isExported()`, `isNamedExport()`, or `isDefaultExport()` methods:
 
-```typescript
+```ts
 functionDeclaration.isExported(); // returns: boolean
 functionDeclaration.isNamedExport(); // returns: boolean
 functionDeclaration.isDefaultExport(); // returns: boolean
@@ -20,14 +20,14 @@ functionDeclaration.isDefaultExport(); // returns: boolean
 
 Use the `has` methods to check for the `export` and `default` keywords:
 
-```typescript
+```ts
 functionDeclaration.hasExportKeyword(); // returns: boolean
 functionDeclaration.hasDefaultKeyword(); // returns: boolean
 ```
 
 And use the `get` methods to get the keywords:
 
-```typescript
+```ts
 functionDeclaration.getExportKeyword();
 functionDeclaration.getDefaultKeyword();
 ```
@@ -36,7 +36,7 @@ functionDeclaration.getDefaultKeyword();
 
 Use `setIsDefaultExport` to set a node as being a default export or not:
 
-```typescript
+```ts
 functionDeclaration.setIsDefaultExport(true); // be one
 functionDeclaration.setIsDefaultExport(false); // don't be one
 ```
@@ -47,7 +47,7 @@ Note: This will throw an exception if the node's parent is not a source file.
 
 Use `setIsExported` to set a node as being a named export if the parent is a source file or an export of a namespace if the parent is a namespace:
 
-```typescript
+```ts
 functionDeclaration.setIsExported(true); // be one
 functionDeclaration.setIsExported(false); // don't be one
 ```
@@ -56,7 +56,7 @@ functionDeclaration.setIsExported(false); // don't be one
 
 Export declarations look like this:
 
-```typescript
+```ts
 export * from "./some-file";
 export {MyClass} from "./other-file";
 export {MyClass};
@@ -64,7 +64,7 @@ export {MyClass};
 
 Get the export declarations by calling:
 
-```typescript
+```ts
 const exports = sourceFile.getExportDeclarations();
 // or to get the first one that matches a condition
 const exportDeclaration = sourceFile.getExportDeclaration(d => d.hasNamedExports());
@@ -84,7 +84,7 @@ exportDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undef
 
 Add or insert use `insertExportDeclaration`, `insertExportDeclarations`, `addExportDeclaration`, or `addExportDeclarations`:
 
-```typescript
+```ts
 const exportDeclaration = sourceFile.addExportDeclaration({
     defaultImport: "MyClass",
     moduleSpecifier: "./file"
@@ -95,7 +95,7 @@ const exportDeclaration = sourceFile.addExportDeclaration({
 
 Call `.remove()`:
 
-```typescript
+```ts
 exportDeclaration.remove();
 ```
 
@@ -103,13 +103,13 @@ exportDeclaration.remove();
 
 Given an export declaration with named exports:
 
-```typescript
+```ts
 export {Export1, Export2, Export3} from "./other-file";
 ```
 
 Calling `exportDeclaration.toNamespaceExport();` will change the code to the following:
 
-```typescript
+```ts
 export * from "./other-file";
 ```
 
@@ -117,13 +117,13 @@ export * from "./other-file";
 
 Get the named exports from an export declaration:
 
-```typescript
+```ts
 const namedExports = exportDeclaration.getNamedExports();
 ```
 
 Adding or inserting named exports can be done via the `addNamedExport`, `addNamedExports`, `insertNamedExport`, or `insertNamedExports` methods.
 
-```typescript
+```ts
 const namedExport = exportDeclaration.addNamedExport({
     name: "MyClass",
     alias: "MyAliasName" // alias is optional
@@ -132,7 +132,7 @@ const namedExport = exportDeclaration.addNamedExport({
 
 Removing one named export:
 
-```typescript
+```ts
 namedExport.remove();
 ```
 
@@ -142,7 +142,7 @@ Export specifiers are the individual named exports.
 
 ##### Name
 
-```typescript
+```ts
 namedExport.getNameNode(); // returns: Identifier
 namedExport.setName("NewName");
 namedExport.renameName("NewName");
@@ -150,7 +150,7 @@ namedExport.renameName("NewName");
 
 ##### Alias
 
-```typescript
+```ts
 namedExport.getAliasIdentifier(); // returns: Identifier | undefined
 namedExport.setAlias("NewAliasName");
 ```
@@ -167,7 +167,7 @@ const declarations = namedExport.getLocalTargetDeclarations(); // returns: Node[
 
 ##### Parent export declaration
 
-```typescript
+```ts
 namedExport.getExportDeclaration(); // returns: ExportDeclaration
 ```
 
@@ -175,14 +175,14 @@ namedExport.getExportDeclaration(); // returns: ExportDeclaration
 
 Export assignments look like the following:
 
-```typescript
+```ts
 export = 5;
 export default name;
 ```
 
 Get the export assignments by calling:
 
-```typescript
+```ts
 const exportAssignments = sourceFile.getExportAssignments();
 // or to get the first one that matches a condition
 const exportAssignment = sourceFile.getExportAssignment(d => d.isExportEquals());
@@ -197,7 +197,7 @@ const expression = exportAssignment.getExpression();
 
 Add or insert use `insertExportAssignment`, `insertExportAssignments`, `addExportAssignment`, or `addExportAssignments`:
 
-```typescript
+```ts
 const exportAssignment = sourceFile.addExportAssignment({
     isExportEquals: true, // defaults to true
     expression: "5"
@@ -208,6 +208,6 @@ const exportAssignment = sourceFile.addExportAssignment({
 
 Call `.remove()`:
 
-```typescript
+```ts
 exportAssignment.remove();
 ```

@@ -6,7 +6,7 @@ title: Type Checker
 
 Get the type checker by calling:
 
-```typescript
+```ts
 const typeChecker = ast.getTypeChecker();
 ```
 
@@ -14,7 +14,7 @@ const typeChecker = ast.getTypeChecker();
 
 The underlying `ts.TypeChecker` can be retrieved as follows:
 
-```typescript
+```ts
 const tsTypeChecker = typeChecker.compilerObject;
 ```
 
@@ -30,6 +30,6 @@ It may be useful in certain instances to use the type checker though.
 
 Get the type of any node by calling:
 
-```typescript
+```ts
 const typeOfNode = typeChecker.getTypeAtLocation(node);
 ```

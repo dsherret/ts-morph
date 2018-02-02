@@ -6,7 +6,7 @@ title: Manipulation Settings
 
 The manipulation settings can be set when creating the main AST object:
 
-```typescript
+```ts
 import * as ts from "typescript";
 import TsSimpleAst, {QuoteType, NewLineKind, IndentationText} from "ts-simple-ast";
 
@@ -27,7 +27,7 @@ const ast = new TsSimpleAst({
 
 You can only provide a partial of these settings if you wish:
 
-```typescript
+```ts
 const ast = new TsSimpleAst({
     manipulationSettings: { indentationText: IndentationText.TwoSpaces }
 });
@@ -37,7 +37,7 @@ const ast = new TsSimpleAst({
 
 Get more details about the settings by looking at the `manipulationSettings` property on the main AST object:
 
-```typescript
+```ts
 ast.manipulationSettings.getIndentationText();
 ast.manipulationSettings.getNewLineKind();
 ast.manipulationSettings.getQuoteType();
@@ -48,7 +48,7 @@ ast.manipulationSettings.getScriptTarget();
 
 You can update these settings later if you wish by using the `set` method:
 
-```typescript
+```ts
 // set only one
 ast.manipulationSettings.set({ quoteType: QuoteType.Single });
 

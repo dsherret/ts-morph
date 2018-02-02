@@ -8,13 +8,13 @@ These are found in certain areas. For example `extends` and `implements` express
 
 ### Getting expression
 
-```typescript
+```ts
 const expression = expressionWithTypeArgs.getExpression(); // returns: Node
 ```
 
 ### Getting type arguments
 
-```typescript
+```ts
 const typeArgs = expressionWithTypeArgs.getTypeArguments(); // returns: TypeNode[]
 ```
 
@@ -22,7 +22,7 @@ const typeArgs = expressionWithTypeArgs.getTypeArguments(); // returns: TypeNode
 
 Call expressions are statements that call a function:
 
-```typescript
+```ts
 doSomething();
 ```
 
@@ -32,7 +32,7 @@ From a given node, get all the children or descendants that are call expressions
 
 For example:
 
-```typescript
+```ts
 const childCallExpressions = node.getChildrenOfKind(ts.SyntaxKind.CallExpression);
 const descendantCallExpressions = node.getDescendantsOfKind(ts.SyntaxKind.CallExpression);
 ```
@@ -41,6 +41,6 @@ const descendantCallExpressions = node.getDescendantsOfKind(ts.SyntaxKind.CallEx
 
 Use the following:
 
-```typescript
+```ts
 const returnType = callExpression.getReturnType();
 ```

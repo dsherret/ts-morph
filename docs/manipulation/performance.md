@@ -19,7 +19,7 @@ Behind the scenes, when you manipulate the AST:
 
 It's why you can do this:
 
-```typescript
+```ts
 // sourcefile contains: interface Person { name: string; }
 const personInterface = sourceFile.getInterfaceOrThrow("Person");
 const nameProperty = personInterface.getPropertyOrThrow("name");
@@ -29,7 +29,7 @@ nameProperty.getText(); // "name: number;"
 
 Instead of having to renavigate the tree after each manipulation:
 
-```typescript
+```ts
 // thankfully the library does not work this way
 let personInterface = sourceFile.getInterfaceOrThrow("Person");
 let nameProperty = personInterface.getPropertyOrThrow("name");
@@ -46,7 +46,7 @@ When thinking about performance, the key point here is that if you have a lot of
 
 The main way to improve performance when manipulating, is to "forget" a node when you're done with it.
 
-```typescript
+```ts
 personInterface.forget();
 ```
 
@@ -57,7 +57,7 @@ It won't be updated when manipulation happens again. Note that after doing this,
 
 It's possible to make sure all created nodes within a block are forgotten:
 
-```typescript
+```ts
 import {Ast, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "ts-simple-ast";
 
 const ast = new Ast();
@@ -85,7 +85,7 @@ classDeclaration.getText();     // throws, was forgotten
 
 Also, do not be concerned about nesting forget blocks. That is perfectly fine to do:
 
-```typescript
+```ts
 ast.forgetNodesCreatedInBlock(() => {
     namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
     interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");

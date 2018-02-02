@@ -6,7 +6,7 @@ title: Imports
 
 Imports of a source file can be retrieved by calling:
 
-```typescript
+```ts
 // get them all
 const imports = sourceFile.getImportDeclarations();
 // or get the first one that matches a condition
@@ -17,7 +17,7 @@ const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() !
 
 Add or insert use `insertImportDeclaration`, `insertImportDeclarations`, `addImportDeclaration`, or `addImportDeclarations`:
 
-```typescript
+```ts
 const importDeclaration = sourceFile.addImportDeclaration({
     defaultImport: "MyClass",
     moduleSpecifier: "./file"
@@ -28,7 +28,7 @@ const importDeclaration = sourceFile.addImportDeclaration({
 
 Call `.remove()`:
 
-```typescript
+```ts
 importDeclaration.remove();
 ```
 
@@ -36,7 +36,7 @@ importDeclaration.remove();
 
 Get it:
 
-```typescript
+```ts
 const moduleSpecifier = importDeclaration.getModuleSpecifier(); // returns: string
 ```
 
@@ -44,7 +44,7 @@ _Example:_ For `import settings from "./settings";` would return `./settings`.
 
 Set it:
 
-```typescript
+```ts
 importDeclaration.setModuleSpecifier("./new-file");
 ```
 
@@ -58,13 +58,13 @@ const sourceFile = importDeclaration.getModuleSpecifierSourceFile(); // returns:
 
 Get it:
 
-```typescript
+```ts
 const defaultImport = importDeclaration.getDefaultImport(); // returns: Identifier | undefined
 ```
 
 Set it:
 
-```typescript
+```ts
 importDeclaration.setDefaultImport("MyClass");
 ```
 
@@ -72,7 +72,7 @@ importDeclaration.setDefaultImport("MyClass");
 
 Given the file:
 
-```typescript
+```ts
 import MyClass from "./file";
 
 const instance = new MyClass();
@@ -80,14 +80,14 @@ const instance = new MyClass();
 
 Doing the following:
 
-```typescript
+```ts
 const importDeclaration = sourceFile.getImportDeclarations()[0];
 importDeclaration.setDefaultImport("NewName");
 ````
 
 Will rename the default import and all its usages:
 
-```typescript
+```ts
 import NewName from "./file";
 
 const instance = new NewName();
@@ -97,13 +97,13 @@ const instance = new NewName();
 
 Get it:
 
-```typescript
+```ts
 const namespaceImport = importDeclaration.getNamespaceImport(); // returns: Identifier | undefined
 ```
 
 Set it:
 
-```typescript
+```ts
 importDeclaration.setNamespaceImport("newName");
 ```
 
@@ -113,13 +113,13 @@ _Note:_ Setting the namespace import for an existing namespace import will renam
 
 Getting a named import:
 
-```typescript
+```ts
 const namedImports = importDeclaration.getNamedImports(); // returns: ImportSpecifier
 ```
 
 Adding or inserting named imports can be done via the `addNamedImport`, `addNamedImports`, `insertNamedImport`, or `insertNamedImports` methods.
 
-```typescript
+```ts
 const namedImport = importDeclaration.addNamedImport({
     name: "MyClass",
     alias: "MyAliasName" // alias is optional
@@ -128,13 +128,13 @@ const namedImport = importDeclaration.addNamedImport({
 
 Removing one named import:
 
-```typescript
+```ts
 namedImport.remove();
 ```
 
 Removing all named imports:
 
-```typescript
+```ts
 importDeclaration.removeNamedImports();
 ```
 
@@ -144,7 +144,7 @@ Import specifiers are the individual named imports.
 
 ##### Name
 
-```typescript
+```ts
 namedImport.getNameNode(); // returns: Identifier
 namedImport.setName("NewName");
 namedImport.renameName("NewName");
@@ -152,7 +152,7 @@ namedImport.renameName("NewName");
 
 ##### Alias
 
-```typescript
+```ts
 namedImport.getAliasIdentifier(); // returns: Identifier | undefined
 namedImport.setAlias("NewAliasName");
 ```
@@ -161,6 +161,6 @@ _Note:_ Setting the alias will rename any uses of the alias or identifier in the
 
 ##### Parent import declaration
 
-```typescript
+```ts
 namedImport.getImportDeclaration(); // returns: ImportDeclaration
 ```

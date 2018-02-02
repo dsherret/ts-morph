@@ -8,13 +8,13 @@ Nodes like `FunctionDeclaration` and `MethodDeclaration` can be generators.
 
 ### Tell if a generator
 
-```typescript
+```ts
 functionDeclaration.isGenerator(); // returns: boolean
 ```
 
 ### Set as a generator
 
-```typescript
+```ts
 functionDeclaration.setIsGenerator(true); // or false to set as not one
 ```
 
@@ -22,6 +22,6 @@ functionDeclaration.setIsGenerator(true); // or false to set as not one
 
 Gets the asterisk token or undefined if not exists:
 
-```typescript
+```ts
 functionDeclaration.getAsteriskToken();
 ```

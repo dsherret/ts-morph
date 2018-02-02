@@ -10,7 +10,7 @@ Using the writer is very useful because it will write code out using the indenta
 
 ### Example
 
-```typescript
+```ts
 functionDeclaration.setBodyText(writer => writer.writeLine("let myNumber = 5;")
     .write("if (myNumber === 5)").block(() => {
         writer.writeLine("console.log('yes')");

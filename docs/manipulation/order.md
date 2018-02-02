@@ -6,7 +6,7 @@ title: Order
 
 Change the order of certain nodes using the `.setOrder(newIndex: number)` method.
 
-```typescript
+```ts
 const interfaceDeclaration = sourceFile.getInterfaceOrThrow("MyInterface");
 interfaceDeclaration.setOrder(2);
 ```

@@ -8,7 +8,7 @@ Identifiers are nodes that reference or define the name of a node.
 
 For example, in the following code the identifiers are the variable name and the use of the variable:
 
-```typescript
+```ts
 const identifier = 5;
 
 console.log(identifier);
@@ -20,7 +20,7 @@ A lot of the time, a node will have a name and you can retrieve the identifier v
 
 If not, from a given node, you can get all the children or descendants that are identifiers. For example:
 
-```typescript
+```ts
 const childIdentifiers = node.getChildrenOfKind(ts.SyntaxKind.Identifier);
 const descendantIdentifiers = node.getDescendantsOfKind(ts.SyntaxKind.Identifier);
 ```
@@ -29,7 +29,7 @@ const descendantIdentifiers = node.getDescendantsOfKind(ts.SyntaxKind.Identifier
 
 Get the text:
 
-```typescript
+```ts
 const text = identifier.getText();
 ```
 
@@ -37,7 +37,7 @@ const text = identifier.getText();
 
 Rename an identifier:
 
-```typescript
+```ts
 identifier.rename("someNewName");
 ```
 
@@ -45,7 +45,7 @@ identifier.rename("someNewName");
 
 Find all the references:
 
-```typescript
+```ts
 const references = identifier.findReferences();
 ```
 
@@ -53,7 +53,7 @@ const references = identifier.findReferences();
 
 Gets the definitions of the identifier. This is similar to "go to definition" functionality that exists with TypeScript in most IDEs.
 
-```typescript
+```ts
 const definitions = identifier.getDefinitions();
 ```
 
@@ -61,7 +61,7 @@ const definitions = identifier.getDefinitions();
 
 Gets the implementations of the identifier. This is similar to "go to implementation" functionality that exists with TypeScript in most IDEs.
 
-```typescript
+```ts
 const implementations = identifier.getImplementations();
 ```
 
@@ -69,6 +69,6 @@ const implementations = identifier.getImplementations();
 
 Get the type of an identifier:
 
-```typescript
+```ts
 const identifierType = identifier.getType();
 ```

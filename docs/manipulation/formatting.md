@@ -6,7 +6,7 @@ title: Formatting
 
 Sometimes you might encounter code that looks terrible. For example:
 
-```typescript
+```ts
 // BadlyFormattedFile.ts
 var myVariable     :      string |    number;
 function myFunction(param    : MyClass){
@@ -16,7 +16,7 @@ return "";
 
 Automatically format the text of this file by calling format text on it:
 
-```typescript
+```ts
 sourceFile.formatText();
 // or provide optional formatting settings
 sourceFile.formatText({
@@ -26,7 +26,7 @@ sourceFile.formatText({
 
 This will run the source file's text through the TypeScript compiler's formatting API, which will change the source file to contain the following text:
 
-```typescript
+```ts
 // BadlyFormattedFile.ts (not anymore!)
 var myVariable: string | number;
 function myFunction(param: MyClass) {

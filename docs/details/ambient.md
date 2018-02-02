@@ -10,7 +10,7 @@ Certain nodes in TypeScript can be ambient. For example, all nodes within a defi
 
 Use `isAmbient()`:
 
-```typescript
+```ts
 classDeclaration.isAmbient(); // returns: boolean
 ```
 
@@ -20,19 +20,19 @@ This will do several checks to see if it's an ambient declaration.
 
 Check for the `declare` keyword:
 
-```typescript
+```ts
 classDeclaration.hasDeclareKeyword(); // returns: boolean
 ```
 
 Or get the `declare` keyword if it exists:
 
-```typescript
+```ts
 classDeclaration.getDeclareKeyword();
 ```
 
 Or toggle the `declare` keyword on and off:
 
-```typescript
+```ts
 classDeclaration.toggleDeclareKeyword(true);
 classDeclaration.toggleDeclareKeyword(false);
 classDeclaration.toggleDeclareKeyword(); // toggles between true and false

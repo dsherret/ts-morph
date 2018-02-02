@@ -6,7 +6,7 @@ title: Renaming
 
 Given the source file for following code:
 
-```typescript
+```ts
 enum MyEnum {
     myMember
 }
@@ -16,7 +16,7 @@ const myVar = MyEnum.myMember;
 
 Renaming can be done as follows:
 
-```typescript
+```ts
 const myEnum = sourceFile.getEnum("MyEnum")!;
 myEnum.rename("NewEnum");
 ```
@@ -25,7 +25,7 @@ Which will rename all usages of `MyEnum` to `NewEnum` across _all_ files.
 
 So the file above would now contain the following code:
 
-```typescript
+```ts
 enum NewEnum {
     myMember
 }

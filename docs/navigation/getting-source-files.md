@@ -10,13 +10,13 @@ After source files are added, you will need to get them in order to navigate or 
 
 Get all the source files:
 
-```typescript
+```ts
 const sourceFiles = ast.getSourceFiles();
 ```
 
 Or filter by glob:
 
-```typescript
+```ts
 // single
 const testSourceFiles = ast.getSourceFiles("**/src/test/**/*.ts");
 // or multiple
@@ -30,7 +30,7 @@ const nonTestSourceFiles = ast.getSourceFiles([
 
 Will return the first source file that matches the end of the provided file path:
 
-```typescript
+```ts
 const personFile = ast.getSourceFile("Models/Person.ts");
 ```
 
@@ -38,6 +38,6 @@ const personFile = ast.getSourceFile("Models/Person.ts");
 
 Will return the first source file that matches the provided condition:
 
-```typescript
+```ts
 const fileWithFiveClasses = ast.getSourceFile(f => f.getClasses().length === 5);
 ```

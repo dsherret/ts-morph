@@ -6,7 +6,7 @@ title: Functions
 
 Functions can be retrieved from source files, other namespaces, or function bodies:
 
-```typescript
+```ts
 const functions = sourceFile.getFunctions();
 const function1 = sourceFile.getFunction("Function1");
 const firstFunctionWithChildFunction = sourceFile.getFunction(f => f.getFunctions().length > 0);
@@ -18,7 +18,7 @@ Most of the information you can get about functions is covered in other sections
 
 Add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.
 
-```typescript
+```ts
 const functionDeclaration = sourceFile.addFunction({
     name: "FunctionName"
 });
@@ -28,7 +28,7 @@ const functionDeclaration = sourceFile.addFunction({
 
 Call `.remove()`:
 
-```typescript
+```ts
 functionDeclaration.remove();
 ```
 
@@ -38,20 +38,20 @@ By default, in ambient contexts or for ambient nodes, all overloads will be retu
 
 Get the overloads by calling:
 
-```typescript
+```ts
 const overloads = functionDeclaration.getOverloads(); // returns: FunctionDeclaration[]
 ```
 
 Or tell if the current declaration is an overload by calling either:
 
-```typescript
+```ts
 functionDeclaration.isOverload();
 functionDeclaration.isImplementation();
 ```
 
 From the overloads, get the implementation by calling:
 
-```typescript
+```ts
 const implementation = overload.getImplementation();
 ```
 
@@ -63,7 +63,7 @@ Add or insert overloads by using either the `.addOverload()`, `.addOverloads()`,
 
 Call `.remove()` on the overload:
 
-```typescript
+```ts
 overload.remove();
 ```
 
@@ -71,13 +71,13 @@ overload.remove();
 
 The body text can be set via the `.setBodyText()` method:
 
-```typescript
+```ts
 functionDeclaration.setBodyText("const myNumber = 5;");
 ```
 
 Or alternatively, write the body text with [code-block-writer](https://github.com/dsherret/code-block-writer):
 
-```typescript
+```ts
 functionDeclaration.setBodyText(writer => writer.writeLine("const myNumber = 5;")
     .write("if (myNumber === 5)").block(() => {
         writer.writeLine("console.log('yes')");
@@ -92,7 +92,7 @@ A function declaration can be replaced with its body using the `.unwrap()` metho
 
 Given the following code:
 
-```typescript
+```ts
 function someFunction() {
     function innerFunction() {
     }
@@ -103,7 +103,7 @@ function someFunction() {
 
 Calling `.unwrap()` on the function will change the code to the following:
 
-```typescript
+```ts
 function innerFunction() {
 }
 
@@ -114,12 +114,12 @@ const someDeclaration = 5;
 
 They exist in an expression:
 
-```typescript
+```ts
 const add = function(a: number, b: number) { return a + b; };
 ```
 
 In this case, it can be retrieved via the variable declaration's [initializer](initializers).
 
-```typescript
+```ts
 const functionExpression = sourceFile.getVariableDeclarationOrThrow("add").getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression);
 ```

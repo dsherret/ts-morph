@@ -6,7 +6,7 @@ title: Enums
 
 Enums can be retrieved from source files, namespaces, or function bodies:
 
-```typescript
+```ts
 const enums = sourceFile.getEnums();
 const enum1 = sourceFile.getEnum("Enum1");
 const enum2 = sourceFile.getEnum(e => e.getMembers().length === 5);
@@ -16,7 +16,7 @@ const enum2 = sourceFile.getEnum(e => e.getMembers().length === 5);
 
 Add or insert enums to a source file, namespace, or function like declarations by calling `addEnum()`, `addEnums()`, `insertEnum()`, or `insertEnums()`.
 
-```typescript
+```ts
 const enumDeclaration = sourceFile.addEnum({
     name: "EnumName",
     members: [{
@@ -29,7 +29,7 @@ const enumDeclaration = sourceFile.addEnum({
 
 Call `.remove()`:
 
-```typescript
+```ts
 enumDeclaration.remove();
 ```
 
@@ -37,7 +37,7 @@ enumDeclaration.remove();
 
 Use `getMembers()`:
 
-```typescript
+```ts
 const members = enumDeclaration.getMembers();
 ```
 
@@ -45,7 +45,7 @@ const members = enumDeclaration.getMembers();
 
 Use `getMember()`:
 
-```typescript
+```ts
 const member1 = enumDeclaration.getMember("member1");
 const member2 = enumDeclaration.getMember(m => m.getValue() === 1);
 ```
@@ -54,7 +54,7 @@ const member2 = enumDeclaration.getMember(m => m.getValue() === 1);
 
 Members can be added by calling `addMember()`, `addMembers()`, `insertMember()`, or `insertMembers()`:
 
-```typescript
+```ts
 const member = enumDeclaration.addMember({
     name: "newMember",
     value: 10
@@ -65,26 +65,26 @@ const member = enumDeclaration.addMember({
 
 Check if it's a const enum via `isConstEnum()`:
 
-```typescript
+```ts
 enumDeclaration.isConstEnum(); // returns: boolean
 ```
 
 Get the `const` keyword via `getConstKeyword()`:
 
-```typescript
+```ts
 enumDeclaration.getConstKeyword(); // returns: Node | undefined
 ```
 
 Set if it's a const enum via `setIsConstEnum(value)`:
 
-```typescript
+```ts
 enumDeclaration.setIsConstEnum(true);
 enumDeclaration.setIsConstEnum(false);
 ```
 
 ## Enum Members
 
-```typescript
+```ts
 const member = enumDeclaration.getMember("member");
 ```
 
@@ -92,19 +92,19 @@ const member = enumDeclaration.getMember("member");
 
 The value can be retrieved whether it is implicitly or explicitly defined:
 
-```typescript
+```ts
 member.getValue(); // returns: string | number
 ```
 
 It can also be set to a number:
 
-```typescript
+```ts
 member.setValue(5);
 ```
 
 Or a string:
 
-```typescript
+```ts
 member.setValue("string value");
 ```
 
@@ -112,6 +112,6 @@ member.setValue("string value");
 
 Call `remove()` on it:
 
-```typescript
+```ts
 member.remove();
 ```

@@ -6,7 +6,7 @@ title: Variables
 
 A variable statement looks like the following:
 
-```typescript
+```ts
 export const var1 = "5", var2 = "6";
 ```
 
@@ -14,7 +14,7 @@ export const var1 = "5", var2 = "6";
 
 Can be retrieved from source files, namespaces, or function bodies:
 
-```typescript
+```ts
 const variableStatements = sourceFile.getVariableStatements();
 const firstExportedVariableStatement = sourceFile.getVariableStatement(s => s.hasExportKeyword());
 ```
@@ -24,7 +24,7 @@ const firstExportedVariableStatement = sourceFile.getVariableStatement(s => s.ha
 Add or insert variable statements to a source file, namespace, or function like declarations by calling `addVariableStatement()`, `addVariableStatements()`,
 `insertVariableStatement()`, or `insertVariableStatements()`.
 
-```typescript
+```ts
 import Ast, {VariableDeclarationType} from "ts-simple-ast";
 
 const variableStatement = sourceFile.addVariableStatement({
@@ -44,7 +44,7 @@ const variableStatement = sourceFile.addVariableStatement({
 
 Call `.remove()`:
 
-```typescript
+```ts
 variableStatement.remove();
 ```
 
@@ -52,13 +52,13 @@ variableStatement.remove();
 
 Get:
 
-```typescript
+```ts
 const declarationType = variableStatement.getDeclarationType();
 ```
 
 It will return one of the following values:
 
-```typescript
+```ts
 import {VariableDeclarationType} from "ts-simple-ast";
 
 VariableDeclarationType.Let;
@@ -68,7 +68,7 @@ VariableDeclarationType.Var;
 
 Set:
 
-```typescript
+```ts
 variableStatement.setDeclarationType(VariableDeclarationType.Const);
 ```
 
@@ -80,13 +80,13 @@ These are the individual declarations within a variable statement.
 
 Get them from the variable statement:
 
-```typescript
+```ts
 const variableDeclarations = variableStatement.getDeclarations();
 ```
 
 Or from source files, namespaces, and function bodies:
 
-```typescript
+```ts
 const variableDeclarations = sourceFile.getVariableDeclarations();
 const variableDeclaration = sourceFile.getVariableDeclaration("myVar");
 const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v =>
@@ -98,7 +98,7 @@ const firstStringTypedVariableDeclaration = sourceFile.getVariableDeclaration(v 
 Add or insert variable declarations to a variable statement by calling `addDeclaration()`, `addDeclarations()`,
 `insertDeclaration()`, or `insertDeclarations()`.
 
-```typescript
+```ts
 const declaration = variableStatement.addDeclaration({ name: "num", type: "number" });
 ```
 
@@ -106,6 +106,6 @@ const declaration = variableStatement.addDeclaration({ name: "num", type: "numbe
 
 Call `.remove()`:
 
-```typescript
+```ts
 variableDeclaration.remove();
 ```

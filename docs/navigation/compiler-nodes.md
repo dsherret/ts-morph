@@ -8,7 +8,7 @@ Sometimes it might be useful to get the node from the TypeScript compiler.
 
 They're accessible via the `.compilerNode` property that's found on most objects:
 
-```typescript
+```ts
 const compilerNode = personInterface.compilerNode;
 ```
 
@@ -21,7 +21,7 @@ Sometimes there isn't a helper function in this library for accessing certain pr
 
 In these situations, you can access any underlying compiler node property by using the `.getNodeProperty(propName)` method:
 
-```typescript
+```ts
 const nameNode = propertyAccessExpression.getNodeProperty("name"); // returns: Node<ts.PropertyName>
 ```
 

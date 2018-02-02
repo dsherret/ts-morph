@@ -32,7 +32,7 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 
 ## Example
 
-```typescript
+```ts
 import Ast from "ts-simple-ast";
 
 // add source files to ast
@@ -75,7 +75,7 @@ const sourceFileCompilerNode = sourceFile.compilerNode;
 
 Or navigate existing compiler nodes created outside this library:
 
-```typescript
+```ts
 import * as ts from "typescript";
 import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
 

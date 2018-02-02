@@ -10,7 +10,7 @@ Source files are the root nodes of the AST.
 
 Use:
 
-```typescript
+```ts
 // returns the file path (ex. /home/david/file.ts)
 sourceFile.getFilePath();
 
@@ -22,7 +22,7 @@ sourceFile.getBaseName();
 
 Use:
 
-```typescript
+```ts
 sourceFile.isDeclarationFile(); // returns: boolean
 ```
 
@@ -30,7 +30,7 @@ sourceFile.isDeclarationFile(); // returns: boolean
 
 Save a source file to the file system using one of the following commands:
 
-```typescript
+```ts
 await sourceFile.save();
 sourceFile.saveSync();
 ```
@@ -40,7 +40,7 @@ sourceFile.saveSync();
 There is a `sourceFile.isSaved()` method that will tell you if the file is saved or not, but it might be easier
 to call one of the following methods on the main AST object in order to save unsaved source files:
 
-```typescript
+```ts
 ast.saveUnsavedSourceFiles(); // returns: Promise
 ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are a lot of files to save
 ```
@@ -49,7 +49,7 @@ ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are
 
 Delete a source file from the file system using one of the following commands:
 
-```typescript
+```ts
 await sourceFile.delete(); // or deleteSync()
 ```
 
@@ -57,7 +57,7 @@ await sourceFile.delete(); // or deleteSync()
 
 Copy a source file to a new file by specifying a new relative or absolute path:
 
-```typescript
+```ts
 const newSourceFile = sourceFile.copy("newFileName.ts");
 // this won't throw if a file exists at the specified path
 const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
@@ -89,7 +89,7 @@ If the file was _deleted_: The source file will be removed and all its nodes for
 
 Remove a source file from the AST by calling:
 
-```typescript
+```ts
 ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
 ```
 
@@ -99,7 +99,7 @@ Note: This does not delete the file from the file system. To do delete it, call 
 
 This returns any files that are referenced via `/// <reference path="..." />` statements:
 
-```typescript
+```ts
 const referencedFiles = sourceFile.getReferencedFiles();
 ```
 
@@ -107,7 +107,7 @@ const referencedFiles = sourceFile.getReferencedFiles();
 
 This returns any files that are referenced via `/// <reference types="..." />` statements:
 
-```typescript
+```ts
 const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 ```
 
@@ -115,7 +115,7 @@ const typeReferenceDirectives = sourceFile.getTypeReferenceDirectives();
 
 If it exists, the default export symbol can be retrieved:
 
-```typescript
+```ts
 const defaultExportSymbol = sourceFile.getDefaultExportSymbol(); // returns: Symbol | undefined
 ```
 
@@ -123,7 +123,7 @@ const defaultExportSymbol = sourceFile.getDefaultExportSymbol(); // returns: Sym
 
 Use:
 
-```typescript
+```ts
 sourceFile.removeDefaultExport();
 ```
 
@@ -142,7 +142,7 @@ See [Export Declarations](exports).
 
 Call the `.indent` or `.unindent` methods.
 
-```typescript
+```ts
 sourceFile.indent(5);        // indent line containing position 5
 sourceFile.indent([5, 10]);  // indent line or lines within position range [5-10]
 sourceFile.indent(10, 3);    // indent line containing position 10, 3 times

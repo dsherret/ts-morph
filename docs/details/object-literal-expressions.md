@@ -6,7 +6,7 @@ title: Object Literal Expressions
 
 Object literal expressions look like the [initializer](initializers) for this variable declaration:
 
-```typescript
+```ts
 const obj = {
     propertyAssignment: 5,
     shorthandPropertyAssignment,
@@ -27,7 +27,7 @@ const obj = {
 
 Once you have retrieved the object literal expression, get it's properties via:
 
-```typescript
+```ts
 const properties = objectLiteralExpression.getProperties();
 // or
 const property = objectLiteralExpression.getProperty("propertyAssignment");
@@ -43,7 +43,7 @@ const method = objectLiteralExpression.getPropertyOrThrow("method");
 
 Add a property assignment via the `insertPropertyAssignment`, `insertPropertyAssignments`, `addPropertyAssignment`, or `addPropertyAssignments` methods.
 
-```typescript
+```ts
 const propertyAssignment = objectLiteralExpression.addPropertyAssignment({
     name: "propertyAssignment",
     initializer: "5"
@@ -55,7 +55,7 @@ const propertyAssignment = objectLiteralExpression.addPropertyAssignment({
 Add a shorthand property assignment via the `insertShorthandPropertyAssignment`, `insertShorthandPropertyAssignments`,
 `addShorthandPropertyAssignment`, or `addShorthandPropertyAssignments` methods.
 
-```typescript
+```ts
 const shorthandPropertyAssignment = objectLiteralExpression.addShorthandPropertyAssignment({
     name: "shorthandPropertyAssignment"
 });
@@ -65,7 +65,7 @@ const shorthandPropertyAssignment = objectLiteralExpression.addShorthandProperty
 
 Add a spread assignment via the `insertSpreadAssignment`, `insertSpreadAssignments`, `addSpreadAssignment`, or `addSpreadAssignments` methods.
 
-```typescript
+```ts
 const spreadAssignment = objectLiteralExpression.addSpreadAssignment({ expression: "spreadAssignment" });
 ```
 
@@ -73,7 +73,7 @@ const spreadAssignment = objectLiteralExpression.addSpreadAssignment({ expressio
 
 Add get and set accessors via the `insertGetAccessor`, `insertGetAccessors`, `addGetAccessor`, `addGetAccessors`, or similarly named methods for set accessors.
 
-```typescript
+```ts
 const getAccessor = objectLiteralExpression.addGetAccessor({
     name: "someNumber",
     returnType: "number",
@@ -90,7 +90,7 @@ const setAccessor = objectLiteralExpression.addSetAccessor({
 
 Add a method via the `insertMethod`, `insertMethods`, `addMethod`, or `addMethods` methods.
 
-```typescript
+```ts
 const method = objectLiteralExpression.addMethod({
     name: "method",
     body: `return "some string";`

@@ -6,7 +6,7 @@ title: Parameters
 
 Parameters can be retreived from nodes by calling `getParameters()`:
 
-```typescript
+```ts
 const parameters = functionDeclaration.getParameters();
 ```
 
@@ -16,7 +16,7 @@ Insert or add rest parameters by calling `insertParameter()`, `insertParameters(
 
 For example:
 
-```typescript
+```ts
 const parameter = functionDeclaration.insertParameter(1, {
     name: "param1",
     type: "string"
@@ -27,7 +27,7 @@ const parameter = functionDeclaration.insertParameter(1, {
 
 Remove a parameter by calling `.remove()` on it:
 
-```typescript
+```ts
 parameter.remove();
 ```
 
@@ -35,13 +35,13 @@ parameter.remove();
 
 Tell if a parameter is a rest parameter:
 
-```typescript
+```ts
 const isRestParameter = parameter.isRestParameter(); // returns: boolean
 ```
 
 Or set a parameter as a rest parameter:
 
-```typescript
+```ts
 parameter.setIsRestParameter(true);
 ```
 
@@ -49,7 +49,7 @@ parameter.setIsRestParameter(true);
 
 Constructor parameters may be properties when they have a scope and/or are readonly. You can tell if one is by calling:
 
-```typescript
+```ts
 const isParameterProperty = parameter.isParameterProperty(); // returns: boolean
 ```
 
@@ -59,6 +59,6 @@ A parameter can be optional if it is marked so with a question mark, is a rest p
 
 `isOptional()` can be used to tell if any of these are true:
 
-```typescript
+```ts
 const isOptional = parameter.isOptional(); // returns: boolean
 ```

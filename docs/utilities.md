@@ -10,7 +10,7 @@ This is an outline of any utilities currently available in the library.
 
 Get the compiler options from a file by using the `getCompilerOptionsFromTsConfig` function:
 
-```typescript
+```ts
 import {getCompilerOptionsFromTsConfig} from "ts-simple-ast";
 
 const result = getCompilerOptionsFromTsConfig("file/path/to/tsconfig.json");
@@ -23,7 +23,7 @@ result.errors;  // diagnostics
 
 There is a collection of type guard functions that are useful for finding out the type of a Node:
 
-```typescript
+```ts
 import {TypeGuards} from "ts-simple-ast";
 
 // ... some code here that gets a node ...

@@ -6,30 +6,30 @@ title: Signatures
 
 ### Type Parameters
 
-```typescript
+```ts
 const typeParams = signature.getTypeParameters(); // returns: TypeParameter[]
 ```
 
 ### Parameters
 
-```typescript
+```ts
 const params = signature.getParameters(); // returns: Symbol[]
 ```
 
 ### Return Type
 
-```typescript
+```ts
 const returnType = signature.getReturnType();
 ```
 
 ### Documentation Comments
 
-```typescript
+```ts
 const docs = signature.getDocumentationComments();
 ```
 
 ### JS Doc Tags
 
-```typescript
+```ts
 const tags = signature.getJsDocTags();
 ```

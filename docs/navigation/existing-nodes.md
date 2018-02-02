@@ -8,7 +8,7 @@ Sometimes you might want to easily navigate an existing compiler node created ou
 
 Do that by using the `createWrappedNode` function:
 
-```typescript
+```ts
 import * as ts from "typescript";
 import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
 

@@ -6,7 +6,7 @@ title: Namespaces
 
 Namespaces (or modules) can be retrieved from source files or other namespaces:
 
-```typescript
+```ts
 const namespaces = sourceFile.getNamespaces();
 const namespace1 = sourceFile.getNamespace("Namespace1");
 const firstNamespaceWithClass = sourceFile.getNamespace(n => n.getClasses().length > 0);
@@ -20,7 +20,7 @@ Note: Although it's a compile error, you can also retreive namespaces from funct
 
 Add or insert namespaces to a source file, namespace, or function like declarations by calling `addNamespace()`, `addNamespaces()`, `insertNamespace()`, or `insertNamespaces()`.
 
-```typescript
+```ts
 const namespaceDeclaration = sourceFile.addNamespace({
     name: "NamespaceName"
 });
@@ -30,7 +30,7 @@ const namespaceDeclaration = sourceFile.addNamespace({
 
 Call `.remove()`:
 
-```typescript
+```ts
 namespaceDeclaration.remove();
 ```
 
@@ -38,21 +38,21 @@ namespaceDeclaration.remove();
 
 Check for the keyword you want:
 
-```typescript
+```ts
 namespaceDeclaration.hasModuleKeyword(); // returns: boolean
 namespaceDeclaration.hasNamespaceKeyword(); // returns: boolean
 ```
 
 Or set one or the other:
 
-```typescript
+```ts
 namespaceDeclaration.setHasModuleKeyword(); // optionally pass in a boolean
 namespaceDeclaration.setHasNamespaceKeyword();
 ```
 
 Or get the keyword:
 
-```typescript
+```ts
 namespaceDeclaration.getDeclarationTypeKeyword(); // returns: the module or namespace keyword
 ```
 
@@ -62,7 +62,7 @@ A namespace declaration can be replaced with its body using the `.unwrap()` meth
 
 Given the following code:
 
-```typescript
+```ts
 namespace MyNamespace {
     function someFunction() {
     }
@@ -74,7 +74,7 @@ namespace MyNamespace {
 
 Calling `.unwrap()` on the namespace will change the code to the following:
 
-```typescript
+```ts
 function someFunction() {
 }
 

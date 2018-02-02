@@ -6,7 +6,7 @@ title: Emitting
 
 Emitting is easy. Here's an example:
 
-```typescript
+```ts
 const ast = new TsSimpleAst({ compilerOptions: { outDir: "dist", declaration: true } });
 ast.addSourceFile("MyFile.ts", "const num = 1;");
 ast.emit();
@@ -14,7 +14,7 @@ ast.emit();
 
 Outputs two files in the `dist` folder:
 
-```typescript
+```ts
 // MyFile.js
 var num = 1;
 
@@ -26,14 +26,14 @@ declare const num = 1;
 
 Call `.emit()` on the source file:
 
-```typescript
+```ts
 const sourceFile = ast.getSourceFileOrThrow("MyFile.ts");
 sourceFile.emit();
 ```
 
 Or get its emit output:
 
-```typescript
+```ts
 const emitOutput = sourceFile.getEmitOutput();
 emitOutput.getEmitSkipped(); // returns: boolean
 for (const outputFile of emitOutput.getOutputFiles()) {
@@ -47,7 +47,7 @@ for (const outputFile of emitOutput.getOutputFiles()) {
 
 Specify the `emitOnlyDtsFiles` flag:
 
-```typescript
+```ts
 ast.emit({ emitOnlyDtsFiles: true });
 ```
 

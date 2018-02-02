@@ -28,7 +28,7 @@ ast.addSourceFilesFromTsConfig("path/to/tsconfig.json");
 
 Specify as many file globs or file paths as you wish:
 
-```typescript
+```ts
 ast.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
 ast.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
 ast.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
@@ -36,7 +36,7 @@ ast.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
 
 ### By file path
 
-```typescript
+```ts
 const sourceFile = ast.addExistingSourceFile("path/to/file.ts"); // or addSourceFileIfExists
 ```
 
@@ -44,7 +44,7 @@ const sourceFile = ast.addExistingSourceFile("path/to/file.ts"); // or addSource
 
 Create source files based on an object that looks like the AST of a source file:
 
-```typescript
+```ts
 const sourceFile = ast.createSourceFile("path/to/myStructureFile.ts", {
     enums: [{
         name: "MyEnum",
@@ -62,7 +62,7 @@ const sourceFile = ast.createSourceFile("path/to/myStructureFile.ts", {
 
 The above would create a source file with the following text:
 
-```typescript
+```ts
 enum MyEnum {
     member
 }
@@ -75,7 +75,7 @@ Note: The file will not be created and saved to the file system until calling `.
 
 ### By string
 
-```typescript
+```ts
 const fileText = "enum MyEnum {\n}\n";
 const sourceFile = ast.createSourceFile("path/to/myNewFile.ts", fileText);
 ```
@@ -86,7 +86,7 @@ Note: The file will not be created and saved to the file system until calling `.
 
 Adding source files to the AST from a structure or text will act like any other source file, but they will not be saved to the disk unless you ask it to be.
 
-```typescript
+```ts
 // save it to the disk if you wish:
 sourceFile.save(); // or saveSync();
 ```

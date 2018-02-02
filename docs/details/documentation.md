@@ -6,7 +6,7 @@ title: JS Docs
 
 Certain nodes can have JS docs. For example:
 
-```typescript
+```ts
 /**
  * Gets the name.
  * @param person - Person to get the name from.
@@ -20,7 +20,7 @@ function getName(person: Person) {
 
 Get all the JS doc nodes by using `getJsDocs()`:
 
-```typescript
+```ts
 functionDeclaration.getJsDocs(); // returns: JSDoc[]
 ```
 
@@ -30,7 +30,7 @@ Add or insert JS doc comments using the `addJsDoc()`, `addJsDocs()`, `insertJsDo
 
 For example:
 
-```typescript
+```ts
 const docNode = classDeclaration.addJsDoc({
     description: "Some description..."
 });
@@ -42,7 +42,7 @@ Right now you can only add a description, but in the future support will be adde
 
 Get the comment:
 
-```typescript
+```ts
 // getting the node from the original example above
 const jsDoc = functionDeclaration.getJsDocs()[0];
 jsDoc.getComment(); // returns string: "Gets the name."
@@ -50,13 +50,13 @@ jsDoc.getComment(); // returns string: "Gets the name."
 
 Get the tags:
 
-```typescript
+```ts
 const tags = jsDocNode.getTags();
 tags[0].getText(); // "@param person - Person to get the name from."
 ```
 
 Get the inner text (the text without the surrounding comment):
 
-```typescript
+```ts
 jsDocNode.getInnerText(); // "Gets the name.\n@param person - Person to get the name from."
 ```

@@ -14,20 +14,20 @@ This can be achieved with the `.replaceWithText(...)` method that exists on any 
 
 Given the following code:
 
-```typescript
+```ts
 let myVariable = Some.Property.Access.Expression;
 ```
 
 You can replace the property access expression with new text by doing the following:
 
-```typescript
+```ts
 const originalInitializer = sourceFile.getVariableDeclarations()[0].getInitializerOrThrow();
 const newInitializer = originalInitializer.replaceWithText("MyReference");
 ```
 
 That will make the source file hold the following text:
 
-```typescript
+```ts
 let myVariable = MyReference;
 ```
 
@@ -38,7 +38,7 @@ You will have to use the new node returned by that method.
 
 Statements can be added, inserted, or removed from nodes with a body (ex. functions, methods, namespaces, source files).
 
-```typescript
+```ts
 // add statements
 const statements = sourceFile.addStatements("console.log(5);\nconsole.log(6);");
 // insert statements (index is the child index to insert at)
@@ -50,7 +50,7 @@ sourceFile.removeStatement(1);       // removes statement at index 1
 
 When adding or inserting, you can also write using a [code writer](code-writer):
 
-```typescript
+```ts
 functionDeclaration.addStatements(writer => {
     writer.write("if (true)").block(() => {
         writer.write("something;");
@@ -64,7 +64,7 @@ In some scenarios, a simple to use API might not have been implemented. If you f
 
 In the meantime, you can insert, replace, and remove text using the following methods, but *generally you will want to avoid using these if possible*:
 
-```typescript
+```ts
 // insert text
 sourceFile.insertText(0, "// some comment\n");
 // replace text
@@ -82,7 +82,7 @@ if you try to use them. You will have to renavigate to those nodes.
 
 For example:
 
-```typescript
+```ts
 let classDeclaration = sourceFile.addClass({ name: "MyClass" });
 sourceFile.insertText(0, "// some comment\n");
 

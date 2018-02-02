@@ -6,7 +6,7 @@ title: Classes
 
 Class declarations can be retrieved from source files, namespaces, or function bodies:
 
-```typescript
+```ts
 const classes = sourceFile.getClasses();
 const class1 = sourceFile.getClass("Class1");
 const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().length > 0);
@@ -16,7 +16,7 @@ const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().l
 
 Add or insert classes to a source file, namespace, or function like declarations by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.
 
-```typescript
+```ts
 const classDeclaration = sourceFile.addClass({
     name: "ClassName"
 });
@@ -26,7 +26,7 @@ const classDeclaration = sourceFile.addClass({
 
 Call `.remove()`:
 
-```typescript
+```ts
 classDeclaration.remove();
 ```
 
@@ -34,19 +34,19 @@ classDeclaration.remove();
 
 Will return [`ExpressionWithTypeArguments | undefined`](expressions):
 
-```typescript
+```ts
 const extendsExpression = classDeclaration.getExtends();
 ```
 
 Set the extends expression:
 
-```typescript
+```ts
 classDeclaration.setExtends("BaseClass");
 ```
 
 Remove it:
 
-```typescript
+```ts
 classDeclaration.removeExtends();
 ```
 
@@ -54,13 +54,13 @@ classDeclaration.removeExtends();
 
 Will return [`ExpressionWithTypeArguments[]`](expressions):
 
-```typescript
+```ts
 const implementsExpressions = classDeclaration.getImplements();
 ```
 
 Add or insert implements expressions:
 
-```typescript
+```ts
 classDeclaration.addImplements("Named");
 classDeclaration.addImplements(["Named", "Aged"]);
 classDeclaration.insertImplements(1, "Named");
@@ -69,7 +69,7 @@ classDeclaration.insertImplements(1, ["Named", "Aged"]);
 
 Remove an expression:
 
-```typescript
+```ts
 classDeclaration.removeImplements(0); // index
 classDeclaration.removeImplements(classDeclaration.getImplements()[0]); // node
 ```
@@ -98,7 +98,7 @@ Note: This is not a useful method to use if the base could possibly be a mixin. 
 
 Will return all the class declarations that derive from the current class:
 
-```typescript
+```ts
 const derivedClasses = classDeclaration.getDerivedClasses();
 ```
 
@@ -107,13 +107,13 @@ const derivedClasses = classDeclaration.getDerivedClasses();
 Constructors can be retreived via `getConstructors`. This returns all the constructors in an ambient context, but will only return the
 implementation constructor otherwise.
 
-```typescript
+```ts
 const constructors = classDeclaration.getConstructors();
 ```
 
 Add or insert a constructor by calling `addConstructor()` or `insertConstructor()` respectively.
 
-```typescript
+```ts
 const ctor = classDeclaration.addConstructor({ /* options like parameters may go here */ });
 ```
 
@@ -121,7 +121,7 @@ const ctor = classDeclaration.addConstructor({ /* options like parameters may go
 
 Get instance methods:
 
-```typescript
+```ts
 const instanceMethods = classDeclaration.getInstanceMethods();
 const myMethod = classDeclaration.getInstanceMethod("myMethod");
 const firstMethodWith2Params = classDeclaration.getInstanceMethod(m => m.getParameters().length === 2);
@@ -129,7 +129,7 @@ const firstMethodWith2Params = classDeclaration.getInstanceMethod(m => m.getPara
 
 Get the static methods:
 
-```typescript
+```ts
 const staticMethods = classDeclaration.getStaticMethods();
 const myStaticMethod = classDeclaration.getStaticMethod("myMethod");
 const firstStaticMethodWith2Params = classDeclaration.getStaticMethod(m => m.getParameters().length === 2);
@@ -139,7 +139,7 @@ const firstStaticMethodWith2Params = classDeclaration.getStaticMethod(m => m.get
 
 Add or insert methods by using `insertMethods()`, `insertMethod`, `addMethod`, or `addMethods`:
 
-```typescript
+```ts
 const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", returnType: "string" });
 ```
 
@@ -147,7 +147,7 @@ const method = classDeclaration.addMethod({ isStatic: true, name: "myMethod", re
 
 Call `.remove()`:
 
-```typescript
+```ts
 method.remove();
 ```
 
@@ -157,7 +157,7 @@ Properties searched for can be of type `PropertyDeclaration`, `GetAccessorDeclar
 
 Get the instance properties:
 
-```typescript
+```ts
 const instanceProperties = classDeclaration.getInstanceProperties();
 const myProperty = classDeclaration.getInstanceProperty("myProperty");
 const myStringProperty = classDeclaration.getInstanceProperty(p =>
@@ -166,7 +166,7 @@ const myStringProperty = classDeclaration.getInstanceProperty(p =>
 
 Get the static properties:
 
-```typescript
+```ts
 const staticProperties = classDeclaration.getStaticProperties();
 const myStaticProperty = classDeclaration.getStaticProperty("myStaticProperty");
 const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
@@ -177,19 +177,19 @@ const myStaticStringProperty = classDeclaration.getStaticProperty(p =>
 
 Add or insert properties by using `insertProperties()`, `insertProperty`, `addProperty`, or `addProperties`:
 
-```typescript
+```ts
 const property = classDeclaration.addProperty({ isStatic: true, name: "prop", type: "string" });
 ```
 
 Add or insert get accessors by using `insertGetAccessors()`, `insertGetAccessor`, `addGetAccessor`, or `addGetAccessors`:
 
-```typescript
+```ts
 const getAccessor = classDeclaration.addGetAccessor({ name: "someNumber", returnType: "number", body: "return 5;" });
 ```
 
 Add or insert set accessors by using `insertSetAccessors()`, `insertSetAccessor`, `addSetAccessor`, or `addSetAccessors`:
 
-```typescript
+```ts
 const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parameters: [{ name: "value", type: "number" }], body: "_someNumber = value;" });
 ```
 
@@ -197,7 +197,7 @@ const setAccessor = classDeclaration.addSetAccessor({ name: "someNumber", parame
 
 Call `.remove()`:
 
-```typescript
+```ts
 property.remove();
 ```
 
@@ -205,19 +205,19 @@ property.remove();
 
 Get all static and instance members:
 
-```typescript
+```ts
 const allMembers = classDeclaration.getAllMembers();
 ```
 
 Get instance members:
 
-```typescript
+```ts
 const instanceMembers = classDeclaration.getInstanceMembers();
 ```
 
 Get static members:
 
-```typescript
+```ts
 const staticMembers = classDeclaration.getStaticMembers();
 ```
 
@@ -227,19 +227,19 @@ Nodes on a class may be abstract.
 
 Get if it's abstract:
 
-```typescript
+```ts
 method.isAbstract(); // returns: boolean
 ```
 
 Get the abstract keyword:
 
-```typescript
+```ts
 method.getAbstractKeyword(); // returns: node | undefined
 ```
 
 Set if abstract:
 
-```typescript
+```ts
 method.setIsAbstract(true);  // set as abstract
 method.setIsAbstract(false); // set as not abstract
 ```
@@ -260,7 +260,7 @@ Explore the functionality available via auto-complete.
 
 If it exists, get the corresponding set accessor:
 
-```typescript
+```ts
 const setAccessor = getAccessor.getSetAccessor();
 ```
 
@@ -268,6 +268,6 @@ const setAccessor = getAccessor.getSetAccessor();
 
 If it exists, get the corresponding get accessor:
 
-```typescript
+```ts
 const getAccessor = setAccessor.getGetAccessor();
 ```

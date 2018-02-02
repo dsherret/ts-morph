@@ -6,7 +6,7 @@ title: Removing
 
 Given the source file for following code:
 
-```typescript
+```ts
 enum MyEnum {
     myMember
 }
@@ -14,14 +14,14 @@ enum MyEnum {
 
 Removing can be done as follows:
 
-```typescript
+```ts
 const member = sourceFile.getEnum("MyEnum")!.getMember("myMember")!;
 member.remove();
 ```
 
 So the file above would now contain the following code:
 
-```typescript
+```ts
 enum MyEnum {
 }
 ```

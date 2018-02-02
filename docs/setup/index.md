@@ -6,7 +6,7 @@ title: Instantiating
 
 Use the default export from `"ts-simple-ast"`:
 
-```typescript
+```ts
 import Ast from "ts-simple-ast";
 
 const ast = new Ast();
@@ -14,7 +14,7 @@ const ast = new Ast();
 
 ### Compiler options
 
-```typescript
+```ts
 import * as ts from "typescript";
 
 const ast = new Ast({

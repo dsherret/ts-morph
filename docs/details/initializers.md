@@ -8,13 +8,13 @@ title: Initializers
 
 For example, given the following code:
 
-```typescript
+```ts
 const add = function(a: number, b: number) { return a + b; };
 ```
 
 The initializer can be retrieved in any of these ways:
 
-```typescript
+```ts
 variableDeclaration.getInitializer(); // returns: Expression | undefined
 variableDeclaration.getInitializerOrThrow(); // returns: Expression
 variableDeclaration.getInitializerIfKind(ts.SyntaxKind.FunctionExpression); // returns: Expression | undefined
@@ -25,7 +25,7 @@ variableDeclaration.getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression
 
 Use `.removeInitializer()` on the parent node. For example:
 
-```typescript
+```ts
 variableDeclaration.removeInitializer();
 ```
 
@@ -33,6 +33,6 @@ variableDeclaration.removeInitializer();
 
 Use `.setInitializer(...)`:
 
-```typescript
+```ts
 variableDeclaration.setInitializer("2 + 2");
 ```

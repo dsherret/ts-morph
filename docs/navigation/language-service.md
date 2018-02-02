@@ -6,7 +6,7 @@ title: Language Service
 
 Get the language service by calling:
 
-```typescript
+```ts
 const languageService = ast.getLanguageService();
 ```
 
@@ -14,7 +14,7 @@ const languageService = ast.getLanguageService();
 
 The underlying `ts.LanguageService` can be retrieved as follows:
 
-```typescript
+```ts
 const tsLanguageService = languageService.compilerObject;
 ```
 

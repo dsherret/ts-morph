@@ -6,7 +6,7 @@ title: Decorators
 
 Decorators can be retrieved from class related nodes by calling the `getDecorators()` method.
 
-```typescript
+```ts
 const decorators = classDeclaration.getDecorators();
 ```
 
@@ -16,7 +16,7 @@ Get the name or fully qualified name of a decorator by using the `getName()` or 
 
 For example, given the following code:
 
-```typescript
+```ts
 @obj.decorator
 function myFunction() {
 }
@@ -24,7 +24,7 @@ function myFunction() {
 
 The following happens:
 
-```typescript
+```ts
 decorator.getName(); // "decorator"
 decorator.getFullName(); // "obj.decorator"
 ```
@@ -33,13 +33,13 @@ decorator.getFullName(); // "obj.decorator"
 
 Decorators with parenthesis (ex. `@decorator(3)`) are decorator factories, while decorators without (ex. `@decorator`) are not.
 
-```typescript
+```ts
 decorator.isDecoratorFactory(); // returns: boolean
 ```
 
 Set as a decorator factory or not:
 
-```typescript
+```ts
 decorator.setIsDecoratorFactory(true);
 ```
 
@@ -47,20 +47,20 @@ decorator.setIsDecoratorFactory(true);
 
 Get the decorator's arguments by calling `.getArguments()`:
 
-```typescript
+```ts
 const args = decorator.getArguments(); // returns: Expression[]
 ```
 ```
 
 Add and insert via `.addArgument(...)`, `.insertArguments(...)`, `.addArgument(...)`, or `.addArguments(...)`.
 
-```typescript
+```ts
 const args = decorator.insertArguments(1, ["5", "6"]);
 ```
 
 And remove them by calling `.removeArgument()`:
 
-```typescript
+```ts
 // specify the index
 decorator.removeArgument(0);
 // or specify the argument node
@@ -70,19 +70,19 @@ decorator.removeArgument(args[0]);
 
 Get the decorator's type arguments by calling `.getTypeArguments()`:
 
-```typescript
+```ts
 const typeArgs = decorator.getTypeArguments(); // returns: TypeNode[]
 ```
 
 Add and insert via `.insertTypeArgument(...)`, `.insertTypeArguments(...)`, `.addTypeArgument(...)`, or `.addTypeArguments(...)`.
 
-```typescript
+```ts
 const typeArgs = decorator.insertTypeArguments(1, ["string", "number"]);
 ```
 
 And remove them by calling `.removeTypeArgument()`:
 
-```typescript
+```ts
 // specify the index
 decorator.removeTypeArgument(0);
 // or specify the type argument node
@@ -93,7 +93,7 @@ decorator.removeTypeArgument(typeArgs[0]);
 
 Decorator factories are call expressions. Get the call expression by calling:
 
-```typescript
+```ts
 const callExpression = decorator.getCallExpression(); // returns: CallExpression | undefined
 ```
 
@@ -103,7 +103,7 @@ Decorators can be added or inserted by calling `addDecorator(decorator)`, `addDe
 
 For example:
 
-```typescript
+```ts
 classDeclaration.addDecorator({
     name: "MyDecorator",
     arguments: ["3", `"some string"`]
@@ -114,7 +114,7 @@ classDeclaration.addDecorator({
 
 Call `.removeDecorator()`:
 
-```typescript
+```ts
 classDeclaration.removeDecorator(0); // index
 classDeclaration.removeDecorator(classDeclaration.getDecorators()[0]); // node
 ```

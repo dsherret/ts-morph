@@ -10,7 +10,7 @@ Certain nodes in TypeScript can have an `async` keyword modifier.
 
 A node can be tested if it's async using the `isAsync()` method:
 
-```typescript
+```ts
 functionDeclaration.isAsync(); // returns: boolean
 ```
 
@@ -18,7 +18,7 @@ functionDeclaration.isAsync(); // returns: boolean
 
 Get the `async` keyword if it exists:
 
-```typescript
+```ts
 functionDeclaration.getAsyncKeyword();
 ```
 
@@ -26,6 +26,6 @@ functionDeclaration.getAsyncKeyword();
 
 Set if the declaration is async using `setIsAsync`:
 
-```typescript
+```ts
 functionDeclaration.setIsAsync(true);
 ```

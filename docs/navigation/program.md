@@ -6,7 +6,7 @@ title: Program
 
 Get the program by calling:
 
-```typescript
+```ts
 const program = ast.getProgram();
 ```
 
@@ -14,7 +14,7 @@ const program = ast.getProgram();
 
 The underlying `ts.Program` can be retrieved as follows:
 
-```typescript
+```ts
 const tsProgram = program.compilerObject;
 ```
 

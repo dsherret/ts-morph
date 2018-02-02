@@ -10,7 +10,7 @@ Find all the references of a node by calling `.findReferences()` on an identifie
 
 Simple example:
 
-```typescript
+```ts
 const classDeclaration = ...; // get a class or some other declaration somehow
 const referencedSymbols = classDeclaration.getNameNode().findReferences();
 

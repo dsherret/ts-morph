@@ -8,7 +8,7 @@ title: Navigation example
 
 Given the following file:
 
-```typescript
+```ts
 // Person.ts
 
 interface Person {
@@ -21,7 +21,7 @@ export default Person;
 
 And setup:
 
-```typescript
+```ts
 import Ast from "ts-simple-ast";
 
 const ast = new Ast();
@@ -32,13 +32,13 @@ ast.addExistingSourceFiles("**/*.ts");
 
 First you need to get the source file you would like to look at:
 
-```typescript
+```ts
 const sourceFile = ast.getSourceFileOrThrow("Person.ts");
 ```
 
 Now inspect what's inside... here's a few examples:
 
-```typescript
+```ts
 const hasClasses = sourceFile.getClasses().length > 0;
 const interfaces = sourceFile.getInterfaces();
 

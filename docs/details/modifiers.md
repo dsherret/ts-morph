@@ -10,7 +10,7 @@ Only certain nodes can have modifiers and they will have these functions.
 
 ### Getting all modifiers
 
-```typescript
+```ts
 functionDeclaration.getModifiers();
 ```
 
@@ -18,13 +18,13 @@ functionDeclaration.getModifiers();
 
 Use `getFirstModifierByKind(syntaxKind: ts.SyntaxKind);` where `ts.SyntaxKind` is a TypeScript compiler syntax kind.
 
-```typescript
+```ts
 functionDeclaration.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
 ```
 
 ### Telling if has a modifier
 
-```typescript
+```ts
 functionDeclaration.hasModifier(ts.SyntaxKind.AsyncKeyword); // returns: boolean
 ```
 
@@ -32,7 +32,7 @@ functionDeclaration.hasModifier(ts.SyntaxKind.AsyncKeyword); // returns: boolean
 
 Toggles a modifier on or off:
 
-```typescript
+```ts
 functionDeclaration.toggleModifier("async");
 functionDeclaration.toggleModifier("async", false); // or explicit toggle
 ```

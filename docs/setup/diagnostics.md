@@ -6,7 +6,7 @@ title: Diagnostics
 
 Diagnostics (compile errors) can be retrieved on the AST or on source files:
 
-```typescript
+```ts
 const diagnostics = ast.getDiagnostics();
 const preEmitDiagnostics = ast.getPreEmitDiagnostics();
 
@@ -21,7 +21,7 @@ const sourceFilePreEmitDiagnostics = sourceFile.getPreEmitDiagnostics();
 
 Returned message text could be a `string` or a `DiagnosticMessageChain`:
 
-```typescript
+```ts
 const message = diagnostic.getMessageText();
 ```
 
@@ -29,7 +29,7 @@ const message = diagnostic.getMessageText();
 
 Source file the diagnostic occurs in:
 
-```typescript
+```ts
 const sourceFile = diagnostic.getSourceFile(); // returns: SourceFile | undefined
 ```
 
@@ -37,7 +37,7 @@ const sourceFile = diagnostic.getSourceFile(); // returns: SourceFile | undefine
 
 Position in the file and length of the diagnostic:
 
-```typescript
+```ts
 const start = diagnostic.getStart();   // returns: number
 const length = diagnostic.getLength(); // returns: number
 ```
@@ -46,7 +46,7 @@ const length = diagnostic.getLength(); // returns: number
 
 Categories can be warnings, errors, or just messages.
 
-```typescript
+```ts
 const category = diagnostic.getCategory(); // returns: ts.DiagnosticCategory
 ```
 
@@ -54,7 +54,7 @@ const category = diagnostic.getCategory(); // returns: ts.DiagnosticCategory
 
 This is the error code number:
 
-```typescript
+```ts
 const code = diagnostic.getCode(); // returns: number
 ```
 
@@ -62,7 +62,7 @@ const code = diagnostic.getCode(); // returns: number
 
 todo: I don't know what this is, but it's available to get from the diagnostic.
 
-```typescript
+```ts
 const source = diagnostic.getSource(); // returns: string | undefined
 ```
 
@@ -83,7 +83,7 @@ According to the typescript compiler:
 
 The properties of a DMC are similar to a Diagnostic:
 
-```typescript
+```ts
 const messageText = dmc.getMessageText(); // returns: string
 const category = dmc.getCategory();       // returns: ts.DiagnosticCategory
 const code = dmc.getCode();               // returns: number
@@ -93,6 +93,6 @@ const code = dmc.getCode();               // returns: number
 
 Call `.getNext()`:
 
-```typescript
+```ts
 const next = dmc.getNext(); // returns: DiagnosticMessageChain | undefined
 ```

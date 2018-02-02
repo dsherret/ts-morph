@@ -6,7 +6,7 @@ title: Interfaces
 
 Interface declarations can be retrieved from source files, namespaces, or function bodies:
 
-```typescript
+```ts
 const interfaces = sourceFile.getInterfaces();
 const interface1 = sourceFile.getInterface("Interface1");
 const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperties().length === 5);
@@ -16,7 +16,7 @@ const firstInterfaceWith5Properties = sourceFile.getInterface(i => i.getProperti
 
 Add or insert interfaces to a source file, namespace, or function like declarations by calling `addInterface()`, `addInterfaces()`, `insertInterface()`, or `insertInterfaces()`.
 
-```typescript
+```ts
 const interfaceDeclaration = sourceFile.addInterface({
     name: "InterfaceName"
 });
@@ -26,7 +26,7 @@ const interfaceDeclaration = sourceFile.addInterface({
 
 Call `.remove()`:
 
-```typescript
+```ts
 interfaceDeclaration.remove();
 ```
 
@@ -34,13 +34,13 @@ interfaceDeclaration.remove();
 
 Will return [`ExpressionWithTypeArguments[]`](expressions):
 
-```typescript
+```ts
 const extendsExpressions = interfaceDeclaration.getExtends();
 ```
 
 Add or insert extends expressions:
 
-```typescript
+```ts
 interfaceDeclaration.addExtends("Named");
 interfaceDeclaration.addExtends(["Named", "Aged"]);
 interfaceDeclaration.insertExtends(1, "Named");
@@ -49,7 +49,7 @@ interfaceDeclaration.insertExtends(2, ["Named", "Aged"]);
 
 Remove an expression:
 
-```typescript
+```ts
 interfaceDeclaration.removeExtends(0); // index
 interfaceDeclaration.removeExtends(interfaceDeclaration.getExtends()[0]); // node
 ```
@@ -66,7 +66,7 @@ const members = interfaceDeclaration.getAllMembers();
 
 Use:
 
-```typescript
+```ts
 const constructSignatures = interfaceDeclaration.getConstructSignatures();
 const constructSignature = interfaceDeclaration.getConstructSignature(c => c.getParameters().length > 2);
 ```
@@ -75,7 +75,7 @@ const constructSignature = interfaceDeclaration.getConstructSignature(c => c.get
 
 To add or insert use `addConstructSignature()`, `addConstructSignatures()`, `insertConstructSignature`, or `insertConstructSignatures()`:
 
-```typescript
+```ts
 const constructSignature = interfaceDeclaration.addConstructSignature({ returnType: "SomeClass" });
 ```
 
@@ -83,7 +83,7 @@ const constructSignature = interfaceDeclaration.addConstructSignature({ returnTy
 
 Remove a construct signature:
 
-```typescript
+```ts
 constructSignature.remove();
 ```
 
@@ -91,7 +91,7 @@ constructSignature.remove();
 
 Use:
 
-```typescript
+```ts
 const callSignatures = interfaceDeclaration.getCallSignatures();
 const callSignature = interfaceDeclaration.getCallSignature(c => c.getParameters().length > 2);
 ```
@@ -100,7 +100,7 @@ const callSignature = interfaceDeclaration.getCallSignature(c => c.getParameters
 
 To add or insert use `addCallSignature()`, `addCallSignatures()`, `insertCallSignature`, or `insertCallSignatures()`:
 
-```typescript
+```ts
 const callSignature = interfaceDeclaration.addCallSignature({ returnType: "SomeClass" });
 ```
 
@@ -108,7 +108,7 @@ const callSignature = interfaceDeclaration.addCallSignature({ returnType: "SomeC
 
 Remove a call signature:
 
-```typescript
+```ts
 callSignature.remove();
 ```
 
@@ -116,7 +116,7 @@ callSignature.remove();
 
 Use:
 
-```typescript
+```ts
 const methodSignatures = interfaceDeclaration.getMethods();
 const myMethod = interfaceDeclaration.getMethod("myMethod");
 const firstMethodWith4Params = interfaceDeclaration.getMethod(m => m.getParameters().length === 4);
@@ -126,7 +126,7 @@ const firstMethodWith4Params = interfaceDeclaration.getMethod(m => m.getParamete
 
 To add or insert use `addMethod()`, `addMethods()`, `insertMethod`, or `insertMethods()`:
 
-```typescript
+```ts
 const methodSignature = interfaceDeclaration.insertMethod(1, { name: "newMethod", returnType: "boolean" });
 ```
 
@@ -134,7 +134,7 @@ const methodSignature = interfaceDeclaration.insertMethod(1, { name: "newMethod"
 
 Remove a method signature:
 
-```typescript
+```ts
 methodSignature.remove();
 ```
 
@@ -142,7 +142,7 @@ methodSignature.remove();
 
 Use:
 
-```typescript
+```ts
 const properties = interfaceDeclaration.getProperties();
 const myProperty = interfaceDeclaration.getProperty("myProperty");
 const firstStringProperty = interfaceDeclaration.getProperty(p => p.getType().getText() === "string");
@@ -152,7 +152,7 @@ const firstStringProperty = interfaceDeclaration.getProperty(p => p.getType().ge
 
 To add or insert use `addProperty()`, `addProperties()`, `insertProperty`, or `insertProperties()`:
 
-```typescript
+```ts
 const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newProperty", type: "string" });
 ```
 
@@ -160,7 +160,7 @@ const propertySignature = interfaceDeclaration.insertProperty(1, { name: "newPro
 
 Remove a property signature:
 
-```typescript
+```ts
 propertySignature.remove();
 ```
 
@@ -182,7 +182,7 @@ const baseDeclarations = interfaceDeclaration.getBaseDeclarations();
 
 Get the implementations.
 
-```typescript
+```ts
 const implementations = interfaceDeclaration.getImplementations();
 ```
 
