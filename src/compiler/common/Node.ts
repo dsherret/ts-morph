@@ -754,7 +754,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
      */
     getStartLineNumber(includeJsDocComment?: boolean) {
-        return this.getSourceFile().getLineNumberFromPos(this.getStartLinePos(includeJsDocComment));
+        return this.sourceFile.getLineNumberFromPos(this.getStartLinePos(includeJsDocComment));
+    }
+
+    /**
+     * Gets the line number of the end of the node.
+     */
+    getEndLineNumber() {
+        const sourceFileText = this.sourceFile.getFullText();
+        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n");
+        return this.sourceFile.getLineNumberFromPos(endLinePos);
     }
 
     /**

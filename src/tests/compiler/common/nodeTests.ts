@@ -323,6 +323,13 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getEndLineNumber), () => {
+        it("should get the end line number of the node", () => {
+            const {firstChild} = getInfoFromText<ClassDeclaration>("\n\nclass MyClass {\n\n    prop: string;\n}");
+            expect(firstChild.getEndLineNumber()).to.equal(6);
+        });
+    });
+
     describe(nameof<Node>(n => n.getStart), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const {firstChild} = getInfoFromText(text);
