@@ -1,5 +1,6 @@
 ﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
+import * as errors from "./../../errors";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type";
@@ -72,6 +73,23 @@ export class Symbol {
         if (symbol == null)
             return false;
         return this.compilerSymbol === symbol.compilerSymbol;
+    }
+
+    /**
+     * Gets the value declaration of a symbol or throws if it doesn't exist.
+     */
+    getValueDeclarationOrThrow(): Node {
+        return errors.throwIfNullOrUndefined(this.getValueDeclaration(), () => `Expected to find the value declaration of symbol '${this.getName()}'.`);
+    }
+
+    /**
+     * Gets the value declaration of the symbol or returns undefined if it doesn't exist.
+     */
+    getValueDeclaration(): Node | undefined {
+        const declaration = this.compilerSymbol.valueDeclaration;
+        if (declaration == null)
+            return undefined;
+        return this.global.compilerFactory.getNodeFromCompilerNode(declaration, this.global.compilerFactory.getSourceFileForNode(declaration));
     }
 
     /**
