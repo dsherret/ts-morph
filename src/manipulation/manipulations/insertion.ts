@@ -57,6 +57,9 @@ export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
     newText: string;
     parent: Node;
+    replacing?: {
+        textLength: number;
+    };
 }
 
 /**
@@ -68,11 +71,13 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
     doManipulation(parent.sourceFile,
         new InsertionTextManipulator({
             insertPos,
-            newText
+            newText,
+            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
         }), new NodeHandlerFactory().getForRange({
             parent,
             start: insertPos,
-            end: insertPos + newText.length
+            end: insertPos + newText.length,
+            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
         }));
 }
 
@@ -109,7 +114,7 @@ export interface InsertIntoCommaSeparatedNodesOptions {
     insertIndex: number;
     newTexts: string[];
     parent: Node;
-    useNewlines?: boolean;
+    useNewLines?: boolean;
 }
 
 export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNodesOptions) {
@@ -118,46 +123,58 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const nextNode = currentNodes[insertIndex];
     const previousNode = currentNodes[insertIndex - 1];
     const numberOfSyntaxListItemsInserting = newTexts.length * 2 - 1;
-    const separator = getSeparator();
-    let newText = newTexts.join(`,${opts.useNewlines ? parent.global.manipulationSettings.getNewLineKind() : " "}`).replace(/^\s+/, "");
+    const separator = opts.useNewLines ? parent.global.manipulationSettings.getNewLineKind() : " ";
+    const childIndentationText = parent.getParentOrThrow().getChildIndentationText();
+    const parentNextSibling = parent.getNextSibling();
+    const isContained = parentNextSibling != null && (
+        parentNextSibling.getKind() === ts.SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === ts.SyntaxKind.CloseBracketToken
+    );
+    let newText = newTexts.join(`,${separator}`);
 
-    if (nextNode != null) {
-        insertIntoParent({
-            insertPos: nextNode.getStart(),
-            newText: `${newText},${separator}`,
+    if (previousNode != null) {
+        const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
+        const insertPos = previousNode.getEnd();
+
+        newText = `,${separator}${newText}`;
+        if (nextNode != null) {
+            newText += `,${separator}`;
+            if (opts.useNewLines)
+                newText += childIndentationText;
+        }
+        else if (opts.useNewLines)
+            newText += separator + parent.getParentOrThrow().getIndentationText();
+
+        insertIntoParentTextRange({
+            insertPos,
+            newText,
             parent,
-            childIndex: nextNode.getChildIndex(),
-            insertItemsCount: numberOfSyntaxListItemsInserting + 1 // extra comma
+            replacing: { textLength: nextEndStart - insertPos }
         });
     }
-    else if (previousNode != null) {
-        insertIntoParent({
-            insertPos: previousNode.getEnd(),
-            newText: `,${separator}${newText}`,
+    else if (nextNode != null) {
+        if (opts.useNewLines)
+            newText = separator + newText;
+        newText += `,${separator}`;
+        if (opts.useNewLines)
+            newText += childIndentationText;
+        const insertPos = isContained ? parent.getPos() : parent.getStart(true);
+        insertIntoParentTextRange({
+            insertPos,
+            newText,
             parent,
-            childIndex: previousNode.getChildIndex() + 1,
-            insertItemsCount: numberOfSyntaxListItemsInserting + 1 // extra comma
+            replacing: { textLength: nextNode.getStart(true) - insertPos }
         });
     }
     else {
-        if (opts.useNewlines && currentNodes.length === 0)
+        if (opts.useNewLines)
             newText = separator + newText + parent.global.manipulationSettings.getNewLineKind() + parent.getIndentationText();
 
-        insertIntoParent({
+        insertIntoParentTextRange({
             insertPos: parent.getPos(),
-            parent,
             newText,
-            childIndex: 0,
-            insertItemsCount: numberOfSyntaxListItemsInserting,
-            replacing: currentNodes.length === 0 ? { textLength: parent.getNextSiblingOrThrow().getStart() - parent.getPos(), nodes: [] } : undefined
+            parent,
+            replacing: { textLength: parent.getNextSiblingOrThrow().getStart() - parent.getPos() }
         });
-    }
-
-    function getSeparator() {
-        if (!opts.useNewlines)
-            return " ";
-
-        return parent.global.manipulationSettings.getNewLineKind() + parent.getParentOrThrow().getChildIndentationText();
     }
 }
 

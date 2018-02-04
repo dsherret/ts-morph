@@ -300,7 +300,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             currentNodes: this.getProperties(),
             insertIndex: index,
             newTexts,
-            useNewlines: true
+            useNewLines: true
         });
 
         return this.getProperties().slice(index, index + structures.length);

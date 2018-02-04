@@ -1,4 +1,5 @@
 ﻿import * as ts from "typescript";
+import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
 import {ArrayLiteralExpression, VariableStatement} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
@@ -29,9 +30,9 @@ describe(nameof(ArrayLiteralExpression), () => {
     });
 
     describe(nameof<ArrayLiteralExpression>(e => e.insertElements), () => {
-        function doTest(text: string, index: number, elementTexts: string[], expectedText: string) {
+        function doTest(text: string, index: number, elementTexts: string[], expectedText: string, options?: { useNewLines?: boolean; }) {
             const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
-            const result = arrayLiteralExpression.insertElements(index, elementTexts);
+            const result = arrayLiteralExpression.insertElements(index, elementTexts, options);
             expect(result.map(r => r.getText())).to.deep.equal(elementTexts);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -50,6 +51,36 @@ describe(nameof(ArrayLiteralExpression), () => {
 
         it("should insert in at the end of the array", () => {
             doTest("var t = [1, 2]", 2, ["3", "4"], "var t = [1, 2, 3, 4]");
+        });
+
+        it("should insert on new lines when the array literal expression spans multiple lines", () => {
+            doTest("var t = [\n]", 0, ["1", "2"], "var t = [\n    1,\n    2\n]");
+        });
+
+        it("should insert on the same line when two elements are on the same line", () => {
+            doTest("var t = [1, 3,\n    4, 5\n]", 1, ["2"], "var t = [1, 2, 3,\n    4, 5\n]");
+        });
+
+        it("should insert on new lines when all the elements are on new lines", () => {
+            doTest("var t = [\n    1,\n    4,\n    5\n]", 1, ["2", "3"], `var t = [\n    1,\n    2,\n    3,\n    4,\n    5\n]`);
+        });
+
+        it("should insert on new lines when specifying to", () => {
+            doTest("var t = [1, 3, 4]", 1, ["2"], `var t = [1,\n    2,\n    3, 4]`, { useNewLines: true });
+        });
+
+        it("should insert first element on new lines specifying to", () => {
+            doTest("var t = [2, 3, 4]", 0, ["1"], `var t = [\n    1,\n    2, 3, 4]`, { useNewLines: true });
+        });
+
+        function doWriterTest(text: string, index: number, writerFunction: (writer: CodeBlockWriter) => void, expectedText: string, options?: { useNewLines?: boolean; }) {
+            const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
+            const result = arrayLiteralExpression.insertElements(index, writerFunction, options);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should support writing with a writer", () => {
+            doWriterTest("var t = [1, 4, 5]", 1, writer => writer.writeLine("2,").write("3"), `var t = [1,\n    2,\n    3,\n    4, 5]`, { useNewLines: true });
         });
     });
 

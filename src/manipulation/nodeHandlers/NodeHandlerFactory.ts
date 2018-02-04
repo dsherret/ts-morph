@@ -29,6 +29,7 @@ export interface ReplaceTreeWithRangeOptions {
     parent: Node;
     start: number;
     end: number;
+    replacingLength?: number;
 }
 
 export interface ReplaceTreeWithChildIndexOptions {
@@ -75,11 +76,11 @@ export class NodeHandlerFactory {
     }
 
     getForRange(opts: ReplaceTreeWithRangeOptions) {
-        const {parent: changingParent, start, end} = opts;
+        const {parent: changingParent, start, end, replacingLength} = opts;
         const sourceFile = changingParent.getSourceFile();
         const compilerFactory = sourceFile.global.compilerFactory;
 
-        const parentHandler = new RangeParentHandler(compilerFactory, { start, end });
+        const parentHandler = new RangeParentHandler(compilerFactory, { start, end, replacingLength });
         if (changingParent === sourceFile)
             return parentHandler;
         else

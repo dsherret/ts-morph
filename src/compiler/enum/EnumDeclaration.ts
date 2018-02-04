@@ -82,7 +82,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             currentNodes: members,
             insertIndex: index,
             newTexts,
-            useNewlines: true
+            useNewLines: true
         });
 
         // get the members

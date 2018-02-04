@@ -62,7 +62,7 @@ describe(nameof(EnumDeclaration), () => {
         });
 
         it("should insert a member when a comma exists", () => {
-            doTest("enum MyEnum {\n    member1,\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1,\n    member2,\n}\n");
+            doTest("enum MyEnum {\n    member1,\n}\n", 1, [{ name: "member2" }], "enum MyEnum {\n    member1,\n    member2\n}\n");
         });
 
         it("should insert in the middle", () => {
