@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.9.0"></a>
+# [6.9.0](https://github.com/dsherret/ts-simple-ast/compare/6.8.0...6.9.0) (2018-02-04)
+
+
+### Bug Fixes
+
+* [#239](https://github.com/dsherret/ts-simple-ast/issues/239) - Fix JSDoc.getInnerText() stripping leading spaces. ([b9c56de](https://github.com/dsherret/ts-simple-ast/commit/b9c56de))
+
+
+### Features
+
+* Add Node.getEndLineNumber() ([f00ca4c](https://github.com/dsherret/ts-simple-ast/commit/f00ca4c))
+* Add Symbol.getValueDeclaration() ([91da111](https://github.com/dsherret/ts-simple-ast/commit/91da111))
+* Improve inserting to ArrayLiteralExpressions. ([b2e991f](https://github.com/dsherret/ts-simple-ast/commit/b2e991f))
+
+
+
 <a name="6.8.0"></a>
 # [6.8.0](https://github.com/dsherret/ts-simple-ast/compare/6.7.0...6.8.0) (2018-02-01)
 
