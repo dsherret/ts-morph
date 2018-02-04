@@ -98,8 +98,24 @@ describe(nameof(JSDoc), () => {
             doTest("/** Description */function identifier() {}", "Description");
         });
 
+        it("should return the correct inner text when there's no space", () => {
+            doTest("/**Description*/function identifier() {}", "Description");
+        });
+
         it("should return the correct inner text when on multiple lines", () => {
             doTest("/**\n * Description\n */function identifier() {}", "Description");
+        });
+
+        it("should return the correct inner text on multiple lines when there's no space", () => {
+            doTest("/**\n *Description\n */function identifier() {}", "Description");
+        });
+
+        it("should return the correct inner text on multiple lines when there's indentation", () => {
+            doTest("/**\n *     Description\n */function identifier() {}", "    Description");
+        });
+
+        it("should return the correct inner text on multiple lines when there's no star", () => {
+            doTest("/**\nDescription\n */function identifier() {}", "Description");
         });
 
         it("should return the correct inner text with tags", () => {

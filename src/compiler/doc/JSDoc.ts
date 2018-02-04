@@ -1,7 +1,7 @@
 ﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {removeChildren, replaceTextPossiblyCreatingChildNodes} from "./../../manipulation";
-import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
+import {getPreviousMatchingPos} from "./../../manipulation/textSeek";
 import {getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
 import {JSDocTag} from "./JSDocTag";
@@ -32,12 +32,13 @@ export class JSDoc extends Node<ts.JSDoc> {
      */
     getInnerText() {
         const innerTextWithStars = this.getText().replace(/^\/\*\*[^\S\n]*\n?/, "").replace(/(\r?\n)?[^\S\n]*\*\/$/, "");
-        const leadingTest = /[\s\t\*\r]/;
 
         return innerTextWithStars.split(/\n/).map(line => {
-            // skip over the " * " part of the text
-            const start = getNextMatchingPos(line, 0, char => !leadingTest.test(char));
-            return line.substring(start);
+            const starPos = line.indexOf("*");
+            if (starPos === -1)
+                return line;
+            const substringStart = line[starPos + 1] === " " ? starPos + 2 : starPos + 1;
+            return line.substring(substringStart);
         }).join("\n");
     }
 
