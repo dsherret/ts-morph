@@ -18,6 +18,7 @@ export * from "./ReadonlyableNodeStructure";
 export * from "./ReturnTypedNodeStructure";
 export * from "./ScopeableNodeStructure";
 export * from "./ScopedNodeStructure";
+export * from "./SignaturedDeclarationStructure";
 export * from "./StaticableNodeStructure";
 export * from "./TypedNodeStructure";
 export * from "./TypeParameteredNodeStructure";

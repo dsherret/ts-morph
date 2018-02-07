@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.10.0"></a>
+# [6.10.0](https://github.com/dsherret/ts-simple-ast/compare/6.9.0...6.10.0) (2018-02-07)
+
+
+### Features
+
+* Wrap more type nodes. ([9211350](https://github.com/dsherret/ts-simple-ast/commit/9211350))
+
+
+
 <a name="6.9.0"></a>
 # [6.9.0](https://github.com/dsherret/ts-simple-ast/compare/6.8.0...6.9.0) (2018-02-04)
 

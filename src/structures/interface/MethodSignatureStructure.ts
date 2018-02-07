@@ -1,7 +1,7 @@
-﻿import {PropertyNamedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure} from "./../base";
-import {SignaturedDeclarationStructure} from "./../function";
+﻿import {PropertyNamedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure,
+    TypeParameteredNodeStructure} from "./../base";
 
 export interface MethodSignatureStructure
-    extends PropertyNamedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure
+    extends PropertyNamedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure
 {
 }
