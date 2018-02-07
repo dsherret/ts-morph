@@ -101,6 +101,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an ArrayTypeNode.
+     * @param node - Node to check.
+     */
+    static isArrayTypeNode(node: compiler.Node): node is compiler.ArrayTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ArrayType:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is an ArrowFunction.
      * @param node - Node to check.
      */
@@ -446,6 +459,19 @@ export class TypeGuards {
     static isConstructorDeclaration(node: compiler.Node): node is compiler.ConstructorDeclaration {
         switch (node.getKind()) {
             case ts.SyntaxKind.Constructor:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ConstructorTypeNode.
+     * @param node - Node to check.
+     */
+    static isConstructorTypeNode(node: compiler.Node): node is compiler.ConstructorTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.ConstructorType:
                 return true;
             default:
                 return false;
@@ -884,6 +910,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a FunctionTypeNode.
+     * @param node - Node to check.
+     */
+    static isFunctionTypeNode(node: compiler.Node): node is compiler.FunctionTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.FunctionType:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a GeneratorableNode.
      * @param node - Node to check.
      */
@@ -1090,6 +1129,19 @@ export class TypeGuards {
     static isInterfaceDeclaration(node: compiler.Node): node is compiler.InterfaceDeclaration {
         switch (node.getKind()) {
             case ts.SyntaxKind.InterfaceDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a IntersectionTypeNode.
+     * @param node - Node to check.
+     */
+    static isIntersectionTypeNode(node: compiler.Node): node is compiler.IntersectionTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.IntersectionType:
                 return true;
             default:
                 return false;
@@ -1393,6 +1445,20 @@ export class TypeGuards {
             case ts.SyntaxKind.TemplateHead:
             case ts.SyntaxKind.TemplateMiddle:
             case ts.SyntaxKind.TemplateTail:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a LiteralTypeNode.
+     * @param node - Node to check.
+     */
+    static isLiteralTypeNode(node: compiler.Node): node is compiler.LiteralTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.LiteralType:
+            case ts.SyntaxKind.LastTypeNode:
                 return true;
             default:
                 return false;
@@ -1716,6 +1782,8 @@ export class TypeGuards {
             case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.ConstructorType:
+            case ts.SyntaxKind.FunctionType:
                 return true;
             default:
                 return false;
@@ -1964,6 +2032,8 @@ export class TypeGuards {
             case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.ConstructorType:
+            case ts.SyntaxKind.FunctionType:
                 return true;
             default:
                 return false;
@@ -2055,6 +2125,8 @@ export class TypeGuards {
             case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.ConstructorType:
+            case ts.SyntaxKind.FunctionType:
                 return true;
             default:
                 return false;
@@ -2380,6 +2452,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a TupleTypeNode.
+     * @param node - Node to check.
+     */
+    static isTupleTypeNode(node: compiler.Node): node is compiler.TupleTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.TupleType:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a TypeAliasDeclaration.
      * @param node - Node to check.
      */
@@ -2426,9 +2511,16 @@ export class TypeGuards {
     static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
         switch (node.getKind()) {
             case ts.SyntaxKind.FirstTypeNode:
-            case ts.SyntaxKind.LastTypeNode:
+            case ts.SyntaxKind.ArrayType:
+            case ts.SyntaxKind.ConstructorType:
             case ts.SyntaxKind.ExpressionWithTypeArguments:
+            case ts.SyntaxKind.FunctionType:
+            case ts.SyntaxKind.IntersectionType:
+            case ts.SyntaxKind.LiteralType:
+            case ts.SyntaxKind.LastTypeNode:
+            case ts.SyntaxKind.TupleType:
             case ts.SyntaxKind.TypeReference:
+            case ts.SyntaxKind.UnionType:
                 return true;
             default:
                 return false;
@@ -2479,6 +2571,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ConstructSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
+            case ts.SyntaxKind.FunctionType:
             case ts.SyntaxKind.TypeAliasDeclaration:
                 return true;
             default:
@@ -2570,6 +2663,32 @@ export class TypeGuards {
             case ts.SyntaxKind.TypeAssertionExpression:
             case ts.SyntaxKind.TypeOfExpression:
             case ts.SyntaxKind.VoidKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UndefinedKeyword.
+     * @param node - Node to check.
+     */
+    static isUndefinedKeyword(node: compiler.Node): node is compiler.Node {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.UndefinedKeyword:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a UnionTypeNode.
+     * @param node - Node to check.
+     */
+    static isUnionTypeNode(node: compiler.Node): node is compiler.UnionTypeNode {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.UnionType:
                 return true;
             default:
                 return false;

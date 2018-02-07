@@ -143,7 +143,7 @@ function getInsertInfo(node: TypeParameteredNode & Node) {
         const nameNode = namedNode.getNameNode();
         return { insertPos: nameNode.getEnd(), childIndex: nameNode.getChildIndex() + 1 };
     }
-    else if (TypeGuards.isCallSignatureDeclaration(node)) {
+    else if (TypeGuards.isCallSignatureDeclaration(node) || TypeGuards.isFunctionTypeNode(node)) {
         const openParenToken = node.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken);
         return { insertPos: openParenToken.getStart(), childIndex: openParenToken.getChildIndex() };
     }

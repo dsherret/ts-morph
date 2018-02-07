@@ -14,8 +14,8 @@
     "test": "npm install typescript@2.7.1 && gulp typescript && npm run test-ts-2.4.2 && npm run test-ts-2.5.3 && npm run test-ts-2.6.2 && npm run test-ts-2.7.1",
     "build": "gulp typescript",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "update-barrel-files": "node dist-cg/code-generation/updateBarrelFiles",
-    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch"
+    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch",
+    "output-wrapped-nodes": "gulp code-generate && node dist-cg/code-generation/outputWrappedNodesInfo"
   },
   "repository": {
     "type": "git",

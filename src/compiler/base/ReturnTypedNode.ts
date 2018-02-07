@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {ReturnTypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {insertIntoParent, removeChildren} from "./../../manipulation";
+import {insertIntoParent, removeChildren, insertIntoParentTextRange} from "./../../manipulation";
 import {StringUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
@@ -59,21 +59,13 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             if (returnTypeNode != null && returnTypeNode.getText() === text)
                 return this;
 
-            // get replace length of previous return type
-            const colonToken = returnTypeNode == null ? undefined : returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
-            const replaceLength = colonToken == null ? 0 : returnTypeNode!.getEnd() - colonToken.getPos();
-
             // insert new type
-            const closeParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken);
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: this,
-                childIndex: colonToken != null ? colonToken.getChildIndex() + 1 : closeParenToken.getChildIndex() + 1,
-                insertItemsCount: colonToken != null ? 1 : 2,
-                insertPos: colonToken != null ? colonToken.getEnd() : closeParenToken.getEnd(),
-                newText: colonToken != null ? ` ${text}` : `: ${text}`,
+                insertPos: returnTypeNode != null ? returnTypeNode.getStart() : this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken).getEnd(),
+                newText: returnTypeNode != null ? text : `: ${text}`,
                 replacing: {
-                    textLength: returnTypeNode == null ? 0 : returnTypeNode.getFullWidth(),
-                    nodes: returnTypeNode == null ? [] : [returnTypeNode]
+                    textLength: returnTypeNode == null ? 0 : returnTypeNode.getWidth()
                 }
             });
 

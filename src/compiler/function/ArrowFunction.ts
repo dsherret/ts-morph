@@ -1,12 +1,12 @@
 import * as ts from "typescript";
 import {Expression} from "./../expression";
-import {JSDocableNode, NameableNode, ModifierableNode, AsyncableNode, GeneratorableNode, BodiedNode, TextInsertableNode} from "./../base";
+import {JSDocableNode, NameableNode, ModifierableNode, AsyncableNode, GeneratorableNode, BodiedNode, TextInsertableNode, TypeParameteredNode,
+    SignaturedDeclaration} from "./../base";
 import {Node} from "./../common";
 import {StatementedNode} from "./../statement";
-import {SignaturedDeclaration} from "./SignaturedDeclaration";
 
 export const ArrowFunctionBase = JSDocableNode(TextInsertableNode(BodiedNode(AsyncableNode(StatementedNode(
-    SignaturedDeclaration(ModifierableNode(Expression)
+    TypeParameteredNode(SignaturedDeclaration(ModifierableNode(Expression))
 ))))));
 export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**

@@ -20,6 +20,7 @@ export * from "./ReadonlyableNode";
 export * from "./ReturnTypedNode";
 export * from "./ScopeableNode";
 export * from "./ScopedNode";
+export * from "./SignaturedDeclaration";
 export * from "./StaticableNode";
 export * from "./TextInsertableNode";
 export * from "./TypeArgumentedNode";

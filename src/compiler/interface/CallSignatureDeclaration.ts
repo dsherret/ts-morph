@@ -3,10 +3,9 @@ import {CallSignatureDeclarationStructure} from "./../../structures";
 import {removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
-import {JSDocableNode, ChildOrderableNode} from "./../base";
-import {SignaturedDeclaration} from "./../function";
+import {JSDocableNode, ChildOrderableNode, TypeParameteredNode, SignaturedDeclaration} from "./../base";
 
-export const CallSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(SignaturedDeclaration(Node)));
+export const CallSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(Node))));
 export class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
     /**
      * Fills the node from a structure.
