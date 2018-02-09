@@ -15,13 +15,14 @@ export function ChildOrderableNode<T extends Constructor<Node>>(Base: T): Constr
     return class extends Base implements ChildOrderableNode {
         setOrder(order: number) {
             const childIndex = this.getChildIndex();
-            errors.throwIfOutOfRange(order, [0, this.getChildCount() - 1], nameof(order));
+            const parent = this.getParentSyntaxList() || this.getParentSyntaxListOrThrow();
+            errors.throwIfOutOfRange(order, [0, parent.getChildCount() - 1], nameof(order));
 
             if (childIndex === order)
                 return this;
 
             changeChildOrder({
-                parent: this.getParentSyntaxList() || this.getParentOrThrow(),
+                parent,
                 getSiblingFormatting: getGeneralFormatting,
                 oldIndex: childIndex,
                 newIndex: order
