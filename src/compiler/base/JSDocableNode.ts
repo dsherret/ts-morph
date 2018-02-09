@@ -1,6 +1,6 @@
 ﻿import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
-import {insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";
 import {JSDocStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
@@ -72,12 +72,10 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             index = verifyAndGetIndex(index, nodes.length);
 
             const insertPos = index === nodes.length ? this.getStart() : nodes[index].getStart();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos,
                 parent: this,
-                newText: code,
-                childIndex: nodes.length > 0 ? nodes[0].getChildIndex() + index : 0,
-                insertItemsCount: structures.length
+                newText: code
             });
 
             return this.getJsDocs().slice(index, index + structures.length);
