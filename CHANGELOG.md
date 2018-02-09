@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.11.0"></a>
+# [6.11.0](https://github.com/dsherret/ts-simple-ast/compare/6.9.0...6.11.0) (2018-02-09)
+
+
+### Features
+
+* [#242](https://github.com/dsherret/ts-simple-ast/issues/242) - Wrap IndexSignatureDeclaration. ([3dab39f](https://github.com/dsherret/ts-simple-ast/commit/3dab39f))
+* Wrap more type nodes. ([9211350](https://github.com/dsherret/ts-simple-ast/commit/9211350))
+
+
+
 <a name="6.10.0"></a>
 # [6.10.0](https://github.com/dsherret/ts-simple-ast/compare/6.9.0...6.10.0) (2018-02-07)
 
