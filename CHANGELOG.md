@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.11.1"></a>
+## [6.11.1](https://github.com/dsherret/ts-simple-ast/compare/6.11.0...6.11.1) (2018-02-09)
+
+
+### Bug Fixes
+
+* [#244](https://github.com/dsherret/ts-simple-ast/issues/244) - Fixes setOrder() bug where verify fails incorrectly. ([c7bec28](https://github.com/dsherret/ts-simple-ast/commit/c7bec28))
+* Fix failing ts 2.4 test for IndexSignatureDeclaration. ([654e5c2](https://github.com/dsherret/ts-simple-ast/commit/654e5c2))
+
+
+
 <a name="6.11.0"></a>
 # [6.11.0](https://github.com/dsherret/ts-simple-ast/compare/6.9.0...6.11.0) (2018-02-09)
 
