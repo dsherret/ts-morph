@@ -360,6 +360,7 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.IndexSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:
@@ -1070,6 +1071,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a IndexSignatureDeclaration.
+     * @param node - Node to check.
+     */
+    static isIndexSignatureDeclaration(node: compiler.Node): node is compiler.IndexSignatureDeclaration {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.IndexSignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a InitializerExpressionableNode.
      * @param node - Node to check.
      */
@@ -1336,6 +1350,7 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.CallSignature:
             case ts.SyntaxKind.ConstructSignature:
+            case ts.SyntaxKind.IndexSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.MethodSignature:
             case ts.SyntaxKind.PropertySignature:

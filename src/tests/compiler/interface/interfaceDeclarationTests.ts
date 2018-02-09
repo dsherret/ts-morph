@@ -1,7 +1,8 @@
 ﻿import {expect} from "chai";
-import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, CallSignatureDeclaration, ClassDeclaration} from "./../../../compiler";
+import {InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, CallSignatureDeclaration, ClassDeclaration,
+    IndexSignatureDeclaration} from "./../../../compiler";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationSpecificStructure,
-    CallSignatureDeclarationStructure} from "./../../../structures";
+    CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
@@ -156,6 +157,112 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should throw when none match", () => {
             expect(() => firstChild.getConstructSignatureOrThrow(c => c.getParameters().length > 5)).to.throw();
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.insertIndexSignatures), () => {
+        function doTest(startCode: string, insertIndex: number, structures: IndexSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertIndexSignatures(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("interface i {\n}", 0, [{ returnType: "number" }], "interface i {\n    [key: string]: number;\n}");
+        });
+
+        it("should insert multiple into other", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1,
+                [{ returnType: "number" }, { keyName: "key2", keyType: "number", returnType: "Date" }],
+                "interface i {\n    method1();\n    [key: string]: number;\n    [key2: number]: Date;\n    method2();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.insertIndexSignature), () => {
+        function doTest(startCode: string, insertIndex: number, structure: IndexSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.insertIndexSignature(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(IndexSignatureDeclaration);
+        }
+
+        it("should insert at index", () => {
+            doTest("interface i {\n    method1();\n    method2();\n}", 1, { returnType: "Date" },
+                "interface i {\n    method1();\n    [key: string]: Date;\n    method2();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addIndexSignatures), () => {
+        function doTest(startCode: string, structures: IndexSignatureDeclarationStructure[], expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addIndexSignatures(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple at end", () => {
+            doTest("interface i {\n    method1();\n}", [{ returnType: "string" }, { returnType: "Date" }],
+                "interface i {\n    method1();\n    [key: string]: string;\n    [key: string]: Date;\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.addIndexSignature), () => {
+        function doTest(startCode: string, structure: IndexSignatureDeclarationStructure, expectedCode: string) {
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(startCode);
+            const result = firstChild.addIndexSignature(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(IndexSignatureDeclaration);
+        }
+
+        it("should add at end", () => {
+            doTest("interface i {\n    method1();\n}", { returnType: "string" }, "interface i {\n    method1();\n    [key: string]: string;\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getIndexSignatures), () => {
+        describe("none", () => {
+            it("should not have any", () => {
+                const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier {\n}\n");
+                expect(firstChild.getIndexSignatures().length).to.equal(0);
+            });
+        });
+
+        describe("has index signatures", () => {
+            const text = "interface Identifier {\n    prop: string;\n    [key: string]: string;\n    method1():void;\n    method2():string;\n}\n";
+            const {firstChild} = getInfoFromText<InterfaceDeclaration>(text);
+
+            it("should get the right number of index signatures", () => {
+                expect(firstChild.getIndexSignatures().length).to.equal(1);
+            });
+
+            it("should get a construct signature of the right instance of", () => {
+                expect(firstChild.getIndexSignatures()[0]).to.be.instanceOf(IndexSignatureDeclaration);
+            });
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getIndexSignature), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { [key: string]: string; [key2: string]: Date; }");
+
+        it("should get the first that matches", () => {
+            expect(firstChild.getIndexSignature(c => c.getKeyName() === "key2")).to.equal(firstChild.getIndexSignatures()[1]);
+        });
+
+        it("should return undefined when none match", () => {
+            expect(firstChild.getIndexSignature(c => c.getKeyName() === "other")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(d => d.getIndexSignatureOrThrow), () => {
+        const {firstChild} = getInfoFromText<InterfaceDeclaration>("interface Identifier { [key: string]: string; [key2: string]: Date; }");
+
+        it("should get the first that matches", () => {
+            expect(firstChild.getIndexSignatureOrThrow(c => c.getKeyName() === "key2")).to.equal(firstChild.getIndexSignatures()[1]);
+        });
+
+        it("should throw when none match", () => {
+            expect(() => firstChild.getIndexSignatureOrThrow(c => c.getKeyName() === "other")).to.throw();
         });
     });
 
@@ -505,11 +612,14 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should modify when changed", () => {
             const structure: MakeRequired<InterfaceDeclarationSpecificStructure> = {
+                callSignatures: [{ returnType: "string" }],
                 constructSignatures: [{ returnType: "string" }],
+                indexSignatures: [{ keyName: "key", keyType: "string", returnType: "number" }],
                 properties: [{ name: "p" }],
                 methods: [{ name: "m" }]
             };
-            doTest("interface Identifier {\n}", structure, "interface Identifier {\n    new(): string;\n    p;\n    m();\n}");
+            doTest("interface Identifier {\n}", structure,
+                "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}");
         });
     });
 

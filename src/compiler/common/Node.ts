@@ -813,6 +813,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const childIndex = this.getChildIndex();
 
         try {
+            // todo: this should only forget the existing node if the kind changes
             const nodes = getNodes(this);
             const start = nodes[0].getStart();
             insertIntoParent({

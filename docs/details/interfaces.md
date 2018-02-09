@@ -112,6 +112,35 @@ Remove a call signature:
 callSignature.remove();
 ```
 
+### Index signatures
+
+Use:
+
+```ts
+const indexSignatures = interfaceDeclaration.getIndexSignatures();
+const indexSignature = interfaceDeclaration.getIndexSignature(s => s.getKeyName() === "keyName");
+```
+
+#### Add/Insert
+
+To add or insert use `addIndexSignature()`, `addIndexSignatures()`, `insertIndexSignature`, or `insertIndexSignatures()`:
+
+```ts
+const indexSignature = interfaceDeclaration.addIndexSignature({
+    keyName: "someKey", // defaults to key
+    keyType: "string", // defaults to string
+    returnType: "SomeClass"
+});
+```
+
+#### Remove
+
+Remove an index signature:
+
+```ts
+indexSignature.remove();
+```
+
 ### Method signatures
 
 Use:

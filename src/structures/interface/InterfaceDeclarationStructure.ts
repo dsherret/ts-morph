@@ -3,6 +3,8 @@
 import {PropertySignatureStructure} from "./PropertySignatureStructure";
 import {MethodSignatureStructure} from "./MethodSignatureStructure";
 import {ConstructSignatureDeclarationStructure} from "./ConstructSignatureDeclarationStructure";
+import {CallSignatureDeclarationStructure} from "./CallSignatureDeclarationStructure";
+import {IndexSignatureDeclarationStructure} from "./IndexSignatureDeclarationStructure";
 
 export interface InterfaceDeclarationStructure
     extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure,
@@ -11,7 +13,9 @@ export interface InterfaceDeclarationStructure
 }
 
 export interface InterfaceDeclarationSpecificStructure {
+    callSignatures?: CallSignatureDeclarationStructure[];
     constructSignatures?: ConstructSignatureDeclarationStructure[];
-    properties?: PropertySignatureStructure[];
+    indexSignatures?: IndexSignatureDeclarationStructure[];
     methods?: MethodSignatureStructure[];
+    properties?: PropertySignatureStructure[];
 }

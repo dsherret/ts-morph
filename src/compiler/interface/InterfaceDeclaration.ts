@@ -2,7 +2,7 @@
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure,
-    CallSignatureDeclarationStructure} from "./../../structures";
+    CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure} from "./../../structures";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
 import * as structureToTexts from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
@@ -15,10 +15,11 @@ import {Type, TypeAliasDeclaration} from "./../type";
 import {ImplementationLocation} from "./../tools";
 import {ConstructSignatureDeclaration} from "./ConstructSignatureDeclaration";
 import {CallSignatureDeclaration} from "./CallSignatureDeclaration";
+import {IndexSignatureDeclaration} from "./IndexSignatureDeclaration";
 import {MethodSignature} from "./MethodSignature";
 import {PropertySignature} from "./PropertySignature";
 
-export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration;
+export type InterfaceMemberTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
 
 export const InterfaceDeclarationBase = ChildOrderableNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(TypeParameteredNode(
     JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))))
@@ -31,8 +32,12 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     fill(structure: Partial<InterfaceDeclarationStructure>) {
         callBaseFill(InterfaceDeclarationBase.prototype, this, structure);
 
+        if (structure.callSignatures != null)
+            this.addCallSignatures(structure.callSignatures);
         if (structure.constructSignatures != null)
             this.addConstructSignatures(structure.constructSignatures);
+        if (structure.indexSignatures != null)
+            this.addIndexSignatures(structure.indexSignatures);
         if (structure.properties != null)
             this.addProperties(structure.properties);
         if (structure.methods != null)
@@ -212,6 +217,84 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     getCallSignatures(): CallSignatureDeclaration[] {
         return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.CallSignature)
             .map(m => this.getNodeFromCompilerNode<CallSignatureDeclaration>(m as ts.CallSignatureDeclaration));
+    }
+
+    /**
+     * Add index signature.
+     * @param structure - Structure representing the index signature.
+     */
+    addIndexSignature(structure: IndexSignatureDeclarationStructure) {
+        return this.addIndexSignatures([structure])[0];
+    }
+
+    /**
+     * Add index signatures.
+     * @param structures - Structures representing the index signatures.
+     */
+    addIndexSignatures(structures: IndexSignatureDeclarationStructure[]) {
+        return this.insertIndexSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
+    }
+
+    /**
+     * Insert index signature.
+     * @param index - Index to insert at.
+     * @param structure - Structure representing the index signature.
+     */
+    insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure) {
+        return this.insertIndexSignatures(index, [structure])[0];
+    }
+
+    /**
+     * Insert properties.
+     * @param index - Index to insert at.
+     * @param structures - Structures representing the index signatures.
+     */
+    insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]) {
+        const indentationText = this.getChildIndentationText();
+
+        // create code
+        const codes = structures.map(s => {
+            // todo: pass in the StructureToText to the function below
+            const writer = this.getWriterWithChildIndentation();
+            const structureToText = new structureToTexts.IndexSignatureDeclarationStructureToText(writer);
+            structureToText.writeText(s);
+            return writer.toString();
+        });
+
+        return insertIntoBracesOrSourceFileWithFillAndGetChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
+            getIndexedChildren: () => this.getAllMembers(),
+            sourceFile: this.getSourceFile(),
+            parent: this,
+            index,
+            childCodes: codes,
+            structures,
+            expectedKind: ts.SyntaxKind.IndexSignature,
+            fillFunction: (node, structure) => node.fill(structure)
+        });
+    }
+
+    /**
+     * Gets the first index signature by a find function.
+     * @param findFunction - Function to find the index signature by.
+     */
+    getIndexSignature(findFunction: (member: IndexSignatureDeclaration) => boolean): IndexSignatureDeclaration | undefined {
+        return ArrayUtils.find(this.getIndexSignatures(), findFunction);
+    }
+
+    /**
+     * Gets the first index signature by a find function or throws if not found.
+     * @param findFunction - Function to find the index signature by.
+     */
+    getIndexSignatureOrThrow(findFunction: (member: IndexSignatureDeclaration) => boolean): IndexSignatureDeclaration {
+        return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), "Expected to find a index signature with the provided condition.");
+    }
+
+    /**
+     * Gets the interface index signatures.
+     */
+    getIndexSignatures(): IndexSignatureDeclaration[] {
+        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.IndexSignature)
+            .map(m => this.getNodeFromCompilerNode<IndexSignatureDeclaration>(m as ts.IndexSignatureDeclaration));
     }
 
     /**
