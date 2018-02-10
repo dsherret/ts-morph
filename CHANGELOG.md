@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.12.0"></a>
+# [6.12.0](https://github.com/dsherret/ts-simple-ast/compare/6.11.1...6.12.0) (2018-02-10)
+
+
+### Features
+
+* [#245](https://github.com/dsherret/ts-simple-ast/issues/245) - IndexSignatureDeclaration - Add support for readonly keyword. ([2624f8b](https://github.com/dsherret/ts-simple-ast/commit/2624f8b))
+
+
+
 <a name="6.11.1"></a>
 ## [6.11.1](https://github.com/dsherret/ts-simple-ast/compare/6.11.0...6.11.1) (2018-02-09)
 
