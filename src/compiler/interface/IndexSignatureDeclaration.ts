@@ -4,9 +4,9 @@ import {removeInterfaceMember} from "./../../manipulation";
 import {callBaseFill} from "./../callBaseFill";
 import {Node, Identifier} from "./../common";
 import {TypeNode, Type} from "./../type";
-import {JSDocableNode, ChildOrderableNode} from "./../base";
+import {JSDocableNode, ChildOrderableNode, ModifierableNode, ReadonlyableNode} from "./../base";
 
-export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(Node));
+export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(Node))));
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
     /**
      * Fills the node from a structure.

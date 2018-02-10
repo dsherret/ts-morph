@@ -25,10 +25,11 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 docs: [{ description: "Desc" }],
                 keyName: "newKeyName",
                 keyType: "number",
-                returnType: "Date"
+                returnType: "Date",
+                isReadonly: true
             };
             doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
-                "interface Identifier {\n    /**\n     * Desc\n     */\n    [newKeyName: number]: Date;\n}");
+                "interface Identifier {\n    /**\n     * Desc\n     */\n    readonly [newKeyName: number]: Date;\n}");
         });
     });
 
@@ -131,6 +132,22 @@ describe(nameof(IndexSignatureDeclaration), () => {
 
         it("should set the return type", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "Date", "interface Identifier { [keyName: string]: Date; }");
+        });
+    });
+
+    describe(nameof<IndexSignatureDeclaration>(n => n.setIsReadonly), () => {
+        function doTest(code: string, value: boolean, expectedCode: string) {
+            const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
+            firstIndexSignature.setIsReadonly(value);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should set as readonly", () => {
+            doTest("interface Identifier { [keyName: string]: number; }", true, "interface Identifier { readonly [keyName: string]: number; }");
+        });
+
+        it("should set as not readonly", () => {
+            doTest("interface Identifier { readonly [keyName: string]: number; }", false, "interface Identifier { [keyName: string]: number; }");
         });
     });
 

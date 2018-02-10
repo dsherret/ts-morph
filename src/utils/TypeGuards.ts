@@ -1569,6 +1569,7 @@ export class TypeGuards {
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.FunctionExpression:
             case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.IndexSignature:
             case ts.SyntaxKind.InterfaceDeclaration:
             case ts.SyntaxKind.PropertySignature:
             case ts.SyntaxKind.ModuleDeclaration:
@@ -1998,6 +1999,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case ts.SyntaxKind.PropertyDeclaration:
             case ts.SyntaxKind.Parameter:
+            case ts.SyntaxKind.IndexSignature:
             case ts.SyntaxKind.PropertySignature:
                 return true;
             default:
