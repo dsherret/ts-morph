@@ -53,8 +53,12 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum MyEnum {\n}\n", 0, [{ name: "myName" }], "enum MyEnum {\n    myName\n}\n");
         });
 
-        it("should insert a member with a value", () => {
+        it("should insert a member with a number value", () => {
             doTest("enum MyEnum {\n}\n", 0, [{ name: "myName", value: 5 }], "enum MyEnum {\n    myName = 5\n}\n");
+        });
+
+        it("should insert a member with a string value", () => {
+            doTest("enum MyEnum {\n}\n", 0, [{ name: "myName", value: "str" }], "enum MyEnum {\n    myName = \"str\"\n}\n");
         });
 
         it("should insert a member and add a comma to the previous member when no comma exists", () => {
@@ -84,7 +88,7 @@ describe(nameof(EnumDeclaration), () => {
             expect(result).to.be.instanceOf(EnumMember);
         }
 
-        it("should add a member", () => {
+        it("should insert a member", () => {
             doTest("enum MyEnum {\n    member2\n}\n", 0, { name: "member1" }, "enum MyEnum {\n    member1,\n    member2\n}\n");
         });
     });
