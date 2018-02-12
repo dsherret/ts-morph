@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.13.0"></a>
+# [6.13.0](https://github.com/dsherret/ts-simple-ast/compare/6.12.0...6.13.0) (2018-02-12)
+
+
+### Bug Fixes
+
+* Writing a statemented node would not respect the manipulation settings. ([179e327](https://github.com/dsherret/ts-simple-ast/commit/179e327))
+* Writing enum member value that's a string should be surrounded in quotes. ([d5da5b6](https://github.com/dsherret/ts-simple-ast/commit/d5da5b6))
+
+
+### Features
+
+* [#240](https://github.com/dsherret/ts-simple-ast/issues/240) - Wrap JSX nodes. ([aa4d70a](https://github.com/dsherret/ts-simple-ast/commit/aa4d70a))
+
+
+
 <a name="6.12.0"></a>
 # [6.12.0](https://github.com/dsherret/ts-simple-ast/compare/6.11.1...6.12.0) (2018-02-10)
 
