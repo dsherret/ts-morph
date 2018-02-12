@@ -8,7 +8,6 @@ import {insertIntoParent, getNextNonWhitespacePos, getPreviousMatchingPos, repla
     getTextFromFormattingEdits} from "./../../manipulation";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions} from "./../../utils";
 import {SourceFile} from "./../file";
-import * as base from "./../base";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
 import {FormatCodeSettings} from "./../tools";

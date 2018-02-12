@@ -113,7 +113,11 @@ export class CompilerFactory {
      */
     createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
-        return createTempSourceFile(filePath, sourceText, { createLanguageService, compilerOptions: this.global.compilerOptions });
+        return createTempSourceFile(filePath, sourceText, {
+            createLanguageService,
+            compilerOptions: this.global.compilerOptions,
+            manipulationSettings: this.global.manipulationSettings.get()
+        });
     }
 
     /**

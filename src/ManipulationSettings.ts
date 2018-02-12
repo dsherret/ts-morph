@@ -76,6 +76,13 @@ export class ManipulationSettingsContainer {
     }
 
     /**
+     * Gets a copy of the manipulations settings as an object.
+     */
+    get(): ManipulationSettings {
+        return {...this.settings};
+    }
+
+    /**
      * Sets one or all of the settings.
      * @param settings - Settings to set.
      */
