@@ -30,8 +30,6 @@ gulp.task("typescript", ["clean-dist"], function() {
         tsResult.js.pipe(replace(/(}\)\()(.*\|\|.*;)/g, '$1/* istanbul ignore next */$2'))
             .pipe(replace(/(var __[a-z]+ = \(this && this.__[a-z]+\))/g, '$1/* istanbul ignore next */'))
             .pipe(replace(/(if \(!exports.hasOwnProperty\(p\)\))/g, '/* istanbul ignore else */ $1'))
-            // ignore empty constructors (for mixins and static classes)
-            .pipe(replace(/(function [A-Za-z]+\(\) {[\s\n\t]+})/g, '/* istanbul ignore next */ $1'))
             .pipe(gulp.dest("./dist"))
     ]);
 });
