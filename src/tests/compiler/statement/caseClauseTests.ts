@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {CaseClause} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getCaseClause(text: string) {
-    return getInfoFromTextWithDescendant<CaseClause>(text, ts.SyntaxKind.CaseClause).descendant;
+    return getInfoFromTextWithDescendant<CaseClause>(text, SyntaxKind.CaseClause).descendant;
 }
 
 describe(nameof(CaseClause), () => {

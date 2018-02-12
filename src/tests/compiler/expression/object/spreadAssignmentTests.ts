@@ -1,12 +1,12 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {SpreadAssignment} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {
         const opts = getInfoFromText(text);
-        const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.SpreadAssignment) as SpreadAssignment;
+        const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.SpreadAssignment) as SpreadAssignment;
         return {
             spreadAssignment,
             ...opts

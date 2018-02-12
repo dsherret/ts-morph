@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {TupleTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(TupleTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<TupleTypeNode>(text, ts.SyntaxKind.TupleType);
+        return getInfoFromTextWithDescendant<TupleTypeNode>(text, SyntaxKind.TupleType);
     }
 
     describe(nameof<TupleTypeNode>(d => d.getElementTypeNodes), () => {

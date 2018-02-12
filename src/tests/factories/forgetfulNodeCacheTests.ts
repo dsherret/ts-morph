@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {expect} from "chai";
 import {ArrayUtils} from "./../../utils";
 import {getInfoFromText} from "./../compiler/testHelpers";
@@ -11,11 +11,11 @@ describe(nameof(ForgetfulNodeCache), () => {
         cache.getOrCreate(firstChild.compilerNode, () => firstChild);
 
         cache.setForgetPoint();
-        const classKeyword = firstChild.getFirstChildByKindOrThrow(ts.SyntaxKind.ClassKeyword);
+        const classKeyword = firstChild.getFirstChildByKindOrThrow(SyntaxKind.ClassKeyword);
         cache.getOrCreate(classKeyword.compilerNode, () => classKeyword);
 
         cache.setForgetPoint();
-        const openBraceToken = firstChild.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
+        const openBraceToken = firstChild.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
         cache.getOrCreate(openBraceToken.compilerNode, () => openBraceToken);
 
         cache.forgetLastPoint();
@@ -24,7 +24,7 @@ describe(nameof(ForgetfulNodeCache), () => {
         expect(firstChild.wasForgotten()).to.be.false;
 
         cache.setForgetPoint();
-        const closeBraceToken = firstChild.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseBraceToken);
+        const closeBraceToken = firstChild.getFirstChildByKindOrThrow(SyntaxKind.CloseBraceToken);
         cache.getOrCreate(closeBraceToken.compilerNode, () => closeBraceToken);
 
         cache.forgetLastPoint();

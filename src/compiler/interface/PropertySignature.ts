@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {removeInterfaceMember} from "./../../manipulation";
 import {PropertySignatureStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";

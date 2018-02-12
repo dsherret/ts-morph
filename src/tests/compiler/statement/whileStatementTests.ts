@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {WhileStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<WhileStatement>(text, ts.SyntaxKind.WhileStatement).descendant;
+    return getInfoFromTextWithDescendant<WhileStatement>(text, SyntaxKind.WhileStatement).descendant;
 }
 
 describe(nameof(WhileStatement), () => {

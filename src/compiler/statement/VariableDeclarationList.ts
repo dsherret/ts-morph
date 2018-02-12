@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
@@ -38,11 +38,11 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
         const declarationType = this.getDeclarationType();
         switch (declarationType) {
             case VariableDeclarationType.Const:
-                return this.getFirstChildByKindOrThrow(ts.SyntaxKind.ConstKeyword);
+                return this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword);
             case VariableDeclarationType.Let:
-                return this.getFirstChildByKindOrThrow(ts.SyntaxKind.LetKeyword);
+                return this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword);
             case VariableDeclarationType.Var:
-                return this.getFirstChildByKindOrThrow(ts.SyntaxKind.VarKeyword);
+                return this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword);
             default:
                 throw errors.getNotImplementedForNeverValueError(declarationType);
         }
@@ -114,7 +114,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
         });
 
         insertIntoCommaSeparatedNodes({
-            parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+            parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             currentNodes: this.getDeclarations(),
             insertIndex: index,
             newTexts: texts

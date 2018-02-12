@@ -1,6 +1,7 @@
-﻿import * as path from "path";
-import * as ts from "typescript";
+﻿import * as compilerApi from "typescript";
+import * as path from "path";
 import {expect} from "chai";
+import {ts, SyntaxKind, CompilerOptions} from "./../typescript";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "./../compiler";
 import {VirtualFileSystemHost} from "./../fileSystem";
 import {TsSimpleAst} from "./../TsSimpleAst";
@@ -10,7 +11,7 @@ import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
 
 console.log("");
-console.log("TypeScript version: " + ts.version);
+console.log("TypeScript version: " + compilerApi.version);
 
 describe(nameof(TsSimpleAst), () => {
     describe("constructor", () => {
@@ -439,7 +440,7 @@ describe(nameof(TsSimpleAst), () => {
     });
 
     describe(nameof<TsSimpleAst>(ast => ast.emit), () => {
-        function setup(compilerOptions: ts.CompilerOptions) {
+        function setup(compilerOptions: CompilerOptions) {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst({ compilerOptions }, fileSystem);
             ast.createSourceFile("file1.ts", "const num1 = 1;");
@@ -589,7 +590,7 @@ describe(nameof(TsSimpleAst), () => {
                     remember2(interfaceNode3, interfaceNode4);
                 });
 
-                namespaceKeywordNode = namespaceNode.getFirstChildByKindOrThrow(ts.SyntaxKind.NamespaceKeyword);
+                namespaceKeywordNode = namespaceNode.getFirstChildByKindOrThrow(SyntaxKind.NamespaceKeyword);
                 interfaceNode1 = namespaceNode.getInterfaceOrThrow("Interface1");
                 remember(interfaceNode1);
             });

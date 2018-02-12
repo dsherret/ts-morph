@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {getInfoFromText} from "./../compiler/testHelpers";
 
@@ -40,18 +40,18 @@ describe("helpers", () => {
         const {firstChild} = getInfoFromText("class Identifier {}");
 
         it("should throw when not the expected syntax kind and no message is specified", () => {
-            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.AbstractKeyword))
-                .to.throw(errors.NotImplementedError, `Expected node to be syntax kind ${ts.SyntaxKind[ts.SyntaxKind.AbstractKeyword]}, but was ` +
-                    `${ts.SyntaxKind[ts.SyntaxKind.ClassDeclaration]}.`);
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, SyntaxKind.AbstractKeyword))
+                .to.throw(errors.NotImplementedError, `Expected node to be syntax kind ${SyntaxKind[SyntaxKind.AbstractKeyword]}, but was ` +
+                    `${SyntaxKind[SyntaxKind.ClassDeclaration]}.`);
         });
 
         it("should throw when not the expected syntax kind and a message is specified", () => {
-            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.AbstractKeyword, "message"))
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, SyntaxKind.AbstractKeyword, "message"))
                 .to.throw(errors.NotImplementedError, "message");
         });
 
         it("should not throw when is the expected syntax kind", () => {
-            expect(() => errors.throwIfNotSyntaxKind(firstChild, ts.SyntaxKind.ClassDeclaration))
+            expect(() => errors.throwIfNotSyntaxKind(firstChild, SyntaxKind.ClassDeclaration))
                 .to.not.throw();
         });
     });
@@ -115,7 +115,7 @@ describe("helpers", () => {
     });
 
     describe(nameof(errors.getNotImplementedForSyntaxKindError), () => {
-        const result = errors.getNotImplementedForSyntaxKindError(ts.SyntaxKind.EnumDeclaration);
+        const result = errors.getNotImplementedForSyntaxKindError(SyntaxKind.EnumDeclaration);
 
         it("should return a NotImplementedError", () => {
             expect(result).to.be.instanceOf(errors.NotImplementedError);

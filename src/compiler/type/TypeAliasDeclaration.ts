@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {TypeAliasDeclarationStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Statement} from "./../statement";

@@ -1,6 +1,6 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
 import {TypeParameterDeclarationStructure, TypeParameteredNodeStructure} from "./../../../structures";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration, CallSignatureDeclaration} from "./../../../compiler";
 import {getInfoFromText, getInfoFromTextWithDescendant} from "./../testHelpers";
 
@@ -92,7 +92,7 @@ describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(n => n.insertTypeParameter), () => {
         it("should insert when none exists for a call signature declaration", () => {
             const startCode = "interface Identifier {\n    (): void;\n}\n";
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<CallSignatureDeclaration>(startCode, ts.SyntaxKind.CallSignature);
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<CallSignatureDeclaration>(startCode, SyntaxKind.CallSignature);
             descendant.insertTypeParameter(0, { name: "T" });
             expect(sourceFile.getFullText()).to.equal("interface Identifier {\n    <T>(): void;\n}\n");
         });

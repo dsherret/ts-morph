@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
@@ -30,10 +30,17 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     }
 
     /**
+     * Gets the name of the import specifier.
+     */
+    getName() {
+        return this.getNameNode().getText();
+    }
+
+    /**
      * Gets the name node of what's being imported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier) as Identifier;
+        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier) as Identifier;
     }
 
     /**
@@ -62,7 +69,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the alias identifier, if it exists.
      */
     getAliasIdentifier() {
-        const asKeyword = this.getFirstChildByKind(ts.SyntaxKind.AsKeyword);
+        const asKeyword = this.getFirstChildByKind(SyntaxKind.AsKeyword);
         if (asKeyword == null)
             return undefined;
         const aliasIdentifier = asKeyword.getNextSibling();
@@ -75,7 +82,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the import declaration associated with this import specifier.
      */
     getImportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration) as ImportDeclaration;
     }
 
     /**

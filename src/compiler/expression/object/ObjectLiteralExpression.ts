@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../../errors";
 import {ArrayUtils} from "./../../../utils";
@@ -296,7 +296,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
         });
 
         insertIntoCommaSeparatedNodes({
-            parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+            parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             currentNodes: this.getProperties(),
             insertIndex: index,
             newTexts,

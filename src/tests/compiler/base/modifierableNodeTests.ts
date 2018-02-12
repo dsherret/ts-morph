@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ModifierableNode, ClassDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -7,22 +7,22 @@ describe(nameof(ModifierableNode), () => {
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKind), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
-            expect(firstChild.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword)).to.not.be.undefined;
+            expect(firstChild.getFirstModifierByKind(SyntaxKind.ExportKeyword)).to.not.be.undefined;
         });
 
         it("should return undefined when the modifier doesn't exist", () => {
-            expect(firstChild.getFirstModifierByKind(ts.SyntaxKind.AbstractKeyword)).to.be.undefined;
+            expect(firstChild.getFirstModifierByKind(SyntaxKind.AbstractKeyword)).to.be.undefined;
         });
     });
 
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKindOrThrow), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should return the modifier when it exists", () => {
-            expect(firstChild.getFirstModifierByKindOrThrow(ts.SyntaxKind.ExportKeyword)).to.not.be.undefined;
+            expect(firstChild.getFirstModifierByKindOrThrow(SyntaxKind.ExportKeyword)).to.not.be.undefined;
         });
 
         it("should return undefined when the modifier doesn't exist", () => {
-            expect(() => firstChild.getFirstModifierByKindOrThrow(ts.SyntaxKind.AbstractKeyword)).to.throw();
+            expect(() => firstChild.getFirstModifierByKindOrThrow(SyntaxKind.AbstractKeyword)).to.throw();
         });
     });
 
@@ -40,11 +40,11 @@ describe(nameof(ModifierableNode), () => {
 
         describe("providing syntax kind", () => {
             it("should be true when it does", () => {
-                expect(firstChild.hasModifier(ts.SyntaxKind.ExportKeyword)).to.be.true;
+                expect(firstChild.hasModifier(SyntaxKind.ExportKeyword)).to.be.true;
             });
 
             it("should be false when it doesn't", () => {
-                expect(firstChild.hasModifier(ts.SyntaxKind.AbstractKeyword)).to.be.false;
+                expect(firstChild.hasModifier(SyntaxKind.AbstractKeyword)).to.be.false;
             });
         });
     });
@@ -58,8 +58,8 @@ describe(nameof(ModifierableNode), () => {
         });
 
         it("should get the right modifiers", () => {
-            expect(modifiers[0].getKind()).to.equal(ts.SyntaxKind.ExportKeyword);
-            expect(modifiers[1].getKind()).to.equal(ts.SyntaxKind.AbstractKeyword);
+            expect(modifiers[0].getKind()).to.equal(SyntaxKind.ExportKeyword);
+            expect(modifiers[1].getKind()).to.equal(SyntaxKind.AbstractKeyword);
         });
     });
 

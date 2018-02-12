@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, CompilerOptions} from "./../../typescript";
 import {Diagnostic} from "./../../compiler";
 import {DefaultFileSystemHost, FileSystemHost} from "./../../fileSystem";
 import {FileUtils} from "./../../utils";
@@ -9,7 +9,7 @@ import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult} from 
  * @param filePath - File path to the tsconfig.json.
  * @param fileSystemHost - Optional file system host.
  */
-export function getCompilerOptionsFromTsConfig(filePath: string, fileSystemHost?: FileSystemHost): { options: ts.CompilerOptions; errors: Diagnostic[]; } {
+export function getCompilerOptionsFromTsConfig(filePath: string, fileSystemHost?: FileSystemHost): { options: CompilerOptions; errors: Diagnostic[]; } {
     // remember, this is a public function
     fileSystemHost = fileSystemHost || new DefaultFileSystemHost();
     const parseResult = getTsConfigParseResult(filePath, fileSystemHost);

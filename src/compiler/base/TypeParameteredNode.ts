@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParent} from "./../../manipulation";
@@ -109,7 +109,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             }
             else {
                 insertIntoCommaSeparatedNodes({
-                    parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeParameters,
                     insertIndex: index,
                     newTexts: typeParamCodes
@@ -144,7 +144,7 @@ function getInsertInfo(node: TypeParameteredNode & Node) {
         return { insertPos: nameNode.getEnd(), childIndex: nameNode.getChildIndex() + 1 };
     }
     else if (TypeGuards.isCallSignatureDeclaration(node) || TypeGuards.isFunctionTypeNode(node)) {
-        const openParenToken = node.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken);
+        const openParenToken = node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
         return { insertPos: openParenToken.getStart(), childIndex: openParenToken.getChildIndex() };
     }
     else

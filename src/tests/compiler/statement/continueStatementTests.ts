@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ContinueStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<ContinueStatement>(text, ts.SyntaxKind.ContinueStatement).descendant;
+    return getInfoFromTextWithDescendant<ContinueStatement>(text, SyntaxKind.ContinueStatement).descendant;
 }
 
 describe(nameof(ContinueStatement), () => {

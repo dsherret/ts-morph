@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
@@ -40,12 +40,12 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKind(kind: ts.SyntaxKind): Statement | undefined;
+    getStatementByKind(kind: SyntaxKind): Statement | undefined;
     /**
      * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKindOrThrow(kind: ts.SyntaxKind): Statement;
+    getStatementByKindOrThrow(kind: SyntaxKind): Statement;
     /**
      * Adds statements.
      * @param text - Text of the statement or statements to add.
@@ -424,7 +424,7 @@ export interface StatementedNode {
         index: number,
         childCodes: string[],
         structures: TStructure[],
-        expectedSyntaxKind: ts.SyntaxKind,
+        expectedSyntaxKind: SyntaxKind,
         withEachChild?: (child: T, index: number) => void,
         opts?: {
             previousBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean,
@@ -449,13 +449,13 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
         }
 
-        getStatementByKind(kind: ts.SyntaxKind): Statement | undefined {
+        getStatementByKind(kind: SyntaxKind): Statement | undefined {
             const statement = ArrayUtils.find(this.getCompilerStatements(), s => s.kind === kind);
             return this.getNodeFromCompilerNodeIfExists<Statement>(statement);
         }
 
-        getStatementByKindOrThrow(kind: ts.SyntaxKind): Statement {
-            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${ts.SyntaxKind[kind]}.`);
+        getStatementByKindOrThrow(kind: SyntaxKind): Statement {
+            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${SyntaxKind[kind]}.`);
         }
 
         addStatements(text: string): Statement[];
@@ -508,7 +508,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<ClassDeclaration>(index, texts, structures, ts.SyntaxKind.ClassDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<ClassDeclaration>(index, texts, structures, SyntaxKind.ClassDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
@@ -517,7 +517,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getClasses(): ClassDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ClassDeclaration) as ClassDeclaration[];
         }
 
         getClass(name: string): ClassDeclaration | undefined;
@@ -555,7 +555,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<EnumDeclaration>(index, texts, structures, ts.SyntaxKind.EnumDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<EnumDeclaration>(index, texts, structures, SyntaxKind.EnumDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
@@ -564,7 +564,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getEnums(): EnumDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.EnumDeclaration) as EnumDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.EnumDeclaration) as EnumDeclaration[];
         }
 
         getEnum(name: string): EnumDeclaration | undefined;
@@ -602,7 +602,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<FunctionDeclaration>(index, texts, structures, ts.SyntaxKind.FunctionDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<FunctionDeclaration>(index, texts, structures, SyntaxKind.FunctionDeclaration, (child, i) => {
                 // todo: remove filling when writing
                 const params = structures[i].parameters;
                 delete structures[i].parameters;
@@ -616,7 +616,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getFunctions(): FunctionDeclaration[] {
             // todo: remove type assertion
-            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.FunctionDeclaration) as FunctionDeclaration[])
+            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.FunctionDeclaration) as FunctionDeclaration[])
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
 
@@ -655,7 +655,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<InterfaceDeclaration>(index, texts, structures, ts.SyntaxKind.InterfaceDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<InterfaceDeclaration>(index, texts, structures, SyntaxKind.InterfaceDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
@@ -664,7 +664,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getInterfaces(): InterfaceDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration[];
         }
 
         getInterface(name: string): InterfaceDeclaration | undefined;
@@ -702,7 +702,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<NamespaceDeclaration>(index, texts, structures, ts.SyntaxKind.ModuleDeclaration, (child, i) => {
+            const newChildren = this._insertMainChildren<NamespaceDeclaration>(index, texts, structures, SyntaxKind.ModuleDeclaration, (child, i) => {
                 child.fill(structures[i]);
             });
 
@@ -710,7 +710,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): NamespaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ModuleDeclaration) as NamespaceDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ModuleDeclaration) as NamespaceDeclaration[];
         }
 
         getNamespace(name: string): NamespaceDeclaration | undefined;
@@ -749,7 +749,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return writer.toString();
             });
             const newChildren = this._insertMainChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>(
-                index, texts, structures, ts.SyntaxKind.TypeAliasDeclaration, (child, i) => {
+                index, texts, structures, SyntaxKind.TypeAliasDeclaration, (child, i) => {
                     child.fill(structures[i]);
                 }, {
                     previousBlanklineWhen: previousMember => !TypeGuards.isTypeAliasDeclaration(previousMember),
@@ -762,7 +762,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getTypeAliases(): TypeAliasDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.TypeAliasDeclaration) as TypeAliasDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.TypeAliasDeclaration) as TypeAliasDeclaration[];
         }
 
         getTypeAlias(name: string): TypeAliasDeclaration | undefined;
@@ -781,7 +781,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* Variable statements */
 
         getVariableStatements(): VariableStatement[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.VariableStatement) as VariableStatement[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.VariableStatement) as VariableStatement[];
         }
 
         getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined {
@@ -812,7 +812,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<VariableStatement>(index, texts, structures, ts.SyntaxKind.VariableStatement, (child, i) => {
+            const newChildren = this._insertMainChildren<VariableStatement>(index, texts, structures, SyntaxKind.VariableStatement, (child, i) => {
                 const structure = {...structures[i]};
                 delete structure.declarations;
                 delete structure.declarationType;
@@ -901,7 +901,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             index: number,
             childCodes: string[],
             structures: TStructure[],
-            expectedSyntaxKind: ts.SyntaxKind,
+            expectedSyntaxKind: SyntaxKind,
             withEachChild?: ((child: U, index: number) => void),
             opts: {
                 previousBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean,
@@ -911,7 +911,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         ) {
             const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
-            const newLineChar = this.global.manipulationSettings.getNewLineKind();
+            const newLineChar = this.global.manipulationSettings.getNewLineKindAsString();
             index = verifyAndGetIndex(index, mainChildren.length);
 
             // insert into a temp file

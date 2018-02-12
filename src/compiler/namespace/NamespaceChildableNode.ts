@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {Node} from "./../common";
 import {NamespaceDeclaration} from "./NamespaceDeclaration";
@@ -16,10 +16,10 @@ export function NamespaceChildableNode<T extends Constructor<NamespaceChildableN
     return class extends Base implements NamespaceChildableNode {
         getParentNamespace() {
             let parent = this.getParentOrThrow();
-            if (parent.getKind() !== ts.SyntaxKind.ModuleBlock)
+            if (parent.getKind() !== SyntaxKind.ModuleBlock)
                 return undefined;
 
-            while (parent.getParentOrThrow().getKind() === ts.SyntaxKind.ModuleDeclaration)
+            while (parent.getParentOrThrow().getKind() === SyntaxKind.ModuleDeclaration)
                 parent = parent.getParentOrThrow();
 
             return parent as NamespaceDeclaration;

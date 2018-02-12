@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {PropertyNamedNodeStructure} from "./../../../structures";

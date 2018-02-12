@@ -1,5 +1,4 @@
-﻿import * as ts from "typescript";
-import {Node, PropertySignature, Identifier, InterfaceDeclaration} from "./../../../src/main";
+﻿import {Node, PropertySignature, Identifier, InterfaceDeclaration, ts, SyntaxKind} from "./../../../src/main";
 import {Memoize, ArrayUtils} from "./../../../src/utils";
 import {WrapperFactory} from "./../WrapperFactory";
 import {TsNode} from "./TsNode";
@@ -13,7 +12,7 @@ export class TsNodeProperty {
     }
 
     getTsNode(): TsNode {
-        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(ts.SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration);
+        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration);
     }
 
     @Memoize

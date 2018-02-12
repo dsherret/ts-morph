@@ -1,6 +1,5 @@
-﻿/* barrel:ignore */
-import * as ts from "typescript";
 import * as errors from "./../errors";
+import {ts, SyntaxKind} from "./../typescript";
 import {Node} from "./../compiler";
 import {KeyValueCache, createHashSet, HashSet} from "./../utils";
 
@@ -55,7 +54,7 @@ export class ForgetfulNodeCache extends KeyValueCache<ts.Node, Node> {
 
     private forgetNodes(nodes: IterableIterator<Node>) {
         for (const node of nodes) {
-            if (node.wasForgotten() || node.getKind() === ts.SyntaxKind.SourceFile)
+            if (node.wasForgotten() || node.getKind() === SyntaxKind.SourceFile)
                 continue;
             node.forgetOnlyThis();
         }

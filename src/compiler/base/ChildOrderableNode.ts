@@ -1,5 +1,4 @@
-﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
+﻿import * as errors from "./../../errors";
 import {changeChildOrder, getGeneralFormatting} from "./../../manipulation";
 import {Constructor} from "./../../Constructor";
 import {Node} from "./../common";

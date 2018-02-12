@@ -1,3 +1,4 @@
+export * from "./typescript";
 export * from "./compiler";
 export * from "./structures";
 export {TsSimpleAst as default} from "./TsSimpleAst";

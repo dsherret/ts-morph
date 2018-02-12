@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {Expression} from "./../expression";
 import {Node} from "./../common";

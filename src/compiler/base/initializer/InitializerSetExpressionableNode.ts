@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {InitializerSetExpressionableNodeStructure} from "./../../../structures";
@@ -28,7 +28,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             const initializer = this.getInitializer();
             if (initializer == null)
                 return this;
-            const previousSibling = initializer.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.FirstAssignment);
+            const previousSibling = initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstAssignment);
 
             removeChildren({
                 children: [previousSibling, initializer],
@@ -43,7 +43,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             if (this.hasInitializer())
                 this.removeInitializer();
 
-            const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
+            const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
 
             insertIntoParent({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),

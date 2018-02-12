@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {LeftHandSideExpressionedNode} from "./expressioned";
 import {Node} from "./../common";
 import {PrimaryExpression} from "./PrimaryExpression";

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, DiagnosticCategory} from "./../../../typescript";
 import {SourceFile} from "./../../../compiler";
 import {GlobalContainer} from "./../../../GlobalContainer";
 import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
@@ -63,7 +63,7 @@ export class Diagnostic {
     /**
      * Gets the diagnostic category.
      */
-    getCategory(): ts.DiagnosticCategory {
+    getCategory(): DiagnosticCategory {
         return this.compilerObject.category;
     }
 

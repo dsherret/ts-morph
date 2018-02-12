@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {EnumDeclaration, InitializerGetExpressionableNode, Expression} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
@@ -61,34 +61,34 @@ describe(nameof(InitializerGetExpressionableNode), () => {
     describe(nameof<InitializerGetExpressionableNode>(n => n.getInitializerIfKind), () => {
         it("should get when the initializer of kind exists", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
-            expect(member.getInitializerIfKind(ts.SyntaxKind.NumericLiteral)!.getText()).to.equal("4");
+            expect(member.getInitializerIfKind(SyntaxKind.NumericLiteral)!.getText()).to.equal("4");
         });
 
         it("should be undefined when the initializer of kind does not exists", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
-            expect(member.getInitializerIfKind(ts.SyntaxKind.ObjectLiteralExpression)).to.be.undefined;
+            expect(member.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression)).to.be.undefined;
         });
 
         it("should be undefined when the initializer doesn't exist", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember }");
-            expect(member.getInitializerIfKind(ts.SyntaxKind.ObjectLiteralExpression)).to.be.undefined;
+            expect(member.getInitializerIfKind(SyntaxKind.ObjectLiteralExpression)).to.be.undefined;
         });
     });
 
     describe(nameof<InitializerGetExpressionableNode>(n => n.getInitializerIfKindOrThrow), () => {
         it("should get when the initializer of kind exists", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
-            expect(member.getInitializerIfKindOrThrow(ts.SyntaxKind.NumericLiteral).getText()).to.equal("4");
+            expect(member.getInitializerIfKindOrThrow(SyntaxKind.NumericLiteral).getText()).to.equal("4");
         });
 
         it("should throw when the initializer of kind does not exists", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember = 4 }");
-            expect(() => member.getInitializerIfKindOrThrow(ts.SyntaxKind.ObjectLiteralExpression)).to.throw();
+            expect(() => member.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)).to.throw();
         });
 
         it("should be undefined when the initializer doesn't exist", () => {
             const {member} = getEnumMemberFromText("enum MyEnum { myMember }");
-            expect(() => member.getInitializerIfKindOrThrow(ts.SyntaxKind.ObjectLiteralExpression)).to.throw();
+            expect(() => member.getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)).to.throw();
         });
     });
 });

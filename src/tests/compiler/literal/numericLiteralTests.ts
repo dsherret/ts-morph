@@ -1,12 +1,12 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {InterfaceDeclaration, NumericLiteral} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(NumericLiteral), () => {
     describe(nameof<NumericLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, expectedValue: number) {
-            const {descendant} = getInfoFromTextWithDescendant<NumericLiteral>(text, ts.SyntaxKind.NumericLiteral);
+            const {descendant} = getInfoFromTextWithDescendant<NumericLiteral>(text, SyntaxKind.NumericLiteral);
             expect(descendant.getLiteralValue()).to.equal(expectedValue);
         }
 

@@ -1,9 +1,9 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
 import * as errors from "./../../../errors";
+import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "./../../../typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
     FileSystemRefreshResult} from "./../../../compiler";
-import {IndentationText, ManipulationSettings, NewLineKind} from "./../../../ManipulationSettings";
+import {IndentationText, ManipulationSettings} from "./../../../ManipulationSettings";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
@@ -593,12 +593,12 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.getLanguageVariant), () => {
         it("should return standard when in a ts file", () => {
             const {sourceFile} = getInfoFromText("");
-            expect(sourceFile.getLanguageVariant()).to.equal(ts.LanguageVariant.Standard);
+            expect(sourceFile.getLanguageVariant()).to.equal(LanguageVariant.Standard);
         });
 
         it("should return jsx when in a tsx file", () => {
             const {sourceFile} = getInfoFromText("", { filePath: "file.tsx" });
-            expect(sourceFile.getLanguageVariant()).to.equal(ts.LanguageVariant.JSX);
+            expect(sourceFile.getLanguageVariant()).to.equal(LanguageVariant.JSX);
         });
     });
 
@@ -620,7 +620,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
         it("should get the emit output for the source file", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ts.ScriptTarget.ES5 } });
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 } });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput();
 
@@ -632,7 +632,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ts.ScriptTarget.ES5 } });
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 } });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 

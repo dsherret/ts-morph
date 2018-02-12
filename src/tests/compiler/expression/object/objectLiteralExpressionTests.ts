@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, MethodDeclaration,
     GetAccessorDeclaration, SetAccessorDeclaration} from "./../../../../compiler";
 import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, GetAccessorDeclarationStructure,
@@ -9,7 +9,7 @@ import {getInfoFromText} from "./../../testHelpers";
 describe(nameof(ObjectLiteralExpression), () => {
     function getObjectLiteralExpression(text: string) {
         const opts = getInfoFromText(text);
-        const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.ObjectLiteralExpression) as ObjectLiteralExpression;
+        const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression) as ObjectLiteralExpression;
         return {
             objectLiteralExpression,
             ...opts
@@ -42,7 +42,7 @@ describe(nameof(ObjectLiteralExpression), () => {
 
         it("should get the property by a find function", () => {
             const {objectLiteralExpression} = getObjectLiteralExpression("const t = { prop: 5 }");
-            const property = objectLiteralExpression.getProperty(p => p.getKind() === ts.SyntaxKind.PropertyAssignment);
+            const property = objectLiteralExpression.getProperty(p => p.getKind() === SyntaxKind.PropertyAssignment);
             expect(property!.getText()).to.equal("prop: 5");
         });
     });
@@ -61,7 +61,7 @@ describe(nameof(ObjectLiteralExpression), () => {
 
         it("should get the property by a find function", () => {
             const {objectLiteralExpression} = getObjectLiteralExpression("const t = { prop: 5 }");
-            const property = objectLiteralExpression.getPropertyOrThrow(p => p.getKind() === ts.SyntaxKind.PropertyAssignment);
+            const property = objectLiteralExpression.getPropertyOrThrow(p => p.getKind() === SyntaxKind.PropertyAssignment);
             expect(property.getText()).to.equal("prop: 5");
         });
     });

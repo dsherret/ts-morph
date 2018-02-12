@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {Node, Identifier} from "./../../common";
@@ -23,7 +23,7 @@ export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtension
             const compilerNameNode = this.compilerNode.name;
 
             switch (compilerNameNode.kind) {
-                case ts.SyntaxKind.Identifier:
+                case SyntaxKind.Identifier:
                     return this.getNodeFromCompilerNode<Identifier>(compilerNameNode);
                 /* istanbul ignore next */
                 default:

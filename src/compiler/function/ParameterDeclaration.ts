@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node} from "./../common";
 import {insertIntoParent, removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {ParameterDeclarationStructure} from "./../../structures";

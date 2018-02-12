@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {IntersectionTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(IntersectionTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<IntersectionTypeNode>(text, ts.SyntaxKind.IntersectionType);
+        return getInfoFromTextWithDescendant<IntersectionTypeNode>(text, SyntaxKind.IntersectionType);
     }
 
     describe(nameof<IntersectionTypeNode>(d => d.getTypeNodes), () => {

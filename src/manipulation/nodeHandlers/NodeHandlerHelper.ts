@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node, SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
 import {AdvancedIterator} from "./../../utils";
@@ -11,7 +11,7 @@ export class NodeHandlerHelper {
     handleForValues(handler: NodeHandler, currentNode: ts.Node, newNode: Node) {
         if (this.compilerFactory.hasCompilerNode(currentNode))
             handler.handleNode(this.compilerFactory.getExistingCompilerNode(currentNode)!, newNode);
-        else if (currentNode.kind === ts.SyntaxKind.SyntaxList) {
+        else if (currentNode.kind === SyntaxKind.SyntaxList) {
             // always handle syntax lists because their children might be in the cache
             // todo: pass this in for performance reasons
             const sourceFile = this.compilerFactory.getExistingCompilerNode(currentNode.getSourceFile())! as SourceFile;

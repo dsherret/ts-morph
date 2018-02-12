@@ -1,11 +1,10 @@
-﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
+import {ts, SyntaxKind, NewLineKind} from "./../../../typescript";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
     SourceFile, FormatCodeSettings} from "./../../../compiler";
 import * as errors from "./../../../errors";
 import {TypeGuards} from "./../../../utils";
-import {NewLineKind} from "./../../../ManipulationSettings";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Node), () => {
@@ -39,7 +38,7 @@ describe(nameof(Node), () => {
     describe(nameof<Node>(n => n.getKind), () => {
         it("should return the syntax kind", () => {
             const {firstChild} = getInfoFromText("enum MyEnum {}");
-            expect(firstChild.getKind()).to.equal(ts.SyntaxKind.EnumDeclaration);
+            expect(firstChild.getKind()).to.equal(SyntaxKind.EnumDeclaration);
         });
     });
 
@@ -130,11 +129,11 @@ describe(nameof(Node), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node if its the specified syntax kind", () => {
-            expect(firstChild.getFirstChildIfKind(ts.SyntaxKind.EnumKeyword)!.getText()).to.equal("enum");
+            expect(firstChild.getFirstChildIfKind(SyntaxKind.EnumKeyword)!.getText()).to.equal("enum");
         });
 
         it("should return undefined when the specified syntax kind isn't the first child", () => {
-            expect(firstChild.getFirstChildIfKind(ts.SyntaxKind.AbstractKeyword)).to.be.undefined;
+            expect(firstChild.getFirstChildIfKind(SyntaxKind.AbstractKeyword)).to.be.undefined;
         });
     });
 
@@ -142,11 +141,11 @@ describe(nameof(Node), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node if its the specified syntax kind", () => {
-            expect(firstChild.getFirstChildIfKindOrThrow(ts.SyntaxKind.EnumKeyword).getText()).to.equal("enum");
+            expect(firstChild.getFirstChildIfKindOrThrow(SyntaxKind.EnumKeyword).getText()).to.equal("enum");
         });
 
         it("should return undefined when the specified syntax kind isn't the first child", () => {
-            expect(() => firstChild.getFirstChildIfKindOrThrow(ts.SyntaxKind.AbstractKeyword)).to.throw();
+            expect(() => firstChild.getFirstChildIfKindOrThrow(SyntaxKind.AbstractKeyword)).to.throw();
         });
     });
 
@@ -154,11 +153,11 @@ describe(nameof(Node), () => {
         const {firstChild} = getInfoFromText("enum MyEnum {}");
 
         it("should return the first node of the specified syntax kind", () => {
-            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.OpenBraceToken)!.getText()).to.equal("{");
+            expect(firstChild.getFirstChildByKind(SyntaxKind.OpenBraceToken)!.getText()).to.equal("{");
         });
 
         it("should return undefined when the specified syntax kind doesn't exist", () => {
-            expect(firstChild.getFirstChildByKind(ts.SyntaxKind.ClassDeclaration)).to.be.undefined;
+            expect(firstChild.getFirstChildByKind(SyntaxKind.ClassDeclaration)).to.be.undefined;
         });
     });
 
@@ -176,11 +175,11 @@ describe(nameof(Node), () => {
         });
 
         it("should return the child at the specified position", () => {
-            expect(syntaxList.getChildAtPos(1)!.getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
+            expect(syntaxList.getChildAtPos(1)!.getKind()).to.equal(SyntaxKind.FunctionDeclaration);
         });
 
         it("should return only a child and not a descendant", () => {
-            expect(syntaxList.getChildAtPos(variableStatement.getPos())!.getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
+            expect(syntaxList.getChildAtPos(variableStatement.getPos())!.getKind()).to.equal(SyntaxKind.FunctionDeclaration);
         });
     });
 
@@ -197,11 +196,11 @@ describe(nameof(Node), () => {
         });
 
         it("should get the first child", () => {
-            expect(syntaxList.getChildAtIndex(0).getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+            expect(syntaxList.getChildAtIndex(0).getKind()).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should get the last child", () => {
-            expect(syntaxList.getChildAtIndex(1).getKind()).to.equal(ts.SyntaxKind.InterfaceDeclaration);
+            expect(syntaxList.getChildAtIndex(1).getKind()).to.equal(SyntaxKind.InterfaceDeclaration);
         });
     });
 
@@ -210,11 +209,11 @@ describe(nameof(Node), () => {
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
         it("should get the child at the specified index when the kind", () => {
-            expect(syntaxList.getChildAtIndexIfKind(0, ts.SyntaxKind.ClassDeclaration)!.getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+            expect(syntaxList.getChildAtIndexIfKind(0, SyntaxKind.ClassDeclaration)!.getKind()).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should be undefined when specifying the wrong kind", () => {
-            expect(syntaxList.getChildAtIndexIfKind(0, ts.SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+            expect(syntaxList.getChildAtIndexIfKind(0, SyntaxKind.InterfaceDeclaration)).to.be.undefined;
         });
     });
 
@@ -223,11 +222,11 @@ describe(nameof(Node), () => {
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
         it("should get the child at the specified index when the kind", () => {
-            expect(syntaxList.getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.ClassDeclaration).getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+            expect(syntaxList.getChildAtIndexIfKindOrThrow(0, SyntaxKind.ClassDeclaration).getKind()).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should be undefined when specifying the wrong kind", () => {
-            expect(() => syntaxList.getChildAtIndexIfKindOrThrow(0, ts.SyntaxKind.InterfaceDeclaration)).to.throw();
+            expect(() => syntaxList.getChildAtIndexIfKindOrThrow(0, SyntaxKind.InterfaceDeclaration)).to.throw();
         });
     });
 
@@ -244,15 +243,15 @@ describe(nameof(Node), () => {
         });
 
         it("should return the descendant at the specified position", () => {
-            expect(sourceFile.getDescendantAtPos(1)!.getKind()).to.equal(ts.SyntaxKind.FunctionKeyword);
+            expect(sourceFile.getDescendantAtPos(1)!.getKind()).to.equal(SyntaxKind.FunctionKeyword);
         });
 
         it("should return a very descendant descendant", () => {
-            expect(sourceFile.getDescendantAtPos(variableStatement.getPos())!.getKind()).to.equal(ts.SyntaxKind.ConstKeyword);
+            expect(sourceFile.getDescendantAtPos(variableStatement.getPos())!.getKind()).to.equal(SyntaxKind.ConstKeyword);
         });
 
         it("should return a the node at the specified pos when specifying a space", () => {
-            expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(ts.SyntaxKind.FirstPunctuation);
+            expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(SyntaxKind.FirstPunctuation);
         });
     });
 
@@ -357,11 +356,11 @@ describe(nameof(Node), () => {
         const child = firstChild.getInstanceProperty("prop")!;
 
         it("should get the parent when it's the right kind", () => {
-            expect(child.getParentIfKind(ts.SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+            expect(child.getParentIfKind(SyntaxKind.ClassDeclaration)).to.not.be.undefined;
         });
 
         it("should not get the parent when it's not the right kind", () => {
-            expect(child.getParentIfKind(ts.SyntaxKind.InterfaceDeclaration)).to.be.undefined;
+            expect(child.getParentIfKind(SyntaxKind.InterfaceDeclaration)).to.be.undefined;
         });
     });
 
@@ -370,11 +369,11 @@ describe(nameof(Node), () => {
         const child = firstChild.getInstanceProperty("prop")!;
 
         it("should get the parent when it's the right kind", () => {
-            expect(child.getParentIfKindOrThrow(ts.SyntaxKind.ClassDeclaration)).to.not.be.undefined;
+            expect(child.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration)).to.not.be.undefined;
         });
 
         it("should throw when it's not the right kind", () => {
-            expect(() => child.getParentIfKindOrThrow(ts.SyntaxKind.InterfaceDeclaration)).to.throw();
+            expect(() => child.getParentIfKindOrThrow(SyntaxKind.InterfaceDeclaration)).to.throw();
         });
     });
 
@@ -382,7 +381,7 @@ describe(nameof(Node), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
-            const topParent = deepestNode.getParentWhile(n => n.getKind() === ts.SyntaxKind.PropertyAccessExpression)!;
+            const topParent = deepestNode.getParentWhile(n => n.getKind() === SyntaxKind.PropertyAccessExpression)!;
             expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
         });
 
@@ -397,7 +396,7 @@ describe(nameof(Node), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
-            const topParent = deepestNode.getParentWhileOrThrow(n => n.getKind() === ts.SyntaxKind.PropertyAccessExpression);
+            const topParent = deepestNode.getParentWhileOrThrow(n => n.getKind() === SyntaxKind.PropertyAccessExpression);
             expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
         });
 
@@ -412,14 +411,14 @@ describe(nameof(Node), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
-            const topParent = deepestNode.getParentWhileKind(ts.SyntaxKind.PropertyAccessExpression)!;
+            const topParent = deepestNode.getParentWhileKind(SyntaxKind.PropertyAccessExpression)!;
             expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
         });
 
         it("should return undefined when the initial parent doesn't match the condition", () => {
             const {sourceFile} = getInfoFromText("const t;");
             const child = sourceFile.getVariableStatements()[0];
-            expect(child.getParentWhileKind(ts.SyntaxKind.PrivateKeyword)).to.be.undefined;
+            expect(child.getParentWhileKind(SyntaxKind.PrivateKeyword)).to.be.undefined;
         });
     });
 
@@ -427,14 +426,14 @@ describe(nameof(Node), () => {
         it("should keep getting the parent until a condition is no longer matched", () => {
             const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
             const deepestNode = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test");
-            const topParent = deepestNode.getParentWhileKindOrThrow(ts.SyntaxKind.PropertyAccessExpression);
+            const topParent = deepestNode.getParentWhileKindOrThrow(SyntaxKind.PropertyAccessExpression);
             expect(topParent.getText()).to.equal("Test.Test2.Test3.Test4");
         });
 
         it("should return undefined when the initial parent doesn't match the condition", () => {
             const {sourceFile} = getInfoFromText("const t;");
             const child = sourceFile.getVariableStatements()[0];
-            expect(() => child.getParentWhileKindOrThrow(ts.SyntaxKind.PrivateKeyword)).to.throw();
+            expect(() => child.getParentWhileKindOrThrow(SyntaxKind.PrivateKeyword)).to.throw();
         });
     });
 
@@ -443,11 +442,11 @@ describe(nameof(Node), () => {
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
         it("should get the first child by a condition", () => {
-            expect(syntaxList.getFirstChildOrThrow(n => n.getKind() === ts.SyntaxKind.InterfaceDeclaration)).to.be.instanceOf(InterfaceDeclaration);
+            expect(syntaxList.getFirstChildOrThrow(n => n.getKind() === SyntaxKind.InterfaceDeclaration)).to.be.instanceOf(InterfaceDeclaration);
         });
 
         it("should throw when it can't find the child", () => {
-            expect(() => syntaxList.getFirstChildOrThrow(n => n.getKind() === ts.SyntaxKind.IsKeyword)).to.throw();
+            expect(() => syntaxList.getFirstChildOrThrow(n => n.getKind() === SyntaxKind.IsKeyword)).to.throw();
         });
     });
 
@@ -456,12 +455,12 @@ describe(nameof(Node), () => {
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
 
         it("should get the last child by a condition", () => {
-            const interfaceDec = syntaxList.getLastChildOrThrow(n => n.getKind() === ts.SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration;
+            const interfaceDec = syntaxList.getLastChildOrThrow(n => n.getKind() === SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration;
             expect(interfaceDec.getName()).to.equal("MyInterface");
         });
 
         it("should throw when it can't find the child", () => {
-            expect(() => syntaxList.getLastChildOrThrow(n => n.getKind() === ts.SyntaxKind.IsKeyword)).to.throw();
+            expect(() => syntaxList.getLastChildOrThrow(n => n.getKind() === SyntaxKind.IsKeyword)).to.throw();
         });
     });
 
@@ -469,13 +468,13 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
-            const prop = sourceFile.getFirstDescendant(n => n.getKind() === ts.SyntaxKind.PropertySignature);
+            const prop = sourceFile.getFirstDescendant(n => n.getKind() === SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
         it("should return undefined when it can't find it", () => {
-            const privateKeyword = sourceFile.getFirstDescendant(n => n.getKind() === ts.SyntaxKind.PrivateKeyword);
+            const privateKeyword = sourceFile.getFirstDescendant(n => n.getKind() === SyntaxKind.PrivateKeyword);
             expect(privateKeyword).to.be.undefined;
         });
     });
@@ -484,13 +483,13 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
-            const prop = sourceFile.getFirstDescendantOrThrow(n => n.getKind() === ts.SyntaxKind.PropertySignature);
+            const prop = sourceFile.getFirstDescendantOrThrow(n => n.getKind() === SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
         it("should return undefined when it can't find it", () => {
-            expect(() => sourceFile.getFirstDescendantOrThrow(n => n.getKind() === ts.SyntaxKind.PrivateKeyword)).to.throw();
+            expect(() => sourceFile.getFirstDescendantOrThrow(n => n.getKind() === SyntaxKind.PrivateKeyword)).to.throw();
         });
     });
 
@@ -498,7 +497,7 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the descendant by a kind", () => {
-            const properties = sourceFile.getDescendantsOfKind(ts.SyntaxKind.PropertySignature);
+            const properties = sourceFile.getDescendantsOfKind(SyntaxKind.PropertySignature);
             expect(properties.length).to.equal(2);
             expect(properties[0]).to.be.instanceOf(PropertySignature);
             expect(properties[1]).to.be.instanceOf(PropertySignature);
@@ -509,13 +508,13 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
-            const prop = sourceFile.getFirstDescendantByKind(ts.SyntaxKind.PropertySignature);
+            const prop = sourceFile.getFirstDescendantByKind(SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
         it("should return undefined when it can't find it", () => {
-            const privateKeyword = sourceFile.getFirstDescendantByKind(ts.SyntaxKind.PrivateKeyword);
+            const privateKeyword = sourceFile.getFirstDescendantByKind(SyntaxKind.PrivateKeyword);
             expect(privateKeyword).to.be.undefined;
         });
     });
@@ -524,13 +523,13 @@ describe(nameof(Node), () => {
         const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
-            const prop = sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.PropertySignature);
+            const prop = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
         it("should return undefined when it can't find it", () => {
-            expect(() => sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.PrivateKeyword)).to.throw();
+            expect(() => sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PrivateKeyword)).to.throw();
         });
     });
 
@@ -639,7 +638,7 @@ describe(nameof(Node), () => {
     describe(nameof<Node>(n => n.isFirstNodeOnLine), () => {
         function doTest(text: string, index: number, expected: boolean) {
             const {sourceFile} = getInfoFromText(text);
-            expect(sourceFile.getFirstChildIfKindOrThrow(ts.SyntaxKind.SyntaxList).getChildren()[index].isFirstNodeOnLine()).to.equal(expected);
+            expect(sourceFile.getFirstChildIfKindOrThrow(SyntaxKind.SyntaxList).getChildren()[index].isFirstNodeOnLine()).to.equal(expected);
         }
 
         it("should be true if it is and it's on the first line", () => {

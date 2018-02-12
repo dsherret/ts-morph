@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxSelfClosingElement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfo(text: string) {
-    return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, ts.SyntaxKind.JsxSelfClosingElement, { isJsx: true });
+    return getInfoFromTextWithDescendant<JsxSelfClosingElement>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
 }
 
 describe(nameof(JsxSelfClosingElement), () => {

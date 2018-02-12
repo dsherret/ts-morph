@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 import {Diagnostic} from "./Diagnostic";
 import {GlobalContainer} from "./../../../GlobalContainer";
 import {Memoize} from "./../../../utils";

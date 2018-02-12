@@ -1,7 +1,6 @@
-﻿import * as ts from "typescript";
+import * as compilerApi from "typescript";
+import {ts, SyntaxKind, ScriptKind, ScriptTarget, NewLineKind, EmitHint} from "./../typescript";
 import {Node} from "./../compiler";
-import {newLineKindToTs} from "./newLineKindToTs";
-import {NewLineKind} from "./../ManipulationSettings";
 
 /**
  * Options for printing a node.
@@ -25,13 +24,13 @@ export interface PrintNodeOptions {
      *
      * Defaults to `Unspecified`.
      */
-    emitHint?: ts.EmitHint;
+    emitHint?: EmitHint;
     /**
      * The script kind.
      *
      * Defaults to TSX. This is only useful when not using a wrapped node and not providing a source file.
      */
-    scriptKind?: ts.ScriptKind;
+    scriptKind?: ScriptKind;
 }
 
 /**
@@ -48,36 +47,36 @@ export function printNode(node: ts.Node, options?: PrintNodeOptions): string;
  */
 export function printNode(node: ts.Node, sourceFile: ts.SourceFile, options?: PrintNodeOptions): string;
 export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions | ts.SourceFile, secondOverloadOptions?: PrintNodeOptions) {
-    const isFirstOverload = sourceFileOrOptions == null || (sourceFileOrOptions as ts.SourceFile).kind !== ts.SyntaxKind.SourceFile;
+    const isFirstOverload = sourceFileOrOptions == null || (sourceFileOrOptions as ts.SourceFile).kind !== SyntaxKind.SourceFile;
     const options = getOptions();
     const sourceFile = getSourceFile();
 
-    const printer = ts.createPrinter({
-        newLine: newLineKindToTs(options.newLineKind || NewLineKind.LineFeed),
+    const printer = compilerApi.createPrinter({
+        newLine: options.newLineKind == null ? NewLineKind.LineFeed : options.newLineKind,
         removeComments: options.removeComments || false
     });
 
     if (sourceFile == null)
         return printer.printFile(node as ts.SourceFile);
     else
-        return printer.printNode(options.emitHint || ts.EmitHint.Unspecified, node, sourceFile);
+        return printer.printNode(options.emitHint == null ? EmitHint.Unspecified : options.emitHint, node, sourceFile);
 
     function getSourceFile() {
         if (isFirstOverload) {
-            if (node.kind === ts.SyntaxKind.SourceFile)
+            if (node.kind === SyntaxKind.SourceFile)
                 return undefined;
             const scriptKind = getScriptKind();
-            return ts.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ts.ScriptTarget.Latest, false, scriptKind);
+            return compilerApi.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ScriptTarget.Latest, false, scriptKind);
         }
 
         return sourceFileOrOptions as ts.SourceFile;
 
         function getScriptKind() {
-            return options.scriptKind == null ? ts.ScriptKind.TSX : options.scriptKind;
+            return options.scriptKind == null ? ScriptKind.TSX : options.scriptKind;
         }
 
-        function getFileExt(scriptKind: ts.ScriptKind) {
-            if (scriptKind === ts.ScriptKind.JSX || scriptKind === ts.ScriptKind.TSX)
+        function getFileExt(scriptKind: ScriptKind) {
+            if (scriptKind === ScriptKind.JSX || scriptKind === ScriptKind.TSX)
                 return "tsx";
             return "ts";
         }

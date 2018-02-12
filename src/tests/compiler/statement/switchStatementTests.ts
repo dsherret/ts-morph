@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {SwitchStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<SwitchStatement>(text, ts.SyntaxKind.SwitchStatement).descendant;
+    return getInfoFromTextWithDescendant<SwitchStatement>(text, SyntaxKind.SwitchStatement).descendant;
 }
 
 describe(nameof(SwitchStatement), () => {

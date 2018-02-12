@@ -1,4 +1,3 @@
-import * as ts from "typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {AwaitableNodeStructure} from "./../../structures";
@@ -6,6 +5,7 @@ import {callBaseFill} from "./../callBaseFill";
 import {insertIntoParent, removeChildren, FormattingKind} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode} from "./../base";
+import {ts, SyntaxKind} from "./../../typescript";
 
 export type AwaitableNodeExtensionType = Node<ts.Node & { awaitModifier?: ts.AwaitKeywordToken; }>;
 
@@ -83,8 +83,8 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
 }
 
 function getAwaitInsertInfo(node: Node) {
-    if (node.getKind() === ts.SyntaxKind.ForOfStatement) {
-        const forKeyword = node.getFirstChildByKindOrThrow(ts.SyntaxKind.ForKeyword);
+    if (node.getKind() === SyntaxKind.ForOfStatement) {
+        const forKeyword = node.getFirstChildByKindOrThrow(SyntaxKind.ForKeyword);
         return {
             pos: forKeyword.getEnd(),
             childIndex: forKeyword.getChildIndex() + 1

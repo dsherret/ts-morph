@@ -1,8 +1,8 @@
-﻿import * as ts from "typescript";
-import * as errors from "./../../errors";
+﻿import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node} from "./../common";
 
 export type ArgumentedNodeExtensionType = Node<ts.Node & { arguments: ts.NodeArray<ts.Node>; }>;
@@ -76,7 +76,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             index = verifyAndGetIndex(index, args.length);
 
             insertIntoCommaSeparatedNodes({
-                parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
+                parent: this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: args,
                 insertIndex: index,
                 newTexts: argumentTexts

@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {NoSubstitutionTemplateLiteral} from "./../../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 function getLiteral(text: string) {
-    return getInfoFromTextWithDescendant<NoSubstitutionTemplateLiteral>(text, ts.SyntaxKind.NoSubstitutionTemplateLiteral).descendant;
+    return getInfoFromTextWithDescendant<NoSubstitutionTemplateLiteral>(text, SyntaxKind.NoSubstitutionTemplateLiteral).descendant;
 }
 
 describe(nameof(NoSubstitutionTemplateLiteral), () => {

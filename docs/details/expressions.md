@@ -33,8 +33,8 @@ From a given node, get all the children or descendants that are call expressions
 For example:
 
 ```ts
-const childCallExpressions = node.getChildrenOfKind(ts.SyntaxKind.CallExpression);
-const descendantCallExpressions = node.getDescendantsOfKind(ts.SyntaxKind.CallExpression);
+const childCallExpressions = node.getChildrenOfKind(SyntaxKind.CallExpression);
+const descendantCallExpressions = node.getDescendantsOfKind(SyntaxKind.CallExpression);
 ```
 
 ### Return type

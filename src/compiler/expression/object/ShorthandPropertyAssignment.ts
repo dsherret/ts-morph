@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import * as errors from "./../../../errors";
 import {insertIntoParent, removeChildren} from "./../../../manipulation";
 import {StringUtils} from "./../../../utils";
@@ -89,6 +89,6 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
             }
         });
 
-        return parent.getChildAtIndexIfKindOrThrow(childIndex, ts.SyntaxKind.PropertyAssignment) as PropertyAssignment;
+        return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.PropertyAssignment) as PropertyAssignment;
     }
 }

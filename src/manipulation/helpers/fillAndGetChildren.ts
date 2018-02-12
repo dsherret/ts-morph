@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node, SourceFile} from "./../../compiler";
 import {getRangeFromArray} from "./getRangeFromArray";
 
@@ -6,7 +6,7 @@ export interface FillAndGetChildrenOptions<TNode extends Node, TStructure> {
     sourceFile: SourceFile;
     allChildren: Node[];
     index: number;
-    expectedKind: ts.SyntaxKind;
+    expectedKind: SyntaxKind;
     structures: TStructure[];
     fillFunction?: (child: TNode, structure: TStructure) => void;
 }

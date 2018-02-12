@@ -13,7 +13,6 @@ export * from "./interface";
 export * from "./jsx";
 export * from "./literal";
 export * from "./namespace";
-export * from "./polyfills";
 export * from "./statement";
 export * from "./tools";
 export * from "./type";

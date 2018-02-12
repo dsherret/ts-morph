@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
     verifyAndGetIndex} from "./../../manipulation";
@@ -65,9 +65,9 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             return this.removeExtends();
 
         const heritageClauses = this.getHeritageClauses();
-        const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
         if (extendsClause != null) {
-            const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList);
+            const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList);
             const childSyntaxListStart = childSyntaxList.getStart();
             insertIntoParent({
                 parent: extendsClause,
@@ -83,12 +83,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             return this;
         }
 
-        const implementsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ImplementsKeyword);
+        const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
         let insertPos: number;
         if (implementsClause != null)
             insertPos = implementsClause.getStart();
         else
-            insertPos = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken).getStart();
+            insertPos = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken).getStart();
 
         const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[insertPos - 1]);
         let newText = `extends ${text} `;
@@ -111,7 +111,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Removes the extends expression, if it exists.
      */
     removeExtends() {
-        const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
         if (extendsClause == null)
             return this;
         extendsClause.removeExpression(0);
@@ -129,7 +129,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the extends expression or return sundefined if it doesn't exist.
      */
     getExtends(): ExpressionWithTypeArguments | undefined {
-        const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+        const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
         if (extendsClause == null)
             return undefined;
 
@@ -168,7 +168,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             structures: [structure],
             previousBlanklineWhen: () => true,
             nextBlanklineWhen: () => true,
-            expectedKind: ts.SyntaxKind.Constructor,
+            expectedKind: SyntaxKind.Constructor,
             fillFunction: (node, struct) => node.fill(struct)
         })[0];
     }
@@ -232,7 +232,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: () => true,
             separatorNewlineWhen: () => true,
             nextBlanklineWhen: () => true,
-            expectedKind: ts.SyntaxKind.GetAccessor,
+            expectedKind: SyntaxKind.GetAccessor,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -269,7 +269,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
 
         // create code
         const codes = structures.map(s => {
@@ -290,7 +290,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: () => true,
             separatorNewlineWhen: () => true,
             nextBlanklineWhen: () => true,
-            expectedKind: ts.SyntaxKind.SetAccessor,
+            expectedKind: SyntaxKind.SetAccessor,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -346,7 +346,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             structures,
             previousBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
             nextBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
-            expectedKind: ts.SyntaxKind.PropertyDeclaration,
+            expectedKind: SyntaxKind.PropertyDeclaration,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -461,7 +461,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
         const indentationText = this.getChildIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
         const isAmbient = this.isAmbient();
 
         // create code
@@ -484,7 +484,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             previousBlanklineWhen: () => !isAmbient,
             nextBlanklineWhen: () => !isAmbient,
             separatorNewlineWhen: () => !isAmbient,
-            expectedKind: ts.SyntaxKind.MethodDeclaration,
+            expectedKind: SyntaxKind.MethodDeclaration,
             fillFunction: (node, structure) => {
                 // todo: remove filling when writing
                 const params = structure.parameters;
@@ -697,7 +697,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             .filter(s => s != null)
             .map(s => s!.getDeclarations())
             .reduce((a, b) => a.concat(b), [])
-            .filter(d => d.getKind() === ts.SyntaxKind.ClassDeclaration);
+            .filter(d => d.getKind() === SyntaxKind.ClassDeclaration);
         if (declarations.length !== 1)
             return undefined;
         return declarations[0] as ClassDeclaration;
@@ -729,13 +729,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 if (ref.isDefinition())
                     continue;
                 const node = ref.getNode();
-                const nodeParent = node.getParentIfKind(ts.SyntaxKind.ExpressionWithTypeArguments);
+                const nodeParent = node.getParentIfKind(SyntaxKind.ExpressionWithTypeArguments);
                 if (nodeParent == null)
                     continue;
-                const heritageClause = nodeParent.getParentIfKind(ts.SyntaxKind.HeritageClause) as HeritageClause;
-                if (heritageClause == null || heritageClause.getToken() !== ts.SyntaxKind.ExtendsKeyword)
+                const heritageClause = nodeParent.getParentIfKind(SyntaxKind.HeritageClause) as HeritageClause;
+                if (heritageClause == null || heritageClause.getToken() !== SyntaxKind.ExtendsKeyword)
                     continue;
-                classes.push(heritageClause.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ClassDeclaration) as ClassDeclaration);
+                classes.push(heritageClause.getFirstAncestorByKindOrThrow(SyntaxKind.ClassDeclaration) as ClassDeclaration);
             }
         }
 

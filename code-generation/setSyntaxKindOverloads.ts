@@ -5,14 +5,14 @@
  *
  * For example the following method declaration in the definition file:
  *
- *     getFirstChildByKind(kind: ts.SyntaxKind): Node | undefined;
+ *     getFirstChildByKind(kind: SyntaxKind): Node | undefined;
  *
  * Would cause a large amount of specific overloads to be added for each literal and the coresponding wrapped node so people don't need to bother casting:
  *
- *     getFirstChildByKind(kind: ts.SyntaxKind.ArrowFunction): ArrowFunction | undefined;
- *     getFirstChildByKind(kind: ts.SyntaxKind.AsExpression): AsExpression | undefined;
+ *     getFirstChildByKind(kind: SyntaxKind.ArrowFunction): ArrowFunction | undefined;
+ *     getFirstChildByKind(kind: SyntaxKind.AsExpression): AsExpression | undefined;
  *     // ...repeat with all the wrapped nodes...
- *     getFirstChildByKind(kind: ts.SyntaxKind): Node | undefined;
+ *     getFirstChildByKind(kind: SyntaxKind): Node | undefined;
  *
  * ----------------------------------------------
  */
@@ -61,7 +61,7 @@ function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {
     const syntaxKindMethods: MethodDeclaration[] = [];
 
     ast.forgetNodesCreatedInBlock(remember => {
-        const methods = classDec.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
+        const methods = classDec.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "SyntaxKind"));
         remember(...methods);
         syntaxKindMethods.push(...methods);
     });
@@ -79,7 +79,7 @@ function setInterfaceSyntaxKindOverloads(interfaceDec: InterfaceDeclaration) {
     const syntaxKindMethods: MethodSignature[] = [];
 
     ast.forgetNodesCreatedInBlock(remember => {
-        const methods = interfaceDec.getMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "ts.SyntaxKind"));
+        const methods = interfaceDec.getMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "SyntaxKind"));
         remember(...methods);
         syntaxKindMethods.push(...methods);
     });
@@ -109,7 +109,7 @@ function getMethodStructures(method: MethodDeclaration | MethodSignature) {
             continue;
 
         for (const syntaxKindName of nodeToWrapper.syntaxKindNames) {
-            const typeText = `ts.SyntaxKind.${syntaxKindName}`;
+            const typeText = `SyntaxKind.${syntaxKindName}`;
 
             const methodStructure = {
                 name: method.getName(),
@@ -123,7 +123,7 @@ function getMethodStructures(method: MethodDeclaration | MethodSignature) {
                 const type = param.getTypeNodeOrThrow().getText();
                 methodStructure.parameters.push({
                     name,
-                    type: type === "ts.SyntaxKind" ? `ts.SyntaxKind.${syntaxKindName}` : type
+                    type: type === "SyntaxKind" ? `SyntaxKind.${syntaxKindName}` : type
                 });
             }
             structures.push(methodStructure);

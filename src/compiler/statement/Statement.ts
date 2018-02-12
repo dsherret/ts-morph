@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {removeStatementedNodeChild} from "./../../manipulation";
 import {Type} from "./../type";
 import {Node} from "../common";

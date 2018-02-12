@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import * as errors from "./../../errors";
 import {Block} from "./Block";
 import {CatchClause} from "./CatchClause";

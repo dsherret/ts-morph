@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxOpeningElement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfo(text: string) {
-    return getInfoFromTextWithDescendant<JsxOpeningElement>(text, ts.SyntaxKind.JsxOpeningElement, { isJsx: true });
+    return getInfoFromTextWithDescendant<JsxOpeningElement>(text, SyntaxKind.JsxOpeningElement, { isJsx: true });
 }
 
 describe(nameof(JsxOpeningElement), () => {

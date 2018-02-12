@@ -7,8 +7,7 @@ title: Manipulation Settings
 The manipulation settings can be set when creating the main AST object:
 
 ```ts
-import * as ts from "typescript";
-import TsSimpleAst, {QuoteType, NewLineKind, IndentationText} from "ts-simple-ast";
+import TsSimpleAst, {QuoteType, NewLineKind, IndentationText, ScriptTarget} from "ts-simple-ast";
 
 const ast = new TsSimpleAst({
     // these are the defaults
@@ -18,7 +17,7 @@ const ast = new TsSimpleAst({
         // LineFeed or CarriageReturnLineFeed
         newLineKind: NewLineKind.LineFeed,
         // defines what ts.ScriptTarget source files are created with
-        scriptTarget: ts.ScriptTarget.Latest,
+        scriptTarget: ScriptTarget.Latest,
         // Single or Double
         quoteType: QuoteType.Double
     }

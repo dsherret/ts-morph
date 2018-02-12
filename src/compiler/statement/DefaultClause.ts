@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {removeClausedNodeChild} from "./../../manipulation";
 import {Expression} from "./../expression";
 import {Node} from "./../common";

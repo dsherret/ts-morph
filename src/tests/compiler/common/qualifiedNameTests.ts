@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {TypeReferenceNode, VariableDeclaration, QualifiedName} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -8,7 +8,7 @@ describe(nameof(QualifiedName), () => {
         const {sourceFile} = getInfoFromText(text);
         const typeRefNode = sourceFile.getVariableDeclarations()[0].getTypeNodeOrThrow() as TypeReferenceNode;
         const qualifiedName = typeRefNode.getTypeName() as QualifiedName;
-        expect(qualifiedName.getKind()).to.equal(ts.SyntaxKind.QualifiedName);
+        expect(qualifiedName.getKind()).to.equal(SyntaxKind.QualifiedName);
         return qualifiedName;
     }
 
@@ -25,9 +25,9 @@ describe(nameof(QualifiedName), () => {
             expect(qualifiedName.getLeft().getText()).to.equal("Some.Qualified");
             const leftQualifiedName = qualifiedName.getLeft() as QualifiedName;
             expect(leftQualifiedName.getRight().getText()).to.equal("Qualified");
-            expect(leftQualifiedName.getRight().getKind()).to.equal(ts.SyntaxKind.Identifier);
+            expect(leftQualifiedName.getRight().getKind()).to.equal(SyntaxKind.Identifier);
             expect(leftQualifiedName.getLeft().getText()).to.equal("Some");
-            expect(leftQualifiedName.getLeft().getKind()).to.equal(ts.SyntaxKind.Identifier);
+            expect(leftQualifiedName.getLeft().getKind()).to.equal(SyntaxKind.Identifier);
         });
     });
 });

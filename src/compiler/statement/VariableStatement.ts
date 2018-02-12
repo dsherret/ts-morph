@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";

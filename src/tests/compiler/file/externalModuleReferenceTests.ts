@@ -1,12 +1,12 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ExternalModuleReference} from "./../../../compiler";
 import * as errors from "./../../../errors";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(ExternalModuleReference), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<ExternalModuleReference>(text, ts.SyntaxKind.ExternalModuleReference);
+        return getInfoFromTextWithDescendant<ExternalModuleReference>(text, SyntaxKind.ExternalModuleReference);
     }
 
     // I'm not sure how to make expression null

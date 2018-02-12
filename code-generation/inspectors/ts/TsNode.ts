@@ -1,5 +1,4 @@
-﻿import * as ts from "typescript";
-import {InterfaceDeclaration, ClassDeclaration} from "./../../../src/main";
+﻿import {InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind} from "./../../../src/main";
 import {Memoize, ArrayUtils} from "./../../../src/utils";
 import {WrapperFactory} from "./../WrapperFactory";
 import {WrappedNode} from "./../tsSimpleAst";
@@ -26,9 +25,9 @@ export class TsNode {
                 continue;
             const node = reference.getNode();
             // ignore nodes in blocks
-            if (node.getFirstAncestorByKind(ts.SyntaxKind.Block) != null)
+            if (node.getFirstAncestorByKind(SyntaxKind.Block) != null)
                 continue;
-            const classDec = node.getFirstAncestorByKind(ts.SyntaxKind.ClassDeclaration);
+            const classDec = node.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
             if (classDec != null)
                 return this.wrapperFactory.getWrapperNode(classDec as ClassDeclaration);
         }

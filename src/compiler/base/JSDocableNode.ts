@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";

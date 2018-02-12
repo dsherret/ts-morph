@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Type} from "./../type";
 import {Node} from "./../common/Node";
 

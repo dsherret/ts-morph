@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {ModuleReference} from "./../aliases";
 import {JSDocableNode, NamedNode} from "./../base";
 import {Node} from "./../common";

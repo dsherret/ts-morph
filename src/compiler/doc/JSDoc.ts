@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import {removeChildren, replaceTextPossiblyCreatingChildNodes} from "./../../manipulation";
 import {getPreviousMatchingPos} from "./../../manipulation/textSeek";
@@ -57,7 +57,7 @@ export class JSDoc extends Node<ts.JSDoc> {
         const startEditPos = this.getStart() + 3;
         const endEditPos = tags.length > 0 ? getPreviousMatchingPos(this.sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1 : this.getEnd() - 2;
         const indentationText = this.getIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
         const text = getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction);
         const newText = newLineKind + text.split(/\r?\n/).map(l => `${indentationText} * ${l}`).join(newLineKind) + newLineKind + indentationText + " ";
 

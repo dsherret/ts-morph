@@ -5,24 +5,34 @@
  * ----------------------------------------------
  */
 import * as path from "path";
-import * as ts from "typescript";
-import TsSimpleAst, {SourceFile, ClassDeclaration, TypeGuards} from "./../src/main";
+import TsSimpleAst, {SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind} from "./../src/main";
 import {getDefinitionAst} from "./common";
 
 const ast = getDefinitionAst();
 
-const definitionFiles = ast.getSourceFiles("**/dist/**/*.d.ts");
+const definitionFiles = ast.getSourceFiles(["**/dist/**/*.d.ts", "!**/dist/typescript/ts.d.ts"]);
 const mainFile = ast.getSourceFileOrThrow("main.d.ts");
+const compilerApiFile = ast.getSourceFileOrThrow("dist/typescript/ts.d.ts");
 const exportedDeclarations = mainFile.getExportedDeclarations();
-mainFile.replaceWithText(`import * as ts from "typescript";\nimport CodeBlockWriter from "code-block-writer";\n`); // clear the source file
+mainFile.replaceWithText(`import CodeBlockWriter from "code-block-writer";\n`); // clear the source file
 
 for (let declaration of exportedDeclarations) {
+    if (declaration.getSourceFile() === compilerApiFile)
+        continue;
     if (TypeGuards.isVariableDeclaration(declaration))
-        declaration = declaration.getFirstAncestorByKindOrThrow(ts.SyntaxKind.VariableStatement);
+        declaration = declaration.getFirstAncestorByKindOrThrow(SyntaxKind.VariableStatement);
 
     mainFile.insertText(mainFile.getFullWidth(), declaration.getFullText() + "\n");
 }
 
+// add an import to the typescript compiler api file
+mainFile.addImportDeclaration({
+    namedImports: ["ts", "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
+        "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"].map(name => ({ name })),
+    moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile)
+});
+
+// update the main.d.ts file
 mainFile.getClassOrThrow("TsSimpleAst").setIsDefaultExport(true);
 mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1"));
 mainFile.save();

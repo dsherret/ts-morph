@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Node} from "./../common";
 
 export class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {

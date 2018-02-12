@@ -1,9 +1,8 @@
-﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../../GlobalContainer";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {SourceFile, Node} from "./../../../compiler";
 import {Memoize} from "./../../../utils";
 import {TextSpan} from "./TextSpan";
-import {ScriptElementKind} from "./../../polyfills";
 
 /**
  * Definition info.
@@ -48,7 +47,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      * Gets the kind.
      */
     getKind() {
-        return this.compilerObject.kind as ScriptElementKind;
+        return this.compilerObject.kind;
     }
 
     /**
@@ -62,7 +61,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      * Gets the container kind.
      */
     getContainerKind() {
-        return this.compilerObject.containerKind as ScriptElementKind;
+        return this.compilerObject.containerKind;
     }
 
     /**
@@ -82,7 +81,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
         return identifier == null ? undefined : identifier.getParentOrThrow();
 
         function findIdentifier(node: Node): Node | undefined {
-            if (node.getKind() === ts.SyntaxKind.Identifier && node.getStart() === start)
+            if (node.getKind() === SyntaxKind.Identifier && node.getStart() === start)
                 return node;
 
             for (const child of node.getChildrenIterator()) {

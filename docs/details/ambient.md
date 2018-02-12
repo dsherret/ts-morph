@@ -30,10 +30,9 @@ Or get the `declare` keyword if it exists:
 classDeclaration.getDeclareKeyword();
 ```
 
-Or toggle the `declare` keyword on and off:
+Or set if it has a `declare` keyword:
 
 ```ts
-classDeclaration.toggleDeclareKeyword(true);
-classDeclaration.toggleDeclareKeyword(false);
-classDeclaration.toggleDeclareKeyword(); // toggles between true and false
+classDeclaration.setHasDeclareKeyword(true);
+classDeclaration.setHasDeclareKeyword(false);
 ```

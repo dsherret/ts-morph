@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxSpreadAttribute} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfo(text: string) {
-    return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, ts.SyntaxKind.JsxSpreadAttribute, { isJsx: true });
+    return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, SyntaxKind.JsxSpreadAttribute, { isJsx: true });
 }
 
 describe(nameof(JsxSpreadAttribute), () => {

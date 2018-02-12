@@ -1,6 +1,6 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
 import TsSimpleAst from "./../../../main";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ExportDeclaration, ExportSpecifier} from "./../../../compiler";
 import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
@@ -142,7 +142,7 @@ describe(nameof(ExportSpecifier), () => {
     describe(nameof<ExportSpecifier>(n => n.getLocalTargetSymbol), () => {
         it("should get the local target symbol when it exists", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
-            expect(myClassExportSpecifier.getLocalTargetSymbol()!.getDeclarations()[0].getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+            expect(myClassExportSpecifier.getLocalTargetSymbol()!.getDeclarations()[0].getKind()).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should returned undefined when it doesn't exist", () => {
@@ -154,7 +154,7 @@ describe(nameof(ExportSpecifier), () => {
     describe(nameof<ExportSpecifier>(n => n.getLocalTargetSymbolOrThrow), () => {
         it("should get the local target symbol when it exists", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
-            expect(myClassExportSpecifier.getLocalTargetSymbolOrThrow().getDeclarations()[0].getKind()).to.equal(ts.SyntaxKind.ClassDeclaration);
+            expect(myClassExportSpecifier.getLocalTargetSymbolOrThrow().getDeclarations()[0].getKind()).to.equal(SyntaxKind.ClassDeclaration);
         });
 
         it("should throw when it doesn't exist", () => {
@@ -166,7 +166,7 @@ describe(nameof(ExportSpecifier), () => {
     describe(nameof<ExportSpecifier>(n => n.getLocalTargetDeclarations), () => {
         it("should get the local target declarations when they exist", () => {
             const myClassExportSpecifier = setupLocalTargetSymbolTest()[0];
-            expect(myClassExportSpecifier.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([ts.SyntaxKind.ClassDeclaration]);
+            expect(myClassExportSpecifier.getLocalTargetDeclarations().map(d => d.getKind())).to.deep.equal([SyntaxKind.ClassDeclaration]);
         });
 
         it("should returned an empty array when they don't exist", () => {

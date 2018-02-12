@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Expression} from "./../expression";
 import {JsxTagNameExpression, JsxAttributeLike} from "./../aliases";
 

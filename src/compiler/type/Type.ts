@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, TypeFlags, ObjectFlags, TypeFormatFlags} from "./../../typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {getSymbolByNameOrFindFunction} from "./../../utils";
@@ -36,7 +36,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * @param enclosingNode - The enclosing node.
      * @param typeFormatFlags - Format flags for the type text.
      */
-    getText(enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags): string {
+    getText(enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags): string {
         return this.global.typeChecker.getTypeText(this, enclosingNode, typeFormatFlags);
     }
 
@@ -221,7 +221,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an anonymous type.
      */
     isAnonymousType() {
-        return (this.getObjectFlags() & ts.ObjectFlags.Anonymous) !== 0;
+        return (this.getObjectFlags() & ObjectFlags.Anonymous) !== 0;
     }
 
     /**
@@ -238,62 +238,62 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a boolean type.
      */
     isBooleanType() {
-        return (this.compilerType.flags & ts.TypeFlags.Boolean) !== 0;
+        return (this.compilerType.flags & TypeFlags.Boolean) !== 0;
     }
 
     /**
      * Gets if this is an enum type.
      */
     isEnumType() {
-        return (this.compilerType.flags & ts.TypeFlags.Enum) !== 0;
+        return (this.compilerType.flags & TypeFlags.Enum) !== 0;
     }
 
     /**
      * Gets if this is an interface type.
      */
     isInterfaceType() {
-        return (this.getObjectFlags() & ts.ObjectFlags.Interface) !== 0;
+        return (this.getObjectFlags() & ObjectFlags.Interface) !== 0;
     }
 
     /**
      * Gets if this is an intersection type.
      */
     isIntersectionType() {
-        return (this.compilerType.flags & ts.TypeFlags.Intersection) !== 0;
+        return (this.compilerType.flags & TypeFlags.Intersection) !== 0;
     }
 
     /**
      * Gets if this is an object type.
      */
     isObjectType() {
-        return (this.compilerType.flags & ts.TypeFlags.Object) !== 0;
+        return (this.compilerType.flags & TypeFlags.Object) !== 0;
     }
 
     /**
      * Gets if this is a type parameter.
      */
     isTypeParameter(): this is TypeParameter {
-        return (this.compilerType.flags & ts.TypeFlags.TypeParameter) !== 0;
+        return (this.compilerType.flags & TypeFlags.TypeParameter) !== 0;
     }
 
     /**
      * Gets if this is a union type.
      */
     isUnionType() {
-        return (this.compilerType.flags & ts.TypeFlags.Union) !== 0;
+        return (this.compilerType.flags & TypeFlags.Union) !== 0;
     }
 
     /**
      * Gets if this is the undefined type.
      */
     isUndefinedType() {
-        return (this.compilerType.flags & ts.TypeFlags.Undefined) !== 0;
+        return (this.compilerType.flags & TypeFlags.Undefined) !== 0;
     }
 
     /**
      * Gets the type flags.
      */
-    getFlags(): ts.TypeFlags {
+    getFlags(): TypeFlags {
         return this.compilerType.flags;
     }
 

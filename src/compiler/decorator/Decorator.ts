@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParent} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
@@ -59,7 +59,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets if the decorator is a decorator factory.
      */
     isDecoratorFactory() {
-        return this.compilerNode.expression.kind === ts.SyntaxKind.CallExpression;
+        return this.compilerNode.expression.kind === SyntaxKind.CallExpression;
     }
 
     /**
@@ -269,7 +269,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      */
     remove() {
         const thisStartLinePos = this.getStartLinePos();
-        const previousDecorator = this.getPreviousSiblingIfKind(ts.SyntaxKind.Decorator);
+        const previousDecorator = this.getPreviousSiblingIfKind(SyntaxKind.Decorator);
 
         if (previousDecorator != null && previousDecorator.getStartLinePos() === thisStartLinePos) {
             removeChildren({

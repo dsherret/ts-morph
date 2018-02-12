@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
@@ -68,7 +68,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         }
 
         getExportKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.ExportKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.ExportKeyword);
         }
 
         getExportKeywordOrThrow() {
@@ -80,7 +80,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         }
 
         getDefaultKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.DefaultKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.DefaultKeyword);
         }
 
         getDefaultKeywordOrThrow() {
@@ -135,7 +135,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             // set this node as the one to default export
             if (TypeGuards.isAmbientableNode(this) && TypeGuards.hasName(this) && this.isAmbient()) {
-                const parentSyntaxList = this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.SyntaxList) as SyntaxList;
+                const parentSyntaxList = this.getFirstAncestorByKindOrThrow(SyntaxKind.SyntaxList) as SyntaxList;
                 parentSyntaxList.insertChildText(this.getChildIndex() + 1, `export default ${this.getName()};`);
             }
             else {

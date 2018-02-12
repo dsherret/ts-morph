@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../../errors";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild} from "./../../../manipulation";
@@ -72,7 +72,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
 
         function insertTexts(node: ArrayLiteralExpression, newTexts: string[]) {
             insertIntoCommaSeparatedNodes({
-                parent: node.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                parent: node.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: elements,
                 insertIndex: index,
                 newTexts,

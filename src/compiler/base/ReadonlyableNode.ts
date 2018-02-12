@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {ReadonlyableNodeStructure} from "./../../structures";
@@ -35,7 +35,7 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
         }
 
         getReadonlyKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.ReadonlyKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.ReadonlyKeyword);
         }
 
         getReadonlyKeywordOrThrow() {

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
 import * as errors from "./../../errors";
@@ -51,7 +51,7 @@ export interface ExtendsClauseableNode {
 export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNodeExtensionType>>(Base: T): Constructor<ExtendsClauseableNode> & T {
     return class extends Base implements ExtendsClauseableNode {
         getExtends(): ExpressionWithTypeArguments[] {
-            const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
             return extendsClause == null ? [] : extendsClause.getTypes();
         }
 
@@ -77,9 +77,9 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             index = verifyAndGetIndex(index, extendsTypes.length);
 
             if (extendsTypes.length > 0) {
-                const extendsClause = this.getHeritageClauseByKindOrThrow(ts.SyntaxKind.ExtendsKeyword);
+                const extendsClause = this.getHeritageClauseByKindOrThrow(SyntaxKind.ExtendsKeyword);
                 insertIntoCommaSeparatedNodes({
-                    parent: extendsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    parent: extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: extendsTypes,
                     insertIndex: index,
                     newTexts: texts
@@ -87,7 +87,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
+            const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
             let insertText = `extends ${texts.join(", ")} `;
@@ -109,7 +109,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
         removeExtends(index: number): this;
         removeExtends(implementsNode: ExpressionWithTypeArguments): this;
         removeExtends(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
-            const extendsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ExtendsKeyword);
+            const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
             if (extendsClause == null)
                 throw new errors.InvalidOperationError("Cannot remove an extends when none exist.");
 

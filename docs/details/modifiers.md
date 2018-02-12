@@ -16,16 +16,16 @@ functionDeclaration.getModifiers();
 
 ### Getting first modifier by syntax kind
 
-Use `getFirstModifierByKind(syntaxKind: ts.SyntaxKind);` where `ts.SyntaxKind` is a TypeScript compiler syntax kind.
+Use `getFirstModifierByKind(syntaxKind: SyntaxKind);`.
 
 ```ts
-functionDeclaration.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
+functionDeclaration.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
 ```
 
 ### Telling if has a modifier
 
 ```ts
-functionDeclaration.hasModifier(ts.SyntaxKind.AsyncKeyword); // returns: boolean
+functionDeclaration.hasModifier(SyntaxKind.AsyncKeyword); // returns: boolean
 ```
 
 ### Toggle modifier

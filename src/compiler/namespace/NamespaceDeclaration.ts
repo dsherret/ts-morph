@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {replaceNodeText} from "./../../manipulation";
 import {NamespaceDeclarationStructure} from "./../../structures";
@@ -70,7 +70,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         let current: Node<ts.NamespaceDeclaration> | undefined = this;
         do {
             nodes.push(this.getNodeFromCompilerNode<Identifier>(current.compilerNode.name));
-            current = current.getFirstChildByKind(ts.SyntaxKind.ModuleDeclaration) as Node<ts.NamespaceDeclaration>;
+            current = current.getFirstChildByKind(SyntaxKind.ModuleDeclaration) as Node<ts.NamespaceDeclaration>;
         } while (current != null);
         return nodes;
     }
@@ -119,7 +119,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     getDeclarationTypeKeyword() {
         return this.getFirstChild(child =>
-            child.getKind() === ts.SyntaxKind.NamespaceKeyword ||
-            child.getKind() === ts.SyntaxKind.ModuleKeyword);
+            child.getKind() === SyntaxKind.NamespaceKeyword ||
+            child.getKind() === SyntaxKind.ModuleKeyword);
     }
 }

@@ -7,7 +7,6 @@
  * all the compiler node properties.
  * ------------------------------------------
  */
-import * as ts from "typescript";
 import * as path from "path";
 import * as fs from "fs";
 import {rootFolder} from "./config";

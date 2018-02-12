@@ -1,7 +1,7 @@
-﻿import * as ts from "typescript";
 import * as multimatch from "multimatch";
 import * as errors from "./errors";
-import * as compiler from "./compiler";
+import {ts, CompilerOptions} from "./typescript";
+import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
 import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getFilePathsFromTsConfigParseResult, TsConfigParseResult,
@@ -12,7 +12,7 @@ import {GlobalContainer} from "./GlobalContainer";
 
 export interface Options {
     /** Compiler options */
-    compilerOptions?: ts.CompilerOptions;
+    compilerOptions?: CompilerOptions;
     /** File path to the tsconfig.json file */
     tsConfigFilePath?: string;
     /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
@@ -61,10 +61,10 @@ export class TsSimpleAst {
                 this.addExistingSourceFile(filePath);
         }
 
-        function getCompilerOptions(): ts.CompilerOptions {
+        function getCompilerOptions(): CompilerOptions {
             return {
                 ...getTsConfigCompilerOptions(),
-                ...(options.compilerOptions || {}) as ts.CompilerOptions
+                ...(options.compilerOptions || {}) as CompilerOptions
             };
         }
 
@@ -153,15 +153,15 @@ export class TsSimpleAst {
      * @param fileGlobs - File glob to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlob: string): compiler.SourceFile[];
+    addExistingSourceFiles(fileGlob: string): SourceFile[];
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[]): compiler.SourceFile[];
-    addExistingSourceFiles(fileGlobs: string | string[]): compiler.SourceFile[] {
-        const sourceFiles: compiler.SourceFile[] = [];
+    addExistingSourceFiles(fileGlobs: string[]): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
+        const sourceFiles: SourceFile[] = [];
 
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
@@ -181,7 +181,7 @@ export class TsSimpleAst {
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      */
-    addSourceFileIfExists(filePath: string): compiler.SourceFile | undefined {
+    addSourceFileIfExists(filePath: string): SourceFile | undefined {
         return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
     }
 
@@ -192,7 +192,7 @@ export class TsSimpleAst {
      * @param filePath - File path to get the file from.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): compiler.SourceFile {
+    addExistingSourceFile(filePath: string): SourceFile {
         const sourceFile = this.addSourceFileIfExists(filePath);
         if (sourceFile == null) {
             const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
@@ -208,7 +208,7 @@ export class TsSimpleAst {
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string): compiler.SourceFile[] {
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[] {
         tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, tsConfigFilePath);
         const parseResult = getTsConfigParseResult(tsConfigFilePath, this.global.fileSystem);
         const compilerOptions = getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath, this.global.fileSystem, parseResult);
@@ -224,7 +224,7 @@ export class TsSimpleAst {
      * @param filePath - File path of the source file.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string): compiler.SourceFile;
+    createSourceFile(filePath: string): SourceFile;
     /**
      * Creates a source file at the specified file path with the specified text.
      *
@@ -233,7 +233,7 @@ export class TsSimpleAst {
      * @param sourceFileText - Text of the source file.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText: string): compiler.SourceFile;
+    createSourceFile(filePath: string, sourceFileText: string): SourceFile;
     /**
      * Creates a source file at the specified file path with the specified text.
      *
@@ -242,8 +242,8 @@ export class TsSimpleAst {
      * @param structure - Structure that represents the source file.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, structure: SourceFileStructure): compiler.SourceFile;
-    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string): compiler.SourceFile {
+    createSourceFile(filePath: string, structure: SourceFileStructure): SourceFile;
+    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string): SourceFile {
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
     }
 
@@ -252,7 +252,7 @@ export class TsSimpleAst {
      * @param sourceFile - Source file to remove.
      * @returns True if removed.
      */
-    removeSourceFile(sourceFile: compiler.SourceFile) {
+    removeSourceFile(sourceFile: SourceFile) {
         const previouslyForgotten = sourceFile.wasForgotten();
         sourceFile.forget();
         return !previouslyForgotten;
@@ -262,13 +262,13 @@ export class TsSimpleAst {
      * Gets a source file by a file name or file path. Throws an error if it doesn't exist.
      * @param fileNameOrPath - File name or path that the path could end with or equal.
      */
-    getSourceFileOrThrow(fileNameOrPath: string): compiler.SourceFile;
+    getSourceFileOrThrow(fileNameOrPath: string): SourceFile;
     /**
      * Gets a source file by a search function. Throws an erorr if it doesn't exist.
      * @param searchFunction - Search function.
      */
-    getSourceFileOrThrow(searchFunction: (file: compiler.SourceFile) => boolean): compiler.SourceFile;
-    getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile {
+    getSourceFileOrThrow(searchFunction: (file: SourceFile) => boolean): SourceFile;
+    getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile {
         const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
         if (sourceFile == null) {
             if (typeof fileNameOrSearchFunction === "string")
@@ -283,18 +283,18 @@ export class TsSimpleAst {
      * Gets a source file by a file name or file path. Returns undefined if none exists.
      * @param fileNameOrPath - File name or path that the path could end with or equal.
      */
-    getSourceFile(fileNameOrPath: string): compiler.SourceFile | undefined;
+    getSourceFile(fileNameOrPath: string): SourceFile | undefined;
     /**
      * Gets a source file by a search function. Returns undefined if none exists.
      * @param searchFunction - Search function.
      */
-    getSourceFile(searchFunction: (file: compiler.SourceFile) => boolean): compiler.SourceFile | undefined;
+    getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
     /**
      * @internal
      */
-    getSourceFile(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile | undefined;
-    getSourceFile(fileNameOrSearchFunction: string | ((file: compiler.SourceFile) => boolean)): compiler.SourceFile | undefined {
-        let searchFunction = fileNameOrSearchFunction as ((file: compiler.SourceFile) => boolean);
+    getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined;
+    getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
+        let searchFunction = fileNameOrSearchFunction as ((file: SourceFile) => boolean);
 
         if (typeof fileNameOrSearchFunction === "string")
             searchFunction = def => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
@@ -306,18 +306,18 @@ export class TsSimpleAst {
      * Gets all the source files contained in the compiler wrapper.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
-    getSourceFiles(): compiler.SourceFile[];
+    getSourceFiles(): SourceFile[];
     /**
      * Gets all the source files contained in the compiler wrapper that match a pattern.
      * @param globPattern - Glob pattern for filtering out the source files.
      */
-    getSourceFiles(globPattern: string): compiler.SourceFile[];
+    getSourceFiles(globPattern: string): SourceFile[];
     /**
      * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
      * @param globPatterns - Glob patterns for filtering out the source files.
      */
-    getSourceFiles(globPatterns: string[]): compiler.SourceFile[];
-    getSourceFiles(globPatterns?: string | string[]): compiler.SourceFile[] {
+    getSourceFiles(globPatterns: string[]): SourceFile[];
+    getSourceFiles(globPatterns?: string | string[]): SourceFile[] {
         const {compilerFactory} = this.global;
         const sourceFiles = this.global.compilerFactory.getSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
@@ -370,7 +370,7 @@ export class TsSimpleAst {
     private getUnsavedSourceFiles() {
         return ArrayUtils.from(getUnsavedIterator(this.global.compilerFactory.getSourceFilesByDirectoryDepth()));
 
-        function *getUnsavedIterator(sourceFiles: IterableIterator<compiler.SourceFile>) {
+        function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
             for (const sourceFile of sourceFiles) {
                 if (!sourceFile.isSaved())
                     yield sourceFile;
@@ -381,7 +381,7 @@ export class TsSimpleAst {
     /**
      * Gets the compiler diagnostics.
      */
-    getDiagnostics(): compiler.Diagnostic[] {
+    getDiagnostics(): Diagnostic[] {
         return [
             ...this.global.program.getSyntacticDiagnostics(),
             ...this.global.program.getSemanticDiagnostics(),
@@ -392,28 +392,28 @@ export class TsSimpleAst {
     /**
      * Gets the pre-emit diagnostics.
      */
-    getPreEmitDiagnostics(): compiler.Diagnostic[] {
+    getPreEmitDiagnostics(): Diagnostic[] {
         return this.global.program.getPreEmitDiagnostics();
     }
 
     /**
      * Gets the language service.
      */
-    getLanguageService(): compiler.LanguageService {
+    getLanguageService(): LanguageService {
         return this.global.languageService;
     }
 
     /**
      * Gets the program.
      */
-    getProgram(): compiler.Program {
+    getProgram(): Program {
         return this.global.program;
     }
 
     /**
      * Gets the type checker.
      */
-    getTypeChecker(): compiler.TypeChecker {
+    getTypeChecker(): TypeChecker {
         return this.global.typeChecker;
     }
 
@@ -428,14 +428,14 @@ export class TsSimpleAst {
      * Emits all the source files.
      * @param emitOptions - Optional emit options.
      */
-    emit(emitOptions: compiler.EmitOptions = {}): compiler.EmitResult {
+    emit(emitOptions: EmitOptions = {}): EmitResult {
         return this.global.program.emit(emitOptions);
     }
 
     /**
      * Gets the compiler options.
      */
-    getCompilerOptions(): ts.CompilerOptions {
+    getCompilerOptions(): CompilerOptions {
         // return a copy
         return {...this.global.compilerOptions};
     }
@@ -446,15 +446,15 @@ export class TsSimpleAst {
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => void): void;
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void): void;
     /**
      * Forgets the nodes created in the scope of the passed in block asynchronously.
      *
      * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => Promise<void>): void;
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)) {
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
         return this.global.compilerFactory.forgetNodesCreatedInBlock(block);
     }
 }

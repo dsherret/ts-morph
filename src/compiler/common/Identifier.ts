@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Type} from "./../type";
 import {ReferencedSymbol, DefinitionInfo, ImplementationLocation} from "./../tools";
 import {PrimaryExpression} from "./../expression/PrimaryExpression";

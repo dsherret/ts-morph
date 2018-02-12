@@ -55,6 +55,18 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
+    describe(nameof<ImportSpecifier>(n => n.getNameNode), () => {
+        function doTest(text: string, name: string) {
+            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const namedImport = firstChild.getNamedImports()[0];
+            expect(namedImport.getName()).to.equal(name);
+        }
+
+        it("should get the name", () => {
+            doTest(`import {name} from "./test";`, "name");
+        });
+    });
+
     describe(nameof<ImportSpecifier>(n => n.setAlias), () => {
         function doTest(text: string, alias: string, expected: string) {
             const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<ImportDeclaration>(text);

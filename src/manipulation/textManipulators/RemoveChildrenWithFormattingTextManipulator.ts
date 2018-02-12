@@ -21,7 +21,7 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         const parent = children[0].getParentOrThrow() as TNode;
         const sourceFile = parent.getSourceFile();
         const fullText = sourceFile.getFullText();
-        const newLineKind = sourceFile.global.manipulationSettings.getNewLineKind();
+        const newLineKind = sourceFile.global.manipulationSettings.getNewLineKindAsString();
         const previousSibling = children[0].getPreviousSibling();
         const nextSibling = children[children.length - 1].getNextSibling();
         const removalPos = getRemovalPos();

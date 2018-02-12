@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {TypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -59,11 +59,11 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             let newText: string;
 
             if (separatorNode == null) {
-                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier);
+                const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
                 childIndex = identifier.getChildIndex() + 1;
                 insertPos = identifier.getEnd();
                 insertItemsCount = 2;
-                newText = (separatorSyntaxKind === ts.SyntaxKind.EqualsToken ? " = " : ": ") + text;
+                newText = (separatorSyntaxKind === SyntaxKind.EqualsToken ? " = " : ": ") + text;
             }
             else {
                 childIndex = separatorNode.getChildIndex() + 1;
@@ -98,7 +98,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         removeType() {
-            if (this.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
+            if (this.getKind() === SyntaxKind.TypeAliasDeclaration)
                 throw new errors.NotSupportedError(`Cannot remove the type of a type alias. Use ${nameof<TypedNode>(t => t.setType)} instead.`);
 
             const typeNode = this.getTypeNode();
@@ -114,9 +114,9 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
 
 function getSeparatorSyntaxKindForNode(node: Node) {
     switch (node.getKind()) {
-        case ts.SyntaxKind.TypeAliasDeclaration:
-            return ts.SyntaxKind.EqualsToken;
+        case SyntaxKind.TypeAliasDeclaration:
+            return SyntaxKind.EqualsToken;
         default:
-            return ts.SyntaxKind.ColonToken;
+            return SyntaxKind.ColonToken;
     }
 }

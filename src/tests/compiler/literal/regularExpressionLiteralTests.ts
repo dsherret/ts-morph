@@ -1,6 +1,6 @@
-﻿import * as ts from "typescript";
 import * as os from "os";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {RegularExpressionLiteral} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
@@ -9,7 +9,7 @@ describe(nameof(RegularExpressionLiteral), () => {
 
     describe(nameof<RegularExpressionLiteral>(n => n.getLiteralValue), () => {
         function doTest(text: string, pattern: string, flags: string) {
-            const {descendant} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, ts.SyntaxKind.RegularExpressionLiteral);
+            const {descendant} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
             const regExpr = descendant.getLiteralValue();
             expect(regExpr.source).to.equal(pattern);
 

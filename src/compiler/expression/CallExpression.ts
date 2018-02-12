@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Expression} from "./Expression";
 import {ArgumentedNode, TypeArgumentedNode} from "./../base";
 import {LeftHandSideExpression} from "./LeftHandSideExpression";

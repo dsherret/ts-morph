@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {Expression} from "./../../expression";
@@ -18,11 +18,11 @@ export interface InitializerGetExpressionableNode {
     /**
      * Gets the initializer if it's a certain kind or throws.
      */
-    getInitializerIfKindOrThrow(kind: ts.SyntaxKind): Expression;
+    getInitializerIfKindOrThrow(kind: SyntaxKind): Expression;
     /**
      * Gets the initializer if it's a certain kind.
      */
-    getInitializerIfKind(kind: ts.SyntaxKind): Expression | undefined;
+    getInitializerIfKind(kind: SyntaxKind): Expression | undefined;
     /**
      * Gets the initializer or throw.
      */
@@ -35,11 +35,11 @@ export function InitializerGetExpressionableNode<T extends Constructor<Initializ
             return this.compilerNode.initializer != null;
         }
 
-        getInitializerIfKindOrThrow(kind: ts.SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initiailizer of kind '${ts.SyntaxKind[kind]}'.`);
+        getInitializerIfKindOrThrow(kind: SyntaxKind) {
+            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initiailizer of kind '${SyntaxKind[kind]}'.`);
         }
 
-        getInitializerIfKind(kind: ts.SyntaxKind) {
+        getInitializerIfKind(kind: SyntaxKind) {
             const initiailizer = this.getInitializer();
             if (initiailizer != null && initiailizer.getKind() !== kind)
                 return undefined;

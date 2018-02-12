@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {ChildOrderableNode} from "./../base";
 import {Statement} from "./Statement";
 

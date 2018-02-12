@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {TypeReferenceNode, VariableDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -10,18 +10,18 @@ describe(nameof(TypeReferenceNode), () => {
     }
 
     describe(nameof<TypeReferenceNode>(t => t.getTypeName), () => {
-        function doTest(text: string, expectedSyntaxKind: ts.SyntaxKind, expectedTypeName: string) {
+        function doTest(text: string, expectedSyntaxKind: SyntaxKind, expectedTypeName: string) {
             const typeRefNode = getTypeReferenceNode(text);
             expect(typeRefNode.getTypeName().getKind()).to.equal(expectedSyntaxKind);
             expect(typeRefNode.getTypeName().getText()).to.equal(expectedTypeName);
         }
 
         it("should get the type name when an identifier", () => {
-            doTest("const myVariable: Class<string>;", ts.SyntaxKind.Identifier, "Class");
+            doTest("const myVariable: Class<string>;", SyntaxKind.Identifier, "Class");
         });
 
         it("should get the type name when a fully qualified name", () => {
-            doTest("const myVariable: Class.Tests<string>;", ts.SyntaxKind.QualifiedName, "Class.Tests");
+            doTest("const myVariable: Class.Tests<string>;", SyntaxKind.QualifiedName, "Class.Tests");
         });
     });
 

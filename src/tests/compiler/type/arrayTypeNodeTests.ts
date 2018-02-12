@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ArrayTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(ArrayTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<ArrayTypeNode>(text, ts.SyntaxKind.ArrayType);
+        return getInfoFromTextWithDescendant<ArrayTypeNode>(text, SyntaxKind.ArrayType);
     }
 
     describe(nameof<ArrayTypeNode>(d => d.getElementTypeNode), () => {

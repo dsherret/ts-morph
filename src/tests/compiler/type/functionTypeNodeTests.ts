@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {FunctionTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(FunctionTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<FunctionTypeNode>(text, ts.SyntaxKind.FunctionType);
+        return getInfoFromTextWithDescendant<FunctionTypeNode>(text, SyntaxKind.FunctionType);
     }
 
     describe(nameof<FunctionTypeNode>(d => d.getReturnTypeNodeOrThrow), () => {

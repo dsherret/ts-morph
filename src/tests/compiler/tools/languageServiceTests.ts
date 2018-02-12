@@ -1,8 +1,8 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, ScriptTarget} from "./../../../typescript";
 import {LanguageService, EmitOutput, SourceFile} from "./../../../compiler";
 import {FileNotFoundError} from "./../../../errors";
-import {FileUtils, TsVersion} from "./../../../utils";
+import {FileUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(LanguageService), () => {
@@ -32,14 +32,14 @@ describe(nameof(LanguageService), () => {
                 });
             }
 
-            const {sourceFile} = getInfoFromText("const t = 5;", { compilerOptions: { target: ts.ScriptTarget.ES5 } });
+            const {sourceFile} = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
 
             doTest(sourceFile);
             doTest(sourceFile.getFilePath());
         });
 
         it("should get the emit output when specifying a source file", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("const t = 5;", { compilerOptions: { target: ts.ScriptTarget.ES5 } });
+            const {sourceFile, tsSimpleAst} = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile);
             checkOutput(output, {
                 emitSkipped: false,
@@ -68,20 +68,14 @@ describe(nameof(LanguageService), () => {
             const {sourceFile, tsSimpleAst} = getInfoFromText("class MyClass {}\n export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath(), true);
 
-            if (TsVersion.greaterThanEqualToVersion(2, 7))
-                checkOutput(output, {
-                    emitSkipped: true,
-                    outputFiles: [{
-                        fileName: "/" + sourceFile.getBaseName().replace(".ts", ".d.ts"),
-                        text: "export declare class Test extends MyClass {\n}\n",
-                        writeByteOrderMark: false
-                    }]
-                });
-            else
-                checkOutput(output, {
-                    emitSkipped: true,
-                    outputFiles: []
-                });
+            checkOutput(output, {
+                emitSkipped: true,
+                outputFiles: [{
+                    fileName: "/" + sourceFile.getBaseName().replace(".ts", ".d.ts"),
+                    text: "export declare class Test extends MyClass {\n}\n",
+                    writeByteOrderMark: false
+                }]
+            });
         });
 
         it("should throw when the specified file does not exist", () => {

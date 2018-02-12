@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Node} from "./../../compiler";
 import * as errors from "./../../errors";
 import {FormattingKind, getFormattingKindText} from "./../formatting";
@@ -17,7 +17,7 @@ export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {
 export function getNewInsertCode<TNode extends Node, TStructure>(opts: GetNewInsertCodeOptions<TNode, TStructure>) {
     const {structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind} = opts;
     const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
-    const newLineKind = parent.global.manipulationSettings.getNewLineKind();
+    const newLineKind = parent.global.manipulationSettings.getNewLineKindAsString();
 
     return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);
 

@@ -1,6 +1,6 @@
-﻿import * as ts from "typescript";
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {ArrayLiteralExpression, VariableStatement} from "./../../../../compiler";
 import {getInfoFromText} from "./../../testHelpers";
 
@@ -9,7 +9,7 @@ describe(nameof(ArrayLiteralExpression), () => {
         const opts = getInfoFromText<VariableStatement>(text);
         const declaration = opts.firstChild.getDeclarations()[0];
         return {
-            arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(ts.SyntaxKind.ArrayLiteralExpression) as ArrayLiteralExpression,
+            arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(SyntaxKind.ArrayLiteralExpression) as ArrayLiteralExpression,
             ...opts
         };
     }

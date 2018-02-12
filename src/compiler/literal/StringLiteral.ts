@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {LiteralExpression} from "./../expression";
 import {QuoteType} from "./QuoteType";
 

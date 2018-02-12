@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind, LanguageVariant} from "./../../typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {Directory} from "./../../fileSystem";
@@ -7,7 +7,7 @@ import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/t
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "./../../structures";
 import {ImportDeclarationStructureToText, ExportDeclarationStructureToText, ExportAssignmentStructureToText} from "./../../structureToTexts";
-import {ArrayUtils, FileUtils, newLineKindToTs, TypeGuards, StringUtils, createHashSet} from "./../../utils";
+import {ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol, Identifier} from "./../common";
@@ -185,7 +185,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the source file language variant.
      */
-    getLanguageVariant() {
+    getLanguageVariant(): LanguageVariant {
         return this.compilerNode.languageVariant;
     }
 
@@ -252,7 +252,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return writer.toString();
         });
 
-        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, ts.SyntaxKind.ImportDeclaration, undefined, {
+        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, SyntaxKind.ImportDeclaration, undefined, {
             previousBlanklineWhen: previousMember => !(TypeGuards.isImportDeclaration(previousMember)),
             nextBlanklineWhen: nextMember => !(TypeGuards.isImportDeclaration(nextMember)),
             separatorNewlineWhen: () => false
@@ -280,7 +280,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getImportDeclarations(): ImportDeclaration[] {
         // todo: remove type assertion
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ImportDeclaration) as ImportDeclaration[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration) as ImportDeclaration[];
     }
 
     /**
@@ -323,7 +323,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return writer.toString();
         });
 
-        return this._insertMainChildren<ExportDeclaration>(index, texts, structures, ts.SyntaxKind.ExportDeclaration, undefined, {
+        return this._insertMainChildren<ExportDeclaration>(index, texts, structures, SyntaxKind.ExportDeclaration, undefined, {
             previousBlanklineWhen: previousMember => !(TypeGuards.isExportDeclaration(previousMember)),
             nextBlanklineWhen: nextMember => !(TypeGuards.isExportDeclaration(nextMember)),
             separatorNewlineWhen: () => false
@@ -350,7 +350,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's export declarations.
      */
     getExportDeclarations(): ExportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration) as ExportDeclaration[];
     }
 
     /**
@@ -379,13 +379,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                     return;
                 handledDeclarations.add(declaration);
 
-                if (declaration.getKind() === ts.SyntaxKind.ExportSpecifier) {
+                if (declaration.getKind() === SyntaxKind.ExportSpecifier) {
                     for (const d of (declaration as ExportSpecifier).getLocalTargetDeclarations())
                         yield* getDeclarationHandlingExportSpecifiers(d);
                 }
-                else if (declaration.getKind() === ts.SyntaxKind.ExportAssignment) {
+                else if (declaration.getKind() === SyntaxKind.ExportAssignment) {
                     const identifier = (declaration as ExportAssignment).getExpression();
-                    if (identifier == null || identifier.getKind() !== ts.SyntaxKind.Identifier)
+                    if (identifier == null || identifier.getKind() !== SyntaxKind.Identifier)
                         return;
                     const symbol = identifier.getSymbol();
                     if (symbol == null)
@@ -439,7 +439,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return writer.toString();
         });
 
-        return this._insertMainChildren<ExportAssignment>(index, texts, structures, ts.SyntaxKind.ExportAssignment, undefined, {
+        return this._insertMainChildren<ExportAssignment>(index, texts, structures, SyntaxKind.ExportAssignment, undefined, {
             previousBlanklineWhen: previousMember => !(TypeGuards.isExportAssignment(previousMember)),
             nextBlanklineWhen: nextMember => !(TypeGuards.isExportAssignment(nextMember)),
             separatorNewlineWhen: () => false
@@ -466,7 +466,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's export assignments.
      */
     getExportAssignments(): ExportAssignment[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(ts.SyntaxKind.ExportAssignment) as ExportAssignment[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment) as ExportAssignment[];
     }
 
     /**
@@ -517,7 +517,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
 
         const declaration = defaultExportSymbol.getDeclarations()[0];
-        if (declaration.compilerNode.kind === ts.SyntaxKind.ExportAssignment)
+        if (declaration.compilerNode.kind === SyntaxKind.ExportAssignment)
             removeChildrenWithFormatting({ children: [declaration], getSiblingFormatting: () => FormattingKind.Newline });
         else if (TypeGuards.isModifierableNode(declaration)) {
             declaration.toggleModifier("default", false);

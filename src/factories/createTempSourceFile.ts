@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, CompilerOptions, ScriptTarget} from "./../typescript";
 import {SourceFile} from "./../compiler";
 import {GlobalContainer} from "./../GlobalContainer";
 import {ManipulationSettings} from "./../ManipulationSettings";
@@ -6,12 +6,12 @@ import {VirtualFileSystemHost} from "./../fileSystem/VirtualFileSystemHost";
 
 export interface CreateTempSourceFileOptions {
     createLanguageService?: boolean;
-    compilerOptions?: ts.CompilerOptions;
+    compilerOptions?: CompilerOptions;
     manipulationSettings?: ManipulationSettings;
 }
 
 export function createTempSourceFile(filePath: string, sourceText: string, opts: CreateTempSourceFileOptions = {}) {
-    const {createLanguageService = false, compilerOptions = { target: ts.ScriptTarget.Latest }} = opts;
+    const {createLanguageService = false, compilerOptions = { target: ScriptTarget.Latest }} = opts;
     const globalContainer = new GlobalContainer(new VirtualFileSystemHost(), compilerOptions, { createLanguageService });
     if (opts.manipulationSettings != null)
         globalContainer.manipulationSettings.set(opts.manipulationSettings);

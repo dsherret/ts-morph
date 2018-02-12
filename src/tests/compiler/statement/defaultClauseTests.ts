@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {DefaultClause} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getDefaultClause(text: string) {
-    return getInfoFromTextWithDescendant<DefaultClause>(text, ts.SyntaxKind.DefaultClause).descendant;
+    return getInfoFromTextWithDescendant<DefaultClause>(text, SyntaxKind.DefaultClause).descendant;
 }
 
 describe(nameof(DefaultClause), () => {

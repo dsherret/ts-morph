@@ -1,5 +1,6 @@
-﻿import * as ts from "typescript";
-import * as compiler from "./../compiler";
+import * as compilerApi from "typescript";
+import {ts, SyntaxKind, TypeFlags} from "./../typescript";
+import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, Diagnostic, JSDocTagInfo} from "./../compiler";
 import * as errors from "./../errors";
 import {SourceFileStructure} from "./../structures";
 import {KeyValueCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
@@ -16,7 +17,7 @@ import {DirectoryCache} from "./DirectoryCache";
  * @internal
  */
 export class CompilerFactory {
-    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, compiler.SourceFile>();
+    private readonly sourceFileCacheByFilePath = new KeyValueCache<string, SourceFile>();
     private readonly nodeCache = new ForgetfulNodeCache();
     private readonly directoryCache: DirectoryCache;
     private readonly sourceFileAddedEventContainer = new EventContainer();
@@ -124,7 +125,7 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    getSourceFileFromFilePath(filePath: string): compiler.SourceFile | undefined {
+    getSourceFileFromFilePath(filePath: string): SourceFile | undefined {
         filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
@@ -168,7 +169,7 @@ export class CompilerFactory {
      */
     getSourceFileForNode(compilerNode: ts.Node) {
         let currentNode = compilerNode;
-        while (currentNode.kind !== ts.SyntaxKind.SourceFile) {
+        while (currentNode.kind !== SyntaxKind.SourceFile) {
             if (currentNode.parent == null)
                 throw new errors.NotImplementedError("Could not find node source file.");
             currentNode = currentNode.parent;
@@ -196,9 +197,9 @@ export class CompilerFactory {
      * Gets a wrapped compiler type based on the node's kind.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: compiler.SourceFile): compiler.Node<NodeType> {
-        if (compilerNode.kind === ts.SyntaxKind.SourceFile)
-            return this.getSourceFile(compilerNode as any as ts.SourceFile) as compiler.Node as compiler.Node<NodeType>;
+    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): Node<NodeType> {
+        if (compilerNode.kind === SyntaxKind.SourceFile)
+            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as Node<NodeType>;
 
         const createNode = (ctor: any) => {
             // ensure the parent is created
@@ -208,13 +209,13 @@ export class CompilerFactory {
         };
 
         if (nodeToWrapperMappings[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
         else
-            return this.nodeCache.getOrCreate<compiler.Node<NodeType>>(compilerNode, () => createNode(compiler.Node));
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node));
     }
 
-    private getSourceFileFromText(filePath: string, sourceText: string): compiler.SourceFile {
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+    private getSourceFileFromText(filePath: string, sourceText: string): SourceFile {
+        const compilerSourceFile = compilerApi.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
 
@@ -222,9 +223,9 @@ export class CompilerFactory {
      * Gets a wrapped source file from a compiler source file.
      * @param sourceFile - Compiler source file.
      */
-    getSourceFile(compilerSourceFile: ts.SourceFile): compiler.SourceFile {
-        return this.nodeCache.getOrCreate<compiler.SourceFile>(compilerSourceFile, () => {
-            const sourceFile = new compiler.SourceFile(this.global, compilerSourceFile);
+    getSourceFile(compilerSourceFile: ts.SourceFile): SourceFile {
+        return this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
+            const sourceFile = new SourceFile(this.global, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
 
             // add to list of directories
@@ -298,57 +299,57 @@ export class CompilerFactory {
      * @param compilerObject - Compiler symbol display part.
      */
     getSymbolDisplayPart(compilerObject: ts.SymbolDisplayPart) {
-        return new compiler.SymbolDisplayPart(compilerObject);
+        return new SymbolDisplayPart(compilerObject);
     }
 
     /**
      * Gets a wrapped type from a compiler type.
      * @param type - Compiler type.
      */
-    getType<TType extends ts.Type = TType>(type: TType): compiler.Type<TType> {
-        if ((type.flags & ts.TypeFlags.TypeParameter) === ts.TypeFlags.TypeParameter)
-            return this.getTypeParameter(type as any as ts.TypeParameter) as any as compiler.Type<TType>;
-        return new compiler.Type<TType>(this.global, type);
+    getType<TType extends ts.Type = TType>(type: TType): Type<TType> {
+        if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
+            return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
+        return new Type<TType>(this.global, type);
     }
 
     /**
      * Gets a warpped type parameter from a compiler type parameter.
      * @param typeParameter - Compiler type parameter
      */
-    getTypeParameter(typeParameter: ts.TypeParameter): compiler.TypeParameter {
-        return new compiler.TypeParameter(this.global, typeParameter);
+    getTypeParameter(typeParameter: ts.TypeParameter): TypeParameter {
+        return new TypeParameter(this.global, typeParameter);
     }
 
     /**
      * Gets a wrapped signature from a compiler signature.
      * @param signature - Compiler signature.
      */
-    getSignature(signature: ts.Signature): compiler.Signature {
-        return new compiler.Signature(this.global, signature);
+    getSignature(signature: ts.Signature): Signature {
+        return new Signature(this.global, signature);
     }
 
     /**
      * Gets a wrapped symbol from a compiler symbol.
      * @param symbol - Compiler symbol.
      */
-    getSymbol(symbol: ts.Symbol): compiler.Symbol {
-        return new compiler.Symbol(this.global, symbol);
+    getSymbol(symbol: ts.Symbol): Symbol {
+        return new Symbol(this.global, symbol);
     }
 
     /**
      * Gets a wrapped diagnostic from a compiler diagnostic.
      * @param diagnostic - Compiler diagnostic.
      */
-    getDiagnostic(diagnostic: ts.Diagnostic): compiler.Diagnostic {
-        return new compiler.Diagnostic(this.global, diagnostic);
+    getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
+        return new Diagnostic(this.global, diagnostic);
     }
 
     /**
      * Gets a warpped JS doc tag info from a compiler object.
      * @param jsDocTagInfo - Compiler object.
      */
-    getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): compiler.JSDocTagInfo {
-        return new compiler.JSDocTagInfo(jsDocTagInfo);
+    getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): JSDocTagInfo {
+        return new JSDocTagInfo(jsDocTagInfo);
     }
 
     /**
@@ -356,9 +357,9 @@ export class CompilerFactory {
      * @param oldNode - Old node to remove.
      * @param newNode - New node to use.
      */
-    replaceCompilerNode(oldNode: ts.Node | compiler.Node, newNode: ts.Node) {
-        const nodeToReplace = oldNode instanceof compiler.Node ? oldNode.compilerNode : oldNode;
-        const node = oldNode instanceof compiler.Node ? oldNode : this.nodeCache.get(oldNode);
+    replaceCompilerNode(oldNode: ts.Node | Node, newNode: ts.Node) {
+        const nodeToReplace = oldNode instanceof Node ? oldNode.compilerNode : oldNode;
+        const node = oldNode instanceof Node ? oldNode : this.nodeCache.get(oldNode);
 
         this.nodeCache.replaceKey(nodeToReplace, newNode);
 
@@ -370,11 +371,11 @@ export class CompilerFactory {
      * Removes a node from the cache.
      * @param node - Node to remove.
      */
-    removeNodeFromCache(node: compiler.Node) {
+    removeNodeFromCache(node: Node) {
         const compilerNode = node.compilerNode;
         this.nodeCache.removeByKey(compilerNode);
 
-        if (compilerNode.kind === ts.SyntaxKind.SourceFile) {
+        if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
             this.directoryCache.get(FileUtils.getDirPath(sourceFile.fileName))!._removeSourceFile(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
@@ -394,7 +395,7 @@ export class CompilerFactory {
      * Forgets the nodes created in the block.
      * @param block - Block of code to run.
      */
-    forgetNodesCreatedInBlock(block: (remember: (...node: compiler.Node[]) => void) => (void | Promise<void>)): Promise<void> {
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)): Promise<void> {
         // can't use the async keyword here because exceptions that happen when doing this synchronously need to be thrown
         this.nodeCache.setForgetPoint();
         let wasPromise = false;

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoParent, removeChildren} from "./../../manipulation";
@@ -50,7 +50,7 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
-                const colonNode = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ColonToken);
+                const colonNode = this.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
                 insertIntoParent({
                     insertPos: colonNode.getStart(),
                     childIndex: colonNode.getChildIndex(),

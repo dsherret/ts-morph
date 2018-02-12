@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {EnumMemberStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -50,7 +50,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
      */
     remove() {
         const childrenToRemove: Node[] = [this];
-        const commaToken = this.getNextSiblingIfKind(ts.SyntaxKind.CommaToken);
+        const commaToken = this.getNextSiblingIfKind(SyntaxKind.CommaToken);
         if (commaToken != null)
             childrenToRemove.push(commaToken);
         removeChildrenWithFormatting({

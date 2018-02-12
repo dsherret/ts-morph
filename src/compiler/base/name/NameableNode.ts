@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {removeChildren, insertIntoParent} from "./../../../manipulation";
@@ -65,7 +65,7 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             }
 
             if (nameNode == null) {
-                const openParenToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken);
+                const openParenToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
                 insertIntoParent({
                     childIndex: openParenToken.getChildIndex(),
                     insertItemsCount: 1,

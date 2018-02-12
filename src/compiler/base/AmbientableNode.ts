@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {AmbientableNodeStructure} from "./../../structures";
@@ -44,7 +44,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
         }
 
         getDeclareKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.DeclareKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.DeclareKeyword);
         }
 
         isAmbient() {

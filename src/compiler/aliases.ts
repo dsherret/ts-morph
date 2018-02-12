@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../typescript";
 import {Identifier, ComputedPropertyName, QualifiedName} from "./common";
 import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression} from "./expression";
 import {JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment} from "./jsx";
@@ -13,10 +13,10 @@ export type PropertyName = Identifier | StringLiteral | NumericLiteral | Compute
 function propertyNameAliasValidation() {
     const value: ts.PropertyName = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.Identifier:
-        case ts.SyntaxKind.StringLiteral:
-        case ts.SyntaxKind.NumericLiteral:
-        case ts.SyntaxKind.ComputedPropertyName:
+        case SyntaxKind.Identifier:
+        case SyntaxKind.StringLiteral:
+        case SyntaxKind.NumericLiteral:
+        case SyntaxKind.ComputedPropertyName:
             return;
         default:
             const ensureNever: never = value;
@@ -29,8 +29,8 @@ export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaratio
 function accessorDeclarationAliasValidation() {
     const value: ts.AccessorDeclaration = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.SetAccessor:
-        case ts.SyntaxKind.GetAccessor:
+        case SyntaxKind.SetAccessor:
+        case SyntaxKind.GetAccessor:
             return;
         default:
             const ensureNever: never = value;
@@ -43,8 +43,8 @@ export type EntityName = Identifier | QualifiedName;
 function entityNameValidation() {
     const value: ts.EntityName = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.Identifier:
-        case ts.SyntaxKind.QualifiedName:
+        case SyntaxKind.Identifier:
+        case SyntaxKind.QualifiedName:
             return;
         default:
             const ensureNever: never = value;
@@ -57,11 +57,11 @@ export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElem
 function jsxChildValidation() {
     const value: ts.JsxChild = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.JsxText:
-        case ts.SyntaxKind.JsxExpression:
-        case ts.SyntaxKind.JsxElement:
-        case ts.SyntaxKind.JsxSelfClosingElement:
-        case ts.SyntaxKind.JsxFragment:
+        case SyntaxKind.JsxText:
+        case SyntaxKind.JsxExpression:
+        case SyntaxKind.JsxElement:
+        case SyntaxKind.JsxSelfClosingElement:
+        case SyntaxKind.JsxFragment:
             return;
         default:
             const ensureNever: never = value;
@@ -74,8 +74,8 @@ export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 function jsxAttributeValidation() {
     const value: ts.JsxAttributeLike = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.JsxAttribute:
-        case ts.SyntaxKind.JsxSpreadAttribute:
+        case SyntaxKind.JsxAttribute:
+        case SyntaxKind.JsxSpreadAttribute:
             return;
         default:
             const ensureNever: never = value;
@@ -95,12 +95,12 @@ export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAss
 function objectLiteralElementLikeAliasValidation() {
     const value: ts.ObjectLiteralElementLike = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.PropertyAssignment:
-        case ts.SyntaxKind.ShorthandPropertyAssignment:
-        case ts.SyntaxKind.SpreadAssignment:
-        case ts.SyntaxKind.MethodDeclaration:
-        case ts.SyntaxKind.SetAccessor:
-        case ts.SyntaxKind.GetAccessor:
+        case SyntaxKind.PropertyAssignment:
+        case SyntaxKind.ShorthandPropertyAssignment:
+        case SyntaxKind.SpreadAssignment:
+        case SyntaxKind.MethodDeclaration:
+        case SyntaxKind.SetAccessor:
+        case SyntaxKind.GetAccessor:
             return;
         default:
             const ensureNever: never = value;
@@ -113,8 +113,8 @@ export type CaseOrDefaultClause = CaseClause | DefaultClause;
 function caseOrDefaultClauseValidation() {
     const value: ts.CaseOrDefaultClause = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.CaseClause:
-        case ts.SyntaxKind.DefaultClause:
+        case SyntaxKind.CaseClause:
+        case SyntaxKind.DefaultClause:
             return;
         default:
             const ensureNever: never = value;
@@ -127,9 +127,9 @@ export type ModuleReference = EntityName | ExternalModuleReference;
 function moduleReferenceValidation() {
     const value: ts.ModuleReference = null as any;
     switch (value.kind) {
-        case ts.SyntaxKind.Identifier:
-        case ts.SyntaxKind.QualifiedName:
-        case ts.SyntaxKind.ExternalModuleReference:
+        case SyntaxKind.Identifier:
+        case SyntaxKind.QualifiedName:
+        case SyntaxKind.ExternalModuleReference:
             return;
         default:
             const ensureNever: never = value;

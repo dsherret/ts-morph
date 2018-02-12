@@ -21,8 +21,8 @@ A lot of the time, a node will have a name and you can retrieve the identifier v
 If not, from a given node, you can get all the children or descendants that are identifiers. For example:
 
 ```ts
-const childIdentifiers = node.getChildrenOfKind(ts.SyntaxKind.Identifier);
-const descendantIdentifiers = node.getDescendantsOfKind(ts.SyntaxKind.Identifier);
+const childIdentifiers = node.getChildrenOfKind(SyntaxKind.Identifier);
+const descendantIdentifiers = node.getDescendantsOfKind(SyntaxKind.Identifier);
 ```
 
 ### Text

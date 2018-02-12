@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node, OverloadableNode, ClassDeclaration} from "./../../compiler";
 import {FormattingKind, getClausedNodeChildFormatting, getClassMemberFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting} from "./../formatting";
 import {doManipulation} from "./doManipulation";
@@ -115,7 +115,7 @@ export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparat
     });
 
     function addNextCommaIfAble() {
-        const commaToken = child.getNextSiblingIfKind(ts.SyntaxKind.CommaToken);
+        const commaToken = child.getNextSiblingIfKind(SyntaxKind.CommaToken);
 
         if (commaToken != null)
             childrenToRemove.push(commaToken);
@@ -125,7 +125,7 @@ export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparat
         if (syntaxList.getLastChild() !== childrenToRemove[childrenToRemove.length - 1])
             return;
 
-        const precedingComma = child.getPreviousSiblingIfKind(ts.SyntaxKind.CommaToken);
+        const precedingComma = child.getPreviousSiblingIfKind(SyntaxKind.CommaToken);
         if (precedingComma != null)
             childrenToRemove.unshift(precedingComma);
     }

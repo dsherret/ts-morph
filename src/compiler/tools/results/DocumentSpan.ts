@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {GlobalContainer} from "./../../../GlobalContainer";
+import {ts} from "./../../../typescript";
 import {Node, SourceFile} from "./../../../compiler";
 import {Memoize} from "./../../../utils";
 import {TextSpan} from "./TextSpan";

@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+import * as compilerApi from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
@@ -17,17 +18,17 @@ export interface ModifierableNode {
      * Gets the first modifier of the specified syntax kind or throws if none found.
      * @param kind - Syntax kind.
      */
-    getFirstModifierByKindOrThrow(kind: ts.SyntaxKind): Node<ts.Modifier>;
+    getFirstModifierByKindOrThrow(kind: SyntaxKind): Node<ts.Modifier>;
     /**
      * Gets the first modifier of the specified syntax kind or undefined if none found.
      * @param kind - Syntax kind.
      */
-    getFirstModifierByKind(kind: ts.SyntaxKind): Node<ts.Modifier> | undefined;
+    getFirstModifierByKind(kind: SyntaxKind): Node<ts.Modifier> | undefined;
     /**
      * Gets if it has the specified modifier.
      * @param kind - Syntax kind to check for.
      */
-    hasModifier(kind: ts.SyntaxKind): boolean;
+    hasModifier(kind: SyntaxKind): boolean;
     /**
      * Gets if it has the specified modifier.
      * @param text - Text to check for.
@@ -61,11 +62,11 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return this.compilerNode.modifiers == null ? [] : this.compilerNode.modifiers.map(m => this.getNodeFromCompilerNode(m));
         }
 
-        getFirstModifierByKindOrThrow(kind: ts.SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${ts.SyntaxKind[kind]}`);
+        getFirstModifierByKindOrThrow(kind: SyntaxKind) {
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${SyntaxKind[kind]}`);
         }
 
-        getFirstModifierByKind(kind: ts.SyntaxKind) {
+        getFirstModifierByKind(kind: SyntaxKind) {
             for (const modifier of this.getModifiers()) {
                 if (modifier.getKind() === kind)
                     return modifier as Node<ts.Modifier>;
@@ -74,9 +75,9 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return undefined;
         }
 
-        hasModifier(kind: ts.SyntaxKind): boolean;
+        hasModifier(kind: SyntaxKind): boolean;
         hasModifier(text: ModifierTexts): boolean;
-        hasModifier(textOrKind: ModifierTexts | ts.SyntaxKind) {
+        hasModifier(textOrKind: ModifierTexts | SyntaxKind) {
             if (typeof textOrKind === "string")
                 return this.getModifiers().some(m => m.getText() === textOrKind);
             else
@@ -151,7 +152,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                         return modifiers[0].getStart();
                     for (const child of node.getChildrenIterator()) {
                         // skip over any initial syntax lists (ex. decorators) or js docs
-                        if (child.getKind() === ts.SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
+                        if (child.getKind() === SyntaxKind.SyntaxList || compilerApi.isJSDocCommentContainingNode(child.compilerNode))
                             continue;
                         return child.getStart();
                     }

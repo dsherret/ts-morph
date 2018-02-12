@@ -16,7 +16,7 @@ export function getTextFromStringOrWriter(manipulationSettings: ManipulationSett
 export function getCodeBlockWriter(manipulationSettings: ManipulationSettingsContainer) {
     const indentationText = manipulationSettings.getIndentationText();
     return new CodeBlockWriter({
-        newLine: manipulationSettings.getNewLineKind(),
+        newLine: manipulationSettings.getNewLineKindAsString(),
         indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
         useTabs: indentationText === IndentationText.Tab,
         useSingleQuote: manipulationSettings.getQuoteType() === QuoteType.Single

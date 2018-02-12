@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 import {AssignmentExpression} from "../AssignmentExpression";
 import {ArrayLiteralExpression} from "./ArrayLiteralExpression";
 

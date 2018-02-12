@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {UnionTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(UnionTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<UnionTypeNode>(text, ts.SyntaxKind.UnionType);
+        return getInfoFromTextWithDescendant<UnionTypeNode>(text, SyntaxKind.UnionType);
     }
 
     describe(nameof<UnionTypeNode>(d => d.getTypeNodes), () => {

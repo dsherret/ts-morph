@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxText} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfo(text: string) {
-    return getInfoFromTextWithDescendant<JsxText>(text, ts.SyntaxKind.JsxText, { isJsx: true });
+    return getInfoFromTextWithDescendant<JsxText>(text, SyntaxKind.JsxText, { isJsx: true });
 }
 
 describe(nameof(JsxText), () => {

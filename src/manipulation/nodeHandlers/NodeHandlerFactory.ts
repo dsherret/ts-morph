@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node, SourceFile} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
 import {NodeHandler} from "./NodeHandler";
@@ -71,7 +71,7 @@ export class NodeHandlerFactory {
         return this.getDefault({
             parent,
             childCount: 1,
-            isFirstChild: (currentNode, newNode) => newNode.getKind() === ts.SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
+            isFirstChild: (currentNode, newNode) => newNode.getKind() === SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
         });
     }
 

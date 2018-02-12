@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {StringLiteral, QuoteType} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStringLiteral(text: string) {
-    return getInfoFromTextWithDescendant<StringLiteral>(text, ts.SyntaxKind.StringLiteral).descendant;
+    return getInfoFromTextWithDescendant<StringLiteral>(text, SyntaxKind.StringLiteral).descendant;
 }
 
 describe(nameof(StringLiteral), () => {

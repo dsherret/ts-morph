@@ -121,5 +121,5 @@ const add = function(a: number, b: number) { return a + b; };
 In this case, it can be retrieved via the variable declaration's [initializer](initializers).
 
 ```ts
-const functionExpression = sourceFile.getVariableDeclarationOrThrow("add").getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression);
+const functionExpression = sourceFile.getVariableDeclarationOrThrow("add").getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression);
 ```

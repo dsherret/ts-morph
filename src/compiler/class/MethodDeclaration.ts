@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as getStructureFuncs from "./../../manipulation/helpers/getStructureFunctions";
 import * as errors from "./../../errors";
 import {removeOverloadableClassMember} from "./../../manipulation";
@@ -68,7 +68,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
             childCodes,
             getThisStructure: getStructureFuncs.fromMethodDeclarationOverload,
             fillNodeFromStructure: (node, structure) => node.fill(structure),
-            expectedSyntaxKind: ts.SyntaxKind.MethodDeclaration
+            expectedSyntaxKind: SyntaxKind.MethodDeclaration
         });
     }
 

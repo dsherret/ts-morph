@@ -1,8 +1,7 @@
 ﻿import * as errors from "./../../errors";
-import {NewLineKind} from "./../../ManipulationSettings";
 import {FormattingKind} from "./FormattingKind";
 
-export function getFormattingKindText(formattingKind: FormattingKind, opts: { newLineKind: NewLineKind; }) {
+export function getFormattingKindText(formattingKind: FormattingKind, opts: { newLineKind: string; }) {
     switch (formattingKind) {
         case FormattingKind.Space:
             return " ";

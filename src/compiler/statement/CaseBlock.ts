@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import * as errors from "./../../errors";
 import {verifyAndGetIndex, removeClausedNodeChildren} from "./../../manipulation";
 import {Node} from "./../common";

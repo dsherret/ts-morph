@@ -1,12 +1,11 @@
 ﻿import {Node} from "./../../compiler";
-import {NewLineKind} from "./../../ManipulationSettings";
 import {FormattingKind} from "./../formatting";
 
 export interface GetSpacingBetweenNodesOptions<TParentNode extends Node> {
     parent: TParentNode;
     previousSibling: Node | undefined;
     nextSibling: Node | undefined;
-    newLineKind: NewLineKind;
+    newLineKind: string;
     getSiblingFormatting: (parent: TParentNode, sibling: Node) => FormattingKind;
 }
 

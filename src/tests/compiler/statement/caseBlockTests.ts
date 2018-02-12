@@ -1,12 +1,12 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {CaseBlock, Node} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 function getCaseBlock(text: string) {
     const obj = getInfoFromText(text);
     const caseBlock = (
-        obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.CaseBlock)
+        obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.CaseBlock)
     ) as CaseBlock;
     return {...obj, caseBlock};
 }

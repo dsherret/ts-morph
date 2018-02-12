@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {ReturnTypedNode} from "./ReturnTypedNode";
 import {ParameteredNode} from "./ParameteredNode";

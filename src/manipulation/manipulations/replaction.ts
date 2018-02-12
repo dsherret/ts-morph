@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Node, SourceFile, RenameLocation} from "./../../compiler";
 import {TypeGuards} from "./../../utils";
 import {doManipulation} from "./doManipulation";

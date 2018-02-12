@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {AdvancedIterator, ArrayUtils} from "./../../utils";
+import {ts} from "./../../typescript";
 import {Node} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";

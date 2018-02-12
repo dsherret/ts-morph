@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node, SourceFile} from "./../../compiler";
 import {InsertionTextManipulator, InsertIntoBracesTextManipulator} from "./../textManipulators";
 import {NodeHandlerFactory} from "./../nodeHandlers";
@@ -123,11 +123,11 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const nextNode = currentNodes[insertIndex];
     const previousNode = currentNodes[insertIndex - 1];
     const numberOfSyntaxListItemsInserting = newTexts.length * 2 - 1;
-    const separator = opts.useNewLines ? parent.global.manipulationSettings.getNewLineKind() : " ";
+    const separator = opts.useNewLines ? parent.global.manipulationSettings.getNewLineKindAsString() : " ";
     const childIndentationText = parent.getParentOrThrow().getChildIndentationText();
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
-        parentNextSibling.getKind() === ts.SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === ts.SyntaxKind.CloseBracketToken
+        parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
     );
     let newText = newTexts.join(`,${separator}`);
 
@@ -167,7 +167,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
     else {
         if (opts.useNewLines)
-            newText = separator + newText + parent.global.manipulationSettings.getNewLineKind() + parent.getIndentationText();
+            newText = separator + newText + parent.global.manipulationSettings.getNewLineKindAsString() + parent.getIndentationText();
 
         insertIntoParentTextRange({
             insertPos: parent.getPos(),
@@ -207,7 +207,7 @@ export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode
     getIndexedChildren: () => Node[];
     // for child functions
     sourceFile: SourceFile;
-    expectedKind: ts.SyntaxKind;
+    expectedKind: SyntaxKind;
     structures: TStructure[];
     fillFunction?: (child: TNode, structure: TStructure) => void;
     parent: Node;
@@ -236,7 +236,7 @@ export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends
     insertIntoBracesOrSourceFile({
         ...opts,
         children: parentSyntaxList.getChildren(),
-        separator: opts.sourceFile.global.manipulationSettings.getNewLineKind(),
+        separator: opts.sourceFile.global.manipulationSettings.getNewLineKindAsString(),
         index: childIndex
     } as InsertIntoBracesOrSourceFileOptions<TStructure>);
 

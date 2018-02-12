@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Node} from "./../common";
 import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "./../../structures";
 import {verifyAndGetIndex, removeOverloadableStatementedNodeChild} from "./../../manipulation";
@@ -69,7 +69,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             childCodes,
             getThisStructure: getStructureFuncs.fromFunctionDeclarationOverload,
             fillNodeFromStructure: (node, structure) => node.fill(structure),
-            expectedSyntaxKind: ts.SyntaxKind.FunctionDeclaration
+            expectedSyntaxKind: SyntaxKind.FunctionDeclaration
         });
     }
 

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
 import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
@@ -14,10 +14,10 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * @param text - Text to set as the import specifier.
      */
     setModuleSpecifier(text: string) {
-        const stringLiteral = this.getLastChildByKind(ts.SyntaxKind.StringLiteral);
+        const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
 
         if (stringLiteral == null) {
-            const semiColonToken = this.getLastChildIfKind(ts.SyntaxKind.SemicolonToken);
+            const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
             const quoteType = this.global.manipulationSettings.getQuoteType();
             insertIntoParent({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
@@ -66,14 +66,14 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Gets the source file referenced in the module specifier.
      */
     getModuleSpecifierSourceFile() {
-        const stringLiteral = this.getLastChildByKind(ts.SyntaxKind.StringLiteral);
+        const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
         if (stringLiteral == null)
             return undefined;
         const symbol = stringLiteral.getSymbol();
         if (symbol == null)
             return undefined;
         const declarations = symbol.getDeclarations();
-        if (declarations.length === 0 || declarations[0].getKind() !== ts.SyntaxKind.SourceFile)
+        if (declarations.length === 0 || declarations[0].getKind() !== SyntaxKind.SourceFile)
             return undefined;
         return declarations[0] as SourceFile;
     }
@@ -82,7 +82,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Gets if the module specifier exists
      */
     hasModuleSpecifier() {
-        return this.getLastChildByKind(ts.SyntaxKind.StringLiteral) != null;
+        return this.getLastChildByKind(SyntaxKind.StringLiteral) != null;
     }
 
     /**
@@ -143,7 +143,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         index = verifyAndGetIndex(index, namedExports.length);
 
         if (namedExports.length === 0) {
-            const asteriskToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.AsteriskToken);
+            const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParent({
                 insertPos: asteriskToken.getStart(),
                 parent: this,
@@ -158,7 +158,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         }
         else {
             insertIntoCommaSeparatedNodes({
-                parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.NamedExports).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                parent: this.getFirstChildByKindOrThrow(SyntaxKind.NamedExports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedExports,
                 insertIndex: index,
                 newTexts: codes
@@ -185,7 +185,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         if (!this.hasModuleSpecifier())
             throw new errors.InvalidOperationError("Cannot change to a namespace export when no module specifier exists.");
 
-        const namedExportsNode = this.getFirstChildByKind(ts.SyntaxKind.NamedExports);
+        const namedExportsNode = this.getFirstChildByKind(SyntaxKind.NamedExports);
         if (namedExportsNode == null)
             return this;
 

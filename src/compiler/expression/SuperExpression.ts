@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {PrimaryExpression} from "./PrimaryExpression";
 
 export const SuperExpressionBase = PrimaryExpression;

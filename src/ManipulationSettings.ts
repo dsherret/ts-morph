@@ -1,14 +1,7 @@
-﻿import * as ts from "typescript";
 import * as objectAssign from "object-assign";
+import {ts, ScriptTarget, NewLineKind} from "./typescript";
 import {QuoteType} from "./compiler";
-
-/** Kinds of new lines */
-export enum NewLineKind {
-    /** Line feed */
-    LineFeed = "\n",
-    /** Carriage return and line feed */
-    CarriageReturnLineFeed = "\r\n"
-}
+import {newLineKindToString} from "./utils";
 
 /** Kinds of indentation */
 export enum IndentationText {
@@ -31,7 +24,7 @@ export interface ManipulationSettings {
     /** New line kind */
     newLineKind: NewLineKind;
     /** Script target. */
-    scriptTarget: ts.ScriptTarget;
+    scriptTarget: ScriptTarget;
     /** Quote type used for string literals. */
     quoteType: QuoteType;
 }
@@ -43,7 +36,7 @@ export class ManipulationSettingsContainer {
     private readonly settings: ManipulationSettings = {
         indentationText: IndentationText.FourSpaces,
         newLineKind: NewLineKind.LineFeed,
-        scriptTarget: ts.ScriptTarget.Latest,
+        scriptTarget: ScriptTarget.Latest,
         quoteType: QuoteType.Double
     };
 
@@ -59,6 +52,13 @@ export class ManipulationSettingsContainer {
      */
     getNewLineKind() {
         return this.settings.newLineKind;
+    }
+
+    /**
+     * Gets the new line kind as a string.
+     */
+    getNewLineKindAsString() {
+        return newLineKindToString(this.getNewLineKind());
     }
 
     /**

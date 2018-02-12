@@ -1,5 +1,4 @@
-﻿/* barrel:ignore */
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import {insertIntoParent, getIndentedText} from "./../../../manipulation";
 import {getTextFromStringOrWriter, StringUtils} from "./../../../utils";
@@ -12,10 +11,10 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
     const childSyntaxList = body.getChildSyntaxListOrThrow();
     const childrenToRemove = childSyntaxList.getChildren();
     const childIndentationText = body.getChildIndentationText();
-    const newLineKind = body.global.manipulationSettings.getNewLineKind();
+    const newLineKind = body.global.manipulationSettings.getNewLineKindAsString();
     const newText = getNewText();
-    const openBrace = body.getFirstChildByKindOrThrow(ts.SyntaxKind.FirstPunctuation);
-    const closeBrace = body.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseBraceToken);
+    const openBrace = body.getFirstChildByKindOrThrow(SyntaxKind.FirstPunctuation);
+    const closeBrace = body.getFirstChildByKindOrThrow(SyntaxKind.CloseBraceToken);
 
     // ideally this wouldn't replace the existing syntax list
     insertIntoParent({

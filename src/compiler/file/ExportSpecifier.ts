@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
@@ -32,7 +32,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the name node of what's being exported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier) as Identifier;
+        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier) as Identifier;
     }
 
     /**
@@ -61,7 +61,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the alias identifier, if it exists.
      */
     getAliasIdentifier() {
-        const asKeyword = this.getFirstChildByKind(ts.SyntaxKind.AsKeyword);
+        const asKeyword = this.getFirstChildByKind(SyntaxKind.AsKeyword);
         if (asKeyword == null)
             return undefined;
         const aliasIdentifier = asKeyword.getNextSibling();
@@ -74,7 +74,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the export declaration associated with this export specifier.
      */
     getExportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(ts.SyntaxKind.ExportDeclaration) as ExportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration) as ExportDeclaration;
     }
 
     /**

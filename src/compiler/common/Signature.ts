@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {SymbolDisplayPart} from "./../tools";
 import {JSDocTagInfo} from "./../doc";

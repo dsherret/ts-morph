@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+import * as compilerApi from "typescript";
+import {ts, CompilerOptions, ScriptTarget} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {replaceSourceFileTextForRename, getTextFromFormattingEdits} from "./../../manipulation";
 import * as errors from "./../../errors";
@@ -33,7 +34,7 @@ export class LanguageService {
         const fileExistsSync = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystem.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => global.compilerOptions,
-            getNewLine: () => global.manipulationSettings.getNewLineKind(),
+            getNewLine: () => global.manipulationSettings.getNewLineKindAsString(),
             getScriptFileNames: () => this.global.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
                 return (version++).toString();
@@ -41,14 +42,14 @@ export class LanguageService {
             getScriptSnapshot: fileName => {
                 if (!fileExistsSync(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
+                return compilerApi.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => global.fileSystem.getCurrentDirectory(),
             getDefaultLibFileName: options => {
                 if (this.global.fileSystem instanceof DefaultFileSystemHost)
-                    return ts.getDefaultLibFilePath(global.compilerOptions);
+                    return compilerApi.getDefaultLibFilePath(global.compilerOptions);
                 else
-                    return FileUtils.pathJoin(global.fileSystem.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions));
+                    return FileUtils.pathJoin(global.fileSystem.getCurrentDirectory(), "node_modules/typescript/lib/" + compilerApi.getDefaultLibFileName(global.compilerOptions));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
@@ -61,13 +62,13 @@ export class LanguageService {
         };
 
         this.compilerHost = {
-            getSourceFile: (fileName: string, languageVersion: ts.ScriptTarget, onError?: (message: string) => void) => {
+            getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
                 const sourceFile = this.global.compilerFactory.getSourceFileFromFilePath(fileName);
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
             // getDefaultLibLocation: (...) => {},
-            getDefaultLibFileName: (options: ts.CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
+            getDefaultLibFileName: (options: CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
             writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
                 this.global.fileSystem.writeFileSync(filePath, data);
             },
@@ -84,7 +85,7 @@ export class LanguageService {
             getEnvironmentVariable: (name: string) => process.env[name]
         };
 
-        this._compilerObject = ts.createLanguageService(languageServiceHost);
+        this._compilerObject = compilerApi.createLanguageService(languageServiceHost);
         this.program = new Program(this.global, this.global.compilerFactory.getSourceFilePaths(), this.compilerHost);
 
         this.global.compilerFactory.onSourceFileAdded(() => this.resetProgram());

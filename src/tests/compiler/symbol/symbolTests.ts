@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
+import {ts, SymbolFlags} from "./../../../typescript";
 import {Symbol} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -24,7 +24,7 @@ describe(nameof(Symbol), () => {
 
     describe(nameof<Symbol>(s => s.getFlags), () => {
         it("should get the symbol flags", () => {
-            expect(enumNameNodeSymbol.getFlags()).to.equal(ts.SymbolFlags.RegularEnum);
+            expect(enumNameNodeSymbol.getFlags()).to.equal(SymbolFlags.RegularEnum);
         });
     });
 });

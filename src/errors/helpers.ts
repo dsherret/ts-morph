@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../typescript";
 import {Node} from "./../compiler";
 import {FileSystemHost} from "./../fileSystem";
 import {ArgumentError} from "./ArgumentError";
@@ -38,9 +38,9 @@ export function throwIfNotStringOrWhitespace(value: string, argName: string) {
  * @param syntaxKind - Syntax kind that's expected.
  * @param message - Optional message to throw.
  */
-export function throwIfNotSyntaxKind(node: Node, syntaxKind: ts.SyntaxKind, message?: string) {
+export function throwIfNotSyntaxKind(node: Node, syntaxKind: SyntaxKind, message?: string) {
     if (node.getKind() !== syntaxKind)
-        throw new NotImplementedError(message || `Expected node to be syntax kind ${ts.SyntaxKind[syntaxKind]}, but was ${node.getKindName()}.`);
+        throw new NotImplementedError(message || `Expected node to be syntax kind ${SyntaxKind[syntaxKind]}, but was ${node.getKindName()}.`);
 }
 
 /**
@@ -73,8 +73,8 @@ export function throwIfRangeOutOfRange(actualRange: [number, number], range: [nu
  * Gets an error saying that a feature is not implemented for a certain syntax kind.
  * @param syntaxKind - Syntax kind that isn't implemented.
  */
-export function getNotImplementedForSyntaxKindError(syntaxKind: ts.SyntaxKind) {
-    return new NotImplementedError(`Not implemented feature for syntax kind '${ts.SyntaxKind[syntaxKind]}'.`);
+export function getNotImplementedForSyntaxKindError(syntaxKind: SyntaxKind) {
+    return new NotImplementedError(`Not implemented feature for syntax kind '${SyntaxKind[syntaxKind]}'.`);
 }
 
 /**

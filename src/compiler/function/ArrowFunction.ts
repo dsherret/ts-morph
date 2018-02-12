@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Expression} from "./../expression";
 import {JSDocableNode, NameableNode, ModifierableNode, AsyncableNode, GeneratorableNode, BodiedNode, TextInsertableNode, TypeParameteredNode,
     SignaturedDeclaration} from "./../base";

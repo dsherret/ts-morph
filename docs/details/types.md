@@ -54,13 +54,13 @@ Sometimes this may not be good enough. If not, try to provide the enclosing node
 const text = type.getText(parameter);
 ```
 
-Format it by providing `ts.TypeFormatFlags`:
+Format it by providing `TypeFormatFlags`:
 
 ```ts
-const text = type.getText(parameter, ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.WriteArrayAsGenericType);
+const text = type.getText(parameter, TypeFormatFlags.NoTruncation | TypeFormatFlags.WriteArrayAsGenericType);
 ```
 
-Look at the TypeScript compiler definition file for more available options for `ts.TypeFormatFlags`.
+Look at the definition file for more available options for `TypeFormatFlags`.
 
 ### Intersection types
 
@@ -134,7 +134,7 @@ For example, `string | undefined` would return `string`.
 
 ### Type flags
 
-This has information about the type, such as `ts.TypeFlags.BooleanLike`.
+This has information about the type, such as `TypeFlags.BooleanLike`.
 
 ```ts
 const flags = type.getFlags();
@@ -144,7 +144,7 @@ Generally a method that starts with "is" exists on the type and you can easily u
 
 ### Object flags
 
-This has information about object types, such as `ts.ObjectFlags.Mapped`.
+This has information about object types, such as `ObjectFlags.Mapped`.
 
 ```ts
 const objectFlags = type.getObjectFlags();

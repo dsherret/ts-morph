@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind, SymbolFlags, TypeFormatFlags} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {EnumMember} from "./../enum";
 import {Expression} from "./../expression";
@@ -107,7 +107,7 @@ export class TypeChecker {
      * @param symbol - Symbol to get the alias symbol of.
      */
     getAliasedSymbol(symbol: Symbol): Symbol | undefined {
-        if (!symbol.hasFlags(ts.SymbolFlags.Alias))
+        if (!symbol.hasFlags(SymbolFlags.Alias))
             return undefined;
 
         const tsAliasSymbol = this.compilerObject.getAliasedSymbol(symbol.compilerSymbol);
@@ -128,7 +128,7 @@ export class TypeChecker {
      * @param enclosingNode - Enclosing node.
      * @param typeFormatFlags - Type format flags.
      */
-    getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: ts.TypeFormatFlags) {
+    getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags) {
         if (typeFormatFlags == null)
             typeFormatFlags = this.getDefaultTypeFormatFlags(enclosingNode);
 
@@ -172,11 +172,11 @@ export class TypeChecker {
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {
-        let formatFlags = (ts.TypeFormatFlags.UseTypeOfFunction | ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType |
-            ts.TypeFormatFlags.WriteTypeArgumentsOfSignature) as ts.TypeFormatFlags;
+        let formatFlags = (TypeFormatFlags.UseTypeOfFunction | TypeFormatFlags.NoTruncation | TypeFormatFlags.UseFullyQualifiedType |
+            TypeFormatFlags.WriteTypeArgumentsOfSignature) as TypeFormatFlags;
 
-        if (enclosingNode != null && enclosingNode.getKind() === ts.SyntaxKind.TypeAliasDeclaration)
-            formatFlags |= ts.TypeFormatFlags.InTypeAlias;
+        if (enclosingNode != null && enclosingNode.getKind() === SyntaxKind.TypeAliasDeclaration)
+            formatFlags |= TypeFormatFlags.InTypeAlias;
 
         return formatFlags;
     }

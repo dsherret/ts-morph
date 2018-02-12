@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags} from "./../../../typescript";
 import {Type, VariableStatement} from "./../../../compiler";
 import {VirtualFileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {getInfoFromText} from "./../testHelpers";
@@ -13,7 +13,7 @@ describe(nameof(Type), () => {
     describe(nameof<Type>(t => t.compilerType), () => {
         it("should get the compiler type", () => {
             const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.compilerType.flags).to.equal(ts.TypeFlags.String);
+            expect(firstType.compilerType.flags).to.equal(TypeFlags.String);
         });
     });
 
@@ -32,7 +32,7 @@ describe(nameof(Type), () => {
 
         it("should use the type format flags", () => {
             const {firstChild, firstType} = getTypeFromText(`let myType: ${longType};`);
-            expect(firstType.getText(firstChild, ts.TypeFormatFlags.None)).to.equal(longType.substring(0, 97) + "...");
+            expect(firstType.getText(firstChild, TypeFormatFlags.None)).to.equal(longType.substring(0, 97) + "...");
         });
     });
 
@@ -99,8 +99,8 @@ describe(nameof(Type), () => {
         it("should get the union types when they exist", () => {
             const {firstType} = getTypeFromText("let myType: string | number;");
             expect(firstType.getUnionTypes().length).to.equal(2);
-            expect(firstType.getUnionTypes()[0].getFlags()).to.equal(ts.TypeFlags.String);
-            expect(firstType.getUnionTypes()[1].getFlags()).to.equal(ts.TypeFlags.Number);
+            expect(firstType.getUnionTypes()[0].getFlags()).to.equal(TypeFlags.String);
+            expect(firstType.getUnionTypes()[1].getFlags()).to.equal(TypeFlags.Number);
         });
 
         it("should not return anything for an intersection type", () => {
@@ -118,8 +118,8 @@ describe(nameof(Type), () => {
         it("should get the union types when they exist", () => {
             const {firstType} = getTypeFromText("let myType: string & number;");
             expect(firstType.getIntersectionTypes().length).to.equal(2);
-            expect(firstType.getIntersectionTypes()[0].getFlags()).to.equal(ts.TypeFlags.String);
-            expect(firstType.getIntersectionTypes()[1].getFlags()).to.equal(ts.TypeFlags.Number);
+            expect(firstType.getIntersectionTypes()[0].getFlags()).to.equal(TypeFlags.String);
+            expect(firstType.getIntersectionTypes()[1].getFlags()).to.equal(TypeFlags.Number);
         });
 
         it("should not return anything for a union type", () => {
@@ -215,7 +215,7 @@ describe(nameof(Type), () => {
     describe(nameof<Type>(t => t.getFlags), () => {
         it("should get the type flags", () => {
             const {firstType} = getTypeFromText("let myType: number;");
-            expect(firstType.getFlags()).to.equal(ts.TypeFlags.Number);
+            expect(firstType.getFlags()).to.equal(TypeFlags.Number);
         });
     });
 
@@ -227,7 +227,7 @@ describe(nameof(Type), () => {
 
         it("should get the object flags when an object", () => {
             const {firstType} = getTypeFromText("let myType: MyInterface; interface MyInterface {}");
-            expect(firstType.getObjectFlags()).to.equal(ts.ObjectFlags.Interface);
+            expect(firstType.getObjectFlags()).to.equal(ObjectFlags.Interface);
         });
     });
 
@@ -340,7 +340,7 @@ describe(nameof(Type), () => {
     describe(nameof<Type>(t => t.getAliasSymbol), () => {
         it("should return the alias symbol when it exists", () => {
             const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
-            expect(firstType.getAliasSymbol()!.getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+            expect(firstType.getAliasSymbol()!.getFlags()).to.equal(SymbolFlags.TypeAlias);
         });
 
         it("should return undefined when not exists", () => {
@@ -352,7 +352,7 @@ describe(nameof(Type), () => {
     describe(nameof<Type>(t => t.getAliasSymbolOrThrow), () => {
         it("should return the alias symbol when it exists", () => {
             const {firstType} = getTypeFromText("let myType: MyAlias; type MyAlias = {str: string;};");
-            expect(firstType.getAliasSymbolOrThrow().getFlags()).to.equal(ts.SymbolFlags.TypeAlias);
+            expect(firstType.getAliasSymbolOrThrow().getFlags()).to.equal(SymbolFlags.TypeAlias);
         });
 
         it("should throw when not exists", () => {

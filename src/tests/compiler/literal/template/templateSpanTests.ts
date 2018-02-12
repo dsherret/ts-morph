@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {TemplateSpan} from "./../../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 function getTemplateSpan(text: string) {
-    return getInfoFromTextWithDescendant<TemplateSpan>(text, ts.SyntaxKind.TemplateSpan).descendant;
+    return getInfoFromTextWithDescendant<TemplateSpan>(text, SyntaxKind.TemplateSpan).descendant;
 }
 
 describe(nameof(TemplateSpan), () => {

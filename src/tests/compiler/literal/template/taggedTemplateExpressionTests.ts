@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {TaggedTemplateExpression} from "./../../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 function getExpression(text: string) {
-    return getInfoFromTextWithDescendant<TaggedTemplateExpression>(text, ts.SyntaxKind.TaggedTemplateExpression).descendant;
+    return getInfoFromTextWithDescendant<TaggedTemplateExpression>(text, SyntaxKind.TaggedTemplateExpression).descendant;
 }
 
 describe(nameof(TaggedTemplateExpression), () => {

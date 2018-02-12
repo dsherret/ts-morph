@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {DiagnosticCategory} from "./../../../typescript";
 import {Diagnostic} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -28,7 +28,7 @@ describe(nameof(Diagnostic), () => {
 
     describe(nameof<Diagnostic>(d => d.getCategory), () => {
         it("should get the category", () => {
-            expect(constError.getCategory()).to.equal(ts.DiagnosticCategory.Error);
+            expect(constError.getCategory()).to.equal(DiagnosticCategory.Error);
         });
     });
 

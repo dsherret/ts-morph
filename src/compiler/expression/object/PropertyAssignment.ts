@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import * as errors from "./../../../errors";
 import {insertIntoParent} from "./../../../manipulation";
 import {PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "./../../base";
@@ -17,7 +17,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      */
     removeInitializer(): ShorthandPropertyAssignment {
         const initializer = this.getInitializerOrThrow();
-        const colonToken = initializer.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
+        const colonToken = initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
         const childIndex = this.getChildIndex();
         const sourceFileText = this.sourceFile.getFullText();
         const insertPos = this.getStart();
@@ -36,7 +36,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
             }
         });
 
-        return parent.getChildAtIndexIfKindOrThrow(childIndex, ts.SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+        return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
     }
 
     /**

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {removeOverloadableClassMember} from "./../../manipulation";
 import * as getStructureFuncs from "./../../manipulation/helpers/getStructureFunctions";
@@ -63,7 +63,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
             childCodes,
             getThisStructure: getStructureFuncs.fromConstructorDeclarationOverload,
             fillNodeFromStructure: (node, structure) => node.fill(structure),
-            expectedSyntaxKind: ts.SyntaxKind.Constructor
+            expectedSyntaxKind: SyntaxKind.Constructor
         });
     }
 

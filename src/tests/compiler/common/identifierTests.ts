@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration, ClassDeclaration, InterfaceDeclaration} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -74,7 +74,7 @@ describe(nameof(Identifier), () => {
             expect(references[0].isDefinition()).to.equal(true);
             expect(references[0].isInString()).to.equal(undefined);
             expect(references[0].isWriteAccess()).to.equal(true);
-            expect(references[0].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.FunctionDeclaration);
+            expect(references[0].getNode().getParentOrThrow().getKind()).to.equal(SyntaxKind.FunctionDeclaration);
 
             // second reference
             expect(references[1].getSourceFile()).to.equal(sourceFile);
@@ -83,7 +83,7 @@ describe(nameof(Identifier), () => {
             expect(references[1].isDefinition()).to.equal(false);
             expect(references[1].isInString()).to.equal(undefined);
             expect(references[1].isWriteAccess()).to.equal(false);
-            expect(references[1].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
+            expect(references[1].getNode().getParentOrThrow().getKind()).to.equal(SyntaxKind.VariableDeclaration);
 
             // third reference
             expect(references[2].getSourceFile()).to.equal(secondSourceFile);
@@ -92,7 +92,7 @@ describe(nameof(Identifier), () => {
             expect(references[2].isDefinition()).to.equal(false);
             expect(references[2].isInString()).to.equal(undefined);
             expect(references[2].isWriteAccess()).to.equal(false);
-            expect(references[2].getNode().getParentOrThrow().getKind()).to.equal(ts.SyntaxKind.VariableDeclaration);
+            expect(references[2].getNode().getParentOrThrow().getKind()).to.equal(SyntaxKind.VariableDeclaration);
         });
 
         it("should get the right node when the reference is at the start of a property access expression", () => {
@@ -116,7 +116,7 @@ const t = MyNamespace.MyClass;
     describe(nameof<Identifier>(n => n.getType), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const {sourceFile} = getInfoFromText(text);
-            const identifiers = sourceFile.getDescendantsOfKind(ts.SyntaxKind.Identifier) as Identifier[];
+            const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier) as Identifier[];
             expect(identifiers.map(i => i.getType().getText())).to.deep.equal(expectedTypes);
         }
 

@@ -47,7 +47,7 @@ const length = diagnostic.getLength(); // returns: number
 Categories can be warnings, errors, or just messages.
 
 ```ts
-const category = diagnostic.getCategory(); // returns: ts.DiagnosticCategory
+const category = diagnostic.getCategory(); // returns: DiagnosticCategory
 ```
 
 #### Code
@@ -85,7 +85,7 @@ The properties of a DMC are similar to a Diagnostic:
 
 ```ts
 const messageText = dmc.getMessageText(); // returns: string
-const category = dmc.getCategory();       // returns: ts.DiagnosticCategory
+const category = dmc.getCategory();       // returns: DiagnosticCategory
 const code = dmc.getCode();               // returns: number
 ```
 

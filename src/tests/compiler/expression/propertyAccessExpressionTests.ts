@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts} from "./../../../typescript";
 import {PropertyAccessExpression, VariableDeclaration, TypeReferenceNode} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 

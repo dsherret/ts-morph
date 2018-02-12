@@ -1,12 +1,12 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {BooleanLiteral} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 function getInfoFromTextWithBooleanLiteral(text: string) {
     const obj = getInfoFromText(text);
     const literal = (
-        obj.sourceFile.getFirstDescendantByKind(ts.SyntaxKind.TrueKeyword) || obj.sourceFile.getFirstDescendantByKindOrThrow(ts.SyntaxKind.FalseKeyword)
+        obj.sourceFile.getFirstDescendantByKind(SyntaxKind.TrueKeyword) || obj.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.FalseKeyword)
     ) as BooleanLiteral;
     return { ...obj, literal };
 }

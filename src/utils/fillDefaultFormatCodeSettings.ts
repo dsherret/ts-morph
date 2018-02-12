@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {ManipulationSettingsContainer, IndentationText} from "./../ManipulationSettings";
+import {ts} from "./../typescript";
 import {FormatCodeSettings} from "./../compiler";
 
 export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, manipulationSettings: ManipulationSettingsContainer) {
@@ -15,7 +15,7 @@ export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, mani
     setValueIfUndefined(settings, "insertSpaceBeforeFunctionParenthesis", false);
     setValueIfUndefined(settings, "insertSpaceAfterSemicolonInForStatements", true);
     setValueIfUndefined(settings, "insertSpaceBeforeAndAfterBinaryOperators", true);
-    setValueIfUndefined(settings, "newLineCharacter", manipulationSettings.getNewLineKind());
+    setValueIfUndefined(settings, "newLineCharacter", manipulationSettings.getNewLineKindAsString());
     setValueIfUndefined(settings, "indentStyle", ts.IndentStyle.Smart);
     setValueIfUndefined(settings, "indentSize", manipulationSettings.getIndentationText().length);
     setValueIfUndefined(settings, "placeOpenBraceOnNewLineForFunctions", false);

@@ -1,11 +1,11 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {LiteralTypeNode} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(LiteralTypeNode), () => {
     function getNode(text: string) {
-        return getInfoFromTextWithDescendant<LiteralTypeNode>(text, ts.SyntaxKind.LiteralType);
+        return getInfoFromTextWithDescendant<LiteralTypeNode>(text, SyntaxKind.LiteralType);
     }
 
     describe(nameof<LiteralTypeNode>(d => d.getLiteral), () => {

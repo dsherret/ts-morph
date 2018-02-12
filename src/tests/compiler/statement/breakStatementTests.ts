@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {BreakStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getBreakStatement(text: string) {
-    return getInfoFromTextWithDescendant<BreakStatement>(text, ts.SyntaxKind.BreakStatement).descendant;
+    return getInfoFromTextWithDescendant<BreakStatement>(text, SyntaxKind.BreakStatement).descendant;
 }
 
 describe(nameof(BreakStatement), () => {

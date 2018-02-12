@@ -1,9 +1,9 @@
-﻿import * as ts from "typescript";
-import {Constructor} from "./../../Constructor";
+﻿import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {AsyncableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
+import {ts, SyntaxKind} from "./../../typescript";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type AsyncableNodeExtensionType = Node & ModifierableNode;
@@ -31,15 +31,15 @@ export interface AsyncableNode {
 export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>(Base: T): Constructor<AsyncableNode> & T {
     return class extends Base implements AsyncableNode {
         isAsync() {
-            return this.hasModifier(ts.SyntaxKind.AsyncKeyword);
+            return this.hasModifier(SyntaxKind.AsyncKeyword);
         }
 
         getAsyncKeyword(): Node<ts.Modifier> | undefined {
-            return this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
         }
 
         getAsyncKeywordOrThrow(): Node<ts.Modifier> {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(ts.SyntaxKind.AsyncKeyword), "Expected to find an async keyword.");
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(SyntaxKind.AsyncKeyword), "Expected to find an async keyword.");
         }
 
         setIsAsync(value: boolean) {

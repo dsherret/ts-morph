@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {removeCommaSeparatedChild, removeChildren} from "./../../manipulation";
 import {VariableDeclarationStructure} from "./../../structures";
@@ -25,10 +25,10 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
         const parent = this.getParentOrThrow();
 
         switch (parent.getKind()) {
-            case ts.SyntaxKind.VariableDeclarationList:
+            case SyntaxKind.VariableDeclarationList:
                 removeFromDeclarationList(this);
                 break;
-            case ts.SyntaxKind.CatchClause:
+            case SyntaxKind.CatchClause:
                 removeFromCatchClause(this);
                 break;
             default:
@@ -36,7 +36,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
         }
 
         function removeFromDeclarationList(node: VariableDeclaration) {
-            const variableStatement = parent.getParentIfKindOrThrow(ts.SyntaxKind.VariableStatement) as VariableStatement;
+            const variableStatement = parent.getParentIfKindOrThrow(SyntaxKind.VariableStatement) as VariableStatement;
             const declarations = variableStatement.getDeclarations();
             if (declarations.length === 1)
                 variableStatement.remove();
@@ -47,9 +47,9 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
         function removeFromCatchClause(node: VariableDeclaration) {
             removeChildren({
                 children: [
-                    node.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.OpenParenToken),
+                    node.getPreviousSiblingIfKindOrThrow(SyntaxKind.OpenParenToken),
                     node,
-                    node.getNextSiblingIfKindOrThrow(ts.SyntaxKind.CloseParenToken)
+                    node.getNextSiblingIfKindOrThrow(SyntaxKind.CloseParenToken)
                 ],
                 removePrecedingSpaces: true
             });

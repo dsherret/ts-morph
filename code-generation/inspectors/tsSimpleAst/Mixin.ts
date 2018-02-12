@@ -1,5 +1,4 @@
-﻿import * as ts from "typescript";
-import {InterfaceDeclaration, PropertyAccessExpression} from "./../../../src/main";
+﻿import {InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind} from "./../../../src/main";
 import {Memoize, TypeGuards, ArrayUtils} from "./../../../src/utils";
 import {WrapperFactory} from "./../WrapperFactory";
 
@@ -21,13 +20,13 @@ export class Mixin {
     getCoveredTsNodePropertyNames(): string[] {
         // this is done just to be fast... there's definitely a more correct way of doing this
         const sourceFile = this.node.getSourceFile();
-        const propertyAccessExpressions = sourceFile.getDescendantsOfKind(ts.SyntaxKind.PropertyAccessExpression) as PropertyAccessExpression[];
+        const propertyAccessExpressions = sourceFile.getDescendantsOfKind(SyntaxKind.PropertyAccessExpression) as PropertyAccessExpression[];
         const names: string[] = [];
 
         for (const expr of propertyAccessExpressions) {
             if (expr.getText() !== "this.compilerNode")
                 continue;
-            const parent = expr.getParentIfKindOrThrow(ts.SyntaxKind.PropertyAccessExpression) as PropertyAccessExpression;
+            const parent = expr.getParentIfKindOrThrow(SyntaxKind.PropertyAccessExpression) as PropertyAccessExpression;
             names.push(parent.getName());
         }
 

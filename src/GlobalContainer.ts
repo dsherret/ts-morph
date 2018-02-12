@@ -1,6 +1,6 @@
-﻿import * as ts from "typescript";
 import * as errors from "./errors";
 import {CompilerFactory} from "./factories";
+import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
@@ -24,11 +24,11 @@ export class GlobalContainer {
     private readonly _compilerFactory: CompilerFactory;
     private readonly _languageService: LanguageService | undefined;
     private readonly _fileSystem: FileSystemHost;
-    private readonly _compilerOptions: ts.CompilerOptions;
+    private readonly _compilerOptions: CompilerOptions;
     private readonly _customTypeChecker: TypeChecker | undefined;
     private readonly _logger = new ConsoleLogger();
 
-    constructor(fileSystem: FileSystemHost, compilerOptions: ts.CompilerOptions, opts: GlobalContainerOptions) {
+    constructor(fileSystem: FileSystemHost, compilerOptions: CompilerOptions, opts: GlobalContainerOptions) {
         this._fileSystem = fileSystem;
         this._compilerOptions = compilerOptions;
         this._compilerFactory = new CompilerFactory(this);

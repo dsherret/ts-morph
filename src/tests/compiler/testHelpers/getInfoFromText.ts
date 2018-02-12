@@ -1,9 +1,9 @@
-﻿import * as ts from "typescript";
 import * as fs from "fs";
 import * as path from "path";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
 import {createWrappedNode} from "./../../../createWrappedNode";
 import {FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost} from "./../../../fileSystem";
+import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "./../../../typescript";
 import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
 
 function getTextForLibFile(fileName: string) {
@@ -41,7 +41,7 @@ export interface GetInfoFromTextOptions {
     filePath?: string;
     host?: FileSystemHost;
     disableErrorCheck?: boolean;
-    compilerOptions?: ts.CompilerOptions;
+    compilerOptions?: CompilerOptions;
     includeLibDts?: boolean;
     isJsx?: boolean;
 }
@@ -55,7 +55,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: G
     };
 }
 
-export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: string, descendantKind: ts.SyntaxKind, opts?: GetInfoFromTextOptions) {
+export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: string, descendantKind: SyntaxKind, opts?: GetInfoFromTextOptions) {
     const info = getInfoFromTextInternal(text, opts);
     return {
         ...info,
@@ -66,7 +66,7 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: st
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
-        compilerOptions = { target: ts.ScriptTarget.ES2017 }, includeLibDts = false} = opts || {};
+        compilerOptions = { target: ScriptTarget.ES2017 }, includeLibDts = false} = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)

@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
 import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren} from "./../../manipulation";
@@ -14,7 +14,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @param text - Text to set as the import specifier.
      */
     setModuleSpecifier(text: string) {
-        const stringLiteral = this.getLastChildByKindOrThrow(ts.SyntaxKind.StringLiteral);
+        const stringLiteral = this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral);
         insertIntoParent({
             parent: this,
             newText: text,
@@ -54,7 +54,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         if (symbol == null)
             return undefined;
         const declarations = symbol.getDeclarations();
-        if (declarations.length === 0 || declarations[0].getKind() !== ts.SyntaxKind.SourceFile)
+        if (declarations.length === 0 || declarations[0].getKind() !== SyntaxKind.SourceFile)
             return undefined;
         return declarations[0] as SourceFile;
     }
@@ -72,7 +72,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             return this;
         }
 
-        const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
+        const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
         const importClause = this.getImportClause();
         if (importClause == null) {
             insertIntoParent({
@@ -104,7 +104,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         if (importClause == null)
             return undefined;
         const firstChild = importClause.getFirstChild();
-        if (firstChild == null || firstChild.getKind() !== ts.SyntaxKind.Identifier)
+        if (firstChild == null || firstChild.getKind() !== SyntaxKind.Identifier)
             return undefined;
         return firstChild as Identifier;
     }
@@ -136,7 +136,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             return this;
         }
 
-        const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
+        const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
         insertIntoParent({
             insertPos: importKeyword.getEnd(),
             childIndex: importKeyword.getChildIndex() + 1,
@@ -154,10 +154,10 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
-        const namespaceImport = importClause.getFirstChildByKind(ts.SyntaxKind.NamespaceImport);
+        const namespaceImport = importClause.getFirstChildByKind(SyntaxKind.NamespaceImport);
         if (namespaceImport == null)
             return undefined;
-        return namespaceImport.getFirstChildByKind(ts.SyntaxKind.Identifier) as Identifier | undefined;
+        return namespaceImport.getFirstChildByKind(SyntaxKind.Identifier) as Identifier | undefined;
     }
 
     /**
@@ -206,7 +206,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         if (namedImports.length === 0) {
             if (importClause == null) {
-                const importKeyword = this.getFirstChildByKindOrThrow(ts.SyntaxKind.ImportKeyword);
+                const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
                 insertIntoParent({
                     insertPos: importKeyword.getEnd(),
                     childIndex: importKeyword.getChildIndex() + 1,
@@ -233,7 +233,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
                 throw new errors.NotImplementedError("Expected to have an import clause.");
 
             insertIntoCommaSeparatedNodes({
-                parent: importClause.getFirstChildByKindOrThrow(ts.SyntaxKind.NamedImports).getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                parent: importClause.getFirstChildByKindOrThrow(SyntaxKind.NamedImports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedImports,
                 insertIndex: index,
                 newTexts: codes
@@ -250,7 +250,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         const importClause = this.getImportClause();
         if (importClause == null)
             return [];
-        const namedImports = importClause.getFirstChildByKind(ts.SyntaxKind.NamedImports);
+        const namedImports = importClause.getFirstChildByKind(SyntaxKind.NamedImports);
         if (namedImports == null)
             return [];
         return namedImports.getChildSyntaxListOrThrow().getChildren().filter(c => TypeGuards.isImportSpecifier(c)) as ImportSpecifier[];
@@ -264,20 +264,20 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         if (importClause == null)
             return this;
 
-        const namedImportsNode = importClause.getFirstChildByKind(ts.SyntaxKind.NamedImports);
+        const namedImportsNode = importClause.getFirstChildByKind(SyntaxKind.NamedImports);
         if (namedImportsNode == null)
             return this;
 
         // ex. import defaultExport, {Export1} from "module-name";
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            const commaToken = defaultImport.getNextSiblingIfKindOrThrow(ts.SyntaxKind.CommaToken);
+            const commaToken = defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken);
             removeChildren({ children: [commaToken, namedImportsNode] });
             return this;
         }
 
         // ex. import {Export1} from "module-name";
-        const fromKeyword = importClause.getNextSiblingIfKindOrThrow(ts.SyntaxKind.FromKeyword);
+        const fromKeyword = importClause.getNextSiblingIfKindOrThrow(SyntaxKind.FromKeyword);
         removeChildren({ children: [importClause, fromKeyword], removePrecedingSpaces: true });
         return this;
     }

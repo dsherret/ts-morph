@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {PropertyDeclarationStructure} from "./../../structures";
 import {removeClassMember, removeInterfaceMember} from "./../../manipulation";
@@ -30,7 +30,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
         const parent = this.getParentOrThrow();
 
         switch (parent.getKind()) {
-            case ts.SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassDeclaration:
                 removeClassMember(this);
                 break;
             default:

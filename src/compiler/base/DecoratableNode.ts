@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import * as errors from "./../../errors";
@@ -148,7 +148,7 @@ function getDecoratorFormattingKind(parent: DecoratableNode & Node, currentDecor
 
 function areDecoratorsOnSameLine(parent: DecoratableNode & Node, currentDecorators: Node[]) {
     if (currentDecorators.length <= 1)
-        return parent.getKind() === ts.SyntaxKind.Parameter;
+        return parent.getKind() === SyntaxKind.Parameter;
 
     const startLinePos = currentDecorators[0].getStartLinePos();
     for (let i = 1; i < currentDecorators.length; i++) {

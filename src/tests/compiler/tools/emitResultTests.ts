@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts} from "./../../../typescript";
 import {EmitResult} from "./../../../compiler";
 import {TsSimpleAst} from "./../../../TsSimpleAst";
 import {FileUtils} from "./../../../utils";

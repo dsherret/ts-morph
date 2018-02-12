@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {Node} from "./../common";
 import {JSDocableNode, ModifierableNode, TypeParameteredNode, SignaturedDeclaration} from "./../base";

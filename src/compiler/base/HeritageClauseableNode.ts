@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {ArrayUtils} from "./../../utils";
@@ -16,12 +16,12 @@ export interface HeritageClauseableNode {
      * Gets the heritage clause by kind.
      * @kind - Kind of heritage clause.
      */
-    getHeritageClauseByKind(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword): HeritageClause | undefined;
+    getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword): HeritageClause | undefined;
     /**
      * Gets the heritage clause by kind or throws if it doesn't exist.
      * @kind - Kind of heritage clause.
      */
-    getHeritageClauseByKindOrThrow(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword): HeritageClause;
+    getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword): HeritageClause;
 }
 
 export function HeritageClauseableNode<T extends Constructor<HeritageClauseableNodeExtensionType>>(Base: T): Constructor<HeritageClauseableNode> & T {
@@ -33,11 +33,11 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
             return heritageClauses.map(c => this.getNodeFromCompilerNode<HeritageClause>(c));
         }
 
-        getHeritageClauseByKindOrThrow(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword) {
-            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${ts.SyntaxKind[kind]}.`);
+        getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {
+            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${SyntaxKind[kind]}.`);
         }
 
-        getHeritageClauseByKind(kind: ts.SyntaxKind.ExtendsKeyword | ts.SyntaxKind.ImplementsKeyword) {
+        getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {
             return ArrayUtils.find(this.getHeritageClauses(), c => c.compilerNode.token === kind);
         }
     };

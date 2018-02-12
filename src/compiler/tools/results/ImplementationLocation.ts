@@ -1,7 +1,6 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 import {GlobalContainer} from "./../../../GlobalContainer";
 import {Memoize} from "./../../../utils";
-import {ScriptElementKind} from "./../../polyfills";
 import {DocumentSpan} from "./DocumentSpan";
 import {SymbolDisplayPart} from "./SymbolDisplayPart";
 
@@ -17,7 +16,7 @@ export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocati
      * Gets the kind.
      */
     getKind() {
-        return this.compilerObject.kind as ScriptElementKind;
+        return this.compilerObject.kind;
     }
 
     /**

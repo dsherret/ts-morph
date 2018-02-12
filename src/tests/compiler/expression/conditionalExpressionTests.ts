@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ConditionalExpression} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfoFromTextWithExpression(text: string) {
-    const info = getInfoFromTextWithDescendant<ConditionalExpression>(text, ts.SyntaxKind.ConditionalExpression);
+    const info = getInfoFromTextWithDescendant<ConditionalExpression>(text, SyntaxKind.ConditionalExpression);
     return {...info, expression: info.descendant};
 }
 

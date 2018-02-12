@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
-import {ManipulationSettings, ManipulationSettingsContainer, IndentationText, NewLineKind} from "./../ManipulationSettings";
+import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "./../ManipulationSettings";
+import {ts, ScriptTarget, NewLineKind} from "./../typescript";
 import {QuoteType} from "./../compiler";
 import {StringUtils} from "./../utils";
 
@@ -38,7 +38,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteType: QuoteType.Double,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
-            scriptTarget: ts.ScriptTarget.Latest
+            scriptTarget: ScriptTarget.Latest
         });
     });
 
@@ -52,7 +52,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
-            scriptTarget: ts.ScriptTarget.Latest
+            scriptTarget: ScriptTarget.Latest
         });
     });
 
@@ -62,14 +62,14 @@ describe(nameof(ManipulationSettingsContainer), () => {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
-            scriptTarget: ts.ScriptTarget.ES3
+            scriptTarget: ScriptTarget.ES3
         });
 
         checkSettings(settings, {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
-            scriptTarget: ts.ScriptTarget.ES3
+            scriptTarget: ScriptTarget.ES3
         });
     });
 });

@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 import {PrimaryExpression} from "./../../expression";
 import {TemplateHead} from "./TemplateHead";
 import {TemplateSpan} from "./TemplateSpan";

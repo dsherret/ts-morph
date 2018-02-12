@@ -1,4 +1,5 @@
-﻿import * as ts from "typescript";
+import * as compilerApi from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
@@ -105,7 +106,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the syntax kind name.
      */
     getKindName() {
-        return ts.SyntaxKind[this.compilerNode.kind];
+        return SyntaxKind[this.compilerNode.kind];
     }
 
     /**
@@ -116,7 +117,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (options.newLineKind == null)
             options.newLineKind = this.global.manipulationSettings.getNewLineKind();
 
-        if (this.getKind() === ts.SyntaxKind.SourceFile)
+        if (this.getKind() === SyntaxKind.SourceFile)
             return printNode(this.compilerNode, options);
         else
             return printNode(this.compilerNode, this.sourceFile.compilerNode, options);
@@ -333,7 +334,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         for (const child of this.getCompilerChildren()) {
             if (this.global.compilerFactory.hasCompilerNode(child))
                 yield this.global.compilerFactory.getExistingCompilerNode(child)!;
-            else if (child.kind === ts.SyntaxKind.SyntaxList) {
+            else if (child.kind === SyntaxKind.SyntaxList) {
                 // always return syntax lists because their children could be in the cache
                 yield getWrappedNode(this, child);
             }
@@ -366,13 +367,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             TypeGuards.isCaseClause(this) ||
             TypeGuards.isDefaultClause(this)
         )
-            return node.getFirstChildByKind(ts.SyntaxKind.SyntaxList) as SyntaxList | undefined;
+            return node.getFirstChildByKind(SyntaxKind.SyntaxList) as SyntaxList | undefined;
 
         let passedBrace = false;
         for (const child of node.getCompilerChildren()) {
             if (!passedBrace)
-                passedBrace = child.kind === ts.SyntaxKind.FirstPunctuation;
-            else if (child.kind === ts.SyntaxKind.SyntaxList)
+                passedBrace = child.kind === SyntaxKind.FirstPunctuation;
+            else if (child.kind === SyntaxKind.SyntaxList)
                 return getWrappedNode(this, child) as SyntaxList;
         }
 
@@ -525,7 +526,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the combined modifier flags.
      */
     getCombinedModifierFlags() {
-        return ts.getCombinedModifierFlags(this.compilerNode);
+        return compilerApi.getCombinedModifierFlags(this.compilerNode) as ts.ModifierFlags;
     }
 
     /**
@@ -628,8 +629,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${ts.SyntaxKind[kind]}.`);
+    getParentWhileKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
     /**
@@ -637,7 +638,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKind(kind: ts.SyntaxKind) {
+    getParentWhileKind(kind: SyntaxKind) {
         return this.getParentWhile(n => n.getKind() === kind);
     }
 
@@ -680,7 +681,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (child.pos > pos || child === this.compilerNode)
                 return undefined;
 
-            if (child.kind === ts.SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)
+            if (child.kind === SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)
                 return getWrappedNode(this, child);
         }
 
@@ -862,7 +863,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the children based on a kind.
      * @param kind - Syntax kind.
      */
-    getChildrenOfKind(kind: ts.SyntaxKind): Node[] {
+    getChildrenOfKind(kind: SyntaxKind): Node[] {
         return this.getCompilerChildren().filter(c => c.kind === kind).map(c => getWrappedNode(this, c));
     }
 
@@ -870,15 +871,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getFirstChildByKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+    getFirstChildByKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the first child by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstChildByKind(kind: ts.SyntaxKind): Node | undefined {
+    getFirstChildByKind(kind: SyntaxKind): Node | undefined {
         const child = this.getCompilerFirstChild(c => c.kind === kind);
         return child == null ? undefined : getWrappedNode(this, child);
     }
@@ -887,15 +888,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child if it matches the specified syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getFirstChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+    getFirstChildIfKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the first child if it matches the specified syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstChildIfKind(kind: ts.SyntaxKind): Node | undefined {
+    getFirstChildIfKind(kind: SyntaxKind): Node | undefined {
         const firstChild = this.getCompilerFirstChild();
         return firstChild != null && firstChild.kind === kind ? getWrappedNode(this, firstChild) : undefined;
     }
@@ -904,15 +905,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getLastChildByKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+    getLastChildByKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the last child by syntax kind.
      * @param kind - Syntax kind.
      */
-    getLastChildByKind(kind: ts.SyntaxKind): Node | undefined {
+    getLastChildByKind(kind: SyntaxKind): Node | undefined {
         const lastChild = this.getCompilerLastChild(c => c.kind === kind);
         return lastChild == null ? undefined : getWrappedNode(this, lastChild);
     }
@@ -921,15 +922,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child if it matches the specified syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getLastChildIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${ts.SyntaxKind[kind]} was expected.`);
+    getLastChildIfKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the last child if it matches the specified syntax kind.
      * @param kind - Syntax kind.
      */
-    getLastChildIfKind(kind: ts.SyntaxKind): Node | undefined {
+    getLastChildIfKind(kind: SyntaxKind): Node | undefined {
         const lastChild = this.getCompilerLastChild();
         return lastChild != null && lastChild.kind === kind ? getWrappedNode(this, lastChild) : undefined;
     }
@@ -939,8 +940,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index to get.
      * @param kind - Expected kind.
      */
-    getChildAtIndexIfKindOrThrow(index: number, kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${ts.SyntaxKind[kind]}`);
+    getChildAtIndexIfKindOrThrow(index: number, kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${SyntaxKind[kind]}`);
     }
 
     /**
@@ -948,7 +949,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index to get.
      * @param kind - Expected kind.
      */
-    getChildAtIndexIfKind(index: number, kind: ts.SyntaxKind): Node | undefined {
+    getChildAtIndexIfKind(index: number, kind: SyntaxKind): Node | undefined {
         const node = this.getCompilerChildAtIndex(index);
         return node.kind === kind ? getWrappedNode(this, node) : undefined;
     }
@@ -957,23 +958,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the previous sibiling if it matches the specified kind, or throws.
      * @param kind - Kind to check.
      */
-    getPreviousSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+    getPreviousSiblingIfKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the next sibiling if it matches the specified kind, or throws.
      * @param kind - Kind to check.
      */
-    getNextSiblingIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${ts.SyntaxKind[kind]} was expected.`);
+    getNextSiblingIfKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${SyntaxKind[kind]} was expected.`);
     }
 
     /**
      * Gets the previous sibling if it matches the specified kind.
      * @param kind - Kind to check.
      */
-    getPreviousSiblingIfKind(kind: ts.SyntaxKind): Node | undefined {
+    getPreviousSiblingIfKind(kind: SyntaxKind): Node | undefined {
         const previousSibling = this.getCompilerPreviousSibling();
         return previousSibling != null && previousSibling.kind === kind ? getWrappedNode(this, previousSibling) : undefined;
     }
@@ -982,7 +983,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibling if it matches the specified kind.
      * @param kind - Kind to check.
      */
-    getNextSiblingIfKind(kind: ts.SyntaxKind): Node | undefined {
+    getNextSiblingIfKind(kind: SyntaxKind): Node | undefined {
         const nextSibling = this.getCompilerNextSibling();
         return nextSibling != null && nextSibling.kind === kind ? getWrappedNode(this, nextSibling) : undefined;
     }
@@ -990,7 +991,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the parent if it's a certain syntax kind.
      */
-    getParentIfKind(kind: ts.SyntaxKind): Node | undefined {
+    getParentIfKind(kind: SyntaxKind): Node | undefined {
         const parentNode = this.getParent();
         return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
     }
@@ -998,24 +999,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the parent if it's a certain syntax kind of throws.
      */
-    getParentIfKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${ts.SyntaxKind[kind]}.`);
+    getParentIfKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
     /**
      * Gets the first ancestor by syntax kind or throws if not found.
      * @param kind - Syntax kind.
      */
-    getFirstAncestorByKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${ts.SyntaxKind[kind]}.`);
+    getFirstAncestorByKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
     /**
      * Get the first ancestor by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstAncestorByKind(kind: ts.SyntaxKind): Node | undefined {
-        for (const parent of this.getAncestors(kind === ts.SyntaxKind.SyntaxList)) {
+    getFirstAncestorByKind(kind: SyntaxKind): Node | undefined {
+        for (const parent of this.getAncestors(kind === SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
                 return parent;
         }
@@ -1026,7 +1027,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the descendants that match a specified syntax kind.
      * @param kind - Kind to check.
      */
-    getDescendantsOfKind(kind: ts.SyntaxKind) {
+    getDescendantsOfKind(kind: SyntaxKind) {
         const descendants: Node[] = [];
         for (const descendant of this.getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
@@ -1039,15 +1040,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by syntax kind or throws.
      * @param kind - Syntax kind.
      */
-    getFirstDescendantByKindOrThrow(kind: ts.SyntaxKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${ts.SyntaxKind[kind]} is required to do this operation.`);
+    getFirstDescendantByKindOrThrow(kind: SyntaxKind) {
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${SyntaxKind[kind]} is required to do this operation.`);
     }
 
     /**
      * Gets the first descendant by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstDescendantByKind(kind: ts.SyntaxKind): Node | undefined {
+    getFirstDescendantByKind(kind: SyntaxKind): Node | undefined {
         for (const descendant of this.getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
                 return getWrappedNode(this, descendant);
@@ -1215,7 +1216,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getWriter() {
         const indentationText = this.global.manipulationSettings.getIndentationText();
         return new CodeBlockWriter({
-            newLine: this.global.manipulationSettings.getNewLineKind(),
+            newLine: this.global.manipulationSettings.getNewLineKindAsString(),
             indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
             useTabs: indentationText === IndentationText.Tab,
             useSingleQuote: this.global.manipulationSettings.getQuoteType() === QuoteType.Single

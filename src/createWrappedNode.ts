@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import * as errors from "./errors";
+import {ts, SyntaxKind, CompilerOptions} from "./typescript";
 import {SourceFile, Node} from "./compiler";
 import {GlobalContainer} from "./GlobalContainer";
 import {DefaultFileSystemHost} from "./fileSystem";
@@ -8,7 +8,7 @@ export interface CreateWrappedNodeOptions {
     /**
      * Compiler options.
      */
-    compilerOptions?: ts.CompilerOptions;
+    compilerOptions?: CompilerOptions;
     /**
      * Optional source file of the node. Will make it not bother going up the tree to find the source file.
      */
@@ -36,7 +36,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
     }
 
     function getSourceFileFromNode(compilerNode: ts.Node) {
-        if (compilerNode.kind === ts.SyntaxKind.SourceFile)
+        if (compilerNode.kind === SyntaxKind.SourceFile)
             return compilerNode as ts.SourceFile;
         if (compilerNode.parent == null)
             throw new errors.InvalidOperationError("Please ensure the node was created from a source file with 'setParentNodes' set to 'true'.");
@@ -45,7 +45,7 @@ export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: Cr
         while (parent.parent != null)
             parent = parent.parent;
 
-        if (parent.kind !== ts.SyntaxKind.SourceFile)
+        if (parent.kind !== SyntaxKind.SourceFile)
             throw new errors.NotImplementedError("For some reason the top parent was not a source file.");
 
         return parent as ts.SourceFile;

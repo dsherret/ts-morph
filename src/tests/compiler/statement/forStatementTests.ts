@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {ForStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<ForStatement>(text, ts.SyntaxKind.ForStatement).descendant;
+    return getInfoFromTextWithDescendant<ForStatement>(text, SyntaxKind.ForStatement).descendant;
 }
 
 describe(nameof(ForStatement), () => {

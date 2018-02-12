@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
-import CodeBlockWriter from "code-block-writer";
+﻿import CodeBlockWriter from "code-block-writer";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {BodiedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
+import {ts} from "./../../typescript";
 import {setBodyTextForNode} from "./helpers/setBodyTextForNode";
 
 export type BodiedNodeExtensionType = Node<ts.Node & { body: ts.Node; }>;

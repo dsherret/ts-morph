@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
@@ -81,7 +81,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             index = verifyAndGetIndex(index, typeArguments.length);
 
             if (typeArguments.length === 0) {
-                const identifier = this.getFirstChildByKindOrThrow(ts.SyntaxKind.Identifier);
+                const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
                 insertIntoParent({
                     insertPos: identifier.getEnd(),
                     childIndex: identifier.getChildIndex() + 1,
@@ -92,7 +92,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             }
             else {
                 insertIntoCommaSeparatedNodes({
-                    parent: this.getFirstChildByKindOrThrow(ts.SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeArguments,
                     insertIndex: index,
                     newTexts: argumentTexts
@@ -114,9 +114,9 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                 const childSyntaxList = typeArguments[0].getParentSyntaxListOrThrow();
                 removeChildren({
                     children: [
-                        childSyntaxList.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.FirstBinaryOperator),
+                        childSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstBinaryOperator),
                         childSyntaxList,
-                        childSyntaxList.getNextSiblingIfKindOrThrow(ts.SyntaxKind.GreaterThanToken)
+                        childSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
                     ]
                 });
             }

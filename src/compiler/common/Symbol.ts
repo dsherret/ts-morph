@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SymbolFlags} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import * as errors from "./../../errors";
 import {ArrayUtils} from "./../../utils";
@@ -47,13 +47,13 @@ export class Symbol {
      * Gets if the symbol is an alias.
      */
     isAlias() {
-        return (this.getFlags() & ts.SymbolFlags.Alias) === ts.SymbolFlags.Alias;
+        return (this.getFlags() & SymbolFlags.Alias) === SymbolFlags.Alias;
     }
 
     /**
      * Gets the symbol flags.
      */
-    getFlags(): ts.SymbolFlags {
+    getFlags(): SymbolFlags {
         return this.compilerSymbol.getFlags();
     }
 
@@ -61,7 +61,7 @@ export class Symbol {
      * Gets if the symbol has the specified flags.
      * @param flags - Flags to check if the symbol has.
      */
-    hasFlags(flags: ts.SymbolFlags) {
+    hasFlags(flags: SymbolFlags) {
         return (this.compilerSymbol.flags & flags) === flags;
     }
 

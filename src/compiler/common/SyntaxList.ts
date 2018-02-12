@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import {verifyAndGetIndex, getIndentedText, getInsertPosFromIndex, insertIntoParentTextRange} from "./../../manipulation";
 import {TypeGuards, StringUtils} from "./../../utils";
@@ -47,7 +47,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
         // get index
         const initialChildCount = this.getChildCount();
-        const newLineKind = this.global.manipulationSettings.getNewLineKind();
+        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
         const parent = this.getParentOrThrow();
         index = verifyAndGetIndex(index, initialChildCount);
 

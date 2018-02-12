@@ -1,12 +1,12 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {PropertyAccessExpression, SuperExpressionedNode} from "./../../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 describe(nameof(SuperExpressionedNode), () => {
     describe(nameof<SuperExpressionedNode>(n => n.getExpression), () => {
         function doTest(text: string, expectedText: string) {
-            const {descendant} = getInfoFromTextWithDescendant<PropertyAccessExpression>(text, ts.SyntaxKind.PropertyAccessExpression);
+            const {descendant} = getInfoFromTextWithDescendant<PropertyAccessExpression>(text, SyntaxKind.PropertyAccessExpression);
             expect(descendant.getExpression().getText()).to.equal(expectedText);
         }
 

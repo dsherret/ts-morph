@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {CallExpression} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -7,7 +7,7 @@ describe(nameof(CallExpression), () => {
     describe(nameof<CallExpression>(e => e.getReturnType), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const {sourceFile} = getInfoFromText(text);
-            const callExpressions = sourceFile.getDescendantsOfKind(ts.SyntaxKind.CallExpression) as CallExpression[];
+            const callExpressions = sourceFile.getDescendantsOfKind(SyntaxKind.CallExpression) as CallExpression[];
             expect(callExpressions.map(c => c.getReturnType().getText())).to.deep.equal(expectedTypes);
         }
 

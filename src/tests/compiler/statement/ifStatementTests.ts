@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {IfStatement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getStatement(text: string) {
-    return getInfoFromTextWithDescendant<IfStatement>(text, ts.SyntaxKind.IfStatement).descendant;
+    return getInfoFromTextWithDescendant<IfStatement>(text, SyntaxKind.IfStatement).descendant;
 }
 
 describe(nameof(IfStatement), () => {

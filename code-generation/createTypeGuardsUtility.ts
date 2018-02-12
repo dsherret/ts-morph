@@ -43,7 +43,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
         bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
                 for (const syntaxKindName of method.syntaxKinds) {
-                    writer.writeLine(`case ts.SyntaxKind.${syntaxKindName}:`);
+                    writer.writeLine(`case SyntaxKind.${syntaxKindName}:`);
                 }
                 writer.indent().write("return true;").newLine();
                 writer.writeLine("default:")

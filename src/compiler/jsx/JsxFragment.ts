@@ -1,11 +1,10 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {PrimaryExpression} from "./../expression";
 import {JsxChild} from "./../aliases";
-import {JsxFragmentCompilerPolyfill} from "./../polyfills";
 import {JsxOpeningFragment} from "./JsxOpeningFragment";
 import {JsxClosingFragment} from "./JsxClosingFragment";
 
-export class JsxFragment extends PrimaryExpression<JsxFragmentCompilerPolyfill> {
+export class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
     /**
      * Gets the children of the JSX fragment.
      */

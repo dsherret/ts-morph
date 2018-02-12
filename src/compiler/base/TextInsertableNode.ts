@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";

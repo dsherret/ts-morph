@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
@@ -91,7 +91,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 return [];
 
             const parameters = this.getParameters();
-            const syntaxList = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(ts.SyntaxKind.SyntaxList);
+            const syntaxList = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList);
             index = verifyAndGetIndex(index, parameters.length);
 
             const newTexts = structures.map(s => {

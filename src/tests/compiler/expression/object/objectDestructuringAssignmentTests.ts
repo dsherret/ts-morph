@@ -1,12 +1,12 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../../typescript";
 import {ObjectDestructuringAssignment} from "./../../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 describe(nameof(ObjectDestructuringAssignment), () => {
     describe(nameof<ObjectDestructuringAssignment>(n => n.getLeft), () => {
         function doTest(text: string, expectedText: string) {
-            const {descendant} = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, ts.SyntaxKind.BinaryExpression);
+            const {descendant} = getInfoFromTextWithDescendant<ObjectDestructuringAssignment>(text, SyntaxKind.BinaryExpression);
             expect(descendant.getLeft().getText()).to.equal(expectedText);
         }
 

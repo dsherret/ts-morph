@@ -1,10 +1,10 @@
-import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {CatchClause} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getCatchClause(text: string) {
-    return getInfoFromTextWithDescendant<CatchClause>(text, ts.SyntaxKind.CatchClause).descendant;
+    return getInfoFromTextWithDescendant<CatchClause>(text, SyntaxKind.CatchClause).descendant;
 }
 
 describe(nameof(CatchClause), () => {

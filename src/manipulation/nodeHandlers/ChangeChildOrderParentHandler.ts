@@ -1,5 +1,5 @@
-﻿import * as ts from "typescript";
 import * as errors from "./../../errors";
+import {ts} from "./../../typescript";
 import {Node} from "./../../compiler";
 import {CompilerFactory} from "./../../factories";
 import {NodeHandler} from "./NodeHandler";

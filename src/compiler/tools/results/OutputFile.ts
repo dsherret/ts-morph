@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../../typescript";
 
 /**
  * Output file of an emit.

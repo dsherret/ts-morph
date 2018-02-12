@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "./../../manipulation";
 import {ImplementsClauseableNodeStructure} from "./../../structures";
@@ -51,7 +51,7 @@ export interface ImplementsClauseableNode {
 export function ImplementsClauseableNode<T extends Constructor<ImplementsClauseableNodeExtensionType>>(Base: T): Constructor<ImplementsClauseableNode> & T {
     return class extends Base implements ImplementsClauseableNode {
         getImplements(): ExpressionWithTypeArguments[] {
-            const implementsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ImplementsKeyword);
+            const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
             return implementsClause == null ? [] : implementsClause.getTypes();
         }
 
@@ -78,9 +78,9 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             index = verifyAndGetIndex(index, implementsTypes.length);
 
             if (implementsTypes.length > 0) {
-                const implementsClause = this.getHeritageClauseByKindOrThrow(ts.SyntaxKind.ImplementsKeyword);
+                const implementsClause = this.getHeritageClauseByKindOrThrow(SyntaxKind.ImplementsKeyword);
                 insertIntoCommaSeparatedNodes({
-                    parent: implementsClause.getFirstChildByKindOrThrow(ts.SyntaxKind.SyntaxList),
+                    parent: implementsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: implementsTypes,
                     insertIndex: index,
                     newTexts: texts
@@ -88,7 +88,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
 
-            const openBraceToken = this.getFirstChildByKindOrThrow(ts.SyntaxKind.OpenBraceToken);
+            const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
             let insertText = `implements ${texts.join(", ")} `;
@@ -111,7 +111,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
         removeImplements(index: number): this;
         removeImplements(implementsNode: ExpressionWithTypeArguments): this;
         removeImplements(implementsNodeOrIndex: ExpressionWithTypeArguments | number) {
-            const implementsClause = this.getHeritageClauseByKind(ts.SyntaxKind.ImplementsKeyword);
+            const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
             if (implementsClause == null)
                 throw new errors.InvalidOperationError("Cannot remove an implements when none exist.");
 

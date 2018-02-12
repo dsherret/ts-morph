@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {NamedNode, TypeParameteredNode} from "./../base";
 import {Node} from "./../common";
@@ -25,7 +25,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     remove() {
         const parentSyntaxList = this.getParentSyntaxListOrThrow();
-        const typeParameters = parentSyntaxList.getChildrenOfKind(ts.SyntaxKind.TypeParameter);
+        const typeParameters = parentSyntaxList.getChildrenOfKind(SyntaxKind.TypeParameter);
 
         if (typeParameters.length === 1)
             removeAllTypeParameters();
@@ -34,9 +34,9 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
         function removeAllTypeParameters() {
             const children = [
-                parentSyntaxList.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.FirstBinaryOperator),
+                parentSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstBinaryOperator),
                 parentSyntaxList,
-                parentSyntaxList.getNextSiblingIfKindOrThrow(ts.SyntaxKind.GreaterThanToken)
+                parentSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
             ];
 
             removeChildren({ children });

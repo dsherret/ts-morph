@@ -1,6 +1,5 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Expression} from "./../expression";
-import {JsxClosingFragmentCompilerPolyfill} from "./../polyfills";
 
-export class JsxClosingFragment extends Expression<JsxClosingFragmentCompilerPolyfill> {
+export class JsxClosingFragment extends Expression<ts.JsxClosingFragment> {
 }

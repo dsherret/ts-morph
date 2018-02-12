@@ -1,19 +1,13 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxFragment} from "./../../../compiler";
-import {TsVersion} from "./../../../utils";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getInfo(text: string) {
-    return getInfoFromTextWithDescendant<JsxFragment>(text, ts.SyntaxKind.JsxFragment, { isJsx: true });
+    return getInfoFromTextWithDescendant<JsxFragment>(text, SyntaxKind.JsxFragment, { isJsx: true });
 }
 
 describe(nameof(JsxFragment), () => {
-    if (!TsVersion.greaterThanEqualToVersion(2, 7)) {
-        console.log(`Skipping ${nameof(JsxFragment)} tests in ${ts.version}.`);
-        return;
-    }
-
     describe(nameof<JsxFragment>(n => n.getOpeningFragment), () => {
         function doTest(text: string, expected: string) {
             const {descendant} = getInfo(text);

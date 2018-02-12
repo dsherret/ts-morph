@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import {ReturnTypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
@@ -62,7 +62,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             // insert new type
             insertIntoParentTextRange({
                 parent: this,
-                insertPos: returnTypeNode != null ? returnTypeNode.getStart() : this.getFirstChildByKindOrThrow(ts.SyntaxKind.CloseParenToken).getEnd(),
+                insertPos: returnTypeNode != null ? returnTypeNode.getStart() : this.getFirstChildByKindOrThrow(SyntaxKind.CloseParenToken).getEnd(),
                 newText: returnTypeNode != null ? text : `: ${text}`,
                 replacing: {
                     textLength: returnTypeNode == null ? 0 : returnTypeNode.getWidth()
@@ -86,7 +86,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             if (returnTypeNode == null)
                 return this;
 
-            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(ts.SyntaxKind.ColonToken);
+            const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
             removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
         }

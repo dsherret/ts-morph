@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, DiagnosticCategory} from "./../../../typescript";
 
 /**
  * Diagnostic message chain.
@@ -47,7 +47,7 @@ export class DiagnosticMessageChain {
     /**
      * Gets the category of the diagnostic message chain.
      */
-    getCategory(): ts.DiagnosticCategory {
+    getCategory(): DiagnosticCategory {
         return this.compilerObject.category;
     }
 }

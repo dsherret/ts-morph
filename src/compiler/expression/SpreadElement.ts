@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {Node} from "./../common";
 import {Expression} from "./Expression";
 import {ExpressionedNode} from "./expressioned";

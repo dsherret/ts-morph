@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import * as errors from "./../../errors";
 import {TypeGuards} from "./../../utils";
 import {Type} from "./Type";

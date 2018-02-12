@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts} from "./../../typescript";
 import {PrimaryExpression} from "./../expression";
 import {JsxChild} from "./../aliases";
 import {JsxOpeningElement} from "./JsxOpeningElement";

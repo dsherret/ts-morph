@@ -1,10 +1,10 @@
-﻿import * as ts from "typescript";
 import {expect} from "chai";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {BinaryExpression} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
 function getBinaryExpression(text: string) {
-     return getInfoFromTextWithDescendant<BinaryExpression>(text, ts.SyntaxKind.BinaryExpression).descendant;
+     return getInfoFromTextWithDescendant<BinaryExpression>(text, SyntaxKind.BinaryExpression).descendant;
 }
 
 describe(nameof(BinaryExpression), () => {

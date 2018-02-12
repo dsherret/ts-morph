@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -24,7 +24,7 @@ describe(nameof(JSDocableNode), () => {
                 });
 
                 it("should have the right node kind", () => {
-                    expect(nodes[0].getKind()).to.equal(ts.SyntaxKind.JSDocComment);
+                    expect(nodes[0].getKind()).to.equal(SyntaxKind.JSDocComment);
                 });
             });
 
@@ -47,7 +47,7 @@ describe(nameof(JSDocableNode), () => {
         const doc = firstChild.getJsDocs()[0];
 
         it("should have the right node kind", () => {
-            expect(doc.getKind()).to.equal(ts.SyntaxKind.JSDocComment);
+            expect(doc.getKind()).to.equal(SyntaxKind.JSDocComment);
         });
     });
 

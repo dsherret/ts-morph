@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, InterfaceDeclarationStructure,
@@ -112,7 +112,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             index,
             childCodes: codes,
             structures,
-            expectedKind: ts.SyntaxKind.ConstructSignature,
+            expectedKind: SyntaxKind.ConstructSignature,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -137,7 +137,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface construct signatures.
      */
     getConstructSignatures(): ConstructSignatureDeclaration[] {
-        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.ConstructSignature)
+        return this.compilerNode.members.filter(m => m.kind === SyntaxKind.ConstructSignature)
             .map(m => this.getNodeFromCompilerNode<ConstructSignatureDeclaration>(m as ts.ConstructSignatureDeclaration));
     }
 
@@ -190,7 +190,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             index,
             childCodes: codes,
             structures,
-            expectedKind: ts.SyntaxKind.CallSignature,
+            expectedKind: SyntaxKind.CallSignature,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -215,7 +215,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface call signatures.
      */
     getCallSignatures(): CallSignatureDeclaration[] {
-        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.CallSignature)
+        return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
             .map(m => this.getNodeFromCompilerNode<CallSignatureDeclaration>(m as ts.CallSignatureDeclaration));
     }
 
@@ -268,7 +268,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             index,
             childCodes: codes,
             structures,
-            expectedKind: ts.SyntaxKind.IndexSignature,
+            expectedKind: SyntaxKind.IndexSignature,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -293,7 +293,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface index signatures.
      */
     getIndexSignatures(): IndexSignatureDeclaration[] {
-        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.IndexSignature)
+        return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
             .map(m => this.getNodeFromCompilerNode<IndexSignatureDeclaration>(m as ts.IndexSignatureDeclaration));
     }
 
@@ -347,7 +347,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             index,
             childCodes: codes,
             structures,
-            expectedKind: ts.SyntaxKind.MethodSignature,
+            expectedKind: SyntaxKind.MethodSignature,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -387,7 +387,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface method signatures.
      */
     getMethods(): MethodSignature[] {
-        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.MethodSignature)
+        return this.compilerNode.members.filter(m => m.kind === SyntaxKind.MethodSignature)
             .map(m => this.getNodeFromCompilerNode<MethodSignature>(m as ts.MethodSignature));
     }
 
@@ -440,7 +440,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
             index,
             childCodes: codes,
             structures,
-            expectedKind: ts.SyntaxKind.PropertySignature,
+            expectedKind: SyntaxKind.PropertySignature,
             fillFunction: (node, structure) => node.fill(structure)
         });
     }
@@ -480,7 +480,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      * Gets the interface property signatures.
      */
     getProperties(): PropertySignature[] {
-        return this.compilerNode.members.filter(m => m.kind === ts.SyntaxKind.PropertySignature)
+        return this.compilerNode.members.filter(m => m.kind === SyntaxKind.PropertySignature)
             .map(m => this.getNodeFromCompilerNode<PropertySignature>(m as ts.PropertySignature));
     }
 

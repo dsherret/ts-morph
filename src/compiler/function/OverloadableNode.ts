@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as objectAssign from "object-assign";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
@@ -90,7 +90,7 @@ export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, T
     childCodes: string[];
     getThisStructure: (node: TNode) => TStructure;
     fillNodeFromStructure: (node: TNode, structure: TStructure) => void;
-    expectedSyntaxKind: ts.SyntaxKind;
+    expectedSyntaxKind: SyntaxKind;
 }
 
 /**
@@ -116,7 +116,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     }
 
     const indentationText = opts.node.getIndentationText();
-    const newLineKind = opts.node.global.manipulationSettings.getNewLineKind();
+    const newLineKind = opts.node.global.manipulationSettings.getNewLineKindAsString();
 
     insertIntoParent({
         parent: parentSyntaxList,

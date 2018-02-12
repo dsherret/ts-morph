@@ -15,11 +15,11 @@ const ast = new Ast();
 ### Compiler options
 
 ```ts
-import * as ts from "typescript";
+import Ast, {ScriptTarget} from "ts-simple-ast";
 
 const ast = new Ast({
     compilerOptions: {
-        target: ts.ScriptTarget.ES3
+        target: ScriptTarget.ES3
     }
 });
 ```

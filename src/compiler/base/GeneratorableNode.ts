@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {GeneratorableNodeStructure} from "./../../structures";
@@ -82,8 +82,8 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
 }
 
 function getAsteriskInsertInfo(node: Node) {
-    if (node.getKind() === ts.SyntaxKind.FunctionDeclaration) {
-        const functionKeyword = node.getFirstChildByKindOrThrow(ts.SyntaxKind.FunctionKeyword);
+    if (node.getKind() === SyntaxKind.FunctionDeclaration) {
+        const functionKeyword = node.getFirstChildByKindOrThrow(SyntaxKind.FunctionKeyword);
         return {
             pos: functionKeyword.getEnd(),
             childIndex: functionKeyword.getChildIndex() + 1

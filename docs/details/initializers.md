@@ -17,8 +17,8 @@ The initializer can be retrieved in any of these ways:
 ```ts
 variableDeclaration.getInitializer(); // returns: Expression | undefined
 variableDeclaration.getInitializerOrThrow(); // returns: Expression
-variableDeclaration.getInitializerIfKind(ts.SyntaxKind.FunctionExpression); // returns: Expression | undefined
-variableDeclaration.getInitializerIfKindOrThrow(ts.SyntaxKind.FunctionExpression); // returns: Expression
+variableDeclaration.getInitializerIfKind(SyntaxKind.FunctionExpression); // returns: Expression | undefined
+variableDeclaration.getInitializerIfKindOrThrow(SyntaxKind.FunctionExpression); // returns: Expression
 ```
 
 ### Removing

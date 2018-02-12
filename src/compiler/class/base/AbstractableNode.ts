@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../../typescript";
 import {AbstractableNodeStructure} from "./../../../structures";
 import * as errors from "./../../../errors";
 import {Constructor} from "./../../../Constructor";
@@ -36,7 +36,7 @@ export function AbstractableNode<T extends Constructor<AbstractableNodeExtension
         }
 
         getAbstractKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.AbstractKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.AbstractKeyword);
         }
 
         getAbstractKeywordOrThrow() {

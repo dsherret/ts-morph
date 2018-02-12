@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {StaticableNodeStructure} from "./../../structures";
@@ -31,11 +31,11 @@ export interface StaticableNode {
 export function StaticableNode<T extends Constructor<StaticableNodeExtensionType>>(Base: T): Constructor<StaticableNode> & T {
     return class extends Base implements StaticableNode {
         isStatic() {
-            return this.hasModifier(ts.SyntaxKind.StaticKeyword);
+            return this.hasModifier(SyntaxKind.StaticKeyword);
         }
 
         getStaticKeyword() {
-            return this.getFirstModifierByKind(ts.SyntaxKind.StaticKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.StaticKeyword);
         }
 
         getStaticKeywordOrThrow() {

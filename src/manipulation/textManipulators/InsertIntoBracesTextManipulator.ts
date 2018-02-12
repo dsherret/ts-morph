@@ -29,7 +29,7 @@ export class InsertIntoBracesTextManipulator<TStructure> extends InsertionTextMa
 
             const sourceFile = parent.getSourceFile();
             const insertPos = getInsertPosFromIndex(index, parent, children);
-            const newLineChar = sourceFile.global.manipulationSettings.getNewLineKind();
+            const newLineChar = sourceFile.global.manipulationSettings.getNewLineKindAsString();
 
             let newText = "";
 

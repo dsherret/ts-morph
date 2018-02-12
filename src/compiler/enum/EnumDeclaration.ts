@@ -1,4 +1,4 @@
-﻿import * as ts from "typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
@@ -147,6 +147,6 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Gets the const enum keyword or undefined if not exists.
      */
     getConstKeyword() {
-        return this.getFirstModifierByKind(ts.SyntaxKind.ConstKeyword);
+        return this.getFirstModifierByKind(SyntaxKind.ConstKeyword);
     }
 }
