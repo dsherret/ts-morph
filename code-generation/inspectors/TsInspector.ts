@@ -1,4 +1,4 @@
-﻿import TsSimpleAst, {InterfaceDeclaration} from "./../../src/main";
+﻿import TsSimpleAst, {InterfaceDeclaration, SourceFile} from "./../../src/main";
 import {Memoize, ArrayUtils} from "./../../src/utils";
 import {hasDescendantBaseType} from "./../common";
 import {TsNode} from "./ts";
@@ -8,9 +8,13 @@ export class TsInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly ast: TsSimpleAst) {
     }
 
+    getDeclarationFile(): SourceFile {
+        return this.ast.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
+    }
+
     @Memoize
     getTsNodes() {
-        const compilerApiFile = this.ast.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
+        const compilerApiFile = this.getDeclarationFile();
         const interfaces: InterfaceDeclaration[] = [];
         for (const interfaceDec of ArrayUtils.flatten(compilerApiFile.getNamespaces().map(n => n.getInterfaces()))) {
             if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => checkingType.getText() === "ts.Node")))

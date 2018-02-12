@@ -1,9 +1,9 @@
 ﻿import * as ts from "typescript";
-import {Node} from "./Node";
 import {Type} from "./../type";
 import {ReferencedSymbol, DefinitionInfo, ImplementationLocation} from "./../tools";
+import {PrimaryExpression} from "./../expression/PrimaryExpression";
 
-export class Identifier extends Node<ts.Identifier> {
+export class Identifier extends PrimaryExpression<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */

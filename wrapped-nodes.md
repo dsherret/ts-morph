@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 142
+**Total:** 150
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
@@ -178,6 +178,28 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: name
     * :x: typeExpression
 * [JSDocUnknownTag](src/compiler/doc/JSDocUnknownTag.ts)
+* [JsxAttribute](src/compiler/jsx/JsxAttribute.ts)
+    * :heavy_check_mark: name
+    * :heavy_check_mark: initializer
+* [JsxClosingElement](src/compiler/jsx/JsxClosingElement.ts)
+    * :heavy_check_mark: tagName
+* [JsxElement](src/compiler/jsx/JsxElement.ts)
+    * :heavy_check_mark: openingElement
+    * :heavy_check_mark: children
+    * :heavy_check_mark: closingElement
+* [JsxExpression](src/compiler/jsx/JsxExpression.ts)
+    * :heavy_check_mark: dotDotDotToken
+    * :heavy_check_mark: expression
+* [JsxOpeningElement](src/compiler/jsx/JsxOpeningElement.ts)
+    * :heavy_check_mark: tagName
+    * :heavy_check_mark: attributes
+* [JsxSelfClosingElement](src/compiler/jsx/JsxSelfClosingElement.ts)
+    * :heavy_check_mark: tagName
+    * :heavy_check_mark: attributes
+* [JsxSpreadAttribute](src/compiler/jsx/JsxSpreadAttribute.ts)
+    * :heavy_check_mark: expression
+* [JsxText](src/compiler/jsx/JsxText.ts)
+    * :heavy_check_mark: containsOnlyWhiteSpaces
 * [LabeledStatement](src/compiler/statement/LabeledStatement.ts)
     * :heavy_check_mark: label
     * :heavy_check_mark: statement
@@ -357,7 +379,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 62
+**Total:** 54
 
 * ArrayBindingPattern
 * BindingElement
@@ -383,18 +405,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JSDocUnknownType
 * JSDocVariadicType
 * JsonSourceFile
-* JsxAttribute
 * JsxAttributes
-* JsxClosingElement
 * JsxClosingFragment
-* JsxElement
-* JsxExpression
 * JsxFragment
-* JsxOpeningElement
 * JsxOpeningFragment
-* JsxSelfClosingElement
-* JsxSpreadAttribute
-* JsxText
 * KeywordTypeNode
 * LiteralLikeNode
 * MappedTypeNode

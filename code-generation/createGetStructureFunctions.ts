@@ -8,6 +8,9 @@
  * -------------------------------------------------
  */
 import CodeBlockWriter from "code-block-writer";
+import * as fs from "fs";
+import * as path from "path";
+import {rootFolder} from "./config";
 import {Structure} from "./inspectors";
 
 // todo: a lot of this code was written before this library supported manipulation
@@ -27,7 +30,7 @@ export function createGetStructureFunctions(structures: Structure[]) {
         write(writer, structure);
     }
 
-    return writer.toString();
+    fs.writeFileSync(path.join(rootFolder, "src/manipulation/helpers/getStructureFunctions.ts"), writer.toString(), { encoding: "utf-8" });
 }
 
 // todo: make this better... good enough for now

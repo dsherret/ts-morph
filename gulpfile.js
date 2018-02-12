@@ -16,7 +16,7 @@ var unusedDefinitionsFilter = filter([
     "**", "!*/factories/CompilerFactory.d.ts", "!*/factories/index.d.ts", "!*/tests/**/*.d.ts", "!*/manipulation/**/*.d.ts"
 ]);
 
-gulp.task("typescript", ["clean-scripts"], function() {
+gulp.task("typescript", ["clean-dist"], function() {
     var tsProject = ts.createProject("tsconfig.json", {
         typescript: require("typescript")
     });
@@ -64,7 +64,7 @@ gulp.task("watch", function() {
     gulp.watch("./src/**/*.ts", ["tslint", "typescript"]);
 });
 
-gulp.task("clean-scripts", ["clean-code-generation"], function(cb) {
+gulp.task("clean-dist", function(cb) {
     return del(["./dist/**/*"], cb);
 });
 

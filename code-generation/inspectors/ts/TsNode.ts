@@ -13,6 +13,10 @@ export class TsNode {
         return this.node.getName();
     }
 
+    getInterface() {
+        return this.node;
+    }
+
     @Memoize
     getAssociatedWrappedNode(): WrappedNode | undefined {
         const references = this.node.getNameNode().findReferences();

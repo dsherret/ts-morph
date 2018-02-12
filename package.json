@@ -6,6 +6,8 @@
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/flattenDeclarationFiles && npm run code-verification && npm publish",
+    "install-oldest-ts": "npm install typescript@2.4.2",
+    "install-latest-ts": "npm install typescript@2.7.1",
     "test-ts-2.4.2": "npm install typescript@2.4.2 && npm run test-run",
     "test-ts-2.5.3": "npm install typescript@2.5.3 && npm run test-run",
     "test-ts-2.6.2": "npm install typescript@2.6.2 && npm run test-run",
@@ -14,8 +16,9 @@
     "test": "npm install typescript@2.7.1 && gulp typescript && npm run test-ts-2.4.2 && npm run test-ts-2.5.3 && npm run test-ts-2.6.2 && npm run test-ts-2.7.1",
     "build": "gulp typescript",
     "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && node dist-cg/code-generation/ensureNoDefinitionFileErrors && node dist-cg/code-generation/ensureOverloadStructuresMatch",
-    "output-wrapped-nodes": "gulp code-generate && node dist-cg/code-generation/outputWrappedNodesInfo"
+    "output-wrapped-nodes": "gulp code-generate && node dist-cg/code-generation/outputWrappedNodesInfo",
+    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-cg/code-generation/ensureOverloadStructuresMatch",
+    "ensure-no-definition-file-errors": "npm run install-oldest-ts && node dist-cg/code-generation/ensureNoDefinitionFileErrors && npm run install-latest-ts && node dist-cg/code-generation/ensureNoDefinitionFileErrors"
   },
   "repository": {
     "type": "git",

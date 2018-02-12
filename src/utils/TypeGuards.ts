@@ -712,6 +712,7 @@ export class TypeGuards {
             case ts.SyntaxKind.StringKeyword:
             case ts.SyntaxKind.SymbolKeyword:
             case ts.SyntaxKind.UndefinedKeyword:
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.AsExpression:
             case ts.SyntaxKind.AwaitExpression:
             case ts.SyntaxKind.BinaryExpression:
@@ -739,6 +740,13 @@ export class TypeGuards {
             case ts.SyntaxKind.YieldExpression:
             case ts.SyntaxKind.ArrowFunction:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxClosingFragment:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxExpression:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxOpeningElement:
+            case ts.SyntaxKind.JsxOpeningFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
@@ -1366,6 +1374,149 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JsxAttribute.
+     * @param node - Node to check.
+     */
+    static isJsxAttribute(node: compiler.Node): node is compiler.JsxAttribute {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxAttribute:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxClosingElement.
+     * @param node - Node to check.
+     */
+    static isJsxClosingElement(node: compiler.Node): node is compiler.JsxClosingElement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxClosingElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxClosingFragment.
+     * @param node - Node to check.
+     */
+    static isJsxClosingFragment(node: compiler.Node): node is compiler.JsxClosingFragment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxClosingFragment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxElement.
+     * @param node - Node to check.
+     */
+    static isJsxElement(node: compiler.Node): node is compiler.JsxElement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxExpression.
+     * @param node - Node to check.
+     */
+    static isJsxExpression(node: compiler.Node): node is compiler.JsxExpression {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxExpression:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxFragment.
+     * @param node - Node to check.
+     */
+    static isJsxFragment(node: compiler.Node): node is compiler.JsxFragment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxFragment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxOpeningElement.
+     * @param node - Node to check.
+     */
+    static isJsxOpeningElement(node: compiler.Node): node is compiler.JsxOpeningElement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxOpeningElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxOpeningFragment.
+     * @param node - Node to check.
+     */
+    static isJsxOpeningFragment(node: compiler.Node): node is compiler.JsxOpeningFragment {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxOpeningFragment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxSelfClosingElement.
+     * @param node - Node to check.
+     */
+    static isJsxSelfClosingElement(node: compiler.Node): node is compiler.JsxSelfClosingElement {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxSelfClosingElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxSpreadAttribute.
+     * @param node - Node to check.
+     */
+    static isJsxSpreadAttribute(node: compiler.Node): node is compiler.JsxSpreadAttribute {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxSpreadAttribute:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxText.
+     * @param node - Node to check.
+     */
+    static isJsxText(node: compiler.Node): node is compiler.JsxText {
+        switch (node.getKind()) {
+            case ts.SyntaxKind.JsxText:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a LabeledStatement.
      * @param node - Node to check.
      */
@@ -1384,6 +1535,7 @@ export class TypeGuards {
      */
     static isLeftHandSideExpression(node: compiler.Node): node is compiler.LeftHandSideExpression {
         switch (node.getKind()) {
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.CallExpression:
             case ts.SyntaxKind.ElementAccessExpression:
             case ts.SyntaxKind.ImportKeyword:
@@ -1394,6 +1546,9 @@ export class TypeGuards {
             case ts.SyntaxKind.SuperKeyword:
             case ts.SyntaxKind.ThisKeyword:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
@@ -1486,6 +1641,7 @@ export class TypeGuards {
      */
     static isMemberExpression(node: compiler.Node): node is compiler.MemberExpression {
         switch (node.getKind()) {
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.ElementAccessExpression:
             case ts.SyntaxKind.ImportKeyword:
             case ts.SyntaxKind.MetaProperty:
@@ -1494,6 +1650,9 @@ export class TypeGuards {
             case ts.SyntaxKind.SuperKeyword:
             case ts.SyntaxKind.ThisKeyword:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
@@ -1608,6 +1767,7 @@ export class TypeGuards {
             case ts.SyntaxKind.ImportEqualsDeclaration:
             case ts.SyntaxKind.FunctionDeclaration:
             case ts.SyntaxKind.InterfaceDeclaration:
+            case ts.SyntaxKind.JsxAttribute:
             case ts.SyntaxKind.ModuleDeclaration:
             case ts.SyntaxKind.TypeAliasDeclaration:
             case ts.SyntaxKind.TypeParameter:
@@ -1864,12 +2024,16 @@ export class TypeGuards {
      */
     static isPrimaryExpression(node: compiler.Node): node is compiler.PrimaryExpression {
         switch (node.getKind()) {
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.ImportKeyword:
             case ts.SyntaxKind.MetaProperty:
             case ts.SyntaxKind.NewExpression:
             case ts.SyntaxKind.SuperKeyword:
             case ts.SyntaxKind.ThisKeyword:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
@@ -2634,6 +2798,7 @@ export class TypeGuards {
      */
     static isUnaryExpression(node: compiler.Node): node is compiler.UnaryExpression {
         switch (node.getKind()) {
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.AwaitExpression:
             case ts.SyntaxKind.CallExpression:
             case ts.SyntaxKind.DeleteExpression:
@@ -2651,6 +2816,9 @@ export class TypeGuards {
             case ts.SyntaxKind.TypeOfExpression:
             case ts.SyntaxKind.VoidKeyword:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:
@@ -2732,6 +2900,7 @@ export class TypeGuards {
      */
     static isUpdateExpression(node: compiler.Node): node is compiler.UpdateExpression {
         switch (node.getKind()) {
+            case ts.SyntaxKind.Identifier:
             case ts.SyntaxKind.CallExpression:
             case ts.SyntaxKind.ElementAccessExpression:
             case ts.SyntaxKind.ImportKeyword:
@@ -2742,6 +2911,9 @@ export class TypeGuards {
             case ts.SyntaxKind.SuperKeyword:
             case ts.SyntaxKind.ThisKeyword:
             case ts.SyntaxKind.FunctionExpression:
+            case ts.SyntaxKind.JsxElement:
+            case ts.SyntaxKind.JsxFragment:
+            case ts.SyntaxKind.JsxSelfClosingElement:
             case ts.SyntaxKind.FalseKeyword:
             case ts.SyntaxKind.TrueKeyword:
             case ts.SyntaxKind.NullKeyword:

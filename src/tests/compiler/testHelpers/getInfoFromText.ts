@@ -43,6 +43,7 @@ export interface GetInfoFromTextOptions {
     disableErrorCheck?: boolean;
     compilerOptions?: ts.CompilerOptions;
     includeLibDts?: boolean;
+    isJsx?: boolean;
 }
 
 /** @internal */
@@ -64,8 +65,8 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: st
 
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
-    const {isDefinitionFile = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false, compilerOptions = { target: ts.ScriptTarget.ES2017 },
-        includeLibDts = false} = opts || {};
+    const {isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
+        compilerOptions = { target: ts.ScriptTarget.ES2017 }, includeLibDts = false} = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)
@@ -73,7 +74,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     }
 
     const tsSimpleAst = new TsSimpleAst({ compilerOptions }, host);
-    const sourceFile = tsSimpleAst.createSourceFile(filePath || (isDefinitionFile ? "testFile.d.ts" : "testFile.ts"), text);
+    const sourceFile = tsSimpleAst.createSourceFile(getFilePath(), text);
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)
     /*
@@ -82,6 +83,14 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     */
 
     return {tsSimpleAst, sourceFile};
+
+    function getFilePath() {
+        if (filePath != null)
+            return filePath;
+        if (isJsx)
+            return "testFile.tsx";
+        return isDefinitionFile ? "testFile.d.ts" : "testFile.ts";
+    }
 }
 
 function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile) {

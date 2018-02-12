@@ -3,6 +3,7 @@ import {GlobalContainer} from "./../../../GlobalContainer";
 import {SourceFile, Node} from "./../../../compiler";
 import {Memoize} from "./../../../utils";
 import {TextSpan} from "./TextSpan";
+import {ScriptElementKind} from "./../../polyfills";
 
 /**
  * Definition info.
@@ -47,7 +48,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      * Gets the kind.
      */
     getKind() {
-        return this.compilerObject.kind;
+        return this.compilerObject.kind as ScriptElementKind;
     }
 
     /**
@@ -61,7 +62,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      * Gets the container kind.
      */
     getContainerKind() {
-        return this.compilerObject.containerKind;
+        return this.compilerObject.containerKind as ScriptElementKind;
     }
 
     /**

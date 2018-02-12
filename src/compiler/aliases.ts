@@ -1,6 +1,7 @@
 ﻿import * as ts from "typescript";
 import {Identifier, ComputedPropertyName, QualifiedName} from "./common";
-import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment} from "./expression";
+import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression} from "./expression";
+import {JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment} from "./jsx";
 import {ExternalModuleReference} from "./file";
 import {CaseClause, DefaultClause} from "./statement";
 import {GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration} from "./class";
@@ -48,6 +49,44 @@ function entityNameValidation() {
         default:
             const ensureNever: never = value;
     }
+}
+
+export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
+
+/* istanbul ignore next */
+function jsxChildValidation() {
+    const value: ts.JsxChild = null as any;
+    switch (value.kind) {
+        case ts.SyntaxKind.JsxText:
+        case ts.SyntaxKind.JsxExpression:
+        case ts.SyntaxKind.JsxElement:
+        case ts.SyntaxKind.JsxSelfClosingElement:
+        case ts.SyntaxKind.JsxFragment:
+            return;
+        default:
+            const ensureNever: never = value;
+    }
+}
+
+export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
+
+/* istanbul ignore next */
+function jsxAttributeValidation() {
+    const value: ts.JsxAttributeLike = null as any;
+    switch (value.kind) {
+        case ts.SyntaxKind.JsxAttribute:
+        case ts.SyntaxKind.JsxSpreadAttribute:
+            return;
+        default:
+            const ensureNever: never = value;
+    }
+}
+
+export type JsxTagNameExpression = PrimaryExpression | PropertyAccessExpression;
+
+/* istanbul ignore next */
+function jsxTagNameExpressionValidation() {
+    // todo: some way to validate this
 }
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
