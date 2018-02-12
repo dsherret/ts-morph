@@ -74,30 +74,27 @@ describe(nameof(AmbientableNode), () => {
         });
     });
 
-    describe(nameof<AmbientableNode>(n => n.toggleDeclareKeyword), () => {
-        function doTest(text: string, value: boolean | undefined, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(text);
-            if (value !== undefined)
-                firstChild.toggleDeclareKeyword(value);
-            else
-                firstChild.toggleDeclareKeyword();
+    describe(nameof<AmbientableNode>(n => n.setHasDeclareKeyword), () => {
+        function doTest(text: string, value: boolean, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<AmbientableNode & Node>(text);
+            firstChild.setHasDeclareKeyword(value);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
-        it("should add declare keyword when doesn't have one", () => {
-            doTest("class MyClass { }", undefined, "declare class MyClass { }");
-        });
-
-        it("should remove declare keyword when it has one", () => {
-            doTest("declare class MyClass { }", undefined, "class MyClass { }");
-        });
-
-        it("should add declare keyword when explicitly toggling it", () => {
+        it("should add declare keyword when setting it to true", () => {
             doTest("class MyClass { }", true, "declare class MyClass { }");
         });
 
-        it("should remove declare keyword when explicitly toggling it", () => {
+        it("should remove declare keyword when setting it to false", () => {
             doTest("declare class MyClass { }", false, "class MyClass { }");
+        });
+
+        it("should do nothing for an interface when setting to true", () => {
+            doTest("interface MyInterface { }", true, "interface MyInterface { }");
+        });
+
+        it("should do nothing for a type alias when setting to true", () => {
+            doTest("type MyType = string;", true, "type MyType = string;");
         });
     });
 

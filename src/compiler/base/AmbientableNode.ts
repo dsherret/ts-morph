@@ -27,10 +27,10 @@ export interface AmbientableNode {
      */
     isAmbient(): boolean;
     /**
-     * Toggles or sets if this node has a declare keyword.
-     * @param value - If to add the declare keyword or not.
+     * Sets if this node has a declare keyword.
+     * @param value - To add the declare keyword or not.
      */
-    toggleDeclareKeyword(value?: boolean): this;
+    setHasDeclareKeyword(value?: boolean): this;
 }
 
 export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionType>>(Base: T): Constructor<AmbientableNode> & T {
@@ -64,7 +64,11 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             return TypeGuards.isSourceFile(topParent) && topParent.isDeclarationFile();
         }
 
-        toggleDeclareKeyword(value?: boolean) {
+        setHasDeclareKeyword(value: boolean) {
+            // do nothing for these kind of nodes
+            if (TypeGuards.isInterfaceDeclaration(this) || TypeGuards.isTypeAliasDeclaration(this))
+                return this;
+
             this.toggleModifier("declare", value);
             return this;
         }
@@ -73,7 +77,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.hasDeclareKeyword != null)
-                this.toggleDeclareKeyword(structure.hasDeclareKeyword);
+                this.setHasDeclareKeyword(structure.hasDeclareKeyword);
 
             return this;
         }
