@@ -36,7 +36,7 @@ export class HeritageClause extends Node<ts.HeritageClause> {
      */
     removeExpression(expressionNodeOrIndex: ExpressionWithTypeArguments | number): this;
     removeExpression(expressionNodeOrIndex: ExpressionWithTypeArguments | number) {
-        const expressions = this.getTypes();
+        const expressions = this.getTypeNodes();
         const expressionNodeToRemove = typeof expressionNodeOrIndex === "number" ? getExpressionFromIndex(expressionNodeOrIndex) : expressionNodeOrIndex;
 
         if (expressions.length === 1) {

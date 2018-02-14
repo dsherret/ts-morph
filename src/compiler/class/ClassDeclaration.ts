@@ -133,7 +133,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (extendsClause == null)
             return undefined;
 
-        const types = extendsClause.getTypes();
+        const types = extendsClause.getTypeNodes();
         return types.length === 0 ? undefined : types[0];
     }
 

@@ -52,7 +52,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
     return class extends Base implements ImplementsClauseableNode {
         getImplements(): ExpressionWithTypeArguments[] {
             const implementsClause = this.getHeritageClauseByKind(SyntaxKind.ImplementsKeyword);
-            return implementsClause == null ? [] : implementsClause.getTypes();
+            return implementsClause == null ? [] : implementsClause.getTypeNodes();
         }
 
         addImplements(text: string[]): ExpressionWithTypeArguments[];
