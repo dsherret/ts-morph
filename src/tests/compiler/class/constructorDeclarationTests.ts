@@ -42,7 +42,7 @@ describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverload), () => {
         function doTest(startCode: string, index: number, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as ConstructorDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -57,7 +57,7 @@ describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.addOverloads), () => {
         function doTest(startCode: string, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as ConstructorDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -72,7 +72,7 @@ describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.addOverload), () => {
         function doTest(startCode: string, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as ConstructorDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverload(structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

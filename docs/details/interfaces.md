@@ -59,7 +59,7 @@ interfaceDeclaration.removeExtends(interfaceDeclaration.getExtends()[0]); // nod
 Get all the members of the interface:
 
 ```ts
-const members = interfaceDeclaration.getAllMembers();
+const members = interfaceDeclaration.getMembers();
 ```
 
 ### Construct signatures

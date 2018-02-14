@@ -106,7 +106,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
-            getIndexedChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -184,7 +184,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
-            getIndexedChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -262,7 +262,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
-            getIndexedChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -341,7 +341,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodSignature, MethodSignatureStructure>({
-            getIndexedChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -434,7 +434,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertySignature, PropertySignatureStructure>({
-            getIndexedChildren: () => this.getAllMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -487,7 +487,7 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
     /**
      * Gets all members.
      */
-    getAllMembers(): InterfaceMemberTypes[] {
+    getMembers(): InterfaceMemberTypes[] {
         return this.compilerNode.members.map(m => this.getNodeFromCompilerNode<InterfaceMemberTypes>(m));
     }
 

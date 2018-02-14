@@ -177,7 +177,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the constructor declarations.
      */
     getConstructors() {
-        return this.getAllMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
+        return this.getMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
     }
 
     /**
@@ -607,7 +607,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
+        return this.getMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
     }
 
     /**
@@ -644,13 +644,13 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the static members.
      */
     getStaticMembers() {
-        return this.getAllMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
+        return this.getMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && !(m instanceof ParameterDeclaration) && m.isStatic()) as ClassStaticMemberTypes[];
     }
 
     /**
-     * Gets the constructors, methods, properties, and class parameter properties.
+     * Gets the constructors, methods, properties, and class parameter properties (regardless of whether an instance of static member).
      */
-    getAllMembers() {
+    getMembers() {
         const members = this.getBodyMembers();
         const implementationCtors = members.filter(c => TypeGuards.isConstructorDeclaration(c) && c.isImplementation()) as ConstructorDeclaration[];
         for (const ctor of implementationCtors) {

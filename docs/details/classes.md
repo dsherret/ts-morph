@@ -206,7 +206,7 @@ property.remove();
 Get all static and instance members:
 
 ```ts
-const allMembers = classDeclaration.getAllMembers();
+const allMembers = classDeclaration.getMembers();
 ```
 
 Get instance members:

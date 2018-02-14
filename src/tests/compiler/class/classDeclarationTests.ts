@@ -771,19 +771,19 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getAllMembers), () => {
+    describe(nameof<ClassDeclaration>(d => d.getMembers), () => {
         it("should get the right number of instance, static, and constructor members in a non-ambient context", () => {
             const code = "class Identifier {\nconstructor();constructor() {}\nstatic prop2: string;\nstatic method();static method() {}\nabstract abstractMethod(): void;\n" +
                 "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
-            expect(firstChild.getAllMembers().length).to.equal(7);
+            expect(firstChild.getMembers().length).to.equal(7);
         });
 
         it("should get the right number of instance, static, and constructor members in an ambient context", () => {
             const code = "declare class Identifier {\nconstructor();constructor();\nstatic prop2: string;\nstatic method();static method();\n" +
                 "prop: string;\nprop2: number;method1(str);method1();\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
-            expect(firstChild.getAllMembers().length).to.equal(9);
+            expect(firstChild.getMembers().length).to.equal(9);
         });
     });
 

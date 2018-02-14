@@ -57,7 +57,7 @@ describe(nameof(StaticableNode), () => {
     describe(nameof<MethodDeclaration>(n => n.fill), () => {
         function getFirstMethod(code: string) {
             const result = getInfoFromText<ClassDeclaration>(code);
-            const firstMethod = result.firstChild.getAllMembers().filter(m => TypeGuards.isMethodDeclaration(m))[0] as MethodDeclaration;
+            const firstMethod = result.firstChild.getMembers().filter(m => TypeGuards.isMethodDeclaration(m))[0] as MethodDeclaration;
             return {firstMethod, ...result};
         }
 

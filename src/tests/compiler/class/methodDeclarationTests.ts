@@ -7,7 +7,7 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
         function doTest(startCode: string, index: number, structures: MethodDeclarationOverloadStructure[], expectedCode: string, methodIndex = 0) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[methodIndex] as MethodDeclaration;
+            const methodDeclaration = firstChild.getMembers()[methodIndex] as MethodDeclaration;
             const result = methodDeclaration.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -47,7 +47,7 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverload), () => {
         function doTest(startCode: string, index: number, structure: MethodDeclarationOverloadStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as MethodDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
             expect(result).to.be.instanceof(MethodDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -62,7 +62,7 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.addOverloads), () => {
         function doTest(startCode: string, structures: MethodDeclarationOverloadStructure[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as MethodDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -77,7 +77,7 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.addOverload), () => {
         function doTest(startCode: string, structure: MethodDeclarationOverloadStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-            const methodDeclaration = firstChild.getAllMembers()[0] as MethodDeclaration;
+            const methodDeclaration = firstChild.getMembers()[0] as MethodDeclaration;
             const result = methodDeclaration.addOverload(structure);
             expect(result).to.be.instanceof(MethodDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

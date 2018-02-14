@@ -120,7 +120,7 @@ describe(nameof(getMixinStructureFuncs.fromReturnTypedNode), () => {
 describe(nameof(getMixinStructureFuncs.fromStaticableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.StaticableNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromStaticableNode(firstChild.getAllMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromStaticableNode(firstChild.getMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when is static", () => {
@@ -135,7 +135,7 @@ describe(nameof(getMixinStructureFuncs.fromStaticableNode), () => {
 describe(nameof(getMixinStructureFuncs.fromScopedNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ScopedNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromScopedNode(firstChild.getAllMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromScopedNode(firstChild.getMembers()[0] as compiler.MethodDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when has scope", () => {
@@ -195,7 +195,7 @@ describe(nameof(getMixinStructureFuncs.fromImplementsClauseableNode), () => {
 describe(nameof(getMixinStructureFuncs.fromQuestionTokenableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.QuestionTokenableNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromQuestionTokenableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromQuestionTokenableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when has question token", () => {
@@ -210,7 +210,7 @@ describe(nameof(getMixinStructureFuncs.fromQuestionTokenableNode), () => {
 describe(nameof(getMixinStructureFuncs.fromReadonlyableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.ReadonlyableNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromReadonlyableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromReadonlyableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when is readonly", () => {
@@ -225,7 +225,7 @@ describe(nameof(getMixinStructureFuncs.fromReadonlyableNode), () => {
 describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.TypedNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromTypedNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromTypedNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when has a type", () => {
@@ -240,7 +240,7 @@ describe(nameof(getMixinStructureFuncs.fromTypedNode), () => {
 describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.InitializerExpressionableNodeStructure>) {
         const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
-        expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getAllMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
+        expect(getMixinStructureFuncs.fromInitializerExpressionableNode(firstChild.getMembers()[0] as compiler.PropertyDeclaration)).to.deep.equal(expectedStructure);
     }
 
     it("should get when has a an initailizer", () => {
