@@ -12,9 +12,7 @@
 
 ### Version 7
 
-The TypeScript compiler peer dependency has been dropped! This will make it easier to progress.
-
-Note that the TypeScript compiler object can now be accessed via the `ts` named export. Also TypeScript compiler objects used in this library are now exported directly as named exports:
+The TypeScript compiler peer dependency has been dropped! The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
 
 ```ts
 import Ast, {ts, SyntaxKind, ScriptTarget} from "ts-simple-ast";
