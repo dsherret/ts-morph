@@ -10,7 +10,7 @@ Imports of a source file can be retrieved by calling:
 // get them all
 const imports = sourceFile.getImportDeclarations();
 // or get the first one that matches a condition
-const importWithDefaultImport = sourceFile.getImport(i => i.getDefaultImport() != null);
+const importWithDefaultImport = sourceFile.getImportDeclaration(i => i.getDefaultImport() != null);
 ```
 
 ### Add/Insert

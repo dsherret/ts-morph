@@ -263,7 +263,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the import by.
      */
-    getImport(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
+    getImportDeclaration(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration | undefined {
         return ArrayUtils.find(this.getImportDeclarations(), condition);
     }
 
@@ -271,8 +271,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the first import declaration that matches a condition, or throws if it doesn't exist.
      * @param condition - Condition to get the import by.
      */
-    getImportOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration {
-        return errors.throwIfNullOrUndefined(this.getImport(condition), "Expected to find an import with the provided condition.");
+    getImportDeclarationOrThrow(condition: (importDeclaration: ImportDeclaration) => boolean): ImportDeclaration {
+        return errors.throwIfNullOrUndefined(this.getImportDeclaration(condition), "Expected to find an import with the provided condition.");
     }
 
     /**

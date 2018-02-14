@@ -285,22 +285,27 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getImport), () => {
+    describe(nameof<SourceFile>(n => n.getImportDeclaration), () => {
         it("should get the import declaration", () => {
             const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImport(i => i.getDefaultImport() != null)!.getText()).to.equal("import myImport from 'test';");
+            expect(sourceFile.getImportDeclaration(i => i.getDefaultImport() != null)!.getText()).to.equal("import myImport from 'test';");
+        });
+
+        it("should return undefined when not exists", () => {
+            const {sourceFile} = getInfoFromText("");
+            expect(sourceFile.getImportDeclaration(e => false)).to.be.undefined;
         });
     });
 
-    describe(nameof<SourceFile>(n => n.getImportOrThrow), () => {
+    describe(nameof<SourceFile>(n => n.getImportDeclarationOrThrow), () => {
         it("should get the import declaration", () => {
             const {sourceFile} = getInfoFromText("import myImport from 'test'; import {next} from './test';");
-            expect(sourceFile.getImportOrThrow(i => i.getDefaultImport() != null).getText()).to.equal("import myImport from 'test';");
+            expect(sourceFile.getImportDeclarationOrThrow(i => i.getDefaultImport() != null).getText()).to.equal("import myImport from 'test';");
         });
 
         it("should throw when not exists", () => {
             const {sourceFile} = getInfoFromText("");
-            expect(() => sourceFile.getImportOrThrow(e => false)).to.throw();
+            expect(() => sourceFile.getImportDeclarationOrThrow(e => false)).to.throw();
         });
     });
 
