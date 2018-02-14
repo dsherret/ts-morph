@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.0"></a>
+# [7.0.0](https://github.com/dsherret/ts-simple-ast/compare/6.13.0...7.0.0) (2018-02-14)
+
+
+### Code Refactoring
+
+* [#232](https://github.com/dsherret/ts-simple-ast/issues/232) - HeritageClause: getTypes() -> getTypeNodes() ([ef5a369](https://github.com/dsherret/ts-simple-ast/commit/ef5a369))
+* ClassDeclaration & InterfaceDeclaration: getAllMembers -> getMembers ([cdb186a](https://github.com/dsherret/ts-simple-ast/commit/cdb186a))
+* getImport -> getImportDeclaration. ([acd9d70](https://github.com/dsherret/ts-simple-ast/commit/acd9d70))
+* Rename toggleDeclareKeyword to setHasDeclareKeyword for consistency. ([0cecefe](https://github.com/dsherret/ts-simple-ast/commit/0cecefe))
+
+
+### Features
+
+* [#249](https://github.com/dsherret/ts-simple-ast/issues/249) - Remove TypeScript compiler peer dependency. ([db9f0fc](https://github.com/dsherret/ts-simple-ast/commit/db9f0fc))
+
+
+### BREAKING CHANGES
+
+* HeritageClause getTypes() renamed to getTypeNodes().
+
+It was incorrectly named originally.
+* ClassDeclaration & InterfaceDeclaration getAllMembers() renamed to getMembers().
+* sourceFile.getImport is now getImportDeclaration for consistency.
+* Access the TypeScript compiler via `import {ts} from "ts-simple-ast";`
+* NewLineKind is now the TypeScript compiler's enum.
+* toggleDeclareKeyword is now setHasDeclareKeyword.
+
+
+
 <a name="6.13.0"></a>
 # [6.13.0](https://github.com/dsherret/ts-simple-ast/compare/6.12.0...6.13.0) (2018-02-12)
 

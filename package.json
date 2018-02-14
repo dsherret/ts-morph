@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "6.13.0",
+  "version": "7.0.0",
   "description": "TypeScript compiler wrapper for AST navigation and code generation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
