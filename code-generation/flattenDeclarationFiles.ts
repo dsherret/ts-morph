@@ -32,6 +32,8 @@ mainFile.addImportDeclaration({
     moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile)
 });
 
+mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile) });
+
 // update the main.d.ts file
 mainFile.getClassOrThrow("TsSimpleAst").setIsDefaultExport(true);
 mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1"));
