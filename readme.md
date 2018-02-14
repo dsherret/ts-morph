@@ -6,16 +6,29 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-TypeScript compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
+[TypeScript](https://github.com/Microsoft/TypeScript) compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (26 January 2018)
+## Library Development - Progress Update (13 February 2018)
 
-A report has been generated, using this library, that identifies nodes and properties from the TypeScript compiler API that haven't been wrapped. This has helped identify gaps and shortcommings of the library. The report can be viewed in the [wrapped-nodes.md](wrapped-nodes.md) file.
+### Version 7
+
+The TypeScript compiler peer dependency has been dropped! This will make it easier to progress.
+
+Note that the TypeScript compiler object can now be accessed via the `ts` named export. Also TypeScript compiler objects used in this library are now exported directly as named exports:
+
+```ts
+import Ast, {ts, SyntaxKind, ScriptTarget} from "ts-simple-ast";
+```
+
+### General Progress
 
 Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
 Please open an issue if find a feature missing or bug that isn't in the issue tracker.
 
+### Report
+
+View a generated report on what nodes have been wrapped in the [wrapped-nodes.md](wrapped-nodes.md) file.
 
 ## Documentation
 
