@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.0.1"></a>
+## [7.0.1](https://github.com/dsherret/ts-simple-ast/compare/7.0.0...7.0.1) (2018-02-14)
+
+
+### Bug Fixes
+
+* Fix ts compiler types not being exported from declaration file. ([0755aa2](https://github.com/dsherret/ts-simple-ast/commit/0755aa2))
+
+
+
 <a name="7.0.0"></a>
 # [7.0.0](https://github.com/dsherret/ts-simple-ast/compare/6.13.0...7.0.0) (2018-02-14)
 
