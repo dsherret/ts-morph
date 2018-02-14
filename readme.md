@@ -12,7 +12,9 @@
 
 ### Version 7
 
-The TypeScript compiler peer dependency has been dropped! The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
+The TypeScript peer dependency has been dropped, but there should be no loss of functionality! If there is, please open an issue.
+
+The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
 
 ```ts
 import Ast, {ts, SyntaxKind, ScriptTarget} from "ts-simple-ast";
@@ -69,6 +71,7 @@ classDeclaration.hasExportKeyword(); // returns: false
 classDeclaration.isDefaultExport();  // returns: true
 
 // manipulate ast
+sourceFile.addEnum({ name: "MyEnum" });
 classDeclaration.rename("NewName");
 classDeclaration.addProperty({
     name: "myProp",
@@ -77,7 +80,7 @@ classDeclaration.addProperty({
 classDeclaration.setIsDefaultExport(false);
 
 // result
-sourceFile.getFullText(); // returns: "class NewName {\n    myProp = 5;\n}\nlet myClass: MyClass;\n"
+sourceFile.getFullText(); // returns: "class NewName {\n    myProp = 5;\n}\nlet myClass: MyClass;\n\nenum MyEnum {\n}\n"
 sourceFile.save();        // save it asynchronously to MyFile.ts
 
 // get underlying compiler node from the typescript AST from any node
