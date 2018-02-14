@@ -1,14 +1,15 @@
 ﻿import {expect} from "chai";
 import {HeritageClause, ClassDeclaration} from "./../../../compiler";
+import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(HeritageClause), () => {
-    describe(nameof<HeritageClause>(n => n.getTypes), () => {
+    describe(nameof<HeritageClause>(n => n.getTypeNodes), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier extends Base implements IBase, IBase2 {}");
         const heritageClauses = firstChild.getHeritageClauses();
-        const types = heritageClauses.map(c => c.getTypes()).reduce((a, b) => a.concat(b), []);
+        const types = ArrayUtils.flatten(heritageClauses.map(c => c.getTypeNodes()));
 
-        it("should get all the types", () => {
+        it("should get all the type nodes", () => {
             expect(types.length).to.equal(3);
         });
     });

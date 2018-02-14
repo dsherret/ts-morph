@@ -5,9 +5,9 @@ import {ExpressionWithTypeArguments} from "./../type";
 
 export class HeritageClause extends Node<ts.HeritageClause> {
     /**
-     * Gets all the types for the heritage clause.
+     * Gets all the type nodes for the heritage clause.
      */
-    getTypes(): ExpressionWithTypeArguments[] {
+    getTypeNodes(): ExpressionWithTypeArguments[] {
         if (this.compilerNode.types == null)
             return [];
 
