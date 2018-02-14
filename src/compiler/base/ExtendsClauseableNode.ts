@@ -52,7 +52,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
     return class extends Base implements ExtendsClauseableNode {
         getExtends(): ExpressionWithTypeArguments[] {
             const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
-            return extendsClause == null ? [] : extendsClause.getTypes();
+            return extendsClause == null ? [] : extendsClause.getTypeNodes();
         }
 
         addExtends(texts: string[]): ExpressionWithTypeArguments[];
