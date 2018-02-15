@@ -1,7 +1,30 @@
 ﻿import {StatementedNode, EnumDeclaration, EnumMemberStructure, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration,
-    PropertyDeclaration, FunctionDeclaration, VariableStatement} from "./../../src/main";
+    PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards} from "./../../src/main";
 
 // todo: in the future this should be done in the library (ex. node.addInterface(cloningInterface.getStructure()))
+// What's done here is not so great...
+
+export function cloneNamespaces(node: StatementedNode, cloningNamespaces: NamespaceDeclaration[]) {
+    const namespaces = node.addNamespaces(cloningNamespaces.map(n => ({
+        isExported: true,
+        hasDeclareKeyword: true,
+        name: n.getName()
+    })));
+    for (let i = 0; i < cloningNamespaces.length; i++) {
+        cloneInterfaces(namespaces[i], cloningNamespaces[i].getInterfaces());
+        cloneClasses(namespaces[i], cloningNamespaces[i].getClasses());
+        cloneFunctions(namespaces[i], cloningNamespaces[i].getFunctions());
+        cloneEnums(namespaces[i], cloningNamespaces[i].getEnums());
+        cloneVariables(namespaces[i], cloningNamespaces[i].getVariableStatements());
+        cloneTypeAliases(namespaces[i], cloningNamespaces[i].getTypeAliases());
+
+        // bad... will be fixed when moving towards using getStructure() functions
+        for (const statement of namespaces[i].getStatements()) {
+            if (TypeGuards.isAmbientableNode(statement))
+                statement.setHasDeclareKeyword(false);
+        }
+    }
+}
 
 export function cloneInterfaces(node: StatementedNode, cloningInterfaces: InterfaceDeclaration[]) {
     node.addInterfaces(cloningInterfaces.map(cloningInterface => ({

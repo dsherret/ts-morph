@@ -640,6 +640,10 @@ export interface CompilerOptions {
 }
 
 export namespace ts {
+    export declare namespace ScriptSnapshot {
+        export function fromString(text: string): IScriptSnapshot;
+    }
+
     /**
      * ES6 Map interface, only read methods included.
      */
@@ -697,7 +701,7 @@ export namespace ts {
          * This brand prevents using nodes not created within this library or not created within the ts namespace object of this library.
          * It's recommended that you only use this library and use its ts named export for all your TypeScript compiler needs.
          * If you want to ignore this and are using the same TypeScript compiler version as ts.versionMajorMinor then assert it to ts.Node.
-         * If you don't use this library with this same major & minor version of TypeScript then you may encounter unexpected behaviour.
+         * If you don't use this library with this same major & minor version of TypeScript then be warned, you may encounter unexpected behaviour.
          */
         _tsSimpleAstBrand: undefined;
     }
@@ -4662,8 +4666,6 @@ export namespace ts {
     }
 
     export declare function isExternalModuleNameRelative(moduleName: string): boolean;
-    export declare function setTimeout(handler: (...args: any[]) => void, timeout: number): any;
-    export declare function clearTimeout(handle: any): void;
     export declare function getNodeMajorVersion(): number;
     export declare function tokenToString(t: SyntaxKind): string | undefined;
     export declare function getPositionOfLineAndCharacter(sourceFile: SourceFile, line: number, character: number): number;
@@ -5666,7 +5668,6 @@ export namespace ts {
         options: TypeAcquisition;
         errors: Diagnostic[];
     };
-    export declare function fromString(text: string): IScriptSnapshot;
     export declare function createClassifier(): Classifier;
     export declare function createDocumentRegistry(useCaseSensitiveFileNames?: boolean, currentDirectory?: string): DocumentRegistry;
     export declare function preProcessFile(sourceText: string, readImportFiles?: boolean, detectJavaScriptImports?: boolean): PreProcessedFileInfo;
@@ -5705,10 +5706,6 @@ export namespace ts {
      */
     export declare const servicesVersion = "0.7";
     export declare let disableIncrementalParsing: boolean;
-
-    export declare namespace ScriptSnapshot {
-        export function fromString(text: string): IScriptSnapshot;
-    }
 
     // overwrite this namespace with the TypeScript compiler
     ObjectUtils.assign((ts as any), tsCompiler);

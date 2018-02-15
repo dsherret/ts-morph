@@ -7,11 +7,9 @@
 import * as path from "path";
 import {rootFolder} from "./config";
 import {InspectorFactory} from "./inspectors";
-import {EnumDeclaration, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration, TypeGuards, ts, SyntaxKind,
-    UnionTypeNode, FunctionDeclaration, VariableStatement} from "./../src/main";
-import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables} from "./common/cloning";
-
-// todo: need to generate ScriptSnapshot namespace...
+import {UnionTypeNode} from "./../src/main";
+import {ArrayUtils} from "./../src/utils";
+import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces} from "./common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
     "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"];
@@ -23,9 +21,10 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
     const ast = factory.getAst();
     const declarationFile = tsInspector.getDeclarationFile();
 
-    const allEnums = declarationFile.getDescendantsOfKind(SyntaxKind.EnumDeclaration) as EnumDeclaration[];
-    const allInterfaces = declarationFile.getDescendantsOfKind(SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration[];
-    const allTypeAliases = declarationFile.getDescendantsOfKind(SyntaxKind.TypeAliasDeclaration) as TypeAliasDeclaration[];
+    const tsNamespaces = declarationFile.getNamespaces().filter(n => n.getName() === "ts");
+    const allEnums = ArrayUtils.flatten(tsNamespaces.map(n => n.getEnums()));
+    const allInterfaces = ArrayUtils.flatten(tsNamespaces.map(n => n.getInterfaces()));
+    const allTypeAliases = ArrayUtils.flatten(tsNamespaces.map(n => n.getTypeAliases()));
 
     createTsSourceFile();
 
@@ -47,12 +46,13 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             isExported: true
         });
 
+        cloneNamespaces(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getNamespaces())));
         cloneInterfaces(tsNamespace, allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) === -1));
         cloneEnums(tsNamespace, allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) === -1));
         cloneTypeAliases(tsNamespace, allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) === -1));
-        cloneClasses(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.ClassDeclaration) as ClassDeclaration[]);
-        cloneFunctions(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.FunctionDeclaration) as FunctionDeclaration[]);
-        cloneVariables(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.VariableStatement) as VariableStatement[]);
+        cloneClasses(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getClasses())));
+        cloneFunctions(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getFunctions())));
+        cloneVariables(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getVariableStatements())));
 
         tsNamespace.getInterfaceOrThrow("Node").addProperty({
             docs: [{
