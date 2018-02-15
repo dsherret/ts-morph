@@ -678,7 +678,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const pos = this.getPos();
         const end = this.getEnd();
         for (const child of parent.getCompilerChildren()) {
-            if (child.pos > pos || child === this.compilerNode)
+            if (child.pos > end || child === this.compilerNode)
                 return undefined;
 
             if (child.kind === SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)

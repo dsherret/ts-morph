@@ -78,7 +78,7 @@ describe(nameof(AmbientableNode), () => {
         function doTest(text: string, value: boolean, expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<AmbientableNode & Node>(text);
             firstChild.setHasDeclareKeyword(value);
-            expect(sourceFile.getText()).to.equal(expected);
+            expect(sourceFile.getFullText()).to.equal(expected);
         }
 
         it("should add declare keyword when setting it to true", () => {
@@ -87,6 +87,11 @@ describe(nameof(AmbientableNode), () => {
 
         it("should remove declare keyword when setting it to false", () => {
             doTest("declare class MyClass { }", false, "class MyClass { }");
+        });
+
+        it("should add to a function declaration that has an export keyword and js doc", () => {
+            // this is a weird situation where the jsdoc pos is 4, but the export keyword's syntax list is 0 (maybe it's a ts compiler bug?)
+            doTest("    /** Testing*/export function identifier { }", true, "    /** Testing*/export declare function identifier { }");
         });
 
         it("should do nothing for an interface when setting to true", () => {
