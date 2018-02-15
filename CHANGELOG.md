@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.0"></a>
+# [7.1.0](https://github.com/dsherret/ts-simple-ast/compare/7.0.1...7.1.0) (2018-02-15)
+
+
+### Bug Fixes
+
+* Fix scenario where adding a modifier would throw when there was an jsdoc on the parent in some scenarios. ([1fbcee6](https://github.com/dsherret/ts-simple-ast/commit/1fbcee6))
+* Insert functions with a declaration keyword without a body. ([c64009d](https://github.com/dsherret/ts-simple-ast/commit/c64009d))
+
+
+### Features
+
+* [#252](https://github.com/dsherret/ts-simple-ast/issues/252) - Add Type.isNullable. ([f2dfd1f](https://github.com/dsherret/ts-simple-ast/commit/f2dfd1f))
+* Add functions and variables to typescript declaration file. ([451840b](https://github.com/dsherret/ts-simple-ast/commit/451840b))
+* Add ts.Node brand to prevent using ts.Nodes created outside the ts named export. ([ab7c353](https://github.com/dsherret/ts-simple-ast/commit/ab7c353))
+* BodyableNode - addBody, removeBody, hasBody ([3f4175e](https://github.com/dsherret/ts-simple-ast/commit/3f4175e))
+
+
+
 <a name="7.0.1"></a>
 ## [7.0.1](https://github.com/dsherret/ts-simple-ast/compare/7.0.0...7.0.1) (2018-02-14)
 
