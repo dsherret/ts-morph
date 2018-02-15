@@ -59,7 +59,7 @@ export interface ModifierableNode {
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
     return class extends Base implements ModifierableNode {
         getModifiers() {
-            return this.compilerNode.modifiers == null ? [] : this.compilerNode.modifiers.map(m => this.getNodeFromCompilerNode(m));
+            return this.getCompilerModifiers().map(m => this.getNodeFromCompilerNode(m));
         }
 
         getFirstModifierByKindOrThrow(kind: SyntaxKind) {
@@ -67,9 +67,9 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         getFirstModifierByKind(kind: SyntaxKind) {
-            for (const modifier of this.getModifiers()) {
-                if (modifier.getKind() === kind)
-                    return modifier as Node<ts.Modifier>;
+            for (const modifier of this.getCompilerModifiers()) {
+                if (modifier.kind === kind)
+                    return this.getNodeFromCompilerNode(modifier);
             }
 
             return undefined;
@@ -81,7 +81,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             if (typeof textOrKind === "string")
                 return this.getModifiers().some(m => m.getText() === textOrKind);
             else
-                return this.getModifiers().some(m => m.getKind() === textOrKind);
+                return this.getCompilerModifiers().some(m => m.kind === textOrKind);
         }
 
         toggleModifier(text: ModifierTexts, value?: boolean) {
@@ -98,9 +98,9 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
 
         addModifier(text: ModifierTexts): Node<ts.Modifier> {
             const modifiers = this.getModifiers();
-            const hasModifier = modifiers.some(m => m.getText() === text);
-            if (hasModifier)
-                return ArrayUtils.find(this.getModifiers(), m => m.getText() === text) as Node<ts.Modifier>;
+            const existingModifier = ArrayUtils.find(modifiers, m => m.getText() === text);
+            if (existingModifier != null)
+                return existingModifier;
 
             // get insert position & index
             const {insertPos, insertIndex} = getInsertInfo(this);
@@ -171,6 +171,10 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 getSiblingFormatting: () => FormattingKind.Space
             });
             return true;
+        }
+
+        private getCompilerModifiers() {
+            return this.compilerNode.modifiers || ([] as any as ts.NodeArray<ts.Modifier>);
         }
     };
 }
