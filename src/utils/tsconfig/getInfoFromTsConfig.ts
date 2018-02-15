@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import * as errors from "./../../errors";
 import {ts, CompilerOptions} from "./../../typescript";
 import {Diagnostic} from "./../../compiler";
@@ -14,7 +13,7 @@ export function getTsConfigParseResult(tsConfigFilePath: string, fileSystem: Fil
     tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
     errors.throwIfFileNotExists(fileSystem, tsConfigFilePath);
 
-    const parseResult: TsConfigParseResult = compilerApi.parseConfigFileTextToJson(tsConfigFilePath, fileSystem.readFileSync(tsConfigFilePath));
+    const parseResult: TsConfigParseResult = ts.parseConfigFileTextToJson(tsConfigFilePath, fileSystem.readFileSync(tsConfigFilePath));
     if (parseResult.error != null)
         throw new Error(parseResult.error.messageText.toString());
     return parseResult;
@@ -22,7 +21,7 @@ export function getTsConfigParseResult(tsConfigFilePath: string, fileSystem: Fil
 
 export function getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult) {
     tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
-    const settings = compilerApi.convertCompilerOptionsFromJson(parseResult.config.compilerOptions, FileUtils.getDirPath(tsConfigFilePath), tsConfigFilePath);
+    const settings = ts.convertCompilerOptionsFromJson(parseResult.config.compilerOptions, FileUtils.getDirPath(tsConfigFilePath), tsConfigFilePath);
     return {
         options: settings.options,
         errors: (settings.errors || []).map(e => new Diagnostic(undefined, e))
@@ -32,7 +31,7 @@ export function getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath: stri
 export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult, compilerOptions: CompilerOptions) {
     tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
     const currentDir = fileSystem.getCurrentDirectory();
-    const host: compilerApi.ParseConfigHost = {
+    const host: ts.ParseConfigHost = {
         useCaseSensitiveFileNames: true,
         readDirectory: (rootDir, extensions, excludes, includes) => tsMatchFiles(rootDir, extensions, excludes || [], includes, false, currentDir, undefined,
             path => getFileSystemEntries(path, fileSystem)),
@@ -63,7 +62,7 @@ export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fi
     }
 
     function* getFilesFromDir(dirPath: string) {
-        for (const filePath of compilerApi.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
+        for (const filePath of ts.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
             yield FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
     }
 }
@@ -80,7 +79,7 @@ function tsMatchFiles(this: any,
     depth: number | undefined,
     getEntries: (path: string) => FileSystemEntries
 ): string[] {
-    return (compilerApi as any).matchFiles.apply(this, arguments);
+    return (ts as any).matchFiles.apply(this, arguments);
 }
 /* tslint:enable:align */
 

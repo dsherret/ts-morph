@@ -1,5 +1,4 @@
-﻿import * as compilerApi from "typescript";
-import * as path from "path";
+﻿import * as path from "path";
 import {expect} from "chai";
 import {ts, SyntaxKind, CompilerOptions} from "./../typescript";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "./../compiler";
@@ -11,7 +10,7 @@ import * as errors from "./../errors";
 import * as testHelpers from "./testHelpers";
 
 console.log("");
-console.log("TypeScript version: " + compilerApi.version);
+console.log("TypeScript version: " + ts.version);
 
 describe(nameof(TsSimpleAst), () => {
     describe("constructor", () => {

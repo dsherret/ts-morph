@@ -4,15 +4,14 @@ title: Navigating Existing Nodes
 
 ## Navigating Existing Nodes
 
-Sometimes you might want to easily navigate an existing compiler node created outside this library.
+Sometimes you might want to easily navigate an existing compiler node.
 
 Do that by using the `createWrappedNode` function:
 
 ```ts
-import * as ts from "typescript";
-import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
+import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
 
-// some code that creates a class declaration (could be any kind of ts.Node)
+// some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...; 
 
 // create and use a wrapped node

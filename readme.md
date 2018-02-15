@@ -87,13 +87,12 @@ sourceFile.save();        // save it asynchronously to MyFile.ts
 const sourceFileCompilerNode = sourceFile.compilerNode;
 ```
 
-Or navigate existing compiler nodes created outside this library:
+Or navigate existing compiler nodes created with the TypeScript compiler:
 
 ```ts
-import * as ts from "typescript";
-import {createWrappedNode, ClassDeclaration} from "ts-simple-ast";
+import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
 
-// some code that creates a class declaration (could be any kind of ts.Node)
+// some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...; 
 
 // create and use a wrapped node

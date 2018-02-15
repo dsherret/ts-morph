@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import {ts, SyntaxKind, ScriptKind, ScriptTarget, NewLineKind, EmitHint} from "./../typescript";
 import {Node} from "./../compiler";
 
@@ -51,7 +50,7 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
     const options = getOptions();
     const sourceFile = getSourceFile();
 
-    const printer = compilerApi.createPrinter({
+    const printer = ts.createPrinter({
         newLine: options.newLineKind == null ? NewLineKind.LineFeed : options.newLineKind,
         removeComments: options.removeComments || false
     });
@@ -66,7 +65,7 @@ export function printNode(node: ts.Node, sourceFileOrOptions?: PrintNodeOptions 
             if (node.kind === SyntaxKind.SourceFile)
                 return undefined;
             const scriptKind = getScriptKind();
-            return compilerApi.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ScriptTarget.Latest, false, scriptKind);
+            return ts.createSourceFile(`print.${getFileExt(scriptKind)}`, "", ScriptTarget.Latest, false, scriptKind);
         }
 
         return sourceFileOrOptions as ts.SourceFile;

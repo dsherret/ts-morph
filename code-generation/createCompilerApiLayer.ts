@@ -11,6 +11,8 @@ import {EnumDeclaration, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclar
     UnionTypeNode, FunctionDeclaration, VariableStatement} from "./../src/main";
 import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables} from "./common/cloning";
 
+// todo: need to generate ScriptSnapshot namespace...
+
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
     "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"];
 const interfacesToSeparate = ["CompilerOptions", "MapLike"];
@@ -51,6 +53,17 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         cloneClasses(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.ClassDeclaration) as ClassDeclaration[]);
         cloneFunctions(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.FunctionDeclaration) as FunctionDeclaration[]);
         cloneVariables(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.VariableStatement) as VariableStatement[]);
+
+        tsNamespace.getInterfaceOrThrow("Node").addProperty({
+            docs: [{
+                description: "This brand prevents using nodes not created within this library or not created within the ts namespace object of this library.\n" +
+                    "It's recommended that you only use this library and use its ts named export for all your TypeScript compiler needs.\n" +
+                    "If you want to ignore this and are using the same TypeScript compiler version as ts.versionMajorMinor then assert it to ts.Node.\n" +
+                    "If you don't use this library with this same major & minor version of TypeScript then be warned, you may encounter unexpected behaviour."
+            }],
+            name: "_tsSimpleAstBrand",
+            type: "undefined"
+        });
 
         sourceFile.insertStatements(0, writer => {
             writer.writeLine("/* tslint:disable */")

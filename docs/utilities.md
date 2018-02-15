@@ -44,8 +44,7 @@ node.print(); // returns: string
 But sometimes you might want to print a compiler node. There's a `printNode` utility function for doing that:
 
 ```ts
-import * as ts from "typescript";
-import {printNode} from "ts-simple-ast";
+import {printNode, ts} from "ts-simple-ast";
 
 // Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 const tsFunctionDeclaration = ts.createFunctionDeclaration(

@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import {ts, SyntaxKind} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
@@ -526,7 +525,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the combined modifier flags.
      */
     getCombinedModifierFlags() {
-        return compilerApi.getCombinedModifierFlags(this.compilerNode) as ts.ModifierFlags;
+        return ts.getCombinedModifierFlags(this.compilerNode);
     }
 
     /**

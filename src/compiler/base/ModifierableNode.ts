@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
@@ -152,7 +151,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                         return modifiers[0].getStart();
                     for (const child of node.getChildrenIterator()) {
                         // skip over any initial syntax lists (ex. decorators) or js docs
-                        if (child.getKind() === SyntaxKind.SyntaxList || compilerApi.isJSDocCommentContainingNode(child.compilerNode))
+                        if (child.getKind() === SyntaxKind.SyntaxList || ts.isJSDocCommentContainingNode(child.compilerNode))
                             continue;
                         return child.getStart();
                     }

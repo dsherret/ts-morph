@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import {ts, CompilerOptions} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
@@ -57,7 +56,7 @@ export class Program {
         const compilerOptions = this.global.compilerOptions;
         this._getOrCreateCompilerObject = () => {
             if (this._createdCompilerObject == null)
-                this._createdCompilerObject = compilerApi.createProgram(rootNames, compilerOptions, host);
+                this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
 
             // this needs to be on a separate line in case the program was reset between the line above and here
             return this._createdCompilerObject || this._getOrCreateCompilerObject();
@@ -117,7 +116,7 @@ export class Program {
      * @param sourceFile - Source file.
      */
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        const compilerDiagnostics = compilerApi.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
         return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 }

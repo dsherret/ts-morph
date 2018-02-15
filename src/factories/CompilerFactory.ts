@@ -1,4 +1,3 @@
-import * as compilerApi from "typescript";
 import {ts, SyntaxKind, TypeFlags} from "./../typescript";
 import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, Diagnostic, JSDocTagInfo} from "./../compiler";
 import * as errors from "./../errors";
@@ -215,7 +214,7 @@ export class CompilerFactory {
     }
 
     private getSourceFileFromText(filePath: string, sourceText: string): SourceFile {
-        const compilerSourceFile = compilerApi.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
         return this.getSourceFile(compilerSourceFile);
     }
 

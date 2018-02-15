@@ -1,14 +1,13 @@
-import * as compilerApi from "typescript";
 import {expect} from "chai";
 import {printNode, PrintNodeOptions} from "./../../utils";
-import {NewLineKind} from "./../../typescript";
+import {ts, ScriptTarget, ScriptKind, SyntaxKind, NewLineKind} from "./../../typescript";
 import {getInfoFromText} from "./../compiler/testHelpers";
 
 describe(nameof(printNode), () => {
     const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";
     const nodeTextNoComment = nodeText.replace("    // comment\n", "");
     const {sourceFile, firstChild} = getInfoFromText(nodeText);
-    const tsSourceFile = compilerApi.createSourceFile("file.tsx", nodeText, compilerApi.ScriptTarget.Latest, false, compilerApi.ScriptKind.TSX);
+    const tsSourceFile = ts.createSourceFile("file.tsx", nodeText, ScriptTarget.Latest, false, ScriptKind.TSX);
     const tsClass = tsSourceFile.getChildren(tsSourceFile)[0].getChildren(tsSourceFile)[0];
 
     it("should print the node when specifying a compiler node and options", () => {
@@ -33,26 +32,26 @@ describe(nameof(printNode), () => {
 
     it("general compiler api test", () => {
         // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
-        const tsFunctionDeclaration = compilerApi.createFunctionDeclaration(
+        const tsFunctionDeclaration = ts.createFunctionDeclaration(
             /*decorators*/ undefined,
-            /*modifiers*/[compilerApi.createToken(compilerApi.SyntaxKind.ExportKeyword)],
+            /*modifiers*/[ts.createToken(SyntaxKind.ExportKeyword)],
             /*asteriskToken*/ undefined,
             "myFunction",
             /*typeParameters*/ undefined,
             /*parameters*/ [],
-            /*returnType*/ compilerApi.createKeywordTypeNode(compilerApi.SyntaxKind.NumberKeyword),
-            compilerApi.createBlock([compilerApi.createReturn(compilerApi.createLiteral(5))], /*multiline*/ true)
+            /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
+            ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true)
         );
         expect(printNode(tsFunctionDeclaration)).to.equal("export function myFunction(): number {\n    return 5;\n}");
     });
 
     it("should print the node when printing a jsx file", () => {
-        const node = compilerApi.createJsxOpeningElement(compilerApi.createIdentifier("Test"), compilerApi.createJsxAttributes([]));
-        expect(printNode(node, { scriptKind: compilerApi.ScriptKind.TSX })).to.equal("<Test>");
+        const node = ts.createJsxOpeningElement(ts.createIdentifier("Test"), ts.createJsxAttributes([]));
+        expect(printNode(node, { scriptKind: ScriptKind.TSX })).to.equal("<Test>");
     });
 
     it("should print the node when printing a non-jsx file", () => {
-        const node = compilerApi.createTypeAssertion(compilerApi.createKeywordTypeNode(compilerApi.SyntaxKind.StringKeyword), compilerApi.createIdentifier("test"));
-        expect(printNode(node, { scriptKind: compilerApi.ScriptKind.TS })).to.equal("<string>test");
+        const node = ts.createTypeAssertion(ts.createKeywordTypeNode(SyntaxKind.StringKeyword), ts.createIdentifier("test"));
+        expect(printNode(node, { scriptKind: ScriptKind.TS })).to.equal("<string>test");
     });
 });
