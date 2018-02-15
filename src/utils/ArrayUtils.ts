@@ -84,4 +84,19 @@ export class ArrayUtils {
 
         return -1;
     }
+
+    static containsSubArray<T>(items: T[], subArray: T[]) {
+        let findIndex = 0;
+        for (const item of items) {
+            if (subArray[findIndex] === item) {
+                findIndex++;
+                if (findIndex === subArray.length)
+                    return true;
+            }
+            else
+                findIndex = 0;
+        }
+
+        return false;
+    }
 }

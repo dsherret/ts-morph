@@ -5,3 +5,4 @@ export * from "./getGeneralFormatting";
 export * from "./getInterfaceMemberFormatting";
 export * from "./getStatementedNodeChildFormatting";
 export * from "./getTextFromFormattingEdits";
+export * from "./hasBody";

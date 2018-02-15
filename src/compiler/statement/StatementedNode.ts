@@ -5,7 +5,7 @@ import * as errors from "./../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren} from "./../../manipulation";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
@@ -602,14 +602,19 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structureToText.writeText(s);
                 return writer.toString();
             });
-            const newChildren = this._insertMainChildren<FunctionDeclaration>(index, texts, structures, SyntaxKind.FunctionDeclaration, (child, i) => {
-                // todo: remove filling when writing
-                const params = structures[i].parameters;
-                delete structures[i].parameters;
-                child.fill(structures[i]);
-                if (params != null)
-                    child.getParameters().forEach((p, j) => p.fill(params[j]));
-            });
+            const newChildren = this._insertMainChildren<FunctionDeclaration, FunctionDeclarationStructure>(index, texts, structures, SyntaxKind.FunctionDeclaration,
+                (child, i) => {
+                    // todo: remove filling when writing
+                    const params = structures[i].parameters;
+                    delete structures[i].parameters;
+                    child.fill(structures[i]);
+                    if (params != null)
+                        child.getParameters().forEach((p, j) => p.fill(params[j]));
+                }, {
+                    previousBlanklineWhen: (previousMember, firstStructure) => !firstStructure.hasDeclareKeyword || hasBody(previousMember),
+                    separatorNewlineWhen: (previousStructure, nextStructure) => !previousStructure.hasDeclareKeyword || !nextStructure.hasDeclareKeyword,
+                    nextBlanklineWhen: (nextMember, lastStructure) => !lastStructure.hasDeclareKeyword || hasBody(nextMember)
+                });
 
             return newChildren;
         }
@@ -904,7 +909,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             expectedSyntaxKind: SyntaxKind,
             withEachChild?: ((child: U, index: number) => void),
             opts: {
-                previousBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean,
+                previousBlanklineWhen?: (previousMember: Node, firstStructure: TStructure) => boolean,
                 separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean,
                 nextBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean
             } = {}

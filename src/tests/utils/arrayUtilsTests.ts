@@ -115,4 +115,34 @@ describe(nameof(ArrayUtils), () => {
             doTest([1, 2, 3, 5], 6, [1, 2, 3, 5, 6]);
         });
     });
+
+    describe(`#${nameof(ArrayUtils.containsSubArray)}()`, () => {
+        function doTest(items: number[], subArray: number[], result: boolean) {
+            expect(ArrayUtils.containsSubArray(items, subArray)).equal(result);
+        }
+
+        it("should be true when it contains the sub array at the start", () => {
+            doTest([1, 2, 3, 4, 5], [1, 2, 3], true);
+        });
+
+        it("should be true when it contains the sub array at the end", () => {
+            doTest([1, 2, 3, 4, 5], [3, 4, 5], true);
+        });
+
+        it("should be true when it contains the sub array in the middle", () => {
+            doTest([1, 2, 3, 4, 5], [2, 3, 4], true);
+        });
+
+        it("should be false when it doesn't contain the sub array", () => {
+            doTest([1, 2, 3, 4, 5], [1, 2, 2], false);
+        });
+
+        it("should be false when it doesn't contain the sub array in a different order", () => {
+            doTest([1, 2, 3, 4, 5], [3, 2, 1], false);
+        });
+
+        it("should be false when it doesn't contain all the sub array", () => {
+            doTest([1, 2, 3, 4, 5], [3, 4, 5, 6], false);
+        });
+    });
 });

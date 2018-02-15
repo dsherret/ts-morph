@@ -36,6 +36,12 @@ describe(nameof(StatementedNode), () => {
                 "function Identifier1() {\n}\n\nfunction Identifier2() {\n}\n\nfunction Identifier3() {\n}\n");
         });
 
+        it("should insert ones with a declaration keyword accordingly", () => {
+            doTest("function Identifier1() {\n}\ndeclare function Identifier4(): string;", 1,
+                [{ hasDeclareKeyword: true, name: "Identifier2" }, { hasDeclareKeyword: true, name: "Identifier3" }],
+                "function Identifier1() {\n}\n\ndeclare function Identifier2();\ndeclare function Identifier3();\ndeclare function Identifier4(): string;");
+        });
+
         it("should have the expected text adding to non-source file", () => {
             const {sourceFile} = getInfoFromText("namespace Namespace {\n}\n");
             const namespaceDec = sourceFile.getNamespaces()[0];
