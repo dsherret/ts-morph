@@ -1,5 +1,5 @@
 ﻿import {StatementedNode, EnumDeclaration, EnumMemberStructure, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration,
-    PropertyDeclaration} from "./../../src/main";
+    PropertyDeclaration, FunctionDeclaration, VariableStatement} from "./../../src/main";
 
 // todo: in the future this should be done in the library (ex. node.addInterface(cloningInterface.getStructure()))
 
@@ -97,3 +97,38 @@ export function cloneClasses(node: StatementedNode, classes: ClassDeclaration[])
         }))
     })));
 }
+
+export function cloneFunctions(node: StatementedNode, functions: FunctionDeclaration[]) {
+    node.addFunctions(functions.map(f => ({
+        name: f.getName(),
+        isExported: true,
+        typeParameters: f.getTypeParameters().map(p => ({
+            name: p.getName(),
+            constraint: p.getConstraintNode() == null ? undefined : p.getConstraintNode()!.getText()
+        })),
+        docs: f.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+        parameters: f.getParameters().map(p => ({
+            name: p.getNameOrThrow(),
+            type: p.getTypeNodeOrThrow().getText()
+        })),
+        returnType: f.getReturnTypeNodeOrThrow().getText()
+    })));
+}
+
+/*
+export function cloneVariables(node: StatementedNode, variables: VariableStatement[]) {
+    node.addVariableStatement(variables.map(v => ({
+        isExported: true,
+        typeParameters: f.getTypeParameters().map(p => ({
+            name: p.getName(),
+            constraint: p.getConstraintNode() == null ? undefined : p.getConstraintNode()!.getText()
+        })),
+        docs: f.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+        parameters: f.getParameters().map(p => ({
+            name: p.getNameOrThrow(),
+            type: p.getTypeNodeOrThrow().getText()
+        })),
+        returnType: f.getReturnTypeNodeOrThrow().getText()
+    })));
+}
+*/

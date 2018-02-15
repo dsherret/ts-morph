@@ -8,8 +8,8 @@ import * as path from "path";
 import {rootFolder} from "./config";
 import {InspectorFactory} from "./inspectors";
 import {EnumDeclaration, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration, TypeGuards, ts, SyntaxKind,
-    UnionTypeNode} from "./../src/main";
-import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses} from "./common/cloning";
+    UnionTypeNode, FunctionDeclaration} from "./../src/main";
+import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions} from "./common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
     "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"];
@@ -49,6 +49,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         cloneEnums(tsNamespace, allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) === -1));
         cloneTypeAliases(tsNamespace, allTypeAliases.filter(t => typeAliasesToSeparate.indexOf(t.getName()) === -1));
         cloneClasses(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.ClassDeclaration) as ClassDeclaration[]);
+        cloneFunctions(tsNamespace, declarationFile.getDescendantsOfKind(SyntaxKind.FunctionDeclaration) as FunctionDeclaration[]);
         tsNamespace.getStatements().forEach(s => {
             if (TypeGuards.isAmbientableNode(s))
                 s.setHasDeclareKeyword(true);

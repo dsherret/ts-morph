@@ -4,7 +4,8 @@ import * as errors from "./../../errors";
 import {BodyableNodeStructure} from "./../../structures";
 import {Node} from "./../common";
 import {callBaseFill} from "./../callBaseFill";
-import {ts} from "./../../typescript";
+import {ts, SyntaxKind} from "./../../typescript";
+import {insertIntoParentTextRange} from "./../../manipulation";
 import {setBodyTextForNode} from "./helpers/setBodyTextForNode";
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
@@ -19,6 +20,10 @@ export interface BodyableNode {
      */
     getBody(): Node | undefined;
     /**
+     * Gets if the node has a body.
+     */
+    hasBody(): boolean;
+    /**
      * Sets the body text. A body is required to do this operation.
      * @param writerFunction - Write the text using the provided writer.
      */
@@ -28,6 +33,14 @@ export interface BodyableNode {
      * @param text - Text to set as the body.
      */
     setBodyText(text: string): this;
+    /**
+     * Adds a body if it doesn't exists.
+     */
+    addBody(): this;
+    /**
+     * Removes the body if it exists.
+     */
+    removeBody(): this;
 }
 
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
@@ -44,8 +57,48 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         setBodyText(text: string): this;
         setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
         setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-            const body = this.getBodyOrThrow();
-            setBodyTextForNode(body, textOrWriterFunction);
+            this.addBody();
+            setBodyTextForNode(this.getBodyOrThrow(), textOrWriterFunction);
+            return this;
+        }
+
+        hasBody() {
+            return this.compilerNode.body != null;
+        }
+
+        addBody() {
+            if (this.hasBody())
+                return this;
+
+            const semiColon = this.getLastChildByKind(SyntaxKind.SemicolonToken);
+            const indentationText = this.getIndentationText();
+
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
+                newText: this.getWriter().write(" {").newLine().write(indentationText + "}").toString(),
+                replacing: {
+                    textLength: semiColon == null ? 0 : semiColon.getFullWidth()
+                }
+            });
+
+            return this;
+        }
+
+        removeBody() {
+            const body = this.getBody();
+            if (body == null)
+                return this;
+
+            insertIntoParentTextRange({
+                parent: this,
+                insertPos: body.getPos(),
+                newText: ";",
+                replacing: {
+                    textLength: body.getFullWidth()
+                }
+            });
+
             return this;
         }
 

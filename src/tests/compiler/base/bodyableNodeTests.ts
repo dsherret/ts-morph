@@ -43,11 +43,10 @@ describe(nameof(BodyableNode), () => {
                     "class C {\n    myMethod() {\n        var myVar;\n        function myInnerFunction() {\n        }\n    }\n}\n");
             });
 
-            it("should throw if no body exists", () => {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("declare class C { myMethod(); }");
-                expect(() => {
-                    firstChild.getInstanceMethods()[0].setBodyText("'some text';");
-                }).to.throw();
+            it("should add a body if none exists", () => {
+                doTest("declare class C {\n    myMethod();\n}",
+                    "var myVar;",
+                    "declare class C {\n    myMethod() {\n        var myVar;\n    }\n}");
             });
         });
 
@@ -74,6 +73,10 @@ describe(nameof(BodyableNode), () => {
                 doTest("function myFunction() {\n    function myInnerFunction() {}\n}", "var myVar;", "function myFunction() {\n    var myVar;\n}");
             });
 
+            it("should set the body text when not exists", () => {
+                doTest("function myFunction();", "var myVar;", "function myFunction() {\n    var myVar;\n}");
+            });
+
             it("should insert multiple lines on the correct indentation", () => {
                 doTest("function myFunction() {\n    \n}", "var myVar;\nlet mySecond;",
                     "function myFunction() {\n    var myVar;\n    let mySecond;\n}");
@@ -91,6 +94,69 @@ describe(nameof(BodyableNode), () => {
                 doTest("function myFunction() {\n    function myInnerFunction() {}\n}", "var myVar;\nlet mySecond;",
                     "function myFunction() {\n    function myInnerFunction() {\n        var myVar;\n        let mySecond;\n    }\n}");
             });
+        });
+    });
+
+    describe(nameof<BodyableNode>(n => n.hasBody), () => {
+        function doTest(startCode: string, value: boolean) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            expect(firstChild.hasBody()).to.equal(value);
+        }
+
+        it("should have a body when it does", () => {
+            doTest("function myFunction() {\n}", true);
+        });
+
+        it("should not have a body when it doesn't", () => {
+            doTest("function myFunction(): boolean;", false);
+        });
+    });
+
+    describe(nameof<BodyableNode>(n => n.addBody), () => {
+        function doTest(startCode: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            firstChild.addBody();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should do nothing when it exists", () => {
+            doTest("function myFunction() {\n}", "function myFunction() {\n}");
+        });
+
+        it("should add the function body when it doesn't exist and has a type", () => {
+            doTest("function myFunction(): string;", "function myFunction(): string {\n}");
+        });
+
+        it("should add the function body when it doesn't exist", () => {
+            doTest("function myFunction();", "function myFunction() {\n}");
+        });
+
+        it("should add the function body when it doesn't exist and has no semicolon", () => {
+            doTest("function myFunction()", "function myFunction() {\n}");
+        });
+    });
+
+    describe(nameof<BodyableNode>(n => n.removeBody), () => {
+        function doTest(startCode: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            firstChild.removeBody();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove the function body when it exists", () => {
+            doTest("function myFunction() {\n}", "function myFunction();");
+        });
+
+        it("should remove the function body when it exists and is on a newline", () => {
+            doTest("function myFunction()\n{\n}", "function myFunction();");
+        });
+
+        it("should remove the function body when it exists and has a type", () => {
+            doTest("function myFunction(): string {\n}", "function myFunction(): string;");
+        });
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest("function myFunction();", "function myFunction();");
         });
     });
 
