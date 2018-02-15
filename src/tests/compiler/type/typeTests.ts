@@ -1,12 +1,16 @@
 import {expect} from "chai";
 import {ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags} from "./../../../typescript";
-import {Type, VariableStatement} from "./../../../compiler";
+import {Type, VariableStatement, Node, FunctionDeclaration} from "./../../../compiler";
 import {VirtualFileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Type), () => {
+    function getInfoFromTextWithTypeChecking<T extends Node>(text: string) {
+        return getInfoFromText<T>(text, { host: new VirtualFileSystemHost(), includeLibDts: true, compilerOptions: { strictNullChecks: true } });
+    }
+
     function getTypeFromText(text: string) {
-        const result = getInfoFromText<VariableStatement>(text, { host: new VirtualFileSystemHost(), includeLibDts: true });
+        const result = getInfoFromTextWithTypeChecking<VariableStatement>(text);
         return {...result, firstType: result.firstChild.getDeclarations()[0].getType()};
     }
 
@@ -324,16 +328,54 @@ describe(nameof(Type), () => {
     });
 
     describe(nameof<Type>(t => t.getNonNullableType), () => {
-        it("should return the original type for a type that's already non-nullable", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
+        function doTest(typeStr: string, expected: string) {
+            const {firstType} = getTypeFromText(`let myType: ${typeStr};`);
             const nonNullableType = firstType.getNonNullableType();
-            expect(nonNullableType.getText()).to.equal("string");
+            expect(nonNullableType.getText()).to.equal(expected);
+        }
+
+        it("should return the original type for a type that's already non-nullable", () => {
+            doTest("string", "string");
         });
 
-        it("should return the non-nullable type", () => {
-            const {firstType} = getTypeFromText("let myType: string | undefined;");
-            const nonNullableType = firstType.getNonNullableType()!;
-            expect(nonNullableType.getText()).to.equal("string");
+        it("should return the non-nullable type for undefined", () => {
+            doTest("string | undefined", "string");
+        });
+
+        it("should return the non-nullable type for null", () => {
+            doTest("string | null", "string");
+        });
+
+        it("should return the non-nullable type for null and undefined", () => {
+            doTest("string | null | undefined", "string");
+        });
+    });
+
+    describe(nameof<Type>(t => t.isNullable), () => {
+        function doTest(typeStr: string, expected: boolean) {
+            const {firstType} = getTypeFromText(`let myType: ${typeStr};`);
+            expect(firstType.isNullable()).to.equal(expected);
+        }
+
+        it("should return false for a non-nullable type", () => {
+            doTest("string", false);
+        });
+
+        it("should return true for undefined", () => {
+            doTest("string | undefined", true);
+        });
+
+        it("should return true for null", () => {
+            doTest("string | null", true);
+        });
+
+        it("should return true for null and undefined", () => {
+            doTest("string | null | undefined", true);
+        });
+
+        it("should return true for an optional property", () => {
+            const {firstChild} = getInfoFromTextWithTypeChecking<FunctionDeclaration>("function test(param?: string) {}");
+            expect(firstChild.getParameters()[0].getType().isNullable()).to.equal(true);
         });
     });
 

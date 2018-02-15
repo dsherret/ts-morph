@@ -137,6 +137,17 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if the type is possibly null or undefined.
+     */
+    isNullable() {
+        for (const type of this.getUnionTypes()) {
+            if (type.isNullType() || type.isUndefinedType())
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Gets the non-nullable type.
      */
     getNonNullableType(): Type {
@@ -260,6 +271,13 @@ export class Type<TType extends ts.Type = ts.Type> {
      */
     isIntersectionType() {
         return (this.compilerType.flags & TypeFlags.Intersection) !== 0;
+    }
+
+    /**
+     * Gets if this is the null type.
+     */
+    isNullType() {
+        return (this.compilerType.flags & TypeFlags.Null) !== 0;
     }
 
     /**
