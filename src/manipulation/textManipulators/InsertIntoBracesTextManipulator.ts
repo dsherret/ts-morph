@@ -27,6 +27,9 @@ export class InsertIntoBracesTextManipulator<TStructure> extends InsertionTextMa
         function getNewText() {
             const {parent, index, childCodes, separator, children} = opts;
 
+            if (childCodes.length === 0)
+                return "";
+
             const sourceFile = parent.getSourceFile();
             const insertPos = getInsertPosFromIndex(index, parent, children);
             const newLineChar = sourceFile.global.manipulationSettings.getNewLineKindAsString();

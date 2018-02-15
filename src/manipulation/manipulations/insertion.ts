@@ -196,6 +196,9 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
     const {parent, index, childCodes, separator, children} = opts;
 
+    if (childCodes.length === 0)
+        return;
+
     doManipulation(parent.sourceFile, new InsertIntoBracesTextManipulator(opts), new NodeHandlerFactory().getForChildIndex({
         parent: parent.getChildSyntaxListOrThrow(),
         childIndex: index,
