@@ -118,7 +118,8 @@ export function cloneClasses(node: StatementedNode, classes: ClassDeclaration[])
             parameters: method.getParameters().map(p => ({
                 name: p.getNameOrThrow(),
                 hasQuestionToken: p.hasQuestionToken(),
-                type: p.getTypeNodeOrThrow().getText()
+                type: p.getTypeNodeOrThrow().getText(),
+                isRestParameter: p.isRestParameter()
             }))
         }))
     })));
@@ -137,7 +138,8 @@ export function cloneFunctions(node: StatementedNode, functions: FunctionDeclara
         parameters: f.getParameters().map(p => ({
             name: p.getNameOrThrow(),
             hasQuestionToken: p.isOptional(),
-            type: p.getTypeNodeOrThrow().getText()
+            type: p.getTypeNodeOrThrow().getText(),
+            isRestParameter: p.isRestParameter()
         })),
         returnType: f.getReturnTypeNodeOrThrow().getText()
     })));

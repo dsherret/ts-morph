@@ -29,7 +29,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
     createTsSourceFile();
 
     function createTsSourceFile() {
-        const sourceFile = getOrCreateSourceFile("ts.ts");
+        const sourceFile = getOrCreateSourceFile("index.ts");
 
         sourceFile.addImportDeclarations([{
             namespaceImport: "tsCompiler",
