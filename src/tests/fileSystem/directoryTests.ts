@@ -583,7 +583,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.delete), () => {
+    describe(nameof<Directory>(d => d.deleteImmediately), () => {
         it("should delete the file and remove all its descendants", async () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
             const ast = new TsSimpleAst(undefined, fileSystem);
@@ -592,7 +592,7 @@ describe(nameof(Directory), () => {
             const sourceFile = directory.addExistingSourceFile("file.ts");
             const otherSourceFile = ast.createSourceFile("otherFile.ts");
 
-            await directory.delete();
+            await directory.deleteImmediately();
             expect(directory._wasRemoved()).to.be.true;
             expect(childDir._wasRemoved()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
@@ -601,7 +601,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.deleteSync), () => {
+    describe(nameof<Directory>(d => d.deleteImmediatelySync), () => {
         it("should delete the file and remove all its descendants synchronously", () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
             const ast = new TsSimpleAst(undefined, fileSystem);
@@ -610,7 +610,7 @@ describe(nameof(Directory), () => {
             const sourceFile = directory.addExistingSourceFile("file.ts");
             const otherSourceFile = ast.createSourceFile("otherFile.ts");
 
-            directory.deleteSync();
+            directory.deleteImmediatelySync();
             expect(directory._wasRemoved()).to.be.true;
             expect(childDir._wasRemoved()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
@@ -702,7 +702,7 @@ describe(nameof(Directory), () => {
         it("should emit correctly when not specifying anything", async () => {
             const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = await directory.emit();
-            runChecks(fileSystem, result, "dist", "dist");
+            runChecks(fileSystem, result, "/dist", "/dist");
         });
 
         it("should emit correctly when specifying a different out dir and no declaration dir in compiler options", async () => {
@@ -714,13 +714,13 @@ describe(nameof(Directory), () => {
         it("should emit correctly when specifying a different out dir and a declaration dir in compiler options", async () => {
             const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ outDir: "../newOutDir" });
-            runChecks(fileSystem, result, "/newOutDir", "dec");
+            runChecks(fileSystem, result, "/newOutDir", "/dec");
         });
 
         it("should emit correctly when specifying a different declaration dir", async () => {
             const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declarationDir: "dec", declaration: true, sourceMap: true });
             const result = await directory.emit({ declarationDir: "newDeclarationDir" });
-            runChecks(fileSystem, result, "dist", "/dir/newDeclarationDir");
+            runChecks(fileSystem, result, "/dist", "/dir/newDeclarationDir");
         });
 
         it("should emit correctly when specifying a different out and declaration dir", async () => {
@@ -787,7 +787,23 @@ describe(nameof(Directory), () => {
         it("should emit correctly when not specifying anything", () => {
             const {directory, fileSystem} = setup({ target: ScriptTarget.ES5, outDir: "dist", declaration: true, sourceMap: true });
             const result = directory.emitSync();
-            runChecks(fileSystem, result, "dist", "dist");
+            runChecks(fileSystem, result, "/dist", "/dist");
+        });
+
+        it("should get the absolute path in the output file name", () => {
+            const fileSystem = getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst({ compilerOptions: { declaration: false } }, fileSystem);
+            const directory = ast.createDirectory("dir");
+            const subDir = directory.createDirectory("sub");
+            const subDir2 = directory.createDirectory("sub2");
+            subDir.createSourceFile("file1.ts", "");
+            const result = subDir.emitSync({ outDir: "../sub2" });
+            expect(result.getEmitSkipped()).to.be.false;
+
+            const writeLog = fileSystem.getSyncWriteLog();
+            expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
+            expect(writeLog[0].filePath).to.equal("/dir/sub2/file1.js");
+            expect(writeLog.length).to.equal(1);
         });
 
         it("should stop emitting when it encounters a problem", () => {

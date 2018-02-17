@@ -91,7 +91,7 @@ export class Directory {
     getDirectoryOrThrow(pathOrCondition: string | ((directory: Directory) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getDirectory(pathOrCondition), () => {
             if (typeof pathOrCondition === "string")
-                return `Could not find a directory at path '${FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath())}'.`;
+                return `Could not find a directory at path '${this.global.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
             return "Could not find child directory that matched condition.";
         });
     }
@@ -110,7 +110,7 @@ export class Directory {
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)): Directory | undefined;
     getDirectory(pathOrCondition: string | ((directory: Directory) => boolean)) {
         if (typeof pathOrCondition === "string") {
-            const path = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath());
+            const path = this.global.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
             return this.global.compilerFactory.getDirectory(path);
         }
 
@@ -132,7 +132,7 @@ export class Directory {
     getSourceFileOrThrow(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         return errors.throwIfNullOrUndefined(this.getSourceFile(pathOrCondition), () => {
             if (typeof pathOrCondition === "string")
-                return `Could not find child source file at path '${FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath())}'.`;
+                return `Could not find child source file at path '${this.global.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath())}'.`;
             return "Could not find child source file that matched condition.";
         });
     }
@@ -151,7 +151,7 @@ export class Directory {
     getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)): SourceFile | undefined;
     getSourceFile(pathOrCondition: string | ((sourceFile: SourceFile) => boolean)) {
         if (typeof pathOrCondition === "string") {
-            const path = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, pathOrCondition, this.getPath());
+            const path = this.global.fileSystemWrapper.getStandardizedAbsolutePath(pathOrCondition, this.getPath());
             if (this.global.compilerFactory.containsSourceFileAtPath(path))
                 return this.global.compilerFactory.getSourceFileFromFilePath(path);
             else
@@ -222,7 +222,7 @@ export class Directory {
      * @param path - Directory name or path to the directory that should be added.
      */
     addDirectoryIfExists(path: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
+        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         return this.global.compilerFactory.getDirectoryFromPath(dirPath);
     }
 
@@ -234,7 +234,7 @@ export class Directory {
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
     addExistingDirectory(path: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
+        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         const directory = this.addDirectoryIfExists(dirPath);
         if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
@@ -246,7 +246,7 @@ export class Directory {
      * @param path - Relative or absolute path to the directory that should be created.
      */
     createDirectory(path: string) {
-        const dirPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
+        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         return this.global.compilerFactory.createDirectory(dirPath);
     }
 
@@ -277,7 +277,7 @@ export class Directory {
      */
     createSourceFile(relativeFilePath: string, structure: SourceFileStructure): SourceFile;
     createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure) {
-        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath());
+        const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
     }
 
@@ -288,7 +288,7 @@ export class Directory {
      * @param relativeFilePath - Relative file path to add.
      */
     addSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
-        const filePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath());
+        const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
     }
 
@@ -302,7 +302,7 @@ export class Directory {
     addExistingSourceFile(relativeFilePath: string): SourceFile {
         const sourceFile = this.addSourceFileIfExists(relativeFilePath);
         if (sourceFile == null)
-            throw new errors.FileNotFoundError(FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeFilePath, this.getPath()));
+            throw new errors.FileNotFoundError(this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath()));
         return sourceFile;
     }
 
@@ -311,7 +311,7 @@ export class Directory {
      * @param options - Options for emitting.
      */
     async emit(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystem} = this.global;
+        const {fileSystemWrapper} = this.global;
         const writeTasks: Promise<void>[] = [];
         const outputFilePaths: string[] = [];
 
@@ -321,7 +321,7 @@ export class Directory {
                 return new DirectoryEmitResult(true, outputFilePaths);
             }
 
-            writeTasks.push(fileSystem.writeFile(emitResult.filePath, emitResult.fileText));
+            writeTasks.push(fileSystemWrapper.writeFile(emitResult.filePath, emitResult.fileText));
             outputFilePaths.push(emitResult.filePath);
         }
 
@@ -336,14 +336,14 @@ export class Directory {
      * @param options - Options for emitting.
      */
     emitSync(options: { emitOnlyDtsFiles?: boolean; outDir?: string; declarationDir?: string; } = {}) {
-        const {fileSystem} = this.global;
+        const {fileSystemWrapper} = this.global;
         const outputFilePaths: string[] = [];
 
         for (const emitResult of this._emitInternal(options)) {
             if (emitResult === false)
                 return new DirectoryEmitResult(true, outputFilePaths);
 
-            fileSystem.writeFileSync(emitResult.filePath, emitResult.fileText);
+            fileSystemWrapper.writeFileSync(emitResult.filePath, emitResult.fileText);
             outputFilePaths.push(emitResult.filePath);
         }
 
@@ -356,7 +356,7 @@ export class Directory {
         const isJsFile = options.outDir == null ? undefined : /\.js$/i;
         const isMapFile = options.outDir == null ? undefined : /\.js\.map$/i;
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
-        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, path, this.getPath());
+        const getStandardizedPath = (path: string | undefined) => path == null ? undefined : this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
         const hasDeclarationDir = this.global.compilerOptions.declarationDir != null || options.declarationDir != null;
 
@@ -395,7 +395,7 @@ export class Directory {
      * @returns The directory the copy was made to.
      */
     copy(relativeOrAbsolutePath: string, options: { overwrite?: boolean; } = {}) {
-        const newPath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, relativeOrAbsolutePath, this.getPath());
+        const newPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
         const directory = this.global.compilerFactory.createOrAddDirectoryIfNotExists(newPath);
 
         for (const sourceFile of this.getSourceFiles())
@@ -407,27 +407,23 @@ export class Directory {
     }
 
     /**
-     * Asyncronously deletes the directory and all its descendants.
-     *
-     * WARNING: This will delete the directory from the file system.
+     * Asyncronously deletes the directory and all its descendants from the file system.
      */
-    async delete() {
-        const fileSystem = this.global.fileSystem;
+    async deleteImmediately() {
+        const {fileSystemWrapper} = this.global;
         const path = this.getPath();
         this.remove();
-        await fileSystem.delete(path);
+        await fileSystemWrapper.deleteImmediately(path);
     }
 
     /**
-     * Synchronously deletes the directory and all its descendants.
-     *
-     * WARNING: This will delete the directory from the file system.
+     * Synchronously deletes the directory and all its descendants from the file system.
      */
-    deleteSync() {
-        const fileSystem = this.global.fileSystem;
+    deleteImmediatelySync() {
+        const {fileSystemWrapper} = this.global;
         const path = this.getPath();
         this.remove();
-        fileSystem.deleteSync(path);
+        fileSystemWrapper.deleteImmediatelySync(path);
     }
 
     /**

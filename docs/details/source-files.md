@@ -50,7 +50,7 @@ ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are
 Delete a source file from the file system using one of the following commands:
 
 ```ts
-await sourceFile.delete(); // or deleteSync()
+await sourceFile.deleteImmediately(); // or deleteImmediatelySync()
 ```
 
 ### Copy

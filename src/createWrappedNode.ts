@@ -2,7 +2,7 @@ import * as errors from "./errors";
 import {ts, SyntaxKind, CompilerOptions} from "./typescript";
 import {SourceFile, Node} from "./compiler";
 import {GlobalContainer} from "./GlobalContainer";
-import {DefaultFileSystemHost} from "./fileSystem";
+import {DefaultFileSystemHost, FileSystemWrapper} from "./fileSystem";
 
 export interface CreateWrappedNodeOptions {
     /**
@@ -26,7 +26,7 @@ export interface CreateWrappedNodeOptions {
  */
 export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: CreateWrappedNodeOptions = {}): Node<T> {
     const {compilerOptions = {}, sourceFile, typeChecker} = opts;
-    const globalContainer = new GlobalContainer(new DefaultFileSystemHost(), compilerOptions, { createLanguageService: false, typeChecker });
+    const globalContainer = new GlobalContainer(new FileSystemWrapper(new DefaultFileSystemHost()), compilerOptions, { createLanguageService: false, typeChecker });
 
     const wrappedSourceFile = globalContainer.compilerFactory.getSourceFile(getSourceFileNode());
     return globalContainer.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;

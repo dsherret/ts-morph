@@ -1,7 +1,7 @@
 import * as errors from "./../../errors";
 import {ts, CompilerOptions} from "./../../typescript";
 import {Diagnostic} from "./../../compiler";
-import {FileSystemHost} from "./../../fileSystem";
+import {FileSystemWrapper} from "./../../fileSystem";
 import {ArrayUtils, FileUtils, createHashSet} from "./../../utils";
 
 export interface TsConfigParseResult {
@@ -9,18 +9,32 @@ export interface TsConfigParseResult {
     error?: ts.Diagnostic;
 }
 
-export function getTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost) {
-    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
-    errors.throwIfFileNotExists(fileSystem, tsConfigFilePath);
+export interface TsConfigParseOptions {
+    tsConfigFilePath: string;
+    encoding: string;
+    fileSystemWrapper: FileSystemWrapper;
+}
 
-    const parseResult: TsConfigParseResult = ts.parseConfigFileTextToJson(tsConfigFilePath, fileSystem.readFileSync(tsConfigFilePath));
+export function getTsConfigParseResult(opts: TsConfigParseOptions) {
+    const {encoding, fileSystemWrapper} = opts;
+    const tsConfigFilePath = fileSystemWrapper.getStandardizedAbsolutePath(opts.tsConfigFilePath);
+    errors.throwIfFileNotExists(fileSystemWrapper, tsConfigFilePath);
+
+    const parseResult: TsConfigParseResult = ts.parseConfigFileTextToJson(tsConfigFilePath, fileSystemWrapper.readFileSync(tsConfigFilePath, encoding));
     if (parseResult.error != null)
         throw new Error(parseResult.error.messageText.toString());
     return parseResult;
 }
 
-export function getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult) {
-    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
+export interface CompilerOptionsFromTsConfigParseResultOptions {
+    tsConfigFilePath: string;
+    fileSystemWrapper: FileSystemWrapper;
+    tsConfigParseResult: TsConfigParseResult;
+}
+
+export function getCompilerOptionsFromTsConfigParseResult(opts: CompilerOptionsFromTsConfigParseResultOptions) {
+    const {fileSystemWrapper, tsConfigParseResult: parseResult} = opts;
+    const tsConfigFilePath = fileSystemWrapper.getStandardizedAbsolutePath(opts.tsConfigFilePath);
     const settings = ts.convertCompilerOptionsFromJson(parseResult.config.compilerOptions, FileUtils.getDirPath(tsConfigFilePath), tsConfigFilePath);
     return {
         options: settings.options,
@@ -28,22 +42,31 @@ export function getCompilerOptionsFromTsConfigParseResult(tsConfigFilePath: stri
     };
 }
 
-export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fileSystem: FileSystemHost, parseResult: TsConfigParseResult, compilerOptions: CompilerOptions) {
-    tsConfigFilePath = FileUtils.getStandardizedAbsolutePath(fileSystem, tsConfigFilePath);
-    const currentDir = fileSystem.getCurrentDirectory();
+export interface FilePathsFromTsConfigParseResultOptions {
+    tsConfigFilePath: string;
+    encoding: string;
+    fileSystemWrapper: FileSystemWrapper;
+    tsConfigParseResult: TsConfigParseResult;
+    compilerOptions: CompilerOptions;
+}
+
+export function getFilePathsFromTsConfigParseResult(opts: FilePathsFromTsConfigParseResultOptions) {
+    const {encoding, fileSystemWrapper, tsConfigParseResult: parseResult, compilerOptions} = opts;
+    const tsConfigFilePath = fileSystemWrapper.getStandardizedAbsolutePath(opts.tsConfigFilePath);
+    const currentDir = fileSystemWrapper.getCurrentDirectory();
     const host: ts.ParseConfigHost = {
         useCaseSensitiveFileNames: true,
         readDirectory: (rootDir, extensions, excludes, includes) => tsMatchFiles(rootDir, extensions, excludes || [], includes, false, currentDir, undefined,
-            path => getFileSystemEntries(path, fileSystem)),
-        fileExists: path => fileSystem.fileExistsSync(path),
-        readFile: path => fileSystem.readFileSync(path)
+            path => getFileSystemEntries(path, fileSystemWrapper)),
+        fileExists: path => fileSystemWrapper.fileExistsSync(path),
+        readFile: path => fileSystemWrapper.readFileSync(path, encoding)
     };
 
     const files = createHashSet<string>();
     const tsConfigDir = FileUtils.getDirPath(tsConfigFilePath);
 
     for (const rootDir of getRootDirs()) {
-        for (const filePath of getFilesFromDir(FileUtils.getStandardizedAbsolutePath(fileSystem, rootDir, tsConfigDir)))
+        for (const filePath of getFilesFromDir(fileSystemWrapper.getStandardizedAbsolutePath(rootDir, tsConfigDir)))
             files.add(filePath);
     }
 
@@ -63,7 +86,7 @@ export function getFilePathsFromTsConfigParseResult(tsConfigFilePath: string, fi
 
     function* getFilesFromDir(dirPath: string) {
         for (const filePath of ts.parseJsonConfigFileContent(parseResult.config, host, dirPath, compilerOptions, undefined).fileNames)
-            yield FileUtils.getStandardizedAbsolutePath(fileSystem, filePath);
+            yield fileSystemWrapper.getStandardizedAbsolutePath(filePath);
     }
 }
 
@@ -88,13 +111,13 @@ interface FileSystemEntries {
     readonly directories: ReadonlyArray<string>;
 }
 
-function getFileSystemEntries(path: string, fileSystem: FileSystemHost): FileSystemEntries {
-    const entries = fileSystem.readDirSync(path);
+function getFileSystemEntries(path: string, fileSystemWrapper: FileSystemWrapper): FileSystemEntries {
+    const entries = fileSystemWrapper.readDirSync(path);
     const files: string[] = [];
     const directories: string[] = [];
 
     for (const entry of entries) {
-        if (fileSystem.fileExistsSync(entry))
+        if (fileSystemWrapper.fileExistsSync(entry))
             files.push(entry);
         else
             directories.push(entry);

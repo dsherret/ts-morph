@@ -110,7 +110,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     copy(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
         const {overwrite = false} = options;
-        const absoluteFilePath = FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePath, this.getDirectoryPath());
+        const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (overwrite)
             return this.global.compilerFactory.createOrOverwriteSourceFileFromText(absoluteFilePath, this.getFullText());
@@ -128,27 +128,26 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Asynchronously deletes the file from the file system.
      */
-    async delete() {
+    async deleteImmediately() {
         const filePath = this.getFilePath();
         this.forget();
-        await this.global.fileSystem.delete(filePath);
+        await this.global.fileSystemWrapper.deleteImmediately(filePath);
     }
 
     /**
      * Synchronously deletes the file from the file system.
      */
-    deleteSync() {
+    deleteImmediatelySync() {
         const filePath = this.getFilePath();
         this.forget();
-        this.global.fileSystem.deleteSync(filePath);
+        this.global.fileSystemWrapper.deleteImmediatelySync(filePath);
     }
 
     /**
      * Asynchronously saves this file with any changes.
      */
     async save() {
-        await FileUtils.ensureDirectoryExists(this.global.fileSystem, this.getDirectoryPath());
-        await this.global.fileSystem.writeFile(this.getFilePath(), this.getFullText());
+        await this.global.fileSystemWrapper.writeFile(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
 
@@ -156,7 +155,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Synchronously saves this file with any changes.
      */
     saveSync() {
-        this.global.fileSystem.writeFileSync(this.getFilePath(), this.getFullText());
+        this.global.fileSystemWrapper.writeFileSync(this.getFilePath(), this.getFullText());
         this._isSaved = true;
     }
 
@@ -647,7 +646,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @returns What action ended up taking place.
      */
     async refreshFromFileSystem(): Promise<FileSystemRefreshResult> {
-        const fileReadResult = await FileUtils.readFileOrNotExists(this.global.fileSystem, this.getFilePath(), this.global.getEncoding());
+        const fileReadResult = await this.global.fileSystemWrapper.readFileOrNotExists(this.getFilePath(), this.global.getEncoding());
         return this._refreshFromFileSystemInternal(fileReadResult);
     }
 
@@ -658,7 +657,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @returns What action ended up taking place.
      */
     refreshFromFileSystemSync(): FileSystemRefreshResult {
-        const fileReadResult = FileUtils.readFileOrNotExistsSync(this.global.fileSystem, this.getFilePath(), this.global.getEncoding());
+        const fileReadResult = this.global.fileSystemWrapper.readFileOrNotExistsSync(this.getFilePath(), this.global.getEncoding());
         return this._refreshFromFileSystemInternal(fileReadResult);
     }
 

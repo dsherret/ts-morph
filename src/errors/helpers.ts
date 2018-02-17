@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../typescript";
 import {Node} from "./../compiler";
-import {FileSystemHost} from "./../fileSystem";
+import {FileSystemWrapper} from "./../fileSystem";
 import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
@@ -132,7 +132,7 @@ export function throwIfTrue(value: boolean | undefined, errorMessage: string) {
  * @param fileSystem - File system host.
  * @param filePath - File path.
  */
-export function throwIfFileNotExists(fileSystem: FileSystemHost, filePath: string) {
-    if (!fileSystem.fileExistsSync(filePath))
+export function throwIfFileNotExists(fileSystemWrapper: FileSystemWrapper, filePath: string) {
+    if (!fileSystemWrapper.fileExistsSync(filePath))
         throw new FileNotFoundError(filePath);
 }

@@ -166,9 +166,9 @@ Note that the directory and source files, in all these cases, won't be created u
 Deletes the directory and all its descendants from the file system:
 
 ```ts
-directory.delete();
+directory.deleteImmediately();
 // or
-directory.deleteSync();
+directory.deleteImmediatelySync();
 ```
 
 Note that after doing this, the directory object and all its descendant source files and directories will not be available.

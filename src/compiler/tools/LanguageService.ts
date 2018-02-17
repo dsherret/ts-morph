@@ -30,7 +30,7 @@ export class LanguageService {
 
         // I don't know what I'm doing for some of this...
         let version = 0;
-        const fileExistsSync = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystem.fileExistsSync(path);
+        const fileExistsSync = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
             getCompilationSettings: () => global.compilerOptions,
             getNewLine: () => global.manipulationSettings.getNewLineKindAsString(),
@@ -43,21 +43,21 @@ export class LanguageService {
                     return undefined;
                 return ts.ScriptSnapshot.fromString(this.global.compilerFactory.getSourceFileFromFilePath(fileName)!.getFullText());
             },
-            getCurrentDirectory: () => global.fileSystem.getCurrentDirectory(),
+            getCurrentDirectory: () => global.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
-                if (this.global.fileSystem instanceof DefaultFileSystemHost)
+                if (this.global.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
                     return ts.getDefaultLibFilePath(global.compilerOptions);
                 else
-                    return FileUtils.pathJoin(global.fileSystem.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions));
+                    return FileUtils.pathJoin(global.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
                 if (this.global.compilerFactory.containsSourceFileAtPath(path))
                     return this.global.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
-                return this.global.fileSystem.readFileSync(path, encoding);
+                return this.global.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
-            directoryExists: dirName => this.global.compilerFactory.containsDirectoryAtPath(dirName) || this.global.fileSystem.directoryExistsSync(dirName)
+            directoryExists: dirName => this.global.compilerFactory.containsDirectoryAtPath(dirName) || this.global.fileSystemWrapper.directoryExistsSync(dirName)
         };
 
         this.compilerHost = {
@@ -69,7 +69,7 @@ export class LanguageService {
             // getDefaultLibLocation: (...) => {},
             getDefaultLibFileName: (options: CompilerOptions) => languageServiceHost.getDefaultLibFileName(options),
             writeFile: (filePath, data, writeByteOrderMark, onError, sourceFiles) => {
-                this.global.fileSystem.writeFileSync(filePath, data);
+                this.global.fileSystemWrapper.writeFileSync(filePath, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
             getDirectories: (path: string) => {
@@ -78,7 +78,7 @@ export class LanguageService {
             },
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
-            getCanonicalFileName: (fileName: string) => FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, fileName),
+            getCanonicalFileName: (fileName: string) => this.global.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
             getEnvironmentVariable: (name: string) => process.env[name]
@@ -264,7 +264,7 @@ export class LanguageService {
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
         const filePath = typeof filePathOrSourceFile === "string"
-            ? FileUtils.getStandardizedAbsolutePath(this.global.fileSystem, filePathOrSourceFile)
+            ? this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
             : filePathOrSourceFile.getFilePath();
         if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);

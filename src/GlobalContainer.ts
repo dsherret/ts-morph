@@ -4,7 +4,7 @@ import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
-import {FileSystemHost} from "./fileSystem";
+import {FileSystemWrapper} from "./fileSystem";
 import {Logger, ConsoleLogger} from "./utils";
 
 /**
@@ -23,13 +23,13 @@ export class GlobalContainer {
     private readonly _manipulationSettings = new ManipulationSettingsContainer();
     private readonly _compilerFactory: CompilerFactory;
     private readonly _languageService: LanguageService | undefined;
-    private readonly _fileSystem: FileSystemHost;
+    private readonly _fileSystemWrapper: FileSystemWrapper;
     private readonly _compilerOptions: CompilerOptions;
     private readonly _customTypeChecker: TypeChecker | undefined;
     private readonly _logger = new ConsoleLogger();
 
-    constructor(fileSystem: FileSystemHost, compilerOptions: CompilerOptions, opts: GlobalContainerOptions) {
-        this._fileSystem = fileSystem;
+    constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: GlobalContainerOptions) {
+        this._fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions = compilerOptions;
         this._compilerFactory = new CompilerFactory(this);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
@@ -41,9 +41,9 @@ export class GlobalContainer {
         }
     }
 
-    /** Gets the file system. */
-    get fileSystem() {
-        return this._fileSystem;
+    /** Gets the file system wrapper. */
+    get fileSystemWrapper() {
+        return this._fileSystemWrapper;
     }
 
     /** Gets the compiler options. */

@@ -86,14 +86,14 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.delete), () => {
+    describe(nameof<SourceFile>(n => n.deleteImmediately), () => {
         const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText("", { filePath, host });
         sourceFile.saveSync();
 
         it("should delete the file", async () => {
-            await sourceFile.delete();
+            await sourceFile.deleteImmediately();
             expect(sourceFile.wasForgotten()).to.be.true;
             const deleteLog = host.getDeleteLog();
             const entry = deleteLog[0];
@@ -103,14 +103,14 @@ describe(nameof(SourceFile), () => {
         });
     });
 
-    describe(nameof<SourceFile>(n => n.deleteSync), () => {
+    describe(nameof<SourceFile>(n => n.deleteImmediatelySync), () => {
         const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
         const {sourceFile} = getInfoFromText("", { filePath, host });
         sourceFile.saveSync();
 
         it("should delete the file", () => {
-            sourceFile.deleteSync();
+            sourceFile.deleteImmediatelySync();
             expect(sourceFile.wasForgotten()).to.be.true;
             const deleteLog = host.getDeleteLog();
             const entry = deleteLog[0];
@@ -617,7 +617,7 @@ describe(nameof(SourceFile), () => {
 
             expect(result).to.be.instanceof(EmitResult);
             const writeLog = fileSystem.getSyncWriteLog();
-            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
         });
@@ -625,7 +625,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
         it("should get the emit output for the source file", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 } });
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput();
 
@@ -633,18 +633,18 @@ describe(nameof(SourceFile), () => {
             expect(result.getOutputFiles().length).to.equal(1);
             const outputFile = result.getOutputFiles()[0];
             expect(outputFile.getText()).to.equal("var num1 = 1;\n");
-            expect(outputFile.getFilePath()).to.equal("dist/file1.js");
+            expect(outputFile.getFilePath()).to.equal("/dist/file1.js");
         });
 
         it("should only emit the declaration file when specified", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 } });
+            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 
             expect(result.getEmitSkipped()).to.be.false;
             expect(result.getOutputFiles().length).to.equal(1);
             const outputFile = result.getOutputFiles()[0];
-            expect(outputFile.getFilePath()).to.equal("dist/file1.d.ts");
+            expect(outputFile.getFilePath()).to.equal("/dist/file1.d.ts");
         });
     });
 

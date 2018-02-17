@@ -39,6 +39,6 @@ export class EmitOutput {
      */
     @Memoize
     getOutputFiles() {
-        return this.compilerObject.outputFiles.map(f => new OutputFile(f));
+        return this.compilerObject.outputFiles.map(f => new OutputFile(this.global, f));
     }
 }

@@ -453,9 +453,9 @@ describe(nameof(TsSimpleAst), () => {
             expect(result).to.be.instanceof(EmitResult);
 
             const writeLog = fileSystem.getSyncWriteLog();
-            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
-            expect(writeLog[1].filePath).to.equal("dist/file2.js");
+            expect(writeLog[1].filePath).to.equal("/dist/file2.js");
             expect(writeLog[1].fileText).to.equal("var num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
         });
@@ -465,7 +465,7 @@ describe(nameof(TsSimpleAst), () => {
             ast.emit({ targetSourceFile: ast.getSourceFile("file1.ts") });
 
             const writeLog = fileSystem.getSyncWriteLog();
-            expect(writeLog[0].filePath).to.equal("dist/file1.js");
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
         });
@@ -475,9 +475,9 @@ describe(nameof(TsSimpleAst), () => {
             ast.emit({ emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getSyncWriteLog();
-            expect(writeLog[0].filePath).to.equal("dist/file1.d.ts");
+            expect(writeLog[0].filePath).to.equal("/dist/file1.d.ts");
             expect(writeLog[0].fileText).to.equal("declare const num1 = 1;\n");
-            expect(writeLog[1].filePath).to.equal("dist/file2.d.ts");
+            expect(writeLog[1].filePath).to.equal("/dist/file2.d.ts");
             expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
         });

@@ -1,4 +1,5 @@
 import {ts} from "./../../../typescript";
+import {GlobalContainer} from "./../../../GlobalContainer";
 
 /**
  * Output file of an emit.
@@ -10,7 +11,7 @@ export class OutputFile {
     /**
      * @internal
      */
-    constructor(compilerObject: ts.OutputFile) {
+    constructor(private readonly global: GlobalContainer, compilerObject: ts.OutputFile) {
         this._compilerObject = compilerObject;
     }
 
@@ -25,7 +26,7 @@ export class OutputFile {
      * Gets the file path.
      */
     getFilePath() {
-        return this.compilerObject.name;
+        return this.global.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
     }
 
     /**

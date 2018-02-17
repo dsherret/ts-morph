@@ -1,13 +1,28 @@
 ﻿import {expect} from "chai";
-import {VirtualFileSystemHost} from "./../../../fileSystem";
+import {VirtualFileSystemHost, FileSystemWrapper} from "./../../../fileSystem";
 import {getFilePathsFromTsConfigParseResult, getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, FileUtils} from "./../../../utils";
 import * as errors from "./../../../errors";
 
 describe(nameof(getFilePathsFromTsConfigParseResult), () => {
     function getFilePaths(fileSystem: VirtualFileSystemHost) {
-        const parseResult = getTsConfigParseResult("tsconfig.json", fileSystem);
-        const compilerOptions = getCompilerOptionsFromTsConfigParseResult("tsconfig.json", fileSystem, parseResult);
-        return getFilePathsFromTsConfigParseResult("tsconfig.json", fileSystem, parseResult, compilerOptions.options);
+        const fileSystemWrapper = new FileSystemWrapper(fileSystem);
+        const tsConfigParseResult = getTsConfigParseResult({
+            tsConfigFilePath: "tsconfig.json",
+            encoding: "utf-8",
+            fileSystemWrapper
+        });
+        const compilerOptions = getCompilerOptionsFromTsConfigParseResult({
+            tsConfigFilePath: "tsconfig.json",
+            fileSystemWrapper,
+            tsConfigParseResult
+        });
+        return getFilePathsFromTsConfigParseResult({
+            tsConfigFilePath: "tsconfig.json",
+            encoding: "utf-8",
+            fileSystemWrapper,
+            tsConfigParseResult,
+            compilerOptions: compilerOptions.options
+        });
     }
 
     function doTest(fileSystem: VirtualFileSystemHost, expectedPaths: string[]) {
