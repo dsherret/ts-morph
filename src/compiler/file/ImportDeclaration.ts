@@ -11,9 +11,16 @@ import {SourceFile} from "./SourceFile";
 export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Sets the import specifier.
-     * @param text - Text to set as the import specifier.
+     * @param text - Text to set as the module specifier.
      */
-    setModuleSpecifier(text: string) {
+    setModuleSpecifier(text: string): this;
+    /**
+     * Sets the import specifier.
+     * @param sourceFile - Source file to set the module specifier from.
+     */
+    setModuleSpecifier(sourceFile: SourceFile): this;
+    setModuleSpecifier(textOrSourceFile: string | SourceFile) {
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
         const stringLiteral = this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral);
         insertIntoParentTextRange({
             parent: this,

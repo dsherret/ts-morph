@@ -62,6 +62,13 @@ describe(nameof(ExportDeclaration), () => {
         it("should set the module specifier when it doesn't exist and there's no semi-colon", () => {
             doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
         });
+
+        it("should set the module specifier when it's provided a source file", () => {
+            doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
+            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(`export {test} from "./other";`);
+            firstChild.setModuleSpecifier(sourceFile.copy("newFile.ts"));
+            expect(sourceFile.getText()).to.equal(`export {test} from "./newFile";`);
+        });
     });
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifier), () => {

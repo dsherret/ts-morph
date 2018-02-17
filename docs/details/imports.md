@@ -46,6 +46,8 @@ Set it:
 
 ```ts
 importDeclaration.setModuleSpecifier("./new-file");
+// or set by source file
+importDeclaration.setModuleSpecifier(someSourceFile);
 ```
 
 Get the referenced source file:

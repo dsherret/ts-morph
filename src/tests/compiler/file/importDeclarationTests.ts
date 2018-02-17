@@ -24,6 +24,12 @@ describe(nameof(ImportDeclaration), () => {
         it("should set the module specifier when it's empty", () => {
             doTest(`import test from "";`, "./new-test", `import test from "./new-test";`);
         });
+
+        it("should set the module specifier when it's provided a source file", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(`import {test} from "./other";`);
+            firstChild.setModuleSpecifier(sourceFile.copy("newFile.ts"));
+            expect(sourceFile.getText()).to.equal(`import {test} from "./newFile";`);
+        });
     });
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifier), () => {
