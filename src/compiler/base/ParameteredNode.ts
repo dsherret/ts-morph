@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, insertIntoParent, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {ParameterDeclarationStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";

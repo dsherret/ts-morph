@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
-import {removeChildren, insertIntoParent} from "./../../../manipulation";
+import {removeChildren, insertIntoParentTextRange} from "./../../../manipulation";
 import {StringUtils} from "./../../../utils";
 import {Node, Identifier} from "./../../common";
 
@@ -66,9 +66,7 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
 
             if (nameNode == null) {
                 const openParenToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
-                insertIntoParent({
-                    childIndex: openParenToken.getChildIndex(),
-                    insertItemsCount: 1,
+                insertIntoParentTextRange({
                     insertPos: openParenToken.getStart(),
                     newText: " " + newName,
                     parent: this

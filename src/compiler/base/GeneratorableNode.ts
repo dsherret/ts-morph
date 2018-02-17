@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {GeneratorableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {insertIntoParent, removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
+import {insertIntoParentTextRange, removeChildrenWithFormatting, FormattingKind} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode} from "./../base";
 
@@ -51,11 +51,8 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
                 return this;
 
             if (asteriskToken == null) {
-                const info = getAsteriskInsertInfo(this);
-                insertIntoParent({
-                    insertPos: info.pos,
-                    childIndex: info.childIndex,
-                    insertItemsCount: 1,
+                insertIntoParentTextRange({
+                    insertPos: getAsteriskInsertPos(this),
                     parent: this,
                     newText: "*"
                 });
@@ -81,14 +78,9 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
     };
 }
 
-function getAsteriskInsertInfo(node: Node) {
-    if (node.getKind() === SyntaxKind.FunctionDeclaration) {
-        const functionKeyword = node.getFirstChildByKindOrThrow(SyntaxKind.FunctionKeyword);
-        return {
-            pos: functionKeyword.getEnd(),
-            childIndex: functionKeyword.getChildIndex() + 1
-        };
-    }
+function getAsteriskInsertPos(node: Node) {
+    if (node.getKind() === SyntaxKind.FunctionDeclaration)
+        return node.getFirstChildByKindOrThrow(SyntaxKind.FunctionKeyword).getEnd();
 
     const namedNode = node as any as NamedNode;
 
@@ -96,9 +88,5 @@ function getAsteriskInsertInfo(node: Node) {
     if (namedNode.getName == null)
         throw new errors.NotImplementedError("Expected a name node for a non-function declaration.");
 
-    const identifier = namedNode.getNameNode();
-    return {
-        pos: identifier.getStart(),
-        childIndex: identifier.getChildIndex()
-    };
+    return namedNode.getNameNode().getStart();
 }

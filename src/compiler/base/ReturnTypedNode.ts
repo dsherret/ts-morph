@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {ReturnTypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {insertIntoParent, removeChildren, insertIntoParentTextRange} from "./../../manipulation";
+import {removeChildren, insertIntoParentTextRange} from "./../../manipulation";
 import {StringUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";

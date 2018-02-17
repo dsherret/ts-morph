@@ -4,7 +4,7 @@ import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {IndentationText} from "./../../ManipulationSettings";
 import {StructureToText} from "./../../structureToTexts";
-import {insertIntoParent, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
+import {insertIntoParentTextRange, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
     getTextFromFormattingEdits} from "./../../manipulation";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions} from "./../../utils";
 import {SourceFile} from "./../file";
@@ -811,35 +811,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         const childIndex = this.getChildIndex();
 
-        try {
-            // todo: this should only forget the existing node if the kind changes
-            const nodes = getNodes(this);
-            const start = nodes[0].getStart();
-            insertIntoParent({
-                parent,
-                childIndex,
-                insertItemsCount: 1,
-                insertPos: start,
-                newText,
-                replacing: {
-                    nodes,
-                    textLength: this.getEnd() - start
-                }
-            });
-        } catch (err) {
-            throw new errors.InvalidOperationError(`${nameof<Node>(n => n.replaceWithText)} currently only supports replacing the current node ` +
-                `with a single new node. If you need the ability to replace it with multiple nodes, then please open an issue.\n\nInner error: ` + err);
-        }
+        const start = this.getStart(true);
+        insertIntoParentTextRange({
+            parent,
+            insertPos: start,
+            newText,
+            replacing: {
+                textLength: this.getEnd() - start
+            }
+        });
 
         return parent.getChildren()[childIndex];
-
-        function getNodes(node: Node) {
-            const nodes: Node[] = [];
-            if (TypeGuards.isJSDocableNode(node) && node.getJsDocs().length > 0)
-                nodes.push(...node.getJsDocs());
-            nodes.push(node);
-            return nodes;
-        }
     }
 
     /**

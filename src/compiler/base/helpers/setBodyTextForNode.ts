@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {insertIntoParent, getIndentedText} from "./../../../manipulation";
+import {insertIntoParentTextRange, getIndentedText} from "./../../../manipulation";
 import {getTextFromStringOrWriter, StringUtils} from "./../../../utils";
 import {Node} from "./../../common";
 
@@ -16,16 +16,12 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
     const openBrace = body.getFirstChildByKindOrThrow(SyntaxKind.FirstPunctuation);
     const closeBrace = body.getFirstChildByKindOrThrow(SyntaxKind.CloseBraceToken);
 
-    // ideally this wouldn't replace the existing syntax list
-    insertIntoParent({
+    insertIntoParentTextRange({
         insertPos: openBrace.getEnd(),
-        childIndex: childSyntaxList.getChildIndex(),
-        insertItemsCount: 1,
         newText,
         parent: body,
         replacing: {
-            textLength: closeBrace.getStart() - openBrace.getEnd(),
-            nodes: [childSyntaxList]
+            textLength: closeBrace.getStart() - openBrace.getEnd()
         }
     });
 

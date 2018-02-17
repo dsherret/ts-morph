@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, insertIntoParent, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
+import {insertIntoCreatableSyntaxList, insertIntoParentTextRange, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
     verifyAndGetIndex} from "./../../manipulation";
 import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
@@ -69,15 +69,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (extendsClause != null) {
             const childSyntaxList = extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList);
             const childSyntaxListStart = childSyntaxList.getStart();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: extendsClause,
-                childIndex: childSyntaxList.getChildIndex(),
-                insertItemsCount: 1,
                 newText: text,
                 insertPos: childSyntaxListStart,
                 replacing: {
-                    textLength: childSyntaxList.getEnd() - childSyntaxListStart,
-                    nodes: [childSyntaxList]
+                    textLength: childSyntaxList.getEnd() - childSyntaxListStart
                 }
             });
             return this;

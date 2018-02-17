@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import * as errors from "./../../../errors";
-import {insertIntoParent, removeChildren} from "./../../../manipulation";
+import {insertIntoParentTextRange, removeChildren} from "./../../../manipulation";
 import {StringUtils} from "./../../../utils";
 import {NamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "./../../base";
 import {Expression} from "./../Expression";
@@ -77,14 +77,11 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
         const childIndex = this.getChildIndex();
 
-        insertIntoParent({
-            childIndex,
+        insertIntoParentTextRange({
             insertPos: this.getStart(),
             newText: this.getText() + `: ${text}`,
             parent,
-            insertItemsCount: 1,
             replacing: {
-                nodes: [this],
                 textLength: this.getWidth()
             }
         });

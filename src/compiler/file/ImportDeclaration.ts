@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren} from "./../../manipulation";
+import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren} from "./../../manipulation";
 import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Identifier} from "./../common";
 import {Statement} from "./../statement";
@@ -15,15 +15,12 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     setModuleSpecifier(text: string) {
         const stringLiteral = this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral);
-        insertIntoParent({
+        insertIntoParentTextRange({
             parent: this,
             newText: text,
             insertPos: stringLiteral.getStart() + 1,
-            childIndex: stringLiteral.getChildIndex(),
-            insertItemsCount: 1,
             replacing: {
-                textLength: stringLiteral.getWidth() - 2,
-                nodes: [stringLiteral]
+                textLength: stringLiteral.getWidth() - 2
             }
         });
         return this;
@@ -75,10 +72,8 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
         const importClause = this.getImportClause();
         if (importClause == null) {
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: importKeyword.getEnd(),
-                childIndex: importKeyword.getChildIndex() + 1,
-                insertItemsCount: 2, // ImportClause, FromKeyword
                 parent: this,
                 newText: ` ${text} from`
             });
@@ -86,10 +81,8 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         }
 
         // a namespace import or named import must exist... insert it beforehand
-        insertIntoParent({
+        insertIntoParentTextRange({
             insertPos: importKeyword.getEnd(),
-            childIndex: 0,
-            insertItemsCount: 2, // Identifier, CommaToken
             parent: importClause,
             newText: ` ${text},`
         });
@@ -126,21 +119,16 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const defaultImport = this.getDefaultImport();
         if (defaultImport != null) {
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: defaultImport.getEnd(),
-                childIndex: defaultImport.getChildIndex() + 1,
-                insertItemsCount: 2, // CommaToken, NamespaceImport
                 parent: this.getImportClause()!,
                 newText: `, * as ${text}`
             });
             return this;
         }
 
-        const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
-        insertIntoParent({
-            insertPos: importKeyword.getEnd(),
-            childIndex: importKeyword.getChildIndex() + 1,
-            insertItemsCount: 2, // ImportClause, FromKeyword
+        insertIntoParentTextRange({
+            insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
             parent: this,
             newText: ` * as ${text} from`
         });
@@ -205,28 +193,20 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         index = verifyAndGetIndex(index, namedImports.length);
 
         if (namedImports.length === 0) {
-            if (importClause == null) {
-                const importKeyword = this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword);
-                insertIntoParent({
-                    insertPos: importKeyword.getEnd(),
-                    childIndex: importKeyword.getChildIndex() + 1,
-                    insertItemsCount: 2, // NamedImports, FromKeyword
+            if (importClause == null)
+                insertIntoParentTextRange({
+                    insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
                     parent: this,
                     newText: ` {${codes.join(", ")}} from`
                 });
-            }
             else if (this.getNamespaceImport() != null)
                 throw new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
-            else {
-                const defaultImport = this.getDefaultImport()!;
-                insertIntoParent({
-                    insertPos: defaultImport.getEnd(),
-                    childIndex: defaultImport.getChildIndex() + 1,
-                    insertItemsCount: 2, // CommaToken, NamedImports
+            else
+                insertIntoParentTextRange({
+                    insertPos: this.getDefaultImport()!.getEnd(),
                     parent: importClause,
                     newText: `, {${codes.join(", ")}}`
                 });
-            }
         }
         else {
             if (importClause == null)

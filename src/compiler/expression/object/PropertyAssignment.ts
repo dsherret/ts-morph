@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import * as errors from "./../../../errors";
-import {insertIntoParent} from "./../../../manipulation";
+import {insertIntoParentTextRange} from "./../../../manipulation";
 import {PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "./../../base";
 import {Node} from "./../../common";
 import {ShorthandPropertyAssignment} from "./ShorthandPropertyAssignment";
@@ -24,14 +24,11 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
         const newText = sourceFileText.substring(insertPos, colonToken.getPos()) + sourceFileText.substring(initializer.getEnd(), this.getEnd());
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();
 
-        insertIntoParent({
-            childIndex,
+        insertIntoParentTextRange({
             insertPos,
             newText,
             parent,
-            insertItemsCount: 1,
             replacing: {
-                nodes: [this],
                 textLength: this.getWidth()
             }
         });
@@ -46,14 +43,11 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
     setInitializer(text: string): this {
         const initializer = this.getInitializerOrThrow();
 
-        insertIntoParent({
-            childIndex: initializer.getChildIndex(),
+        insertIntoParentTextRange({
             insertPos: initializer.getStart(),
             newText: text,
             parent: this,
-            insertItemsCount: 1,
             replacing: {
-                nodes: [initializer],
                 textLength: initializer.getWidth()
             }
         });

@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParent} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -98,11 +98,8 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             index = verifyAndGetIndex(index, typeParameters.length);
 
             if (typeParameters.length === 0) {
-                const {insertPos, childIndex} = getInsertInfo(this);
-                insertIntoParent({
-                    insertPos,
-                    childIndex,
-                    insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
+                insertIntoParentTextRange({
+                    insertPos: getInsertPos(this),
                     parent: this,
                     newText: `<${typeParamCodes.join(", ")}>`
                 });
@@ -137,16 +134,12 @@ function getStructureCode(structure: TypeParameterDeclarationStructure) {
     return code;
 }
 
-function getInsertInfo(node: TypeParameteredNode & Node) {
+function getInsertPos(node: TypeParameteredNode & Node) {
     const namedNode = node as any as (NamedNode & Node);
-    if (namedNode.getNameNode != null) {
-        const nameNode = namedNode.getNameNode();
-        return { insertPos: nameNode.getEnd(), childIndex: nameNode.getChildIndex() + 1 };
-    }
-    else if (TypeGuards.isCallSignatureDeclaration(node) || TypeGuards.isFunctionTypeNode(node)) {
-        const openParenToken = node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
-        return { insertPos: openParenToken.getStart(), childIndex: openParenToken.getChildIndex() };
-    }
+    if (namedNode.getNameNode != null)
+        return namedNode.getNameNode().getEnd();
+    else if (TypeGuards.isCallSignatureDeclaration(node) || TypeGuards.isFunctionTypeNode(node))
+        return node.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getStart();
     else
         throw new errors.NotImplementedError(`Not implemented scenario inserting type parameters for node with kind ${node.getKindName()}.`);
 }

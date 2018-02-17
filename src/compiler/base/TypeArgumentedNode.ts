@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
 import {TypeNode} from "./../type";
@@ -82,10 +82,8 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
 
             if (typeArguments.length === 0) {
                 const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
-                insertIntoParent({
+                insertIntoParentTextRange({
                     insertPos: identifier.getEnd(),
-                    childIndex: identifier.getChildIndex() + 1,
-                    insertItemsCount: 3, // FirstBinaryOperator, SyntaxList, GreaterThanToken
                     parent: this,
                     newText: `<${argumentTexts.join(", ")}>`
                 });

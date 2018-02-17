@@ -2,7 +2,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {AwaitableNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
-import {insertIntoParent, removeChildren, FormattingKind} from "./../../manipulation";
+import {insertIntoParentTextRange, removeChildren, FormattingKind} from "./../../manipulation";
 import {Node} from "./../common";
 import {NamedNode} from "./../base";
 import {ts, SyntaxKind} from "./../../typescript";
@@ -52,11 +52,8 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
                 return this;
 
             if (awaitModifier == null) {
-                const info = getAwaitInsertInfo(this);
-                insertIntoParent({
-                    insertPos: info.pos,
-                    childIndex: info.childIndex,
-                    insertItemsCount: 1,
+                insertIntoParentTextRange({
+                    insertPos: getAwaitInsertPos(this),
                     parent: this,
                     newText: " await"
                 });
@@ -82,14 +79,9 @@ export function AwaitableNode<T extends Constructor<AwaitableNodeExtensionType>>
     };
 }
 
-function getAwaitInsertInfo(node: Node) {
-    if (node.getKind() === SyntaxKind.ForOfStatement) {
-        const forKeyword = node.getFirstChildByKindOrThrow(SyntaxKind.ForKeyword);
-        return {
-            pos: forKeyword.getEnd(),
-            childIndex: forKeyword.getChildIndex() + 1
-        };
-    }
+function getAwaitInsertPos(node: Node) {
+    if (node.getKind() === SyntaxKind.ForOfStatement)
+        return node.getFirstChildByKindOrThrow(SyntaxKind.ForKeyword).getEnd();
 
     throw new errors.NotImplementedError("Expected a for of statement node.");
 }

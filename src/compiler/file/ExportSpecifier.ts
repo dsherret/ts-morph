@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
-import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
+import {insertIntoParentTextRange, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {Node, Identifier, Symbol} from "./../common";
 import {ExportDeclaration} from "./ExportDeclaration";
@@ -44,10 +44,8 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
             const nameNode = this.getNameNode();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: nameNode.getEnd(),
-                childIndex: nameNode.getChildIndex() + 1,
-                insertItemsCount: 2, // AsKeyword, Identifier
                 parent: this,
                 newText: ` as ${nameNode.getText()}`
             });

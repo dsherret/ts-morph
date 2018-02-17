@@ -18,6 +18,7 @@ export interface InsertIntoParentOptions {
     customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }
 
+// todo: work on removing this
 export function insertIntoParent(opts: InsertIntoParentOptions) {
     const {insertPos, newText, parent, childIndex, insertItemsCount, customMappings} = opts;
 
@@ -68,6 +69,7 @@ export interface InsertIntoParentTextRangeOptions {
 export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions) {
     const {insertPos, newText, parent} = opts;
 
+    // todo: this should only forget the existing node if the kind changes
     doManipulation(parent.sourceFile,
         new InsertionTextManipulator({
             insertPos,

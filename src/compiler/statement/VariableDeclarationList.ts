@@ -1,5 +1,5 @@
 import {ts, SyntaxKind} from "./../../typescript";
-import {insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {VariableDeclarationListStructure, VariableDeclarationStructure} from "./../../structures";
@@ -55,16 +55,13 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     setDeclarationType(type: VariableDeclarationType) {
         if (this.getDeclarationType() === type)
             return this;
-        const keyword = this.getDeclarationTypeKeyword();
 
-        insertIntoParent({
-            childIndex: keyword.getChildIndex(),
-            insertItemsCount: 1,
+        const keyword = this.getDeclarationTypeKeyword();
+        insertIntoParentTextRange({
             insertPos: keyword.getStart(),
             newText: type,
             parent: this,
             replacing: {
-                nodes: [keyword],
                 textLength: keyword.getWidth()
             }
         });

@@ -1,5 +1,5 @@
 import {ts} from "./../../typescript";
-import {insertIntoParent, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {VariableStatementStructure, VariableDeclarationStructure} from "./../../structures";

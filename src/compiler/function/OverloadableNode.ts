@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "./../../typescript";
 import * as objectAssign from "object-assign";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {verifyAndGetIndex, insertIntoParent, getRangeFromArray} from "./../../manipulation";
+import {verifyAndGetIndex, insertIntoParentTextRange, getRangeFromArray} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {BodyableNode, NamedNode} from "./../base";
@@ -118,10 +118,8 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     const indentationText = opts.node.getIndentationText();
     const newLineKind = opts.node.global.manipulationSettings.getNewLineKindAsString();
 
-    insertIntoParent({
+    insertIntoParentTextRange({
         parent: parentSyntaxList,
-        childIndex: mainIndex,
-        insertItemsCount: structures.length,
         insertPos: opts.node.getNonWhitespaceStart(),
         newText: opts.childCodes.map((c, i) => (i > 0 ? indentationText : "") + c).join(newLineKind) + newLineKind + indentationText
     });

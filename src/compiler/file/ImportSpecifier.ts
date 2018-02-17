@@ -1,5 +1,5 @@
 import {ts, SyntaxKind} from "./../../typescript";
-import {insertIntoParent, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
+import {insertIntoParentTextRange, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {Node, Identifier} from "./../common";
 import {ImportDeclaration} from "./ImportDeclaration";
@@ -52,10 +52,8 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
             const nameNode = this.getNameNode();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: nameNode.getEnd(),
-                childIndex: nameNode.getChildIndex() + 1,
-                insertItemsCount: 2, // AsKeyword, Identifier
                 parent: this,
                 newText: ` as ${nameNode.getText()}`
             });

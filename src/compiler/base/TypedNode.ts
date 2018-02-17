@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {TypedNodeStructure} from "./../../structures";
 import {callBaseFill} from "./../callBaseFill";
 import * as errors from "./../../errors";
-import {insertIntoParent, removeChildren} from "./../../manipulation";
+import {insertIntoParentTextRange, removeChildren} from "./../../manipulation";
 import {StringUtils} from "./../../utils";
 import {Node} from "./../common";
 import {Type} from "./../type/Type";
@@ -54,34 +54,25 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             const separatorNode = this.getFirstChildByKind(separatorSyntaxKind);
 
             let insertPos: number;
-            let childIndex: number;
-            let insertItemsCount: number;
             let newText: string;
 
             if (separatorNode == null) {
                 const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
-                childIndex = identifier.getChildIndex() + 1;
                 insertPos = identifier.getEnd();
-                insertItemsCount = 2;
                 newText = (separatorSyntaxKind === SyntaxKind.EqualsToken ? " = " : ": ") + text;
             }
             else {
-                childIndex = separatorNode.getChildIndex() + 1;
                 insertPos = typeNode!.getStart();
-                insertItemsCount = 1;
                 newText = text;
             }
 
             // insert new type
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: this,
-                childIndex,
-                insertItemsCount,
                 insertPos,
                 newText,
                 replacing: {
-                    textLength: typeNode == null ? 0 : typeNode.getWidth(),
-                    nodes: typeNode == null ? [] : [typeNode]
+                    textLength: typeNode == null ? 0 : typeNode.getWidth()
                 }
             });
 

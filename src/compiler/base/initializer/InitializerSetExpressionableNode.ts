@@ -3,7 +3,7 @@ import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {InitializerSetExpressionableNodeStructure} from "./../../../structures";
 import {callBaseFill} from "./../../callBaseFill";
-import {insertIntoParent, removeChildren} from "./../../../manipulation";
+import {insertIntoParentTextRange, removeChildren} from "./../../../manipulation";
 import {Expression} from "./../../expression";
 import {Node} from "./../../common";
 import {InitializerGetExpressionableNode} from "./InitializerGetExpressionableNode";
@@ -45,10 +45,8 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
 
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
 
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
-                childIndex: semiColonToken != null ? semiColonToken.getChildIndex() : this.getChildCount(),
-                insertItemsCount: 2,
                 parent: this,
                 newText: ` = ${text}`
             });

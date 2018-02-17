@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Node} from "./../common";
-import {insertIntoParent, removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
+import {insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild} from "./../../manipulation";
 import {ParameterDeclarationStructure} from "./../../structures";
 import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "./../base";
 import {callBaseFill} from "./../callBaseFill";
@@ -52,11 +52,8 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
             return this;
 
         if (value) {
-            const nameNode = this.getNameNodeOrThrow();
-            insertIntoParent({
-                insertPos: nameNode.getStart(),
-                childIndex: nameNode.getChildIndex(),
-                insertItemsCount: 1,
+            insertIntoParentTextRange({
+                insertPos: this.getNameNodeOrThrow().getStart(),
                 parent: this,
                 newText: "..."
             });

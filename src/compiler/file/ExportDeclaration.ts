@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {insertIntoParent, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
 import {ArrayUtils, TypeGuards} from "./../../utils";
 import {Identifier} from "./../common";
 import {Statement} from "./../statement";
@@ -19,24 +19,19 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
             const quoteType = this.global.manipulationSettings.getQuoteType();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
-                childIndex: semiColonToken != null ? semiColonToken.getChildIndex() : this.getChildCount(),
-                insertItemsCount: 2, // FromKeyword, StringLiteral
                 parent: this,
                 newText: ` from ${quoteType}${text}${quoteType}`
             });
         }
         else {
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: this,
                 newText: text,
                 insertPos: stringLiteral.getStart() + 1,
-                childIndex: stringLiteral.getChildIndex(),
-                insertItemsCount: 1,
                 replacing: {
-                    textLength: stringLiteral.getWidth() - 2,
-                    nodes: [stringLiteral]
+                    textLength: stringLiteral.getWidth() - 2
                 }
             });
         }
@@ -144,14 +139,11 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         if (namedExports.length === 0) {
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: asteriskToken.getStart(),
                 parent: this,
                 newText: `{${codes.join(", ")}}`,
-                childIndex: asteriskToken.getChildIndex(),
-                insertItemsCount: 1,
                 replacing: {
-                    nodes: [asteriskToken],
                     textLength: 1
                 }
             });
@@ -189,15 +181,12 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         if (namedExportsNode == null)
             return this;
 
-        insertIntoParent({
+        insertIntoParentTextRange({
             parent: this,
             newText: "*",
             insertPos: namedExportsNode.getStart(),
-            childIndex: namedExportsNode.getChildIndex(),
-            insertItemsCount: 1,
             replacing: {
-                textLength: namedExportsNode.getWidth(),
-                nodes: [namedExportsNode]
+                textLength: namedExportsNode.getWidth()
             }
         });
         return this;
