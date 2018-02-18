@@ -583,6 +583,57 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.delete), () => {
+        it("should delete the file and remove all its descendants", () => {
+            const fileSystem = getFileSystemHostWithFiles([], []);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.createDirectory("dir");
+            const childDir = directory.createDirectory("childDir");
+            const sourceFile = directory.createSourceFile("file.ts");
+            const otherSourceFile = ast.createSourceFile("otherFile.ts");
+
+            directory.delete();
+            expect(fileSystem.getDeleteLog()).to.deep.equal([]);
+            expect(directory._wasRemoved()).to.be.true;
+            expect(childDir._wasRemoved()).to.be.true;
+            expect(sourceFile.wasForgotten()).to.be.true;
+            expect(otherSourceFile.wasForgotten()).to.be.false;
+            ast.saveSync();
+            expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal(["/dir/childDir", "/dir/file.ts", "/dir"].sort());
+        });
+
+        it("mixing delete and delete immediately", () => {
+            const fileSystem = getFileSystemHostWithFiles([], []);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const directory = ast.createDirectory("dir");
+            const childDir = directory.createDirectory("childDir");
+            const sourceFile = directory.createSourceFile("sourceFile.ts");
+
+            childDir.delete();
+            sourceFile.delete();
+            directory.deleteImmediately();
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+            ast.saveSync();
+            // should not add the child directory and source file here...
+            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+        });
+
+        it("should delete the directory's previous items when recreating the directory before a save", () => {
+            const fileSystem = getFileSystemHostWithFiles([], []);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const filePaths = ["/dir/subDir/file.ts", "/dir/file.ts"];
+            for (const filePath of filePaths)
+                ast.createSourceFile(filePath);
+            const directory = ast.getDirectoryOrThrow("dir");
+
+            ast.saveSync();
+            directory.delete();
+            ast.createDirectory("dir");
+            ast.saveSync();
+            expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal([...filePaths, "/dir/subDir"].sort());
+        });
+    });
+
     describe(nameof<Directory>(d => d.deleteImmediately), () => {
         it("should delete the file and remove all its descendants", async () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
@@ -636,7 +687,7 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(dir => dir.saveUnsavedSourceFiles), () => {
+    describe(nameof<Directory>(dir => dir.save), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
@@ -645,15 +696,17 @@ describe(nameof(Directory), () => {
             dir.createSourceFile("file1.ts", "").saveSync();
             dir.createSourceFile("file2.ts", "");
             dir.createSourceFile("child/file3.ts", "");
-            await dir.saveUnsavedSourceFiles();
+            await dir.save();
+
             expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(otherFile.isSaved()).to.be.false;
-            expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
-            expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
+            expect(fileSystem.getWriteLog().length).to.equal(2);
+            expect(fileSystem.getCreatedDirectories().length).to.equal(2);
+            expect(fileSystem.getSyncWriteLog().length).to.equal(1);
         });
     });
 
-    describe(nameof<Directory>(dir => dir.saveUnsavedSourceFilesSync), () => {
+    describe(nameof<Directory>(dir => dir.saveSync), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
@@ -662,12 +715,13 @@ describe(nameof(Directory), () => {
             dir.createSourceFile("file1.ts", "").saveSync();
             dir.createSourceFile("file2.ts", "");
             dir.createSourceFile("child/file3.ts", "");
-            dir.saveUnsavedSourceFilesSync();
+            dir.saveSync();
 
             expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(otherFile.isSaved()).to.be.false;
             expect(fileSystem.getWriteLog().length).to.equal(0);
-            expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+            expect(fileSystem.getCreatedDirectories().length).to.equal(2);
+            expect(fileSystem.getSyncWriteLog().length).to.equal(3);
         });
     });
 

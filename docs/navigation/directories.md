@@ -116,11 +116,11 @@ const descendantSourceFiles = directory.getDescendantSourceFiles();
 
 ### Saving
 
-Save all the unsaved source files:
+Save the directory to the disk and all the unsaved source files:
 
 ```ts
-directory.saveUnsavedSourceFiles();
-directory.saveUnsavedSourceFilesSync(); // slow
+directory.save();
+directory.saveSync(); // slow
 ```
 
 ### Emitting
@@ -163,7 +163,19 @@ Note that the directory and source files, in all these cases, won't be created u
 
 ### Deleting
 
-Deletes the directory and all its descendants from the file system:
+Call:
+
+```ts
+directory.delete();
+```
+
+This will remove the directory object and all its descendant source files and directories from the main `ast` object and queue it up for deletion to the file system.
+
+When you're all done your other manipulations, call `ast.save()` and at that point the directory will be deleted.
+
+#### Deleting immediately
+
+If you want to delete a directory immediately from the file system, then use the following:
 
 ```ts
 directory.deleteImmediately();
@@ -171,11 +183,11 @@ directory.deleteImmediately();
 directory.deleteImmediatelySync();
 ```
 
-Note that after doing this, the directory object and all its descendant source files and directories will not be available.
+This isn't recommended though because it could possibly leave the file system in a halfway state if your code errors before it's done.
 
 ### Removing
 
-Removes from main ast object:
+Removes from main ast object without deleting it:
 
 ```ts
 directory.remove();

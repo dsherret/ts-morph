@@ -8,19 +8,9 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (13 February 2018)
+## Library Development - Progress Update (18 February 2018)
 
-### Version 7
-
-The TypeScript peer dependency has been dropped, but there should be no loss of functionality! If there is, please open an issue.
-
-The TypeScript compiler object used by this library can now be accessed via the `ts` named export. Also non-node TypeScript compiler objects used in the public API of this  library are now exported directly as named exports:
-
-```ts
-import Ast, {ts, SyntaxKind, ScriptTarget} from "ts-simple-ast";
-```
-
-### General Progress
+View information on the new versions in [versions.md](versions.md).
 
 Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
@@ -48,46 +38,53 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 ```ts
 import Ast from "ts-simple-ast";
 
-// add source files to ast
+// initialize
 const ast = new Ast();
-const sourceFile = ast.createSourceFile("MyClass.ts", "class MyClass {}\nlet myClass: MyClass;\nexport default MyClass;");
-ast.addExistingSourceFiles("**/folder/**/*.ts");
-ast.createSourceFile("misc.ts", {
-    classes: [{
-        name: "SomeClass",
-        isExported: true
-    }],
+
+// add source files into memory
+ast.addExistingSourceFiles("**/src/**/*.ts");
+const myClassFile = ast.createSourceFile("src/MyClass.ts", "export class MyClass {}");
+const myEnumFile = ast.createSourceFile("src/MyEnum.ts", {
     enums: [{
-        name: "SomeEnum",
+        name: "MyEnum",
         isExported: true,
         members: [{ name: "member" }]
     }]
 });
 
 // get information from ast
-const classDeclaration = sourceFile.getClassOrThrow("MyClass");
-classDeclaration.getName();          // returns: "MyClass"
-classDeclaration.hasExportKeyword(); // returns: false
-classDeclaration.isDefaultExport();  // returns: true
+const myClass = myClassFile.getClassOrThrow("MyClass");
+myClass.getName();          // returns: "MyClass"
+myClass.hasExportKeyword(); // returns: false
+myClass.isDefaultExport();  // returns: true
 
 // manipulate ast
-sourceFile.addEnum({ name: "MyEnum" });
-classDeclaration.rename("NewName");
+const myInterface = myClassFile.addInterface({
+    name: "IMyInterface",
+    isExported: true,
+    properties: [{
+        name: "myProp",
+        type: "number"
+    }]
+});
+
+myClass.rename("NewName");
+myClass.addImplements(myInterface.getName());
 classDeclaration.addProperty({
     name: "myProp",
     initializer: "5"
 });
-classDeclaration.setIsDefaultExport(false);
 
-// result
-sourceFile.getFullText(); // returns: "class NewName {\n    myProp = 5;\n}\nlet myClass: MyClass;\n\nenum MyEnum {\n}\n"
-sourceFile.save();        // save it asynchronously to MyFile.ts
+ast.getSourceFileOrThrow("src/ExistingFile.ts").delete();
+
+// asynchronously save all the changes above
+ast.save();
 
 // get underlying compiler node from the typescript AST from any node
-const sourceFileCompilerNode = sourceFile.compilerNode;
+const compilerNode = myClassFile.compilerNode;
 ```
 
-Or navigate existing compiler nodes created with the TypeScript compiler:
+Or navigate existing compiler nodes created with the TypeScript compiler (the `ts` named export is the TypeScript compiler):
 
 ```ts
 import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";

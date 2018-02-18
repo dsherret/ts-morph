@@ -74,5 +74,8 @@ export function getFileSystemHostWithFiles(initialFiles: { filePath: string; tex
     function doDelete(path: string) {
         deleteLog.push({ path });
         files.removeByKey(path);
+        const dirIndex = directories.indexOf(path);
+        if (dirIndex >= 0)
+            directories.splice(dirIndex, 1);
     }
 }

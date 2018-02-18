@@ -6,6 +6,7 @@
 
 export interface HashSet<T> {
     has(value: T): boolean;
+    clear(): void;
     delete(value: T): boolean;
     add(value: T): void;
     values(): IterableIterator<T>;
@@ -30,6 +31,10 @@ export class Es5HashSet<T> implements HashSet<T> {
             return false;
         this.items.splice(index, 1);
         return true;
+    }
+
+    clear() {
+        this.items.length = 0;
     }
 
     *values() {

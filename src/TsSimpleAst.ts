@@ -327,7 +327,7 @@ export class TsSimpleAst {
         let searchFunction = fileNameOrSearchFunction as ((file: SourceFile) => boolean);
 
         if (typeof fileNameOrSearchFunction === "string")
-            searchFunction = def => FileUtils.filePathMatches(def.getFilePath(), fileNameOrSearchFunction);
+            searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrSearchFunction);
 
         return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), searchFunction);
     }
@@ -370,18 +370,20 @@ export class TsSimpleAst {
     }
 
     /**
-     * Saves all the unsaved source files.
+     * Saves all the unsaved source files to the file system and deletes all deleted files.
      */
-    saveUnsavedSourceFiles() {
-        return Promise.all(this.getUnsavedSourceFiles().map(f => f.save()));
+    async save() {
+        await this.global.fileSystemWrapper.flush();
+        await Promise.all(this.getUnsavedSourceFiles().map(f => f.save()));
     }
 
     /**
-     * Saves all the unsaved source files synchronously.
+     * Synchronously saves all the unsaved source files to the file system and deletes all deleted files.
      *
      * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
      */
-    saveUnsavedSourceFilesSync() {
+    saveSync() {
+        this.global.fileSystemWrapper.flushSync();
         // sidenote: I wish I could do something like in c# where I do this all asynchronously then
         // wait synchronously on the task. It would not be as bad as this is performance wise. Maybe there
         // is a way, but people just shouldn't be using this method unless they're really lazy.

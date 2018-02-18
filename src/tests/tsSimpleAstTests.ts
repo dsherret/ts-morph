@@ -409,28 +409,48 @@ describe(nameof(TsSimpleAst), () => {
         });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.saveUnsavedSourceFiles), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.save), () => {
         it("should save all the unsaved source files asynchronously", async () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             ast.createSourceFile("file1.ts", "").saveSync();
             ast.createSourceFile("file2.ts", "");
             ast.createSourceFile("file3.ts", "");
-            await ast.saveUnsavedSourceFiles();
+            await ast.save();
             expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
             expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
         });
+
+        it("should delete any deleted source files & directories and save unsaved source files", async () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const ast = new TsSimpleAst(undefined, fileSystem);
+            const sourceFileToDelete = ast.createDirectory("dir").createSourceFile("file.ts");
+            sourceFileToDelete.saveSync();
+            sourceFileToDelete.delete();
+            const dirToDelete = ast.createDirectory("dir2");
+            dirToDelete.createSourceFile("file.ts");
+            dirToDelete.saveSync();
+            dirToDelete.delete();
+            let sourceFileToUndelete = ast.createSourceFile("file.ts");
+            sourceFileToUndelete.saveSync();
+            sourceFileToUndelete.delete();
+            sourceFileToUndelete = ast.createSourceFile("file.ts");
+
+            await ast.save();
+            expect(fileSystem.getFiles().map(f => f[0])).to.deep.equal(["/file.ts"]);
+            expect(fileSystem.getCreatedDirectories().sort()).to.deep.equal(["/dir", "/"].sort());
+        });
     });
 
-    describe(nameof<TsSimpleAst>(ast => ast.saveUnsavedSourceFilesSync), () => {
+    describe(nameof<TsSimpleAst>(ast => ast.saveSync), () => {
         it("should save all the unsaved source files synchronously", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const ast = new TsSimpleAst(undefined, fileSystem);
             ast.createSourceFile("file1.ts", "").saveSync();
             ast.createSourceFile("file2.ts", "");
             ast.createSourceFile("file3.ts", "");
-            ast.saveUnsavedSourceFilesSync();
+            ast.saveSync();
 
             expect(ast.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(fileSystem.getWriteLog().length).to.equal(0);

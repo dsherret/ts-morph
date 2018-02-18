@@ -16,8 +16,12 @@ export class VirtualFileSystemHost implements FileSystemHost {
     }
 
     delete(path: string) {
-        this.deleteSync(path);
-        return Promise.resolve();
+        try {
+            this.deleteSync(path);
+            return Promise.resolve();
+        } catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     deleteSync(path: string) {
@@ -34,15 +38,16 @@ export class VirtualFileSystemHost implements FileSystemHost {
         }
 
         const parentDir = this.directories.get(FileUtils.getDirPath(path));
-        if (parentDir != null)
-            parentDir.files.removeByKey(path);
+        if (parentDir == null || !parentDir.files.has(path))
+            throw new errors.FileNotFoundError(path);
+        parentDir.files.removeByKey(path);
     }
 
     readDirSync(dirPath: string) {
         dirPath = FileUtils.getStandardizedAbsolutePath(this, dirPath);
         const dir = this.directories.get(dirPath);
         if (dir == null)
-            return [] as string[];
+            throw new errors.DirectoryNotFoundError(dirPath);
 
         return [...getDirectories(this.directories.getKeys()), ...dir.files.getKeys()];
 

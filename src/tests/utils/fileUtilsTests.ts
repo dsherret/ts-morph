@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {VirtualFileSystemHost} from "./../../fileSystem";
+import {VirtualFileSystemHost, FileSystemWrapper} from "./../../fileSystem";
 import {FileUtils} from "./../../utils";
 import {getFileSystemHostWithFiles} from "./../testHelpers";
 
@@ -7,7 +7,7 @@ describe(nameof(FileUtils), () => {
     describe(nameof(FileUtils.ensureDirectoryExistsSync), () => {
         it("should ensure the specified directory exists and the parent directories", () => {
             const host = getFileSystemHostWithFiles([], ["/some"]);
-            FileUtils.ensureDirectoryExistsSync(host, "/some/dir/path");
+            FileUtils.ensureDirectoryExistsSync(new FileSystemWrapper(host), "/some/dir/path");
             expect(host.getCreatedDirectories()).to.deep.equal([
                 "/some/dir",
                 "/some/dir/path"
@@ -18,7 +18,7 @@ describe(nameof(FileUtils), () => {
     describe(nameof(FileUtils.ensureDirectoryExists), () => {
         it("should ensure the specified directory exists and the parent directories", async () => {
             const host = getFileSystemHostWithFiles([], ["/some"]);
-            await FileUtils.ensureDirectoryExists(host, "/some/dir/path");
+            await FileUtils.ensureDirectoryExists(new FileSystemWrapper(host), "/some/dir/path");
             expect(host.getCreatedDirectories()).to.deep.equal([
                 "/some/dir",
                 "/some/dir/path"
@@ -48,53 +48,103 @@ describe(nameof(FileUtils), () => {
         });
     });
 
-    describe(nameof(FileUtils.filePathMatches), () => {
-        it("should return false for a null path", () => {
-            expect(FileUtils.filePathMatches(null, "test.ts")).to.be.false;
+    describe(nameof(FileUtils.pathStartsWith), () => {
+        it("should return false for a undefined path", () => {
+            expect(FileUtils.pathStartsWith(undefined, "test.ts")).to.be.false;
         });
 
         it("should return false for an empty path", () => {
-            expect(FileUtils.filePathMatches("", "test.ts")).to.be.false;
+            expect(FileUtils.pathStartsWith("", "test.ts")).to.be.false;
         });
 
-        it("should return true when both are null", () => {
-            expect(FileUtils.filePathMatches(null, null)).to.be.true;
+        it("should return true when both are undefined", () => {
+            expect(FileUtils.pathStartsWith(undefined, undefined)).to.be.true;
         });
 
         it("should return true when both are empty", () => {
-            expect(FileUtils.filePathMatches("", "")).to.be.true;
+            expect(FileUtils.pathStartsWith("", "")).to.be.true;
         });
 
         it("should return false for empty search", () => {
-            expect(FileUtils.filePathMatches("V:/dir/tests.ts", "")).to.be.false;
+            expect(FileUtils.pathStartsWith("V:/dir/tests.ts", "")).to.be.false;
         });
 
-        it("should return false for null search", () => {
-            expect(FileUtils.filePathMatches("V:/dir/tests.ts", null)).to.be.false;
+        it("should return false for undefined search", () => {
+            expect(FileUtils.pathStartsWith("V:/dir/tests.ts", undefined)).to.be.false;
         });
 
-        it("should return true for a file name only", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "test.ts")).to.be.true;
+        it("should return false for a file name only", () => {
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "test.ts")).to.be.false;
         });
 
-        it("should return true for a file name and dir", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "dir/test.ts")).to.be.true;
+        it("should return true when matches start directory without a slash", () => {
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "V:/dir")).to.be.true;
         });
 
-        it("should return true for a file name and dir with a slash at the front", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "/dir/test.ts")).to.be.true;
+        it("should return true when matches start directory with a slash", () => {
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "V:/dir/")).to.be.true;
         });
 
         it("should return true for a full match", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "V:/dir/test.ts")).to.be.true;
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "V:/dir/test.ts")).to.be.true;
         });
 
         it("should not error when the file path being searched for is longer", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "V:/dir/dir/test.ts")).to.be.false;
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "V:/dir/dir/test.ts")).to.be.false;
+        });
+
+        it("should return false when the end name doesn't exactly match", () => {
+            expect(FileUtils.pathStartsWith("V:/dir/test.ts", "V:/dir/test.t")).to.be.false;
+        });
+    });
+
+    describe(nameof(FileUtils.pathEndsWith), () => {
+        it("should return false for a undefined path", () => {
+            expect(FileUtils.pathEndsWith(undefined, "test.ts")).to.be.false;
+        });
+
+        it("should return false for an empty path", () => {
+            expect(FileUtils.pathEndsWith("", "test.ts")).to.be.false;
+        });
+
+        it("should return true when both are undefined", () => {
+            expect(FileUtils.pathEndsWith(undefined, undefined)).to.be.true;
+        });
+
+        it("should return true when both are empty", () => {
+            expect(FileUtils.pathEndsWith("", "")).to.be.true;
+        });
+
+        it("should return false for empty search", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/tests.ts", "")).to.be.false;
+        });
+
+        it("should return false for undefined search", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/tests.ts", undefined)).to.be.false;
+        });
+
+        it("should return true for a file name only", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "test.ts")).to.be.true;
+        });
+
+        it("should return true for a file name and dir", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "dir/test.ts")).to.be.true;
+        });
+
+        it("should return true for a file name and dir with a slash at the front", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "/dir/test.ts")).to.be.true;
+        });
+
+        it("should return true for a full match", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "V:/dir/test.ts")).to.be.true;
+        });
+
+        it("should not error when the file path being searched for is longer", () => {
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "V:/dir/dir/test.ts")).to.be.false;
         });
 
         it("should return false when the directory name doesn't exactly match", () => {
-            expect(FileUtils.filePathMatches("V:/dir/test.ts", "ir/test.ts")).to.be.false;
+            expect(FileUtils.pathEndsWith("V:/dir/test.ts", "ir/test.ts")).to.be.false;
         });
     });
 

@@ -407,6 +407,22 @@ export class Directory {
     }
 
     /**
+     * Queues a deletion of the directory to the file system.
+     *
+     * The directory will be deleted when calling ast.save(). If you wish to delete the file immediately, then use deleteImmediately().
+     */
+    delete() {
+        const {fileSystemWrapper} = this.global;
+        const path = this.getPath();
+        for (const sourceFile of this.getSourceFiles())
+            sourceFile.delete();
+        for (const dir of this.getDirectories())
+            dir.delete();
+        fileSystemWrapper.queueDelete(path);
+        this.remove();
+    }
+
+    /**
      * Asyncronously deletes the directory and all its descendants from the file system.
      */
     async deleteImmediately() {
@@ -445,20 +461,23 @@ export class Directory {
     }
 
     /**
-     * Saves all the unsaved descendant source files.
+     * Asynchronously saves the directory and all the unsaved source files to the disk.
      */
-    saveUnsavedSourceFiles() {
-        return Promise.all(this._getUnsavedSourceFiles().map(f => f.save()));
+    async save() {
+        await FileUtils.ensureDirectoryExists(this.global.fileSystemWrapper, this.getPath());
+        const unsavedSourceFiles = this.getSourceFiles().filter(s => !s.isSaved());
+        await Promise.all(unsavedSourceFiles.map(s => s.save()));
+        await Promise.all(this.getDirectories().map(d => d.save()));
     }
 
     /**
-     * Saves all the unsaved descendant source files synchronously.
-     *
-     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
+     * Synchronously saves the directory and all the unsaved source files to the disk.
      */
-    saveUnsavedSourceFilesSync() {
-        for (const file of this._getUnsavedSourceFiles())
-            file.saveSync();
+    saveSync() {
+        FileUtils.ensureDirectoryExistsSync(this.global.fileSystemWrapper, this.getPath());
+        const unsavedSourceFiles = this.getSourceFiles().filter(s => !s.isSaved());
+        unsavedSourceFiles.forEach(s => s.saveSync());
+        this.getDirectories().map(d => d.saveSync());
     }
 
     /** @internal */
@@ -499,17 +518,6 @@ export class Directory {
     private throwIfDeletedOrRemoved() {
         if (this._wasRemoved())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted or removed.");
-    }
-
-    private _getUnsavedSourceFiles() {
-        return ArrayUtils.from(getUnsavedIterator(this.getDescendantSourceFilesIterator()));
-
-        function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
-            for (const sourceFile of sourceFiles) {
-                if (!sourceFile.isSaved())
-                    yield sourceFile;
-            }
-        }
     }
 
     /** @internal */

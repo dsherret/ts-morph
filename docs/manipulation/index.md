@@ -6,6 +6,36 @@ title: Manipulating the AST
 
 Most information about manipulation can be found in the [Details](../details) section. This section only contains general information about manipulation.
 
+### Saving Changes
+
+All moves, copies, and deletes won't be propagated to the underlying file system until `save()` is called on the main `ast` object.
+
+```ts
+import Ast from "ts-simple-ast";
+
+const ast = new Ast();
+
+// ...lots of code here that manipulates, copies, moves, and deletes files...
+
+// when you're all done, call this and it will save everything to the file system
+ast.save();
+```
+
+The above is recommended because it means if your code errors halfway through, the files won't be in a halfway state. However, there's always a way to save, move, copy, and delete while immediately having these changes happen on the underlying file system. For example:
+
+```ts
+// or use the synchronous alternatives (ex. saveSync())
+await sourceFile.save();
+await sourceFile.deleteImmediately();
+await sourceFile.copyImmediately("copiedFile.ts");
+await sourceFile.moveImmediately("movedFile.ts");
+
+await directory.save();
+await directory.deleteImmediately();
+await sourceFile.copyImmediately("CopiedDir");
+await sourceFile.moveImmediately("MovedDir");
+```
+
 ### Replacing any node with new text
 
 This can be achieved with the `.replaceWithText(...)` method that exists on any node.

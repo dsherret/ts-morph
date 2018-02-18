@@ -1,28 +1,40 @@
 ﻿import * as path from "path";
-import {FileSystemHost} from "./../fileSystem";
+import {FileSystemHost, FileSystemWrapper} from "./../fileSystem";
 
 export class FileUtils {
     private static standardizeSlashesRegex = /\\/g;
+    private static trimSlashStartRegex = /^\//;
+    private static trimSlashEndRegex = /\/$/;
+
+    static readonly ENOENT = "ENOENT";
 
     private constructor() {
     }
 
     /**
+     * Gets if the error is a file not found or directory not found error.
+     * @param err - Error to check.
+     */
+    static isNotExistsError(err: any) {
+        return err.code === FileUtils.ENOENT;
+    }
+
+    /**
      * Ensure the directory exists synchronously.
-     * @param host - File system host.
+     * @param fileSystemWrapper - File system wrapper.
      * @param dirPath - Directory path.
      */
-    static ensureDirectoryExistsSync(host: FileSystemHost, dirPath: string) {
-        if (host.directoryExistsSync(dirPath))
+    static ensureDirectoryExistsSync(fileSystemWrapper: FileSystemWrapper, dirPath: string) {
+        if (fileSystemWrapper.directoryExistsSync(dirPath))
             return;
 
         // ensure the parent exists and is not the root
         const parentDirPath = path.dirname(dirPath);
         if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
-            FileUtils.ensureDirectoryExistsSync(host, parentDirPath);
+            FileUtils.ensureDirectoryExistsSync(fileSystemWrapper, parentDirPath);
 
         // make this directory
-        host.mkdirSync(dirPath);
+        fileSystemWrapper.mkdirSync(dirPath);
     }
 
     /**
@@ -30,7 +42,7 @@ export class FileUtils {
      * @param host - File system host.
      * @param dirPath - Directory path.
      */
-    static async ensureDirectoryExists(host: FileSystemHost, dirPath: string) {
+    static async ensureDirectoryExists(host: FileSystemWrapper, dirPath: string) {
         if (await host.directoryExists(dirPath))
             return;
 
@@ -92,25 +104,48 @@ export class FileUtils {
     }
 
     /**
-     * Checks if a file path matches a specified search string.
-     * @param filePath - File path.
-     * @param searchString - Search string.
+     * Checks if a path ends with a specified search path.
+     * @param fileOrDirPath - Path.
+     * @param endsWithPath - Ends with path.
      */
-    static filePathMatches(filePath: string | null, searchString: string | null) {
-        const splitBySlash = (p: string | null) => this.standardizeSlashes(p || "").replace(/^\//, "").split("/");
+    static pathEndsWith(fileOrDirPath: string | undefined, endsWithPath: string | undefined) {
+        const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
+        const endsWithItems = FileUtils.splitPathBySlashes(endsWithPath);
 
-        const filePathItems = splitBySlash(filePath);
-        const searchItems = splitBySlash(searchString);
-
-        if (searchItems.length > filePathItems.length)
+        if (endsWithItems.length > pathItems.length)
             return false;
 
-        for (let i = 0; i < searchItems.length; i++) {
-            if (searchItems[searchItems.length - i - 1] !== filePathItems[filePathItems.length - i - 1])
+        for (let i = 0; i < endsWithItems.length; i++) {
+            if (endsWithItems[endsWithItems.length - i - 1] !== pathItems[pathItems.length - i - 1])
                 return false;
         }
 
-        return searchItems.length > 0;
+        return endsWithItems.length > 0;
+    }
+
+    /**
+     * Checks if a path starts with a specified search path.
+     * @param fileOrDirPath - Path.
+     * @param startsWithPath - Starts with path.
+     */
+    static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined) {
+        const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
+        const startsWithItems = FileUtils.splitPathBySlashes(startsWithPath);
+
+        if (startsWithItems.length > pathItems.length)
+            return false;
+
+        for (let i = 0; i < startsWithItems.length; i++) {
+            if (startsWithItems[i] !== pathItems[i])
+                return false;
+        }
+
+        return startsWithItems.length > 0;
+    }
+
+    private static splitPathBySlashes(fileOrDirPath: string | undefined) {
+        fileOrDirPath = (fileOrDirPath || "").replace(FileUtils.trimSlashStartRegex, "").replace(FileUtils.trimSlashEndRegex, "");
+        return FileUtils.standardizeSlashes(fileOrDirPath).replace(/^\//, "").split("/");
     }
 
     /**
@@ -123,7 +158,7 @@ export class FileUtils {
         try {
             return await fileSystem.readFile(filePath, encoding);
         } catch (err) {
-            if (err.code !== "ENOENT") // file not found exception
+            if (!FileUtils.isNotExistsError(err))
                 throw err;
             return false;
         }
@@ -139,7 +174,7 @@ export class FileUtils {
         try {
             return fileSystem.readFileSync(filePath, encoding);
         } catch (err) {
-            if (err.code !== "ENOENT") // file not found exception
+            if (!FileUtils.isNotExistsError(err))
                 throw err;
             return false;
         }

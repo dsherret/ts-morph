@@ -126,6 +126,17 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Queues a deletion of the file to the file system.
+     *
+     * The file will be deleted when you call ast.save(). If you wish to immediately delete the file, then use deleteImmediately().
+     */
+    delete() {
+        const filePath = this.getFilePath();
+        this.forget();
+        this.global.fileSystemWrapper.queueDelete(filePath);
+    }
+
+    /**
      * Asynchronously deletes the file from the file system.
      */
     async deleteImmediately() {

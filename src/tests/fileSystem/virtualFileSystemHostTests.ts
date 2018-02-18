@@ -39,9 +39,15 @@ describe(nameof(VirtualFileSystemHost), () => {
             expect(fs.fileExistsSync("/otherDir/subdir/file.ts")).to.be.true;
         });
 
-        it("should not error deleting a path that doesn't exist", () => {
+        it("should throw an error deleting a directory that doesn't exist", () => {
             const fs = new VirtualFileSystemHost();
-            expect(() => fs.deleteSync("/somePath")).to.not.throw();
+            expect(() => fs.deleteSync("/somePath")).to.throw(errors.FileNotFoundError);
+        });
+
+        it("should throw an error deleting a file that doesn't exist", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.mkdirSync("dir");
+            expect(() => fs.deleteSync("/dir/file.ts")).to.throw(errors.FileNotFoundError);
         });
     });
 
@@ -53,6 +59,17 @@ describe(nameof(VirtualFileSystemHost), () => {
             fs.writeFileSync(filePath, "");
             await fs.delete(filePath);
             expect(fs.fileExistsSync("/dir/file.ts")).to.be.false;
+        });
+
+        it("should throw an error deleting a directory that doesn't exist", async () => {
+            const fs = new VirtualFileSystemHost();
+            let caughtErr: any;
+            try {
+                await fs.delete("/somePath");
+            } catch (err) {
+                caughtErr = err;
+            }
+            expect(caughtErr).to.be.instanceOf(errors.FileNotFoundError);
         });
     });
 
@@ -66,9 +83,9 @@ describe(nameof(VirtualFileSystemHost), () => {
             expect(fs.readDirSync("/dir")).to.deep.equal(["/dir/subDir", "/dir/file.ts"]);
         });
 
-        it("should read a directory that doesn't exists", () => {
+        it("should throw when reading a directory that doesn't exists", () => {
             const fs = new VirtualFileSystemHost();
-            expect(fs.readDirSync("/dir")).to.deep.equal([]);
+            expect(() => fs.readDirSync("/dir")).to.throw(errors.DirectoryNotFoundError);
         });
     });
 

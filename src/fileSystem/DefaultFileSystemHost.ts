@@ -1,15 +1,16 @@
 ﻿import * as fs from "fs";
 import * as nodePath from "path";
 import * as globby from "globby";
-import {FileSystemHost} from "./FileSystemHost";
+import * as errors from "./../errors";
 import {FileUtils} from "./../utils";
+import {FileSystemHost} from "./FileSystemHost";
 
 export class DefaultFileSystemHost implements FileSystemHost {
     delete(path: string) {
         return new Promise<void>((resolve, reject) => {
             fs.unlink(path, err => {
                 if (err)
-                    reject(err);
+                    reject(this.getFileNotFoundErrorIfNecessary(err, path));
                 else
                     resolve();
             });
@@ -17,18 +18,26 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     deleteSync(path: string) {
-        fs.unlinkSync(path);
+        try {
+            fs.unlinkSync(path);
+        } catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, path);
+        }
     }
 
     readDirSync(dirPath: string) {
-        return fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+        try {
+            return fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+        } catch (err) {
+            throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
+        }
     }
 
     readFile(filePath: string, encoding = "utf-8") {
         return new Promise<string>((resolve, reject) => {
             fs.readFile(filePath, encoding, (err, data) => {
                 if (err)
-                    reject(err);
+                    reject(this.getFileNotFoundErrorIfNecessary(err, filePath));
                 else
                     resolve(data);
             });
@@ -36,11 +45,14 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     readFileSync(filePath: string, encoding = "utf-8") {
-        return fs.readFileSync(filePath, encoding);
+        try {
+            return fs.readFileSync(filePath, encoding);
+        } catch (err) {
+            throw this.getFileNotFoundErrorIfNecessary(err, filePath);
+        }
     }
 
     async writeFile(filePath: string, fileText: string) {
-        await FileUtils.ensureDirectoryExists(this, FileUtils.getDirPath(filePath));
         await new Promise<void>((resolve, reject) => {
             fs.writeFile(filePath, fileText, err => {
                 if (err)
@@ -52,7 +64,6 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     writeFileSync(filePath: string, fileText: string) {
-        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
         fs.writeFileSync(filePath, fileText);
     }
 
@@ -115,5 +126,13 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     glob(patterns: string[]) {
         return globby.sync(patterns);
+    }
+
+    private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {
+        return FileUtils.isNotExistsError(err) ? new errors.DirectoryNotFoundError(path) : err;
+    }
+
+    private getFileNotFoundErrorIfNecessary(err: any, path: string) {
+        return FileUtils.isNotExistsError(err) ? new errors.FileNotFoundError(path) : err;
     }
 }

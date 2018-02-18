@@ -14,4 +14,14 @@ describe(nameof(Es5HashSet), () => {
         expect(ArrayUtils.from(hashSet.values())).to.deep.equal([]);
         expect(hashSet.has("")).to.be.false;
     });
+
+    describe(nameof<Es5HashSet<any>>(s => s.clear), () => {
+        it("should clear the added values", () => {
+            const hashSet = new Es5HashSet<number>();
+            hashSet.add(1);
+            hashSet.add(2);
+            hashSet.clear();
+            expect(ArrayUtils.from(hashSet.values())).to.deep.equal([]);
+        });
+    });
 });

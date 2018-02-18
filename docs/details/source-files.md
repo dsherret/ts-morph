@@ -37,21 +37,36 @@ sourceFile.saveSync();
 
 ### Unsaved files
 
-There is a `sourceFile.isSaved()` method that will tell you if the file is saved or not, but it might be easier
-to call one of the following methods on the main AST object in order to save unsaved source files:
-
-```ts
-ast.saveUnsavedSourceFiles(); // returns: Promise
-ast.saveUnsavedSourceFilesSync(); // could potentially be very slow if there are a lot of files to save
-```
+Use the `sourceFile.isSaved()` method that will tell you if the file is saved to the file system.
 
 ### Delete
 
-Delete a source file from the file system using one of the following commands:
+The `sourceFile.delete()` method will queue up deletions to the file system. When done call `ast.save()`. For example:
 
 ```ts
-await sourceFile.deleteImmediately(); // or deleteImmediatelySync()
+import Ast from "ts-simple-ast";
+
+// queue up all the source files to be deleted
+const ast = new Ast();
+ast.addExistingSourceFiles("**/folder/**/*.ts")
+
+ast.getSourceFileOrThrow("someFile.ts").delete();
+ast.getSourceFileOrThrow("someOtherFile.ts").delete();
+
+// after you're all done, finally save your changes to the file system
+ast.save();
 ```
+
+#### Deleting Immediately
+
+It's possible to delete a source file from the file system immediately by calling one of the following methods:
+
+```ts
+await sourceFile.deleteImmediately();
+sourceFile.deleteImmediatelySync();
+```
+
+This isn't recommended though because it could possibly leave the file system in a halfway state if your code errors before it's done.
 
 ### Copy
 

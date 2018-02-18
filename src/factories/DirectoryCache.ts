@@ -1,6 +1,6 @@
 ﻿/* barrel:ignore */
 import {GlobalContainer} from "./../GlobalContainer";
-import {KeyValueCache, ArrayUtils, FileUtils, createHashSet} from "./../utils";
+import {KeyValueCache, ArrayUtils, FileUtils} from "./../utils";
 import {Directory} from "./../fileSystem/Directory";
 
 /**
@@ -9,7 +9,7 @@ import {Directory} from "./../fileSystem/Directory";
  */
 export class DirectoryCache {
     private readonly directoriesByPath = new KeyValueCache<string, Directory>();
-    private readonly orphanDirs = createHashSet<Directory>();
+    private readonly orphanDirs = new KeyValueCache<string, Directory>();
 
     constructor(private readonly global: GlobalContainer) {
     }
@@ -23,7 +23,7 @@ export class DirectoryCache {
     }
 
     getOrphans() {
-        return ArrayUtils.from(this.orphanDirs.values());
+        return ArrayUtils.from(this.orphanDirs.getValues());
     }
 
     getAll() {
@@ -58,7 +58,7 @@ export class DirectoryCache {
     }
 
     remove(dirPath: string) {
-        return this.directoriesByPath.removeByKey(dirPath);
+        return this.directoriesByPath.removeByKey(dirPath) || this.orphanDirs.removeByKey(dirPath);
     }
 
     createOrAddIfNotExists(dirPath: string) {
@@ -80,7 +80,7 @@ export class DirectoryCache {
             const isChildRootDir = childDirParentPath === childDirPath;
             if (!isChildRootDir && childDirParentPath === path) {
                 newDirectory._addDirectory(childDir);
-                this.orphanDirs.delete(childDir);
+                this.orphanDirs.removeByKey(childDirPath);
             }
         }
 
@@ -91,11 +91,12 @@ export class DirectoryCache {
         }
 
         if (newDirectory.getParent() == null)
-            this.orphanDirs.add(newDirectory);
+            this.orphanDirs.set(path, newDirectory);
 
         this.directoriesByPath.set(path, newDirectory);
+        this.global.fileSystemWrapper.dequeueDelete(path);
 
-        for (const orphanDir of this.orphanDirs.values()) {
+        for (const orphanDir of this.orphanDirs.getValues()) {
             if (newDirectory.isAncestorOf(orphanDir))
                 this.fillParentsOfDirPath(orphanDir.getPath());
         }

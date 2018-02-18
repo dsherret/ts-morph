@@ -226,6 +226,7 @@ export class CompilerFactory {
         return this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
             const sourceFile = new SourceFile(this.global, compilerSourceFile);
             this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
+            this.global.fileSystemWrapper.dequeueDelete(sourceFile.getFilePath());
 
             // add to list of directories
             const dirPath = sourceFile.getDirectoryPath();

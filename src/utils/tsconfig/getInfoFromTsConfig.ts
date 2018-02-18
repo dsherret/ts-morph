@@ -112,16 +112,21 @@ interface FileSystemEntries {
 }
 
 function getFileSystemEntries(path: string, fileSystemWrapper: FileSystemWrapper): FileSystemEntries {
-    const entries = fileSystemWrapper.readDirSync(path);
     const files: string[] = [];
     const directories: string[] = [];
+    try {
+        const entries = fileSystemWrapper.readDirSync(path);
 
-    for (const entry of entries) {
-        if (fileSystemWrapper.fileExistsSync(entry))
-            files.push(entry);
-        else
-            directories.push(entry);
+        for (const entry of entries) {
+            if (fileSystemWrapper.fileExistsSync(entry))
+                files.push(entry);
+            else
+                directories.push(entry);
+        }
+    } catch (err) {
+        if (!FileUtils.isNotExistsError(err))
+            throw err;
     }
 
-    return {files, directories};
+    return { files, directories };
 }

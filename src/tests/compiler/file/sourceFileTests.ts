@@ -86,6 +86,24 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.delete), () => {
+        it("should delete the file once save changes is called", async () => {
+            const filePath = "/Folder/File.ts";
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
+            sourceFile.saveSync();
+
+            sourceFile.delete();
+            expect(sourceFile.wasForgotten()).to.be.true;
+            expect(host.getDeleteLog().length).to.equal(0);
+            tsSimpleAst.saveSync();
+            const entry = host.getDeleteLog()[0];
+            expect(entry.path).to.equal(filePath);
+            expect(host.getDeleteLog().length).to.equal(1);
+            expect(host.getFiles()).to.deep.equal([]);
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.deleteImmediately), () => {
         const filePath = "/Folder/File.ts";
         const host = getFileSystemHostWithFiles([]);
