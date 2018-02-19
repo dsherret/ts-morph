@@ -41,7 +41,7 @@ import Ast from "ts-simple-ast";
 // initialize
 const ast = new Ast();
 
-// add source files into memory
+// add source files
 ast.addExistingSourceFiles("**/src/**/*.ts");
 const myClassFile = ast.createSourceFile("src/MyClass.ts", "export class MyClass {}");
 const myEnumFile = ast.createSourceFile("src/MyEnum.ts", {
