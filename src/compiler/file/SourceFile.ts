@@ -116,16 +116,30 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (filePath === this.getFilePath())
             return this;
 
-        if (overwrite)
-            return this.global.compilerFactory.createOrOverwriteSourceFileFromText(filePath, this.getFullText());
+        const fileImportAndExportsWithSourceFiles = getFileImportAndExportsWithSourceFiles(this, filePath);
+        const copiedSourceFile = getCopiedSourceFile(this);
 
-        try {
-            return this.global.compilerFactory.createSourceFileFromText(filePath, this.getFullText());
-        } catch (err) {
-            if (err instanceof errors.InvalidOperationError)
-                throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
-            else
-                throw err;
+        // update the declarations in this list to point to the declarations in the copied source file
+        for (const item of fileImportAndExportsWithSourceFiles)
+            item.declaration = copiedSourceFile.getChildSyntaxListOrThrow().getChildAtPos(item.declaration.getStart())! as (ImportDeclaration | ExportDeclaration);
+        // update the import & export declarations in the copied file
+        for (const item of fileImportAndExportsWithSourceFiles)
+            item.declaration.setModuleSpecifier(item.sourceFile);
+
+        return copiedSourceFile;
+
+        function getCopiedSourceFile(currentFile: SourceFile) {
+            if (overwrite)
+                return currentFile.global.compilerFactory.createOrOverwriteSourceFileFromText(filePath, currentFile.getFullText());
+
+            try {
+                return currentFile.global.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText());
+            } catch (err) {
+                if (err instanceof errors.InvalidOperationError)
+                    throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
+                else
+                    throw err;
+            }
         }
     }
 
@@ -144,13 +158,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
 
         // todo: first check to see if this has any exports or imports (add isExternalModule()?)
-        const isChangingDirectory = FileUtils.getDirPath(filePath) !== this.getDirectoryPath();
-        const fileImportAndExportsWithSourceFiles = isChangingDirectory ? getFileImportAndExportDeclarations(this)
-            .filter(declaration => declaration.isModuleSpecifierRelative())
-            .map(declaration => ({
-                declaration,
-                sourceFile: declaration.getModuleSpecifierSourceFile()!
-            })).filter(item => item.sourceFile != null) : [];
+        const fileImportAndExportsWithSourceFiles = getFileImportAndExportsWithSourceFiles(this, filePath);
         const referencingImportsAndExports = this.getReferencingImportAndExportDeclarations();
 
         if (!overwrite)
@@ -799,6 +807,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.setIsSaved(true); // saved when loaded from file system
         return FileSystemRefreshResult.Updated;
     }
+}
+
+function getFileImportAndExportsWithSourceFiles(sourceFile: SourceFile, changingFilePath: string) {
+    const isChangingDirectory = FileUtils.getDirPath(changingFilePath) !== sourceFile.getDirectoryPath();
+    if (!isChangingDirectory)
+        return [];
+
+    return getFileImportAndExportDeclarations(sourceFile)
+        .filter(declaration => declaration.isModuleSpecifierRelative())
+        .map(declaration => ({
+            declaration,
+            sourceFile: declaration.getModuleSpecifierSourceFile()!
+        })).filter(item => item.sourceFile != null);
 }
 
 function getFileImportAndExportDeclarations(sourceFile: SourceFile) {

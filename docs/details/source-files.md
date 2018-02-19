@@ -78,6 +78,9 @@ const newSourceFile = sourceFile.copy("newFileName.ts");
 const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
 ```
 
+Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations
+in the copied file.
+
 ### Move
 
 Moves a source file to a new file by specifying a new relative or absolute path:

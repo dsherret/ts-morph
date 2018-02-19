@@ -69,9 +69,28 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should return the existing source file when copying to the same path", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "Folder/File.ts" });
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/Folder/File.ts" });
             const copiedSourceFile = sourceFile.copy(sourceFile.getFilePath());
             expect(copiedSourceFile).to.equal(sourceFile);
+        });
+
+        it("should update the imports and exports in the copied source file", () => {
+            const originalText = `import {MyInterface} from "./MyInterface";\nexport * from "./MyInterface";`;
+            const {sourceFile, tsSimpleAst} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
+            const otherFile = tsSimpleAst.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
+            const copiedSourceFile = sourceFile.copy("../NewFile");
+            expect(sourceFile.getFullText()).to.equal(originalText);
+            expect(copiedSourceFile.getFullText()).to.equal(`import {MyInterface} from "./dir/MyInterface";\nexport * from "./dir/MyInterface";`);
+        });
+
+        it("should not update the imports and exports if copying to the same directory", () => {
+            // module specifiers are this way to check if they change
+            const originalText = `import {MyInterface} from "../dir/MyInterface";\nexport * from "../dir/MyInterface";`;
+            const {sourceFile, tsSimpleAst} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
+            const otherFile = tsSimpleAst.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
+            const copiedSourceFile = sourceFile.copy("NewFile");
+            expect(sourceFile.getFullText()).to.equal(originalText);
+            expect(copiedSourceFile.getFullText()).to.equal(originalText);
         });
     });
 
