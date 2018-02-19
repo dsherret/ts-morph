@@ -197,7 +197,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const fileImportAndExportsWithSourceFiles = getFileImportAndExportsWithSourceFiles(this, filePath);
         const referencingImportsAndExports = this.getReferencingImportAndExportDeclarations();
 
-        if (!overwrite)
+        if (overwrite) {
+            // remove the past file if it exists
+            const existingSourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
+            if (existingSourceFile != null)
+                existingSourceFile.forget();
+        }
+        else
             this.global.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
 
         replaceSourceFileForFilePathMove({

@@ -124,14 +124,17 @@ describe(nameof(SourceFile), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
             const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath });
-            tsSimpleAst.createSourceFile("/existingFile.ts");
+            const existingFile = tsSimpleAst.createSourceFile("/existingFile.ts");
             const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
             const newFile = sourceFile.move(newFilePath, { overwrite });
+            const isRemovingExisting = overwrite && newFilePath === "/existingFile.ts";
+            if (isRemovingExisting)
+                expect(existingFile.wasForgotten()).to.be.true;
             expect(newFile).to.equal(sourceFile);
             expect(sourceFile.getFilePath()).to.equal(absoluteNewFilePath || newFilePath);
             expect(sourceFile.getFullText()).to.equal(fileText);
             expect(interfaceDec.wasForgotten()).to.be.false;
-            expect(tsSimpleAst.getSourceFiles().length).to.equal(2);
+            expect(tsSimpleAst.getSourceFiles().length).to.equal(isRemovingExisting ? 1 : 2);
         }
 
         it("should throw if the file already exists", () => {
@@ -140,7 +143,11 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should not throw if the file already exists and the overwrite option was provided", () => {
-            expect(() => doTest("/file.ts", "/existingFile.ts", undefined, true)).to.not.throw();
+            doTest("/file.ts", "/existingFile.ts", undefined, true);
+        });
+
+        it("should not throw if the file does not exists and the overwrite option was provided", () => {
+            doTest("/file.ts", "/newFile.ts", undefined, true);
         });
 
         it("should copy to a relative file path", () => {

@@ -132,6 +132,14 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets the source file from the cache by a file path.
+     * @param filePath - File path.
+     */
+    getSourceFileFromCacheFromFilePath(filePath: string): SourceFile | undefined {
+        return this.sourceFileCacheByFilePath.get(filePath);
+    }
+
+    /**
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
