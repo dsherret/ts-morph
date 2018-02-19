@@ -127,6 +127,18 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "./../OtherInterface";\nexport interface MyInterface {}\nexport * from "./../OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
         });
+
+        it("should not change the module specifiers in the current file when moving to the same directory", () => {
+            // using a weird module specifier to make sure it doesn't update automatically
+            const fileText = `import {OtherInterface} from "./../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "./../dir/OtherInterface";`;
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
+            const otherFile = tsSimpleAst.createSourceFile("/dir/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
+            sourceFile.move("NewFile.ts");
+            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "./../dir/OtherInterface";\n` +
+                `export interface MyInterface {}\n` +
+                `export * from "./../dir/OtherInterface";`);
+            expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
+        });
     });
 
     describe(nameof<SourceFile>(n => n.save), () => {

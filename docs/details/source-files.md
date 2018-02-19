@@ -88,6 +88,9 @@ sourceFile.move("newFileName.ts");
 sourceFile.move("other.ts", { overwrite: true });
 ```
 
+Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations
+in the moving file and the relative import and export declarations in other files to point to the new location.
+
 ### Refresh from file system
 
 Refresh the source file from the file system:

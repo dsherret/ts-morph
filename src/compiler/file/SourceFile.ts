@@ -141,12 +141,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             return this;
 
         // todo: first check to see if this has any exports or imports (add isExternalModule()?)
-        const fileImportAndExportsWithSourceFiles = getFileImportAndExportDeclarations(this)
+        const isChangingDirectory = FileUtils.getDirPath(filePath) !== this.getDirectoryPath();
+        const fileImportAndExportsWithSourceFiles = isChangingDirectory ? getFileImportAndExportDeclarations(this)
             .filter(declaration => declaration.isModuleSpecifierRelative())
             .map(declaration => ({
                 declaration,
                 sourceFile: declaration.getModuleSpecifierSourceFile()!
-            })).filter(item => item.sourceFile != null);
+            })).filter(item => item.sourceFile != null) : [];
         const referencingImportsAndExports = this.getReferencingImportAndExportDeclarations();
 
         if (!overwrite)
