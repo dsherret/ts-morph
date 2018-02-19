@@ -107,8 +107,8 @@ describe(nameof(ImportDeclaration), () => {
             doTest("import * as test from '../test'", true);
         });
 
-        it("should be when using /", () => {
-            doTest("import * as test from '/test'", true);
+        it("should not be when using /", () => {
+            doTest("import * as test from '/test'", false);
         });
 
         it("should not be when not", () => {

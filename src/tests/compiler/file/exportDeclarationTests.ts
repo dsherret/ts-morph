@@ -179,8 +179,8 @@ describe(nameof(ExportDeclaration), () => {
             doTest("export * from '../test'", true);
         });
 
-        it("should be when using /", () => {
-            doTest("export * from '/test'", true);
+        it("should not be when using /", () => {
+            doTest("export * from '/test'", false);
         });
 
         it("should not be when not", () => {

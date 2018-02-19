@@ -56,13 +56,11 @@ Get the referenced source file:
 const sourceFile = importDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
 ```
 
-Get if the module specifier is for a relative or non-relative import:
+Get if the module specifier is relative (starts with `./` or `../`):
 
 ```ts
 importDeclaration.isModuleSpecifierRelative();
 ```
-
-Note: Relative imports are imports that have module specifiers that start with `./`, `../`, or `/`.
 
 ### Default import
 

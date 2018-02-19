@@ -81,14 +81,13 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     }
 
     /**
-     * Gets if the module specifier starts with `/`, `./`, or `../`.
+     * Gets if the module specifier starts with `./` or `../`.
      */
     isModuleSpecifierRelative() {
         const moduleSpecifier = this.getModuleSpecifier();
         if (moduleSpecifier == null)
             return false;
-        return StringUtils.startsWith(moduleSpecifier, "/") ||
-            StringUtils.startsWith(moduleSpecifier, "./") ||
+        return StringUtils.startsWith(moduleSpecifier, "./") ||
             StringUtils.startsWith(moduleSpecifier, "../");
     }
 
