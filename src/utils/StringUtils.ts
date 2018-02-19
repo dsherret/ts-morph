@@ -16,11 +16,15 @@ export class StringUtils {
     }
 
     static startsWith(str: string, startsWithString: string) {
-        return str.substr(0, startsWithString.length) === startsWithString;
+        if (typeof String.prototype.startsWith === "function")
+            return str.startsWith(startsWithString);
+        return Es5StringUtils.startsWith(str, startsWithString);
     }
 
     static endsWith(str: string, endsWithString: string) {
-        return str.substr(str.length - endsWithString.length, endsWithString.length) === endsWithString;
+        if (typeof String.prototype.endsWith === "function")
+            return str.endsWith(endsWithString);
+        return Es5StringUtils.endsWith(str, endsWithString);
     }
 
     static getLineNumberFromPos(str: string, pos: number) {
@@ -34,5 +38,15 @@ export class StringUtils {
         }
 
         return count + 1; // convert count to line number
+    }
+}
+
+export class Es5StringUtils {
+    static startsWith(str: string, startsWithString: string) {
+        return str.substr(0, startsWithString.length) === startsWithString;
+    }
+
+    static endsWith(str: string, endsWithString: string) {
+        return str.substr(str.length - endsWithString.length, endsWithString.length) === endsWithString;
     }
 }

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as errors from "./../../errors";
-import {StringUtils} from "./../../utils";
+import {StringUtils, Es5StringUtils} from "./../../utils";
 
 describe(nameof(StringUtils), () => {
     describe(nameof(StringUtils.getLineNumberFromPos), () => {
@@ -40,6 +40,36 @@ describe(nameof(StringUtils), () => {
             const pos = str.length;
             str += "out\r\nmore and more";
             expect(StringUtils.getLineNumberFromPos(str, pos)).to.equal(6);
+        });
+    });
+});
+
+describe(nameof(Es5StringUtils), () => {
+    describe(nameof(Es5StringUtils.startsWith), () => {
+        function doTest(str: string, startsWith: string, expected: boolean) {
+            expect(Es5StringUtils.startsWith(str, startsWith)).to.equal(expected);
+        }
+
+        it("should be true when it does", () => {
+            doTest("testing", "test", true);
+        });
+
+        it("should be false when it doesn't", () => {
+            doTest("testing", "test2", false);
+        });
+    });
+
+    describe(nameof(Es5StringUtils.endsWith), () => {
+        function doTest(str: string, endsWith: string, expected: boolean) {
+            expect(Es5StringUtils.endsWith(str, endsWith)).to.equal(expected);
+        }
+
+        it("should be true when it does", () => {
+            doTest("testing", "ing", true);
+        });
+
+        it("should be false when it doesn't", () => {
+            doTest("testing", "3ing", false);
         });
     });
 });
