@@ -51,8 +51,6 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
             })
     })));
 
-    file.save();
-
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 

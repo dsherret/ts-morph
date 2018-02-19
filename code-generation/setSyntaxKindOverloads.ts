@@ -34,6 +34,8 @@ modifyFile(ast.getSourceFileOrThrow("Node.d.ts"));
 modifyFile(ast.getSourceFileOrThrow("InitializerGetExpressionableNode.d.ts"));
 modifyFile(ast.getSourceFileOrThrow("StatementedNode.d.ts"));
 
+ast.save();
+
 console.log("End: " + new Date());
 
 function modifyFile(sourceFile: SourceFile) {
@@ -52,8 +54,6 @@ function modifyFile(sourceFile: SourceFile) {
     const diagnostics = sourceFile.getDiagnostics();
     if (diagnostics.length > 0)
         throw new Error("There were definition file errors after adding the syntax kind overloads: " + diagnostics[0].getMessageText());
-
-    sourceFile.saveSync();
 }
 
 function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {

@@ -37,6 +37,7 @@ mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathToSourc
 // update the main.d.ts file
 mainFile.getClassOrThrow("TsSimpleAst").setIsDefaultExport(true);
 mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1"));
-mainFile.save();
 
 definitionFiles.filter(f => f !== mainFile).forEach(f => f.delete());
+
+ast.save();

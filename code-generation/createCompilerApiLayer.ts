@@ -85,8 +85,6 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
 
         sourceFile.replaceWithText(sourceFile.getFullText().replace(/\r?\n/g, "\r\n"));
 
-        sourceFile.save();
-
         function addSeparatedDeclarations() {
             for (const enumDec of allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0))
                 cloneEnums(sourceFile, [enumDec]);

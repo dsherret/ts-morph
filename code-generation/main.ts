@@ -14,3 +14,5 @@ console.log("Creating type guards utility class...");
 createTypeGuardsUtility(inspector);
 console.log("Creating compiler api layer...");
 createCompilerApiLayer(factory);
+
+inspector.getAst().save();
