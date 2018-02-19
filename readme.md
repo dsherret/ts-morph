@@ -8,7 +8,7 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (18 February 2018)
+## Library Development - Progress Update (19 February 2018)
 
 View information on the new versions in [versions.md](versions.md).
 

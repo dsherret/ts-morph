@@ -4,7 +4,7 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail. This file is only a high leve
 
 ## Version 8
 
-All file system deletes are now deffered until `.save()` is called on the main `ast` object.
+All file system copies, moves, and deletes are now deffered until `.save()` is called on the main `ast` object.
 
 For example:
 
@@ -26,14 +26,18 @@ ast.save();
 
 This was done so that nothing will be passed to the file system until you are all done manipulating.
 
-### Deleting a source file or directory immediately
+### Deleting, moving, or copying a source file or directory immediately
 
-If you want the previous delete behaviour, then use the `.deleteImmediately()` methods:
+If you want the previous behaviour, then use the "Immediately" methods:
 
 ```ts
+await sourceFile.copyImmediately("NewFile.ts"); // or use 'Sync' alternatives
+await sourceFile.moveImmediately("NewFile2.ts");
 await sourceFile.deleteImmediately();
 await directory.deleteImmediately();
 ```
+
+Moving directories is going to come soon. Follow the progress in [#256](https://github.com/dsherret/ts-simple-ast/issues/256).
 
 ## Version 7
 
