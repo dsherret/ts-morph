@@ -104,8 +104,8 @@ describe(nameof(SourceFile), () => {
             const file4 = tsSimpleAst.createSourceFile("/file4.ts", file4Text);
             sourceFile.move("/dir/NewFile.ts");
             expect(file1.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";`);
-            expect(file2.getFullText()).to.equal(`import * as interfaces from "./../dir/NewFile";\nimport "./../dir/NewFile";`);
-            expect(file3.getFullText()).to.equal(`export * from "./../dir/NewFile";`);
+            expect(file2.getFullText()).to.equal(`import * as interfaces from "../dir/NewFile";\nimport "../dir/NewFile";`);
+            expect(file3.getFullText()).to.equal(`export * from "../dir/NewFile";`);
             expect(file4.getFullText()).to.equal(file4Text);
         });
 
@@ -124,7 +124,7 @@ describe(nameof(SourceFile), () => {
             const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const otherFile = tsSimpleAst.createSourceFile("/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("/dir/NewFile.ts");
-            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "./../OtherInterface";\nexport interface MyInterface {}\nexport * from "./../OtherInterface";`);
+            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface";\nexport interface MyInterface {}\nexport * from "../OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
         });
 
@@ -1056,7 +1056,7 @@ function myFunction(param: MyClass) {
         }
 
         it("should get the module specifier to a source file in a different directory", () => {
-            doTest("/dir/from.ts", "/dir2/to.ts", "./../dir2/to");
+            doTest("/dir/from.ts", "/dir2/to.ts", "../dir2/to");
         });
 
         it("should get the module specifier to a source file in the same directory", () => {
@@ -1068,31 +1068,31 @@ function myFunction(param: MyClass) {
         });
 
         it("should get the module specifier to a definition file", () => {
-            doTest("/dir/from.ts", "/dir2/to.d.ts", "./../dir2/to");
+            doTest("/dir/from.ts", "/dir2/to.d.ts", "../dir2/to");
         });
 
         it("should get the module specifier to a definition file that doing use a lower case extension", () => {
-            doTest("/dir/from.ts", "/dir2/to.D.TS", "./../dir2/to");
+            doTest("/dir/from.ts", "/dir2/to.D.TS", "../dir2/to");
         });
 
         it("should use an implicit index when specifying the index file in a different directory", () => {
-            doTest("/dir/file.ts", "/dir2/index.ts", "./../dir2");
+            doTest("/dir/file.ts", "/dir2/index.ts", "../dir2");
         });
 
         it("should use an implicit index when specifying the index file in a parent directory", () => {
-            doTest("/dir/parent/file.ts", "/dir/index.ts", "./../../dir");
+            doTest("/dir/parent/file.ts", "/dir/index.ts", "../../dir");
         });
 
         it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
-            doTest("/dir/file.ts", "/dir2/INDEX.ts", "./../dir2");
+            doTest("/dir/file.ts", "/dir2/INDEX.ts", "../dir2");
         });
 
         it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
-            doTest("/dir/file.ts", "/dir2/index.d.ts", "./../dir2");
+            doTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2");
         });
 
         it("should use an implicit index when specifying the index file in the same directory", () => {
-            doTest("/dir/file.ts", "/dir/index.ts", "./../dir");
+            doTest("/dir/file.ts", "/dir/index.ts", "../dir");
         });
     });
 

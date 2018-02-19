@@ -778,7 +778,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile) {
         const sourceFilePath = sourceFile.getFilePath().replace(/\/index(\.d\.ts|\.ts|\.js)$/i, "");
-        return "./" + FileUtils.getRelativePathTo(this.getFilePath(), sourceFilePath).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+        const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), sourceFilePath).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+        return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
