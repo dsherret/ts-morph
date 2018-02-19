@@ -84,9 +84,20 @@ export class CompilerFactory {
      */
     createSourceFileFromText(filePath: string, sourceText: string) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        if (this.containsSourceFileAtPath(filePath) || this.global.fileSystemWrapper.fileExistsSync(filePath))
-            throw new errors.InvalidOperationError(`A source file already exists at the provided file path: ${filePath}`);
+        this.throwIfFileExists(filePath);
         return this.getSourceFileFromText(filePath, sourceText);
+    }
+
+    /**
+     * Throws an error if the file exists in the cache or file system.
+     * @param filePath - File path.
+     * @param prefixMessage - Message to attach on as a prefix.
+     */
+    throwIfFileExists(filePath: string, prefixMessage?: string) {
+        if (!this.containsSourceFileAtPath(filePath) && !this.global.fileSystemWrapper.fileExistsSync(filePath))
+            return;
+        prefixMessage = prefixMessage == null ? "" : prefixMessage + " ";
+        throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
     /**
@@ -225,19 +236,22 @@ export class CompilerFactory {
     getSourceFile(compilerSourceFile: ts.SourceFile): SourceFile {
         return this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
             const sourceFile = new SourceFile(this.global, compilerSourceFile);
-            this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-            this.global.fileSystemWrapper.dequeueDelete(sourceFile.getFilePath());
-
-            // add to list of directories
-            const dirPath = sourceFile.getDirectoryPath();
-            this.directoryCache.createOrAddIfNotExists(dirPath);
-            this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
-
-            // fire the event
-            this.sourceFileAddedEventContainer.fire(undefined);
-
+            this.addSourceFileToCache(sourceFile);
             return sourceFile;
         });
+    }
+
+    private addSourceFileToCache(sourceFile: SourceFile) {
+        this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
+        this.global.fileSystemWrapper.dequeueDelete(sourceFile.getFilePath());
+
+        // add to list of directories
+        const dirPath = sourceFile.getDirectoryPath();
+        this.directoryCache.createOrAddIfNotExists(dirPath);
+        this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
+
+        // fire the event
+        this.sourceFileAddedEventContainer.fire(undefined);
     }
 
     /**
@@ -361,7 +375,15 @@ export class CompilerFactory {
         const nodeToReplace = oldNode instanceof Node ? oldNode.compilerNode : oldNode;
         const node = oldNode instanceof Node ? oldNode : this.nodeCache.get(oldNode);
 
-        this.nodeCache.replaceKey(nodeToReplace, newNode);
+        if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
+            const oldFilePath = (nodeToReplace as ts.SourceFile).fileName;
+            const sourceFile = this.sourceFileCacheByFilePath.get(oldFilePath)!;
+            this.removeCompilerNodeFromCache(nodeToReplace);
+            this.addSourceFileToCache(sourceFile);
+            this.nodeCache.set(newNode, sourceFile);
+        }
+        else
+            this.nodeCache.replaceKey(nodeToReplace, newNode);
 
         if (node != null)
             node.replaceCompilerNodeFromFactory(newNode);
@@ -372,7 +394,14 @@ export class CompilerFactory {
      * @param node - Node to remove.
      */
     removeNodeFromCache(node: Node) {
-        const compilerNode = node.compilerNode;
+        this.removeCompilerNodeFromCache(node.compilerNode);
+    }
+
+    /**
+     * Removes a compiler node from the cache.
+     * @param compilerNode - Compiler node to remove.
+     */
+    private removeCompilerNodeFromCache(compilerNode: ts.Node) {
         this.nodeCache.removeByKey(compilerNode);
 
         if (compilerNode.kind === SyntaxKind.SourceFile) {

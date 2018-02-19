@@ -78,11 +78,15 @@ const newSourceFile = sourceFile.copy("newFileName.ts");
 const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
 ```
 
-Note that the file, in both these cases, won't be written to the file system unless you save it.
-
 ### Move
 
-TODO: Not yet supported.
+Moves a source file to a new file by specifying a new relative or absolute path:
+
+```ts
+sourceFile.move("newFileName.ts");
+// this won't throw if a file exists at the specified path
+sourceFile.move("other.ts", { overwrite: true });
+```
 
 ### Refresh from file system
 

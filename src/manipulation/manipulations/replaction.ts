@@ -69,3 +69,17 @@ export function replaceTextPossiblyCreatingChildNodes(opts: ReplaceTextPossiblyC
         end: replacePos + newText.length
     }));
 }
+
+export interface ReplaceSourceFileForFilePathMoveOptions {
+    sourceFile: SourceFile;
+    newFilePath: string;
+}
+
+/**
+ * Replaces a source file for a file path move.
+ */
+export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
+    const {sourceFile, newFilePath} = opts;
+    const replacementSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(sourceFile.getFullText(), { filePath: newFilePath });
+    new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory).handleNode(sourceFile, replacementSourceFile);
+}

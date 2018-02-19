@@ -142,6 +142,14 @@ describe(nameof(ExportDeclaration), () => {
             expect(mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
         });
 
+        it("should get the source file when it's an index.ts file", () => {
+            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
+            const classSourceFile = ast.createSourceFile("class/index.ts", `export class Class {}`);
+
+            expect(mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
+        });
+
         it("should return undefined when the referenced file doesn't exist", () => {
             const ast = new TsSimpleAst({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);

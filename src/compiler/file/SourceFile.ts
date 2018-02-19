@@ -2,7 +2,8 @@ import {ts, SyntaxKind, LanguageVariant} from "./../../typescript";
 import * as errors from "./../../errors";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {Directory} from "./../../fileSystem";
-import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting} from "./../../manipulation";
+import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting,
+    replaceSourceFileForFilePathMove} from "./../../manipulation";
 import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/textSeek";
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "./../../structures";
@@ -105,7 +106,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Copy this source file to a new file.
-     * @param filePath - A new file path. Can be relative to the original file or an absolute path.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
      * @param options - Options for copying.
      */
     copy(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
@@ -123,6 +124,36 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             else
                 throw err;
         }
+    }
+
+    /**
+     * Moves this source file to a new file.
+     *
+     * This will modify the export and import declarations' module specifiers that specify this file.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    move(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
+        const {overwrite = false} = options;
+        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+
+        if (filePath === this.getFilePath())
+            return this;
+
+        const importsAndExports = this.getReferencingImportAndExportDeclarations();
+
+        if (!overwrite)
+            this.global.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
+
+        replaceSourceFileForFilePathMove({
+            newFilePath: filePath,
+            sourceFile: this
+        });
+
+        for (const importAndExport of importsAndExports)
+            importAndExport.setModuleSpecifier(this);
+
+        return this;
     }
 
     /**
@@ -190,6 +221,57 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         return (this.compilerNode.typeReferenceDirectives || [])
             .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
+    }
+
+    /**
+     * Get any source files that reference this source file in an import or export declaration.
+     */
+    getReferencingSourceFiles() {
+        const sourceFiles = createHashSet<SourceFile>();
+
+        for (const importOrExport of this.getReferencingImportAndExportDeclarations()) {
+            if (sourceFiles.has(importOrExport.sourceFile))
+                continue;
+            sourceFiles.add(importOrExport.sourceFile);
+        }
+
+        return ArrayUtils.from(sourceFiles.values());
+    }
+
+    /**
+     * Gets the import and exports in other source files that reference this source file.
+     */
+    getReferencingImportAndExportDeclarations() {
+        // todo: see if there's a better way of doing this
+        const baseNames = getBaseNames(this);
+        const result: (ExportDeclaration | ImportDeclaration)[] = [];
+        for (const sourceFile of this.global.compilerFactory.getSourceFilesByDirectoryDepth()) {
+            if (sourceFile === this)
+                continue;
+
+            const compilerImportsAndExports = sourceFile.getChildSyntaxListOrThrow().getCompilerChildren()
+                .filter(c => c.kind === SyntaxKind.ImportDeclaration || c.kind === SyntaxKind.ExportDeclaration);
+            const importsAndExports = compilerImportsAndExports.map(c => sourceFile.getNodeFromCompilerNode(c) as (ExportDeclaration | ImportDeclaration));
+
+            for (const importOrExport of importsAndExports) {
+                const moduleSpecifier = importOrExport.getModuleSpecifier();
+                const referencesSourceFile = moduleSpecifier != null
+                    && baseNames.some(baseName => FileUtils.pathEndsWith(moduleSpecifier, baseName)) // for better performance since getModuleSpecifierSourceFile is slow
+                    && importOrExport.getModuleSpecifierSourceFile() === this;
+
+                if (referencesSourceFile)
+                    result.push(importOrExport);
+            }
+        }
+
+        return result;
+
+        function getBaseNames(sourceFile: SourceFile) {
+            const baseName = sourceFile.getBaseName().replace(/(\.d\.ts|\.ts|\.js)$/i, "");
+            if (baseName === "index")
+                return [baseName, sourceFile.getDirectory().getBaseName()];
+            return [baseName];
+        }
     }
 
     /**

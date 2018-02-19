@@ -66,7 +66,7 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: st
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
-        compilerOptions = { target: ScriptTarget.ES2017 }, includeLibDts = false} = opts || {};
+        compilerOptions = undefined, includeLibDts = false} = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)

@@ -67,6 +67,59 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.move), () => {
+        function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
+            const fileText = "    interface Identifier {}    ";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath });
+            tsSimpleAst.createSourceFile("/existingFile.ts");
+            const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
+            const newFile = sourceFile.move(newFilePath, { overwrite });
+            expect(newFile).to.equal(sourceFile);
+            expect(sourceFile.getFilePath()).to.equal(absoluteNewFilePath || newFilePath);
+            expect(sourceFile.getFullText()).to.equal(fileText);
+            expect(interfaceDec.wasForgotten()).to.be.false;
+            expect(tsSimpleAst.getSourceFiles().length).to.equal(2);
+        }
+
+        it("should throw if the file already exists", () => {
+            expect(() => doTest("/file.ts", "/existingFile.ts")).to.throw(errors.InvalidOperationError,
+                "Did you mean to provide the overwrite option? A source file already exists at the provided file path: /existingFile.ts");
+        });
+
+        it("should not throw if the file already exists and the overwrite option was provided", () => {
+            expect(() => doTest("/file.ts", "/existingFile.ts", undefined, true)).to.not.throw();
+        });
+
+        it("should copy to a relative file path", () => {
+            doTest("/dir/file.ts", "../subDir/existingFile.ts", "/subDir/existingFile.ts");
+        });
+
+        it("should change the module specifiers in other files when moving", () => {
+            const fileText = "export interface MyInterface {}";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file4Text = `export * from "./sub/MyInterface";\nimport "MyOtherFile";`;
+            const file4 = tsSimpleAst.createSourceFile("/file4.ts", file4Text);
+            sourceFile.move("/dir/NewFile.ts");
+            expect(file1.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";`);
+            expect(file2.getFullText()).to.equal(`import * as interfaces from "./../dir/NewFile";\nimport "./../dir/NewFile";`);
+            expect(file3.getFullText()).to.equal(`export * from "./../dir/NewFile";`);
+            expect(file4.getFullText()).to.equal(file4Text);
+        });
+
+        it("should change the module specifiers in other files when moving an index file", () => {
+            const fileText = "export interface MyInterface {}";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
+            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import * as test from "./sub";`);
+            const file2 = tsSimpleAst.createSourceFile("/file2.ts", `import "./sub/index";`);
+            sourceFile.move("/dir/index.ts");
+            expect(file1.getFullText()).to.equal(`import * as test from "./dir";`);
+            expect(file2.getFullText()).to.equal(`import "./dir";`);
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.save), () => {
         const fileText = "    interface Identifier {}    ";
         const filePath = "/Folder/File.ts";
@@ -1019,6 +1072,45 @@ function myFunction(param: MyClass) {
 
         it("should use an implicit index when specifying the index file in the same directory", () => {
             doTest("/dir/file.ts", "/dir/index.ts", "./../dir");
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getReferencingImportAndExportDeclarations), () => {
+        it("should get the imports and exports that reference this source file", () => {
+            const fileText = "export interface MyInterface {}";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file4 = tsSimpleAst.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
+
+            const referencing = sourceFile.getReferencingImportAndExportDeclarations();
+            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getImportDeclarations(),
+                ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getText()).sort());
+        });
+
+        it("should get the imports and exports that reference an index file", () => {
+            const fileText = "export interface MyInterface {}";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
+            const file1 = tsSimpleAst.createSourceFile("/file.ts", `export * from "./sub";`);
+            const file2 = tsSimpleAst.createSourceFile("/file2.ts", `import "./sub/index";`);
+            const referencing = sourceFile.getReferencingImportAndExportDeclarations();
+            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getExportDeclarations(),
+                ...file2.getImportDeclarations()].map(d => d.getText()).sort());
+        });
+    });
+
+    describe(nameof<SourceFile>(s => s.getReferencingSourceFiles), () => {
+        it("should get the source files that reference this source file", () => {
+            const fileText = "export interface MyInterface {}";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file4 = tsSimpleAst.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
+
+            const referencing = sourceFile.getReferencingSourceFiles();
+            expect(referencing.map(r => r.getFilePath()).sort()).to.deep.equal([file1, file2, file3].map(s => s.getFilePath()).sort());
         });
     });
 });
