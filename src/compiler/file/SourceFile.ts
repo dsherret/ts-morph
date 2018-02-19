@@ -140,7 +140,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (filePath === this.getFilePath())
             return this;
 
-        const importsAndExports = this.getReferencingImportAndExportDeclarations();
+        // todo: first check to see if this has any exports or imports (add isExternalModule()?)
+        const fileImportAndExportsWithSourceFiles = getFileImportAndExportDeclarations(this)
+            .filter(declaration => declaration.isModuleSpecifierRelative())
+            .map(declaration => ({
+                declaration,
+                sourceFile: declaration.getModuleSpecifierSourceFile()!
+            })).filter(item => item.sourceFile != null);
+        const referencingImportsAndExports = this.getReferencingImportAndExportDeclarations();
 
         if (!overwrite)
             this.global.compilerFactory.throwIfFileExists(filePath, "Did you mean to provide the overwrite option?");
@@ -150,7 +157,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             sourceFile: this
         });
 
-        for (const importAndExport of importsAndExports)
+        // update the import & export declarations in this file
+        for (const item of fileImportAndExportsWithSourceFiles)
+            item.declaration.setModuleSpecifier(item.sourceFile);
+        // update the import & export declarations in other files
+        for (const importAndExport of referencingImportsAndExports)
             importAndExport.setModuleSpecifier(this);
 
         return this;
@@ -249,11 +260,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             if (sourceFile === this)
                 continue;
 
-            const compilerImportsAndExports = sourceFile.getChildSyntaxListOrThrow().getCompilerChildren()
-                .filter(c => c.kind === SyntaxKind.ImportDeclaration || c.kind === SyntaxKind.ExportDeclaration);
-            const importsAndExports = compilerImportsAndExports.map(c => sourceFile.getNodeFromCompilerNode(c) as (ExportDeclaration | ImportDeclaration));
+            const importAndExports = getFileImportAndExportDeclarations(sourceFile);
 
-            for (const importOrExport of importsAndExports) {
+            for (const importOrExport of importAndExports) {
                 const moduleSpecifier = importOrExport.getModuleSpecifier();
                 const referencesSourceFile = moduleSpecifier != null
                     && baseNames.some(baseName => FileUtils.pathEndsWith(moduleSpecifier, baseName)) // for better performance since getModuleSpecifierSourceFile is slow
@@ -785,4 +794,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         this.setIsSaved(true); // saved when loaded from file system
         return FileSystemRefreshResult.Updated;
     }
+}
+
+function getFileImportAndExportDeclarations(sourceFile: SourceFile) {
+    // efficient way of getting them
+    const compilerImportsAndExports = sourceFile.getChildSyntaxListOrThrow().getCompilerChildren()
+        .filter(c => c.kind === SyntaxKind.ImportDeclaration || c.kind === SyntaxKind.ExportDeclaration);
+    return compilerImportsAndExports.map(c => sourceFile.getNodeFromCompilerNode(c) as (ExportDeclaration | ImportDeclaration));
 }

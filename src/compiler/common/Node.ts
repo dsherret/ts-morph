@@ -1208,7 +1208,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets or creates a node from the internal cache.
      * @internal
      */
-    protected getNodeFromCompilerNode<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
+    getNodeFromCompilerNode<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType): LocalNodeType
     {
         return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile) as LocalNodeType;
@@ -1218,7 +1218,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets or creates a node from the internal cache, if it exists.
      * @internal
      */
-    protected getNodeFromCompilerNodeIfExists<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
+    getNodeFromCompilerNodeIfExists<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType | undefined): LocalNodeType | undefined
     {
         return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalNodeType, LocalCompilerNodeType>(compilerNode);
