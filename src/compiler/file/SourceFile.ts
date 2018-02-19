@@ -20,6 +20,14 @@ import {ExportAssignment} from "./ExportAssignment";
 import {ExportSpecifier} from "./ExportSpecifier";
 import {FileSystemRefreshResult} from "./FileSystemRefreshResult";
 
+export interface SourceFileCopyOptions {
+    overwrite?: boolean;
+}
+
+export interface SourceFileMoveOptions {
+    overwrite?: boolean;
+}
+
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
 export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -106,10 +114,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Copy this source file to a new file.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
      * @param filePath - New file path. Can be relative to the original file or an absolute path.
      * @param options - Options for copying.
      */
-    copy(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
+    copy(filePath: string, options: SourceFileCopyOptions = {}): SourceFile {
         const {overwrite = false} = options;
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
@@ -144,13 +154,39 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Copy this source file to a new file and immediately saves it to the file system asynchronously.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
+     */
+    async copyImmediately(filePath: string, options?: SourceFileCopyOptions): Promise<SourceFile> {
+        const newSourceFile = this.copy(filePath, options);
+        await newSourceFile.save();
+        return newSourceFile;
+    }
+
+    /**
+     * Copy this source file to a new file and immediately saves it to the file system synchronously.
+     *
+     * This will modify the module specifiers in the new file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for copying.
+     */
+    copyImmediatelySync(filePath: string, options?: SourceFileCopyOptions): SourceFile {
+        const newSourceFile = this.copy(filePath, options);
+        newSourceFile.saveSync();
+        return newSourceFile;
+    }
+
+    /**
      * Moves this source file to a new file.
      *
-     * This will modify the export and import declarations' module specifiers that specify this file.
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
      * @param filePath - New file path. Can be relative to the original file or an absolute path.
      * @param options - Options for moving.
      */
-    move(filePath: string, options: { overwrite?: boolean; } = {}): SourceFile {
+    move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
         const {overwrite = false} = options;
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
@@ -176,6 +212,41 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         for (const importAndExport of referencingImportsAndExports)
             importAndExport.setModuleSpecifier(this);
 
+        return this;
+    }
+
+    /**
+     * Moves this source file to a new file and asynchronously updates the file system immediately.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    async moveImmediately(filePath: string, options?: SourceFileMoveOptions): Promise<SourceFile> {
+        const oldFilePath = this.getFilePath();
+        const newFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        this.move(filePath, options);
+        if (oldFilePath === newFilePath)
+            await this.save();
+        else
+            await Promise.all([this.global.fileSystemWrapper.deleteImmediately(oldFilePath), this.save()]);
+        return this;
+    }
+
+    /**
+     * Moves this source file to a new file and synchronously updates the file system immediately.
+     *
+     * This will modify the module specifiers in other files that specify this file and the module specifiers in the current file, if necessary.
+     * @param filePath - New file path. Can be relative to the original file or an absolute path.
+     * @param options - Options for moving.
+     */
+    moveImmediatelySync(filePath: string, options?: SourceFileMoveOptions): SourceFile {
+        const oldFilePath = this.getFilePath();
+        const newFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        this.move(filePath, options);
+        if (oldFilePath !== newFilePath)
+            this.global.fileSystemWrapper.deleteImmediatelySync(oldFilePath);
+        this.saveSync();
         return this;
     }
 

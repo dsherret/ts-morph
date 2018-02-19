@@ -94,6 +94,32 @@ describe(nameof(SourceFile), () => {
         });
     });
 
+    describe(nameof<SourceFile>(n => n.copyImmediately), () => {
+        it("should copy the source file and update the file system", async () => {
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            const newSourceFile = await sourceFile.copyImmediately("NewFile.ts");
+            expect(fileSystem.fileExistsSync("/File.ts")).to.be.true;
+            expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
+            expect(sourceFile.getFilePath()).to.equal("/File.ts");
+            expect(newSourceFile.getFilePath()).to.equal("/NewFile.ts");
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.copyImmediatelySync), () => {
+        it("should copy the source file and update the file system", () => {
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            const newSourceFile = sourceFile.copyImmediatelySync("NewFile.ts");
+            expect(fileSystem.fileExistsSync("/File.ts")).to.be.true;
+            expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
+            expect(sourceFile.getFilePath()).to.equal("/File.ts");
+            expect(newSourceFile.getFilePath()).to.equal("/NewFile.ts");
+        });
+    });
+
     describe(nameof<SourceFile>(n => n.move), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
@@ -165,6 +191,50 @@ describe(nameof(SourceFile), () => {
                 `export interface MyInterface {}\n` +
                 `export * from "./../dir/OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.moveImmediately), () => {
+        it("should move the source file and update the file system", async () => {
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            await sourceFile.moveImmediately("NewFile.ts");
+            expect(fileSystem.fileExistsSync("/File.ts")).to.be.false;
+            expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
+        });
+
+        it("should only save source file when moving to the same path", async () => {
+            const filePath = "/File.ts";
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            await sourceFile.moveImmediately(filePath);
+            expect(fileSystem.fileExistsSync(filePath)).to.be.true;
+            expect(host.getDeleteLog().length).to.equal(0);
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.moveImmediatelySync), () => {
+        it("should move the source file and update the file system", () => {
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            sourceFile.moveImmediatelySync("NewFile.ts");
+            expect(fileSystem.fileExistsSync("/File.ts")).to.be.false;
+            expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
+        });
+
+        it("should only save source file when moving to the same path", () => {
+            const filePath = "/File.ts";
+            const host = getFileSystemHostWithFiles([]);
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
+            const fileSystem = tsSimpleAst.getFileSystem();
+            tsSimpleAst.saveSync();
+            sourceFile.moveImmediatelySync(filePath);
+            expect(fileSystem.fileExistsSync(filePath)).to.be.true;
+            expect(host.getDeleteLog().length).to.equal(0);
         });
     });
 

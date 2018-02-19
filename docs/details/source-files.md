@@ -81,6 +81,15 @@ const otherSourceFile = sourceFile.copy("other.ts", { overwrite: true });
 Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations
 in the copied file.
 
+#### Copying Immediately
+
+As with `.deleteImmediately()` it's possible to immediately copy a file and have the changes reflected on the file system:
+
+```ts
+await sourceFile.copyImmediately("NewFile.ts");
+sourceFile.copyImmediatelySync("NewFile2.ts");
+```
+
 ### Move
 
 Moves a source file to a new file by specifying a new relative or absolute path:
@@ -93,6 +102,15 @@ sourceFile.move("other.ts", { overwrite: true });
 
 Note: If necessary, this will automatically update the module specifiers of the relative import and export declarations
 in the moving file and the relative import and export declarations in other files to point to the new location.
+
+#### Moving Immediately
+
+As with `.deleteImmediately()` it's possible to immediately move a file and have the changes reflected on the file system:
+
+```ts
+await sourceFile.moveImmediately("NewFile.ts");
+sourceFile.moveImmediatelySync("NewFile2.ts");
+```
 
 ### Refresh from file system
 
