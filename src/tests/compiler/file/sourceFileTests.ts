@@ -12,58 +12,66 @@ import {FileUtils} from "./../../../utils";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
-        const fileText = "    interface Identifier {}    ";
-        const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
-        const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
-        const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
-        const testFile = sourceFile.copy("/TestFile.ts");
+        describe("general", () => {
+            const fileText = "    interface Identifier {}    ";
+            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
+            const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
+            const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
+            const testFile = sourceFile.copy("/TestFile.ts");
 
-        it("should throw if the file already exists", () => {
-            expect(() => sourceFile.copy("/TestFile.ts")).to.throw(errors.InvalidOperationError,
-                "Did you mean to provide the overwrite option? A source file already exists at the provided file path: /TestFile.ts");
-        });
+            it("should throw if the file already exists", () => {
+                expect(() => sourceFile.copy("/TestFile.ts")).to.throw(errors.InvalidOperationError,
+                    "Did you mean to provide the overwrite option? A source file already exists at the provided file path: /TestFile.ts");
+            });
 
-        it("should overwrite if specifying to overwrite", () => {
-            const newText = "const t = 5;";
-            sourceFile.replaceWithText(newText);
-            const copiedFile = sourceFile.copy("/TestFile.ts", { overwrite: true });
-            expect(copiedFile).to.equal(testFile);
-            expect(copiedFile.getFullText()).to.equal(newText);
-            expect(testFile.getFullText()).to.equal(newText);
-        });
+            it("should overwrite if specifying to overwrite", () => {
+                const newText = "const t = 5;";
+                sourceFile.replaceWithText(newText);
+                const copiedFile = sourceFile.copy("/TestFile.ts", { overwrite: true });
+                expect(copiedFile).to.equal(testFile);
+                expect(copiedFile.getFullText()).to.equal(newText);
+                expect(testFile.getFullText()).to.equal(newText);
+            });
 
-        describe(nameof(tsSimpleAst), () => {
-            it("should include the copied source files", () => {
-                expect(tsSimpleAst.getSourceFiles().length).to.equal(4);
+            describe(nameof(tsSimpleAst), () => {
+                it("should include the copied source files", () => {
+                    expect(tsSimpleAst.getSourceFiles().length).to.equal(4);
+                });
+            });
+
+            describe("relative source file", () => {
+                it("should not be saved", () => {
+                    expect(relativeSourceFile.isSaved()).to.be.false;
+                });
+
+                it("should have have the same text", () => {
+                    expect(relativeSourceFile.getFullText()).to.equal(fileText);
+                });
+
+                it("should have the expected path", () => {
+                    expect(relativeSourceFile.getFilePath()).to.equal("/NewFolder/NewFile.ts");
+                });
+            });
+
+            describe("absolute source file", () => {
+                it("should not be saved", () => {
+                    expect(absoluteSourceFile.isSaved()).to.be.false;
+                });
+
+                it("should have have the same text", () => {
+                    expect(absoluteSourceFile.getFullText()).to.equal(fileText);
+                });
+
+                it("should have the expected path", () => {
+                    expect(absoluteSourceFile.getFilePath()).to.equal("/NewFile.ts");
+                });
             });
         });
 
-        describe("relative source file", () => {
-            it("should not be saved", () => {
-                expect(relativeSourceFile.isSaved()).to.be.false;
-            });
-
-            it("should have have the same text", () => {
-                expect(relativeSourceFile.getFullText()).to.equal(fileText);
-            });
-
-            it("should have the expected path", () => {
-                expect(relativeSourceFile.getFilePath()).to.equal("/NewFolder/NewFile.ts");
-            });
-        });
-
-        describe("absolute source file", () => {
-            it("should not be saved", () => {
-                expect(absoluteSourceFile.isSaved()).to.be.false;
-            });
-
-            it("should have have the same text", () => {
-                expect(absoluteSourceFile.getFullText()).to.equal(fileText);
-            });
-
-            it("should have the expected path", () => {
-                expect(absoluteSourceFile.getFilePath()).to.equal("/NewFile.ts");
-            });
+        it("should return the existing source file when copying to the same path", () => {
+            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "Folder/File.ts" });
+            const copiedSourceFile = sourceFile.copy(sourceFile.getFilePath());
+            expect(copiedSourceFile).to.equal(sourceFile);
         });
     });
 
