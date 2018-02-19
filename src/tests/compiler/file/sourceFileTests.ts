@@ -1258,4 +1258,23 @@ function myFunction(param: MyClass) {
             doTest("/MyInterface.d.ts", ".d.ts");
         });
     });
+
+    describe(nameof<SourceFile>(s => s.getBaseNameWithoutExtension), () => {
+        function doTest(filePath: string, baseNameWithoutExtension: string) {
+            const {sourceFile} = getInfoFromText("", { filePath });
+            expect(sourceFile.getBaseNameWithoutExtension()).to.equal(baseNameWithoutExtension);
+        }
+
+        it("should get the source file's extension when a .ts file", () => {
+            doTest("/MyInterface.ts", "MyInterface");
+        });
+
+        it("should get the source file's extension when a .js file", () => {
+            doTest("/MyInterface.js", "MyInterface");
+        });
+
+        it("should get the source file's extension when a .d.ts file", () => {
+            doTest("/MyInterface.d.ts", "MyInterface");
+        });
+    });
 });

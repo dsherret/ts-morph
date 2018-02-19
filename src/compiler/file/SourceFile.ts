@@ -91,6 +91,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the file path's base name without the extension.
+     */
+    getBaseNameWithoutExtension() {
+        const baseName = this.getBaseName();
+        const extension = this.getExtension();
+        return baseName.substring(0, baseName.length - extension.length);
+    }
+
+    /**
      * Gets the file path's extension.
      */
     getExtension() {
