@@ -13,12 +13,14 @@ import Ast from "ts-simple-ast";
 
 const ast = new Ast();
 
-// ...lots of code here that manipulates and deletes files, for example...
+// ...lots of code here that manipulates, copies, moves, and deletes files...
 sourceFile.delete();
 directory.delete();
-// ...more code that manipulates and deletes files...
+otherSourceFile.move("OtherFile.ts");
+otherSourceFile.copy("NewFile.ts");
+// ...more code that changes files...
 
-// deletes are executed on the file system on this line
+// copies, moves, deletes, and other changes are executed on the file system on this line
 ast.save();
 ```
 
