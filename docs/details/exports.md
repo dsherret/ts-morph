@@ -78,6 +78,7 @@ exportDeclaration.getModuleSpecifier(); // returns: string | undefined
 exportDeclaration.setModuleSpecifier("./new-file");
 exportDeclaration.setModuleSpecifier(someSourceFile);
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
+exportDeclaration.isModuleSpecifierRelative(); // if the module specifier starts with ./, ../, or /
 exportDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
 ```
 

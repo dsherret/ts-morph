@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ImportSpecifierStructure} from "./../../structures";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren} from "./../../manipulation";
-import {ArrayUtils, TypeGuards} from "./../../utils";
+import {ArrayUtils, TypeGuards, StringUtils} from "./../../utils";
 import {Identifier} from "./../common";
 import {Statement} from "./../statement";
 import {ImportSpecifier} from "./ImportSpecifier";
@@ -61,6 +61,16 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         if (declarations.length === 0 || declarations[0].getKind() !== SyntaxKind.SourceFile)
             return undefined;
         return declarations[0] as SourceFile;
+    }
+
+    /**
+     * Gets if the module specifier starts with `/`, `./`, or `../`.
+     */
+    isModuleSpecifierRelative() {
+        const moduleSpecifier = this.getModuleSpecifier();
+        return StringUtils.startsWith(moduleSpecifier, "/") ||
+            StringUtils.startsWith(moduleSpecifier, "./") ||
+            StringUtils.startsWith(moduleSpecifier, "../");
     }
 
     /**

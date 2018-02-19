@@ -93,6 +93,29 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportDeclaration>(n => n.isModuleSpecifierRelative), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            expect(firstChild.isModuleSpecifierRelative()).to.equal(expected);
+        }
+
+        it("should be when using ./", () => {
+            doTest("import * as test from './test'", true);
+        });
+
+        it("should be when using ../", () => {
+            doTest("import * as test from '../test'", true);
+        });
+
+        it("should be when using /", () => {
+            doTest("import * as test from '/test'", true);
+        });
+
+        it("should not be when not", () => {
+            doTest("import * as test from 'test'", false);
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.setDefaultImport), () => {
         function doTest(text: string, newDefaultImport: string, expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);

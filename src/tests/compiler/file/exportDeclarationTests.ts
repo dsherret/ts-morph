@@ -165,6 +165,33 @@ describe(nameof(ExportDeclaration), () => {
         });
     });
 
+    describe(nameof<ExportDeclaration>(n => n.isModuleSpecifierRelative), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.isModuleSpecifierRelative()).to.equal(expected);
+        }
+
+        it("should be when using ./", () => {
+            doTest("export * from './test'", true);
+        });
+
+        it("should be when using ../", () => {
+            doTest("export * from '../test'", true);
+        });
+
+        it("should be when using /", () => {
+            doTest("export * from '/test'", true);
+        });
+
+        it("should not be when not", () => {
+            doTest("export * from 'test'", false);
+        });
+
+        it("should not be when not existing", () => {
+            doTest("export {test}", false);
+        });
+    });
+
     describe(nameof<ExportDeclaration>(n => n.getNamedExports), () => {
         function doTest(text: string, expected: { name: string; alias?: string; }[]) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
