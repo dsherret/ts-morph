@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.0.0"></a>
+# [8.0.0](https://github.com/dsherret/ts-simple-ast/compare/7.1.0...8.0.0) (2018-02-19)
+
+
+### Bug Fixes
+
+* Blank line would be inserted when calling an addXs method and providing an empty array in some scenarios. ([dfbf940](https://github.com/dsherret/ts-simple-ast/commit/dfbf940))
+* getRelativePathToSourceFileAsModuleSpecifier() should return `../` instead of `./../` when going back a directory. ([a7954fa](https://github.com/dsherret/ts-simple-ast/commit/a7954fa))
+* sourceFile.copy should return the current source file when copying to its own path. ([6e737e7](https://github.com/dsherret/ts-simple-ast/commit/6e737e7))
+
+
+### Code Refactoring
+
+* **file-system:** Preparing for having the ability to queue deletions. ([83e45f0](https://github.com/dsherret/ts-simple-ast/commit/83e45f0))
+
+
+### Features
+
+* [#199](https://github.com/dsherret/ts-simple-ast/issues/199) - Add SourceFile.move(...), .getReferencingSourceFiles(), and .getReferencingImportAndExportDeclarations(). ([f22db6c](https://github.com/dsherret/ts-simple-ast/commit/f22db6c))
+* Deletes do not happen on the file system until `.save()` is called on the main `ast` object. ([d208cfd](https://github.com/dsherret/ts-simple-ast/commit/d208cfd))
+* ImportDeclaration and ExportDeclaration - isModuleSpecifierRelative() ([2ef3064](https://github.com/dsherret/ts-simple-ast/commit/2ef3064))
+* setModuleSpecifier accepts a source file. ([c2a4d9a](https://github.com/dsherret/ts-simple-ast/commit/c2a4d9a))
+* SourceFile - copyImmediately and moveImmediately along with sync methods. ([4183769](https://github.com/dsherret/ts-simple-ast/commit/4183769))
+* sourceFile.copy() will automatically update the new source file's import & export declarations' module specifiers if necessary. ([e48949e](https://github.com/dsherret/ts-simple-ast/commit/e48949e))
+
+
+### BREAKING CHANGES
+
+* * ast.saveUnsavedSourceFiles() is now ast.save()
+* Directory.saveUnsavedSourceFiles() is now Directory.save()
+* **file-system:** SourceFile/Directory: delete() and deleteSync() are now deleteImmediately() and deleteImmediatelySync().
+
+
+
 <a name="7.1.0"></a>
 # [7.1.0](https://github.com/dsherret/ts-simple-ast/compare/7.0.1...7.1.0) (2018-02-15)
 
