@@ -6,7 +6,7 @@ export {Options} from "./TsSimpleAst";
 export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
 export {createWrappedNode, CreateWrappedNodeOptions} from "./createWrappedNode";
-export {getCompilerOptionsFromTsConfig} from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
+export {getCompilerOptionsFromTsConfig, CompilerOptionsFromTsConfigOptions, CompilerOptionsFromTsConfigResult} from "./utils/tsconfig/getCompilerOptionsFromTsConfig";
 export {printNode, PrintNodeOptions} from "./utils/printNode";
 export {Constructor} from "./Constructor";
 export {TypeGuards} from "./utils/TypeGuards";

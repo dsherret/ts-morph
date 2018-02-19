@@ -10,7 +10,7 @@ import {getDefinitionAst} from "./common";
 
 const ast = getDefinitionAst();
 
-const definitionFiles = ast.getSourceFiles(["**/dist/**/*.d.ts", "!**/dist/typescript/ts.d.ts"]);
+const definitionFiles = ast.getSourceFiles(["**/dist/**/*.d.ts", "!**/dist/typescript/typescript.d.ts"]);
 const mainFile = ast.getSourceFileOrThrow("main.d.ts");
 const compilerApiFile = ast.getSourceFileOrThrow("dist/typescript/typescript.d.ts");
 const exportedDeclarations = mainFile.getExportedDeclarations();
