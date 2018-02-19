@@ -96,6 +96,24 @@ export class FileUtils {
     }
 
     /**
+     * Gets the extension of the file name.
+     * @param fileOrDirPath - Path to get the extension from.
+     */
+    static getExtension(fileOrDirPath: string) {
+        const baseName = FileUtils.getBaseName(fileOrDirPath);
+        const lastDotIndex = baseName.lastIndexOf(".");
+        if (lastDotIndex <= 0) // for files like .gitignore, need to include 0
+            return ""; // same behaviour as node
+        const lastExt = baseName.substring(lastDotIndex);
+        const lastExtLowerCase = lastExt.toLowerCase();
+        if (lastExtLowerCase === ".ts" && baseName.substring(lastDotIndex - 2, lastDotIndex).toLowerCase() === ".d")
+            return baseName.substring(lastDotIndex - 2);
+        if (lastExtLowerCase === ".map" && baseName.substring(lastDotIndex - 3, lastDotIndex).toLowerCase() === ".js")
+            return baseName.substring(lastDotIndex - 3);
+        return lastExt;
+    }
+
+    /**
      * Changes all back slashes to forward slashes.
      * @param fileOrDirPath - Path.
      */

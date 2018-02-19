@@ -1238,4 +1238,24 @@ function myFunction(param: MyClass) {
             expect(referencing.map(r => r.getFilePath()).sort()).to.deep.equal([file1, file2, file3].map(s => s.getFilePath()).sort());
         });
     });
+
+    describe(nameof<SourceFile>(s => s.getExtension), () => {
+        function doTest(filePath: string, extension: string) {
+            const {sourceFile} = getInfoFromText("", { filePath });
+            expect(sourceFile.getExtension()).to.equal(extension);
+        }
+
+        // most of these tests are in FileUtils
+        it("should get the source file's extension when a .ts file", () => {
+            doTest("/MyInterface.ts", ".ts");
+        });
+
+        it("should get the source file's extension when a .js file", () => {
+            doTest("/MyInterface.js", ".js");
+        });
+
+        it("should get the source file's extension when a .d.ts file", () => {
+            doTest("/MyInterface.d.ts", ".d.ts");
+        });
+    });
 });

@@ -173,4 +173,52 @@ describe(nameof(FileUtils), () => {
             doTest("V:/testing/this/out/to.ts", "V:/testing/this/out/to.ts", "to.ts");
         });
     });
+
+    describe(nameof(FileUtils.getExtension), () => {
+        function doTest(path: string, expected: string) {
+            expect(FileUtils.getExtension(path)).to.equal(expected);
+        }
+
+        // copying behaviour from https://nodejs.org/api/path.html#path_path_extname_path
+
+        it("should return a dot for a file that ends with a dot", () => {
+            doTest("path/file.", ".");
+        });
+
+        it("should return only the last extension for a file name with multiple dots", () => {
+            doTest("path/file.coffee.md", ".md");
+        });
+
+        it("should return an empty string when there's no dot in the file name", () => {
+            doTest("path/file", "");
+        });
+
+        it("should return an empty string when the dot is at the start of the file name", () => {
+            doTest("path/.file", "");
+        });
+
+        it("should return an empty string when there's no dot in the file name and a dot in the directory path", () => {
+            doTest("path.something/file", "");
+        });
+
+        it("should return the extension for a .ts file", () => {
+            doTest("path/file.ts", ".ts");
+        });
+
+        it("should return the extension for a .d.ts file", () => {
+            doTest("path/file.d.ts", ".d.ts");
+        });
+
+        it("should return the extension for a .d.ts file that's upper case", () => {
+            doTest("path/file.D.TS", ".D.TS");
+        });
+
+        it("should return the extension for a .js.map file", () => {
+            doTest("path/file.js.map", ".js.map");
+        });
+
+        it("should return the extension for a .js.map file that's upper case", () => {
+            doTest("path/file.JS.MAP", ".JS.MAP");
+        });
+    });
 });

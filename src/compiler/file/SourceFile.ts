@@ -91,6 +91,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the file path's extension.
+     */
+    getExtension() {
+        return FileUtils.getExtension(this.getFilePath());
+    }
+
+    /**
      * Gets the directory that the source file is contained in.
      */
     getDirectory(): Directory {
