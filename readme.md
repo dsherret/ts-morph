@@ -70,7 +70,7 @@ const myInterface = myClassFile.addInterface({
 
 myClass.rename("NewName");
 myClass.addImplements(myInterface.getName());
-classDeclaration.addProperty({
+myClass.addProperty({
     name: "myProp",
     initializer: "5"
 });
