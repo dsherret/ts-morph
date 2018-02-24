@@ -641,6 +641,20 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an ExclamationTokenableNode.
+     * @param node - Node to check.
+     */
+    static isExclamationTokenableNode(node: compiler.Node): node is compiler.ExclamationTokenableNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is an ExportAssignment.
      * @param node - Node to check.
      */

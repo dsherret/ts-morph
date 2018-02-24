@@ -5,6 +5,7 @@ export * from "./AwaitableNodeStructure";
 export * from "./BodiedNodeStructure";
 export * from "./BodyableNodeStructure";
 export * from "./DecoratableNodeStructure";
+export * from "./ExclamationTokenableNodeStructure";
 export * from "./ExportableNodeStructure";
 export * from "./ExtendsClauseableNodeStructure";
 export * from "./GeneratorableNodeStructure";

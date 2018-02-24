@@ -10,25 +10,28 @@ describe(nameof(QuestionTokenableNode), () => {
     }
 
     describe(nameof<QuestionTokenableNode>(d => d.hasQuestionToken), () => {
+        function doTest(text: string, value: boolean) {
+            const {firstProperty} = getInfoWithFirstPropertyFromText(text);
+            expect(firstProperty.hasQuestionToken()).to.equal(value);
+        }
+
         it("should have a question token when has one", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop?: string;}\n");
-            expect(firstProperty.hasQuestionToken()).to.be.true;
+            doTest("class MyClass { prop?: string; }", true);
         });
 
         it("should not have a question token when not has one", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
-            expect(firstProperty.hasQuestionToken()).to.be.false;
+            doTest("class MyClass { prop: string; }", false);
         });
     });
 
     describe(nameof<QuestionTokenableNode>(d => d.getQuestionTokenNode), () => {
         it("should be get the question token node", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop?: string;}\n");
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass { prop?: string; }");
             expect(firstProperty.getQuestionTokenNode()!.getText()).to.equal("?");
         });
 
         it("should be undefined when not optional", () => {
-            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass {\nprop: string;}\n");
+            const {firstProperty} = getInfoWithFirstPropertyFromText("class MyClass { prop: string;} ");
             expect(firstProperty.getQuestionTokenNode()).to.be.undefined;
         });
     });
@@ -46,22 +49,26 @@ describe(nameof(QuestionTokenableNode), () => {
     });
 
     describe(nameof<QuestionTokenableNode>(d => d.setHasQuestionToken), () => {
+        function doTest(startText: string, value: boolean, expected: string) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startText);
+            firstProperty.setHasQuestionToken(value);
+            expect(sourceFile.getFullText()).to.be.equal(expected);
+        }
+
         it("should be set as optional when not optional", () => {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
-            firstProperty.setHasQuestionToken(true);
-            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop?: string; }");
+            doTest("class MyClass { prop: string; }", true, "class MyClass { prop?: string; }");
+        });
+
+        it("should be set as optional when has an exclamation token", () => {
+            doTest("class MyClass { prop!: string; }", true, "class MyClass { prop?: string; }");
         });
 
         it("should be set as not optional when optional", () => {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop?: string; }");
-            firstProperty.setHasQuestionToken(false);
-            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
+            doTest("class MyClass { prop?: string; }", false, "class MyClass { prop: string; }");
         });
 
         it("should do nothing when setting to same value", () => {
-            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText("class MyClass { prop: string; }");
-            firstProperty.setHasQuestionToken(false);
-            expect(sourceFile.getFullText()).to.be.equal("class MyClass { prop: string; }");
+            doTest("class MyClass { prop: string; }", false, "class MyClass { prop: string; }");
         });
     });
 

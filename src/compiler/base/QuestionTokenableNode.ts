@@ -3,6 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoParentTextRange, removeChildren} from "./../../manipulation";
 import {QuestionTokenableNodeStructure} from "./../../structures";
+import {TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 
@@ -50,6 +51,9 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 return this;
 
             if (value) {
+                if (TypeGuards.isExclamationTokenableNode(this))
+                    this.setHasExclamationToken(false);
+
                 const colonNode = this.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
                 insertIntoParentTextRange({
                     insertPos: colonNode.getStart(),

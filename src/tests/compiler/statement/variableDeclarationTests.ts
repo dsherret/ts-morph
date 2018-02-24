@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import {VariableDeclaration, TryStatement} from "./../../../compiler";
+import {VariableDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(VariableDeclaration), () => {
@@ -39,6 +40,20 @@ describe(nameof(VariableDeclaration), () => {
             it("should remove the variable declaration from a catch clause", () => {
                 doTest("try {} catch (ex) {}", "try {} catch {}");
             });
+        });
+    });
+
+    describe(nameof<VariableDeclaration>(d => d.fill), () => {
+        function doTest(startCode: string, structure: Partial<VariableDeclarationStructure>, expectedCode: string) {
+            const {sourceFile} = getInfoFromText(startCode);
+            const variableDeclaration = sourceFile.getVariableDeclarations()[0];
+            variableDeclaration.fill(structure);
+            expect(sourceFile.getText()).to.equal(expectedCode);
+        }
+
+        it("should fill both an exclamation token and type", () => {
+            // needs to be tested because adding an exclamation token when there's no type will do nothing
+            doTest("var t;", { hasExclamationToken: true, type: "string" }, "var t!: string;");
         });
     });
 });

@@ -267,7 +267,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [PropertyDeclaration](src/compiler/class/PropertyDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: questionToken
-    * :x: exclamationToken
+    * :heavy_check_mark: exclamationToken
     * :heavy_check_mark: type
     * :heavy_check_mark: initializer
 * [PropertySignature](src/compiler/interface/PropertySignature.ts)
@@ -370,7 +370,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [UpdateExpression](src/compiler/expression/UpdateExpression.ts)
 * [VariableDeclaration](src/compiler/statement/VariableDeclaration.ts)
     * :heavy_check_mark: name
-    * :x: exclamationToken
+    * :heavy_check_mark: exclamationToken
     * :heavy_check_mark: type
     * :heavy_check_mark: initializer
 * [VariableDeclarationList](src/compiler/statement/VariableDeclarationList.ts)

@@ -6,6 +6,7 @@ export * from "./BodiedNode";
 export * from "./BodyableNode";
 export * from "./ChildOrderableNode";
 export * from "./DecoratableNode";
+export * from "./ExclamationTokenableNode";
 export * from "./ExportableNode";
 export * from "./ExtendsClauseableNode";
 export * from "./GeneratorableNode";
