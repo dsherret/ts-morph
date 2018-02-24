@@ -5,9 +5,10 @@ import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, JSDocableNode, ModifierableNode,
     ChildOrderableNode} from "./../base";
+import {TypeElement} from "./TypeElement";
 
 export const PropertySignatureBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(
-    PropertyNamedNode(ModifierableNode(Node))
+    PropertyNamedNode(ModifierableNode(TypeElement))
 ))))));
 export class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**

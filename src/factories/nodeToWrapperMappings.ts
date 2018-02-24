@@ -123,6 +123,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.TupleType]: compiler.TupleTypeNode,
     [SyntaxKind.TypeAliasDeclaration]: compiler.TypeAliasDeclaration,
     [SyntaxKind.TypeAssertionExpression]: compiler.TypeAssertion,
+    [SyntaxKind.TypeLiteral]: compiler.TypeLiteralNode,
     [SyntaxKind.TypeParameter]: compiler.TypeParameterDeclaration,
     [SyntaxKind.TypeReference]: compiler.TypeReferenceNode,
     [SyntaxKind.UnionType]: compiler.UnionTypeNode,

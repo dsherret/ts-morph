@@ -7,6 +7,7 @@ export * from "./LiteralTypeNode";
 export * from "./TupleTypeNode";
 export * from "./Type";
 export * from "./TypeAliasDeclaration";
+export * from "./TypeLiteralNode";
 export * from "./TypeNode";
 export * from "./TypeParameter";
 export * from "./TypeParameterDeclaration";

@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 150
+**Total:** 155
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
@@ -183,6 +183,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: initializer
 * [JsxClosingElement](src/compiler/jsx/JsxClosingElement.ts)
     * :heavy_check_mark: tagName
+* [JsxClosingFragment](src/compiler/jsx/JsxClosingFragment.ts)
 * [JsxElement](src/compiler/jsx/JsxElement.ts)
     * :heavy_check_mark: openingElement
     * :heavy_check_mark: children
@@ -190,9 +191,14 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [JsxExpression](src/compiler/jsx/JsxExpression.ts)
     * :heavy_check_mark: dotDotDotToken
     * :heavy_check_mark: expression
+* [JsxFragment](src/compiler/jsx/JsxFragment.ts)
+    * :heavy_check_mark: openingFragment
+    * :heavy_check_mark: children
+    * :heavy_check_mark: closingFragment
 * [JsxOpeningElement](src/compiler/jsx/JsxOpeningElement.ts)
     * :heavy_check_mark: tagName
     * :heavy_check_mark: attributes
+* [JsxOpeningFragment](src/compiler/jsx/JsxOpeningFragment.ts)
 * [JsxSelfClosingElement](src/compiler/jsx/JsxSelfClosingElement.ts)
     * :heavy_check_mark: tagName
     * :heavy_check_mark: attributes
@@ -342,6 +348,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [TypeAssertion](src/compiler/expression/TypeAssertion.ts)
     * :heavy_check_mark: type
     * :heavy_check_mark: expression
+* [TypeElement](src/compiler/interface/TypeElement.ts)
+    * :heavy_check_mark: name
+    * :x: questionToken
+* [TypeLiteralNode](src/compiler/type/TypeLiteralNode.ts)
+    * :heavy_check_mark: members
 * [TypeNode](src/compiler/type/TypeNode.ts)
 * [TypeOfExpression](src/compiler/expression/TypeOfExpression.ts)
     * :heavy_check_mark: expression
@@ -379,7 +390,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 54
+**Total:** 49
 
 * ArrayBindingPattern
 * BindingElement
@@ -406,9 +417,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JSDocVariadicType
 * JsonSourceFile
 * JsxAttributes
-* JsxClosingFragment
-* JsxFragment
-* JsxOpeningFragment
 * KeywordTypeNode
 * LiteralLikeNode
 * MappedTypeNode
@@ -430,8 +438,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ThisTypeNode
 * Token
 * TransientIdentifier
-* TypeElement
-* TypeLiteralNode
 * TypeOperatorNode
 * TypePredicateNode
 * TypeQueryNode

@@ -26,6 +26,7 @@ export * from "./StaticableNode";
 export * from "./TextInsertableNode";
 export * from "./TypeArgumentedNode";
 export * from "./TypedNode";
+export * from "./TypeElementMemberedNode";
 export * from "./TypeParameteredNode";
 export * from "./UnwrappableNode";
 export * from "./initializer";

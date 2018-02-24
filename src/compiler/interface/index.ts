@@ -4,3 +4,4 @@ export * from "./IndexSignatureDeclaration";
 export * from "./InterfaceDeclaration";
 export * from "./MethodSignature";
 export * from "./PropertySignature";
+export * from "./TypeElement";

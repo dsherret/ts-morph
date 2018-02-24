@@ -2686,6 +2686,50 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a TypeElement.
+     * @param node - Node to check.
+     */
+    static isTypeElement(node: compiler.Node): node is compiler.TypeElement {
+        switch (node.getKind()) {
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeElementMemberedNode.
+     * @param node - Node to check.
+     */
+    static isTypeElementMemberedNode(node: compiler.Node): node is compiler.TypeElementMemberedNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.TypeLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a TypeLiteralNode.
+     * @param node - Node to check.
+     */
+    static isTypeLiteralNode(node: compiler.Node): node is compiler.TypeLiteralNode {
+        switch (node.getKind()) {
+            case SyntaxKind.TypeLiteral:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a TypeNode.
      * @param node - Node to check.
      */
@@ -2700,6 +2744,7 @@ export class TypeGuards {
             case SyntaxKind.LiteralType:
             case SyntaxKind.LastTypeNode:
             case SyntaxKind.TupleType:
+            case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:
             case SyntaxKind.UnionType:
                 return true;

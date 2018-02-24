@@ -2,6 +2,7 @@ import {ts, SyntaxKind} from "./../typescript";
 import {Identifier, ComputedPropertyName, QualifiedName} from "./common";
 import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression} from "./expression";
 import {JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment} from "./jsx";
+import {PropertySignature, MethodSignature, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration} from "./interface";
 import {ExternalModuleReference} from "./file";
 import {CaseClause, DefaultClause} from "./statement";
 import {GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration} from "./class";
@@ -134,4 +135,11 @@ function moduleReferenceValidation() {
         default:
             const ensureNever: never = value;
     }
+}
+
+export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSignatureDeclaration | CallSignatureDeclaration | IndexSignatureDeclaration;
+
+/* istanbul ignore next */
+function typeElementTypes() {
+    // todo: some way to validate this
 }

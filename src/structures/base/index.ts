@@ -21,5 +21,6 @@ export * from "./ScopedNodeStructure";
 export * from "./SignaturedDeclarationStructure";
 export * from "./StaticableNodeStructure";
 export * from "./TypedNodeStructure";
+export * from "./TypeElementMemberedNodeStructure";
 export * from "./TypeParameteredNodeStructure";
 export * from "./name";
