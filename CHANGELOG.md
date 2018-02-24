@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.1.0"></a>
+# [8.1.0](https://github.com/dsherret/ts-simple-ast/compare/8.0.0...8.1.0) (2018-02-24)
+
+
+### Features
+
+* [#259](https://github.com/dsherret/ts-simple-ast/issues/259) - Wrap TypeLiteralNode. ([d479100](https://github.com/dsherret/ts-simple-ast/commit/d479100))
+* Add support for strict property initialization (exclamation token). ([1e787f2](https://github.com/dsherret/ts-simple-ast/commit/1e787f2))
+* sourceFile.getBaseNameWithoutExtension() ([09a63d9](https://github.com/dsherret/ts-simple-ast/commit/09a63d9))
+* sourceFile.getExtension() ([3906902](https://github.com/dsherret/ts-simple-ast/commit/3906902))
+
+
+
 <a name="8.0.0"></a>
 # [8.0.0](https://github.com/dsherret/ts-simple-ast/compare/7.1.0...8.0.0) (2018-02-19)
 
