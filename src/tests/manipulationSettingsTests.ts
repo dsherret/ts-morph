@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "./../ManipulationSettings";
-import {ts, ScriptTarget, NewLineKind} from "./../typescript";
+import {ts, ScriptTarget, NewLineKind, EditorSettings, IndentStyle} from "./../typescript";
 import {QuoteType} from "./../compiler";
 import {StringUtils} from "./../utils";
 
@@ -70,6 +70,39 @@ describe(nameof(ManipulationSettingsContainer), () => {
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             scriptTarget: ScriptTarget.ES3
+        });
+    });
+
+    describe(nameof<ManipulationSettingsContainer>(c => c.getEditorSettings), () => {
+        function doTest(actual: EditorSettings, expected: EditorSettings) {
+            expect(actual).is.deep.equal(expected);
+        }
+
+        it("should get the default editor settings", () => {
+            doTest(new ManipulationSettingsContainer().getEditorSettings(), {
+                convertTabsToSpaces: true,
+                newLineCharacter: "\n",
+                indentStyle: IndentStyle.Smart,
+                indentSize: 4,
+                tabSize: 4
+            });
+        });
+
+        it("should get the correct editor settings after changing", () => {
+            const container = new ManipulationSettingsContainer();
+            container.getEditorSettings(); // fill the internal cache
+            container.set({
+                indentationText: IndentationText.Tab,
+                newLineKind: NewLineKind.CarriageReturnLineFeed
+            });
+
+            doTest(container.getEditorSettings(), {
+                convertTabsToSpaces: false,
+                newLineCharacter: "\r\n",
+                indentStyle: IndentStyle.Smart,
+                indentSize: 1,
+                tabSize: 1
+            });
         });
     });
 });

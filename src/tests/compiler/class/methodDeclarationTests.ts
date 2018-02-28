@@ -29,18 +29,18 @@ describe(nameof(MethodDeclaration), () => {
         });
 
         it("should be able to insert at start when another overload exists", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier() {}\n }", 0, [{ returnType: "string" }],
-                "class Identifier {\n  identifier(): string;\n  identifier();\n  identifier() {}\n }");
+            doTest("class Identifier {\n    identifier();\n    identifier() {}\n }", 0, [{ returnType: "string" }],
+                "class Identifier {\n    identifier(): string;\n    identifier();\n    identifier() {}\n }");
         });
 
         it("should be able to insert at end when another overload exists", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier() {}\n }", 1, [{ returnType: "string" }],
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier() {}\n }");
+            doTest("class Identifier {\n    identifier();\n    identifier() {}\n }", 1, [{ returnType: "string" }],
+                "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier() {}\n }");
         });
 
         it("should be able to insert in the middle when other overloads exists", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier();\n  identifier() {}\n }", 1, [{ returnType: "string" }],
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier();\n  identifier() {}\n }");
+            doTest("class Identifier {\n    identifier();\n    identifier();\n    identifier() {}\n }", 1, [{ returnType: "string" }],
+                "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier();\n    identifier() {}\n }");
         });
     });
 
@@ -54,8 +54,8 @@ describe(nameof(MethodDeclaration), () => {
         }
 
         it("should be able to insert in the middle when other overloads exists", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier();\n  identifier() {}\n }", 1, { returnType: "string" },
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier();\n  identifier() {}\n }");
+            doTest("class Identifier {\n    identifier();\n    identifier();\n    identifier() {}\n }", 1, { returnType: "string" },
+                "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier();\n    identifier() {}\n }");
         });
     });
 
@@ -69,8 +69,8 @@ describe(nameof(MethodDeclaration), () => {
         }
 
         it("should be able to add multiple", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier() {}\n}", [{ returnType: "string" }, { returnType: "number" }],
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier(): number;\n  identifier() {}\n}");
+            doTest("class Identifier {\n    identifier();\n    identifier() {}\n}", [{ returnType: "string" }, { returnType: "number" }],
+                "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier(): number;\n    identifier() {}\n}");
         });
     });
 
@@ -84,8 +84,8 @@ describe(nameof(MethodDeclaration), () => {
         }
 
         it("should be able to add an overload", () => {
-            doTest("class Identifier {\n  identifier();\n  identifier() {}\n }", { returnType: "string" },
-                "class Identifier {\n  identifier();\n  identifier(): string;\n  identifier() {}\n }");
+            doTest("class Identifier {\n    identifier();\n    identifier() {}\n }", { returnType: "string" },
+                "class Identifier {\n    identifier();\n    identifier(): string;\n    identifier() {}\n }");
         });
     });
 
@@ -98,14 +98,14 @@ describe(nameof(MethodDeclaration), () => {
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class identifier {\n  method() {}\n}", {}, "class identifier {\n  method() {}\n}");
+            doTest("class identifier {\n    method() {}\n}", {}, "class identifier {\n    method() {}\n}");
         });
 
         it("should modify when changed", () => {
             const structure: MakeRequired<MethodDeclarationSpecificStructure> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
-            doTest("class identifier {\n  method() {}\n}", structure, "class identifier {\n  method(param);\n  method() {}\n}");
+            doTest("class identifier {\n    method() {}\n}", structure, "class identifier {\n    method(param);\n    method() {}\n}");
         });
     });
 

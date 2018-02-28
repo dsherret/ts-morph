@@ -33,6 +33,8 @@ export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInse
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;
+    /** @internal */
+    _indentOffset: number | undefined; // todo: remove eventually
 
     /**
      * Initializes a new instance.

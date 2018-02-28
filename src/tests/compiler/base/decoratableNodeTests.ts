@@ -1,7 +1,8 @@
 ﻿import {expect} from "chai";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../../structures";
 import {DecoratableNode, Decorator, ClassDeclaration} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {SyntaxKind} from "./../../../typescript";
+import {getInfoFromText, getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(d => d.getDecorator), () => {
@@ -54,8 +55,8 @@ describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(n => n.insertDecorators), () => {
         describe("class decorators", () => {
             function doTest(startCode: string, index: number, structures: DecoratorStructure[], expectedCode: string) {
-                const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
-                const result = firstChild.insertDecorators(index, structures);
+                const {descendant, sourceFile} = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
+                const result = descendant.insertDecorators(index, structures);
                 expect(result.length).to.equal(structures.length);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -70,7 +71,7 @@ describe(nameof(DecoratableNode), () => {
             });
 
             it("should insert on the same indentation level", () => {
-                doTest("    class MyClass {}", 0, [{ name: "dec" }, { name: "dec2" }], "    @dec\n    @dec2\n    class MyClass {}");
+                doTest("namespace N {\n    class MyClass {}\n}", 0, [{ name: "dec" }, { name: "dec2" }], "namespace N {\n    @dec\n    @dec2\n    class MyClass {}\n}");
             });
 
             it("should insert at the start", () => {
@@ -82,13 +83,13 @@ describe(nameof(DecoratableNode), () => {
             });
 
             it("should insert one in the middle at the same indentation", () => {
-                doTest("    @dec\n    @dec3\nclass MyClass {}", 1, [{ name: "dec2" }], "    @dec\n    @dec2\n    @dec3\nclass MyClass {}");
+                doTest("namespace N {\n    @dec\n    @dec3\nclass MyClass {}\n}", 1, [{ name: "dec2" }], "namespace N {\n    @dec\n    @dec2\n    @dec3\nclass MyClass {}\n}");
             });
 
             it("should insert multiple in the middle at the same indentation", () => {
                 doTest(
-                    "    @dec\n    @dec5\nclass MyClass {}", 1, [{ name: "dec2" }, { name: "dec3" }, { name: "dec4" }],
-                    "    @dec\n    @dec2\n    @dec3\n    @dec4\n    @dec5\nclass MyClass {}"
+                    "namespace N {\n    @dec\n    @dec5\nclass MyClass {}\n}", 1, [{ name: "dec2" }, { name: "dec3" }, { name: "dec4" }],
+                    "namespace N {\n    @dec\n    @dec2\n    @dec3\n    @dec4\n    @dec5\nclass MyClass {}\n}"
                 );
             });
 

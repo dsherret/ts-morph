@@ -1,7 +1,7 @@
 import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {verifyAndGetIndex, getIndentedText, getInsertPosFromIndex, insertIntoParentTextRange} from "./../../manipulation";
-import {TypeGuards, StringUtils} from "./../../utils";
+import {verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange} from "./../../manipulation";
+import {TypeGuards, StringUtils, getTextFromStringOrWriter} from "./../../utils";
 import * as errors from "./../../errors";
 import {Node} from "./Node";
 
@@ -52,11 +52,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         index = verifyAndGetIndex(index, initialChildCount);
 
         // get text
-        let insertText = getIndentedText({
-            textOrWriterFunction,
-            manipulationSettings: this.global.manipulationSettings,
-            indentationText: parent.getChildIndentationText()
-        });
+        let insertText = getTextFromStringOrWriter(parent.getWriterWithChildIndentation(), textOrWriterFunction);
 
         if (insertText.length === 0)
             return [];

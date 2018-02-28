@@ -24,18 +24,18 @@ describe(nameof(ConstructorDeclaration), () => {
         });
 
         it("should be able to insert at start when another overload exists", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor() {}\n }", 0, [{ parameters: [{ name: "param" }] }],
-                "class Identifier {\n  constructor(param);\n  constructor();\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }", 0, [{ parameters: [{ name: "param" }] }],
+                "class Identifier {\n    constructor(param);\n    constructor();\n    constructor() {}\n }");
         });
 
         it("should be able to insert at end when another overload exists", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor() {}\n }", 1, [{ parameters: [{ name: "param" }] }],
-                "class Identifier {\n  constructor();\n  constructor(param);\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }", 1, [{ parameters: [{ name: "param" }] }],
+                "class Identifier {\n    constructor();\n    constructor(param);\n    constructor() {}\n }");
         });
 
         it("should be able to insert in the middle when other overloads exists", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor();\n  constructor() {}\n }", 1, [{ parameters: [{ name: "param" }] }],
-                "class Identifier {\n  constructor();\n  constructor(param);\n  constructor();\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor();\n    constructor() {}\n }", 1, [{ parameters: [{ name: "param" }] }],
+                "class Identifier {\n    constructor();\n    constructor(param);\n    constructor();\n    constructor() {}\n }");
         });
     });
 
@@ -49,8 +49,8 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should be able to insert in the middle when other overloads exists", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor();\n  constructor() {}\n }", 1, { parameters: [{ name: "param" }] },
-                "class Identifier {\n  constructor();\n  constructor(param);\n  constructor();\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor();\n    constructor() {}\n }", 1, { parameters: [{ name: "param" }] },
+                "class Identifier {\n    constructor();\n    constructor(param);\n    constructor();\n    constructor() {}\n }");
         });
     });
 
@@ -64,8 +64,8 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should be able to add multiple", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor() {}\n }", [{ parameters: [{ name: "param" }] }, { parameters: [{ name: "param2" }] }],
-                "class Identifier {\n  constructor();\n  constructor(param);\n  constructor(param2);\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }", [{ parameters: [{ name: "param" }] }, { parameters: [{ name: "param2" }] }],
+                "class Identifier {\n    constructor();\n    constructor(param);\n    constructor(param2);\n    constructor() {}\n }");
         });
     });
 
@@ -79,8 +79,8 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should be able to add an overload", () => {
-            doTest("class Identifier {\n  constructor();\n  constructor() {}\n }", { parameters: [{ name: "param" }] },
-                "class Identifier {\n  constructor();\n  constructor(param);\n  constructor() {}\n }");
+            doTest("class Identifier {\n    constructor();\n    constructor() {}\n }", { parameters: [{ name: "param" }] },
+                "class Identifier {\n    constructor();\n    constructor(param);\n    constructor() {}\n }");
         });
     });
 
@@ -133,14 +133,14 @@ describe(nameof(ConstructorDeclaration), () => {
         }
 
         it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("class identifier {\n  constructor() {}\n}", {}, "class identifier {\n  constructor() {}\n}");
+            doTest("class identifier {\n    constructor() {}\n}", {}, "class identifier {\n    constructor() {}\n}");
         });
 
         it("should modify when changed", () => {
             const structure: MakeRequired<ConstructorDeclarationSpecificStructure> = {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
-            doTest("class identifier {\n  constructor() {}\n}", structure, "class identifier {\n  constructor(param);\n  constructor() {}\n}");
+            doTest("class identifier {\n    constructor() {}\n}", structure, "class identifier {\n    constructor(param);\n    constructor() {}\n}");
         });
     });
 });

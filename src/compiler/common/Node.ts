@@ -6,7 +6,7 @@ import {IndentationText} from "./../../ManipulationSettings";
 import {StructureToText} from "./../../structureToTexts";
 import {insertIntoParentTextRange, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
     getTextFromFormattingEdits} from "./../../manipulation";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
@@ -364,7 +364,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             TypeGuards.isBodiedNode(this) ||
             TypeGuards.isCaseBlock(this) ||
             TypeGuards.isCaseClause(this) ||
-            TypeGuards.isDefaultClause(this)
+            TypeGuards.isDefaultClause(this) ||
+            TypeGuards.isJsxElement(this)
         )
             return node.getFirstChildByKind(SyntaxKind.SyntaxList) as SyntaxList | undefined;
 
@@ -704,39 +705,44 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the indentation text.
+     * Gets the indentation level of the current node.
      */
-    getIndentationText(): string {
-        const sourceFileText = this.sourceFile.getFullText();
-        const startLinePos = this.getStartLinePos();
-        const startPos = this.getStart();
-        let text = "";
+    getIndentationLevel() {
+        const indentationText = this.global.manipulationSettings.getIndentationText();
+        return (this.global.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length) + (this.sourceFile._indentOffset || 0);
+    }
 
-        for (let i = startPos - 1; i >= startLinePos; i--) {
-            const currentChar = sourceFileText[i];
-            switch (currentChar) {
-                case " ":
-                case "\t":
-                    text = currentChar + text;
-                    break;
-                case "\n":
-                    return text;
-                default:
-                    text = "";
-            }
-        }
+    /**
+     * Gets the child indentation level of the current node.
+     */
+    getChildIndentationLevel(): number {
+        if (TypeGuards.isSourceFile(this))
+            return this.sourceFile._indentOffset || 0;
 
-        return text;
+        return this.getIndentationLevel() + 1;
+    }
+
+    /**
+     * Gets the indentation text.
+     * @param offset - Optional number of levels of indentation to add or remove.
+     */
+    getIndentationText(offset = 0): string {
+        return this._getIndentationTextForLevel(this.getIndentationLevel() + offset);
     }
 
     /**
      * Gets the next indentation level text.
+     * @param offset - Optional number of levels of indentation to add or remove.
      */
-    getChildIndentationText(): string {
-        if (TypeGuards.isSourceFile(this))
-            return "";
+    getChildIndentationText(offset = 0): string {
+        return this._getIndentationTextForLevel(this.getChildIndentationLevel() + offset);
+    }
 
-        return this.getIndentationText() + this.global.manipulationSettings.getIndentationText();
+    /**
+     * @internal
+     */
+    private _getIndentationTextForLevel(level: number) {
+        return StringUtils.repeat(this.global.manipulationSettings.getIndentationText(), level);
     }
 
     /**
@@ -802,7 +808,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     replaceWithText(text: string): Node;
     replaceWithText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-        const newText = getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction);
+        const newText = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
             return this;
@@ -1176,7 +1182,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getWriterWithIndentation() {
         const writer = this.getWriter();
-        writer.setIndentationLevel(this.getIndentationText());
+        writer.setIndentationLevel(this.getIndentationLevel());
+        return writer;
+    }
+
+    /**
+     * Gets a writer with the queued indentation text.
+     * @internal
+     */
+    getWriterWithQueuedIndentation() {
+        const writer = this.getWriter();
+        writer.queueIndentationLevel(this.getIndentationLevel());
         return writer;
     }
 
@@ -1186,7 +1202,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getWriterWithChildIndentation() {
         const writer = this.getWriter();
-        writer.setIndentationLevel(this.getChildIndentationText());
+        writer.setIndentationLevel(this.getChildIndentationLevel());
+        return writer;
+    }
+
+    /**
+     * Gets a writer with the queued child indentation text.
+     * @internal
+     */
+    getWriterWithQueuedChildIndentation() {
+        const writer = this.getWriter();
+        writer.queueIndentationLevel(this.getChildIndentationLevel());
         return writer;
     }
 

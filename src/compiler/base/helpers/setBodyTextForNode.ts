@@ -1,18 +1,14 @@
-import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {insertIntoParentTextRange, getIndentedText} from "./../../../manipulation";
-import {getTextFromStringOrWriter, StringUtils} from "./../../../utils";
+import {SyntaxKind} from "./../../../typescript";
+import {insertIntoParentTextRange} from "./../../../manipulation";
 import {Node} from "./../../common";
+import {getBodyText} from "./getBodyText";
 
 /**
  * @internal
  */
 export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-    const childSyntaxList = body.getChildSyntaxListOrThrow();
-    const childrenToRemove = childSyntaxList.getChildren();
-    const childIndentationText = body.getChildIndentationText();
-    const newLineKind = body.global.manipulationSettings.getNewLineKindAsString();
-    const newText = getNewText();
+    const newText = getBodyText(body.getWriterWithIndentation(), textOrWriterFunction);
     const openBrace = body.getFirstChildByKindOrThrow(SyntaxKind.FirstPunctuation);
     const closeBrace = body.getFirstChildByKindOrThrow(SyntaxKind.CloseBraceToken);
 
@@ -24,20 +20,4 @@ export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((
             textLength: closeBrace.getStart() - openBrace.getEnd()
         }
     });
-
-    function getNewText() {
-        let text = getIndentedText({
-            textOrWriterFunction,
-            manipulationSettings: body.global.manipulationSettings,
-            indentationText: childIndentationText
-        });
-
-        if (text.length > 0)
-            text = newLineKind + text;
-
-        if (!StringUtils.endsWith(text, newLineKind))
-            text += newLineKind;
-
-        return text + body.getParentOrThrow().getIndentationText();
-    }
 }

@@ -921,8 +921,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             // insert into a temp file
             const finalChildCodes: string[] = [];
+            const childIndentLevel = TypeGuards.isSourceFile(this) ? 0 : (this.getIndentationLevel() + 1);
             for (let i = 0; i < childCodes.length; i++) {
                 const tempSourceFile = this.global.compilerFactory.createTempSourceFileFromText(childCodes[i], { createLanguageService: true });
+                tempSourceFile._indentOffset = childIndentLevel;
                 if (withEachChild != null) {
                     const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
                     withEachChild(tempSyntaxList.getChildren()[0] as U, i);

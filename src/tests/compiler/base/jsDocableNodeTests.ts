@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import {ts, SyntaxKind} from "./../../../typescript";
 import {JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
+import {TypeGuards} from "./../../../utils";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -53,8 +54,9 @@ describe(nameof(JSDocableNode), () => {
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
         function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const result = firstChild.insertJsDocs(insertIndex, structures);
+            const {firstChild, sourceFile} = getInfoFromText(startCode);
+            const func = TypeGuards.isNamespaceDeclaration(firstChild) ? firstChild.getFunctions()[0] : firstChild as FunctionDeclaration;
+            const result = func.insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -64,8 +66,8 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert at start when indentation is different", () => {
-            doTest("    /**\n     * Desc2\n     */\n    function identifier() {}", 0, [{ description: "Desc1" }],
-                "    /**\n     * Desc1\n     */\n    /**\n     * Desc2\n     */\n    function identifier() {}");
+            doTest("namespace N {\n    /**\n     * Desc2\n     */\n    function identifier() {}\n}", 0, [{ description: "Desc1" }],
+                "namespace N {\n    /**\n     * Desc1\n     */\n    /**\n     * Desc2\n     */\n    function identifier() {}\n}");
         });
 
         it("should insert multiple at end", () => {

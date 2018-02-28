@@ -36,9 +36,6 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             return this.getNodeFromCompilerNode(body);
         }
 
-        setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
-        setBodyText(text: string): this;
-        setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
         setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             const body = this.getBody();
             setBodyTextForNode(body, textOrWriterFunction);

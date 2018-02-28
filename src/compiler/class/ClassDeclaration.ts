@@ -460,6 +460,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const indentationText = this.getChildIndentationText();
         const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
         const isAmbient = this.isAmbient();
+        structures = structures.map(s => ({...s}));
 
         // create code
         const codes = structures.map(s => {

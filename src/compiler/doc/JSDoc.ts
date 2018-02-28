@@ -58,7 +58,7 @@ export class JSDoc extends Node<ts.JSDoc> {
         const endEditPos = tags.length > 0 ? getPreviousMatchingPos(this.sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1 : this.getEnd() - 2;
         const indentationText = this.getIndentationText();
         const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
-        const text = getTextFromStringOrWriter(this.global.manipulationSettings, textOrWriterFunction);
+        const text = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
         const newText = newLineKind + text.split(/\r?\n/).map(l => `${indentationText} * ${l}`).join(newLineKind) + newLineKind + indentationText + " ";
 
         replaceTextPossiblyCreatingChildNodes({

@@ -255,33 +255,6 @@ describe(nameof(Node), () => {
         });
     });
 
-    describe(nameof<Node>(n => n.getIndentationText), () => {
-        it("should return a blank string when it's at the start of the file", () => {
-            const {firstChild} = getInfoFromText("enum MyEnum {\n}\n");
-            expect(firstChild.getIndentationText()).to.equal("");
-        });
-
-        it("should return a blank string when it's at the start of a line", () => {
-            const {firstChild} = getInfoFromText("\r\n\nenum MyEnum {\n}\n");
-            expect(firstChild.getIndentationText()).to.equal("");
-        });
-
-        it("should return the indentation text when it's spaces", () => {
-            const {firstChild} = getInfoFromText("    enum MyEnum {\n}\n");
-            expect(firstChild.getIndentationText()).to.equal("    ");
-        });
-
-        it("should return the indentation text when it includes tabs", () => {
-            const {firstChild} = getInfoFromText("\n    \tenum MyEnum {\n}\n");
-            expect(firstChild.getIndentationText()).to.equal("    \t");
-        });
-
-        it("should go up to the comment", () => {
-            const {firstChild} = getInfoFromText("\n  /* comment */  \tenum MyEnum {\n}\n");
-            expect(firstChild.getIndentationText()).to.equal("  ");
-        });
-    });
-
     describe(nameof<Node>(n => n.getStartLinePos), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const {firstChild} = getInfoFromText(text);

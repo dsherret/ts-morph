@@ -53,9 +53,6 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             return this.getNodeFromCompilerNodeIfExists(this.compilerNode.body);
         }
 
-        setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
-        setBodyText(text: string): this;
-        setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
         setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             this.addBody();
             setBodyTextForNode(this.getBodyOrThrow(), textOrWriterFunction);
@@ -71,12 +68,11 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 return this;
 
             const semiColon = this.getLastChildByKind(SyntaxKind.SemicolonToken);
-            const indentationText = this.getIndentationText();
 
             insertIntoParentTextRange({
                 parent: this,
                 insertPos: semiColon == null ? this.getEnd() : semiColon.getStart(),
-                newText: this.getWriter().write(" {").newLine().write(indentationText + "}").toString(),
+                newText: this.getWriterWithQueuedIndentation().block().toString(),
                 replacing: {
                     textLength: semiColon == null ? 0 : semiColon.getFullWidth()
                 }
