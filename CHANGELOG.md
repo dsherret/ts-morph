@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.0"></a>
+# [8.2.0](https://github.com/dsherret/ts-simple-ast/compare/8.1.0...8.2.0) (2018-02-28)
+
+
+### Features
+
+* Add ast.manipulationSettings.getEditorSettings() (mostly used internally for the default) ([af82884](https://github.com/dsherret/ts-simple-ast/commit/af82884))
+* Add JsxElement setBodyText and setBodyTextInline. ([1420786](https://github.com/dsherret/ts-simple-ast/commit/1420786))
+* Add languageService.getIdentationAtPosition(...) ([4de5f82](https://github.com/dsherret/ts-simple-ast/commit/4de5f82))
+* Upgrade to code-block-writer 6.6.0 ([34c39a9](https://github.com/dsherret/ts-simple-ast/commit/34c39a9))
+* Uses the language service to figure out the indentation level when writing. ([76f9531](https://github.com/dsherret/ts-simple-ast/commit/76f9531))
+
+
+
 <a name="8.1.0"></a>
 # [8.1.0](https://github.com/dsherret/ts-simple-ast/compare/8.0.0...8.1.0) (2018-02-24)
 
