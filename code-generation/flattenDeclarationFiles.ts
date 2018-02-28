@@ -28,7 +28,7 @@ for (let declaration of exportedDeclarations) {
 // add an import to the typescript compiler api file
 mainFile.addImportDeclaration({
     namedImports: ["ts", "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
-        "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"].map(name => ({ name })),
+        "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings"].map(name => ({ name })),
     moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile)
 });
 
