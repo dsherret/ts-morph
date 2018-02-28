@@ -55,7 +55,7 @@
     "tslint": "^5.8.0"
   },
   "dependencies": {
-    "code-block-writer": "^6.2.0",
+    "code-block-writer": "^6.6.0",
     "globby": "^6.1.0",
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
