@@ -503,7 +503,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[] {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.ClassDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -550,7 +550,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertEnums(index: number, structures: EnumDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.EnumDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -597,7 +597,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertFunctions(index: number, structures: FunctionDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.FunctionDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -655,7 +655,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.InterfaceDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -702,7 +702,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.NamespaceDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -748,7 +748,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.TypeAliasDeclarationStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -812,7 +812,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertVariableStatements(index: number, structures: VariableStatementStructure[]) {
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
+                const writer = this.getWriter();
                 const structureToText = new structureToTexts.VariableStatementStructureToText(writer);
                 structureToText.writeText(s);
                 return writer.toString();
@@ -921,15 +921,14 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             // insert into a temp file
             const finalChildCodes: string[] = [];
-            const childIndentLevel = TypeGuards.isSourceFile(this) ? 0 : (this.getIndentationLevel() + 1);
+            const childIndentLevel = this.getChildIndentationLevel();
             for (let i = 0; i < childCodes.length; i++) {
                 const tempSourceFile = this.global.compilerFactory.createTempSourceFileFromText(childCodes[i], { createLanguageService: true });
-                tempSourceFile._indentOffset = childIndentLevel;
                 if (withEachChild != null) {
                     const tempSyntaxList = tempSourceFile.getChildSyntaxListOrThrow();
                     withEachChild(tempSyntaxList.getChildren()[0] as U, i);
                 }
-                finalChildCodes.push(tempSourceFile.getFullText());
+                finalChildCodes.push(this.getWriterWithChildIndentation().write(tempSourceFile.getFullText()).toString());
             }
 
             // insert

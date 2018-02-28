@@ -64,10 +64,11 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
-            const writer = this.getWriterWithIndentation();
+            const writer = this.getWriterWithQueuedIndentation();
             const structureToText = new JSDocStructureToText(writer);
             structureToText.writeDocs(structures);
-            const code = writer.toString().replace(/^\s+/, "") + this.getIndentationText();
+            writer.write(""); // final indentation
+            const code = writer.toString();
             const nodes = this.getJsDocs();
             index = verifyAndGetIndex(index, nodes.length);
 

@@ -709,7 +709,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getIndentationLevel() {
         const indentationText = this.global.manipulationSettings.getIndentationText();
-        return (this.global.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length) + (this.sourceFile._indentOffset || 0);
+        return this.global.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
     }
 
     /**
@@ -717,7 +717,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getChildIndentationLevel(): number {
         if (TypeGuards.isSourceFile(this))
-            return this.sourceFile._indentOffset || 0;
+            return 0;
 
         return this.getIndentationLevel() + 1;
     }

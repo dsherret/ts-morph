@@ -1,9 +1,8 @@
 ﻿import {expect} from "chai";
 import {ts, SyntaxKind} from "./../../../typescript";
-import {JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration} from "./../../../compiler";
-import {TypeGuards} from "./../../../utils";
+import {JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration, PropertyDeclaration} from "./../../../compiler";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {getInfoFromText, getInfoFromTextWithDescendant} from "./../testHelpers";
 
 describe(nameof(JSDocableNode), () => {
     describe(nameof(VariableStatement), () => {
@@ -53,10 +52,9 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
-        function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText(startCode);
-            const func = TypeGuards.isNamespaceDeclaration(firstChild) ? firstChild.getFunctions()[0] : firstChild as FunctionDeclaration;
-            const result = func.insertJsDocs(insertIndex, structures);
+        function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration) {
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant(startCode, syntaxKind);
+            const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -82,6 +80,13 @@ describe(nameof(JSDocableNode), () => {
 
         it("should do nothing if empty array", () => {
             doTest("function identifier() {}", 0, [], "function identifier() {}");
+        });
+
+        describe("PropertyDeclaration", () => {
+            it("should add a js doc to a property declaration", () => {
+                doTest("class C {\n    prop;\n}", 0, [{ description: "Testing" }],
+                    "class C {\n    /**\n     * Testing\n     */\n    prop;\n}", SyntaxKind.PropertyDeclaration);
+            });
         });
     });
 
