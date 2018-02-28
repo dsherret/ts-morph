@@ -1,7 +1,7 @@
 import * as objectAssign from "object-assign";
-import {ts, ScriptTarget, NewLineKind} from "./typescript";
+import {ts, ScriptTarget, NewLineKind, EditorSettings} from "./typescript";
 import {QuoteType} from "./compiler";
-import {newLineKindToString} from "./utils";
+import {newLineKindToString, fillDefaultEditorSettings} from "./utils";
 
 /** Kinds of indentation */
 export enum IndentationText {
@@ -39,6 +39,19 @@ export class ManipulationSettingsContainer {
         scriptTarget: ScriptTarget.Latest,
         quoteType: QuoteType.Double
     };
+    private editorSettings: EditorSettings | undefined;
+
+    /**
+     * Gets the editor settings based on the current manipulation settings.
+     */
+    getEditorSettings() {
+        if (this.editorSettings == null) {
+            this.editorSettings = {};
+            fillDefaultEditorSettings(this.editorSettings, this);
+        }
+
+        return this.editorSettings;
+    }
 
     /**
      * Gets the quote type used for string literals.
@@ -88,5 +101,6 @@ export class ManipulationSettingsContainer {
      */
     set(settings: Partial<ManipulationSettings>) {
         objectAssign(this.settings, settings);
+        this.editorSettings = undefined;
     }
 }
