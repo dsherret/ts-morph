@@ -1,9 +1,11 @@
-import {ManipulationSettingsContainer, IndentationText} from "./../ManipulationSettings";
+import {ManipulationSettingsContainer} from "./../ManipulationSettings";
 import {ts} from "./../typescript";
 import {FormatCodeSettings} from "./../compiler";
+import {setValueIfUndefined} from "./setValueIfUndefined";
+import {fillDefaultEditorSettings} from "./fillDefaultEditorSettings";
 
 export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, manipulationSettings: ManipulationSettingsContainer) {
-    setValueIfUndefined(settings, "convertTabsToSpaces", manipulationSettings.getIndentationText() !== IndentationText.Tab);
+    fillDefaultEditorSettings(settings, manipulationSettings);
     setValueIfUndefined(settings, "insertSpaceAfterCommaDelimiter", true);
     setValueIfUndefined(settings, "insertSpaceAfterConstructor", false);
     setValueIfUndefined(settings, "insertSpaceAfterSemicolonInForStatements", false);
@@ -15,16 +17,7 @@ export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, mani
     setValueIfUndefined(settings, "insertSpaceBeforeFunctionParenthesis", false);
     setValueIfUndefined(settings, "insertSpaceAfterSemicolonInForStatements", true);
     setValueIfUndefined(settings, "insertSpaceBeforeAndAfterBinaryOperators", true);
-    setValueIfUndefined(settings, "newLineCharacter", manipulationSettings.getNewLineKindAsString());
-    setValueIfUndefined(settings, "indentStyle", ts.IndentStyle.Smart);
-    setValueIfUndefined(settings, "indentSize", manipulationSettings.getIndentationText().length);
     setValueIfUndefined(settings, "placeOpenBraceOnNewLineForFunctions", false);
     setValueIfUndefined(settings, "placeOpenBraceOnNewLineForControlBlocks", false);
-    setValueIfUndefined(settings, "tabSize", manipulationSettings.getIndentationText().length);
     setValueIfUndefined(settings, "ensureNewLineAtEndOfFile", true);
-}
-
-function setValueIfUndefined<T, U extends keyof T>(obj: T, propertyName: U, defaultValue: T[U]) {
-    if (typeof obj[propertyName] === "undefined")
-        obj[propertyName] = defaultValue;
 }

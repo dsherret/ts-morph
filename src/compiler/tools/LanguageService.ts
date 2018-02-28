@@ -1,9 +1,9 @@
-import {ts, CompilerOptions, ScriptTarget} from "./../../typescript";
+import {ts, CompilerOptions, ScriptTarget, EditorSettings} from "./../../typescript";
 import {GlobalContainer} from "./../../GlobalContainer";
 import {replaceSourceFileTextForRename, getTextFromFormattingEdits} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {DefaultFileSystemHost} from "./../../fileSystem";
-import {KeyValueCache, FileUtils, StringUtils, fillDefaultFormatCodeSettings} from "./../../utils";
+import {KeyValueCache, FileUtils, StringUtils, fillDefaultFormatCodeSettings, fillDefaultEditorSettings, ObjectUtils} from "./../../utils";
 import {SourceFile} from "./../file";
 import {Node} from "./../common";
 import {Program} from "./Program";
@@ -212,6 +212,7 @@ export class LanguageService {
      * @param settings - Settings.
      */
     getFormattingEditsForRange(filePath: string, range: [number, number], settings: FormatCodeSettings) {
+        // todo: don't modify passed in settings... not sure why a bunch of tests fail when I do `settings = {...settings};` on this line
         fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
 
         return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], settings) || []).map(e => new TextChange(e));
@@ -263,11 +264,39 @@ export class LanguageService {
     /** @internal */
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput;
     getEmitOutput(filePathOrSourceFile: SourceFile | string, emitOnlyDtsFiles?: boolean): EmitOutput {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        return new EmitOutput(this.global, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
+    }
+
+    /**
+     * Gets the indentation at the specified position.
+     * @param sourceFile - Source file.
+     * @param position - Position.
+     * @param settings - Editor settings.
+     */
+    getIdentationAtPosition(sourceFile: SourceFile, position: number, settings?: EditorSettings): number;
+    /**
+     * Gets the indentation at the specified position.
+     * @param filePath - File path.
+     * @param position - Position.
+     * @param settings - Editor settings.
+     */
+    getIdentationAtPosition(filePath: string, position: number, settings?: EditorSettings): number;
+    getIdentationAtPosition(filePathOrSourceFile: SourceFile | string, position: number, settings?: EditorSettings): number {
+        const filePath = this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
+        if (settings == null)
+            settings = this.global.manipulationSettings.getEditorSettings();
+        else
+            fillDefaultEditorSettings(settings, this.global.manipulationSettings);
+        return this.compilerObject.getIndentationAtPosition(filePath, position, settings);
+    }
+
+    private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {
         const filePath = typeof filePathOrSourceFile === "string"
             ? this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePathOrSourceFile)
             : filePathOrSourceFile.getFilePath();
         if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
-        return new EmitOutput(this.global, filePath, this.compilerObject.getEmitOutput(filePath, emitOnlyDtsFiles));
+        return filePath;
     }
 }

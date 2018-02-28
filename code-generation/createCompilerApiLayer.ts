@@ -12,7 +12,7 @@ import {ArrayUtils} from "./../src/utils";
 import {cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces} from "./common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
-    "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory"];
+    "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "IndentStyle"];
 const interfacesToSeparate = ["CompilerOptions", "MapLike"];
 const typeAliasesToSeparate: string[] = [];
 

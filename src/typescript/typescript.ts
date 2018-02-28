@@ -639,6 +639,21 @@ export interface CompilerOptions {
     esModuleInterop?: boolean;
 }
 
+export enum IndentStyle {
+    None = 0,
+    Block = 1,
+    Smart = 2
+}
+
+export interface EditorSettings {
+    baseIndentSize?: number;
+    indentSize?: number;
+    tabSize?: number;
+    newLineCharacter?: string;
+    convertTabsToSpaces?: boolean;
+    indentStyle?: IndentStyle;
+}
+
 export namespace ts {
     export declare namespace ScriptSnapshot {
         export function fromString(text: string): IScriptSnapshot;
@@ -1966,9 +1981,9 @@ export namespace ts {
         isDeclarationFile: boolean;
         /**
          * lib.d.ts should have a reference comment like
-         * 
+         *
          *  /// <reference no-default-lib="true"/>
-         * 
+         *
          * If any other file has this comment, it signals not to include lib.d.ts
          * because this containing file is intended to act as a default library.
          */
@@ -2026,7 +2041,7 @@ export namespace ts {
          * the JavaScript and declaration files will be produced for all the files in this program.
          * If targetSourceFile is specified, then only the JavaScript and declaration for that
          * specific file will be generated.
-         * 
+         *
          * If writeFile is not specified then the writeFile callback from the compiler host will be
          * used for writing the JavaScript and declaration files.  Otherwise, the writeFile parameter
          * will be invoked when writing the JavaScript and declaration files.
@@ -2548,7 +2563,7 @@ export namespace ts {
      * Represents the result of module resolution.
      * Module resolution will pick up tsx/jsx/js files even if '--jsx' and '--allowJs' are turned off.
      * The Program will then filter results based on these flags.
-     * 
+     *
      * Prefer to return a `ResolvedModuleFull` so that the file type does not have to be inferred.
      */
     export interface ResolvedModule {
@@ -2655,7 +2670,7 @@ export namespace ts {
         /**
          * Hook used by transformers to substitute expressions just before they
          * are emitted by the pretty printer.
-         * 
+         *
          * NOTE: Transformation hooks should only be modified during `Transformer` initialization,
          * before returning the `NodeTransformer` callback.
          */
@@ -2663,7 +2678,7 @@ export namespace ts {
         /**
          * Hook used to allow transformers to capture state before or after
          * the printer emits a node.
-         * 
+         *
          * NOTE: Transformation hooks should only be modified during `Transformer` initialization,
          * before returning the `NodeTransformer` callback.
          */
@@ -2735,14 +2750,14 @@ export namespace ts {
         diagnostics?: Diagnostic[];
         /**
          * Gets a substitute for a node, if one is available; otherwise, returns the original node.
-         * 
+         *
          * @param hint A hint as to the intended usage of the node.
          * @param node The node to substitute.
          */
         substituteNode(hint: EmitHint, node: Node): Node;
         /**
          * Emits a node with possible notification.
-         * 
+         *
          * @param hint A hint as to the intended usage of the node.
          * @param node The node to emit.
          * @param emitCallback A callback used to emit the node.
@@ -3043,7 +3058,7 @@ export namespace ts {
          * In case of EmitAndSemanticDiagnosticsBuilderProgram, when targetSourceFile is specified,
          * it is assumed that that file is handled from affected file list. If targetSourceFile is not specified,
          * it will only emit all the affected files instead of whole program
-         * 
+         *
          * The first of writeFile if provided, writeFile of BuilderProgramHost if provided, writeFile of compiler host
          * in that order would be used to write the files
          */
@@ -3580,7 +3595,7 @@ export namespace ts {
          * Inlineable refactorings can have their actions hoisted out to the top level
          * of a context menu. Non-inlineanable refactorings should always be shown inside
          * their parent grouping.
-         * 
+         *
          * If not specified, this value is assumed to be 'true'
          */
         inlineable?: boolean;
@@ -3673,15 +3688,6 @@ export namespace ts {
         NewLineCharacter: string;
         ConvertTabsToSpaces: boolean;
         IndentStyle: IndentStyle;
-    }
-
-    export interface EditorSettings {
-        baseIndentSize?: number;
-        indentSize?: number;
-        tabSize?: number;
-        newLineCharacter?: string;
-        convertTabsToSpaces?: boolean;
-        indentStyle?: IndentStyle;
     }
 
     export interface FormatCodeOptions extends EditorOptions {
@@ -3886,7 +3892,7 @@ export namespace ts {
          * speed trumps accuracy, this function is preferable; however, for true accuracy, the
          * syntactic classifier is ideal. In fact, in certain editing scenarios, combining the
          * lexical, syntactic, and semantic classifiers may issue the best user experience.
-         * 
+         *
          * @param text                      The text of a line to classify.
          * @param lexState                  The state of the lexical classifier at the end of the previous line.
          * @param syntacticClassifierAbsent Whether the client is *not* using a syntactic classifier.
@@ -3910,10 +3916,10 @@ export namespace ts {
      * the same DocumentRegistry instance between different instances of LanguageService allow
      * for more efficient memory utilization since all projects will share at least the library
      * file (lib.d.ts).
-     * 
+     *
      * A more advanced use of the document registry is to serialize sourceFile objects to disk
      * and re-hydrate them when needed.
-     * 
+     *
      * To create a default DocumentRegistry, use createDocumentRegistry to create one, and pass it
      * to all subsequent createLanguageService calls.
      */
@@ -3922,7 +3928,7 @@ export namespace ts {
          * Request a stored SourceFile with a given fileName and compilationSettings.
          * The first call to acquire will call createLanguageServiceSourceFile to generate
          * the SourceFile if was not found in the registry.
-         * 
+         *
          * @param fileName The name of the file requested
          * @param compilationSettings Some compilation settings like target affects the
          * shape of a the resulting SourceFile. This allows the DocumentRegistry to store
@@ -3938,7 +3944,7 @@ export namespace ts {
          * Request an updated version of an already existing SourceFile with a given fileName
          * and compilationSettings. The update will in-turn call updateLanguageServiceSourceFile
          * to get an updated SourceFile.
-         * 
+         *
          * @param fileName The name of the file requested
          * @param compilationSettings Some compilation settings like target affects the
          * shape of a the resulting SourceFile. This allows the DocumentRegistry to store
@@ -3951,10 +3957,10 @@ export namespace ts {
         getKeyForCompilationSettings(settings: CompilerOptions): DocumentRegistryBucketKey;
         /**
          * Informs the DocumentRegistry that a file is not needed any longer.
-         * 
+         *
          * Note: It is not allowed to call release on a SourceFile that was not acquired from
          * this registry originally.
-         * 
+         *
          * @param fileName The name of the file to be released
          * @param compilationSettings The compilation settings used to acquire the file
          */
@@ -4274,12 +4280,6 @@ export namespace ts {
         definition = "definition",
         reference = "reference",
         writtenReference = "writtenReference"
-    }
-
-    export enum IndentStyle {
-        None = 0,
-        Block = 1,
-        Smart = 2
     }
 
     export enum SymbolDisplayPartKind {
@@ -4713,7 +4713,7 @@ export namespace ts {
      * Called to merge all the changes that occurred across several versions of a script snapshot
      * into a single change.  i.e. if a user keeps making successive edits to a script we will
      * have a text change from V1 to V2, V2 to V3, ..., Vn.
-     * 
+     *
      * This function will then merge those changes into a single change range valid between V1 and
      * Vn.
      */
@@ -4738,20 +4738,20 @@ export namespace ts {
     export declare function getOriginalNode<T extends Node>(node: Node, nodeTest: (node: Node) => node is T): T;
     /**
      * Gets a value indicating whether a node originated in the parse tree.
-     * 
+     *
      * @param node The node to test.
      */
     export declare function isParseTreeNode(node: Node): boolean;
     /**
      * Gets the original parse tree node for a node.
-     * 
+     *
      * @param node The original node.
      * @returns The original parse tree node if found; otherwise, undefined.
      */
     export declare function getParseTreeNode(node: Node): Node;
     /**
      * Gets the original parse tree node for a node.
-     * 
+     *
      * @param node The original node.
      * @param nodeTest A callback used to ensure the correct type of parse tree node is returned.
      * @returns The original parse tree node if found; otherwise, undefined.
@@ -4759,7 +4759,7 @@ export namespace ts {
     export declare function getParseTreeNode<T extends Node>(node: Node, nodeTest?: (node: Node) => node is T): T;
     /**
      * Remove extra underscore from escaped identifier text content.
-     * 
+     *
      * @param identifier The escaped identifier text.
      * @returns The unescaped identifier text.
      */
@@ -4777,21 +4777,21 @@ export namespace ts {
     export declare function getNameOfDeclaration(declaration: Declaration | Expression): DeclarationName | undefined;
     /**
      * Gets the JSDoc parameter tags for the node if present.
-     * 
+     *
      * @remarks Returns any JSDoc param tag that matches the provided
      * parameter, whether a param tag on a containing function
      * expression, or a param tag on a variable declaration whose
      * initializer is the containing function. The tags closest to the
      * node are returned first, so in the previous example, the param
      * tag on the containing function expression would be first.
-     * 
+     *
      * Does not return tags for binding patterns, because JSDoc matches
      * parameters by name and binding patterns do not have a name.
      */
     export declare function getJSDocParameterTags(param: ParameterDeclaration): ReadonlyArray<JSDocParameterTag> | undefined;
     /**
      * Return true if the node has JSDoc parameter tags.
-     * 
+     *
      * @remarks Includes parameter tags that are not directly on the node,
      * for example on a variable declaration whose initializer is a function expression.
      */
@@ -4818,7 +4818,7 @@ export namespace ts {
     export declare function getJSDocTypeTag(node: Node): JSDocTypeTag | undefined;
     /**
      * Gets the type node for the node if provided via JSDoc.
-     * 
+     *
      * @remarks The search includes any JSDoc param tag that relates
      * to the provided parameter, for example a type tag on the
      * parameter itself, or a param tag on a containing function
@@ -4830,7 +4830,7 @@ export namespace ts {
     export declare function getJSDocType(node: Node): TypeNode | undefined;
     /**
      * Gets the return type node for the node if provided via JSDoc's return tag.
-     * 
+     *
      * @remarks `getJSDocReturnTag` just gets the whole JSDoc tag. This function
      * gets the type from inside the braces.
      */
@@ -5046,11 +5046,11 @@ export namespace ts {
      * stored in properties. If a 'cbNodes' callback is specified, it is invoked for embedded arrays; otherwise,
      * embedded arrays are flattened and the 'cbNode' callback is invoked for each element. If a callback returns
      * a truthy value, iteration stops and that value is returned. Otherwise, undefined is returned.
-     * 
+     *
      * @param node a given node to visit its children
      * @param cbNode a callback to be invoked for all child nodes
      * @param cbNodes a callback to be invoked for embedded array
-     * 
+     *
      * @remarks `forEachChild` must visit the children of a node in the order
      * that they appear in the source code. The language service depends on this property to locate nodes by position.
      */
@@ -5376,14 +5376,14 @@ export namespace ts {
     /**
      * Creates a synthetic statement to act as a placeholder for a not-emitted statement in
      * order to preserve comments.
-     * 
+     *
      * @param original The original statement.
      */
     export declare function createNotEmittedStatement(original: Node): NotEmittedStatement;
     /**
      * Creates a synthetic expression to act as a placeholder for a not-emitted expression in
      * order to preserve comments or sourcemap positions.
-     * 
+     *
      * @param expression The inner expression to emit.
      * @param original The original outer expression.
      * @param location The location for the expression. Defaults to the positions from "original" if provided.
@@ -5488,7 +5488,7 @@ export namespace ts {
     export declare function setOriginalNode<T extends Node>(node: T, original: Node | undefined): T;
     /**
      * Visits a Node using the supplied visitor, possibly returning a new Node in its place.
-     * 
+     *
      * @param node The Node to visit.
      * @param visitor The callback used to visit the Node.
      * @param test A callback to execute to verify the Node is valid.
@@ -5497,7 +5497,7 @@ export namespace ts {
     export declare function visitNode<T extends Node>(node: T, visitor: Visitor, test?: (node: Node) => boolean, lift?: (node: NodeArray<Node>) => T): T;
     /**
      * Visits a Node using the supplied visitor, possibly returning a new Node in its place.
-     * 
+     *
      * @param node The Node to visit.
      * @param visitor The callback used to visit the Node.
      * @param test A callback to execute to verify the Node is valid.
@@ -5506,7 +5506,7 @@ export namespace ts {
     export declare function visitNode<T extends Node>(node: T | undefined, visitor: Visitor, test?: (node: Node) => boolean, lift?: (node: NodeArray<Node>) => T): T | undefined;
     /**
      * Visits a NodeArray using the supplied visitor, possibly returning a new NodeArray in its place.
-     * 
+     *
      * @param nodes The NodeArray to visit.
      * @param visitor The callback used to visit a Node.
      * @param test A node test to execute for each node.
@@ -5516,7 +5516,7 @@ export namespace ts {
     export declare function visitNodes<T extends Node>(nodes: NodeArray<T>, visitor: Visitor, test?: (node: Node) => boolean, start?: number, count?: number): NodeArray<T>;
     /**
      * Visits a NodeArray using the supplied visitor, possibly returning a new NodeArray in its place.
-     * 
+     *
      * @param nodes The NodeArray to visit.
      * @param visitor The callback used to visit a Node.
      * @param test A node test to execute for each node.
@@ -5551,7 +5551,7 @@ export namespace ts {
     export declare function visitFunctionBody(node: ConciseBody, visitor: Visitor, context: TransformationContext): ConciseBody;
     /**
      * Visits each child of a Node using the supplied visitor, possibly returning a new Node of the same kind in its place.
-     * 
+     *
      * @param node The Node whose children will be visited.
      * @param visitor The callback used to visit each child.
      * @param context A lexical environment context for the visitor.
@@ -5559,7 +5559,7 @@ export namespace ts {
     export declare function visitEachChild<T extends Node>(node: T, visitor: Visitor, context: TransformationContext): T;
     /**
      * Visits each child of a Node using the supplied visitor, possibly returning a new Node of the same kind in its place.
-     * 
+     *
      * @param node The Node whose children will be visited.
      * @param visitor The callback used to visit each child.
      * @param context A lexical environment context for the visitor.
@@ -5577,10 +5577,10 @@ export namespace ts {
     /**
      * Create a new 'Program' instance. A Program is an immutable collection of 'SourceFile's and a 'CompilerOptions'
      * that represent a compilation unit.
-     * 
+     *
      * Creating a program proceeds from a set of root files, expanding the set of inputs by following imports and
      * triple-slash-reference-path directives transitively. '@types' and triple-slash-reference-types are also pulled in.
-     * 
+     *
      * @param rootNames - A set of root files.
      * @param options - The compiler options which should be used.
      * @param host - The host interacts with the underlying file system.
