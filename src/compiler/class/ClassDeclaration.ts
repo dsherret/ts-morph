@@ -741,19 +741,28 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     private getBodyMembers() {
-        const members = this.compilerNode.members.map(m => this.getNodeFromCompilerNode<ClassMemberTypes>(m));
+        return getAllBodyMembers(this).filter(m => isSupportedClassMember(m));
 
-        // filter out the method declarations or constructor declarations without a body if not ambient
-        return this.isAmbient() ? members : members.filter(m => {
-            if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
-                return true;
-            if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
-                return true;
-            return m.isImplementation();
-        });
+        function getAllBodyMembers(classDec: ClassDeclaration) {
+            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode<ClassMemberTypes>(m));
+
+            // filter out the method declarations or constructor declarations without a body if not ambient
+            return classDec.isAmbient() ? members : members.filter(m => {
+                if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+                    return true;
+                if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+                    return true;
+                return m.isImplementation();
+            });
+        }
     }
 }
 
 function isClassPropertyType(m: Node) {
     return TypeGuards.isPropertyDeclaration(m) || TypeGuards.isSetAccessorDeclaration(m) || TypeGuards.isGetAccessorDeclaration(m) || TypeGuards.isParameterDeclaration(m);
+}
+
+function isSupportedClassMember(m: Node) {
+    return TypeGuards.isMethodDeclaration(m) || TypeGuards.isPropertyDeclaration(m) || TypeGuards.isGetAccessorDeclaration(m) || TypeGuards.isSetAccessorDeclaration(m)
+        || TypeGuards.isConstructorDeclaration(m) || TypeGuards.isParameterDeclaration(m);
 }
