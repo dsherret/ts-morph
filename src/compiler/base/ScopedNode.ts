@@ -17,7 +17,7 @@ export interface ScopedNode {
      * Sets the scope.
      * @param scope - Scope to set to.
      */
-    setScope(scope: Scope): this;
+    setScope(scope: Scope | undefined): this;
     /**
      * Gets if the node has a scope keyword.
      */
@@ -30,8 +30,8 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
             return scopeableNode.getScopeForNode(this) || Scope.Public;
         }
 
-        setScope(scope: Scope) {
-            scopeableNode.setScopeForNode(this, scope === Scope.Public ? undefined : scope);
+        setScope(scope: Scope | undefined) {
+            scopeableNode.setScopeForNode(this, scope);
             return this;
         }
 
