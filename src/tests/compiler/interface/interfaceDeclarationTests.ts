@@ -85,7 +85,7 @@ describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(n => n.getImplementations), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
-            const {firstChild, sourceFile, tsSimpleAst} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
+            const {firstChild, sourceFile, project} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getImplementations();
             expect(implementations.length).to.equal(2);
             expect((implementations[0].getNode() as ClassDeclaration).getName()).to.equal("Class1");

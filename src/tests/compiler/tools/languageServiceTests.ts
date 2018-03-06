@@ -39,7 +39,7 @@ describe(nameof(LanguageService), () => {
         });
 
         it("should get the emit output when specifying a source file", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
+            const {sourceFile, project} = getInfoFromText("const t = 5;", { compilerOptions: { target: ScriptTarget.ES5 } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile);
             checkOutput(output, {
                 emitSkipped: false,
@@ -52,7 +52,7 @@ describe(nameof(LanguageService), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("const t = 5;", { compilerOptions: { declaration: true } });
+            const {sourceFile, project} = getInfoFromText("const t = 5;", { compilerOptions: { declaration: true } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath(), true);
             checkOutput(output, {
                 emitSkipped: false,
@@ -65,7 +65,7 @@ describe(nameof(LanguageService), () => {
         });
 
         it("should not emit if there is a declaraton file error", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("class MyClass {}\n export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
+            const {sourceFile, project} = getInfoFromText("class MyClass {}\n export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath(), true);
 
             checkOutput(output, {
@@ -79,8 +79,8 @@ describe(nameof(LanguageService), () => {
         });
 
         it("should throw when the specified file does not exist", () => {
-            const {tsSimpleAst} = getInfoFromText("");
-            expect(() => tsSimpleAst.getLanguageService().getEmitOutput("nonExistentFile.ts")).to.throw(FileNotFoundError);
+            const {project} = getInfoFromText("");
+            expect(() => project.getLanguageService().getEmitOutput("nonExistentFile.ts")).to.throw(FileNotFoundError);
         });
     });
 });

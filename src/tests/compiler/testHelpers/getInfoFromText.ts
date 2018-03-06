@@ -73,8 +73,8 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
             host.writeFileSync(libFile.filePath, libFile.text);
     }
 
-    const tsSimpleAst = new Project({ compilerOptions }, host);
-    const sourceFile = tsSimpleAst.createSourceFile(getFilePath(), text);
+    const project = new Project({ compilerOptions }, host);
+    const sourceFile = project.createSourceFile(getFilePath(), text);
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)
     /*
@@ -82,7 +82,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
         ensureNoCompileErrorsInSourceFile(sourceFile);
     */
 
-    return {tsSimpleAst, sourceFile};
+    return {project, sourceFile};
 
     function getFilePath() {
         if (filePath != null)

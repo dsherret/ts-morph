@@ -8,7 +8,7 @@ export class TsSimpleAstInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {
     }
 
-    getProject() {
+    getAst() {
         return this.project;
     }
 

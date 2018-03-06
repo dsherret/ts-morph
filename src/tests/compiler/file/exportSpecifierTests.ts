@@ -6,7 +6,7 @@ import {ArrayUtils} from "./../../../utils";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
-    function getAst() {
+    function getProject() {
         return new Project({ useVirtualFileSystem: true });
     }
 
@@ -32,14 +32,14 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.setName), () => {
         it("should change what's imported, but not change anything in the other files", () => {
-            const ast = getAst();
-            const myClassFile = ast.createSourceFile("MyClass.ts", {
+            const project = getProject();
+            const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });
-            const exportsFile = ast.createSourceFile("Exports.ts", {
+            const exportsFile = project.createSourceFile("Exports.ts", {
                 exports: [{ namedExports: [{ name: "MyClass" }], moduleSpecifier: "./MyClass" }]
             });
-            const mainFile = ast.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
+            const mainFile = project.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
             expect(myClassFile.getFullText()).to.equal(`export class MyClass {\n}\n`);
             expect(exportsFile.getFullText()).to.equal(`export {MyNewName} from "./MyClass";\n`);
@@ -47,8 +47,8 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should change it when there's an alias", () => {
-            const ast = getAst();
-            const exportsFile = ast.createSourceFile("Exports.ts", {
+            const project = getProject();
+            const exportsFile = project.createSourceFile("Exports.ts", {
                 exports: [{ namedExports: [{ name: "MyClass", alias: "MyAlias" }], moduleSpecifier: "./MyClass" }]
             });
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
@@ -56,8 +56,8 @@ describe(nameof(ExportSpecifier), () => {
         });
 
         it("should rename in current file if exporting from current file", () => {
-            const ast = getAst();
-            const myClassFile = ast.createSourceFile("MyClass.ts", {
+            const project = getProject();
+            const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
                 exports: [{ namedExports: [{ name: "MyClass" }]}]
             });
@@ -68,8 +68,8 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.renameName), () => {
         it("should rename in current file if exporting from current file", () => {
-            const ast = getAst();
-            const myClassFile = ast.createSourceFile("MyClass.ts", {
+            const project = getProject();
+            const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
                 exports: [{ namedExports: [{ name: "MyClass" }]}]
             });
@@ -103,28 +103,28 @@ describe(nameof(ExportSpecifier), () => {
 
     describe(nameof<ExportSpecifier>(n => n.setAlias), () => {
         it("should rename existing alias", () => {
-            const ast = getAst();
-            const myClassFile = ast.createSourceFile("MyClass.ts", {
+            const project = getProject();
+            const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });
-            const exportsFile = ast.createSourceFile("Exports.ts", {
+            const exportsFile = project.createSourceFile("Exports.ts", {
                 exports: [{ namedExports: [{ name: "MyClass", alias: "MyAlias" }], moduleSpecifier: "./MyClass" }]
             });
-            const mainFile = ast.createSourceFile("Main.ts", `import {MyAlias} from "./Exports";\n\nconst t = MyAlias;\n`);
+            const mainFile = project.createSourceFile("Main.ts", `import {MyAlias} from "./Exports";\n\nconst t = MyAlias;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setAlias("MyNewAlias");
             expect(exportsFile.getFullText()).to.equal(`export {MyClass as MyNewAlias} from "./MyClass";\n`);
             expect(mainFile.getFullText()).to.equal(`import {MyNewAlias} from "./Exports";\n\nconst t = MyNewAlias;\n`);
         });
 
         it("should add new alias and update all usages to the new alias", () => {
-            const ast = getAst();
-            const myClassFile = ast.createSourceFile("MyClass.ts", {
+            const project = getProject();
+            const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass", isExported: true }]
             });
-            const exportsFile = ast.createSourceFile("Exports.ts", {
+            const exportsFile = project.createSourceFile("Exports.ts", {
                 exports: [{ namedExports: [{ name: "MyClass" }], moduleSpecifier: "./MyClass" }]
             });
-            const mainFile = ast.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
+            const mainFile = project.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setAlias("MyNewAlias");
             expect(myClassFile.getFullText()).to.equal(`export class MyClass {\n}\n`);
             expect(exportsFile.getFullText()).to.equal(`export {MyClass as MyNewAlias} from "./MyClass";\n`);
@@ -133,9 +133,9 @@ describe(nameof(ExportSpecifier), () => {
     });
 
     function setupLocalTargetSymbolTest() {
-        const ast = getAst();
-        const mainFile = ast.createSourceFile("main.ts", `export {MyClass, OtherClass} from "./MyClass";`);
-        const myClassFile = ast.createSourceFile("MyClass.ts", `export class MyClass {}`);
+        const project = getProject();
+        const mainFile = project.createSourceFile("main.ts", `export {MyClass, OtherClass} from "./MyClass";`);
+        const myClassFile = project.createSourceFile("MyClass.ts", `export class MyClass {}`);
         return mainFile.getExportDeclarations()[0].getNamedExports();
     }
 

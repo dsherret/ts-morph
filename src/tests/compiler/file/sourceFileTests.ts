@@ -14,7 +14,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
         describe("general", () => {
             const fileText = "    interface Identifier {}    ";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
             const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
             const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
             const testFile = sourceFile.copy("/TestFile.ts");
@@ -33,9 +33,9 @@ describe(nameof(SourceFile), () => {
                 expect(testFile.getFullText()).to.equal(newText);
             });
 
-            describe(nameof(tsSimpleAst), () => {
+            describe(nameof(project), () => {
                 it("should include the copied source files", () => {
-                    expect(tsSimpleAst.getSourceFiles().length).to.equal(4);
+                    expect(project.getSourceFiles().length).to.equal(4);
                 });
             });
 
@@ -69,15 +69,15 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should return the existing source file when copying to the same path", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/Folder/File.ts" });
+            const {sourceFile, project} = getInfoFromText("", { filePath: "/Folder/File.ts" });
             const copiedSourceFile = sourceFile.copy(sourceFile.getFilePath());
             expect(copiedSourceFile).to.equal(sourceFile);
         });
 
         it("should update the imports and exports in the copied source file", () => {
             const originalText = `import {MyInterface} from "./MyInterface";\nexport * from "./MyInterface";`;
-            const {sourceFile, tsSimpleAst} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
-            const otherFile = tsSimpleAst.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
+            const {sourceFile, project} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
+            const otherFile = project.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
             const copiedSourceFile = sourceFile.copy("../NewFile");
             expect(sourceFile.getFullText()).to.equal(originalText);
             expect(copiedSourceFile.getFullText()).to.equal(`import {MyInterface} from "./dir/MyInterface";\nexport * from "./dir/MyInterface";`);
@@ -86,8 +86,8 @@ describe(nameof(SourceFile), () => {
         it("should not update the imports and exports if copying to the same directory", () => {
             // module specifiers are this way to check if they change
             const originalText = `import {MyInterface} from "../dir/MyInterface";\nexport * from "../dir/MyInterface";`;
-            const {sourceFile, tsSimpleAst} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
-            const otherFile = tsSimpleAst.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
+            const {sourceFile, project} = getInfoFromText(originalText, { filePath: "/dir/File.ts" });
+            const otherFile = project.createSourceFile("/dir/MyInterface.ts", "export interface MyInterface {}");
             const copiedSourceFile = sourceFile.copy("NewFile");
             expect(sourceFile.getFullText()).to.equal(originalText);
             expect(copiedSourceFile.getFullText()).to.equal(originalText);
@@ -96,9 +96,9 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.copyImmediately), () => {
         it("should copy the source file and update the file system", async () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             const newSourceFile = await sourceFile.copyImmediately("NewFile.ts");
             expect(fileSystem.fileExistsSync("/File.ts")).to.be.true;
             expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
@@ -109,9 +109,9 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.copyImmediatelySync), () => {
         it("should copy the source file and update the file system", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             const newSourceFile = sourceFile.copyImmediatelySync("NewFile.ts");
             expect(fileSystem.fileExistsSync("/File.ts")).to.be.true;
             expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
@@ -123,8 +123,8 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.move), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath });
-            const existingFile = tsSimpleAst.createSourceFile("/existingFile.ts");
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath });
+            const existingFile = project.createSourceFile("/existingFile.ts");
             const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
             const newFile = sourceFile.move(newFilePath, { overwrite });
             const isRemovingExisting = overwrite && newFilePath === "/existingFile.ts";
@@ -134,7 +134,7 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.getFilePath()).to.equal(absoluteNewFilePath || newFilePath);
             expect(sourceFile.getFullText()).to.equal(fileText);
             expect(interfaceDec.wasForgotten()).to.be.false;
-            expect(tsSimpleAst.getSourceFiles().length).to.equal(isRemovingExisting ? 1 : 2);
+            expect(project.getSourceFiles().length).to.equal(isRemovingExisting ? 1 : 2);
         }
 
         it("should throw if the file already exists", () => {
@@ -156,12 +156,12 @@ describe(nameof(SourceFile), () => {
 
         it("should change the module specifiers in other files when moving", () => {
             const fileText = "export interface MyInterface {}";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
-            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
-            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
             const file4Text = `export * from "./sub/MyInterface";\nimport "MyOtherFile";`;
-            const file4 = tsSimpleAst.createSourceFile("/file4.ts", file4Text);
+            const file4 = project.createSourceFile("/file4.ts", file4Text);
             sourceFile.move("/dir/NewFile.ts");
             expect(file1.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";`);
             expect(file2.getFullText()).to.equal(`import * as interfaces from "../dir/NewFile";\nimport "../dir/NewFile";`);
@@ -171,9 +171,9 @@ describe(nameof(SourceFile), () => {
 
         it("should change the module specifiers in other files when moving an index file", () => {
             const fileText = "export interface MyInterface {}";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
-            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import * as test from "./sub";`);
-            const file2 = tsSimpleAst.createSourceFile("/file2.ts", `import "./sub/index";`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import * as test from "./sub";`);
+            const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
             sourceFile.move("/dir/index.ts");
             expect(file1.getFullText()).to.equal(`import * as test from "./dir";`);
             expect(file2.getFullText()).to.equal(`import "./dir";`);
@@ -181,8 +181,8 @@ describe(nameof(SourceFile), () => {
 
         it("should change the module specifiers in the current file when moving", () => {
             const fileText = `import {OtherInterface} from "./OtherInterface";\nexport interface MyInterface {}\nexport * from "./OtherInterface";`;
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
-            const otherFile = tsSimpleAst.createSourceFile("/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const otherFile = project.createSourceFile("/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("/dir/NewFile.ts");
             expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface";\nexport interface MyInterface {}\nexport * from "../OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
@@ -191,8 +191,8 @@ describe(nameof(SourceFile), () => {
         it("should not change the module specifiers in the current file when moving to the same directory", () => {
             // using a weird module specifier to make sure it doesn't update automatically
             const fileText = `import {OtherInterface} from "./../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "./../dir/OtherInterface";`;
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
-            const otherFile = tsSimpleAst.createSourceFile("/dir/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
+            const otherFile = project.createSourceFile("/dir/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("NewFile.ts");
             expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "./../dir/OtherInterface";\n` +
                 `export interface MyInterface {}\n` +
@@ -203,9 +203,9 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.moveImmediately), () => {
         it("should move the source file and update the file system", async () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             await sourceFile.moveImmediately("NewFile.ts");
             expect(fileSystem.fileExistsSync("/File.ts")).to.be.false;
             expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
@@ -214,9 +214,9 @@ describe(nameof(SourceFile), () => {
         it("should only save source file when moving to the same path", async () => {
             const filePath = "/File.ts";
             const host = getFileSystemHostWithFiles([]);
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath, host });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             await sourceFile.moveImmediately(filePath);
             expect(fileSystem.fileExistsSync(filePath)).to.be.true;
             expect(host.getDeleteLog().length).to.equal(0);
@@ -225,9 +225,9 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.moveImmediatelySync), () => {
         it("should move the source file and update the file system", () => {
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath: "/File.ts" });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath: "/File.ts" });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             sourceFile.moveImmediatelySync("NewFile.ts");
             expect(fileSystem.fileExistsSync("/File.ts")).to.be.false;
             expect(fileSystem.fileExistsSync("/NewFile.ts")).to.be.true;
@@ -236,9 +236,9 @@ describe(nameof(SourceFile), () => {
         it("should only save source file when moving to the same path", () => {
             const filePath = "/File.ts";
             const host = getFileSystemHostWithFiles([]);
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
-            const fileSystem = tsSimpleAst.getFileSystem();
-            tsSimpleAst.saveSync();
+            const {sourceFile, project} = getInfoFromText("", { filePath, host });
+            const fileSystem = project.getFileSystem();
+            project.saveSync();
             sourceFile.moveImmediatelySync(filePath);
             expect(fileSystem.fileExistsSync(filePath)).to.be.true;
             expect(host.getDeleteLog().length).to.equal(0);
@@ -268,13 +268,13 @@ describe(nameof(SourceFile), () => {
         it("should delete the file once save changes is called", async () => {
             const filePath = "/Folder/File.ts";
             const host = getFileSystemHostWithFiles([]);
-            const {sourceFile, tsSimpleAst} = getInfoFromText("", { filePath, host });
+            const {sourceFile, project} = getInfoFromText("", { filePath, host });
             sourceFile.saveSync();
 
             sourceFile.delete();
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(host.getDeleteLog().length).to.equal(0);
-            tsSimpleAst.saveSync();
+            project.saveSync();
             const entry = host.getDeleteLog()[0];
             expect(entry.path).to.equal(filePath);
             expect(host.getDeleteLog().length).to.equal(1);
@@ -361,23 +361,23 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const sourceFile = ast.createSourceFile("MyFile.d.ts", "");
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("MyFile.d.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.true;
         });
 
         it("should not be a source file when the file name ends with .ts", () => {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const sourceFile = ast.createSourceFile("MyFile.ts", "");
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
     });
 
     describe(nameof<SourceFile>(n => n.insertImportDeclarations), () => {
         function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
-            const {sourceFile, tsSimpleAst} = getInfoFromText(startCode);
+            const {sourceFile, project} = getInfoFromText(startCode);
             if (useSingleQuotes)
-                tsSimpleAst.manipulationSettings.set({ quoteType: QuoteType.Single });
+                project.manipulationSettings.set({ quoteType: QuoteType.Single });
             const result = sourceFile.insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -612,25 +612,25 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getExportedDeclarations), () => {
         it("should get the exported declarations", () => {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
                 "export class MainFileClass {}\nexport default MainFileClass;");
-            ast.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
-            ast.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
-            ast.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
-            ast.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
+            project.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
+            project.createSourceFile("otherClass.ts", `export class OtherClass {}\nexport class InnerClass {}`);
+            project.createSourceFile("barrel.ts", `export * from "./subBarrel";`);
+            project.createSourceFile("subBarrel.ts", `export * from "./subFile";\nexport {SubClass2 as Test} from "./subFile2";\n` +
                 `export {default as SubClass3} from "./subFile3"`);
-            ast.createSourceFile("subFile.ts", `export class SubClass {}`);
-            ast.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
-            ast.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
+            project.createSourceFile("subFile.ts", `export class SubClass {}`);
+            project.createSourceFile("subFile2.ts", `export class SubClass2 {}`);
+            project.createSourceFile("subFile3.ts", `class SubClass3 {}\nexport default SubClass3;`);
 
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
                 .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
         });
 
         it("should get the exported declaration when there's only a default export using an export assignment", () => {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = ast.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
 
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
                 .to.deep.equal(["MainFileClass"].sort());
@@ -806,9 +806,9 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.emit), () => {
         it("should emit the source file", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
-            const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
-            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
-            ast.createSourceFile("file2.ts", "const num2 = 2;");
+            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+            const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
+            project.createSourceFile("file2.ts", "const num2 = 2;");
             const result = sourceFile.emit();
 
             expect(result).to.be.instanceof(EmitResult);
@@ -821,8 +821,8 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
         it("should get the emit output for the source file", () => {
-            const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
-            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
+            const project = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput();
 
             expect(result.getEmitSkipped()).to.be.false;
@@ -833,8 +833,8 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const ast = new Project({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
-            const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
+            const project = new Project({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 
             expect(result.getEmitSkipped()).to.be.false;
@@ -866,8 +866,8 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.formatText), () => {
         function doTest(startingCode: string, expectedCode: string, manipulationSettings: Partial<ManipulationSettings> = {}, settings: FormatCodeSettings = {}) {
-            const {tsSimpleAst, sourceFile} = getInfoFromText(startingCode);
-            tsSimpleAst.manipulationSettings.set(manipulationSettings);
+            const {project, sourceFile} = getInfoFromText(startingCode);
+            project.manipulationSettings.set(manipulationSettings);
             sourceFile.formatText(settings);
             expect(sourceFile.getText()).to.equal(expectedCode);
         }
@@ -1138,9 +1138,9 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathToSourceFile), () => {
         function doTest(from: string, to: string, expected: string) {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const fromFile = ast.createSourceFile(from);
-            const toFile = ast.createSourceFile(to);
+            const project = new Project({ useVirtualFileSystem: true });
+            const fromFile = project.createSourceFile(from);
+            const toFile = project.createSourceFile(to);
             expect(fromFile.getRelativePathToSourceFile(toFile)).to.equal(expected);
         }
 
@@ -1153,9 +1153,9 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathToSourceFileAsModuleSpecifier), () => {
         function doTest(from: string, to: string, expected: string) {
-            const ast = new Project({ useVirtualFileSystem: true });
-            const fromFile = ast.createSourceFile(from);
-            const toFile = from === to ? fromFile : ast.createSourceFile(to);
+            const project = new Project({ useVirtualFileSystem: true });
+            const fromFile = project.createSourceFile(from);
+            const toFile = from === to ? fromFile : project.createSourceFile(to);
             expect(fromFile.getRelativePathToSourceFileAsModuleSpecifier(toFile)).to.equal(expected);
         }
 
@@ -1203,11 +1203,11 @@ function myFunction(param: MyClass) {
     describe(nameof<SourceFile>(s => s.getReferencingImportAndExportDeclarations), () => {
         it("should get the imports and exports that reference this source file", () => {
             const fileText = "export interface MyInterface {}";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
-            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
-            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
-            const file4 = tsSimpleAst.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
 
             const referencing = sourceFile.getReferencingImportAndExportDeclarations();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getImportDeclarations(),
@@ -1216,9 +1216,9 @@ function myFunction(param: MyClass) {
 
         it("should get the imports and exports that reference an index file", () => {
             const fileText = "export interface MyInterface {}";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
-            const file1 = tsSimpleAst.createSourceFile("/file.ts", `export * from "./sub";`);
-            const file2 = tsSimpleAst.createSourceFile("/file2.ts", `import "./sub/index";`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/sub/index.ts" });
+            const file1 = project.createSourceFile("/file.ts", `export * from "./sub";`);
+            const file2 = project.createSourceFile("/file2.ts", `import "./sub/index";`);
             const referencing = sourceFile.getReferencingImportAndExportDeclarations();
             expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...file1.getExportDeclarations(),
                 ...file2.getImportDeclarations()].map(d => d.getText()).sort());
@@ -1228,11 +1228,11 @@ function myFunction(param: MyClass) {
     describe(nameof<SourceFile>(s => s.getReferencingSourceFiles), () => {
         it("should get the source files that reference this source file", () => {
             const fileText = "export interface MyInterface {}";
-            const {sourceFile, tsSimpleAst} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
-            const file1 = tsSimpleAst.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
-            const file2 = tsSimpleAst.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = tsSimpleAst.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
-            const file4 = tsSimpleAst.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
 
             const referencing = sourceFile.getReferencingSourceFiles();
             expect(referencing.map(r => r.getFilePath()).sort()).to.deep.equal([file1, file2, file3].map(s => s.getFilePath()).sort());

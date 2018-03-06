@@ -11,7 +11,7 @@ function getInfoFromTextWithFirstInterfaceProperty(text: string) {
 describe(nameof(PropertyNamedNode), () => {
     describe(nameof<PropertyNamedNode>(n => n.rename), () => {
         function renameTest(startText: string, newName: string, expectedText: string) {
-            const {firstProp, sourceFile, tsSimpleAst} = getInfoFromTextWithFirstInterfaceProperty(startText);
+            const {firstProp, sourceFile, project} = getInfoFromTextWithFirstInterfaceProperty(startText);
             firstProp.rename(newName);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }

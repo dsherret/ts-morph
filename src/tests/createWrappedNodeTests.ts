@@ -48,9 +48,9 @@ describe(nameof(createWrappedNode), () => {
     });
 
     it("should be able to provide a type checker", () => {
-        const ast = new Project({ useVirtualFileSystem: true });
-        const sourceFile = ast.createSourceFile("test.ts", "let s = '';");
-        const typeChecker = ast.getTypeChecker();
+        const project = new Project({ useVirtualFileSystem: true });
+        const sourceFile = project.createSourceFile("test.ts", "let s = '';");
+        const typeChecker = project.getTypeChecker();
         const wrappedSourceFile = createWrappedNode(sourceFile.compilerNode, { typeChecker: typeChecker.compilerObject }) as SourceFile;
 
         expect(wrappedSourceFile.getVariableDeclarationOrThrow("s").getType().getText()).to.equal("string");

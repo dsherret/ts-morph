@@ -4,9 +4,9 @@ import {Diagnostic} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(Diagnostic), () => {
-    const {tsSimpleAst, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true });
-    tsSimpleAst.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
-    const diagnostics = tsSimpleAst.getDiagnostics();
+    const {project, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true });
+    project.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
+    const diagnostics = project.getDiagnostics();
     const constError = diagnostics[1];
 
     it("should have two errors overall", () => {
