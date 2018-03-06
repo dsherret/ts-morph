@@ -44,18 +44,22 @@ describe(nameof(ScopedNode), () => {
     });
 
     describe(nameof<ScopedNode>(d => d.setScope), () => {
-        function doTest(startText: string, scope: Scope, expectedText: string) {
+        function doTest(startText: string, scope: Scope | undefined, expectedText: string) {
             const {firstChild, firstProperty} = getInfoWithFirstPropertyFromText(startText);
             firstProperty.setScope(scope);
             expect(firstChild.getText()).to.be.equal(expectedText);
         }
 
-        it("should clear the scope keyword if set to public", () => {
-            doTest("class Identifier { private prop: string; }", Scope.Public, "class Identifier { prop: string; }");
+        it("should clear the scope keyword if set to undefined", () => {
+            doTest("class Identifier { private prop: string; }", undefined, "class Identifier { prop: string; }");
         });
 
-        it("should clear the scope keyword if set to public even when public", () => {
-            doTest("class Identifier { public prop: string; }", Scope.Public, "class Identifier { prop: string; }");
+        it("should leave the scoppe as is if set to public even when public", () => {
+            doTest("class Identifier { public prop: string; }", Scope.Public, "class Identifier { public prop: string; }");
+        });
+
+        it("should set the scope keyword to public when specified", () => {
+            doTest("class Identifier { private prop: string; }", Scope.Public, "class Identifier { public prop: string; }");
         });
 
         it("should set the scope keyword to protected when specified", () => {

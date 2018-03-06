@@ -123,7 +123,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the extends expression or return sundefined if it doesn't exist.
+     * Gets the extends expression or returns undefined if it doesn't exist.
      */
     getExtends(): ExpressionWithTypeArguments | undefined {
         const extendsClause = this.getHeritageClauseByKind(SyntaxKind.ExtendsKeyword);
