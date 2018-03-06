@@ -10,7 +10,10 @@ by useful in some scenarios (for example, using a virtual file system is useful 
 ### Current File System Object
 
 ```ts
-const fs = ast.getFileSystem(); // returns: FileSystemHost
+import Project from "ts-simple-ast";
+const project = new Project();
+
+const fs = project.getFileSystem(); // returns: FileSystemHost
 ```
 
 This file system object can be used to interact with the current file system. The methods available on it are very obvious and not worth explaining
@@ -21,13 +24,13 @@ here (ex. `writeFile(filePath: string, fileText: string): Promise<void>`, `readF
 If you want to use a virtual file system that is stored in memory, specify that when creating an `Ast` object:
 
 ```ts
-import Ast from "ts-simple-ast";
+import Project from "ts-simple-ast";
 
-const ast = new Ast({ useVirtualFileSystem: true });
-const fs = ast.getFileSystem();
+const project = new Project({ useVirtualFileSystem: true });
+const fs = project.getFileSystem();
 
 // note that it's ok to use synchronous commands when using a virtual file system
-const sourceFile = ast.createSourceFile("file.ts", "console.log(5);");
+const sourceFile = project.createSourceFile("file.ts", "console.log(5);");
 sourceFile.saveSync();
 fs.readFileSync("file.ts"); // returns: "console.log(5);"
 ```
@@ -42,7 +45,7 @@ you won't be able to resolve the types they define.
 If you need this information, you will have to write them to the virtual file system manually using a method that works well in your environment:
 
 ```ts
-import Ast, {FileSystemHost} from "ts-simple-ast";
+import Project, {FileSystemHost} from "ts-simple-ast";
 
 function loadDtsFiles(fs: FileSystemHost) {
     // Example that loads every single lib file. You most likely don't need all of these.
@@ -62,8 +65,8 @@ function loadDtsFiles(fs: FileSystemHost) {
     }
 }
 
-const ast = new Ast({ useVirtualFileSystem: true });
-const fs = ast.getFileSystem();
+const project = new Project({ useVirtualFileSystem: true });
+const fs = project.getFileSystem();
 
 loadDtsFiles(fs);
 ```
@@ -75,12 +78,12 @@ When using a non-default file system, the library will search for these files in
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Ast` object:
 
 ```ts
-const Ast, {FileSystemHost} from "ts-simple-ast";
+const Project, {FileSystemHost} from "ts-simple-ast";
 
 class MyCustomFileSystem implements FileSystemHost {
     // implement it
 }
 
 const fs = new MyCustomFileSystem();
-const ast = new Ast({}, fs);
+const project = new Project({}, fs);
 ```

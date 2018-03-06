@@ -36,15 +36,15 @@ Work in progress: https://dsherret.github.io/ts-simple-ast/
 ## Example
 
 ```ts
-import Ast from "ts-simple-ast";
+import Project from "ts-simple-ast";
 
 // initialize
-const ast = new Ast();
+const project = new Project();
 
 // add source files
-ast.addExistingSourceFiles("**/src/**/*.ts");
-const myClassFile = ast.createSourceFile("src/MyClass.ts", "export class MyClass {}");
-const myEnumFile = ast.createSourceFile("src/MyEnum.ts", {
+project.addExistingSourceFiles("**/src/**/*.ts");
+const myClassFile = project.createSourceFile("src/MyClass.ts", "export class MyClass {}");
+const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     enums: [{
         name: "MyEnum",
         isExported: true,
@@ -75,10 +75,10 @@ myClass.addProperty({
     initializer: "5"
 });
 
-ast.getSourceFileOrThrow("src/ExistingFile.ts").delete();
+project.getSourceFileOrThrow("src/ExistingFile.ts").delete();
 
 // asynchronously save all the changes above
-ast.save();
+project.save();
 
 // get underlying compiler node from the typescript AST from any node
 const compilerNode = myClassFile.compilerNode;

@@ -1,5 +1,5 @@
 export * from "./cloning";
-export * from "./getAst";
-export * from "./getDefinitionAst";
+export * from "./getDefinitionProject";
+export * from "./getProject";
 export * from "./isNodeClass";
 export * from "./typeHelpers";

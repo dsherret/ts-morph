@@ -7,8 +7,8 @@ title: Diagnostics
 Diagnostics (compile errors) can be retrieved on the AST or on source files:
 
 ```ts
-const diagnostics = ast.getDiagnostics();
-const preEmitDiagnostics = ast.getPreEmitDiagnostics();
+const diagnostics = project.getDiagnostics();
+const preEmitDiagnostics = project.getPreEmitDiagnostics();
 
 // or on a source file
 const sourceFileDiagnostics = sourceFile.getDiagnostics();

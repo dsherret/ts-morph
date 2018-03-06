@@ -1,20 +1,20 @@
-﻿import TsSimpleAst, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName} from "./../../src/main";
+﻿import Project, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName} from "./../../src/main";
 import {Memoize, ArrayUtils, TypeGuards, createHashSet} from "./../../src/utils";
 import {isNodeClass} from "./../common";
 import {WrappedNode, Mixin, Structure, NodeToWrapperMapping} from "./tsSimpleAst";
 import {WrapperFactory} from "./WrapperFactory";
 
 export class TsSimpleAstInspector {
-    constructor(private readonly wrapperFactory: WrapperFactory, private readonly ast: TsSimpleAst) {
+    constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {
     }
 
-    getAst() {
-        return this.ast;
+    getProject() {
+        return this.project;
     }
 
     @Memoize
     getWrappedNodes(): WrappedNode[] {
-        const compilerSourceFiles = this.ast.getSourceFiles("**/src/compiler/**/*.ts");
+        const compilerSourceFiles = this.project.getSourceFiles("**/src/compiler/**/*.ts");
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
         return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrapperNode(c));
@@ -32,7 +32,7 @@ export class TsSimpleAstInspector {
 
     @Memoize
     getPublicDeclarations(): Node[] {
-        return this.ast.getSourceFileOrThrow("src/main.ts").getExportedDeclarations();
+        return this.project.getSourceFileOrThrow("src/main.ts").getExportedDeclarations();
     }
 
     @Memoize
@@ -47,7 +47,7 @@ export class TsSimpleAstInspector {
 
     @Memoize
     getStructures(): Structure[] {
-        const compilerSourceFiles = this.ast.getSourceFiles("**/src/structures/**/*.ts");
+        const compilerSourceFiles = this.project.getSourceFiles("**/src/structures/**/*.ts");
         const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
 
         return interfaces.map(i => this.wrapperFactory.getStructure(i));
@@ -61,7 +61,7 @@ export class TsSimpleAstInspector {
     @Memoize
     getNodeToWrapperMappings(): NodeToWrapperMapping[] {
         const wrappedNodes = this.getWrappedNodes();
-        const sourceFile = this.ast.getSourceFileOrThrow("nodeToWrapperMappings.ts");
+        const sourceFile = this.project.getSourceFileOrThrow("nodeToWrapperMappings.ts");
         const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
         const initializer = nodeToWrapperMappings.getInitializer()!;
         const propertyAssignments = initializer.getDescendants().filter(d => TypeGuards.isPropertyAssignment(d)) as PropertyAssignment[];

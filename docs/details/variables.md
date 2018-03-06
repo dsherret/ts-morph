@@ -25,7 +25,7 @@ Add or insert variable statements to a source file, namespace, or function like 
 `insertVariableStatement()`, or `insertVariableStatements()`.
 
 ```ts
-import Ast, {VariableDeclarationType} from "ts-simple-ast";
+import Project, {VariableDeclarationType} from "ts-simple-ast";
 
 const variableStatement = sourceFile.addVariableStatement({
     declarationType: VariableDeclarationType.Const // defaults to "let"

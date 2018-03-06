@@ -7,7 +7,7 @@ title: Program
 Get the program by calling:
 
 ```ts
-const program = ast.getProgram();
+const program = project.getProgram();
 ```
 
 ### Underlying compiler object

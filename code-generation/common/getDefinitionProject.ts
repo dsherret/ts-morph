@@ -1,16 +1,16 @@
 ﻿import * as path from "path";
 import * as fs from "fs";
-import TsSimpleAst, {NewLineKind} from "./../../src/main";
+import Project, {NewLineKind} from "./../../src/main";
 import {rootFolder} from "./../config";
 
-export function getDefinitionAst() {
-    const ast = new TsSimpleAst({
+export function getDefinitionProject() {
+    const project = new Project({
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         manipulationSettings: {
             newLineKind: NewLineKind.CarriageReturnLineFeed
         },
         addFilesFromTsConfig: false
     });
-    ast.addExistingSourceFiles(path.join(rootFolder, "dist/**/*.d.ts"));
-    return ast;
+    project.addExistingSourceFiles(path.join(rootFolder, "dist/**/*.d.ts"));
+    return project;
 }

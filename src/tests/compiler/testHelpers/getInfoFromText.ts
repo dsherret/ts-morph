@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {Project} from "./../../../Project";
 import {createWrappedNode} from "./../../../createWrappedNode";
 import {FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost} from "./../../../fileSystem";
 import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "./../../../typescript";
@@ -73,7 +73,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
             host.writeFileSync(libFile.filePath, libFile.text);
     }
 
-    const tsSimpleAst = new TsSimpleAst({ compilerOptions }, host);
+    const tsSimpleAst = new Project({ compilerOptions }, host);
     const sourceFile = tsSimpleAst.createSourceFile(getFilePath(), text);
 
     // disabled because the tests will run out of memory (I believe this is a ts compiler issue)

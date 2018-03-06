@@ -7,7 +7,7 @@ import {IndentationText, ManipulationSettings} from "./../../../ManipulationSett
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
 import {getFileSystemHostWithFiles} from "./../../testHelpers";
-import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {Project} from "./../../../Project";
 import {FileUtils} from "./../../../utils";
 
 describe(nameof(SourceFile), () => {
@@ -361,13 +361,13 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.isDeclarationFile), () => {
         it("should be a source file when the file name ends with .d.ts", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.d.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.true;
         });
 
         it("should not be a source file when the file name ends with .ts", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
         });
@@ -612,7 +612,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getExportedDeclarations), () => {
         it("should get the exported declarations", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";\nexport {OtherClass} from "./otherClass";\nexport * from "./barrel";\n` +
                 "export class MainFileClass {}\nexport default MainFileClass;");
             ast.createSourceFile("class.ts", `export class Class {} export class MyClass {}`);
@@ -629,7 +629,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should get the exported declaration when there's only a default export using an export assignment", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
 
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
@@ -806,7 +806,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.emit), () => {
         it("should emit the source file", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+            const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             ast.createSourceFile("file2.ts", "const num2 = 2;");
             const result = sourceFile.emit();
@@ -821,7 +821,7 @@ describe(nameof(SourceFile), () => {
 
     describe(nameof<SourceFile>(n => n.getEmitOutput), () => {
         it("should get the emit output for the source file", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput();
 
@@ -833,7 +833,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const ast = new TsSimpleAst({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
+            const ast = new Project({ compilerOptions: { noLib: true, declaration: true, outDir: "dist", target: ScriptTarget.ES5 }, useVirtualFileSystem: true });
             const sourceFile = ast.createSourceFile("file1.ts", "const num1 = 1;");
             const result = sourceFile.getEmitOutput({ emitOnlyDtsFiles: true });
 
@@ -1138,7 +1138,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathToSourceFile), () => {
         function doTest(from: string, to: string, expected: string) {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const fromFile = ast.createSourceFile(from);
             const toFile = ast.createSourceFile(to);
             expect(fromFile.getRelativePathToSourceFile(toFile)).to.equal(expected);
@@ -1153,7 +1153,7 @@ function myFunction(param: MyClass) {
 
     describe(nameof<SourceFile>(s => s.getRelativePathToSourceFileAsModuleSpecifier), () => {
         function doTest(from: string, to: string, expected: string) {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const fromFile = ast.createSourceFile(from);
             const toFile = from === to ? fromFile : ast.createSourceFile(to);
             expect(fromFile.getRelativePathToSourceFileAsModuleSpecifier(toFile)).to.equal(expected);

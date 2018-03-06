@@ -7,7 +7,7 @@ title: Type Checker
 Get the type checker by calling:
 
 ```ts
-const typeChecker = ast.getTypeChecker();
+const typeChecker = project.getTypeChecker();
 ```
 
 ### Underlying compiler object

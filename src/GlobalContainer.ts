@@ -122,7 +122,7 @@ export class GlobalContainer {
     private getToolRequiredError(name: string) {
         return new errors.InvalidOperationError(`A ${name} is required for this operation. ` +
             "This might occur when manipulating or getting type information from a node that was not added " +
-            `to a TsSimpleAst object and created via ${nameof(createWrappedNode)}. ` +
+            `to a Project object and created via ${nameof(createWrappedNode)}. ` +
             `Please submit a bug report if you don't believe a ${name} should be required for this operation.`);
     }
 }

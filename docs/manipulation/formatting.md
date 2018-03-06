@@ -52,7 +52,7 @@ export class MyClass {
 You can select down to the specific node you want to format:
 
 ```ts
-ast.getSourceFileOrThrow("file.ts")
+project.getSourceFileOrThrow("file.ts")
     .getClassOrThrow("MyClass")
     .getInstanceMethodOrThrow("myMethod")
     .getStatements()[0]

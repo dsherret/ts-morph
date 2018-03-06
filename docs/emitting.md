@@ -7,9 +7,9 @@ title: Emitting
 Emitting is easy. Here's an example:
 
 ```ts
-const ast = new TsSimpleAst({ compilerOptions: { outDir: "dist", declaration: true } });
-ast.addSourceFile("MyFile.ts", "const num = 1;");
-ast.emit();
+const project = new Project({ compilerOptions: { outDir: "dist", declaration: true } });
+project.addSourceFile("MyFile.ts", "const num = 1;");
+project.emit();
 ```
 
 Outputs two files in the `dist` folder:
@@ -27,7 +27,7 @@ declare const num = 1;
 Call `.emit()` on the source file:
 
 ```ts
-const sourceFile = ast.getSourceFileOrThrow("MyFile.ts");
+const sourceFile = project.getSourceFileOrThrow("MyFile.ts");
 sourceFile.emit();
 ```
 
@@ -48,7 +48,7 @@ for (const outputFile of emitOutput.getOutputFiles()) {
 Specify the `emitOnlyDtsFiles` flag:
 
 ```ts
-ast.emit({ emitOnlyDtsFiles: true });
+project.emit({ emitOnlyDtsFiles: true });
 ```
 
 ### Emit Diagnostics
@@ -56,7 +56,7 @@ ast.emit({ emitOnlyDtsFiles: true });
 Diagnostics about the emit can be found on the result:
 
 ```ts
-const emitResult = ast.emit();
+const emitResult = project.emit();
 for (const diagnostic of emitResult.getDiagnostics())
     console.log(diagnostic.getMessageText());
 ```

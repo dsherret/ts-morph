@@ -9,15 +9,15 @@
  * ---------------------------------------------------
  */
 import * as path from "path";
-import TsSimpleAst, {ts} from "./../src/main";
-import {getDefinitionAst} from "./common";
+import Project, {ts} from "./../src/main";
+import {getDefinitionProject} from "./common";
 
-const ast = getDefinitionAst();
+const project = getDefinitionProject();
 
-if (ast.getSourceFiles().length === 0)
+if (project.getSourceFiles().length === 0)
     throw new Error("Could not find any source files.");
 
-const problems = ast.getDiagnostics().map(d => {
+const problems = project.getDiagnostics().map(d => {
     let text = "";
     if (d.getSourceFile() != null)
         text += d.getSourceFile()!.getFilePath() + ": ";

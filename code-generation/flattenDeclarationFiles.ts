@@ -5,14 +5,14 @@
  * ----------------------------------------------
  */
 import * as path from "path";
-import TsSimpleAst, {SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind} from "./../src/main";
-import {getDefinitionAst} from "./common";
+import Project, {SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind} from "./../src/main";
+import {getDefinitionProject} from "./common";
 
-const ast = getDefinitionAst();
+const project = getDefinitionProject();
 
-const definitionFiles = ast.getSourceFiles(["**/dist/**/*.d.ts", "!**/dist/typescript/typescript.d.ts"]);
-const mainFile = ast.getSourceFileOrThrow("main.d.ts");
-const compilerApiFile = ast.getSourceFileOrThrow("dist/typescript/typescript.d.ts");
+const definitionFiles = project.getSourceFiles(["**/dist/**/*.d.ts", "!**/dist/typescript/typescript.d.ts"]);
+const mainFile = project.getSourceFileOrThrow("main.d.ts");
+const compilerApiFile = project.getSourceFileOrThrow("dist/typescript/typescript.d.ts");
 const exportedDeclarations = mainFile.getExportedDeclarations();
 mainFile.replaceWithText(`import CodeBlockWriter from "code-block-writer";\n`); // clear the source file
 
@@ -35,9 +35,9 @@ mainFile.addImportDeclaration({
 mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile) });
 
 // update the main.d.ts file
-mainFile.getClassOrThrow("TsSimpleAst").setIsDefaultExport(true);
+mainFile.getClassOrThrow("Project").setIsDefaultExport(true);
 mainFile.replaceWithText(mainFile.getFullText().replace(/compiler\.([A-Za-z]+)/g, "$1"));
 
 definitionFiles.filter(f => f !== mainFile).forEach(f => f.delete());
 
-ast.save();
+project.save();

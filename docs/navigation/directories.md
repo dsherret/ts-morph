@@ -28,13 +28,13 @@ directory.getDirectories();
 directory.getParent();
 ```
 
-Or from the main ast object:
+Or from the main `project` object:
 
 ```ts
-ast.getRootDirectories(); // gets directories without a parent
-ast.getDirectories(); // gets all the directories
-ast.getDirectory("path/to/directory");
-ast.getDirectoryOrThrow("path/to/directory");
+project.getRootDirectories(); // gets directories without a parent
+project.getDirectories(); // gets all the directories
+project.getDirectory("path/to/directory");
+project.getDirectoryOrThrow("path/to/directory");
 ```
 
 ### Adding
@@ -45,10 +45,10 @@ On a directory:
 const childDirectory = directory.addExistingDirectory("childDir"); // or addDirectoryIfExists
 ```
 
-Or main ast object:
+Or main `project` object:
 
 ```ts
-const directory = ast.addExistingDirectory("path/to/dir"); // or addDirectoryIfExists
+const directory = project.addExistingDirectory("path/to/dir"); // or addDirectoryIfExists
 ```
 
 ### Creating
@@ -59,10 +59,10 @@ On a directory
 const childDir = directory.createDirectory("childDir");
 ```
 
-Or main ast object:
+Or main `project` object:
 
 ```ts
-const directory = ast.createDirectory("path/to/dir");
+const directory = project.createDirectory("path/to/dir");
 ```
 
 ## Directory
@@ -169,9 +169,9 @@ Call:
 directory.delete();
 ```
 
-This will remove the directory object and all its descendant source files and directories from the main `ast` object and queue it up for deletion to the file system.
+This will remove the directory object and all its descendant source files and directories from the main `project` object and queue it up for deletion to the file system.
 
-When you're all done your other manipulations, call `ast.save()` and at that point the directory will be deleted.
+When you're all done your other manipulations, call `project.save()` and at that point the directory will be deleted.
 
 #### Deleting immediately
 
@@ -187,7 +187,7 @@ This isn't recommended though because it could possibly leave the file system in
 
 ### Removing
 
-Removes from main ast object without deleting it:
+Removes from main project object without deleting it:
 
 ```ts
 directory.remove();

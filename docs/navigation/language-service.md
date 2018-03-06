@@ -7,7 +7,7 @@ title: Language Service
 Get the language service by calling:
 
 ```ts
-const languageService = ast.getLanguageService();
+const languageService = project.getLanguageService();
 ```
 
 ### Underlying compiler object

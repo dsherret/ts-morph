@@ -22,10 +22,10 @@ export default Person;
 And setup:
 
 ```ts
-import Ast from "ts-simple-ast";
+import Project from "ts-simple-ast";
 
-const ast = new Ast();
-ast.addExistingSourceFiles("**/*.ts");
+const project = new Project();
+project.addExistingSourceFiles("**/*.ts");
 ```
 
 ### Use
@@ -33,7 +33,7 @@ ast.addExistingSourceFiles("**/*.ts");
 First you need to get the source file you would like to look at:
 
 ```ts
-const sourceFile = ast.getSourceFileOrThrow("Person.ts");
+const sourceFile = project.getSourceFileOrThrow("Person.ts");
 ```
 
 Now inspect what's inside... here's a few examples:

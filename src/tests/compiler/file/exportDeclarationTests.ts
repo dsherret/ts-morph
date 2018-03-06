@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ExportDeclaration} from "./../../../compiler";
-import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {Project} from "./../../../Project";
 import {ExportSpecifierStructure} from "./../../../structures";
 import * as errors from "./../../../errors";
 import {getInfoFromText} from "./../testHelpers";
@@ -111,7 +111,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifierSourceFileOrThrow), () => {
         it("should get the source file when it exists", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
             const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
 
@@ -119,14 +119,14 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should throw when the referenced file doesn't exist", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
 
             expect(() => mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.throw();
         });
 
         it("should throw when there is no module specifier", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export {MyClass};`);
 
             expect(() => mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.throw();
@@ -135,7 +135,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifierSourceFile), () => {
         it("should get the source file when it exists", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
             const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
 
@@ -143,7 +143,7 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should get the source file when it's an index.ts file", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
             const classSourceFile = ast.createSourceFile("class/index.ts", `export class Class {}`);
 
@@ -151,14 +151,14 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should return undefined when the referenced file doesn't exist", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export * from "./class";`);
 
             expect(mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;
         });
 
         it("should return undefined when there is no module specifier", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `export {MyClass};`);
 
             expect(mainSourceFile.getExportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;

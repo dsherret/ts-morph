@@ -1,6 +1,6 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
-import {TsSimpleAst} from "./../TsSimpleAst";
+import {Project} from "./../Project";
 import {createWrappedNode} from "./../createWrappedNode";
 import {ts, SyntaxKind, ScriptTarget} from "./../typescript";
 import {SourceFile} from "./../compiler";
@@ -48,7 +48,7 @@ describe(nameof(createWrappedNode), () => {
     });
 
     it("should be able to provide a type checker", () => {
-        const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+        const ast = new Project({ useVirtualFileSystem: true });
         const sourceFile = ast.createSourceFile("test.ts", "let s = '';");
         const typeChecker = ast.getTypeChecker();
         const wrappedSourceFile = createWrappedNode(sourceFile.compilerNode, { typeChecker: typeChecker.compilerObject }) as SourceFile;
@@ -60,7 +60,7 @@ describe(nameof(createWrappedNode), () => {
         const compilerSourceFile = ts.createSourceFile("file.ts", "let s = '';", ScriptTarget.ES2016, true);
         const wrappedSourceFile = createWrappedNode(compilerSourceFile) as SourceFile;
         const expectedMessage = "A type checker is required for this operation. This might occur when manipulating or " +
-            "getting type information from a node that was not added to a TsSimpleAst object and created via createWrappedNode. " +
+            "getting type information from a node that was not added to a Project object and created via createWrappedNode. " +
             "Please submit a bug report if you don't believe a type checker should be required for this operation.";
 
         expect(() => wrappedSourceFile.getVariableDeclarationOrThrow("s").getType()).to.throw(errors.InvalidOperationError, expectedMessage);

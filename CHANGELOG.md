@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* Add ast.manipulationSettings.getEditorSettings() (mostly used internally for the default) ([af82884](https://github.com/dsherret/ts-simple-ast/commit/af82884))
+* Add project.manipulationSettings.getEditorSettings() (mostly used internally for the default) ([af82884](https://github.com/dsherret/ts-simple-ast/commit/af82884))
 * Add JsxElement setBodyText and setBodyTextInline. ([1420786](https://github.com/dsherret/ts-simple-ast/commit/1420786))
 * Add languageService.getIdentationAtPosition(...) ([4de5f82](https://github.com/dsherret/ts-simple-ast/commit/4de5f82))
 * Upgrade to code-block-writer 6.6.0 ([34c39a9](https://github.com/dsherret/ts-simple-ast/commit/34c39a9))
@@ -67,7 +67,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### BREAKING CHANGES
 
-* * ast.saveUnsavedSourceFiles() is now ast.save()
+* * project.saveUnsavedSourceFiles() is now project.save()
 * Directory.saveUnsavedSourceFiles() is now Directory.save()
 * **file-system:** SourceFile/Directory: delete() and deleteSync() are now deleteImmediately() and deleteImmediatelySync().
 
@@ -358,7 +358,7 @@ It was incorrectly named originally.
 
 ### Code Refactoring
 
-* ast.addExistingSourceFiles now takes either a single glob or multiple globs passed as an array. ([fb5b930](https://github.com/dsherret/ts-simple-ast/commit/fb5b930))
+* project.addExistingSourceFiles now takes either a single glob or multiple globs passed as an array. ([fb5b930](https://github.com/dsherret/ts-simple-ast/commit/fb5b930))
 
 
 ### Features
@@ -371,7 +371,7 @@ It was incorrectly named originally.
 
 ### BREAKING CHANGES
 
-* Use an array when passing in multiple file globs to ast.addExistingSourceFiles. This better expresses the intent of this method call.
+* Use an array when passing in multiple file globs to project.addExistingSourceFiles. This better expresses the intent of this method call.
 * Files are added based on the tsconfig by default. `getCompilerOptionsFromTsConfig` now returns an object that includes the diagnostics.
 
 
@@ -500,7 +500,7 @@ All statement nodes are wrapped thanks to [@dicarlo2](https://github.com/dicarlo
 * [#194](https://github.com/dsherret/ts-simple-ast/issues/194) - Add async version of forget block. ([c73dd05](https://github.com/dsherret/ts-simple-ast/commit/c73dd05))
 * Ability to get a directory from directory based on a relative path. ([b7714c5](https://github.com/dsherret/ts-simple-ast/commit/b7714c5))
 * Add addDirectoryIfExists and addSourceFileIfExists ([0ff4ff2](https://github.com/dsherret/ts-simple-ast/commit/0ff4ff2))
-* Add ast.getFileSystem() ([3364349](https://github.com/dsherret/ts-simple-ast/commit/3364349))
+* Add project.getFileSystem() ([3364349](https://github.com/dsherret/ts-simple-ast/commit/3364349))
 * Add ExportAssignment. ([f2b346b](https://github.com/dsherret/ts-simple-ast/commit/f2b346b))
 
 
@@ -537,7 +537,7 @@ All statement nodes are wrapped thanks to [@dicarlo2](https://github.com/dicarlo
 
 * [#184](https://github.com/dsherret/ts-simple-ast/issues/184) - Ability to copy directories. ([18f1e7b](https://github.com/dsherret/ts-simple-ast/commit/18f1e7b))
 * [#185](https://github.com/dsherret/ts-simple-ast/issues/185) - Ability to save all descendant files in a directory. ([334f20b](https://github.com/dsherret/ts-simple-ast/commit/334f20b))
-* Add ast.getPreEmitDiagnostics() ([a561994](https://github.com/dsherret/ts-simple-ast/commit/a561994))
+* Add project.getPreEmitDiagnostics() ([a561994](https://github.com/dsherret/ts-simple-ast/commit/a561994))
 * Add SourceFile.getPreEmitDiagnostics ([d1ea9eb](https://github.com/dsherret/ts-simple-ast/commit/d1ea9eb))
 * Emit a directory. ([3cb455c](https://github.com/dsherret/ts-simple-ast/commit/3cb455c))
 * Program - getSyntacticDiagnostics, getSemanticDiagnostics, getDeclarationDiagnostics, getPreEmitDiagnostics ([56b5f58](https://github.com/dsherret/ts-simple-ast/commit/56b5f58))

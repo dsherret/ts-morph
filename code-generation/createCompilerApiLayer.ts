@@ -18,7 +18,7 @@ const typeAliasesToSeparate: string[] = [];
 
 export function createCompilerApiLayer(factory: InspectorFactory) {
     const tsInspector = factory.getTsInspector();
-    const ast = factory.getAst();
+    const project = factory.getProject();
     const declarationFile = tsInspector.getDeclarationFile();
 
     const tsNamespaces = declarationFile.getNamespaces().filter(n => n.getName() === "ts");
@@ -36,7 +36,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             moduleSpecifier: "typescript"
         }, {
             namedImports: [{ name: "ObjectUtils" }],
-            moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(ast.getSourceFileOrThrow("src/utils/ObjectUtils.ts"))
+            moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/utils/ObjectUtils.ts"))
         }]);
 
         addSeparatedDeclarations();
@@ -106,9 +106,9 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
 
     function getOrCreateSourceFile(fileName: string) {
         const filePath = path.join(rootFolder, "src/typescript", fileName);
-        const existingSourceFile = ast.getSourceFile(filePath);
+        const existingSourceFile = project.getSourceFile(filePath);
         if (existingSourceFile != null)
             existingSourceFile.replaceWithText("");
-        return existingSourceFile || ast.createSourceFile(filePath);
+        return existingSourceFile || project.createSourceFile(filePath);
     }
 }

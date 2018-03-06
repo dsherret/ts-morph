@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import TsSimpleAst, {Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory} from "./../src/main";
+import Project, {Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory} from "./../src/main";
 import {InspectorFactory} from "./inspectors";
 
 const inspector = new InspectorFactory().getTsSimpleAstInspector();
@@ -45,10 +45,10 @@ function doesReturnTypeRequireOrThrow(returnType: Type) {
 
 function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {
     switch (parent.getName()) {
-        case nameof(TsSimpleAst):
+        case nameof(Project):
             return matches(method.getName(), [
-                    nameof<TsSimpleAst>(a => a.addDirectoryIfExists),
-                    nameof<TsSimpleAst>(a => a.addSourceFileIfExists)
+                    nameof<Project>(a => a.addDirectoryIfExists),
+                    nameof<Project>(a => a.addSourceFileIfExists)
                 ]);
         case nameof(Directory):
             return matches(method.getName(), [

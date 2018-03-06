@@ -1,8 +1,8 @@
 export * from "./typescript";
 export * from "./compiler";
 export * from "./structures";
-export {TsSimpleAst as default} from "./TsSimpleAst";
-export {Options} from "./TsSimpleAst";
+export {Project as default} from "./Project";
+export {Options} from "./Project";
 export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
 export {createWrappedNode, CreateWrappedNodeOptions} from "./createWrappedNode";

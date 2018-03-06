@@ -11,16 +11,16 @@ After source files are added, you will need to get them in order to navigate or 
 Get all the source files:
 
 ```ts
-const sourceFiles = ast.getSourceFiles();
+const sourceFiles = project.getSourceFiles();
 ```
 
 Or filter by glob:
 
 ```ts
 // single
-const testSourceFiles = ast.getSourceFiles("**/src/test/**/*.ts");
+const testSourceFiles = project.getSourceFiles("**/src/test/**/*.ts");
 // or multiple
-const nonTestSourceFiles = ast.getSourceFiles([
+const nonTestSourceFiles = project.getSourceFiles([
     "**/src/**/*.ts",
     "!**/src/test/**/*.ts"
 );
@@ -31,7 +31,7 @@ const nonTestSourceFiles = ast.getSourceFiles([
 Will return the first source file that matches the end of the provided file path:
 
 ```ts
-const personFile = ast.getSourceFile("Models/Person.ts");
+const personFile = project.getSourceFile("Models/Person.ts");
 ```
 
 ### By condition
@@ -39,5 +39,5 @@ const personFile = ast.getSourceFile("Models/Person.ts");
 Will return the first source file that matches the provided condition:
 
 ```ts
-const fileWithFiveClasses = ast.getSourceFile(f => f.getClasses().length === 5);
+const fileWithFiveClasses = project.getSourceFile(f => f.getClasses().length === 5);
 ```

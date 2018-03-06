@@ -26,7 +26,7 @@ export interface Options {
 /**
  * Compiler wrapper.
  */
-export class TsSimpleAst {
+export class Project {
     /** @internal */
     private readonly global: GlobalContainer;
 

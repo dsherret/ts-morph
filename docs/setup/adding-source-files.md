@@ -4,24 +4,26 @@ title: Adding Source Files
 
 ## Adding Source Files
 
-You will need to populate the `ast` object with source files.
+You will need to populate the `project` object with source files.
 
 ### By a *tsconfig.json*
 
 Source files will be added when instantiating with a `tsConfigFilePath`:
 
 ```ts
-const ast = new Ast({
+import Project from "ts-simple-ast";
+
+const project = new Project({
     tsConfigFilePath: "path/to/tsconfig.json"
 });
 ```
 
 ...and this can be disabled by setting `addFilesFromTsConfig: false`.
 
-Alternatively, populate the `ast` object by calling `addSourceFilesFromTsConfig`:
+Alternatively, populate the `project` object by calling `addSourceFilesFromTsConfig`:
 
 ```ts
-ast.addSourceFilesFromTsConfig("path/to/tsconfig.json");
+project.addSourceFilesFromTsConfig("path/to/tsconfig.json");
 ```
 
 ### By file globs or file paths
@@ -29,15 +31,15 @@ ast.addSourceFilesFromTsConfig("path/to/tsconfig.json");
 Specify as many file globs or file paths as you wish:
 
 ```ts
-ast.addExistingSourceFiles("**/folder/**/*{.d.ts,.ts}");
-ast.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
-ast.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
+project.addExistingSourceFiles("**/folder/**/*{.d.ts,.ts}");
+project.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
+project.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
 ```
 
 ### By file path
 
 ```ts
-const sourceFile = ast.addExistingSourceFile("path/to/file.ts"); // or addSourceFileIfExists
+const sourceFile = project.addExistingSourceFile("path/to/file.ts"); // or addSourceFileIfExists
 ```
 
 ### By structure
@@ -45,7 +47,7 @@ const sourceFile = ast.addExistingSourceFile("path/to/file.ts"); // or addSource
 Create source files based on an object that looks like the AST of a source file:
 
 ```ts
-const sourceFile = ast.createSourceFile("path/to/myStructureFile.ts", {
+const sourceFile = project.createSourceFile("path/to/myStructureFile.ts", {
     enums: [{
         name: "MyEnum",
         members: [{
@@ -77,7 +79,7 @@ Note: The file will not be created and saved to the file system until calling `.
 
 ```ts
 const fileText = "enum MyEnum {\n}\n";
-const sourceFile = ast.createSourceFile("path/to/myNewFile.ts", fileText);
+const sourceFile = project.createSourceFile("path/to/myNewFile.ts", fileText);
 ```
 
 Note: The file will not be created and saved to the file system until calling `.save()` on the source file.

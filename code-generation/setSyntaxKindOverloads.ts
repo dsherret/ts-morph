@@ -18,7 +18,7 @@
  */
 import {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
     ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards} from "./../src/main";
-import {getDefinitionAst, hasDescendantNodeType} from "./common";
+import {getDefinitionProject, hasDescendantNodeType} from "./common";
 import {InspectorFactory} from "./inspectors";
 
 // setup
@@ -26,15 +26,15 @@ const factory = new InspectorFactory();
 const inspector = factory.getTsSimpleAstInspector();
 
 console.log("Start: " + new Date());
-const ast = getDefinitionAst();
-const compilerSourceFile = ast.getSourceFileOrThrow("compiler/index.d.ts");
+const project = getDefinitionProject();
+const compilerSourceFile = project.getSourceFileOrThrow("compiler/index.d.ts");
 const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
 
-modifyFile(ast.getSourceFileOrThrow("Node.d.ts"));
-modifyFile(ast.getSourceFileOrThrow("InitializerGetExpressionableNode.d.ts"));
-modifyFile(ast.getSourceFileOrThrow("StatementedNode.d.ts"));
+modifyFile(project.getSourceFileOrThrow("Node.d.ts"));
+modifyFile(project.getSourceFileOrThrow("InitializerGetExpressionableNode.d.ts"));
+modifyFile(project.getSourceFileOrThrow("StatementedNode.d.ts"));
 
-ast.save();
+project.save();
 
 console.log("End: " + new Date());
 
@@ -60,7 +60,7 @@ function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {
     // todo: merge this with setInterfaceSyntaxKindOverloads (just need to separate out common parts)
     const syntaxKindMethods: MethodDeclaration[] = [];
 
-    ast.forgetNodesCreatedInBlock(remember => {
+    project.forgetNodesCreatedInBlock(remember => {
         const methods = classDec.getInstanceMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "SyntaxKind"));
         remember(...methods);
         syntaxKindMethods.push(...methods);
@@ -68,7 +68,7 @@ function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {
 
     for (const method of syntaxKindMethods) {
         console.log("Modifying method: " + method.getName() + "...");
-        ast.forgetNodesCreatedInBlock(() => {
+        project.forgetNodesCreatedInBlock(() => {
             classDec.insertMethods(method.getChildIndex(), getMethodStructures(method));
         });
         method.forget();
@@ -78,7 +78,7 @@ function setClassSyntaxKindOverloads(classDec: ClassDeclaration) {
 function setInterfaceSyntaxKindOverloads(interfaceDec: InterfaceDeclaration) {
     const syntaxKindMethods: MethodSignature[] = [];
 
-    ast.forgetNodesCreatedInBlock(remember => {
+    project.forgetNodesCreatedInBlock(remember => {
         const methods = interfaceDec.getMethods().filter(m => m.getParameters().some(p => p.getType().getText() === "SyntaxKind"));
         remember(...methods);
         syntaxKindMethods.push(...methods);
@@ -86,7 +86,7 @@ function setInterfaceSyntaxKindOverloads(interfaceDec: InterfaceDeclaration) {
 
     for (const method of syntaxKindMethods) {
         console.log("Modifying method: " + method.getName() + "...");
-        ast.forgetNodesCreatedInBlock(() => {
+        project.forgetNodesCreatedInBlock(() => {
             interfaceDec.insertMethods(method.getChildIndex(), getMethodStructures(method));
         });
         method.forget();

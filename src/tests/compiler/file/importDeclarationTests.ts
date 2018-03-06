@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration} from "./../../../compiler";
-import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {Project} from "./../../../Project";
 import * as errors from "./../../../errors";
 import {ImportSpecifierStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
@@ -53,7 +53,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFileOrThrow), () => {
         it("should get the source file", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
 
@@ -61,7 +61,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should throw when it doesn't exist", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
 
             expect(() => mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow()).to.throw();
@@ -70,7 +70,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierSourceFile), () => {
         it("should get the source file", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = ast.createSourceFile("class.ts", `export class Class {}`);
 
@@ -78,7 +78,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should get the source file when it's an index.ts file", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
             const classSourceFile = ast.createSourceFile("class/index.ts", `export class Class {}`);
 
@@ -86,7 +86,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should return undefined when it doesn't exist", () => {
-            const ast = new TsSimpleAst({ useVirtualFileSystem: true });
+            const ast = new Project({ useVirtualFileSystem: true });
             const mainSourceFile = ast.createSourceFile("main.ts", `import {Class} from "./class";`);
 
             expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;

@@ -41,20 +41,20 @@ Use the `sourceFile.isSaved()` method that will tell you if the file is saved to
 
 ### Delete
 
-The `sourceFile.delete()` method will queue up deletions to the file system. When done call `ast.save()`. For example:
+The `sourceFile.delete()` method will queue up deletions to the file system. When done call `project.save()`. For example:
 
 ```ts
-import Ast from "ts-simple-ast";
+import Project from "ts-simple-ast";
 
 // queue up all the source files to be deleted
-const ast = new Ast();
-ast.addExistingSourceFiles("**/folder/**/*.ts")
+const project = new Project();
+project.addExistingSourceFiles("**/folder/**/*.ts")
 
-ast.getSourceFileOrThrow("someFile.ts").delete();
-ast.getSourceFileOrThrow("someOtherFile.ts").delete();
+project.getSourceFileOrThrow("someFile.ts").delete();
+project.getSourceFileOrThrow("someOtherFile.ts").delete();
 
 // after you're all done, finally save your changes to the file system
-ast.save();
+project.save();
 ```
 
 #### Deleting Immediately
@@ -133,7 +133,7 @@ If the file was _deleted_: The source file will be removed and all its nodes for
 Remove a source file from the AST by calling:
 
 ```ts
-ast.removeSourceFile(sourceFile); // returns: boolean (if was removed)
+project.removeSourceFile(sourceFile); // returns: boolean (if was removed)
 ```
 
 Note: This does not delete the file from the file system. To do delete it, call `.delete()`.
@@ -230,11 +230,11 @@ export interface Interface2 {}
 The following code:
 
 ```ts
-import Ast, {TypeGuards} from "ts-simple-ast";
+import Project, {TypeGuards} from "ts-simple-ast";
 
-const ast = new Ast();
-ast.addExistingSourceFiles("**/*.ts");
-const mainFile = ast.getSourceFileOrThrow("main.ts");
+const project = new Project();
+project.addExistingSourceFiles("**/*.ts");
+const mainFile = project.getSourceFileOrThrow("main.ts");
 
 for (const declaration of mainFile.getExportedDeclarations()) {
     if (TypeGuards.isClassDeclaration(declaration) || TypeGuards.isInterfaceDeclaration(declaration))

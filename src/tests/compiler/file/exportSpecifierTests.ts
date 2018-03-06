@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import TsSimpleAst from "./../../../main";
+import Project from "./../../../main";
 import {ts, SyntaxKind} from "./../../../typescript";
 import {ExportDeclaration, ExportSpecifier} from "./../../../compiler";
 import {ArrayUtils} from "./../../../utils";
@@ -7,7 +7,7 @@ import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
     function getAst() {
-        return new TsSimpleAst({ useVirtualFileSystem: true });
+        return new Project({ useVirtualFileSystem: true });
     }
 
     describe(nameof<ExportSpecifier>(n => n.getNameNode), () => {

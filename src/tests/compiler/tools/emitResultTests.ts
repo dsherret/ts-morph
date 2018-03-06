@@ -1,14 +1,14 @@
 import {expect} from "chai";
 import {ts} from "./../../../typescript";
 import {EmitResult} from "./../../../compiler";
-import {TsSimpleAst} from "./../../../TsSimpleAst";
+import {Project} from "./../../../Project";
 import {FileUtils} from "./../../../utils";
 import * as testHelpers from "./../../testHelpers";
 
 describe(nameof(EmitResult), () => {
     it("should get the emit result when there are no errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
+        const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist" } }, fileSystem);
         ast.createSourceFile("file1.ts", "const num1 = 1;");
         ast.createSourceFile("file2.ts", "const num2 = 2;");
         const result = ast.emit();
@@ -19,7 +19,7 @@ describe(nameof(EmitResult), () => {
 
     it("should get the emit result when there are errors", () => {
         const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const ast = new TsSimpleAst({ compilerOptions: { noLib: true, outDir: "dist", noEmitOnError: true } }, fileSystem);
+        const ast = new Project({ compilerOptions: { noLib: true, outDir: "dist", noEmitOnError: true } }, fileSystem);
         ast.createSourceFile("file1.ts", "const num1;");
         const result = ast.emit();
 

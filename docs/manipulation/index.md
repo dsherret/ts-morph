@@ -8,17 +8,17 @@ Most information about manipulation can be found in the [Details](../details) se
 
 ### Saving Changes
 
-All moves, copies, and deletes won't be propagated to the underlying file system until `save()` is called on the main `ast` object.
+All moves, copies, and deletes won't be propagated to the underlying file system until `save()` is called on the main `project` object.
 
 ```ts
-import Ast from "ts-simple-ast";
+import Project from "ts-simple-ast";
 
-const ast = new Ast();
+const project = new Project();
 
 // ...lots of code here that manipulates, copies, moves, and deletes files...
 
 // when you're all done, call this and it will save everything to the file system
-ast.save();
+project.save();
 ```
 
 The above is recommended because it means if your code errors halfway through, the files won't be in a halfway state. However, there's always a way to save, move, copy, and delete while immediately having these changes happen on the underlying file system. For example:

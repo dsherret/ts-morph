@@ -58,17 +58,17 @@ It won't be updated when manipulation happens again. Note that after doing this,
 It's possible to make sure all created nodes within a block are forgotten:
 
 ```ts
-import {Ast, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "ts-simple-ast";
+import Project, {NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "ts-simple-ast";
 
-const ast = new Ast();
+const project = new Project();
 const text = "namespace Namespace { interface Interface {} class Class {} }";
-const sourceFile = ast.createSourceFile("file.ts", text);
+const sourceFile = project.createSourceFile("file.ts", text);
 
 let namespaceDeclaration: NamespaceDeclaration;
 let interfaceDeclaration: InterfaceDeclaration;
 let classDeclaration: ClassDeclaration;
 
-ast.forgetNodesCreatedInBlock(remember => {
+project.forgetNodesCreatedInBlock(remember => {
     namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
     interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
     classDeclaration = namespaceDeclaration.getClassDeclarationOrThrow("Class");
@@ -86,11 +86,11 @@ classDeclaration.getText();     // throws, was forgotten
 Also, do not be concerned about nesting forget blocks. That is perfectly fine to do:
 
 ```ts
-ast.forgetNodesCreatedInBlock(() => {
+project.forgetNodesCreatedInBlock(() => {
     namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
     interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
 
-    ast.forgetNodesCreatedInBlock(remember => {
+    project.forgetNodesCreatedInBlock(remember => {
         classDeclaration = namespaceDeclaration.getClassDeclarationOrThrow("Class");
         remember(namespaceDeclaration);
     });
@@ -109,7 +109,7 @@ classDeclaration.getText();     // throws, was forgotten
 This method supports async and await:
 
 ```ts
-await ast.forgetNodesCreatedInBlock(async remember => {
+await project.forgetNodesCreatedInBlock(async remember => {
     // do stuff
 });
 ```
