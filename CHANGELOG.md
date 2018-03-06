@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.2"></a>
+## [8.2.2](https://github.com/dsherret/ts-simple-ast/compare/8.2.1...8.2.2) (2018-03-06)
+
+
+### Bug Fixes
+
+* [#262](https://github.com/dsherret/ts-simple-ast/issues/262) - Write public keyword when specified. ([6258c0e](https://github.com/dsherret/ts-simple-ast/commit/6258c0e))
+
+
+
 <a name="8.2.1"></a>
 ## [8.2.1](https://github.com/dsherret/ts-simple-ast/compare/8.2.0...8.2.1) (2018-03-01)
 
