@@ -48,7 +48,7 @@ import Project from "ts-simple-ast";
 
 // queue up all the source files to be deleted
 const project = new Project();
-project.addExistingSourceFiles("**/folder/**/*.ts")
+project.addExistingSourceFiles("folder/**/*.ts")
 
 project.getSourceFileOrThrow("someFile.ts").delete();
 project.getSourceFileOrThrow("someOtherFile.ts").delete();

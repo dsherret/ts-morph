@@ -8,6 +8,7 @@ export * from "./getTextFromStringOrWriter";
 export * from "./HashSet";
 export * from "./KeyValueCache";
 export * from "./logging";
+export * from "./matchGlobs";
 export * from "./newLineKindToString";
 export * from "./printNode";
 export * from "./setValueIfUndefined";

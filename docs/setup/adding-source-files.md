@@ -31,7 +31,7 @@ project.addSourceFilesFromTsConfig("path/to/tsconfig.json");
 Specify as many file globs or file paths as you wish:
 
 ```ts
-project.addExistingSourceFiles("**/folder/**/*{.d.ts,.ts}");
+project.addExistingSourceFiles("folder/**/*{.d.ts,.ts}");
 project.addExistingSourceFiles(["folder/file.ts", "folder/otherFile.ts"]);
 project.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
 ```

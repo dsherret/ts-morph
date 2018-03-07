@@ -42,7 +42,7 @@ import Project from "ts-simple-ast";
 const project = new Project();
 
 // add source files
-project.addExistingSourceFiles("**/src/**/*.ts");
+project.addExistingSourceFiles("src/**/*.ts");
 const myClassFile = project.createSourceFile("src/MyClass.ts", "export class MyClass {}");
 const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
     enums: [{

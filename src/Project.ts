@@ -1,11 +1,10 @@
-import * as multimatch from "multimatch";
 import * as errors from "./errors";
 import {ts, CompilerOptions} from "./typescript";
 import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
 import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getFilePathsFromTsConfigParseResult, TsConfigParseResult,
-    FileUtils, ArrayUtils} from "./utils";
+    FileUtils, ArrayUtils, matchGlobs} from "./utils";
 import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
 import {GlobalContainer} from "./GlobalContainer";
@@ -24,7 +23,7 @@ export interface Options {
 }
 
 /**
- * Compiler wrapper.
+ * Project that holds source files.
  */
 export class Project {
     /** @internal */
@@ -348,7 +347,7 @@ export class Project {
      */
     getSourceFiles(globPatterns: string[]): SourceFile[];
     getSourceFiles(globPatterns?: string | string[]): SourceFile[] {
-        const {compilerFactory} = this.global;
+        const {compilerFactory, fileSystemWrapper} = this.global;
         const sourceFiles = this.global.compilerFactory.getSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
@@ -357,7 +356,7 @@ export class Project {
 
         function* getFilteredSourceFiles() {
             const sourceFilePaths = Array.from(getSourceFilePaths());
-            const matchedPaths = multimatch(sourceFilePaths, globPatterns!);
+            const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, fileSystemWrapper.getCurrentDirectory());
 
             for (const matchedPath of matchedPaths)
                 yield compilerFactory.getSourceFileFromFilePath(matchedPath)!;

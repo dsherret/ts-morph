@@ -14,7 +14,7 @@ export class TsSimpleAstInspector {
 
     @Memoize
     getWrappedNodes(): WrappedNode[] {
-        const compilerSourceFiles = this.project.getSourceFiles("**/src/compiler/**/*.ts");
+        const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
         return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrapperNode(c));
@@ -47,7 +47,7 @@ export class TsSimpleAstInspector {
 
     @Memoize
     getStructures(): Structure[] {
-        const compilerSourceFiles = this.project.getSourceFiles("**/src/structures/**/*.ts");
+        const compilerSourceFiles = this.project.getSourceFiles("src/structures/**/*.ts");
         const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
 
         return interfaces.map(i => this.wrapperFactory.getStructure(i));

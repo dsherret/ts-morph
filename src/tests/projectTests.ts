@@ -564,11 +564,29 @@ describe(nameof(Project), () => {
             project.createSourceFile("src/test/folder/file.ts", "");
 
             it("should be able to do a file glob", () => {
-                expect(project.getSourceFiles("**/src/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
+                expect(project.getSourceFiles("**/test/**/*.ts").map(s => s.getFilePath())).to.deep.equal([
                     "/src/test/file1.d.ts",
                     "/src/test/file1.ts",
                     "/src/test/file2.ts",
                     "/src/test/file3.ts",
+                    "/src/test/folder/file.ts"
+                ]);
+            });
+
+            it("should be able to do a file glob with a relative path", () => {
+                expect(project.getSourceFiles("src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
+                    "/src/test/folder/file.ts"
+                ]);
+            });
+
+            it("should be able to do a file glob with a relative path with a dot", () => {
+                expect(project.getSourceFiles("./src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
+                    "/src/test/folder/file.ts"
+                ]);
+            });
+
+            it("should be able to do a file glob with an absolute path", () => {
+                expect(project.getSourceFiles("/src/test/folder/*.ts").map(s => s.getFilePath())).to.deep.equal([
                     "/src/test/folder/file.ts"
                 ]);
             });

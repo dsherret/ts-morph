@@ -260,5 +260,17 @@ describe(nameof(VirtualFileSystemHost), () => {
                 "/dir2/file5.txt"
             ]);
         });
+
+        it("should match all the patterns provided for a relative path", () => {
+            expect(fs.glob(["dir/subDir/**/*.ts"])).to.deep.equal([
+                "/dir/subDir/file2.ts"
+            ]);
+        });
+
+        it("should match all the patterns provided for a relative path with a dot", () => {
+            expect(fs.glob(["./dir/subDir/**/*.ts"])).to.deep.equal([
+                "/dir/subDir/file2.ts"
+            ]);
+        });
     });
 });

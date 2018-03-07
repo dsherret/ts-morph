@@ -125,7 +125,10 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     glob(patterns: string[]) {
-        return globby.sync(patterns);
+        return globby.sync(patterns, {
+            cwd: this.getCurrentDirectory(),
+            absolute: true
+        });
     }
 
     private getDirectoryNotFoundErrorIfNecessary(err: any, path: string) {

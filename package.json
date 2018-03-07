@@ -59,6 +59,7 @@
     "globby": "^6.1.0",
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
+    "@dsherret/to-absolute-glob": "^2.0.2",
     "typescript": "2.7.1"
   },
   "standard-version": {

@@ -1,6 +1,10 @@
 ﻿declare module "globby" {
     namespace Globby {
-        export function sync(patterns: string[]): string[];
+        export interface GlobbyOptions {
+            cwd?: string;
+            absolute?: boolean;
+        }
+        export function sync(patterns: string[], options?: GlobbyOptions): string[];
     }
     export = Globby;
 }
