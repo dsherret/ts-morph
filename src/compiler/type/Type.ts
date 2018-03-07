@@ -140,11 +140,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if the type is possibly null or undefined.
      */
     isNullable() {
-        for (const type of this.getUnionTypes()) {
-            if (type.isNullType() || type.isUndefinedType())
-                return true;
-        }
-        return false;
+        return this.getUnionTypes().some(t => t.isNullType() || t.isUndefinedType());
     }
 
     /**

@@ -39,8 +39,7 @@ for (const i of inspector.getPublicInterfaces()) {
 problems.forEach(p => console.error(p));
 
 function doesReturnTypeRequireOrThrow(returnType: Type) {
-    const unionTypes = returnType.getUnionTypes();
-    return unionTypes.some(t => t.isUndefinedType());
+    return returnType.isNullable();
 }
 
 function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {

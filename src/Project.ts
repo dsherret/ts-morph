@@ -133,7 +133,7 @@ export class Project {
     }
 
     /**
-     * Gets a directory by the specified path or throws it doesn't exist.
+     * Gets a directory by the specified path or throws if it doesn't exist.
      * @param dirPath - Path to create the directory at.
      */
     getDirectoryOrThrow(dirPath: string): Directory {
