@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.3"></a>
+## [8.2.3](https://github.com/dsherret/ts-simple-ast/compare/8.2.2...8.2.3) (2018-03-08)
+
+
+### Bug Fixes
+
+* [#270](https://github.com/dsherret/ts-simple-ast/issues/270) - Fix relative path file globs not working when using .getSourceFiles(...) ([fa19352](https://github.com/dsherret/ts-simple-ast/commit/fa19352))
+
+
+
 <a name="8.2.2"></a>
 ## [8.2.2](https://github.com/dsherret/ts-simple-ast/compare/8.2.1...8.2.2) (2018-03-06)
 
