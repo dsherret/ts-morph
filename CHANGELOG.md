@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.2.4"></a>
+## [8.2.4](https://github.com/dsherret/ts-simple-ast/compare/8.2.3...8.2.4) (2018-03-08)
+
+
+### Bug Fixes
+
+* [#271](https://github.com/dsherret/ts-simple-ast/issues/271) - Fix SourceFile.move not deleting previous file on file system. ([a4dfda9](https://github.com/dsherret/ts-simple-ast/commit/a4dfda9))
+
+
+
 <a name="8.2.3"></a>
 ## [8.2.3](https://github.com/dsherret/ts-simple-ast/compare/8.2.2...8.2.3) (2018-03-08)
 
