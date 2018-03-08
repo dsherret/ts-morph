@@ -511,7 +511,14 @@ describe(nameof(Project), () => {
             expect(project.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
-        it("should get the first match based on the directory structure when swapping the order fo what was created first", () => {
+        it("should get when specifying an absolute path", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.createSourceFile("dir/file.ts");
+            const expectedFile = project.createSourceFile("file.ts");
+            expect(project.getSourceFile("/file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+
+        it("should get the first match based on the directory structure when swapping the order of what was created first", () => {
             const project = new Project({ useVirtualFileSystem: true });
             const expectedFile = project.createSourceFile("file.ts");
             project.createSourceFile("dir/file.ts");

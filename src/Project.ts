@@ -325,8 +325,12 @@ export class Project {
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
         let searchFunction = fileNameOrSearchFunction as ((file: SourceFile) => boolean);
 
-        if (typeof fileNameOrSearchFunction === "string")
-            searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrSearchFunction);
+        if (typeof fileNameOrSearchFunction === "string") {
+            if (FileUtils.pathIsAbsolute(fileNameOrSearchFunction))
+                return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(fileNameOrSearchFunction);
+            else
+                searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrSearchFunction);
+        }
 
         return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), searchFunction);
     }
@@ -359,7 +363,7 @@ export class Project {
             const matchedPaths = matchGlobs(sourceFilePaths, globPatterns!, fileSystemWrapper.getCurrentDirectory());
 
             for (const matchedPath of matchedPaths)
-                yield compilerFactory.getSourceFileFromFilePath(matchedPath)!;
+                yield compilerFactory.getSourceFileFromCacheFromFilePath(matchedPath)!;
 
             function* getSourceFilePaths() {
                 for (const sourceFile of sourceFiles)

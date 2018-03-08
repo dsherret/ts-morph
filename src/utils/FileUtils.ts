@@ -64,6 +64,14 @@ export class FileUtils {
     }
 
     /**
+     * Gets if the path is absolute.
+     * @param fileOrDirPath - File or directory path.
+     */
+    static pathIsAbsolute(fileOrDirPath: string) {
+        return path.isAbsolute(fileOrDirPath);
+    }
+
+    /**
      * Gets the standardized absolute path.
      * @param fileSystem - File system.
      * @param fileOrDirPath - Path to standardize.

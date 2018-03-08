@@ -124,7 +124,9 @@ describe(nameof(SourceFile), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
             const {sourceFile, project} = getInfoFromText(fileText, { filePath });
+            const fileSystem = project.getFileSystem();
             const existingFile = project.createSourceFile("/existingFile.ts");
+            project.saveSync();
             const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
             const newFile = sourceFile.move(newFilePath, { overwrite });
             const isRemovingExisting = overwrite && newFilePath === "/existingFile.ts";
@@ -133,8 +135,13 @@ describe(nameof(SourceFile), () => {
             expect(newFile).to.equal(sourceFile);
             expect(sourceFile.getFilePath()).to.equal(absoluteNewFilePath || newFilePath);
             expect(sourceFile.getFullText()).to.equal(fileText);
+            expect(project.getSourceFile(filePath)).to.be.undefined;
+            expect(project.getSourceFile(absoluteNewFilePath || newFilePath)).to.not.be.undefined;
             expect(interfaceDec.wasForgotten()).to.be.false;
             expect(project.getSourceFiles().length).to.equal(isRemovingExisting ? 1 : 2);
+            project.saveSync();
+            expect(fileSystem.fileExistsSync(absoluteNewFilePath || newFilePath)).to.be.true;
+            expect(fileSystem.fileExistsSync(filePath)).to.be.false;
         }
 
         it("should throw if the file already exists", () => {
@@ -150,7 +157,7 @@ describe(nameof(SourceFile), () => {
             doTest("/file.ts", "/newFile.ts", undefined, true);
         });
 
-        it("should copy to a relative file path", () => {
+        it("should move to a relative file path", () => {
             doTest("/dir/file.ts", "../subDir/existingFile.ts", "/subDir/existingFile.ts");
         });
 

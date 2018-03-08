@@ -204,9 +204,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
         const {overwrite = false} = options;
+        const oldFilePath = this.getFilePath();
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
-        if (filePath === this.getFilePath())
+        if (filePath === oldFilePath)
             return this;
 
         // todo: first check to see if this has any exports or imports (add isExternalModule()?)
@@ -226,6 +227,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             newFilePath: filePath,
             sourceFile: this
         });
+        this.global.fileSystemWrapper.queueDelete(oldFilePath);
 
         // update the import & export declarations in this file
         for (const item of fileImportAndExportsWithSourceFiles)

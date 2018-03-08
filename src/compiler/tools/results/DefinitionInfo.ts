@@ -12,6 +12,8 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
     protected readonly global: GlobalContainer;
     /** @internal */
     private readonly _compilerObject: TCompilerObject;
+    /** @internal */
+    private readonly sourceFile: SourceFile;
 
     /**
      * @internal
@@ -19,6 +21,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
     constructor(global: GlobalContainer, compilerObject: TCompilerObject) {
         this.global = global;
         this._compilerObject = compilerObject;
+        this.sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
     }
 
     /**
@@ -32,7 +35,7 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
      * Gets the source file this reference is in.
      */
     getSourceFile(): SourceFile {
-        return this.global.compilerFactory.getSourceFileFromFilePath(this.compilerObject.fileName)!;
+        return this.sourceFile;
     }
 
     /**

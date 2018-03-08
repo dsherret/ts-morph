@@ -14,6 +14,8 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     private readonly _compilerObject: TCompilerObject;
     /** @internal */
     private readonly node: Node;
+    /** @internal */
+    private readonly sourceFile: SourceFile;
 
     /**
      * @internal
@@ -23,6 +25,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
         this._compilerObject = compilerObject;
 
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
+        this.sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
         this.node = this.getSourceFile().getDescendantAtStartWithWidth(this.getTextSpan().getStart(), this.getTextSpan().getLength())!;
     }
 
@@ -37,7 +40,7 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
      * Gets the source file this reference is in.
      */
     getSourceFile(): SourceFile {
-        return this.global.compilerFactory.getSourceFileFromFilePath(this.compilerObject.fileName)!;
+        return this.sourceFile;
     }
 
     /**

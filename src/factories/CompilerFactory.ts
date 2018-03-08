@@ -385,16 +385,17 @@ export class CompilerFactory {
 
         if (nodeToReplace.kind === SyntaxKind.SourceFile && (nodeToReplace as ts.SourceFile).fileName !== (newNode as ts.SourceFile).fileName) {
             const oldFilePath = (nodeToReplace as ts.SourceFile).fileName;
-            const sourceFile = this.sourceFileCacheByFilePath.get(oldFilePath)!;
+            const sourceFile = node! as SourceFile;
             this.removeCompilerNodeFromCache(nodeToReplace);
-            this.addSourceFileToCache(sourceFile);
+            sourceFile.replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
             this.nodeCache.set(newNode, sourceFile);
+            this.addSourceFileToCache(sourceFile);
         }
-        else
+        else {
             this.nodeCache.replaceKey(nodeToReplace, newNode);
-
-        if (node != null)
-            node.replaceCompilerNodeFromFactory(newNode);
+            if (node != null)
+                node.replaceCompilerNodeFromFactory(newNode);
+        }
     }
 
     /**

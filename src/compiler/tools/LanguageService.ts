@@ -53,7 +53,7 @@ export class LanguageService {
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {
                 if (this.global.compilerFactory.containsSourceFileAtPath(path))
-                    return this.global.compilerFactory.getSourceFileFromFilePath(path)!.getFullText();
+                    return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(path)!.getFullText();
                 return this.global.fileSystemWrapper.readFileSync(path, encoding);
             },
             fileExists: fileExistsSync,
@@ -235,7 +235,7 @@ export class LanguageService {
      * @param settings - Format code settings.
      */
     getFormattedDocumentText(filePath: string, settings: FormatCodeSettings) {
-        const sourceFile = this.global.compilerFactory.getSourceFileFromFilePath(filePath);
+        const sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(filePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePath);
 
