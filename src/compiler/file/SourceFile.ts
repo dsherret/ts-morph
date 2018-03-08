@@ -326,7 +326,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -337,7 +337,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.global.compilerFactory.getSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 

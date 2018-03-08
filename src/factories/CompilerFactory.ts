@@ -108,7 +108,7 @@ export class CompilerFactory {
      */
     createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const existingSourceFile = this.getSourceFileFromFilePath(filePath);
+        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath);
         if (existingSourceFile != null) {
             existingSourceFile.replaceWithText(sourceText);
             return existingSourceFile;
@@ -143,7 +143,7 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    getSourceFileFromFilePath(filePath: string): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: string): SourceFile | undefined {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {

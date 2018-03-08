@@ -286,7 +286,7 @@ export class Directory {
      */
     addSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
+        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
     }
 
     /**

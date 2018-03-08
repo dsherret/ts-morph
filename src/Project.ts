@@ -197,7 +197,7 @@ export class Project {
      * @param filePath - File path to get the file from.
      */
     addSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this.global.compilerFactory.getSourceFileFromFilePath(filePath);
+        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
     }
 
     /**
