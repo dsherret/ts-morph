@@ -43,7 +43,10 @@ export class Diagnostic {
         if (typeof messageText === "string")
             return messageText;
 
-        return new DiagnosticMessageChain(messageText);
+        if (this.global == null)
+            return new DiagnosticMessageChain(messageText);
+        else
+            return this.global.compilerFactory.getDiagnosticMessageChain(messageText);
     }
 
     /**

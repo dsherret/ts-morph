@@ -96,7 +96,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (thisSymbol == null || sourceFileSymbol == null)
                 return false;
 
-            return sourceFileSymbol.getExports().some(e => thisSymbol.equals(e.getAliasedSymbol()));
+            return sourceFileSymbol.getExports().some(e => thisSymbol === e.getAliasedSymbol());
         }
 
         isDefaultExport() {
@@ -112,11 +112,11 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (defaultExportSymbol == null || thisSymbol == null)
                 return false;
 
-            if (thisSymbol.equals(defaultExportSymbol))
+            if (thisSymbol === defaultExportSymbol)
                 return true;
 
             const aliasedSymbol = defaultExportSymbol.getAliasedSymbol();
-            return thisSymbol.equals(aliasedSymbol);
+            return thisSymbol === aliasedSymbol;
         }
 
         isNamedExport() {

@@ -7,7 +7,7 @@ export class KeyValueCache<T, U> {
         if (typeof Map !== undefined)
             this.cacheItems = new Map<T, U>();
         else
-            this.cacheItems = new Es5Map();
+            this.cacheItems = new Es5Map<T, U>();
     }
 
     getSize() {

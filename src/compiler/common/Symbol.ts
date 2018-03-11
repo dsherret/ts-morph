@@ -66,16 +66,6 @@ export class Symbol {
     }
 
     /**
-     * Gets if the symbols are equal.
-     * @param symbol - Other symbol to check.
-     */
-    equals(symbol: Symbol | undefined) {
-        if (symbol == null)
-            return false;
-        return this.compilerSymbol === symbol.compilerSymbol;
-    }
-
-    /**
      * Gets the value declaration of a symbol or throws if it doesn't exist.
      */
     getValueDeclarationOrThrow(): Node {

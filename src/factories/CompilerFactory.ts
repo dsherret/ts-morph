@@ -1,8 +1,9 @@
 import {ts, SyntaxKind, TypeFlags} from "./../typescript";
-import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, Diagnostic, JSDocTagInfo} from "./../compiler";
+import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, Diagnostic, DiagnosticMessageChain,
+    JSDocTagInfo} from "./../compiler";
 import * as errors from "./../errors";
 import {SourceFileStructure} from "./../structures";
-import {KeyValueCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
+import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
 import {GlobalContainer} from "./../GlobalContainer";
 import {Directory} from "./../fileSystem";
 import {createWrappedNode} from "./../createWrappedNode";
@@ -17,6 +18,14 @@ import {DirectoryCache} from "./DirectoryCache";
  */
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, SourceFile>();
+    private readonly diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
+    private readonly diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
+    private readonly jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
+    private readonly signatureCache = new WeakCache<ts.Signature, Signature>();
+    private readonly symbolCache = new WeakCache<ts.Symbol, Symbol>();
+    private readonly symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
+    private readonly typeCache = new WeakCache<ts.Type, Type>();
+    private readonly typeParameterCache = new WeakCache<ts.TypeParameter, TypeParameter>();
     private readonly nodeCache = new ForgetfulNodeCache();
     private readonly directoryCache: DirectoryCache;
     private readonly sourceFileAddedEventContainer = new EventContainer();
@@ -321,7 +330,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler symbol display part.
      */
     getSymbolDisplayPart(compilerObject: ts.SymbolDisplayPart) {
-        return new SymbolDisplayPart(compilerObject);
+        return this.symbolDisplayPartCache.getOrCreate(compilerObject, () => new SymbolDisplayPart(compilerObject));
     }
 
     /**
@@ -331,15 +340,15 @@ export class CompilerFactory {
     getType<TType extends ts.Type = TType>(type: TType): Type<TType> {
         if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
             return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
-        return new Type<TType>(this.global, type);
+        return this.typeCache.getOrCreate(type, () => new Type<TType>(this.global, type));
     }
 
     /**
-     * Gets a warpped type parameter from a compiler type parameter.
+     * Gets a wrapped type parameter from a compiler type parameter.
      * @param typeParameter - Compiler type parameter
      */
     getTypeParameter(typeParameter: ts.TypeParameter): TypeParameter {
-        return new TypeParameter(this.global, typeParameter);
+        return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.global, typeParameter));
     }
 
     /**
@@ -347,7 +356,7 @@ export class CompilerFactory {
      * @param signature - Compiler signature.
      */
     getSignature(signature: ts.Signature): Signature {
-        return new Signature(this.global, signature);
+        return this.signatureCache.getOrCreate(signature, () => new Signature(this.global, signature));
     }
 
     /**
@@ -355,7 +364,7 @@ export class CompilerFactory {
      * @param symbol - Compiler symbol.
      */
     getSymbol(symbol: ts.Symbol): Symbol {
-        return new Symbol(this.global, symbol);
+        return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.global, symbol));
     }
 
     /**
@@ -363,7 +372,15 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic.
      */
     getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
-        return new Diagnostic(this.global, diagnostic);
+        return this.diagnosticCache.getOrCreate(diagnostic, () => new Diagnostic(this.global, diagnostic));
+    }
+
+    /**
+     * Gets a wrapped diagnostic message chain from a compiler diagnostic message chain.
+     * @param diagnosticMessageChain - Compiler diagnostic message chain.
+     */
+    getDiagnosticMessageChain(compilerObject: ts.DiagnosticMessageChain): DiagnosticMessageChain {
+        return this.diagnosticMessageChainCache.getOrCreate(compilerObject, () => new DiagnosticMessageChain(compilerObject));
     }
 
     /**
@@ -371,7 +388,7 @@ export class CompilerFactory {
      * @param jsDocTagInfo - Compiler object.
      */
     getJSDocTagInfo(jsDocTagInfo: ts.JSDocTagInfo): JSDocTagInfo {
-        return new JSDocTagInfo(jsDocTagInfo);
+        return this.jsDocTagInfoCache.getOrCreate(jsDocTagInfo, () => new JSDocTagInfo(jsDocTagInfo));
     }
 
     /**

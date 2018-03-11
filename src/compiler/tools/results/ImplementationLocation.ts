@@ -24,6 +24,6 @@ export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocati
      */
     @Memoize
     getDisplayParts() {
-        return this.compilerObject.displayParts.map(p => new SymbolDisplayPart(p));
+        return this.compilerObject.displayParts.map(p => this.global.compilerFactory.getSymbolDisplayPart(p));
     }
 }

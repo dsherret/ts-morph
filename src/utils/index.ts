@@ -1,6 +1,7 @@
 export * from "./AdvancedIterator";
 export * from "./ArrayUtils";
 export * from "./Es5Map";
+export * from "./Es5WeakMap";
 export * from "./EventContainer";
 export * from "./FileUtils";
 export * from "./fillDefaultEditorSettings";
@@ -21,3 +22,4 @@ export * from "./getSymbolByNameOrFindFunction";
 export * from "./isStringKind";
 export * from "./ObjectUtils";
 export * from "./TypeGuards";
+export * from "./WeakCache";

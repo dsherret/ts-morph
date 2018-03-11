@@ -39,7 +39,7 @@ export class EmitResult {
      */
     @Memoize
     getDiagnostics() {
-        return this.compilerObject.diagnostics.map(d => new Diagnostic(this.global, d));
+        return this.compilerObject.diagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
     }
 
     /*

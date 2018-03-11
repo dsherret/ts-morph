@@ -1,4 +1,6 @@
-﻿export interface Dictionary<K, V> {
+﻿import {Es5PropSaver} from "./Es5PropSaver";
+
+export interface Dictionary<K, V> {
     readonly size: number;
     get(key: K): V | undefined;
     set(key: K, value: V): void;
@@ -10,11 +12,9 @@
 }
 
 export class Es5Map<K, V> implements Dictionary<K, V> {
+    private readonly propSaver = new Es5PropSaver<K, string>();
     private readonly items: { [identifier: string]: [K, V]; } = {};
-    private readonly propName = `__key_${Es5Map.instanceCount++}`;
     private itemCount = 0;
-
-    private static instanceCount = 0;
 
     get size() {
         return Object.keys(this.items).length;
@@ -66,7 +66,7 @@ export class Es5Map<K, V> implements Dictionary<K, V> {
     private getIdentifier(key: K) {
         if (typeof key === "string")
             return key;
-        return (key as any)[this.propName] as string | undefined;
+        return this.propSaver.get(key);
     }
 
     private createIdentifier(key: K) {
@@ -74,12 +74,7 @@ export class Es5Map<K, V> implements Dictionary<K, V> {
             return key;
 
         const identifier = (this.itemCount++).toString();
-        Object.defineProperty(key, this.propName, {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: identifier
-        });
+        this.propSaver.set(key, identifier);
         return identifier;
     }
 }
