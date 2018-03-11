@@ -53,7 +53,7 @@ gulp.task("test-run", ["pre-test"], function() {
 
 gulp.task("tslint", function() {
     //var program = tslint.Linter.createProgram("./tsconfig.json"); // doesn't seem to work well
-    return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts", "./code-generation/**/*.ts"])
+    return gulp.src(["./src/**/*.ts", "!./src/typings/**/*.d.ts", "./scripts/**/*.ts"])
         .pipe(gulpTslint({ formatter: "verbose", /*program*/ }))
         .pipe(gulpTslint.report());
 });
@@ -66,22 +66,22 @@ gulp.task("clean-dist", function(cb) {
     return del(["./dist/**/*"], cb);
 });
 
-gulp.task("clean-code-generation", function(cb) {
-    return del(["./dist-cg/**/*"], cb);
+gulp.task("clean-scripts", function(cb) {
+    return del(["./dist-scripts/**/*"], cb);
 });
 
-gulp.task("code-generate", ["clean-code-generation"], function (cb) {
+gulp.task("scripts", ["clean-scripts"], function (cb) {
     var tsProject = ts.createProject("tsconfig.json", {
         typescript: require("typescript")
     });
 
-    var tsResult = gulp.src(["./{src,code-generation}/**/*.ts"])
+    var tsResult = gulp.src(["./{src,scripts}/**/*.ts"])
         .pipe(tsNameOf())
         .pipe(ts(tsProject));
 
     return merge([
-        tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist-cg')),
-        tsResult.js.pipe(gulp.dest("./dist-cg"))
+        tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist-scripts')),
+        tsResult.js.pipe(gulp.dest("./dist-scripts"))
     ]);
 });
 

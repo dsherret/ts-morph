@@ -5,14 +5,14 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "dopublish": "gulp typescript && gulp code-generate && node dist-cg/code-generation/setSyntaxKindOverloads && node dist-cg/code-generation/flattenDeclarationFiles && npm run code-verification && npm publish",
+    "dopublish": "gulp typescript && gulp scripts && node dist-scripts/scripts/setSyntaxKindOverloads && node dist-scripts/scripts/flattenDeclarationFiles && npm run code-verification && npm publish",
     "test": "npm run build && npm run test-run",
     "build": "gulp typescript",
     "test-run": "gulp test-run",
-    "code-generate": "gulp code-generate && node dist-cg/code-generation/main",
-    "output-wrapped-nodes": "gulp code-generate && node dist-cg/code-generation/outputWrappedNodesInfo",
-    "code-verification": "node dist-cg/code-generation/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-cg/code-generation/ensureOverloadStructuresMatch",
-    "ensure-no-definition-file-errors": "node dist-cg/code-generation/ensureNoDefinitionFileErrors"
+    "code-generate": "gulp scripts && node dist-scripts/scripts/code-generate",
+    "output-wrapped-nodes": "gulp scripts && node dist-scripts/scripts/outputWrappedNodesInfo",
+    "code-verification": "node dist-scripts/scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-scripts/scripts/ensureOverloadStructuresMatch",
+    "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors"
   },
   "repository": {
     "type": "git",

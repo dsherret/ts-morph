@@ -4,4 +4,4 @@ node_js:
 before_script:
     - gulp tslint
 after_script:
-    - gulp code-generate && npm run code-verification
+    - gulp scripts && npm run code-verification
