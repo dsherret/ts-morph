@@ -156,7 +156,7 @@ export class LanguageService {
      */
     getDefinitionsAtPosition(sourceFile: SourceFile, pos: number): DefinitionInfo[] {
         const results = this.compilerObject.getDefinitionAtPosition(sourceFile.getFilePath(), pos) || [];
-        return results.map(info => new DefinitionInfo(this.global, info));
+        return results.map(info => this.global.compilerFactory.getDefinitionInfo(info));
     }
 
     /**
@@ -192,7 +192,7 @@ export class LanguageService {
      */
     findReferencesAtPosition(sourceFile: SourceFile, pos: number) {
         const results = this.compilerObject.findReferences(sourceFile.getFilePath(), pos) || [];
-        return results.map(s => new ReferencedSymbol(this.global, s));
+        return results.map(s => this.global.compilerFactory.getReferencedSymbol(s));
     }
 
     /**

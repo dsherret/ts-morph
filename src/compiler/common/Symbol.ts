@@ -27,6 +27,10 @@ export class Symbol {
     constructor(global: GlobalContainer, symbol: ts.Symbol) {
         this.global = global;
         this._compilerSymbol = symbol;
+
+        // wrap these immediately
+        this.getValueDeclaration();
+        this.getDeclarations();
     }
 
     /**

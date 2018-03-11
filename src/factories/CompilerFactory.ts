@@ -1,6 +1,6 @@
 import {ts, SyntaxKind, TypeFlags} from "./../typescript";
-import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, Diagnostic, DiagnosticMessageChain,
-    JSDocTagInfo} from "./../compiler";
+import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
+    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "./../compiler";
 import * as errors from "./../errors";
 import {SourceFileStructure} from "./../structures";
 import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
@@ -19,11 +19,16 @@ import {DirectoryCache} from "./DirectoryCache";
 export class CompilerFactory {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, SourceFile>();
     private readonly diagnosticCache = new WeakCache<ts.Diagnostic, Diagnostic>();
+    private readonly definitionInfoCache = new WeakCache<ts.DefinitionInfo, DefinitionInfo>();
+    private readonly documentSpanCache = new WeakCache<ts.DocumentSpan, DocumentSpan>();
     private readonly diagnosticMessageChainCache = new WeakCache<ts.DiagnosticMessageChain, DiagnosticMessageChain>();
     private readonly jsDocTagInfoCache = new WeakCache<ts.JSDocTagInfo, JSDocTagInfo>();
     private readonly signatureCache = new WeakCache<ts.Signature, Signature>();
     private readonly symbolCache = new WeakCache<ts.Symbol, Symbol>();
     private readonly symbolDisplayPartCache = new WeakCache<ts.SymbolDisplayPart, SymbolDisplayPart>();
+    private readonly referenceEntryCache = new WeakCache<ts.ReferenceEntry, ReferenceEntry>();
+    private readonly referencedSymbolCache = new WeakCache<ts.ReferencedSymbol, ReferencedSymbol>();
+    private readonly referencedSymbolDefinitionInfoCache = new WeakCache<ts.ReferencedSymbolDefinitionInfo, ReferencedSymbolDefinitionInfo>();
     private readonly typeCache = new WeakCache<ts.Type, Type>();
     private readonly typeParameterCache = new WeakCache<ts.TypeParameter, TypeParameter>();
     private readonly nodeCache = new ForgetfulNodeCache();
@@ -366,6 +371,47 @@ export class CompilerFactory {
      */
     getSymbol(symbol: ts.Symbol): Symbol {
         return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.global, symbol));
+    }
+
+    /**
+     * Gets a wrapped definition info from a compiler object.
+     * @param compilerObject - Compiler definition info.
+     */
+    getDefinitionInfo(compilerObject: ts.DefinitionInfo): DefinitionInfo {
+        return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.global, compilerObject));
+    }
+
+    /**
+     * Gets a wrapped document span from a compiler object.
+     * @param compilerObject - Compiler document span.
+     */
+    getDocumentSpan(compilerObject: ts.DocumentSpan): DocumentSpan {
+        return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.global, compilerObject));
+    }
+
+    /**
+     * Gets a wrapped referenced entry from a compiler object.
+     * @param compilerObject - Compiler referenced entry.
+     */
+    getReferenceEntry(compilerObject: ts.ReferenceEntry): ReferenceEntry {
+        return this.referenceEntryCache.getOrCreate(compilerObject, () => new ReferenceEntry(this.global, compilerObject));
+    }
+
+    /**
+     * Gets a wrapped referenced symbol from a compiler object.
+     * @param compilerObject - Compiler referenced symbol.
+     */
+    getReferencedSymbol(compilerObject: ts.ReferencedSymbol): ReferencedSymbol {
+        return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.global, compilerObject));
+    }
+
+    /**
+     * Gets a wrapped referenced symbol definition info from a compiler object.
+     * @param compilerObject - Compiler referenced symbol definition info.
+     */
+    getReferencedSymbolDefinitionInfo(compilerObject: ts.ReferencedSymbolDefinitionInfo): ReferencedSymbolDefinitionInfo {
+        return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject,
+            () => new ReferencedSymbolDefinitionInfo(this.global, compilerObject));
     }
 
     /**

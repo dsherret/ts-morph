@@ -24,7 +24,7 @@ export class ReferencedSymbol {
 
         // it's important to store the references so that the nodes referenced inside will point
         // to the right node in case the user does manipulation between getting this object and getting the references
-        this.references = this.compilerObject.references.map(r => new ReferenceEntry(global, r));
+        this.references = this.compilerObject.references.map(r => global.compilerFactory.getReferenceEntry(r));
     }
 
     /**
@@ -39,7 +39,7 @@ export class ReferencedSymbol {
      */
     @Memoize
     getDefinition() {
-        return new ReferencedSymbolDefinitionInfo(this.global, this.compilerObject.definition);
+        return this.global.compilerFactory.getReferencedSymbolDefinitionInfo(this.compilerObject.definition);
     }
 
     /**
