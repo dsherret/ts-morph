@@ -87,6 +87,10 @@ describe(nameof(ExportableNode), () => {
             doTest("class Identifier {}\nexport default Identifier;", true);
         });
 
+        it("should be exported when exported via an export statement on a different line", () => {
+            doTest("class Identifier {}\nexport {Identifier};", true);
+        });
+
         it("should be exported when default exported on the same line", () => {
             doTest("export default class Identifier {}", true);
         });

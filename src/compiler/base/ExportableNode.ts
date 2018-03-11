@@ -88,7 +88,15 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
         }
 
         isExported() {
-            return this.hasExportKeyword() || this.isDefaultExport();
+            if (this.hasExportKeyword())
+                return true;
+
+            const thisSymbol = this.getSymbol();
+            const sourceFileSymbol = this.getSourceFile().getSymbol();
+            if (thisSymbol == null || sourceFileSymbol == null)
+                return false;
+
+            return sourceFileSymbol.getExports().some(e => thisSymbol.equals(e.getAliasedSymbol()));
         }
 
         isDefaultExport() {
