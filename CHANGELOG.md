@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.0.0"></a>
+# [9.0.0](https://github.com/dsherret/ts-simple-ast/compare/8.2.4...9.0.0) (2018-03-11)
+
+
+### Bug Fixes
+
+* ExportableNode.isExported() takes into account all possible ways for a node to be exported from a file. ([ad07c33](https://github.com/dsherret/ts-simple-ast/commit/ad07c33))
+* Project.getSourceFile should normalize the passed in path. ([c765b16](https://github.com/dsherret/ts-simple-ast/commit/c765b16))
+
+
+### Code Refactoring
+
+* Uses a WeakMap for wrapped Symbols, Types, etc. Internally created an Es5WeakMap. ([177dfe6](https://github.com/dsherret/ts-simple-ast/commit/177dfe6))
+
+
+### Features
+
+* Align ClassDeclaration more with the compiler. ([9b64bb5](https://github.com/dsherret/ts-simple-ast/commit/9b64bb5))
+
+
+### BREAKING CHANGES
+
+* Removed Symbol.equals(symbol). You can use === to compare symbols now.
+* ClassDeclaration.getMembers() no longer returns parameter properties.
+
+
+
 <a name="8.2.4"></a>
 ## [8.2.4](https://github.com/dsherret/ts-simple-ast/compare/8.2.3...8.2.4) (2018-03-08)
 
