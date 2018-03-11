@@ -325,55 +325,55 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getGetAccessorDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getGetAccessor), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getGetAccessorDeclaration("member")!.getText()).to.equal("get member() {}");
+            expect(firstChild.getGetAccessor("member")!.getText()).to.equal("get member() {}");
         });
 
         it("should return undefined when it doesn't exists", () => {
-            expect(firstChild.getGetAccessorDeclaration("member3")).to.be.undefined;
+            expect(firstChild.getGetAccessor("member3")).to.be.undefined;
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getGetAccessorDeclarationOrThrow), () => {
+    describe(nameof<ClassDeclaration>(d => d.getGetAccessorOrThrow), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getGetAccessorDeclarationOrThrow("member").getText()).to.equal("get member() {}");
+            expect(firstChild.getGetAccessorOrThrow("member").getText()).to.equal("get member() {}");
         });
 
         it("should throw when it doesn't exists", () => {
-            expect(() => firstChild.getGetAccessorDeclarationOrThrow("member3")).to.throw();
+            expect(() => firstChild.getGetAccessorOrThrow("member3")).to.throw();
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getSetAccessorDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getSetAccessor), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getSetAccessorDeclaration("member")!.getText()).to.equal("set member() {}");
+            expect(firstChild.getSetAccessor("member")!.getText()).to.equal("set member() {}");
         });
 
         it("should return undefined when it doesn't exists", () => {
-            expect(firstChild.getSetAccessorDeclaration("member3")).to.be.undefined;
+            expect(firstChild.getSetAccessor("member3")).to.be.undefined;
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getSetAccessorDeclarationOrThrow), () => {
+    describe(nameof<ClassDeclaration>(d => d.getSetAccessorOrThrow), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getSetAccessorDeclarationOrThrow("member").getText()).to.equal("set member() {}");
+            expect(firstChild.getSetAccessorOrThrow("member").getText()).to.equal("set member() {}");
         });
 
         it("should throw when it doesn't exists", () => {
-            expect(() => firstChild.getSetAccessorDeclarationOrThrow("member3")).to.throw();
+            expect(() => firstChild.getSetAccessorOrThrow("member3")).to.throw();
         });
     });
 
@@ -609,29 +609,29 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getMethodDeclaration), () => {
+    describe(nameof<ClassDeclaration>(d => d.getMethod), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getMethodDeclaration("member")!.getText()).to.equal("member() {}");
+            expect(firstChild.getMethod("member")!.getText()).to.equal("member() {}");
         });
 
         it("should return undefined when it doesn't exists", () => {
-            expect(firstChild.getMethodDeclaration("member3")).to.be.undefined;
+            expect(firstChild.getMethod("member3")).to.be.undefined;
         });
     });
 
-    describe(nameof<ClassDeclaration>(d => d.getMethodDeclarationOrThrow), () => {
+    describe(nameof<ClassDeclaration>(d => d.getMethodOrThrow), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
         const {firstChild} = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
-            expect(firstChild.getMethodDeclarationOrThrow("member").getText()).to.equal("member() {}");
+            expect(firstChild.getMethodOrThrow("member").getText()).to.equal("member() {}");
         });
 
         it("should throw when it doesn't exists", () => {
-            expect(() => firstChild.getMethodDeclarationOrThrow("member3")).to.throw();
+            expect(() => firstChild.getMethodOrThrow("member3")).to.throw();
         });
     });
 

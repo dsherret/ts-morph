@@ -478,37 +478,37 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the first get accessor declaration by name.
      * @param name - Name.
      */
-    getGetAccessorDeclaration(name: string): GetAccessorDeclaration | undefined;
+    getGetAccessor(name: string): GetAccessorDeclaration | undefined;
     /**
      * Gets the first get accessor declaration by a find function.
      * @param findFunction - Function to find a get accessor declaration by.
      */
-    getGetAccessorDeclaration(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
+    getGetAccessor(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
     /** @internal */
-    getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
-    getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined {
-        return getNodeByNameOrFindFunction(this.getGetAccessorDeclarations(), nameOrFindFunction);
+    getGetAccessor(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
+    getGetAccessor(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined {
+        return getNodeByNameOrFindFunction(this.getGetAccessors(), nameOrFindFunction);
     }
 
     /**
      * Gets the first get accessor declaration by name or throws if it doesn't exist.
      * @param name - Name.
      */
-    getGetAccessorDeclarationOrThrow(name: string): GetAccessorDeclaration;
+    getGetAccessorOrThrow(name: string): GetAccessorDeclaration;
     /**
      * Gets the first get accessor declaration by a find function or throws if it doesn't exist.
      * @param findFunction - Function to find a get accessor declaration by.
      */
-    getGetAccessorDeclarationOrThrow(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration;
-    getGetAccessorDeclarationOrThrow(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration {
-        return errors.throwIfNullOrUndefined(this.getGetAccessorDeclaration(nameOrFindFunction),
+    getGetAccessorOrThrow(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration;
+    getGetAccessorOrThrow(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration {
+        return errors.throwIfNullOrUndefined(this.getGetAccessor(nameOrFindFunction),
             () => getNotFoundErrorMessageForNameOrFindFunction("class getAccessor declaration", nameOrFindFunction));
     }
 
     /**
      * Gets the class get accessor declarations regardless of whether it's an instance of static getAccessor.
      */
-    getGetAccessorDeclarations() {
+    getGetAccessors() {
         return this.getMembers()
             .filter(m => TypeGuards.isGetAccessorDeclaration(m)) as GetAccessorDeclaration[];
     }
@@ -517,37 +517,37 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Sets the first set accessor declaration by name.
      * @param name - Name.
      */
-    getSetAccessorDeclaration(name: string): SetAccessorDeclaration | undefined;
+    getSetAccessor(name: string): SetAccessorDeclaration | undefined;
     /**
      * Sets the first set accessor declaration by a find function.
      * @param findFunction - Function to find a set accessor declaration by.
      */
-    getSetAccessorDeclaration(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
+    getSetAccessor(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
     /** @internal */
-    getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
-    getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined {
-        return getNodeByNameOrFindFunction(this.getSetAccessorDeclarations(), nameOrFindFunction);
+    getSetAccessor(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
+    getSetAccessor(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined {
+        return getNodeByNameOrFindFunction(this.getSetAccessors(), nameOrFindFunction);
     }
 
     /**
      * Sets the first set accessor declaration by name or throws if it doesn't exist.
      * @param name - Name.
      */
-    getSetAccessorDeclarationOrThrow(name: string): SetAccessorDeclaration;
+    getSetAccessorOrThrow(name: string): SetAccessorDeclaration;
     /**
      * Sets the first set accessor declaration by a find function or throws if it doesn't exist.
      * @param findFunction - Function to find a set accessor declaration by.
      */
-    getSetAccessorDeclarationOrThrow(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration;
-    getSetAccessorDeclarationOrThrow(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration {
-        return errors.throwIfNullOrUndefined(this.getSetAccessorDeclaration(nameOrFindFunction),
+    getSetAccessorOrThrow(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration;
+    getSetAccessorOrThrow(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration {
+        return errors.throwIfNullOrUndefined(this.getSetAccessor(nameOrFindFunction),
             () => getNotFoundErrorMessageForNameOrFindFunction("class setAccessor declaration", nameOrFindFunction));
     }
 
     /**
      * Sets the class set accessor declarations regardless of whether it's an instance of static setAccessor.
      */
-    getSetAccessorDeclarations() {
+    getSetAccessors() {
         return this.getMembers()
             .filter(m => TypeGuards.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
     }
@@ -625,37 +625,37 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the first method declaration by name.
      * @param name - Name.
      */
-    getMethodDeclaration(name: string): MethodDeclaration | undefined;
+    getMethod(name: string): MethodDeclaration | undefined;
     /**
      * Gets the first method declaration by a find function.
      * @param findFunction - Function to find a method declaration by.
      */
-    getMethodDeclaration(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    getMethod(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
     /** @internal */
-    getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
-    getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
-        return getNodeByNameOrFindFunction(this.getMethodDeclarations(), nameOrFindFunction);
+    getMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
+    getMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
+        return getNodeByNameOrFindFunction(this.getMethods(), nameOrFindFunction);
     }
 
     /**
      * Gets the first method declaration by name or throws if it doesn't exist.
      * @param name - Name.
      */
-    getMethodDeclarationOrThrow(name: string): MethodDeclaration;
+    getMethodOrThrow(name: string): MethodDeclaration;
     /**
      * Gets the first method declaration by a find function or throws if it doesn't exist.
      * @param findFunction - Function to find a method declaration by.
      */
-    getMethodDeclarationOrThrow(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration;
-    getMethodDeclarationOrThrow(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration {
-        return errors.throwIfNullOrUndefined(this.getMethodDeclaration(nameOrFindFunction),
+    getMethodOrThrow(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration;
+    getMethodOrThrow(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration {
+        return errors.throwIfNullOrUndefined(this.getMethod(nameOrFindFunction),
             () => getNotFoundErrorMessageForNameOrFindFunction("class method declaration", nameOrFindFunction));
     }
 
     /**
      * Gets the class method declarations regardless of whether it's an instance of static method.
      */
-    getMethodDeclarations() {
+    getMethods() {
         return this.getMembers()
             .filter(m => TypeGuards.isMethodDeclaration(m)) as MethodDeclaration[];
     }
