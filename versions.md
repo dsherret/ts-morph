@@ -2,6 +2,26 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail. This file is only a high level overview.
 
+## Version 9
+
+### Improved Wrapping
+
+Improved the wrapping of non-node wrapped compiler objects (symbols, types, diagnostics, etc.). Previously symbols had to be compared like so:
+
+```ts
+someSymbol.equals(otherSymbol); // deprecated method
+```
+
+But now, as expected, you can compare them using an equality check:
+
+```ts
+someSymbol === otherSymbol
+```
+
+### ClassDeclaration changes
+
+Class declaration was changed to be more like the compiler. Read [#266](https://github.com/dsherret/ts-simple-ast/issues/266) for more details.
+
 ## Version 8
 
 All file system copies, moves, and deletes are now deffered until `.save()` is called on the main `ast` object.
