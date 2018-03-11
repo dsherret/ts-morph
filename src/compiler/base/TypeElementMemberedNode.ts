@@ -2,7 +2,7 @@
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "./../../utils";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
     CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
@@ -415,7 +415,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getMethod(nameOrFindFunction: string | ((member: MethodSignature) => boolean)) {
-            return getNamedNodeByNameOrFindFunction(this.getMethods(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getMethods(), nameOrFindFunction);
         }
 
         getMethodOrThrow(nameOrFindFunction: string | ((member: MethodSignature) => boolean)) {
@@ -465,7 +465,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         }
 
         getProperty(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
         }
 
         getPropertyOrThrow(nameOrFindFunction: string | ((member: PropertySignature) => boolean)): PropertySignature {

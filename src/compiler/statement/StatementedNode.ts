@@ -6,7 +6,7 @@ import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDecla
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -524,7 +524,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getClass(findFunction: (declaration: ClassDeclaration) => boolean): ClassDeclaration | undefined;
         getClass(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration | undefined;
         getClass(nameOrFindFunction: string | ((declaration: ClassDeclaration) => boolean)): ClassDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getClasses(), nameOrFindFunction);
         }
 
         getClassOrThrow(name: string): ClassDeclaration;
@@ -571,7 +571,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getEnum(findFunction: (declaration: EnumDeclaration) => boolean): EnumDeclaration | undefined;
         getEnum(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration | undefined;
         getEnum(nameOrFindFunction: string | ((declaration: EnumDeclaration) => boolean)): EnumDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getEnums(), nameOrFindFunction);
         }
 
         getEnumOrThrow(name: string): EnumDeclaration;
@@ -629,7 +629,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getFunction(findFunction: (declaration: FunctionDeclaration) => boolean): FunctionDeclaration | undefined;
         getFunction(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration | undefined;
         getFunction(nameOrFindFunction: string | ((declaration: FunctionDeclaration) => boolean)): FunctionDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getFunctions(), nameOrFindFunction);
         }
 
         getFunctionOrThrow(name: string): FunctionDeclaration;
@@ -676,7 +676,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getInterface(findFunction: (declaration: InterfaceDeclaration) => boolean): InterfaceDeclaration | undefined;
         getInterface(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration | undefined;
         getInterface(nameOrFindFunction: string | ((declaration: InterfaceDeclaration) => boolean)): InterfaceDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getInterfaces(), nameOrFindFunction);
         }
 
         getInterfaceOrThrow(name: string): InterfaceDeclaration;
@@ -722,7 +722,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getNamespace(findFunction: (declaration: NamespaceDeclaration) => boolean): NamespaceDeclaration | undefined;
         getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined;
         getNamespace(nameOrFindFunction: string | ((declaration: NamespaceDeclaration) => boolean)): NamespaceDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getNamespaces(), nameOrFindFunction);
         }
 
         getNamespaceOrThrow(name: string): NamespaceDeclaration;
@@ -774,7 +774,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getTypeAlias(findFunction: (declaration: TypeAliasDeclaration) => boolean): TypeAliasDeclaration | undefined;
         getTypeAlias(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration | undefined;
         getTypeAlias(nameOrFindFunction: string | ((declaration: TypeAliasDeclaration) => boolean)): TypeAliasDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getTypeAliases(), nameOrFindFunction);
         }
 
         getTypeAliasOrThrow(name: string): TypeAliasDeclaration;
@@ -847,7 +847,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         getVariableDeclaration(findFunction: (declaration: VariableDeclaration) => boolean): VariableDeclaration | undefined;
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: VariableDeclaration) => boolean)): VariableDeclaration | undefined;
         getVariableDeclaration(nameOrFindFunction: string | ((declaration: VariableDeclaration) => boolean)): VariableDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getVariableDeclarations(), nameOrFindFunction);
         }
 
         getVariableDeclarationOrThrow(name: string): VariableDeclaration;

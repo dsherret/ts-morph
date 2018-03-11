@@ -1,8 +1,7 @@
 ﻿import {Node} from "./../compiler";
 import {ArrayUtils, TypeGuards} from "./../utils";
 
-// todo: rename to getNodeByNameOrFindFunction
-export function getNamedNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
+export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
 
     if (typeof nameOrFindFunc === "string")

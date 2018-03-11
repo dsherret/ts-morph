@@ -16,7 +16,7 @@ export * from "./StringUtils";
 export * from "./tsconfig";
 export * from "./decorators";
 export * from "./fillDefaultFormatCodeSettings";
-export * from "./getNamedNodeByNameOrFindFunction";
+export * from "./getNodeByNameOrFindFunction";
 export * from "./getSymbolByNameOrFindFunction";
 export * from "./isStringKind";
 export * from "./ObjectUtils";

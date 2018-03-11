@@ -5,7 +5,7 @@ import * as errors from "./../../errors";
 import {callBaseFill} from "./../callBaseFill";
 import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
-import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
+import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {Decorator} from "./../decorator/Decorator";
 
@@ -63,7 +63,7 @@ export interface DecoratableNode {
 export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T {
     return class extends Base implements DecoratableNode {
         getDecorator(nameOrFindFunction: string | ((declaration: Decorator) => boolean)): Decorator | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getDecorators(), nameOrFindFunction);
         }
 
         getDecoratorOrThrow(nameOrFindFunction: string | ((declaration: Decorator) => boolean)): Decorator {

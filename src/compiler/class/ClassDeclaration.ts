@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParentTextRange, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
     verifyAndGetIndex} from "./../../manipulation";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
@@ -362,7 +362,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined;
     getInstanceProperty(nameOrFindFunction: string | ((prop: ClassInstancePropertyTypes) => boolean)): ClassInstancePropertyTypes | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getInstanceProperties(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getInstanceProperties(), nameOrFindFunction);
     }
 
     /**
@@ -401,7 +401,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined;
     getStaticProperty(nameOrFindFunction: string | ((prop: ClassStaticPropertyTypes) => boolean)): ClassStaticPropertyTypes | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getStaticProperties(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getStaticProperties(), nameOrFindFunction);
     }
 
     /**
@@ -448,7 +448,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined;
     getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getPropertyDeclarations(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getPropertyDeclarations(), nameOrFindFunction);
     }
 
     /**
@@ -487,7 +487,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
     getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getGetAccessorDeclarations(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getGetAccessorDeclarations(), nameOrFindFunction);
     }
 
     /**
@@ -526,7 +526,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
     getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getSetAccessorDeclarations(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getSetAccessorDeclarations(), nameOrFindFunction);
     }
 
     /**
@@ -634,7 +634,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
     getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getMethodDeclarations(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getMethodDeclarations(), nameOrFindFunction);
     }
 
     /**
@@ -673,7 +673,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
     getInstanceMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getInstanceMethods(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getInstanceMethods(), nameOrFindFunction);
     }
 
     /**
@@ -711,7 +711,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
     getStaticMethod(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getStaticMethods(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getStaticMethods(), nameOrFindFunction);
     }
 
     /**
@@ -748,7 +748,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined;
     getInstanceMember(nameOrFindFunction: string | ((member: ClassInstanceMemberTypes) => boolean)): ClassInstanceMemberTypes | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getInstanceMembers(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getInstanceMembers(), nameOrFindFunction);
     }
 
     /**
@@ -787,7 +787,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined;
     getStaticMember(nameOrFindFunction: string | ((member: ClassStaticMemberTypes) => boolean)): ClassStaticMemberTypes | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getStaticMembers(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getStaticMembers(), nameOrFindFunction);
     }
 
     /**
@@ -865,7 +865,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /** @internal */
     getMember(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes | undefined;
     getMember(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
     }
 
     /**

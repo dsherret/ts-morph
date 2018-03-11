@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
-import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
+import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
@@ -63,7 +63,7 @@ export interface TypeParameteredNode {
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
     return class extends Base implements TypeParameteredNode {
         getTypeParameter(nameOrFindFunction: string | ((declaration: TypeParameterDeclaration) => boolean)): TypeParameterDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getTypeParameters(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getTypeParameters(), nameOrFindFunction);
         }
 
         getTypeParameterOrThrow(nameOrFindFunction: string | ((declaration: TypeParameterDeclaration) => boolean)): TypeParameterDeclaration {

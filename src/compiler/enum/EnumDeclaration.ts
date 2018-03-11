@@ -3,7 +3,7 @@ import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
 import {EnumMemberStructureToText} from "./../../structureToTexts";
-import {getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
 import {Node} from "./../common";
@@ -104,7 +104,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /** @internal */
     getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined;
     getMember(nameOrFindFunction: string | ((declaration: EnumMember) => boolean)): EnumMember | undefined {
-        return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
+        return getNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
     }
 
     /**

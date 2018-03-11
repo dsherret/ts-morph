@@ -5,7 +5,7 @@ import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray} 
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {ParameterDeclarationStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
-import {ArrayUtils, getNamedNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
+import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
 import {ParameterDeclaration} from "./../function/ParameterDeclaration";
 
@@ -63,7 +63,7 @@ export interface ParameteredNode {
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
     return class extends Base implements ParameteredNode {
         getParameter(nameOrFindFunction: string | ((declaration: ParameterDeclaration) => boolean)): ParameterDeclaration | undefined {
-            return getNamedNodeByNameOrFindFunction(this.getParameters(), nameOrFindFunction);
+            return getNodeByNameOrFindFunction(this.getParameters(), nameOrFindFunction);
         }
 
         getParameterOrThrow(nameOrFindFunction: string | ((declaration: ParameterDeclaration) => boolean)): ParameterDeclaration {
