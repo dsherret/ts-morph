@@ -6,13 +6,13 @@
 [![Coverage Status](https://coveralls.io/repos/dsherret/ts-simple-ast/badge.svg?branch=master&service=github)](https://coveralls.io/github/dsherret/ts-simple-ast?branch=master)
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-[TypeScript](https://github.com/Microsoft/TypeScript) compiler wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
+[TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (19 February 2018)
+## Library Development - Progress Update (11 March 2018)
 
 View information on the new versions in [versions.md](versions.md).
 
-Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
+This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 
 Please open an issue if find a feature missing or bug that isn't in the issue tracker.
 
