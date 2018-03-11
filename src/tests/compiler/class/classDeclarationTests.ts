@@ -4,6 +4,7 @@ import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDec
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
     GetAccessorDeclarationStructure} from "./../../../structures";
 import {getInfoFromText} from "./../testHelpers";
+import {TypeGuards} from "./../../../utils";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(c => c.fill), () => {
@@ -298,6 +299,84 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getPropertyDeclaration), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getPropertyDeclaration("member")!.getText()).to.equal("static member: string;");
+        });
+
+        it("should return undefined when it doesn't exists", () => {
+            expect(firstChild.getPropertyDeclaration("member3")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getPropertyDeclarationOrThrow), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getPropertyDeclarationOrThrow("member2").getText()).to.equal("member2: string;");
+        });
+
+        it("should throw when it doesn't exists", () => {
+            expect(() => firstChild.getPropertyDeclarationOrThrow("member3")).to.throw();
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getGetAccessorDeclaration), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getGetAccessorDeclaration("member")!.getText()).to.equal("get member() {}");
+        });
+
+        it("should return undefined when it doesn't exists", () => {
+            expect(firstChild.getGetAccessorDeclaration("member3")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getGetAccessorDeclarationOrThrow), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getGetAccessorDeclarationOrThrow("member").getText()).to.equal("get member() {}");
+        });
+
+        it("should throw when it doesn't exists", () => {
+            expect(() => firstChild.getGetAccessorDeclarationOrThrow("member3")).to.throw();
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getSetAccessorDeclaration), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getSetAccessorDeclaration("member")!.getText()).to.equal("set member() {}");
+        });
+
+        it("should return undefined when it doesn't exists", () => {
+            expect(firstChild.getSetAccessorDeclaration("member3")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getSetAccessorDeclarationOrThrow), () => {
+        const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getSetAccessorDeclarationOrThrow("member").getText()).to.equal("set member() {}");
+        });
+
+        it("should throw when it doesn't exists", () => {
+            expect(() => firstChild.getSetAccessorDeclarationOrThrow("member3")).to.throw();
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getInstanceProperties), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
@@ -530,6 +609,32 @@ describe(nameof(ClassDeclaration), () => {
         });
     });
 
+    describe(nameof<ClassDeclaration>(d => d.getMethodDeclaration), () => {
+        const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getMethodDeclaration("member")!.getText()).to.equal("member() {}");
+        });
+
+        it("should return undefined when it doesn't exists", () => {
+            expect(firstChild.getMethodDeclaration("member3")).to.be.undefined;
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getMethodDeclarationOrThrow), () => {
+        const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a member when it exists", () => {
+            expect(firstChild.getMethodDeclarationOrThrow("member").getText()).to.equal("member() {}");
+        });
+
+        it("should throw when it doesn't exists", () => {
+            expect(() => firstChild.getMethodDeclarationOrThrow("member3")).to.throw();
+        });
+    });
+
     describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
@@ -688,6 +793,11 @@ describe(nameof(ClassDeclaration), () => {
             expect(method.isStatic()).to.equal(false);
         });
 
+        it("should get a parameter property by name", () => {
+            const method = firstChild.getInstanceMember("param3")! as ParameterDeclaration;
+            expect(method.getName()).to.equal("param3");
+        });
+
         it("should get a method by function", () => {
             const method = firstChild.getInstanceMember(m => m.getName() === "method")! as MethodDeclaration;
             expect(method.getName()).to.equal("method");
@@ -773,7 +883,8 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getMembers), () => {
         it("should get the right number of instance, static, and constructor members in a non-ambient context", () => {
-            const code = "class Identifier {\nconstructor();constructor() {}\nstatic prop2: string;\nstatic method();static method() {}\nabstract abstractMethod(): void;\n" +
+            const code = "class Identifier {\nconstructor();constructor(public param) {}\nstatic prop2: string;\nstatic method();" +
+                "static method() { }\nabstract abstractMethod(): void; \n" +
                 "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
             const {firstChild} = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(7);
@@ -843,6 +954,46 @@ class c {
     }
 }
 `);
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getMember), () => {
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
+            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
+            "instanceProp: string;\nprop2: number;method() {}\n" +
+            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a method by name", () => {
+            const method = firstChild.getMember("method")! as MethodDeclaration;
+            expect(method.getName()).to.equal("method");
+        });
+
+        it("should get a property by function", () => {
+            const method = firstChild.getMember(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method")! as MethodDeclaration;
+            expect(method.getName()).to.equal("method");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.getMemberOrThrow), () => {
+        const code = "class Identifier {\nstatic prop2: string;\nstatic method() {}\n" +
+            "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
+            "instanceProp: string;\nprop2: number;method() {}\n" +
+            "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
+        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+
+        it("should get a method by name", () => {
+            const method = firstChild.getMemberOrThrow("method") as MethodDeclaration;
+            expect(method.getName()).to.equal("method");
+        });
+
+        it("should get a property by function", () => {
+            const method = firstChild.getMemberOrThrow(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method") as MethodDeclaration;
+            expect(method.getName()).to.equal("method");
+        });
+
+        it("should throw when not found", () => {
+            expect(() => firstChild.getMemberOrThrow(m => TypeGuards.isMethodDeclaration(m) && m.getName() === "method9")).to.throw();
         });
     });
 

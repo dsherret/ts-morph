@@ -1,12 +1,12 @@
-﻿import {NamedNode, DeclarationNamedNode, PropertyNamedNode, Decorator} from "./../compiler";
-import {ArrayUtils} from "./../utils";
+﻿import {Node} from "./../compiler";
+import {ArrayUtils, TypeGuards} from "./../utils";
 
-export type NamedNodeByNameOrFindFunctionSupportedTypes = NamedNode | DeclarationNamedNode | PropertyNamedNode | Decorator;
-export function getNamedNodeByNameOrFindFunction<T extends NamedNodeByNameOrFindFunctionSupportedTypes>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
+// todo: rename to getNodeByNameOrFindFunction
+export function getNamedNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;
 
     if (typeof nameOrFindFunc === "string")
-        findFunc = dec => dec.getName() === nameOrFindFunc;
+        findFunc = dec => (dec as any).getName != null && (dec as any).getName() === nameOrFindFunc;
     else
         findFunc = nameOrFindFunc;
 

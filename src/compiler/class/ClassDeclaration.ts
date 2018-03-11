@@ -23,11 +23,12 @@ import {PropertyDeclaration} from "./PropertyDeclaration";
 import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
 import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
 
-export type ClassInstancePropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ParameterDeclaration;
+export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
+export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
 export type ClassInstanceMemberTypes = MethodDeclaration | ClassInstancePropertyTypes;
 export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
-export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration | ParameterDeclaration;
+export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
     NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
@@ -139,7 +140,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structure - Structure of the constructor.
      */
     addConstructor(structure: ConstructorDeclarationStructure = {}) {
-        return this.insertConstructor(getEndIndexFromArray(this.getBodyMembers()), structure);
+        return this.insertConstructor(getEndIndexFromArray(this.getMembers()), structure);
     }
 
     /**
@@ -157,7 +158,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const code = writer.toString();
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
-            getIndexedChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -190,7 +191,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     addGetAccessors(structures: GetAccessorDeclarationStructure[]) {
-        return this.insertGetAccessors(getEndIndexFromArray(this.getBodyMembers()), structures);
+        return this.insertGetAccessors(getEndIndexFromArray(this.getMembers()), structures);
     }
 
     /**
@@ -220,7 +221,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
-            getIndexedChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -247,7 +248,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     addSetAccessors(structures: SetAccessorDeclarationStructure[]) {
-        return this.insertSetAccessors(getEndIndexFromArray(this.getBodyMembers()), structures);
+        return this.insertSetAccessors(getEndIndexFromArray(this.getMembers()), structures);
     }
 
     /**
@@ -278,7 +279,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
-            getIndexedChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -305,7 +306,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     addProperties(structures: PropertyDeclarationStructure[]) {
-        return this.insertProperties(getEndIndexFromArray(this.getBodyMembers()), structures);
+        return this.insertProperties(getEndIndexFromArray(this.getMembers()), structures);
     }
 
     /**
@@ -335,7 +336,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         });
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
-            getIndexedChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -427,6 +428,131 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
+     * Gets the class properties regardless of whether it's an instance of static property.
+     */
+    getProperties() {
+        return this.getMembers()
+            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
+    }
+
+    /**
+     * Gets the first property declaration by name.
+     * @param name - Name.
+     */
+    getPropertyDeclaration(name: string): PropertyDeclaration | undefined;
+    /**
+     * Gets the first property declaration by a find function.
+     * @param findFunction - Function to find a property declaration by.
+     */
+    getPropertyDeclaration(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration | undefined;
+    /** @internal */
+    getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined;
+    getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getPropertyDeclarations(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first property declaration by name or throws if it doesn't exist.
+     * @param name - Name.
+     */
+    getPropertyDeclarationOrThrow(name: string): PropertyDeclaration;
+    /**
+     * Gets the first property declaration by a find function or throws if it doesn't exist.
+     * @param findFunction - Function to find a property declaration by.
+     */
+    getPropertyDeclarationOrThrow(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration;
+    getPropertyDeclarationOrThrow(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration {
+        return errors.throwIfNullOrUndefined(this.getPropertyDeclaration(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class property declaration", nameOrFindFunction));
+    }
+
+    /**
+     * Gets the class property declarations regardless of whether it's an instance of static property.
+     */
+    getPropertyDeclarations() {
+        return this.getMembers()
+            .filter(m => TypeGuards.isPropertyDeclaration(m)) as PropertyDeclaration[];
+    }
+
+    /**
+     * Gets the first get accessor declaration by name.
+     * @param name - Name.
+     */
+    getGetAccessorDeclaration(name: string): GetAccessorDeclaration | undefined;
+    /**
+     * Gets the first get accessor declaration by a find function.
+     * @param findFunction - Function to find a get accessor declaration by.
+     */
+    getGetAccessorDeclaration(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration | undefined;
+    /** @internal */
+    getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined;
+    getGetAccessorDeclaration(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getGetAccessorDeclarations(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first get accessor declaration by name or throws if it doesn't exist.
+     * @param name - Name.
+     */
+    getGetAccessorDeclarationOrThrow(name: string): GetAccessorDeclaration;
+    /**
+     * Gets the first get accessor declaration by a find function or throws if it doesn't exist.
+     * @param findFunction - Function to find a get accessor declaration by.
+     */
+    getGetAccessorDeclarationOrThrow(findFunction: (getAccessor: GetAccessorDeclaration) => boolean): GetAccessorDeclaration;
+    getGetAccessorDeclarationOrThrow(nameOrFindFunction: string | ((getAccessor: GetAccessorDeclaration) => boolean)): GetAccessorDeclaration {
+        return errors.throwIfNullOrUndefined(this.getGetAccessorDeclaration(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class getAccessor declaration", nameOrFindFunction));
+    }
+
+    /**
+     * Gets the class get accessor declarations regardless of whether it's an instance of static getAccessor.
+     */
+    getGetAccessorDeclarations() {
+        return this.getMembers()
+            .filter(m => TypeGuards.isGetAccessorDeclaration(m)) as GetAccessorDeclaration[];
+    }
+
+    /**
+     * Sets the first set accessor declaration by name.
+     * @param name - Name.
+     */
+    getSetAccessorDeclaration(name: string): SetAccessorDeclaration | undefined;
+    /**
+     * Sets the first set accessor declaration by a find function.
+     * @param findFunction - Function to find a set accessor declaration by.
+     */
+    getSetAccessorDeclaration(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration | undefined;
+    /** @internal */
+    getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined;
+    getSetAccessorDeclaration(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getSetAccessorDeclarations(), nameOrFindFunction);
+    }
+
+    /**
+     * Sets the first set accessor declaration by name or throws if it doesn't exist.
+     * @param name - Name.
+     */
+    getSetAccessorDeclarationOrThrow(name: string): SetAccessorDeclaration;
+    /**
+     * Sets the first set accessor declaration by a find function or throws if it doesn't exist.
+     * @param findFunction - Function to find a set accessor declaration by.
+     */
+    getSetAccessorDeclarationOrThrow(findFunction: (setAccessor: SetAccessorDeclaration) => boolean): SetAccessorDeclaration;
+    getSetAccessorDeclarationOrThrow(nameOrFindFunction: string | ((setAccessor: SetAccessorDeclaration) => boolean)): SetAccessorDeclaration {
+        return errors.throwIfNullOrUndefined(this.getSetAccessorDeclaration(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class setAccessor declaration", nameOrFindFunction));
+    }
+
+    /**
+     * Sets the class set accessor declarations regardless of whether it's an instance of static setAccessor.
+     */
+    getSetAccessorDeclarations() {
+        return this.getMembers()
+            .filter(m => TypeGuards.isSetAccessorDeclaration(m)) as SetAccessorDeclaration[];
+    }
+
+    /**
      * Add method.
      * @param structure - Structure representing the method.
      */
@@ -439,7 +565,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the methods.
      */
     addMethods(structures: MethodDeclarationStructure[]) {
-        return this.insertMethods(getEndIndexFromArray(this.getBodyMembers()), structures);
+        return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
     }
 
     /**
@@ -473,7 +599,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
-            getIndexedChildren: () => this.getBodyMembers(),
+            getIndexedChildren: () => this.getMembers(),
             sourceFile: this.getSourceFile(),
             parent: this,
             index,
@@ -493,6 +619,45 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     node.getParameters().forEach((p, i) => p.fill(params[i]));
             }
         });
+    }
+
+    /**
+     * Gets the first method declaration by name.
+     * @param name - Name.
+     */
+    getMethodDeclaration(name: string): MethodDeclaration | undefined;
+    /**
+     * Gets the first method declaration by a find function.
+     * @param findFunction - Function to find a method declaration by.
+     */
+    getMethodDeclaration(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration | undefined;
+    /** @internal */
+    getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined;
+    getMethodDeclaration(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getMethodDeclarations(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first method declaration by name or throws if it doesn't exist.
+     * @param name - Name.
+     */
+    getMethodDeclarationOrThrow(name: string): MethodDeclaration;
+    /**
+     * Gets the first method declaration by a find function or throws if it doesn't exist.
+     * @param findFunction - Function to find a method declaration by.
+     */
+    getMethodDeclarationOrThrow(findFunction: (method: MethodDeclaration) => boolean): MethodDeclaration;
+    getMethodDeclarationOrThrow(nameOrFindFunction: string | ((method: MethodDeclaration) => boolean)): MethodDeclaration {
+        return errors.throwIfNullOrUndefined(this.getMethodDeclaration(nameOrFindFunction),
+            () => getNotFoundErrorMessageForNameOrFindFunction("class method declaration", nameOrFindFunction));
+    }
+
+    /**
+     * Gets the class method declarations regardless of whether it's an instance of static method.
+     */
+    getMethodDeclarations() {
+        return this.getMembers()
+            .filter(m => TypeGuards.isMethodDeclaration(m)) as MethodDeclaration[];
     }
 
     /**
@@ -605,7 +770,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the instance members.
      */
     getInstanceMembers() {
-        return this.getMembers().filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
+        return this.getMembersWithParameterProperties()
+            .filter(m => !TypeGuards.isConstructorDeclaration(m) && (TypeGuards.isParameterDeclaration(m) || !m.isStatic())) as ClassInstanceMemberTypes[];
     }
 
     /**
@@ -646,10 +812,11 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the constructors, methods, properties, and class parameter properties (regardless of whether an instance of static member).
+     * Gets the class members regardless of whether an instance of static member with parameter properties.
+     * @internal
      */
-    getMembers() {
-        const members = this.getBodyMembers();
+    getMembersWithParameterProperties() {
+        const members: (ClassMemberTypes | ParameterDeclaration)[] = this.getMembers();
         const implementationCtors = members.filter(c => TypeGuards.isConstructorDeclaration(c) && c.isImplementation()) as ConstructorDeclaration[];
         for (const ctor of implementationCtors) {
             // insert after the constructor
@@ -663,6 +830,56 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         return members;
+    }
+
+    /**
+     * Gets the class' members regardless of whether it's an instance of static member.
+     */
+    getMembers() {
+        return getAllMembers(this).filter(m => isSupportedClassMember(m));
+
+        function getAllMembers(classDec: ClassDeclaration) {
+            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode<ClassMemberTypes>(m));
+
+            // filter out the method declarations or constructor declarations without a body if not ambient
+            return classDec.isAmbient() ? members : members.filter(m => {
+                if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
+                    return true;
+                if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
+                    return true;
+                return m.isImplementation();
+            });
+        }
+    }
+
+    /**
+     * Gets the first member by name.
+     * @param name - Name.
+     */
+    getMember(name: string): ClassMemberTypes | undefined;
+    /**
+     * Gets the first member by a find function.
+     * @param findFunction - Function to find an method by.
+     */
+    getMember(findFunction: (member: ClassMemberTypes) => boolean): ClassMemberTypes | undefined;
+    /** @internal */
+    getMember(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes | undefined;
+    getMember(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes | undefined {
+        return getNamedNodeByNameOrFindFunction(this.getMembers(), nameOrFindFunction);
+    }
+
+    /**
+     * Gets the first member by name or throws if not found.
+     * @param name - Name.
+     */
+    getMemberOrThrow(name: string): ClassMemberTypes;
+    /**
+     * Gets the first member by a find function. or throws if not found.
+     * @param findFunction - Function to find an method by.
+     */
+    getMemberOrThrow(findFunction: (member: ClassMemberTypes) => boolean): ClassMemberTypes;
+    getMemberOrThrow(nameOrFindFunction: string | ((member: ClassMemberTypes) => boolean)): ClassMemberTypes {
+        return errors.throwIfNullOrUndefined(this.getMember(nameOrFindFunction), () => getNotFoundErrorMessageForNameOrFindFunction("class member", nameOrFindFunction));
     }
 
     /**
@@ -739,30 +956,19 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         return classes;
     }
-
-    private getBodyMembers() {
-        return getAllBodyMembers(this).filter(m => isSupportedClassMember(m));
-
-        function getAllBodyMembers(classDec: ClassDeclaration) {
-            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode<ClassMemberTypes>(m));
-
-            // filter out the method declarations or constructor declarations without a body if not ambient
-            return classDec.isAmbient() ? members : members.filter(m => {
-                if (!(TypeGuards.isConstructorDeclaration(m) || TypeGuards.isMethodDeclaration(m)))
-                    return true;
-                if (TypeGuards.isMethodDeclaration(m) && m.isAbstract())
-                    return true;
-                return m.isImplementation();
-            });
-        }
-    }
 }
 
 function isClassPropertyType(m: Node) {
-    return TypeGuards.isPropertyDeclaration(m) || TypeGuards.isSetAccessorDeclaration(m) || TypeGuards.isGetAccessorDeclaration(m) || TypeGuards.isParameterDeclaration(m);
+    return TypeGuards.isPropertyDeclaration(m)
+        || TypeGuards.isSetAccessorDeclaration(m)
+        || TypeGuards.isGetAccessorDeclaration(m)
+        || TypeGuards.isParameterDeclaration(m);
 }
 
 function isSupportedClassMember(m: Node) {
-    return TypeGuards.isMethodDeclaration(m) || TypeGuards.isPropertyDeclaration(m) || TypeGuards.isGetAccessorDeclaration(m) || TypeGuards.isSetAccessorDeclaration(m)
-        || TypeGuards.isConstructorDeclaration(m) || TypeGuards.isParameterDeclaration(m);
+    return TypeGuards.isMethodDeclaration(m)
+        || TypeGuards.isPropertyDeclaration(m)
+        || TypeGuards.isGetAccessorDeclaration(m)
+        || TypeGuards.isSetAccessorDeclaration(m)
+        || TypeGuards.isConstructorDeclaration(m);
 }

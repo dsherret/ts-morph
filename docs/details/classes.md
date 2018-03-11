@@ -153,9 +153,7 @@ method.remove();
 
 ### Properties
 
-Properties searched for can be of type `PropertyDeclaration`, `GetAccessorDeclaration`, `SetAccessorDeclaration`, or `ParameterDeclaration` (constructor parameter properties).
-
-Get the instance properties:
+Get the instance properties (includes parameter properties):
 
 ```ts
 const instanceProperties = classDeclaration.getInstanceProperties();
@@ -203,13 +201,13 @@ property.remove();
 
 ### Get members
 
-Get all static and instance members:
+Get all the members regardless of whether static or instance:
 
 ```ts
 const allMembers = classDeclaration.getMembers();
 ```
 
-Get instance members:
+Get instance members including parameter properties:
 
 ```ts
 const instanceMembers = classDeclaration.getInstanceMembers();
