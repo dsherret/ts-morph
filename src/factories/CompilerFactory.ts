@@ -145,6 +145,7 @@ export class CompilerFactory {
      * @param filePath - File path.
      */
     getSourceFileFromCacheFromFilePath(filePath: string): SourceFile | undefined {
+        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         return this.sourceFileCacheByFilePath.get(filePath);
     }
 
