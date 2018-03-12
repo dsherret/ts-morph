@@ -428,48 +428,40 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the class properties regardless of whether it's an instance of static property.
-     */
-    getProperties() {
-        return this.getMembers()
-            .filter(m => isClassPropertyType(m)) as ClassPropertyTypes[];
-    }
-
-    /**
      * Gets the first property declaration by name.
      * @param name - Name.
      */
-    getPropertyDeclaration(name: string): PropertyDeclaration | undefined;
+    getProperty(name: string): PropertyDeclaration | undefined;
     /**
      * Gets the first property declaration by a find function.
      * @param findFunction - Function to find a property declaration by.
      */
-    getPropertyDeclaration(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration | undefined;
+    getProperty(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration | undefined;
     /** @internal */
-    getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined;
-    getPropertyDeclaration(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined {
-        return getNodeByNameOrFindFunction(this.getPropertyDeclarations(), nameOrFindFunction);
+    getProperty(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined;
+    getProperty(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration | undefined {
+        return getNodeByNameOrFindFunction(this.getProperties(), nameOrFindFunction);
     }
 
     /**
      * Gets the first property declaration by name or throws if it doesn't exist.
      * @param name - Name.
      */
-    getPropertyDeclarationOrThrow(name: string): PropertyDeclaration;
+    getPropertyOrThrow(name: string): PropertyDeclaration;
     /**
      * Gets the first property declaration by a find function or throws if it doesn't exist.
      * @param findFunction - Function to find a property declaration by.
      */
-    getPropertyDeclarationOrThrow(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration;
-    getPropertyDeclarationOrThrow(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration {
-        return errors.throwIfNullOrUndefined(this.getPropertyDeclaration(nameOrFindFunction),
+    getPropertyOrThrow(findFunction: (property: PropertyDeclaration) => boolean): PropertyDeclaration;
+    getPropertyOrThrow(nameOrFindFunction: string | ((property: PropertyDeclaration) => boolean)): PropertyDeclaration {
+        return errors.throwIfNullOrUndefined(this.getProperty(nameOrFindFunction),
             () => getNotFoundErrorMessageForNameOrFindFunction("class property declaration", nameOrFindFunction));
     }
 
     /**
      * Gets the class property declarations regardless of whether it's an instance of static property.
      */
-    getPropertyDeclarations() {
+    getProperties() {
         return this.getMembers()
             .filter(m => TypeGuards.isPropertyDeclaration(m)) as PropertyDeclaration[];
     }
