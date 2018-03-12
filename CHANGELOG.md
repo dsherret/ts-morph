@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.0.1"></a>
+## [9.0.1](https://github.com/dsherret/ts-simple-ast/compare/9.0.0...9.0.1) (2018-03-12)
+
+
+### Bug Fixes
+
+* Fix intended method name. ([cbdee2e](https://github.com/dsherret/ts-simple-ast/commit/cbdee2e))
+
+
+
 <a name="9.0.0"></a>
 # [9.0.0](https://github.com/dsherret/ts-simple-ast/compare/8.2.4...9.0.0) (2018-03-11)
 
