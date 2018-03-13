@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.1.0"></a>
+# [9.1.0](https://github.com/dsherret/ts-simple-ast/compare/9.0.1...9.1.0) (2018-03-13)
+
+
+### Bug Fixes
+
+* Project.getSourceFile - Getting a source file by relative path should work. ([d117ecc](https://github.com/dsherret/ts-simple-ast/commit/d117ecc))
+
+
+### Features
+
+* TextInsertableNode - Add removeText() overload with no parameters. ([a4b5ef1](https://github.com/dsherret/ts-simple-ast/commit/a4b5ef1))
+
+
+
 <a name="9.0.1"></a>
 ## [9.0.1](https://github.com/dsherret/ts-simple-ast/compare/9.0.0...9.0.1) (2018-03-12)
 
