@@ -300,8 +300,9 @@ export class Project {
     getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile {
         const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
         if (sourceFile == null) {
-            if (typeof fileNameOrSearchFunction === "string")
-                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${fileNameOrSearchFunction}.`);
+            const filePathOrSearchFunction = getFilePathOrSearchFunction(this.global.fileSystemWrapper, fileNameOrSearchFunction);
+            if (typeof filePathOrSearchFunction === "string")
+                throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${filePathOrSearchFunction}.`);
             else
                 throw new errors.InvalidOperationError(`Could not find source file based on the provided condition.`);
         }
@@ -323,17 +324,11 @@ export class Project {
      */
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined;
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
-        let searchFunction = fileNameOrSearchFunction as ((file: SourceFile) => boolean);
+        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.global.fileSystemWrapper, fileNameOrSearchFunction);
 
-        if (typeof fileNameOrSearchFunction === "string") {
-            const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
-            if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0)
-                return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(fileNameOrPath);
-            else
-                searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
-        }
-
-        return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), searchFunction);
+        if (typeof filePathOrSearchFunction === "string")
+            return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
+        return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
     }
 
     /**
@@ -493,4 +488,18 @@ export class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
         return this.global.compilerFactory.forgetNodesCreatedInBlock(block);
     }
+}
+
+function getFilePathOrSearchFunction(
+    fileSystemWrapper: FileSystemWrapper,
+    fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)
+): string | ((file: SourceFile) => boolean) {
+    if (fileNameOrSearchFunction instanceof Function)
+        return fileNameOrSearchFunction;
+
+    const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
+    if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0)
+        return fileSystemWrapper.getStandardizedAbsolutePath(fileNameOrPath);
+    else
+        return def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
 }
