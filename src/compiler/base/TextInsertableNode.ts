@@ -1,9 +1,8 @@
-import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent} from "./../../manipulation";
-import {SyntaxKind} from "./../../typescript";
+import {ts, SyntaxKind} from "./../../typescript";
 import {TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
 
