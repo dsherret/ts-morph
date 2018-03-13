@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as errors from "./../../../errors";
-import {TextInsertableNode, SourceFile, ClassDeclaration} from "./../../../compiler";
+import {TextInsertableNode, SourceFile, ClassDeclaration, Node} from "./../../../compiler";
 import {getInfoFromText} from "./../testHelpers";
 
 describe(nameof(TextInsertableNode), () => {
@@ -113,7 +113,27 @@ describe(nameof(TextInsertableNode), () => {
 
     describe(nameof<TextInsertableNode>(n => n.removeText), () => {
         describe(nameof(SourceFile), () => {
-            function doTest(startCode: string, pos: number, end: number, expectedCode: string) {
+            function doSourceFileTest(startCode: string, expectedCode: string) {
+                const {sourceFile} = getInfoFromText(startCode);
+                sourceFile.removeText();
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should remove the text", () => {
+                doSourceFileTest("class MyClass {}", "");
+            });
+
+            function doFirstChildTest(startCode: string, expectedCode: string) {
+                const {firstChild, sourceFile} = getInfoFromText<TextInsertableNode & Node>(startCode);
+                firstChild.removeText();
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
+
+            it("should remove the first child's text", () => {
+                doFirstChildTest("class MyClass { prop: string; }", "class MyClass {}");
+            });
+
+            function doRangeTest(startCode: string, pos: number, end: number, expectedCode: string) {
                 const {sourceFile} = getInfoFromText(startCode);
                 sourceFile.removeText(pos, end);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
@@ -121,7 +141,7 @@ describe(nameof(TextInsertableNode), () => {
 
             // no need to do so many tests in here because they're already covered by replaceText
             it("should remove the specified range", () => {
-                doTest("class MyClass {}", 7, 13, "class M {}");
+                doRangeTest("class MyClass {}", 7, 13, "class M {}");
             });
         });
     });

@@ -3,6 +3,7 @@ import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
 import {insertIntoParent} from "./../../manipulation";
+import {SyntaxKind} from "./../../typescript";
 import {TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
 
@@ -42,6 +43,10 @@ export interface TextInsertableNode {
      */
     replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
     /**
+     * Removes all the text within the node
+     */
+    removeText(): this;
+    /**
      * Removes text within the body of the node.
      *
      * WARNING: This will forget any previously navigated descendant nodes.
@@ -53,24 +58,23 @@ export interface TextInsertableNode {
 
 export function TextInsertableNode<T extends Constructor<TextInsertableNodeExtensionType>>(Base: T): Constructor<TextInsertableNode> & T {
     return class extends Base implements TextInsertableNode {
-        insertText(pos: number, writerFunction: (writer: CodeBlockWriter) => void): this;
-        insertText(pos: number, text: string): this;
         insertText(pos: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             this.replaceText([pos, pos], textOrWriterFunction);
             return this;
         }
 
-        removeText(pos: number, end: number) {
-            this.replaceText([pos, end], "");
+        removeText(pos?: number, end?: number) {
+            if (pos == null)
+                this.replaceText(getValidRange(this), "");
+            else
+                this.replaceText([pos, end!], "");
             return this;
         }
 
-        replaceText(range: [number, number], text: string): this;
-        replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
-        replaceText(range: [number, number], textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
         replaceText(range: [number, number], textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
             const thisNode = this;
             const childSyntaxList = this.getChildSyntaxListOrThrow();
+            const validRange = getValidRange(this);
             const pos = range[0];
             const end = range[1];
 
@@ -100,19 +104,28 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             }
 
             function verifyInRange(i: number) {
-                const nodeToVerifyRange = getNodeToVerifyRange();
-                if (i >= nodeToVerifyRange.getPos() && i <= nodeToVerifyRange.getEnd())
+                if (i >= validRange[0] && i <= validRange[1])
                     return;
 
                 throw new errors.InvalidOperationError(`Cannot insert or replace text outside the bounds of the node. ` +
-                    `Expected a position between [${nodeToVerifyRange.getPos()}, ${nodeToVerifyRange.getEnd()}], but received ${i}.`);
-            }
-
-            function getNodeToVerifyRange() {
-                if (TypeGuards.isSourceFile(thisNode))
-                    return thisNode;
-                return childSyntaxList;
+                    `Expected a position between [${validRange[0]}, ${validRange[1]}], but received ${i}.`);
             }
         }
     };
+}
+
+function getValidRange(thisNode: Node): [number, number] {
+    const rangeNode = getRangeNode();
+    const openBrace = TypeGuards.isSourceFile(rangeNode) ? undefined : rangeNode.getPreviousSiblingIfKind(SyntaxKind.FirstPunctuation);
+    const closeBrace = openBrace == null ? undefined : rangeNode.getNextSiblingIfKind(SyntaxKind.CloseBraceToken);
+    if (openBrace != null && closeBrace != null)
+        return [openBrace.getEnd(), closeBrace.getStart()];
+    else
+        return [rangeNode.getPos(), rangeNode.getEnd()];
+
+    function getRangeNode() {
+        if (TypeGuards.isSourceFile(thisNode))
+            return thisNode;
+        return thisNode.getChildSyntaxListOrThrow();
+    }
 }
