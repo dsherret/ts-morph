@@ -511,6 +511,27 @@ describe(nameof(Project), () => {
             expect(project.getSourceFile("file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
         });
 
+        it("should get the first match based on the directory structure when specifying a dot slash", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.createSourceFile("dir/file.ts");
+            const expectedFile = project.createSourceFile("file.ts");
+            expect(project.getSourceFile("./file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+
+        it("should get the first match based on the directory structure when using ../", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const expectedFile = project.createSourceFile("dir/file.ts");
+            project.createSourceFile("file.ts");
+            expect(project.getSourceFile("dir/../dir/file.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+
+        it("should get the first match based on a file name", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.createSourceFile("file.ts");
+            const expectedFile = project.createSourceFile("dir/file2.ts");
+            expect(project.getSourceFile("file2.ts")!.getFilePath()).to.equal(expectedFile.getFilePath());
+        });
+
         it("should get when specifying an absolute path", () => {
             const project = new Project({ useVirtualFileSystem: true });
             project.createSourceFile("dir/file.ts");

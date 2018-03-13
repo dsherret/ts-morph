@@ -326,10 +326,11 @@ export class Project {
         let searchFunction = fileNameOrSearchFunction as ((file: SourceFile) => boolean);
 
         if (typeof fileNameOrSearchFunction === "string") {
-            if (FileUtils.pathIsAbsolute(fileNameOrSearchFunction))
-                return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(fileNameOrSearchFunction);
+            const fileNameOrPath = FileUtils.standardizeSlashes(fileNameOrSearchFunction);
+            if (FileUtils.pathIsAbsolute(fileNameOrPath) || fileNameOrPath.indexOf("/") >= 0)
+                return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(fileNameOrPath);
             else
-                searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrSearchFunction);
+                searchFunction = def => FileUtils.pathEndsWith(def.getFilePath(), fileNameOrPath);
         }
 
         return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), searchFunction);
