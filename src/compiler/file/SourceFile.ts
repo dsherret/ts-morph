@@ -488,7 +488,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getImportDeclarations(): ImportDeclaration[] {
         // todo: remove type assertion
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration) as ImportDeclaration[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ImportDeclaration);
     }
 
     /**
@@ -558,7 +558,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's export declarations.
      */
     getExportDeclarations(): ExportDeclaration[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration) as ExportDeclaration[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportDeclaration);
     }
 
     /**
@@ -674,7 +674,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Get the file's export assignments.
      */
     getExportAssignments(): ExportAssignment[] {
-        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment) as ExportAssignment[];
+        return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ExportAssignment);
     }
 
     /**

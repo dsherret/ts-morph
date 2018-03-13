@@ -18,6 +18,11 @@ export class WrappedNode {
     }
 
     @Memoize
+    getType(): Type {
+        return this.node.getType();
+    }
+
+    @Memoize
     getBases(): WrappedNode[] {
         const base = this.getBase();
         if (base == null)

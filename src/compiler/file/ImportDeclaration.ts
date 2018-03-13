@@ -161,7 +161,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         const namespaceImport = importClause.getFirstChildByKind(SyntaxKind.NamespaceImport);
         if (namespaceImport == null)
             return undefined;
-        return namespaceImport.getFirstChildByKind(SyntaxKind.Identifier) as Identifier | undefined;
+        return namespaceImport.getFirstChildByKind(SyntaxKind.Identifier);
     }
 
     /**

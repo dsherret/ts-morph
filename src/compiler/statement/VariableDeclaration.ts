@@ -36,7 +36,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
         }
 
         function removeFromDeclarationList(node: VariableDeclaration) {
-            const variableStatement = parent.getParentIfKindOrThrow(SyntaxKind.VariableStatement) as VariableStatement;
+            const variableStatement = parent.getParentIfKindOrThrow(SyntaxKind.VariableStatement);
             const declarations = variableStatement.getDeclarations();
             if (declarations.length === 1)
                 variableStatement.remove();

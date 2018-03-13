@@ -12,7 +12,7 @@ export class TsNodeProperty {
     }
 
     getTsNode(): TsNode {
-        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration);
+        return this.wrapperFactory.getTsNode(this.node.getFirstAncestorByKindOrThrow(SyntaxKind.InterfaceDeclaration));
     }
 
     @Memoize

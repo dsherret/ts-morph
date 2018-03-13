@@ -6,7 +6,7 @@ import {getInfoFromText} from "./../../testHelpers";
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {
         const opts = getInfoFromText(text);
-        const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.SpreadAssignment) as SpreadAssignment;
+        const spreadAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.SpreadAssignment);
         return {
             spreadAssignment,
             ...opts

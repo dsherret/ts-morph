@@ -40,7 +40,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the name node of what's being imported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier) as Identifier;
+        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
     }
 
     /**
@@ -80,7 +80,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the import declaration associated with this import specifier.
      */
     getImportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration) as ImportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ImportDeclaration);
     }
 
     /**

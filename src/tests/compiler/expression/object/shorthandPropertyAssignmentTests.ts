@@ -6,7 +6,7 @@ import {getInfoFromText} from "./../../testHelpers";
 describe(nameof(ShorthandPropertyAssignment), () => {
     function getShorthandPropertyAssignemntExpression(text: string) {
         const opts = getInfoFromText(text);
-        const shorthandPropertyAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+        const shorthandPropertyAssignment = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
         return {
             shorthandPropertyAssignment,
             ...opts
@@ -79,7 +79,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
     describe(nameof<ShorthandPropertyAssignment>(a => a.setInitializer), () => {
         it("should set a new initializer", () => {
             const {sourceFile} = getInfoFromText("const t = { prop, prop2 }");
-            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
             const propAssignment = shortPropAssignment.setInitializer("5");
             expect(propAssignment).to.be.instanceOf(PropertyAssignment);
             expect(shortPropAssignment.wasForgotten()).to.be.true;
@@ -90,7 +90,7 @@ describe(nameof(ShorthandPropertyAssignment), () => {
     describe(nameof<ShorthandPropertyAssignment>(a => a.removeObjectAssignmentInitializer), () => {
         function doTest(start: string, expected: string) {
             const {sourceFile} = getInfoFromText(start);
-            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment) as ShorthandPropertyAssignment;
+            const shortPropAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ShorthandPropertyAssignment);
             shortPropAssignment.removeObjectAssignmentInitializer();
             expect(sourceFile.getFullText()).to.equal(expected);
         }

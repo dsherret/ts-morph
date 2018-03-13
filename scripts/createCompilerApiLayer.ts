@@ -108,7 +108,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         const filePath = path.join(rootFolder, "src/typescript", fileName);
         const existingSourceFile = project.getSourceFile(filePath);
         if (existingSourceFile != null)
-            existingSourceFile.replaceWithText("");
+            existingSourceFile.removeText();
         return existingSourceFile || project.createSourceFile(filePath);
     }
 }

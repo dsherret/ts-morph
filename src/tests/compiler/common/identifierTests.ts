@@ -116,7 +116,7 @@ const t = MyNamespace.MyClass;
     describe(nameof<Identifier>(n => n.getType), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const {sourceFile} = getInfoFromText(text);
-            const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier) as Identifier[];
+            const identifiers = sourceFile.getDescendantsOfKind(SyntaxKind.Identifier);
             expect(identifiers.map(i => i.getType().getText())).to.deep.equal(expectedTypes);
         }
 

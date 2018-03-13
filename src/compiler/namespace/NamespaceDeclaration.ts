@@ -67,10 +67,10 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      */
     getNameNodes() {
         const nodes: Identifier[] = [];
-        let current: Node<ts.NamespaceDeclaration> | undefined = this;
+        let current: NamespaceDeclaration | undefined = this;
         do {
             nodes.push(this.getNodeFromCompilerNode<Identifier>(current.compilerNode.name));
-            current = current.getFirstChildByKind(SyntaxKind.ModuleDeclaration) as Node<ts.NamespaceDeclaration>;
+            current = current.getFirstChildByKind(SyntaxKind.ModuleDeclaration);
         } while (current != null);
         return nodes;
     }

@@ -3,6 +3,7 @@ import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {Expression} from "./../../expression";
 import {Node} from "./../../common";
+import {KindToExpressionMappings} from "./../../kindToNodeMappings";
 
 export type InitializerGetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 
@@ -18,11 +19,11 @@ export interface InitializerGetExpressionableNode {
     /**
      * Gets the initializer if it's a certain kind or throws.
      */
-    getInitializerIfKindOrThrow(kind: SyntaxKind): Expression;
+    getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
     /**
      * Gets the initializer if it's a certain kind.
      */
-    getInitializerIfKind(kind: SyntaxKind): Expression | undefined;
+    getInitializerIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
     /**
      * Gets the initializer or throw.
      */

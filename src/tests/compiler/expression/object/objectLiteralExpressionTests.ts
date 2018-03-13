@@ -9,7 +9,7 @@ import {getInfoFromText} from "./../../testHelpers";
 describe(nameof(ObjectLiteralExpression), () => {
     function getObjectLiteralExpression(text: string) {
         const opts = getInfoFromText(text);
-        const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression) as ObjectLiteralExpression;
+        const objectLiteralExpression = opts.sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.ObjectLiteralExpression);
         return {
             objectLiteralExpression,
             ...opts

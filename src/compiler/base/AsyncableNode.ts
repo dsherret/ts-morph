@@ -35,11 +35,11 @@ export function AsyncableNode<T extends Constructor<AsyncableNodeExtensionType>>
         }
 
         getAsyncKeyword(): Node<ts.Modifier> | undefined {
-            return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword);
+            return this.getFirstModifierByKind(SyntaxKind.AsyncKeyword) as Node<ts.Modifier>;
         }
 
         getAsyncKeywordOrThrow(): Node<ts.Modifier> {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(SyntaxKind.AsyncKeyword), "Expected to find an async keyword.");
+            return errors.throwIfNullOrUndefined(this.getAsyncKeyword(), "Expected to find an async keyword.");
         }
 
         setIsAsync(value: boolean) {

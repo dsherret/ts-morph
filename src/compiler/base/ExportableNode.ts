@@ -143,7 +143,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
             // set this node as the one to default export
             if (TypeGuards.isAmbientableNode(this) && TypeGuards.hasName(this) && this.isAmbient()) {
-                const parentSyntaxList = this.getFirstAncestorByKindOrThrow(SyntaxKind.SyntaxList) as SyntaxList;
+                const parentSyntaxList = this.getFirstAncestorByKindOrThrow(SyntaxKind.SyntaxList);
                 parentSyntaxList.insertChildText(this.getChildIndex() + 1, `export default ${this.getName()};`);
             }
             else {

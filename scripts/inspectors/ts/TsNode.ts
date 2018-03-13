@@ -29,7 +29,7 @@ export class TsNode {
                 continue;
             const classDec = node.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
             if (classDec != null)
-                return this.wrapperFactory.getWrapperNode(classDec as ClassDeclaration);
+                return this.wrapperFactory.getWrapperNode(classDec);
         }
         return undefined;
     }

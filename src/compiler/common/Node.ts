@@ -15,6 +15,7 @@ import {TypeAliasDeclaration, Type} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {QuoteType} from "./../literal/QuoteType";
 import {NamespaceDeclaration} from "./../namespace";
+import {KindToNodeMappings} from "./../kindToNodeMappings";
 import {Symbol} from "./Symbol";
 import {SyntaxList} from "./SyntaxList";
 
@@ -367,7 +368,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             TypeGuards.isDefaultClause(this) ||
             TypeGuards.isJsxElement(this)
         )
-            return node.getFirstChildByKind(SyntaxKind.SyntaxList) as SyntaxList | undefined;
+            return node.getFirstChildByKind(SyntaxKind.SyntaxList);
 
         let passedBrace = false;
         for (const child of node.getCompilerChildren()) {
@@ -629,7 +630,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKindOrThrow(kind: SyntaxKind) {
+    getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
@@ -638,8 +639,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKind(kind: SyntaxKind) {
-        return this.getParentWhile(n => n.getKind() === kind);
+    getParentWhileKind<TKind extends SyntaxKind>(kind: TKind) {
+        return this.getParentWhile(n => n.getKind() === kind) as KindToNodeMappings[TKind];
     }
 
     /**
@@ -850,7 +851,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the children based on a kind.
      * @param kind - Syntax kind.
      */
-    getChildrenOfKind(kind: SyntaxKind): Node[] {
+    getChildrenOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
         return this.getCompilerChildren().filter(c => c.kind === kind).map(c => getWrappedNode(this, c));
     }
 
@@ -858,7 +859,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getFirstChildByKindOrThrow(kind: SyntaxKind) {
+    getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -866,7 +867,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstChildByKind(kind: SyntaxKind): Node | undefined {
+    getFirstChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const child = this.getCompilerFirstChild(c => c.kind === kind);
         return child == null ? undefined : getWrappedNode(this, child);
     }
@@ -875,7 +876,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child if it matches the specified syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getFirstChildIfKindOrThrow(kind: SyntaxKind) {
+    getFirstChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
         return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -883,7 +884,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child if it matches the specified syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstChildIfKind(kind: SyntaxKind): Node | undefined {
+    getFirstChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const firstChild = this.getCompilerFirstChild();
         return firstChild != null && firstChild.kind === kind ? getWrappedNode(this, firstChild) : undefined;
     }
@@ -892,7 +893,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getLastChildByKindOrThrow(kind: SyntaxKind) {
+    getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -900,7 +901,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by syntax kind.
      * @param kind - Syntax kind.
      */
-    getLastChildByKind(kind: SyntaxKind): Node | undefined {
+    getLastChildByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const lastChild = this.getCompilerLastChild(c => c.kind === kind);
         return lastChild == null ? undefined : getWrappedNode(this, lastChild);
     }
@@ -909,7 +910,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child if it matches the specified syntax kind or throws an error if not found.
      * @param kind - Syntax kind.
      */
-    getLastChildIfKindOrThrow(kind: SyntaxKind) {
+    getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -917,7 +918,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child if it matches the specified syntax kind.
      * @param kind - Syntax kind.
      */
-    getLastChildIfKind(kind: SyntaxKind): Node | undefined {
+    getLastChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const lastChild = this.getCompilerLastChild();
         return lastChild != null && lastChild.kind === kind ? getWrappedNode(this, lastChild) : undefined;
     }
@@ -927,7 +928,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index to get.
      * @param kind - Expected kind.
      */
-    getChildAtIndexIfKindOrThrow(index: number, kind: SyntaxKind) {
+    getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${SyntaxKind[kind]}`);
     }
 
@@ -936,7 +937,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param index - Index to get.
      * @param kind - Expected kind.
      */
-    getChildAtIndexIfKind(index: number, kind: SyntaxKind): Node | undefined {
+    getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {
         const node = this.getCompilerChildAtIndex(index);
         return node.kind === kind ? getWrappedNode(this, node) : undefined;
     }
@@ -945,7 +946,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the previous sibiling if it matches the specified kind, or throws.
      * @param kind - Kind to check.
      */
-    getPreviousSiblingIfKindOrThrow(kind: SyntaxKind) {
+    getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -953,7 +954,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibiling if it matches the specified kind, or throws.
      * @param kind - Kind to check.
      */
-    getNextSiblingIfKindOrThrow(kind: SyntaxKind) {
+    getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${SyntaxKind[kind]} was expected.`);
     }
 
@@ -961,7 +962,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the previous sibling if it matches the specified kind.
      * @param kind - Kind to check.
      */
-    getPreviousSiblingIfKind(kind: SyntaxKind): Node | undefined {
+    getPreviousSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const previousSibling = this.getCompilerPreviousSibling();
         return previousSibling != null && previousSibling.kind === kind ? getWrappedNode(this, previousSibling) : undefined;
     }
@@ -970,7 +971,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibling if it matches the specified kind.
      * @param kind - Kind to check.
      */
-    getNextSiblingIfKind(kind: SyntaxKind): Node | undefined {
+    getNextSiblingIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const nextSibling = this.getCompilerNextSibling();
         return nextSibling != null && nextSibling.kind === kind ? getWrappedNode(this, nextSibling) : undefined;
     }
@@ -978,7 +979,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the parent if it's a certain syntax kind.
      */
-    getParentIfKind(kind: SyntaxKind): Node | undefined {
+    getParentIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         const parentNode = this.getParent();
         return parentNode == null || parentNode.getKind() !== kind ? undefined : parentNode;
     }
@@ -986,7 +987,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the parent if it's a certain syntax kind of throws.
      */
-    getParentIfKindOrThrow(kind: SyntaxKind) {
+    getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
         return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
@@ -994,7 +995,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first ancestor by syntax kind or throws if not found.
      * @param kind - Syntax kind.
      */
-    getFirstAncestorByKindOrThrow(kind: SyntaxKind) {
+    getFirstAncestorByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
         return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${SyntaxKind[kind]}.`);
     }
 
@@ -1002,7 +1003,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Get the first ancestor by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstAncestorByKind(kind: SyntaxKind): Node | undefined {
+    getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         for (const parent of this.getAncestors(kind === SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
                 return parent;
@@ -1014,7 +1015,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the descendants that match a specified syntax kind.
      * @param kind - Kind to check.
      */
-    getDescendantsOfKind(kind: SyntaxKind) {
+    getDescendantsOfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind][] {
         const descendants: Node[] = [];
         for (const descendant of this.getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
@@ -1027,7 +1028,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by syntax kind or throws.
      * @param kind - Syntax kind.
      */
-    getFirstDescendantByKindOrThrow(kind: SyntaxKind) {
+    getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
         return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${SyntaxKind[kind]} is required to do this operation.`);
     }
 
@@ -1035,7 +1036,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by syntax kind.
      * @param kind - Syntax kind.
      */
-    getFirstDescendantByKind(kind: SyntaxKind): Node | undefined {
+    getFirstDescendantByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
         for (const descendant of this.getCompilerDescendantsIterator()) {
             if (descendant.kind === kind)
                 return getWrappedNode(this, descendant);

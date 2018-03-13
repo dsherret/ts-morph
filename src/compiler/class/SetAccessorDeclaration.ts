@@ -27,7 +27,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
      * Gets the corresponding get accessor if one exists.
      */
     getGetAccessor(): GetAccessorDeclaration | undefined {
-        const parent = this.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration) as ClassDeclaration;
+        const parent = this.getParentIfKindOrThrow(SyntaxKind.ClassDeclaration);
         const thisName = this.getName();
         for (const prop of parent.getInstanceProperties()) {
             if (prop.getKind() === SyntaxKind.GetAccessor && prop.getName() === thisName)

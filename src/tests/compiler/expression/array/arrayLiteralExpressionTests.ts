@@ -9,7 +9,7 @@ describe(nameof(ArrayLiteralExpression), () => {
         const opts = getInfoFromText<VariableStatement>(text);
         const declaration = opts.firstChild.getDeclarations()[0];
         return {
-            arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(SyntaxKind.ArrayLiteralExpression) as ArrayLiteralExpression,
+            arrayLiteralExpression: declaration.getFirstChildByKindOrThrow(SyntaxKind.ArrayLiteralExpression),
             ...opts
         };
     }

@@ -16,6 +16,7 @@ import {FunctionDeclaration} from "./../function";
 import {InterfaceDeclaration} from "./../interface";
 import {NamespaceDeclaration} from "./../namespace";
 import {TypeAliasDeclaration} from "./../type";
+import {KindToNodeMappings} from "./../kindToNodeMappings";
 import {Statement, VariableStatement, VariableDeclaration} from "./../statement";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 
@@ -40,12 +41,12 @@ export interface StatementedNode {
      * Gets the first statement that matches the provided syntax kind or returns undefined if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKind(kind: SyntaxKind): Statement | undefined;
+    getStatementByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
      * Gets the first statement that matches the provided syntax kind or throws if it doesn't exist.
      * @param kind - Syntax kind to find the node by.
      */
-    getStatementByKindOrThrow(kind: SyntaxKind): Statement;
+    getStatementByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
      * Adds statements.
      * @param text - Text of the statement or statements to add.
@@ -449,12 +450,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return errors.throwIfNullOrUndefined(this.getStatement(findFunction), "Expected to find a statement matching the provided condition.");
         }
 
-        getStatementByKind(kind: SyntaxKind): Statement | undefined {
+        getStatementByKind(kind: SyntaxKind) {
             const statement = ArrayUtils.find(this.getCompilerStatements(), s => s.kind === kind);
-            return this.getNodeFromCompilerNodeIfExists<Statement>(statement);
+            return this.getNodeFromCompilerNodeIfExists(statement);
         }
 
-        getStatementByKindOrThrow(kind: SyntaxKind): Statement {
+        getStatementByKindOrThrow(kind: SyntaxKind) {
             return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${SyntaxKind[kind]}.`);
         }
 
@@ -517,7 +518,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getClasses(): ClassDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ClassDeclaration) as ClassDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ClassDeclaration);
         }
 
         getClass(name: string): ClassDeclaration | undefined;
@@ -564,7 +565,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getEnums(): EnumDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.EnumDeclaration) as EnumDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.EnumDeclaration);
         }
 
         getEnum(name: string): EnumDeclaration | undefined;
@@ -621,7 +622,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getFunctions(): FunctionDeclaration[] {
             // todo: remove type assertion
-            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.FunctionDeclaration) as FunctionDeclaration[])
+            return (this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.FunctionDeclaration))
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
 
@@ -669,7 +670,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getInterfaces(): InterfaceDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.InterfaceDeclaration);
         }
 
         getInterface(name: string): InterfaceDeclaration | undefined;
@@ -715,7 +716,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getNamespaces(): NamespaceDeclaration[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ModuleDeclaration) as NamespaceDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.ModuleDeclaration);
         }
 
         getNamespace(name: string): NamespaceDeclaration | undefined;
@@ -767,7 +768,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getTypeAliases(): TypeAliasDeclaration[] {
             // todo: remove type assertion
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.TypeAliasDeclaration) as TypeAliasDeclaration[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.TypeAliasDeclaration);
         }
 
         getTypeAlias(name: string): TypeAliasDeclaration | undefined;
@@ -786,7 +787,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* Variable statements */
 
         getVariableStatements(): VariableStatement[] {
-            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.VariableStatement) as VariableStatement[];
+            return this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.VariableStatement);
         }
 
         getVariableStatement(findFunction: (declaration: VariableStatement) => boolean): VariableStatement | undefined {

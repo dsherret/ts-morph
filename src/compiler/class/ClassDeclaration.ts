@@ -939,10 +939,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 const nodeParent = node.getParentIfKind(SyntaxKind.ExpressionWithTypeArguments);
                 if (nodeParent == null)
                     continue;
-                const heritageClause = nodeParent.getParentIfKind(SyntaxKind.HeritageClause) as HeritageClause;
+                const heritageClause = nodeParent.getParentIfKind(SyntaxKind.HeritageClause);
                 if (heritageClause == null || heritageClause.getToken() !== SyntaxKind.ExtendsKeyword)
                     continue;
-                classes.push(heritageClause.getFirstAncestorByKindOrThrow(SyntaxKind.ClassDeclaration) as ClassDeclaration);
+                classes.push(heritageClause.getFirstAncestorByKindOrThrow(SyntaxKind.ClassDeclaration));
             }
         }
 

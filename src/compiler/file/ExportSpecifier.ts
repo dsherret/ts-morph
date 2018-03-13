@@ -32,7 +32,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the name node of what's being exported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier) as Identifier;
+        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
     }
 
     /**
@@ -72,7 +72,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the export declaration associated with this export specifier.
      */
     getExportDeclaration() {
-        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration) as ExportDeclaration;
+        return this.getFirstAncestorByKindOrThrow(SyntaxKind.ExportDeclaration);
     }
 
     /**

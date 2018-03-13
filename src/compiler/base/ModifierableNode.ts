@@ -4,6 +4,7 @@ import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {Node} from "./../common";
+import {KindToNodeMappings} from "./../kindToNodeMappings";
 
 export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
@@ -17,12 +18,12 @@ export interface ModifierableNode {
      * Gets the first modifier of the specified syntax kind or throws if none found.
      * @param kind - Syntax kind.
      */
-    getFirstModifierByKindOrThrow(kind: SyntaxKind): Node<ts.Modifier>;
+    getFirstModifierByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
     /**
      * Gets the first modifier of the specified syntax kind or undefined if none found.
      * @param kind - Syntax kind.
      */
-    getFirstModifierByKind(kind: SyntaxKind): Node<ts.Modifier> | undefined;
+    getFirstModifierByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
      * Gets if it has the specified modifier.
      * @param kind - Syntax kind to check for.

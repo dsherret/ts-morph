@@ -135,7 +135,6 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.LastTypeNode]: compiler.LiteralTypeNode,
     [SyntaxKind.SemicolonToken]: compiler.Node,
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression,
-    [SyntaxKind.UndefinedKeyword]: compiler.Node,
     [SyntaxKind.WhileStatement]: compiler.WhileStatement,
     [SyntaxKind.WithStatement]: compiler.WithStatement,
     [SyntaxKind.YieldExpression]: compiler.YieldExpression,
