@@ -1,7 +1,7 @@
 ﻿import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
 import {insertIntoParentTextRange, verifyAndGetIndex, getNodesToReturn} from "./../../../manipulation";
-import {getNodeByNameOrFindFunction} from "./../../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../../utils";
 import {Node} from "./../../common";
 import {ts, SyntaxKind} from "./../../../typescript";
 import {JsxAttributeStructure} from "./../../../structures";
@@ -27,6 +27,16 @@ export interface JsxAttributedNode {
      */
     getAttribute(findFunction: (attribute: JsxAttributeLike) => boolean): JsxAttributeLike | undefined;
     /**
+     * Gets an attribute by name or throws when it can't be found.
+     * @param name - Name to search for.
+     */
+    getAttributeOrThrow(name: string): JsxAttributeLike;
+    /**
+     * Gets an attribute by a find function or throws when it can't be found.
+     * @param findFunction - Find function.
+     */
+    getAttributeOrThrow(findFunction: (attribute: JsxAttributeLike) => boolean): JsxAttributeLike;
+    /**
      * Adds an attribute into the element.
      */
     addAttribute(attribute: JsxAttributeStructure): JsxAttributeLike;
@@ -48,6 +58,11 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
     return class extends Base implements JsxAttributedNode {
         getAttributes() {
             return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode<JsxAttributeLike>(p));
+        }
+
+        getAttributeOrThrow(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {
+            return errors.throwIfNullOrUndefined(this.getAttribute(nameOrFindFunction),
+                () => getNotFoundErrorMessageForNameOrFindFunction("attribute", nameOrFindFunction));
         }
 
         getAttribute(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {

@@ -60,6 +60,24 @@ describe(nameof(JsxAttributedNode), () => {
         });
     });
 
+    describe(nameof<JsxAttributedNode>(n => n.getAttributeOrThrow), () => {
+        function doNameTest(text: string, name: string, expected: string | undefined) {
+            const {descendant} = getInfo(text);
+            if (expected == null)
+                expect(() => descendant.getAttributeOrThrow(name)).to.throw();
+            else
+                expect(descendant.getAttributeOrThrow(name).getText()).to.equal(expected);
+        }
+
+        it("should get the correct attribute", () => {
+            doNameTest(`var t = (<jsx attrib1 attrib2={5} {...attribs} attrib3={7}></jsx>);`, "attrib3", "attrib3={7}");
+        });
+
+        it("should return undefined when not found", () => {
+            doNameTest(`var t = (<jsx attrib1 attrib2={5} {...attribs} attrib3={7}></jsx>);`, "attrib4", undefined);
+        });
+    });
+
     describe(nameof<JsxAttributedNode>(n => n.insertAttributes), () => {
         describe("element", () => {
             function doTest(text: string, index: number, structures: JsxAttributeStructure[], expected: string) {
