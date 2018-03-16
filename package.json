@@ -1,7 +1,7 @@
 {
   "name": "ts-simple-ast",
   "version": "9.1.0",
-  "description": "TypeScript compiler wrapper for AST navigation and code generation.",
+  "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
@@ -14,10 +14,7 @@
     "code-verification": "node dist-scripts/scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-scripts/scripts/ensureOverloadStructuresMatch",
     "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dsherret/ts-simple-ast.git"
-  },
+  "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
   "keywords": [
     "typescript",
     "ast",
@@ -55,11 +52,11 @@
     "tslint": "^5.8.0"
   },
   "dependencies": {
+    "@dsherret/to-absolute-glob": "^2.0.2",
     "code-block-writer": "^6.6.0",
     "globby": "^6.1.0",
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
-    "@dsherret/to-absolute-glob": "^2.0.2",
     "typescript": "2.7.1"
   },
   "standard-version": {
