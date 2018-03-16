@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
+import {SyntaxKind} from "./../../../typescript";
 import {JsxOpeningElement} from "./../../../compiler";
 import {getInfoFromTextWithDescendant} from "./../testHelpers";
 
@@ -16,17 +16,6 @@ describe(nameof(JsxOpeningElement), () => {
 
         it("should get the tag name", () => {
             doTest(`var t = (<jsx></jsx>);`, "jsx");
-        });
-    });
-
-    describe(nameof<JsxOpeningElement>(n => n.getAttributes), () => {
-        function doTest(text: string, expected: string[]) {
-            const {descendant} = getInfo(text);
-            expect(descendant.getAttributes().map(c => c.getText())).to.deep.equal(expected);
-        }
-
-        it("should get the attributes", () => {
-            doTest(`var t = (<jsx attrib1 attrib2={5} {...attribs}></jsx>);`, ["attrib1", "attrib2={5}", "{...attribs}"]);
         });
     });
 });

@@ -1,3 +1,4 @@
+export * from "./base";
 export * from "./JsxAttribute";
 export * from "./JsxClosingElement";
 export * from "./JsxClosingFragment";
