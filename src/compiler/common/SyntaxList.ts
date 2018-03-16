@@ -1,6 +1,6 @@
 import {ts} from "./../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange} from "./../../manipulation";
+import {verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn} from "./../../manipulation";
 import {TypeGuards, StringUtils, getTextFromStringOrWriter} from "./../../utils";
 import * as errors from "./../../errors";
 import {Node} from "./Node";
@@ -74,6 +74,6 @@ export class SyntaxList extends Node<ts.SyntaxList> {
 
         // get inserted children
         const finalChildren = this.getChildren();
-        return finalChildren.slice(index, index + finalChildren.length - initialChildCount);
+        return getNodesToReturn(finalChildren, index, finalChildren.length - initialChildCount);
     }
 }

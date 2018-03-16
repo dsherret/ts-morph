@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "./../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
 import {ParameterDeclarationStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
@@ -109,7 +109,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 newTexts
             });
 
-            const newParameters = this.getParameters().slice(index, index + structures.length);
+            const newParameters = getNodesToReturn(this.getParameters(), index, structures.length);
             newParameters.forEach((p, i) => p.fill(structures[i]));
             return newParameters;
         }

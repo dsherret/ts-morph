@@ -3,7 +3,7 @@ import {Constructor} from "./../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "./../../structures";
 import * as errors from "./../../errors";
 import {callBaseFill} from "./../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind} from "./../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind, getNodesToReturn} from "./../../manipulation";
 import {getNextNonWhitespacePos} from "./../../manipulation/textSeek";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
 import {Node} from "./../common";
@@ -116,7 +116,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 syntaxList: decorators.length === 0 ? undefined : decorators[0].getParentSyntaxListOrThrow()
             });
 
-            return this.getDecorators().slice(index, index + structures.length);
+            return getNodesToReturn(this.getDecorators(), index, structures.length);
         }
 
         fill(structure: Partial<DecoratableNodeStructure>) {

@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../../errors";
 import {ArrayUtils} from "./../../../utils";
-import {verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../../manipulation";
+import {verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../../manipulation";
 import {StructureToText, PropertyAssignmentStructureToText, ShorthandPropertyAssignmentStructureToText, SpreadAssignmentStructureToText,
     MethodDeclarationStructureToText, GetAccessorDeclarationStructureToText, SetAccessorDeclarationStructureToText} from "./../../../structureToTexts";
 import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
@@ -303,6 +303,6 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
             useNewLines: true
         });
 
-        return this.getProperties().slice(index, index + structures.length);
+        return getNodesToReturn(this.getProperties(), index, structures.length);
     }
 }

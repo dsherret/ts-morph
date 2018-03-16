@@ -1,5 +1,5 @@
 import {ts, SyntaxKind} from "./../../typescript";
-import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../manipulation";
 import * as errors from "./../../errors";
 import {Node} from "./../common";
 import {VariableDeclarationListStructure, VariableDeclarationStructure} from "./../../structures";
@@ -117,7 +117,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             newTexts: texts
         });
 
-        const declarations = this.getDeclarations().slice(index, index + texts.length);
+        const declarations = getNodesToReturn(this.getDeclarations(), index, texts.length);
 
         for (let i = 0; i < structures.length; i++)
             declarations[i].fill(structures[i]);

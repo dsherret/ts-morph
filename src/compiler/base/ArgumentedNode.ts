@@ -1,6 +1,6 @@
 ﻿import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
-import {removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../manipulation";
 import {ArrayUtils} from "./../../utils";
 import {ts, SyntaxKind} from "./../../typescript";
 import {Node} from "./../common";
@@ -82,7 +82,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
                 newTexts: argumentTexts
             });
 
-            return this.getArguments().slice(index, index + argumentTexts.length);
+            return getNodesToReturn(this.getArguments(), index, argumentTexts.length);
         }
 
         removeArgument(arg: Node): this;

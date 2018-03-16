@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "./../../structures";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn} from "./../../manipulation";
 import {EnumMemberStructureToText} from "./../../structureToTexts";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -86,7 +86,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         });
 
         // get the members
-        const newMembers = this.getMembers().slice(index, index + structures.length);
+        const newMembers = getNodesToReturn(this.getMembers(), index, structures.length);
         newMembers.forEach((m, i) => m.fill(structures[i]));
         return newMembers as EnumMember[];
     }

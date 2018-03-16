@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../../errors";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild} from "./../../../manipulation";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn} from "./../../../manipulation";
 import {Expression} from "./../Expression";
 import {PrimaryExpression} from "./../PrimaryExpression";
 
@@ -80,7 +80,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
             });
 
             const newElements = node.getElements();
-            return newElements.slice(index, index + (newElements.length - elements.length));
+            return getNodesToReturn(newElements, index, newElements.length - elements.length);
         }
 
         function getUseNewLines(node: ArrayLiteralExpression) {

@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {ExportSpecifierStructure} from "./../../structures";
-import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes} from "./../../manipulation";
+import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../manipulation";
 import {ArrayUtils, TypeGuards, StringUtils} from "./../../utils";
 import {Identifier} from "./../common";
 import {Statement} from "./../statement";
@@ -175,7 +175,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
             });
         }
 
-        return this.getNamedExports().slice(index, index + structures.length);
+        return getNodesToReturn(this.getNamedExports(), index, structures.length);
     }
 
     /**

@@ -1,6 +1,6 @@
 import {ts} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
-import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray} from "./../../manipulation";
+import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "./../../manipulation";
 import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";
 import {JSDocStructureToText} from "./../../structureToTexts";
 import {callBaseFill} from "./../callBaseFill";
@@ -79,7 +79,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
                 newText: code
             });
 
-            return this.getJsDocs().slice(index, index + structures.length);
+            return getNodesToReturn(this.getJsDocs(), index, structures.length);
         }
 
         fill(structure: Partial<JSDocableNodeStructure>) {

@@ -1,7 +1,8 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange} from "./../../manipulation";
+import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange,
+    getNodesToReturn} from "./../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "./../../structures";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
@@ -113,7 +114,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 });
             }
 
-            return this.getTypeParameters().slice(index, index + structures.length);
+            return getNodesToReturn(this.getTypeParameters(), index, structures.length);
         }
 
         fill(structure: Partial<TypeParameteredNodeStructure>) {
