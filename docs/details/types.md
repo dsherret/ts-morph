@@ -177,6 +177,8 @@ Use any of the following methods:
 ```ts
 type.isAnonymousType();
 type.isBooleanType();
+type.isStringType();
+type.isNumberType();
 type.isEnumType();
 type.isIntersectionType();
 type.isInterfaceType();

@@ -156,6 +156,30 @@ describe(nameof(Type), () => {
         });
     });
 
+    describe(nameof<Type>(t => t.isStringType), () => {
+        it("should get when it is a string type", () => {
+            const {firstType} = getTypeFromText("let myType: string;");
+            expect(firstType.isStringType()).to.equal(true);
+        });
+
+        it("should get when it's not a string type", () => {
+            const {firstType} = getTypeFromText("let myType: boolean;");
+            expect(firstType.isStringType()).to.equal(false);
+        });
+    });
+
+    describe(nameof<Type>(t => t.isNumberType), () => {
+        it("should get when it is a number type", () => {
+            const {firstType} = getTypeFromText("let myType: number;");
+            expect(firstType.isNumberType()).to.equal(true);
+        });
+
+        it("should get when it's not a number type", () => {
+            const {firstType} = getTypeFromText("let myType: boolean;");
+            expect(firstType.isNumberType()).to.equal(false);
+        });
+    });
+
     describe(nameof<Type>(t => t.isEnumType), () => {
         it("should get when it is an enum type", () => {
             const {firstType} = getTypeFromText("let myType: MyEnum; enum MyEnum {}");

@@ -249,6 +249,20 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is a string type.
+     */
+    isStringType() {
+        return (this.compilerType.flags & TypeFlags.String) !== 0;
+    }
+
+    /**
+     * Gets if this is a number type.
+     */
+    isNumberType() {
+        return (this.compilerType.flags & TypeFlags.Number) !== 0;
+    }
+
+    /**
      * Gets if this is an enum type.
      */
     isEnumType() {
