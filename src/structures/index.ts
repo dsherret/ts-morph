@@ -7,6 +7,7 @@ export * from "./enum";
 export * from "./file";
 export * from "./function";
 export * from "./interface";
+export * from "./jsx";
 export * from "./namespace";
 export * from "./statement";
 export * from "./type";

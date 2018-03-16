@@ -1,10 +1,15 @@
 ﻿import {expect} from "chai";
 import {SyntaxKind} from "./../../../../typescript";
 import {JsxAttributedNode, JsxAttributeLike, Node} from "./../../../../compiler";
+import {JsxAttributeStructure} from "./../../../../structures";
 import {getInfoFromTextWithDescendant} from "./../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxAttributedNode & Node>(text, SyntaxKind.JsxOpeningElement, { isJsx: true });
+}
+
+function getInfoFromSelfClosing(text: string) {
+    return getInfoFromTextWithDescendant<JsxAttributedNode & Node>(text, SyntaxKind.JsxSelfClosingElement, { isJsx: true });
 }
 
 describe(nameof(JsxAttributedNode), () => {
@@ -52,6 +57,82 @@ describe(nameof(JsxAttributedNode), () => {
 
         it("should be undefined when can't find using a find function", () => {
             doFindFunctionTest(`var t = (<jsx attrib1 attrib2={5} {...attribs} attrib3={7}></jsx>);`, attrib => false, undefined);
+        });
+    });
+
+    describe(nameof<JsxAttributedNode>(n => n.insertAttributes), () => {
+        describe("element", () => {
+            function doTest(text: string, index: number, structures: JsxAttributeStructure[], expected: string) {
+                const {descendant} = getInfo(text);
+                expect(descendant.insertAttributes(index, structures).length).to.equal(structures.length);
+                expect(descendant.getFullText()).to.equal(expected);
+            }
+
+            it("should insert the attributes when none exists", () => {
+                doTest(`var t = (<jsx></jsx>);`, 0, [{ name: "attrib" }], `<jsx attrib>`);
+            });
+
+            it("should insert the attributes in the middle", () => {
+                doTest(`var t = (<jsx attrib attrib5={2}></jsx>);`, 1,
+                    [{ name: "attrib2" }, { name: "attrib3", initializer: "{3}" }, { name: "attrib4", isSpreadAttribute: true }],
+                    `<jsx attrib attrib2 attrib3={3} ...attrib4 attrib5={2}>`);
+            });
+
+            it("should insert the attributes at the end", () => {
+                doTest(`var t = (<jsx attrib></jsx>);`, 1, [{ name: "attrib2" }], `<jsx attrib attrib2>`);
+            });
+        });
+
+        describe("self closing", () => {
+            function doTest(text: string, index: number, structures: JsxAttributeStructure[], expected: string) {
+                const {descendant} = getInfoFromSelfClosing(text);
+                expect(descendant.insertAttributes(index, structures).length).to.equal(structures.length);
+                expect(descendant.getFullText()).to.equal(expected);
+            }
+
+            it("should insert the attributes when none exists", () => {
+                doTest(`var t = (<jsx />);`, 0, [{ name: "attrib" }], `<jsx attrib />`);
+            });
+
+            it("should insert the attributes at the end", () => {
+                doTest(`var t = (<jsx attrib />);`, 1, [{ name: "attrib2" }], `<jsx attrib attrib2 />`);
+            });
+        });
+    });
+
+    describe(nameof<JsxAttributedNode>(n => n.insertAttribute), () => {
+        function doTest(text: string, index: number, structure: JsxAttributeStructure, expected: string) {
+            const {descendant} = getInfo(text);
+            descendant.insertAttribute(index, structure);
+            expect(descendant.getFullText()).to.equal(expected);
+        }
+
+        it("should insert the attribute", () => {
+            doTest(`var t = (<jsx attrib></jsx>);`, 1, { name: "attrib1" }, `<jsx attrib attrib1>`);
+        });
+    });
+
+    describe(nameof<JsxAttributedNode>(n => n.addAttributes), () => {
+        function doTest(text: string, structures: JsxAttributeStructure[], expected: string) {
+            const {descendant} = getInfo(text);
+            expect(descendant.addAttributes(structures).length).to.equal(structures.length);
+            expect(descendant.getFullText()).to.equal(expected);
+        }
+
+        it("should add the attributes", () => {
+            doTest(`var t = (<jsx a1></jsx>);`, [{ name: "a2" }, { name: "a3"}], `<jsx a1 a2 a3>`);
+        });
+    });
+
+    describe(nameof<JsxAttributedNode>(n => n.addAttribute), () => {
+        function doTest(text: string, structure: JsxAttributeStructure, expected: string) {
+            const { descendant } = getInfo(text);
+            descendant.addAttribute(structure);
+            expect(descendant.getFullText()).to.equal(expected);
+        }
+
+        it("should add the attributes", () => {
+            doTest(`var t = (<jsx a1></jsx>);`, { name: "a2" }, `<jsx a1 a2>`);
         });
     });
 });

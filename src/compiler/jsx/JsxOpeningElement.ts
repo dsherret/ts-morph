@@ -1,13 +1,6 @@
 import {ts} from "./../../typescript";
 import {Expression} from "./../expression";
-import {JsxTagNameExpression} from "./../aliases";
-import {JsxAttributedNode} from "./base";
+import {JsxAttributedNode, JsxTagNamedNode} from "./base";
 
-export class JsxOpeningElement extends JsxAttributedNode(Expression)<ts.JsxOpeningElement> {
-    /**
-     * Gets the tag name of the JSX closing element.
-     */
-    getTagName() {
-        return this.getNodeFromCompilerNode<JsxTagNameExpression>(this.compilerNode.tagName);
-    }
+export class JsxOpeningElement extends JsxAttributedNode(JsxTagNamedNode(Expression))<ts.JsxOpeningElement> {
 }
