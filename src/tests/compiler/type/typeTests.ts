@@ -133,110 +133,137 @@ describe(nameof(Type), () => {
     });
 
     describe(nameof<Type>(t => t.isAnonymousType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isAnonymousType()).to.equal(expected);
+        }
+
         it("should get when it is an anonymous type", () => {
-            const {firstType} = getTypeFromText("let myType: { str: string; };");
-            expect(firstType.isAnonymousType()).to.equal(true);
+            doTest("let myType: { str: string; };", true);
         });
 
         it("should get when it's not an anonymous type", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isAnonymousType()).to.equal(false);
+            doTest("let myType: string;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isBooleanType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isBooleanType()).to.equal(expected);
+        }
+
         it("should get when it is a boolean type", () => {
-            const {firstType} = getTypeFromText("let myType: boolean;");
-            expect(firstType.isBooleanType()).to.equal(true);
+            doTest("let myType: boolean;", true);
         });
 
         it("should get when it's not a boolean type", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isBooleanType()).to.equal(false);
+            doTest("let myType: string;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isStringType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isStringType()).to.equal(expected);
+        }
+
         it("should get when it is a string type", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isStringType()).to.equal(true);
+            doTest("let myType: string;", true);
         });
 
         it("should get when it's not a string type", () => {
-            const {firstType} = getTypeFromText("let myType: boolean;");
-            expect(firstType.isStringType()).to.equal(false);
+            doTest("let myType: boolean;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isNumberType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isNumberType()).to.equal(expected);
+        }
+
         it("should get when it is a number type", () => {
-            const {firstType} = getTypeFromText("let myType: number;");
-            expect(firstType.isNumberType()).to.equal(true);
+            doTest("let myType: number;", true);
         });
 
         it("should get when it's not a number type", () => {
-            const {firstType} = getTypeFromText("let myType: boolean;");
-            expect(firstType.isNumberType()).to.equal(false);
+            doTest("let myType: boolean;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isEnumType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isEnumType()).to.equal(expected);
+        }
+
         it("should get when it is an enum type", () => {
-            const {firstType} = getTypeFromText("let myType: MyEnum; enum MyEnum {}");
-            expect(firstType.isEnumType()).to.equal(true);
+            doTest("let myType: MyEnum; enum MyEnum {}", true);
         });
 
         it("should get when it's not an enum type", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isEnumType()).to.equal(false);
+            doTest("let myType: string;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isInterfaceType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isInterfaceType()).to.equal(expected);
+        }
+
         it("should get when it is an interface type", () => {
-            const {firstType} = getTypeFromText("let myType: MyInterface; interface MyInterface {}");
-            expect(firstType.isInterfaceType()).to.equal(true);
+            doTest("let myType: MyInterface; interface MyInterface {}", true);
         });
 
         it("should get when it's not an enum type", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isInterfaceType()).to.equal(false);
+            doTest("let myType: string;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isIntersectionType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isIntersectionType()).to.equal(expected);
+        }
+
         it("should get when it is an intersection type", () => {
-            const {firstType} = getTypeFromText("let myType: number & string;");
-            expect(firstType.isIntersectionType()).to.equal(true);
+            doTest("let myType: number & string;", true);
         });
 
         it("should get when it's not an intersection type", () => {
-            const {firstType} = getTypeFromText("let myType: number | string;");
-            expect(firstType.isIntersectionType()).to.equal(false);
+            doTest("let myType: number | string;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isObjectType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isObjectType()).to.equal(expected);
+        }
+
         it("should get when it is an object type", () => {
-            const {firstType} = getTypeFromText("let myType: { str: string; };");
-            expect(firstType.isObjectType()).to.equal(true);
+            doTest("let myType: { str: string; };", true);
         });
 
         it("should get when it's not an object type", () => {
-            const {firstType} = getTypeFromText("let myType: number;");
-            expect(firstType.isObjectType()).to.equal(false);
+            doTest("let myType: number;", false);
         });
     });
 
     describe(nameof<Type>(t => t.isUnionType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isUnionType()).to.equal(expected);
+        }
+
         it("should get when it is a union type", () => {
-            const {firstType} = getTypeFromText("let myType: number | string;");
-            expect(firstType.isUnionType()).to.equal(true);
+            doTest("let myType: number | string;", true);
         });
 
         it("should get when it's not a union type", () => {
-            const {firstType} = getTypeFromText("let myType: number & string;");
-            expect(firstType.isUnionType()).to.equal(false);
+            doTest("let myType: number & string;", false);
         });
     });
 
