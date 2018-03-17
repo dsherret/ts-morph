@@ -32,7 +32,7 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
     addTypeForSubSet("KindToExpressionMappings", project.getSourceFileOrThrow("Expression.ts").getClassOrThrow("Expression"));
 
     kindToNodeMappingsFile.insertText(0, writer =>
-        writer.writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been release for a while."));
+        writer.writeLine("// DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while."));
 
     function addTypeForSubSet(name: string, nodeClass: ClassDeclaration) {
         const classType = nodeClass.getType();
@@ -40,8 +40,6 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
             isExported: true,
             name
         });
-        const filteredMappings = nodeToWrapperMappings
-            .filter(m => hasDescendantBaseType(m.wrappedNode.getType(), t => t.getText() === classType.getText()));
 
         newInterface.addIndexSignature({
             keyName: "kind",
@@ -49,11 +47,12 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
             returnType: "compiler.Node"
         });
 
-        for (const mapping of filteredMappings) {
+        for (const mapping of nodeToWrapperMappings) {
+            const isNever = !hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText());
             for (const kind of mapping.syntaxKindNames) {
                 newInterface.addProperty({
                     name: `[SyntaxKind.${kind}]`,
-                    type: `compiler.${mapping.wrapperName}`
+                    type: isNever ? "never" : `compiler.${mapping.wrapperName}`
                 });
             }
         }
