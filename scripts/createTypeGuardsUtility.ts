@@ -23,7 +23,7 @@ interface MethodInfo {
 }
 
 export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
-    const file = inspector.getProject().getSourceFileOrThrow("utils/TypeGuards.ts");
+    const file = inspector.getProject().getSourceFileOrThrow("./src/utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
     const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
 

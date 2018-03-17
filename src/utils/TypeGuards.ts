@@ -1401,6 +1401,20 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a JsxAttributedNode.
+     * @param node - Node to check.
+     */
+    static isJsxAttributedNode(node: compiler.Node): node is compiler.JsxAttributedNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.JsxOpeningElement:
+            case SyntaxKind.JsxSelfClosingElement:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a JsxClosingElement.
      * @param node - Node to check.
      */
@@ -1511,6 +1525,21 @@ export class TypeGuards {
     static isJsxSpreadAttribute(node: compiler.Node): node is compiler.JsxSpreadAttribute {
         switch (node.getKind()) {
             case SyntaxKind.JsxSpreadAttribute:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a JsxTagNamedNode.
+     * @param node - Node to check.
+     */
+    static isJsxTagNamedNode(node: compiler.Node): node is compiler.JsxTagNamedNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.JsxClosingElement:
+            case SyntaxKind.JsxOpeningElement:
+            case SyntaxKind.JsxSelfClosingElement:
                 return true;
             default:
                 return false;
@@ -2907,19 +2936,6 @@ export class TypeGuards {
             case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.TypeOfExpression:
             case SyntaxKind.VoidKeyword:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Gets if the node is a UndefinedKeyword.
-     * @param node - Node to check.
-     */
-    static isUndefinedKeyword(node: compiler.Node): node is compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.UndefinedKeyword:
                 return true;
             default:
                 return false;
