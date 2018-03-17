@@ -101,6 +101,36 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the constraint or throws if it doesn't exist.
+     */
+    getConstraintOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find a constraint.");
+    }
+
+    /**
+     * Gets the constraint or returns undefined if it doesn't exist.
+     */
+    getConstraint() {
+        const constraint = this.compilerType.getConstraint();
+        return constraint == null ? undefined : this.global.compilerFactory.getType(constraint);
+    }
+
+    /**
+     * Gets the default type or throws if it doesn't exist.
+     */
+    getDefaultOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find a constraint.");
+    }
+
+    /**
+     * Gets the default type or returns undefined if it doesn't exist.
+     */
+    getDefault() {
+        const defaultType = this.compilerType.getDefault();
+        return defaultType == null ? undefined : this.global.compilerFactory.getType(defaultType);
+    }
+
+    /**
      * Gets the properties of the type.
      */
     getProperties(): Symbol[] {

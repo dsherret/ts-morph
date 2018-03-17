@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags} from "./../../../typescript";
-import {Type, VariableStatement, Node, FunctionDeclaration} from "./../../../compiler";
+import {Type, VariableStatement, Node, FunctionDeclaration, TypeAliasDeclaration} from "./../../../compiler";
 import {VirtualFileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
 import {getInfoFromText} from "./../testHelpers";
 
@@ -12,6 +12,11 @@ describe(nameof(Type), () => {
     function getTypeFromText(text: string) {
         const result = getInfoFromTextWithTypeChecking<VariableStatement>(text);
         return {...result, firstType: result.firstChild.getDeclarations()[0].getType()};
+    }
+
+    function getTypeAliasTypeFromText(text: string) {
+        const result = getInfoFromTextWithTypeChecking<TypeAliasDeclaration>(text);
+        return {...result, firstType: result.firstChild.getTypeNodeOrThrow().getType()};
     }
 
     describe(nameof<Type>(t => t.compilerType), () => {
@@ -380,6 +385,78 @@ describe(nameof(Type), () => {
         it("should return the construct signatures of a type", () => {
             const {firstType} = getTypeFromText("let myType: { new(): MyClass; };");
             expect(firstType.getConstructSignatures().length).to.equal(1);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getConstraint), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const {firstType} = getTypeAliasTypeFromText(text);
+            if (expected == null)
+                expect(firstType.getConstraint()).to.be.undefined;
+            else
+                expect(firstType.getConstraint()!.getText()).to.equal(expected);
+        }
+
+        it("should get the constraint when it exists", () => {
+            doTest("type t<T extends string> = T;", "string");
+        });
+
+        it("should be undefined when it doesn't have a constraint", () => {
+            doTest("type t<T> = T;", undefined);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getConstraintOrThrow), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const {firstType} = getTypeAliasTypeFromText(text);
+            if (expected == null)
+                expect(() => firstType.getConstraintOrThrow()).to.throw();
+            else
+                expect(firstType.getConstraintOrThrow().getText()).to.equal(expected);
+        }
+
+        it("should get the constraint when it exists", () => {
+            doTest("type t<T extends string> = T;", "string");
+        });
+
+        it("should be undefined when it doesn't have a constraint", () => {
+            doTest("type t<T> = T;", undefined);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getDefault), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const {firstType} = getTypeAliasTypeFromText(text);
+            if (expected == null)
+                expect(firstType.getDefault()).to.be.undefined;
+            else
+                expect(firstType.getDefault()!.getText()).to.equal(expected);
+        }
+
+        it("should get the default when it exists", () => {
+            doTest("type t<T = string> = T;", "string");
+        });
+
+        it("should be undefined when it doesn't have a default", () => {
+            doTest("type t<T> = T;", undefined);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getDefaultOrThrow), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const {firstType} = getTypeAliasTypeFromText(text);
+            if (expected == null)
+                expect(() => firstType.getDefaultOrThrow()).to.throw();
+            else
+                expect(firstType.getDefaultOrThrow().getText()).to.equal(expected);
+        }
+
+        it("should get the default when it exists", () => {
+            doTest("type t<T = string> = T;", "string");
+        });
+
+        it("should be undefined when it doesn't have a default", () => {
+            doTest("type t<T> = T;", undefined);
         });
     });
 
