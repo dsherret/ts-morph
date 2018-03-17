@@ -122,6 +122,14 @@ const stringIndexType = type.getStringIndexType();
 const numberIndexType = type.getNumberIndexType();
 ```
 
+### Tuple element types
+
+```ts
+const tupleElements = type.getTupleElements();
+```
+
+For example, for the type `[string, number]`, the above would return an array containing the type for `string` and `number`.
+
 ### Non-nullable type
 
 Gets the non-nullable type from a nullable type:
