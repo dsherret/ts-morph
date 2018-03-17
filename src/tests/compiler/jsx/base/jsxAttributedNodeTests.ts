@@ -86,6 +86,10 @@ describe(nameof(JsxAttributedNode), () => {
                 expect(descendant.getFullText()).to.equal(expected);
             }
 
+            it("should do nothing when providing an empty array", () => {
+                doTest(`var t = (<jsx></jsx>);`, 0, [], `<jsx>`);
+            });
+
             it("should insert the attributes when none exists", () => {
                 doTest(`var t = (<jsx></jsx>);`, 0, [{ name: "attrib" }], `<jsx attrib>`);
             });

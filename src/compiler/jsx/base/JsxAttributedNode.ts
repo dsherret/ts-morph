@@ -82,6 +82,9 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
         }
 
         insertAttributes(index: number, structures: JsxAttributeStructure[]) {
+            if (structures.length === 0)
+                return [];
+
             index = verifyAndGetIndex(index, this.compilerNode.attributes.properties.length);
 
             const insertPos = index === 0 ? this.getTagName().getEnd() : this.getAttributes()[index - 1].getEnd();

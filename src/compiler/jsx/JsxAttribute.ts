@@ -1,5 +1,6 @@
 import {ts} from "./../../typescript";
 import * as errors from "./../../errors";
+import {removeChildren} from "./../../manipulation";
 import {NamedNode} from "./../base";
 import {Node} from "./../common";
 import {StringLiteral} from "./../literal";
@@ -18,5 +19,16 @@ export class JsxAttribute extends NamedNode(Node)<ts.JsxAttribute> {
      */
     getInitializer() {
         return this.getNodeFromCompilerNodeIfExists<StringLiteral | JsxExpression>(this.compilerNode.initializer);
+    }
+
+    /**
+     * Removes the JSX attribute.
+     */
+    remove() {
+        removeChildren({
+            children: [this],
+            removePrecedingNewLines: true,
+            removePrecedingSpaces: true
+        });
     }
 }
