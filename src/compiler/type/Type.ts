@@ -190,6 +190,13 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the individual element types of the tuple.
+     */
+    getTupleElements(): Type[] {
+        return this.isTupleType() ? this.getTypeArguments() : [];
+    }
+
+    /**
      * Gets the union types.
      */
     getUnionTypes(): Type[] {

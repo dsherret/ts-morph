@@ -509,4 +509,42 @@ describe(nameof(Type), () => {
             expect(typeArgs[0].getText()).to.equal("string");
         });
     });
+
+    describe(nameof<Type>(t => t.getTupleElements), () => {
+        function doTest(text: string, expected: string[]) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.getTupleElements().map(t => t.getText())).to.deep.equal(expected);
+        }
+
+        it("should get the tuple type's types", () => {
+            doTest("let t: [string, number]", ["string", "number"]);
+        });
+
+        it("should get nothing when not a tuple", () => {
+            doTest("let t: string;", []);
+        });
+
+        it("should get nothing for an array type that has type arguments", () => {
+            doTest("let t: Array<string>;", []);
+        });
+    });
+
+    describe(nameof<Type>(t => t.getTypeArguments), () => {
+        function doTest(text: string, expected: string[]) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.getTypeArguments().map(t => t.getText())).to.deep.equal(expected);
+        }
+
+        it("should get the type arguments for an array", () => {
+            doTest("let t: Array<string>;", ["string"]);
+        });
+
+        it("should get them for a tuple", () => {
+            doTest("let t: [string, number]", ["string", "number"]);
+        });
+
+        it("should get nothing when no type args", () => {
+            doTest("let t: string;", []);
+        });
+    });
 });
