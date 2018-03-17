@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.2.0"></a>
+# [9.2.0](https://github.com/dsherret/ts-simple-ast/compare/9.1.0...9.2.0) (2018-03-17)
+
+
+### Features
+
+* [#240](https://github.com/dsherret/ts-simple-ast/issues/240) - Ability to add/insert JSX attributes. ([e2b4a99](https://github.com/dsherret/ts-simple-ast/commit/e2b4a99))
+* [#240](https://github.com/dsherret/ts-simple-ast/issues/240) - Ability to remove JSX attributes. ([1bf7642](https://github.com/dsherret/ts-simple-ast/commit/1bf7642))
+* Add getAttribute to JsxOpeningElement and JsxSelfClosingElement. ([7dbe0f7](https://github.com/dsherret/ts-simple-ast/commit/7dbe0f7))
+* Add getAttributeOrThrow for jsx nodes with attributes. ([93a0fbd](https://github.com/dsherret/ts-simple-ast/commit/93a0fbd))
+
+
+
 <a name="9.1.0"></a>
 # [9.1.0](https://github.com/dsherret/ts-simple-ast/compare/9.0.1...9.1.0) (2018-03-13)
 
