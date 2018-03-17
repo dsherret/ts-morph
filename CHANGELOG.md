@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.3.0"></a>
+# [9.3.0](https://github.com/dsherret/ts-simple-ast/compare/9.1.0...9.3.0) (2018-03-17)
+
+
+### Features
+
+* [#240](https://github.com/dsherret/ts-simple-ast/issues/240) - Ability to add/insert JSX attributes. ([e2b4a99](https://github.com/dsherret/ts-simple-ast/commit/e2b4a99))
+* [#240](https://github.com/dsherret/ts-simple-ast/issues/240) - Ability to remove JSX attributes. ([1bf7642](https://github.com/dsherret/ts-simple-ast/commit/1bf7642))
+* [#250](https://github.com/dsherret/ts-simple-ast/issues/250) - Accept strings for named imports and exports. ([8867b71](https://github.com/dsherret/ts-simple-ast/commit/8867b71))
+* [#278](https://github.com/dsherret/ts-simple-ast/issues/278) - Add Type.isTupleType ([d7c3c3d](https://github.com/dsherret/ts-simple-ast/commit/d7c3c3d))
+* Add getAttribute to JsxOpeningElement and JsxSelfClosingElement. ([7dbe0f7](https://github.com/dsherret/ts-simple-ast/commit/7dbe0f7))
+* Add getAttributeOrThrow for jsx nodes with attributes. ([93a0fbd](https://github.com/dsherret/ts-simple-ast/commit/93a0fbd))
+* Add more type guards. ([4a1a92d](https://github.com/dsherret/ts-simple-ast/commit/4a1a92d))
+* Add Type.getConstraint() and getDefault(). ([8850266](https://github.com/dsherret/ts-simple-ast/commit/8850266))
+* Add Type.getTupleElements(). ([8c5dafc](https://github.com/dsherret/ts-simple-ast/commit/8c5dafc))
+
+
+
 <a name="9.2.0"></a>
 # [9.2.0](https://github.com/dsherret/ts-simple-ast/compare/9.1.0...9.2.0) (2018-03-17)
 
