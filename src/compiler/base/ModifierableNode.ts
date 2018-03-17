@@ -123,9 +123,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 parent: this,
                 insertPos,
                 newText,
-                syntaxList: modifiers.length === 0 ? undefined : modifiers[0].getParentSyntaxListOrThrow(),
-                childIndex: insertIndex,
-                insertItemsCount: 1
+                syntaxList: modifiers.length === 0 ? undefined : modifiers[0].getParentSyntaxListOrThrow()
             });
 
             return ArrayUtils.find(this.getModifiers(), m => m.getStart() === startPos) as Node<ts.Modifier>;

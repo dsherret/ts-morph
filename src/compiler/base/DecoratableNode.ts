@@ -110,8 +110,6 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             insertIntoCreatableSyntaxList({
                 parent: this,
                 insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
-                childIndex: index,
-                insertItemsCount: structures.length,
                 newText: decoratorCode,
                 syntaxList: decorators.length === 0 ? undefined : decorators[0].getParentSyntaxListOrThrow()
             });

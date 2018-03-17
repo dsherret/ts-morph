@@ -5,36 +5,6 @@ import {NodeHandlerFactory} from "./../nodeHandlers";
 import {doManipulation} from "./doManipulation";
 import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions} from "./../helpers";
 
-export interface InsertIntoParentOptions {
-    insertPos: number;
-    newText: string;
-    parent: Node;
-    childIndex: number;
-    insertItemsCount: number;
-    replacing?: {
-        textLength: number;
-        nodes?: Node[];
-    };
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
-}
-
-// todo: work on removing this
-export function insertIntoParent(opts: InsertIntoParentOptions) {
-    const {insertPos, newText, parent, childIndex, insertItemsCount, customMappings} = opts;
-
-    doManipulation(parent.sourceFile, new InsertionTextManipulator({
-        insertPos,
-        newText,
-        replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
-    }), new NodeHandlerFactory().getForChildIndex({
-        parent,
-        childCount: insertItemsCount,
-        childIndex,
-        replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
-        customMappings
-    }));
-}
-
 export interface InsertSyntaxListOptions {
     insertPos: number;
     newText: string;
@@ -60,7 +30,9 @@ export interface InsertIntoParentTextRangeOptions {
     parent: Node;
     replacing?: {
         textLength: number;
+        nodes?: Node[];
     };
+    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
 }
 
 /**
@@ -79,7 +51,9 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
             parent,
             start: insertPos,
             end: insertPos + newText.length,
-            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength
+            replacingLength: opts.replacing == null ? undefined : opts.replacing.textLength,
+            replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
+            customMappings: opts.customMappings
         }));
 }
 
@@ -88,12 +62,10 @@ export interface InsertIntoCreatableSyntaxListOptions {
     newText: string;
     parent: Node;
     syntaxList: Node | undefined;
-    childIndex: number;
-    insertItemsCount: number;
 }
 
 export function insertIntoCreatableSyntaxList(opts: InsertIntoCreatableSyntaxListOptions) {
-    const {insertPos, newText, parent, syntaxList, childIndex, insertItemsCount} = opts;
+    const {insertPos, newText, parent, syntaxList} = opts;
 
     if (syntaxList == null)
         insertSyntaxList({
@@ -102,12 +74,10 @@ export function insertIntoCreatableSyntaxList(opts: InsertIntoCreatableSyntaxLis
             newText
         });
     else
-        insertIntoParent({
+        insertIntoParentTextRange({
             insertPos,
             newText,
-            parent: syntaxList,
-            insertItemsCount,
-            childIndex
+            parent: syntaxList
         });
 }
 

@@ -98,9 +98,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 parent: this,
                 insertPos: openBraceStart,
                 newText: insertText,
-                syntaxList: undefined,
-                childIndex: index,
-                insertItemsCount: length
+                syntaxList: undefined
             });
 
             return getNodeOrNodesToReturn(this.getExtends(), index, length);

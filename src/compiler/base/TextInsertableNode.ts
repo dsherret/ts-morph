@@ -1,7 +1,7 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
-import {insertIntoParent} from "./../../manipulation";
+import {insertIntoParentTextRange} from "./../../manipulation";
 import {ts, SyntaxKind} from "./../../typescript";
 import {TypeGuards, getTextFromStringOrWriter} from "./../../utils";
 import {Node} from "./../common";
@@ -80,10 +80,8 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             verifyArguments();
 
             // ideally this wouldn't replace the existing syntax list
-            insertIntoParent({
+            insertIntoParentTextRange({
                 insertPos: pos,
-                childIndex: childSyntaxList.getChildIndex(),
-                insertItemsCount: 1,
                 newText: getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction),
                 parent: this,
                 replacing: {

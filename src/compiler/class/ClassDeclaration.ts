@@ -97,9 +97,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             parent: this,
             insertPos,
             newText,
-            syntaxList: implementsClause == null ? undefined : implementsClause.getParentSyntaxListOrThrow(),
-            childIndex: 0,
-            insertItemsCount: 1
+            syntaxList: implementsClause == null ? undefined : implementsClause.getParentSyntaxListOrThrow()
         });
 
         return this;

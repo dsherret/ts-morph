@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
-import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParent} from "./../../manipulation";
+import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParentTextRange} from "./../../manipulation";
 import {TypeGuards} from "./../../utils";
 import {CallExpression, Expression} from "./../expression";
 import {Node, Identifier} from "./../common";
@@ -73,14 +73,11 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
         if (isDecoratorFactory) {
             const expression = this.getExpression();
             const expressionText = expression.getText();
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: this,
-                childIndex: expression.getChildIndex(),
-                insertItemsCount: 1,
                 insertPos: expression.getStart(),
                 newText: `${expressionText}()`,
                 replacing: {
-                    nodes: [expression],
                     textLength: expressionText.length
                 },
                 customMappings: newParent => {
@@ -96,14 +93,11 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             const expression = callExpression.getExpression();
             const expressionText = expression.getText();
 
-            insertIntoParent({
+            insertIntoParentTextRange({
                 parent: this,
-                childIndex: callExpression.getChildIndex(),
-                insertItemsCount: 1,
                 insertPos: callExpression.getStart(),
                 newText: `${expressionText}`,
                 replacing: {
-                    nodes: [callExpression],
                     textLength: callExpression.getWidth()
                 },
                 customMappings: newParent => {

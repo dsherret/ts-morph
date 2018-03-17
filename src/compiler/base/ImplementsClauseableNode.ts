@@ -100,9 +100,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 parent: this,
                 insertPos: openBraceStart,
                 newText: insertText,
-                syntaxList: heritageClauses.length === 0 ? undefined : heritageClauses[0].getParentSyntaxListOrThrow(),
-                childIndex: 1,
-                insertItemsCount: 1
+                syntaxList: heritageClauses.length === 0 ? undefined : heritageClauses[0].getParentSyntaxListOrThrow()
             });
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);
