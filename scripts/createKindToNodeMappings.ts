@@ -48,11 +48,12 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
         });
 
         for (const mapping of nodeToWrapperMappings) {
-            const isNever = !hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText());
+            if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
+                continue;
             for (const kind of mapping.syntaxKindNames) {
                 newInterface.addProperty({
                     name: `[SyntaxKind.${kind}]`,
-                    type: isNever ? "never" : `compiler.${mapping.wrapperName}`
+                    type: `compiler.${mapping.wrapperName}`
                 });
             }
         }
