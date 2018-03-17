@@ -267,6 +267,48 @@ describe(nameof(Type), () => {
         });
     });
 
+    describe(nameof<Type>(t => t.isTupleType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isTupleType()).to.equal(expected);
+        }
+
+        it("should be when tuple and one element", () => {
+            doTest("let myType: [string];", true);
+        });
+
+        it("should be when tuple and multiple", () => {
+            doTest("let myType: [string, number];", true);
+        });
+
+        it("should not be when not an array", () => {
+            doTest("let myType: string[];", false);
+        });
+
+        it("should not be when not an array of tuples", () => {
+            doTest("let myType: [string][];", false);
+        });
+
+        it("should not be when not tuple", () => {
+            doTest("let myType: string;", false);
+        });
+    });
+
+    describe(nameof<Type>(t => t.isUndefinedType), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstType} = getTypeFromText(text);
+            expect(firstType.isUndefinedType()).to.equal(expected);
+        }
+
+        it("should be when undefined", () => {
+            doTest("let myType: undefined;", true);
+        });
+
+        it("should not be when not undefined", () => {
+            doTest("let myType: string;", false);
+        });
+    });
+
     describe(nameof<Type>(t => t.getFlags), () => {
         it("should get the type flags", () => {
             const {firstType} = getTypeFromText("let myType: number;");
@@ -465,18 +507,6 @@ describe(nameof(Type), () => {
             const typeArgs = firstType.getAliasTypeArguments();
             expect(typeArgs.length).to.equal(1);
             expect(typeArgs[0].getText()).to.equal("string");
-        });
-    });
-
-    describe(nameof<Type>(t => t.isUndefinedType), () => {
-        it("should not be undefined when not undefined", () => {
-            const {firstType} = getTypeFromText("let myType: string;");
-            expect(firstType.isUndefinedType()).to.be.false;
-        });
-
-        it("should be undefined when not undefined", () => {
-            const {firstType} = getTypeFromText("let myType: undefined;");
-            expect(firstType.isUndefinedType()).to.be.true;
         });
     });
 });

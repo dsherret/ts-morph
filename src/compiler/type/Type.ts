@@ -305,6 +305,16 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is a tuple type.
+     */
+    isTupleType() {
+        const targetType = this.getTargetType();
+        if (targetType == null)
+            return false;
+        return (targetType.getObjectFlags() & ObjectFlags.Tuple) !== 0;
+    }
+
+    /**
      * Gets if this is a union type.
      */
     isUnionType() {
