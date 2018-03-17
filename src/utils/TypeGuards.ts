@@ -74,6 +74,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an AnyKeyword.
+     * @param node - Node to check.
+     */
+    static isAnyKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.AnyKeyword;
+    }
+
+    /**
      * Gets if the node is an ArgumentedNode.
      * @param node - Node to check.
      */
@@ -92,12 +100,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isArrayLiteralExpression(node: compiler.Node): node is compiler.ArrayLiteralExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ArrayLiteralExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ArrayLiteralExpression;
     }
 
     /**
@@ -105,12 +108,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isArrayTypeNode(node: compiler.Node): node is compiler.ArrayTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.ArrayType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ArrayType;
     }
 
     /**
@@ -118,12 +116,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isArrowFunction(node: compiler.Node): node is compiler.ArrowFunction {
-        switch (node.getKind()) {
-            case SyntaxKind.ArrowFunction:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ArrowFunction;
     }
 
     /**
@@ -131,12 +124,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isAsExpression(node: compiler.Node): node is compiler.AsExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.AsExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.AsExpression;
     }
 
     /**
@@ -160,12 +148,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isAwaitExpression(node: compiler.Node): node is compiler.AwaitExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.AwaitExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.AwaitExpression;
     }
 
     /**
@@ -173,12 +156,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isAwaitableNode(node: compiler.Node): node is compiler.AwaitableNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.ForOfStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ForOfStatement;
     }
 
     /**
@@ -186,12 +164,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isBinaryExpression(node: compiler.Node): node is compiler.BinaryExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.BinaryExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.BinaryExpression;
     }
 
     /**
@@ -199,12 +172,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.VariableDeclaration;
     }
 
     /**
@@ -212,12 +180,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isBlock(node: compiler.Node): node is compiler.Block {
-        switch (node.getKind()) {
-            case SyntaxKind.Block:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Block;
     }
 
     /**
@@ -253,6 +216,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a BooleanKeyword.
+     * @param node - Node to check.
+     */
+    static isBooleanKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.BooleanKeyword;
+    }
+
+    /**
      * Gets if the node is a BooleanLiteral.
      * @param node - Node to check.
      */
@@ -271,12 +242,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isBreakStatement(node: compiler.Node): node is compiler.BreakStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.BreakStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.BreakStatement;
     }
 
     /**
@@ -284,12 +250,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCallExpression(node: compiler.Node): node is compiler.CallExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.CallExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CallExpression;
     }
 
     /**
@@ -297,12 +258,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCallSignatureDeclaration(node: compiler.Node): node is compiler.CallSignatureDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.CallSignature:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CallSignature;
     }
 
     /**
@@ -310,12 +266,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCaseBlock(node: compiler.Node): node is compiler.CaseBlock {
-        switch (node.getKind()) {
-            case SyntaxKind.CaseBlock:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CaseBlock;
     }
 
     /**
@@ -323,12 +274,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCaseClause(node: compiler.Node): node is compiler.CaseClause {
-        switch (node.getKind()) {
-            case SyntaxKind.CaseClause:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CaseClause;
     }
 
     /**
@@ -336,12 +282,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCatchClause(node: compiler.Node): node is compiler.CatchClause {
-        switch (node.getKind()) {
-            case SyntaxKind.CatchClause:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CatchClause;
     }
 
     /**
@@ -393,12 +334,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isClassDeclaration(node: compiler.Node): node is compiler.ClassDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ClassDeclaration;
     }
 
     /**
@@ -406,12 +342,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isCommaListExpression(node: compiler.Node): node is compiler.CommaListExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.CommaListExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.CommaListExpression;
     }
 
     /**
@@ -419,12 +350,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isComputedPropertyName(node: compiler.Node): node is compiler.ComputedPropertyName {
-        switch (node.getKind()) {
-            case SyntaxKind.ComputedPropertyName:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ComputedPropertyName;
     }
 
     /**
@@ -432,12 +358,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isConditionalExpression(node: compiler.Node): node is compiler.ConditionalExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ConditionalExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ConditionalExpression;
     }
 
     /**
@@ -445,12 +366,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isConstructSignatureDeclaration(node: compiler.Node): node is compiler.ConstructSignatureDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ConstructSignature:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ConstructSignature;
     }
 
     /**
@@ -458,12 +374,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isConstructorDeclaration(node: compiler.Node): node is compiler.ConstructorDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.Constructor:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Constructor;
     }
 
     /**
@@ -471,12 +382,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isConstructorTypeNode(node: compiler.Node): node is compiler.ConstructorTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.ConstructorType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ConstructorType;
     }
 
     /**
@@ -484,12 +390,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isContinueStatement(node: compiler.Node): node is compiler.ContinueStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ContinueStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ContinueStatement;
     }
 
     /**
@@ -497,12 +398,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.DebuggerStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.DebuggerStatement;
     }
 
     /**
@@ -510,12 +406,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDeclarationNamedNode(node: compiler.Node): node is compiler.DeclarationNamedNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Parameter;
     }
 
     /**
@@ -541,12 +432,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDecorator(node: compiler.Node): node is compiler.Decorator {
-        switch (node.getKind()) {
-            case SyntaxKind.Decorator:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Decorator;
     }
 
     /**
@@ -554,12 +440,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDefaultClause(node: compiler.Node): node is compiler.DefaultClause {
-        switch (node.getKind()) {
-            case SyntaxKind.DefaultClause:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.DefaultClause;
     }
 
     /**
@@ -567,12 +448,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDeleteExpression(node: compiler.Node): node is compiler.DeleteExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.DeleteExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.DeleteExpression;
     }
 
     /**
@@ -580,12 +456,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isDoStatement(node: compiler.Node): node is compiler.DoStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.DoStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.DoStatement;
     }
 
     /**
@@ -593,12 +464,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isElementAccessExpression(node: compiler.Node): node is compiler.ElementAccessExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ElementAccessExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ElementAccessExpression;
     }
 
     /**
@@ -606,12 +472,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isEmptyStatement(node: compiler.Node): node is compiler.EmptyStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.EmptyStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.EmptyStatement;
     }
 
     /**
@@ -619,12 +480,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isEnumDeclaration(node: compiler.Node): node is compiler.EnumDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.EnumDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.EnumDeclaration;
     }
 
     /**
@@ -632,12 +488,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isEnumMember(node: compiler.Node): node is compiler.EnumMember {
-        switch (node.getKind()) {
-            case SyntaxKind.EnumMember:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.EnumMember;
     }
 
     /**
@@ -659,12 +510,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExportAssignment(node: compiler.Node): node is compiler.ExportAssignment {
-        switch (node.getKind()) {
-            case SyntaxKind.ExportAssignment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExportAssignment;
     }
 
     /**
@@ -672,12 +518,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExportDeclaration(node: compiler.Node): node is compiler.ExportDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ExportDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExportDeclaration;
     }
 
     /**
@@ -685,12 +526,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExportSpecifier(node: compiler.Node): node is compiler.ExportSpecifier {
-        switch (node.getKind()) {
-            case SyntaxKind.ExportSpecifier:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExportSpecifier;
     }
 
     /**
@@ -784,12 +620,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExpressionStatement(node: compiler.Node): node is compiler.ExpressionStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ExpressionStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExpressionStatement;
     }
 
     /**
@@ -797,12 +628,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExpressionWithTypeArguments(node: compiler.Node): node is compiler.ExpressionWithTypeArguments {
-        switch (node.getKind()) {
-            case SyntaxKind.ExpressionWithTypeArguments:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExpressionWithTypeArguments;
     }
 
     /**
@@ -829,12 +655,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExtendsClauseableNode(node: compiler.Node): node is compiler.ExtendsClauseableNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.InterfaceDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.InterfaceDeclaration;
     }
 
     /**
@@ -842,12 +663,15 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isExternalModuleReference(node: compiler.Node): node is compiler.ExternalModuleReference {
-        switch (node.getKind()) {
-            case SyntaxKind.ExternalModuleReference:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ExternalModuleReference;
+    }
+
+    /**
+     * Gets if the node is a FalseKeyword.
+     * @param node - Node to check.
+     */
+    static isFalseKeyword(node: compiler.Node): node is compiler.BooleanLiteral {
+        return node.getKind() === SyntaxKind.FalseKeyword;
     }
 
     /**
@@ -855,12 +679,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isForInStatement(node: compiler.Node): node is compiler.ForInStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ForInStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ForInStatement;
     }
 
     /**
@@ -868,12 +687,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isForOfStatement(node: compiler.Node): node is compiler.ForOfStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ForOfStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ForOfStatement;
     }
 
     /**
@@ -881,12 +695,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isForStatement(node: compiler.Node): node is compiler.ForStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ForStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ForStatement;
     }
 
     /**
@@ -894,12 +703,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isFunctionDeclaration(node: compiler.Node): node is compiler.FunctionDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.FunctionDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.FunctionDeclaration;
     }
 
     /**
@@ -907,12 +711,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isFunctionExpression(node: compiler.Node): node is compiler.FunctionExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.FunctionExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.FunctionExpression;
     }
 
     /**
@@ -937,12 +736,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isFunctionTypeNode(node: compiler.Node): node is compiler.FunctionTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.FunctionType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.FunctionType;
     }
 
     /**
@@ -966,12 +760,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isGetAccessorDeclaration(node: compiler.Node): node is compiler.GetAccessorDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.GetAccessor:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.GetAccessor;
     }
 
     /**
@@ -979,12 +768,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isHeritageClause(node: compiler.Node): node is compiler.HeritageClause {
-        switch (node.getKind()) {
-            case SyntaxKind.HeritageClause:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.HeritageClause;
     }
 
     /**
@@ -1006,12 +790,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isIdentifier(node: compiler.Node): node is compiler.Identifier {
-        switch (node.getKind()) {
-            case SyntaxKind.Identifier:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Identifier;
     }
 
     /**
@@ -1019,12 +798,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isIfStatement(node: compiler.Node): node is compiler.IfStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.IfStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.IfStatement;
     }
 
     /**
@@ -1032,12 +806,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImplementsClauseableNode(node: compiler.Node): node is compiler.ImplementsClauseableNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ClassDeclaration;
     }
 
     /**
@@ -1045,12 +814,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImportDeclaration(node: compiler.Node): node is compiler.ImportDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ImportDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ImportDeclaration;
     }
 
     /**
@@ -1058,12 +822,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImportEqualsDeclaration(node: compiler.Node): node is compiler.ImportEqualsDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ImportEqualsDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ImportEqualsDeclaration;
     }
 
     /**
@@ -1071,12 +830,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImportExpression(node: compiler.Node): node is compiler.ImportExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ImportKeyword:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ImportKeyword;
     }
 
     /**
@@ -1084,12 +838,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isImportSpecifier(node: compiler.Node): node is compiler.ImportSpecifier {
-        switch (node.getKind()) {
-            case SyntaxKind.ImportSpecifier:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ImportSpecifier;
     }
 
     /**
@@ -1097,12 +846,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isIndexSignatureDeclaration(node: compiler.Node): node is compiler.IndexSignatureDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.IndexSignature:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.IndexSignature;
     }
 
     /**
@@ -1163,12 +907,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isInterfaceDeclaration(node: compiler.Node): node is compiler.InterfaceDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.InterfaceDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.InterfaceDeclaration;
     }
 
     /**
@@ -1176,12 +915,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isIntersectionTypeNode(node: compiler.Node): node is compiler.IntersectionTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.IntersectionType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.IntersectionType;
     }
 
     /**
@@ -1206,12 +940,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDoc(node: compiler.Node): node is compiler.JSDoc {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocComment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocComment;
     }
 
     /**
@@ -1219,12 +948,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocAugmentsTag(node: compiler.Node): node is compiler.JSDocAugmentsTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocAugmentsTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocAugmentsTag;
     }
 
     /**
@@ -1232,12 +956,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocClassTag(node: compiler.Node): node is compiler.JSDocClassTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocClassTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocClassTag;
     }
 
     /**
@@ -1245,12 +964,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocParameterTag(node: compiler.Node): node is compiler.JSDocParameterTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocParameterTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocParameterTag;
     }
 
     /**
@@ -1272,12 +986,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocPropertyTag(node: compiler.Node): node is compiler.JSDocPropertyTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocPropertyTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocPropertyTag;
     }
 
     /**
@@ -1285,12 +994,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocReturnTag(node: compiler.Node): node is compiler.JSDocReturnTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocReturnTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocReturnTag;
     }
 
     /**
@@ -1318,12 +1022,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocTypeTag(node: compiler.Node): node is compiler.JSDocTypeTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocTypeTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocTypeTag;
     }
 
     /**
@@ -1331,12 +1030,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocTypedefTag(node: compiler.Node): node is compiler.JSDocTypedefTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocTypedefTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocTypedefTag;
     }
 
     /**
@@ -1344,12 +1038,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJSDocUnknownTag(node: compiler.Node): node is compiler.JSDocUnknownTag {
-        switch (node.getKind()) {
-            case SyntaxKind.JSDocTag:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JSDocTag;
     }
 
     /**
@@ -1392,12 +1081,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxAttribute(node: compiler.Node): node is compiler.JsxAttribute {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxAttribute:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxAttribute;
     }
 
     /**
@@ -1419,12 +1103,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxClosingElement(node: compiler.Node): node is compiler.JsxClosingElement {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxClosingElement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxClosingElement;
     }
 
     /**
@@ -1432,12 +1111,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxClosingFragment(node: compiler.Node): node is compiler.JsxClosingFragment {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxClosingFragment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxClosingFragment;
     }
 
     /**
@@ -1445,12 +1119,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxElement(node: compiler.Node): node is compiler.JsxElement {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxElement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxElement;
     }
 
     /**
@@ -1458,12 +1127,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxExpression(node: compiler.Node): node is compiler.JsxExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxExpression;
     }
 
     /**
@@ -1471,12 +1135,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxFragment(node: compiler.Node): node is compiler.JsxFragment {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxFragment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxFragment;
     }
 
     /**
@@ -1484,12 +1143,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxOpeningElement(node: compiler.Node): node is compiler.JsxOpeningElement {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxOpeningElement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxOpeningElement;
     }
 
     /**
@@ -1497,12 +1151,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxOpeningFragment(node: compiler.Node): node is compiler.JsxOpeningFragment {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxOpeningFragment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxOpeningFragment;
     }
 
     /**
@@ -1510,12 +1159,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxSelfClosingElement(node: compiler.Node): node is compiler.JsxSelfClosingElement {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxSelfClosingElement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxSelfClosingElement;
     }
 
     /**
@@ -1523,12 +1167,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxSpreadAttribute(node: compiler.Node): node is compiler.JsxSpreadAttribute {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxSpreadAttribute:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxSpreadAttribute;
     }
 
     /**
@@ -1551,12 +1190,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isJsxText(node: compiler.Node): node is compiler.JsxText {
-        switch (node.getKind()) {
-            case SyntaxKind.JsxText:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.JsxText;
     }
 
     /**
@@ -1564,12 +1198,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isLabeledStatement(node: compiler.Node): node is compiler.LabeledStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.LabeledStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.LabeledStatement;
     }
 
     /**
@@ -1719,12 +1348,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isMetaProperty(node: compiler.Node): node is compiler.MetaProperty {
-        switch (node.getKind()) {
-            case SyntaxKind.MetaProperty:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.MetaProperty;
     }
 
     /**
@@ -1732,12 +1356,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isMethodDeclaration(node: compiler.Node): node is compiler.MethodDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.MethodDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.MethodDeclaration;
     }
 
     /**
@@ -1745,12 +1364,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isMethodSignature(node: compiler.Node): node is compiler.MethodSignature {
-        switch (node.getKind()) {
-            case SyntaxKind.MethodSignature:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.MethodSignature;
     }
 
     /**
@@ -1789,12 +1403,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.FunctionExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.FunctionExpression;
     }
 
     /**
@@ -1844,12 +1453,15 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNamespaceDeclaration(node: compiler.Node): node is compiler.NamespaceDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.ModuleDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ModuleDeclaration;
+    }
+
+    /**
+     * Gets if the node is a NeverKeyword.
+     * @param node - Node to check.
+     */
+    static isNeverKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.NeverKeyword;
     }
 
     /**
@@ -1857,12 +1469,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNewExpression(node: compiler.Node): node is compiler.NewExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.NewExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NewExpression;
     }
 
     /**
@@ -1870,12 +1477,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNoSubstitutionTemplateLiteral(node: compiler.Node): node is compiler.NoSubstitutionTemplateLiteral {
-        switch (node.getKind()) {
-            case SyntaxKind.NoSubstitutionTemplateLiteral:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NoSubstitutionTemplateLiteral;
     }
 
     /**
@@ -1883,12 +1485,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNonNullExpression(node: compiler.Node): node is compiler.NonNullExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.NonNullExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NonNullExpression;
     }
 
     /**
@@ -1896,12 +1493,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNotEmittedStatement(node: compiler.Node): node is compiler.NotEmittedStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.NotEmittedStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NotEmittedStatement;
     }
 
     /**
@@ -1909,12 +1501,15 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNullLiteral(node: compiler.Node): node is compiler.NullLiteral {
-        switch (node.getKind()) {
-            case SyntaxKind.NullKeyword:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NullKeyword;
+    }
+
+    /**
+     * Gets if the node is a NumberKeyword.
+     * @param node - Node to check.
+     */
+    static isNumberKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.NumberKeyword;
     }
 
     /**
@@ -1932,16 +1527,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ObjectKeyword.
+     * @param node - Node to check.
+     */
+    static isObjectKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.ObjectKeyword;
+    }
+
+    /**
      * Gets if the node is a ObjectLiteralExpression.
      * @param node - Node to check.
      */
     static isObjectLiteralExpression(node: compiler.Node): node is compiler.ObjectLiteralExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ObjectLiteralExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ObjectLiteralExpression;
     }
 
     /**
@@ -1949,12 +1547,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isOmittedExpression(node: compiler.Node): node is compiler.OmittedExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.OmittedExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.OmittedExpression;
     }
 
     /**
@@ -1977,12 +1570,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isParameterDeclaration(node: compiler.Node): node is compiler.ParameterDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Parameter;
     }
 
     /**
@@ -2014,12 +1602,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isParenthesizedExpression(node: compiler.Node): node is compiler.ParenthesizedExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ParenthesizedExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ParenthesizedExpression;
     }
 
     /**
@@ -2027,12 +1610,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPartiallyEmittedExpression(node: compiler.Node): node is compiler.PartiallyEmittedExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.PartiallyEmittedExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PartiallyEmittedExpression;
     }
 
     /**
@@ -2040,12 +1618,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPostfixUnaryExpression(node: compiler.Node): node is compiler.PostfixUnaryExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.PostfixUnaryExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PostfixUnaryExpression;
     }
 
     /**
@@ -2053,12 +1626,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPrefixUnaryExpression(node: compiler.Node): node is compiler.PrefixUnaryExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.PrefixUnaryExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PrefixUnaryExpression;
     }
 
     /**
@@ -2099,12 +1667,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPropertyAccessExpression(node: compiler.Node): node is compiler.PropertyAccessExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.PropertyAccessExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PropertyAccessExpression;
     }
 
     /**
@@ -2112,12 +1675,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPropertyAssignment(node: compiler.Node): node is compiler.PropertyAssignment {
-        switch (node.getKind()) {
-            case SyntaxKind.PropertyAssignment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PropertyAssignment;
     }
 
     /**
@@ -2125,12 +1683,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPropertyDeclaration(node: compiler.Node): node is compiler.PropertyDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.PropertyDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PropertyDeclaration;
     }
 
     /**
@@ -2158,12 +1711,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isPropertySignature(node: compiler.Node): node is compiler.PropertySignature {
-        switch (node.getKind()) {
-            case SyntaxKind.PropertySignature:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.PropertySignature;
     }
 
     /**
@@ -2219,12 +1767,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
-        switch (node.getKind()) {
-            case SyntaxKind.RegularExpressionLiteral:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.RegularExpressionLiteral;
     }
 
     /**
@@ -2232,12 +1775,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isReturnStatement(node: compiler.Node): node is compiler.ReturnStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ReturnStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ReturnStatement;
     }
 
     /**
@@ -2269,12 +1807,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isScopeableNode(node: compiler.Node): node is compiler.ScopeableNode & compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.Parameter:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.Parameter;
     }
 
     /**
@@ -2299,12 +1832,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSemicolonToken(node: compiler.Node): node is compiler.Node {
-        switch (node.getKind()) {
-            case SyntaxKind.SemicolonToken:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SemicolonToken;
     }
 
     /**
@@ -2312,12 +1840,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSetAccessorDeclaration(node: compiler.Node): node is compiler.SetAccessorDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.SetAccessor:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SetAccessor;
     }
 
     /**
@@ -2325,12 +1848,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isShorthandPropertyAssignment(node: compiler.Node): node is compiler.ShorthandPropertyAssignment {
-        switch (node.getKind()) {
-            case SyntaxKind.ShorthandPropertyAssignment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ShorthandPropertyAssignment;
     }
 
     /**
@@ -2362,12 +1880,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSourceFile(node: compiler.Node): node is compiler.SourceFile {
-        switch (node.getKind()) {
-            case SyntaxKind.SourceFile:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SourceFile;
     }
 
     /**
@@ -2375,12 +1888,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSpreadAssignment(node: compiler.Node): node is compiler.SpreadAssignment {
-        switch (node.getKind()) {
-            case SyntaxKind.SpreadAssignment:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SpreadAssignment;
     }
 
     /**
@@ -2388,12 +1896,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSpreadElement(node: compiler.Node): node is compiler.SpreadElement {
-        switch (node.getKind()) {
-            case SyntaxKind.SpreadElement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SpreadElement;
     }
 
     /**
@@ -2479,16 +1982,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a StringKeyword.
+     * @param node - Node to check.
+     */
+    static isStringKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.StringKeyword;
+    }
+
+    /**
      * Gets if the node is a StringLiteral.
      * @param node - Node to check.
      */
     static isStringLiteral(node: compiler.Node): node is compiler.StringLiteral {
-        switch (node.getKind()) {
-            case SyntaxKind.StringLiteral:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.StringLiteral;
     }
 
     /**
@@ -2496,12 +2002,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSuperExpression(node: compiler.Node): node is compiler.SuperExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.SuperKeyword:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SuperKeyword;
     }
 
     /**
@@ -2509,12 +2010,15 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSwitchStatement(node: compiler.Node): node is compiler.SwitchStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.SwitchStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SwitchStatement;
+    }
+
+    /**
+     * Gets if the node is a SymbolKeyword.
+     * @param node - Node to check.
+     */
+    static isSymbolKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.SymbolKeyword;
     }
 
     /**
@@ -2522,12 +2026,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isSyntaxList(node: compiler.Node): node is compiler.SyntaxList {
-        switch (node.getKind()) {
-            case SyntaxKind.SyntaxList:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.SyntaxList;
     }
 
     /**
@@ -2535,12 +2034,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTaggedTemplateExpression(node: compiler.Node): node is compiler.TaggedTemplateExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.TaggedTemplateExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TaggedTemplateExpression;
     }
 
     /**
@@ -2548,12 +2042,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTemplateExpression(node: compiler.Node): node is compiler.TemplateExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.TemplateExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TemplateExpression;
     }
 
     /**
@@ -2561,12 +2050,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTemplateHead(node: compiler.Node): node is compiler.TemplateHead {
-        switch (node.getKind()) {
-            case SyntaxKind.TemplateHead:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TemplateHead;
     }
 
     /**
@@ -2574,12 +2058,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTemplateMiddle(node: compiler.Node): node is compiler.TemplateMiddle {
-        switch (node.getKind()) {
-            case SyntaxKind.TemplateMiddle:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TemplateMiddle;
     }
 
     /**
@@ -2587,12 +2066,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTemplateSpan(node: compiler.Node): node is compiler.TemplateSpan {
-        switch (node.getKind()) {
-            case SyntaxKind.TemplateSpan:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TemplateSpan;
     }
 
     /**
@@ -2600,12 +2074,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTemplateTail(node: compiler.Node): node is compiler.TemplateTail {
-        switch (node.getKind()) {
-            case SyntaxKind.TemplateTail:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TemplateTail;
     }
 
     /**
@@ -2641,12 +2110,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isThisExpression(node: compiler.Node): node is compiler.ThisExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.ThisKeyword:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ThisKeyword;
     }
 
     /**
@@ -2654,12 +2118,15 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isThrowStatement(node: compiler.Node): node is compiler.ThrowStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.ThrowStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.ThrowStatement;
+    }
+
+    /**
+     * Gets if the node is a TrueKeyword.
+     * @param node - Node to check.
+     */
+    static isTrueKeyword(node: compiler.Node): node is compiler.BooleanLiteral {
+        return node.getKind() === SyntaxKind.TrueKeyword;
     }
 
     /**
@@ -2667,12 +2134,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTryStatement(node: compiler.Node): node is compiler.TryStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.TryStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TryStatement;
     }
 
     /**
@@ -2680,12 +2142,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTupleTypeNode(node: compiler.Node): node is compiler.TupleTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.TupleType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TupleType;
     }
 
     /**
@@ -2693,12 +2150,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeAliasDeclaration(node: compiler.Node): node is compiler.TypeAliasDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeAliasDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeAliasDeclaration;
     }
 
     /**
@@ -2720,12 +2172,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeAssertion(node: compiler.Node): node is compiler.TypeAssertion {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeAssertionExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeAssertionExpression;
     }
 
     /**
@@ -2764,12 +2211,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeLiteralNode(node: compiler.Node): node is compiler.TypeLiteralNode {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeLiteral:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeLiteral;
     }
 
     /**
@@ -2801,12 +2243,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeOfExpression(node: compiler.Node): node is compiler.TypeOfExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeOfExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeOfExpression;
     }
 
     /**
@@ -2814,12 +2251,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeParameterDeclaration(node: compiler.Node): node is compiler.TypeParameterDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeParameter:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeParameter;
     }
 
     /**
@@ -2853,12 +2285,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isTypeReferenceNode(node: compiler.Node): node is compiler.TypeReferenceNode {
-        switch (node.getKind()) {
-            case SyntaxKind.TypeReference:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.TypeReference;
     }
 
     /**
@@ -2943,16 +2370,19 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a UndefinedKeyword.
+     * @param node - Node to check.
+     */
+    static isUndefinedKeyword(node: compiler.Node): node is compiler.Expression {
+        return node.getKind() === SyntaxKind.UndefinedKeyword;
+    }
+
+    /**
      * Gets if the node is a UnionTypeNode.
      * @param node - Node to check.
      */
     static isUnionTypeNode(node: compiler.Node): node is compiler.UnionTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.UnionType:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.UnionType;
     }
 
     /**
@@ -3012,12 +2442,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isVariableDeclaration(node: compiler.Node): node is compiler.VariableDeclaration {
-        switch (node.getKind()) {
-            case SyntaxKind.VariableDeclaration:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.VariableDeclaration;
     }
 
     /**
@@ -3025,12 +2450,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isVariableDeclarationList(node: compiler.Node): node is compiler.VariableDeclarationList {
-        switch (node.getKind()) {
-            case SyntaxKind.VariableDeclarationList:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.VariableDeclarationList;
     }
 
     /**
@@ -3038,12 +2458,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isVariableStatement(node: compiler.Node): node is compiler.VariableStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.VariableStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.VariableStatement;
     }
 
     /**
@@ -3051,12 +2466,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isVoidExpression(node: compiler.Node): node is compiler.VoidExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.VoidKeyword:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.VoidKeyword;
     }
 
     /**
@@ -3064,12 +2474,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isWhileStatement(node: compiler.Node): node is compiler.WhileStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.WhileStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.WhileStatement;
     }
 
     /**
@@ -3077,12 +2482,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isWithStatement(node: compiler.Node): node is compiler.WithStatement {
-        switch (node.getKind()) {
-            case SyntaxKind.WithStatement:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.WithStatement;
     }
 
     /**
@@ -3090,11 +2490,6 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isYieldExpression(node: compiler.Node): node is compiler.YieldExpression {
-        switch (node.getKind()) {
-            case SyntaxKind.YieldExpression:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.YieldExpression;
     }
 }

@@ -41,14 +41,20 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         }],
         parameters: [{ name: "node", type: "compiler.Node" }],
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
-        bodyText: (writer: CodeBlockWriter) => writer.write("switch (node.getKind())").block(() => {
-                for (const syntaxKindName of method.syntaxKinds) {
+        bodyText: (writer: CodeBlockWriter) => {
+            if (method.syntaxKinds.length === 1) {
+                writer.writeLine(`return node.getKind() === SyntaxKind.${method.syntaxKinds[0]};`);
+                return;
+            }
+
+            writer.write("switch (node.getKind())").block(() => {
+                for (const syntaxKindName of method.syntaxKinds)
                     writer.writeLine(`case SyntaxKind.${syntaxKindName}:`);
-                }
                 writer.indent().write("return true;").newLine();
                 writer.writeLine("default:")
                     .indent().write("return false;").newLine();
-            })
+            });
+        }
     })));
 
     function getMethodInfos() {
@@ -62,11 +68,12 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
             fillMixinable(node, node);
         }
 
-        for (const nodeToWrapperMapping of nodeToWrapperMappings.filter(v => v.wrapperName === "Node")) {
+        const allowedBaseNames = ["Node", "Expression", "BooleanLiteral"];
+        for (const nodeToWrapperMapping of nodeToWrapperMappings.filter(v => allowedBaseNames.indexOf(v.wrapperName) >= 0)) {
             for (const syntaxKindName of nodeToWrapperMapping.syntaxKindNames) {
                 methodInfos.set(syntaxKindName, {
                     name: syntaxKindName,
-                    wrapperName: "Node",
+                    wrapperName: nodeToWrapperMapping.wrapperName,
                     syntaxKinds: [syntaxKindName],
                     isMixin: false
                 });
