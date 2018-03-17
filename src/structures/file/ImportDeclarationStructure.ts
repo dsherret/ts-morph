@@ -3,6 +3,6 @@
 export interface ImportDeclarationStructure {
     defaultImport?: string;
     namespaceImport?: string;
-    namedImports?: ImportSpecifierStructure[];
+    namedImports?: (ImportSpecifierStructure | string)[];
     moduleSpecifier: string;
 }

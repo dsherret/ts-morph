@@ -395,14 +395,14 @@ describe(nameof(SourceFile), () => {
                 { moduleSpecifier: "./test" },
                 { defaultImport: "identifier", moduleSpecifier: "./test" },
                 { defaultImport: "identifier", namespaceImport: "name", moduleSpecifier: "./test" },
-                { defaultImport: "identifier", namedImports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
-                { namedImports: [{ name: "name" }], moduleSpecifier: "./test" },
+                { defaultImport: "identifier", namedImports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedImports: ["name"], moduleSpecifier: "./test" },
                 { namespaceImport: "name", moduleSpecifier: "./test" }
             ], [
                 `import "./test";`,
                 `import identifier from "./test";`,
                 `import identifier, * as name from "./test";`,
-                `import identifier, {name, name as alias} from "./test";`,
+                `import identifier, {name1, name, name as alias} from "./test";`,
                 `import {name} from "./test";`,
                 `import * as name from "./test";`
             ].join("\n") + "\n");
@@ -412,7 +412,7 @@ describe(nameof(SourceFile), () => {
             const {sourceFile} = getInfoFromText("");
 
             expect(() => {
-                sourceFile.insertImportDeclarations(0, [{ namespaceImport: "name", namedImports: [{ name: "name" }], moduleSpecifier: "file" }]);
+                sourceFile.insertImportDeclarations(0, [{ namespaceImport: "name", namedImports: ["name"], moduleSpecifier: "file" }]);
             }).to.throw();
         });
 
@@ -523,12 +523,12 @@ describe(nameof(SourceFile), () => {
         it("should insert the different kinds of exports", () => {
             doTest("", 0, [
                 { moduleSpecifier: "./test" },
-                { namedExports: [{ name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
-                { namedExports: [{ name: "name" }] },
+                { namedExports: ["name1", { name: "name" }, { name: "name", alias: "alias" }], moduleSpecifier: "./test" },
+                { namedExports: ["name"] },
                 { }
             ], [
                 `export * from "./test";`,
-                `export {name, name as alias} from "./test";`,
+                `export {name1, name, name as alias} from "./test";`,
                 `export {name};`,
                 `export {};`
             ].join("\n") + "\n");

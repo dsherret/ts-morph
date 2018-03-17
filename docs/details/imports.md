@@ -132,6 +132,8 @@ const namedImport = importDeclaration.addNamedImport({
     name: "MyClass",
     alias: "MyAliasName" // alias is optional
 });
+// or
+importDeclaration.addNamedImports("MyClass");
 ```
 
 Removing one named import:

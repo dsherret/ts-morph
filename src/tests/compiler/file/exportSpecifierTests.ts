@@ -37,7 +37,7 @@ describe(nameof(ExportSpecifier), () => {
                 classes: [{ name: "MyClass", isExported: true }]
             });
             const exportsFile = project.createSourceFile("Exports.ts", {
-                exports: [{ namedExports: [{ name: "MyClass" }], moduleSpecifier: "./MyClass" }]
+                exports: [{ namedExports: ["MyClass"], moduleSpecifier: "./MyClass" }]
             });
             const mainFile = project.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setName("MyNewName");
@@ -59,7 +59,7 @@ describe(nameof(ExportSpecifier), () => {
             const project = getProject();
             const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
-                exports: [{ namedExports: [{ name: "MyClass" }]}]
+                exports: [{ namedExports: ["MyClass"]}]
             });
             myClassFile.getExportDeclarations()[0].getNamedExports()[0].setName("Identifier");
             expect(myClassFile.getFullText()).to.equal(`class MyClass {\n}\n\nexport {Identifier};\n`);
@@ -71,7 +71,7 @@ describe(nameof(ExportSpecifier), () => {
             const project = getProject();
             const myClassFile = project.createSourceFile("MyClass.ts", {
                 classes: [{ name: "MyClass" }],
-                exports: [{ namedExports: [{ name: "MyClass" }]}]
+                exports: [{ namedExports: ["MyClass"]}]
             });
             myClassFile.getExportDeclarations()[0].getNamedExports()[0].renameName("Identifier");
             expect(myClassFile.getFullText()).to.equal(`class Identifier {\n}\n\nexport {Identifier};\n`);
@@ -122,7 +122,7 @@ describe(nameof(ExportSpecifier), () => {
                 classes: [{ name: "MyClass", isExported: true }]
             });
             const exportsFile = project.createSourceFile("Exports.ts", {
-                exports: [{ namedExports: [{ name: "MyClass" }], moduleSpecifier: "./MyClass" }]
+                exports: [{ namedExports: ["MyClass"], moduleSpecifier: "./MyClass" }]
             });
             const mainFile = project.createSourceFile("Main.ts", `import {MyClass} from "./Exports";\n\nconst t = MyClass;\n`);
             exportsFile.getExportDeclarations()[0].getNamedExports()[0].setAlias("MyNewAlias");

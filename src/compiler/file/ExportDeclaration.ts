@@ -113,41 +113,60 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     }
 
     /**
-     * Add a named export.
+     * Adds a named export.
      * @param structure - Structure that represents the named export.
      */
-    addNamedExport(structure: ExportSpecifierStructure) {
-        return this.addNamedExports([structure])[0];
-    }
-
+    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
     /**
-     * Add named exports.
-     * @param structures - Structures that represent the named exports.
+     * Adds a named export.
+     * @param name - Name of the named export.
      */
-    addNamedExports(structures: ExportSpecifierStructure[]) {
-        return this.insertNamedExports(this.getNamedExports().length, structures);
+    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
+    /** @internal */
+    addNamedExport(structureOrName: ExportSpecifierStructure | string): ExportSpecifier;
+    addNamedExport(structureOrName: ExportSpecifierStructure | string) {
+        return this.addNamedExports([structureOrName])[0];
     }
 
     /**
-     * Insert a named export.
+     * Adds named exports.
+     * @param structuresOrNames - Structures or names that represent the named exports.
+     */
+    addNamedExports(structuresOrNames: (ExportSpecifierStructure | string)[]) {
+        return this.insertNamedExports(this.getNamedExports().length, structuresOrNames);
+    }
+
+    /**
+     * Inserts a named export.
      * @param index - Index to insert at.
      * @param structure - Structure that represents the named export.
      */
-    insertNamedExport(index: number, structure: ExportSpecifierStructure) {
-        return this.insertNamedExports(index, [structure])[0];
+    insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
+    /**
+     * Inserts a named export.
+     * @param index - Index to insert at.
+     * @param name - Name of the named export.
+     */
+    insertNamedExport(index: number, name: string): ExportSpecifier;
+    /** @internal */
+    insertNamedExport(index: number, structureOrName: (ExportSpecifierStructure | string)): ExportSpecifier;
+    insertNamedExport(index: number, structureOrName: (ExportSpecifierStructure | string)) {
+        return this.insertNamedExports(index, [structureOrName])[0];
     }
 
     /**
      * Inserts named exports into the export declaration.
      * @param index - Index to insert at.
-     * @param structures - Structures that represent the named exports.
+     * @param structuresOrNames - Structures or names that represent the named exports.
      */
-    insertNamedExports(index: number, structures: ExportSpecifierStructure[]) {
-        if (ArrayUtils.isNullOrEmpty(structures))
+    insertNamedExports(index: number, structuresOrNames: (ExportSpecifierStructure | string)[]) {
+        if (ArrayUtils.isNullOrEmpty(structuresOrNames))
                 return [];
 
         const namedExports = this.getNamedExports();
-        const codes = structures.map(s => {
+        const codes = structuresOrNames.map(s => {
+            if (typeof s === "string")
+                return s;
             let text = s.name;
             if (s.alias != null && s.alias.length > 0)
                 text += ` as ${s.alias}`;
@@ -175,7 +194,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
             });
         }
 
-        return getNodesToReturn(this.getNamedExports(), index, structures.length);
+        return getNodesToReturn(this.getNamedExports(), index, structuresOrNames.length);
     }
 
     /**

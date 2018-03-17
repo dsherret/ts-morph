@@ -1,5 +1,5 @@
 ﻿import * as errors from "./../../errors";
-import {ImportDeclarationStructure} from "./../../structures";
+import {ImportDeclarationStructure, ImportSpecifierStructure} from "./../../structures";
 import {StructureToText} from "./../StructureToText";
 
 export class ImportDeclarationStructureToText extends StructureToText<ImportDeclarationStructure> {
@@ -19,20 +19,27 @@ export class ImportDeclarationStructureToText extends StructureToText<ImportDecl
         if (structure.namespaceImport != null)
             this.writer.write(` * as ${structure.namespaceImport}`);
         // named imports
-        if (structure.namedImports != null && structure.namedImports.length > 0) {
-            this.writer.write(" {");
-            for (let i = 0; i < structure.namedImports.length; i++) {
-                const namedImport = structure.namedImports[i];
-                this.writer.conditionalWrite(i > 0, ", ");
-                this.writer.write(namedImport.name);
-                this.writer.conditionalWrite(namedImport.alias != null, ` as ${namedImport.alias}`);
-            }
-            this.writer.write("}");
-        }
+        if (structure.namedImports != null && structure.namedImports.length > 0)
+            this.writeNamedImports(structure.namedImports);
         // from keyword
         this.writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
         this.writer.write(" ");
         this.writer.quote(structure.moduleSpecifier);
         this.writer.write(";");
+    }
+
+    private writeNamedImports(namedImports: (ImportSpecifierStructure | string)[]) {
+        this.writer.write(" {");
+        for (let i = 0; i < namedImports.length; i++) {
+            const namedImport = namedImports[i];
+            this.writer.conditionalWrite(i > 0, ", ");
+            if (typeof namedImport === "string")
+                this.writer.write(namedImport);
+            else {
+                this.writer.write(namedImport.name);
+                this.writer.conditionalWrite(namedImport.alias != null, ` as ${namedImport.alias}`);
+            }
+        }
+        this.writer.write("}");
     }
 }

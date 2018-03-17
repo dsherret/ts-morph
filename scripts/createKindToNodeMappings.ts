@@ -24,7 +24,7 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
         moduleSpecifier: kindToNodeMappingsFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/compiler/index.ts"))
     });
     kindToNodeMappingsFile.addImportDeclaration({
-        namedImports: [{ name: "SyntaxKind" }],
+        namedImports: ["SyntaxKind"],
         moduleSpecifier: kindToNodeMappingsFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/typescript/index.ts"))
     });
 

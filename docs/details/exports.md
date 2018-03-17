@@ -130,6 +130,8 @@ const namedExport = exportDeclaration.addNamedExport({
     name: "MyClass",
     alias: "MyAliasName" // alias is optional
 });
+// or
+exportDeclaration.addNamedExport("MyClass");
 ```
 
 Removing one named export:

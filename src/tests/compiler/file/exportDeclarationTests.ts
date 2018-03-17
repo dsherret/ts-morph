@@ -216,7 +216,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
-        function doTest(text: string, index: number, structures: ExportSpecifierStructure[], expected: string) {
+        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
             firstChild.insertNamedExports(index, structures);
             expect(sourceFile.getText()).to.equal(expected);
@@ -227,11 +227,11 @@ describe(nameof(ExportDeclaration), () => {
         });
 
         it("should insert named exports at the start", () => {
-            doTest(`export {name3} from "./test";`, 0, [{ name: "name1" }, { name: "name2" }], `export {name1, name2, name3} from "./test";`);
+            doTest(`export {name3} from "./test";`, 0, [{ name: "name1" }, "name2"], `export {name1, name2, name3} from "./test";`);
         });
 
         it("should insert named exports at the end", () => {
-            doTest(`export {name1} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `export {name1, name2, name3} from "./test";`);
+            doTest(`export {name1} from "./test";`, 1, ["name2", { name: "name3" }], `export {name1, name2, name3} from "./test";`);
         });
 
         it("should insert named exports in the middle", () => {
@@ -240,38 +240,46 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExport), () => {
-        function doTest(text: string, index: number, structure: ExportSpecifierStructure, expected: string) {
+        function doTest(text: string, index: number, structureOrName: (ExportSpecifierStructure | string), expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
-            firstChild.insertNamedExport(index, structure);
+            firstChild.insertNamedExport(index, structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should insert at the specified index", () => {
             doTest(`export {name1, name3} from "./test";`, 1, { name: "name2" }, `export {name1, name2, name3} from "./test";`);
         });
+
+        it("should insert at the specified index as a string", () => {
+            doTest(`export {name1, name3} from "./test";`, 1, "name2", `export {name1, name2, name3} from "./test";`);
+        });
     });
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExport), () => {
-        function doTest(text: string, structure: ExportSpecifierStructure, expected: string) {
+        function doTest(text: string, structureOrName: (ExportSpecifierStructure | string), expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
-            firstChild.addNamedExport(structure);
+            firstChild.addNamedExport(structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should add at the end", () => {
             doTest(`export {name1, name2} from "./test";`, { name: "name3" }, `export {name1, name2, name3} from "./test";`);
         });
+
+        it("should add at the end as a string", () => {
+            doTest(`export {name1, name2} from "./test";`, "name3", `export {name1, name2, name3} from "./test";`);
+        });
     });
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExports), () => {
-        function doTest(text: string, structures: ExportSpecifierStructure[], expected: string) {
+        function doTest(text: string, structures: (ExportSpecifierStructure | string)[], expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
             firstChild.addNamedExports(structures);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should add named exports at the end", () => {
-            doTest(`export {name1} from "./test";`, [{ name: "name2" }, { name: "name3" }], `export {name1, name2, name3} from "./test";`);
+            doTest(`export {name1} from "./test";`, [{ name: "name2" }, "name3"], `export {name1, name2, name3} from "./test";`);
         });
     });
 

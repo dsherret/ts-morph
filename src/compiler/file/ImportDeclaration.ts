@@ -165,41 +165,60 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     }
 
     /**
-     * Add a named import.
+     * Adds a named import.
      * @param structure - Structure that represents the named import.
      */
-    addNamedImport(structure: ImportSpecifierStructure) {
-        return this.addNamedImports([structure])[0];
-    }
-
+    addNamedImport(structure: ImportSpecifierStructure): ImportSpecifier;
     /**
-     * Add named imports.
-     * @param structures - Structures that represent the named imports.
+     * Adds a named import.
+     * @param name - Name of the named import.
      */
-    addNamedImports(structures: ImportSpecifierStructure[]) {
-        return this.insertNamedImports(this.getNamedImports().length, structures);
+    addNamedImport(name: string): ImportSpecifier;
+    /** @internal */
+    addNamedImport(structureOrName: ImportSpecifierStructure | string): ImportSpecifier;
+    addNamedImport(structureOrName: ImportSpecifierStructure | string) {
+        return this.addNamedImports([structureOrName])[0];
     }
 
     /**
-     * Insert a named import.
+     * Adds named imports.
+     * @param structuresOrNames - Structures or names that represent the named imports.
+     */
+    addNamedImports(structuresOrNames: (ImportSpecifierStructure | string)[]) {
+        return this.insertNamedImports(this.getNamedImports().length, structuresOrNames);
+    }
+
+    /**
+     * Inserts a named import.
      * @param index - Index to insert at.
      * @param structure - Structure that represents the named import.
      */
-    insertNamedImport(index: number, structure: ImportSpecifierStructure) {
-        return this.insertNamedImports(index, [structure])[0];
+    insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
+    /**
+     * Inserts a named import.
+     * @param index - Index to insert at.
+     * @param name - Name of the named import.
+     */
+    insertNamedImport(index: number, name: string): ImportSpecifier;
+    /** @internal */
+    insertNamedImport(index: number, structureOrName: ImportSpecifierStructure | string): ImportSpecifier;
+    insertNamedImport(index: number, structureOrName: ImportSpecifierStructure | string) {
+        return this.insertNamedImports(index, [structureOrName])[0];
     }
 
     /**
      * Inserts named imports into the import declaration.
      * @param index - Index to insert at.
-     * @param structures - Structures that represent the named imports.
+     * @param structuresOrNames - Structures or names that represent the named imports.
      */
-    insertNamedImports(index: number, structures: ImportSpecifierStructure[]) {
-        if (ArrayUtils.isNullOrEmpty(structures))
+    insertNamedImports(index: number, structuresOrNames: (ImportSpecifierStructure | string)[]) {
+        if (ArrayUtils.isNullOrEmpty(structuresOrNames))
                 return [];
 
         const namedImports = this.getNamedImports();
-        const codes = structures.map(s => {
+        const codes = structuresOrNames.map(s => {
+            if (typeof s === "string")
+                return s;
             let text = s.name;
             if (s.alias != null && s.alias.length > 0)
                 text += ` as ${s.alias}`;
@@ -236,7 +255,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             });
         }
 
-        return getNodesToReturn(this.getNamedImports(), index, structures.length);
+        return getNodesToReturn(this.getNamedImports(), index, structuresOrNames.length);
     }
 
     /**
