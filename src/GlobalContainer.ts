@@ -5,7 +5,7 @@ import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
 import {FileSystemWrapper} from "./fileSystem";
-import {Logger, ConsoleLogger} from "./utils";
+import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";
 
 /**
  * @internal
@@ -22,6 +22,7 @@ export interface GlobalContainerOptions {
 export class GlobalContainer {
     private readonly _manipulationSettings = new ManipulationSettingsContainer();
     private readonly _compilerFactory: CompilerFactory;
+    private readonly _lazyReferenceCoordinator: LazyReferenceCoordinator;
     private readonly _languageService: LanguageService | undefined;
     private readonly _fileSystemWrapper: FileSystemWrapper;
     private readonly _compilerOptions: CompilerOptions;
@@ -32,6 +33,7 @@ export class GlobalContainer {
         this._fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions = compilerOptions;
         this._compilerFactory = new CompilerFactory(this);
+        this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
 
         if (opts.typeChecker != null) {
@@ -96,6 +98,11 @@ export class GlobalContainer {
      */
     get logger() {
         return this._logger;
+    }
+
+    /** Gets the lazy reference coordinator. */
+    get lazyReferenceCoordinator() {
+        return this._lazyReferenceCoordinator;
     }
 
     /**

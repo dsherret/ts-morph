@@ -1,5 +1,5 @@
 import {ts, SyntaxKind} from "../../typescript";
-import {TypeGuards, StringUtils} from "../../utils";
+import {TypeGuards, ModuleUtils} from "../../utils";
 import * as errors from "../../errors";
 import {Node} from "../common";
 import {Expression} from "../expression";
@@ -34,9 +34,7 @@ export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
         const expression = this.getExpression();
         if (expression == null || !TypeGuards.isStringLiteral(expression))
             return false;
-        const text = expression.getLiteralText();
-        return StringUtils.startsWith(text, "./")
-            || StringUtils.startsWith(text, "../");
+        return ModuleUtils.isModuleSpecifierRelative(expression.getLiteralText());
     }
 
     /**
@@ -49,9 +47,6 @@ export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
         const symbol = expression.getSymbol();
         if (symbol == null)
             return undefined;
-        const declarations = symbol.getDeclarations();
-        if (declarations.length === 0 || declarations[0].getKind() !== SyntaxKind.SourceFile)
-            return undefined;
-        return declarations[0] as SourceFile;
+        return ModuleUtils.getReferencedSourceFileFromSymbol(symbol);
     }
 }

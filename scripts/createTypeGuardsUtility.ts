@@ -80,7 +80,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
             }
         }
 
-        return ArrayUtils.sortByProperty(ArrayUtils.from(methodInfos.getValues()), info => info.name);
+        return ArrayUtils.sortByProperty(methodInfos.getValuesAsArray(), info => info.name);
 
         function fillBase(node: WrappedNode, nodeBase: WrappedNode) {
             if (nodeBase.getName() === "Node")

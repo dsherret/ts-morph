@@ -23,11 +23,11 @@ export class DirectoryCache {
     }
 
     getOrphans() {
-        return ArrayUtils.from(this.orphanDirs.getValues());
+        return this.orphanDirs.getValuesAsArray();
     }
 
     getAll() {
-        return ArrayUtils.from(this.directoriesByPath.getValues());
+        return this.directoriesByPath.getValuesAsArray();
     }
 
     *getAllByDepth() {

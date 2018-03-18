@@ -10,3 +10,4 @@ export {getCompilerOptionsFromTsConfig, CompilerOptionsFromTsConfigOptions, Comp
 export {printNode, PrintNodeOptions} from "./utils/printNode";
 export {Constructor} from "./Constructor";
 export {TypeGuards} from "./utils/TypeGuards";
+export {SourceFileReferencingNodes} from "./utils/references/SourceFileReferenceContainer";

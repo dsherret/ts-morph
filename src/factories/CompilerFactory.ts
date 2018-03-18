@@ -33,8 +33,8 @@ export class CompilerFactory {
     private readonly typeParameterCache = new WeakCache<ts.TypeParameter, TypeParameter>();
     private readonly nodeCache = new ForgetfulNodeCache();
     private readonly directoryCache: DirectoryCache;
-    private readonly sourceFileAddedEventContainer = new EventContainer();
-    private readonly sourceFileRemovedEventContainer = new EventContainer();
+    private readonly sourceFileAddedEventContainer = new EventContainer<SourceFile>();
+    private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
     /**
      * Initializes a new instance of CompilerFactory.
@@ -63,7 +63,7 @@ export class CompilerFactory {
      * Occurs when a source file is added to the cache.
      * @param subscription - Subscripton.
      */
-    onSourceFileAdded(subscription: () => void) {
+    onSourceFileAdded(subscription: (sourceFile: SourceFile) => void) {
         this.sourceFileAddedEventContainer.subscribe(subscription);
     }
 
@@ -71,7 +71,7 @@ export class CompilerFactory {
      * Occurs when a source file is removed from the cache.
      * @param subscription - Subscripton.
      */
-    onSourceFileRemoved(subscription: () => void) {
+    onSourceFileRemoved(subscription: (sourceFile: SourceFile) => void) {
         this.sourceFileRemovedEventContainer.subscribe(subscription);
     }
 
@@ -274,7 +274,7 @@ export class CompilerFactory {
         this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
 
         // fire the event
-        this.sourceFileAddedEventContainer.fire(undefined);
+        this.sourceFileAddedEventContainer.fire(sourceFile);
     }
 
     /**
@@ -480,8 +480,10 @@ export class CompilerFactory {
         if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
             this.directoryCache.get(FileUtils.getDirPath(sourceFile.fileName))!._removeSourceFile(sourceFile.fileName);
+            const tsSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
-            this.sourceFileRemovedEventContainer.fire(undefined);
+            if (tsSourceFile != null)
+                this.sourceFileRemovedEventContainer.fire(tsSourceFile);
         }
     }
 

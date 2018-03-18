@@ -1,4 +1,5 @@
 ﻿import {Dictionary, Es5Map} from "./Es5Map";
+import {ArrayUtils} from "./ArrayUtils";
 
 export class KeyValueCache<T, U> {
     private readonly cacheItems: Dictionary<T, U>;
@@ -16,6 +17,10 @@ export class KeyValueCache<T, U> {
 
     getValues() {
         return this.cacheItems.values();
+    }
+
+    getValuesAsArray() {
+        return ArrayUtils.from(this.getValues());
     }
 
     getKeys() {

@@ -8,7 +8,8 @@ import {getPreviousMatchingPos, getNextMatchingPos} from "./../../manipulation/t
 import {Constructor} from "./../../Constructor";
 import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "./../../structures";
 import {ImportDeclarationStructureToText, ExportDeclarationStructureToText, ExportAssignmentStructureToText} from "./../../structureToTexts";
-import {ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet} from "./../../utils";
+import {ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet, EventContainer, SourceFileReferenceContainer,
+    SourceFileReferencingNodes, ModuleUtils} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {TextInsertableNode} from "./../base";
 import {Node, Symbol, Identifier} from "./../common";
@@ -33,6 +34,10 @@ export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInse
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;
+    /** @internal */
+    private readonly _modifiedEventContainer = new EventContainer();
+    /** @internal */
+    readonly _referenceContainer = new SourceFileReferenceContainer(this);
 
     /**
      * Initializes a new instance.
@@ -74,6 +79,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         super.replaceCompilerNodeFromFactory(compilerNode);
         this.global.resetProgram(); // make sure the program has the latest source file
         this._isSaved = false;
+        this._modifiedEventContainer.fire(undefined);
     }
 
     /**
@@ -142,15 +148,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (filePath === this.getFilePath())
             return this;
 
-        const fileImportAndExportsWithSourceFiles = getFileImportAndExportsWithSourceFiles(this, filePath);
         const copiedSourceFile = getCopiedSourceFile(this);
 
-        // update the declarations in this list to point to the declarations in the copied source file
-        for (const item of fileImportAndExportsWithSourceFiles)
-            item.declaration = copiedSourceFile.getChildSyntaxListOrThrow().getChildAtPos(item.declaration.getStart())! as (ImportDeclaration | ExportDeclaration);
-        // update the import & export declarations in the copied file
-        for (const item of fileImportAndExportsWithSourceFiles)
-            item.declaration.setModuleSpecifier(item.sourceFile);
+        if (copiedSourceFile.getDirectoryPath() !== this.getDirectoryPath())
+            updateReferences(this);
 
         return copiedSourceFile;
 
@@ -166,6 +167,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                 else
                     throw err;
             }
+        }
+
+        function updateReferences(currentFile: SourceFile) {
+            const nodeReferences = ArrayUtils.from(currentFile._referenceContainer.getNodesReferencingOtherSourceFilesEntries());
+
+            // update the nodes in this list to point to the nodes in the copied source file
+            for (const reference of nodeReferences)
+                reference[0] = copiedSourceFile.getChildSyntaxListOrThrow().getChildAtPos(reference[0].getStart())! as SourceFileReferencingNodes;
+            // update the import & export declarations in the copied file
+            updateNodeReferences(nodeReferences);
+
+            // the current files references won't have changed after the modifications
+            currentFile.global.lazyReferenceCoordinator.clearDityForSourceFile(currentFile);
         }
     }
 
@@ -205,14 +219,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
         const {overwrite = false} = options;
         const oldFilePath = this.getFilePath();
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
+        const oldDirPath = this.getDirectoryPath();
+        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, oldDirPath);
 
         if (filePath === oldFilePath)
             return this;
 
-        // todo: first check to see if this has any exports or imports (add isExternalModule()?)
-        const fileImportAndExportsWithSourceFiles = getFileImportAndExportsWithSourceFiles(this, filePath);
-        const referencingImportsAndExports = this.getReferencingImportAndExportDeclarations();
+        const nodeReferences = ArrayUtils.from(this._referenceContainer.getNodesReferencingOtherSourceFilesEntries());
+        const referencingNodes = ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
 
         if (overwrite) {
             // remove the past file if it exists
@@ -229,14 +243,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
         this.global.fileSystemWrapper.queueDelete(oldFilePath);
 
-        // update the import & export declarations in this file
-        for (const item of fileImportAndExportsWithSourceFiles)
-            item.declaration.setModuleSpecifier(item.sourceFile);
-        // update the import & export declarations in other files
-        for (const importAndExport of referencingImportsAndExports)
-            importAndExport.setModuleSpecifier(this);
+        updateReferences(this);
 
         return this;
+
+        function updateReferences(currentSourceFile: SourceFile) {
+            // update the import & export declarations in this file if the directory hasn't changed
+            if (oldDirPath !== currentSourceFile.getDirectoryPath())
+                updateNodeReferences(nodeReferences);
+            // update the import & export declarations in other files
+            updateNodeReferences(referencingNodes.map(node => ([node, currentSourceFile]) as [SourceFileReferencingNodes, SourceFile]));
+
+            // everything should be up to date, so ignore any modifications above
+            currentSourceFile.global.lazyReferenceCoordinator.clearDirtySourceFiles();
+        }
     }
 
     /**
@@ -342,52 +362,34 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Get any source files that reference this source file in an import or export declaration.
+     * Get any source files that reference this source file.
      */
     getReferencingSourceFiles() {
-        const sourceFiles = createHashSet<SourceFile>();
-
-        for (const importOrExport of this.getReferencingImportAndExportDeclarations()) {
-            if (sourceFiles.has(importOrExport.sourceFile))
-                continue;
-            sourceFiles.add(importOrExport.sourceFile);
-        }
-
-        return ArrayUtils.from(sourceFiles.values());
+        return ArrayUtils.from(this._referenceContainer.getDependentSourceFiles());
     }
 
     /**
      * Gets the import and exports in other source files that reference this source file.
      */
     getReferencingImportAndExportDeclarations() {
-        // todo: see if there's a better way of doing this
-        const baseNames = getBaseNames(this);
-        const result: (ExportDeclaration | ImportDeclaration)[] = [];
-        for (const sourceFile of this.global.compilerFactory.getSourceFilesByDirectoryDepth()) {
-            if (sourceFile === this)
-                continue;
+        console.warn(`${nameof(this.getReferencingImportAndExportDeclarations)} will be replaced with ${nameof(this.getReferencingNodesInOtherSourceFiles)} in v10.`);
 
-            const importAndExports = getFileImportAndExportDeclarations(sourceFile);
+        const nodes = this._referenceContainer.getReferencingNodesInOtherSourceFiles();
+        return ArrayUtils.from(filterNodes());
 
-            for (const importOrExport of importAndExports) {
-                const moduleSpecifier = importOrExport.getModuleSpecifier();
-                const referencesSourceFile = moduleSpecifier != null
-                    && baseNames.some(baseName => FileUtils.pathEndsWith(moduleSpecifier, baseName)) // for better performance since getModuleSpecifierSourceFile is slow
-                    && importOrExport.getModuleSpecifierSourceFile() === this;
-
-                if (referencesSourceFile)
-                    result.push(importOrExport);
+        function* filterNodes() {
+            for (const node of nodes) {
+                if (TypeGuards.isImportDeclaration(node) || TypeGuards.isExportDeclaration(node))
+                    yield node;
             }
         }
+    }
 
-        return result;
-
-        function getBaseNames(sourceFile: SourceFile) {
-            const baseName = sourceFile.getBaseName().replace(/(\.d\.ts|\.ts|\.js)$/i, "");
-            if (baseName === "index")
-                return [baseName, sourceFile.getDirectory().getBaseName()];
-            return [baseName];
-        }
+    /**
+     * Gets the import and exports in other source files that reference this source file.
+     */
+    getReferencingNodesInOtherSourceFiles() {
+        return ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
     }
 
     /**
@@ -888,6 +890,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
     }
 
+    /**
+     * Subscribe to when the source file is modified.
+     * @param subscription - Subscription.
+     * @param subscribe - Optional and defaults to true. Use an explicit false to unsubscribe.
+     */
+    onModified(subscription: () => void, subscribe = true) {
+        if (subscribe)
+            this._modifiedEventContainer.subscribe(subscription);
+        else
+            this._modifiedEventContainer.unsubscribe(subscription);
+    }
+
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
         if (fileReadResult === false) {
             this.forget();
@@ -904,22 +918,24 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 }
 
-function getFileImportAndExportsWithSourceFiles(sourceFile: SourceFile, changingFilePath: string) {
-    const isChangingDirectory = FileUtils.getDirPath(changingFilePath) !== sourceFile.getDirectoryPath();
-    if (!isChangingDirectory)
-        return [];
-
-    return getFileImportAndExportDeclarations(sourceFile)
-        .filter(declaration => declaration.isModuleSpecifierRelative())
-        .map(declaration => ({
-            declaration,
-            sourceFile: declaration.getModuleSpecifierSourceFile()!
-        })).filter(item => item.sourceFile != null);
-}
-
-function getFileImportAndExportDeclarations(sourceFile: SourceFile) {
-    // efficient way of getting them
-    const compilerImportsAndExports = sourceFile.getChildSyntaxListOrThrow().getCompilerChildren()
-        .filter(c => c.kind === SyntaxKind.ImportDeclaration || c.kind === SyntaxKind.ExportDeclaration);
-    return compilerImportsAndExports.map(c => sourceFile.getNodeFromCompilerNode(c) as (ExportDeclaration | ImportDeclaration));
+function updateNodeReferences(nodeReferences: [SourceFileReferencingNodes, SourceFile][]) {
+    for (const [node, sourceFile] of nodeReferences) {
+        if (TypeGuards.isImportDeclaration(node) || TypeGuards.isExportDeclaration(node)) {
+            if (node.isModuleSpecifierRelative())
+                node.setModuleSpecifier(sourceFile);
+        }
+        else if (TypeGuards.isImportEqualsDeclaration(node)) {
+            if (node.isExternalModuleReferenceRelative())
+                node.setExternalModuleReference(sourceFile);
+        }
+        else if (TypeGuards.isCallExpression(node)) {
+            const firstArg = node.getArguments()[0];
+            if (TypeGuards.isStringLiteral(firstArg) && ModuleUtils.isModuleSpecifierRelative(firstArg.getLiteralValue()))
+                firstArg.setLiteralValue(firstArg.sourceFile.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(sourceFile));
+        }
+        else {
+            const expectNever: never = node;
+            // do nothing
+        }
+    }
 }
