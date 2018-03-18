@@ -39,6 +39,22 @@ export class StringUtils {
 
         return count + 1; // convert count to line number
     }
+
+    /**
+     * Escapes all the occurences of the char in the string.
+     */
+    static escapeChar(str: string, char: string) {
+        if (char.length !== 1)
+            throw new errors.InvalidOperationError(`Specified char must be one character long.`);
+
+        let result = "";
+        for (let i = 0; i < str.length; i++) {
+            if (str[i] === char)
+                result += "\\";
+            result += str[i];
+        }
+        return result;
+    }
 }
 
 export class Es5StringUtils {

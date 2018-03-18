@@ -19,6 +19,30 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
+    describe(nameof<StringLiteral>(n => n.setLiteralValue), () => {
+        function doTest(text: string, newValue: string, expectedText: string, expectedLiteralText?: string) {
+            const literal = getStringLiteral(text);
+            const sourceFile = literal.sourceFile;
+            literal.setLiteralValue(newValue);
+            expect(literal.wasForgotten()).to.be.false;
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            if (expectedLiteralText != null)
+                expect(literal.getText()).to.equal(expectedLiteralText);
+        }
+
+        it("should set the literal value and leave the quotes as-is", () => {
+            doTest("const t = 'str';", "new", "const t = 'new';", "'new'");
+        });
+
+        it("should set the literal value and escape any quote characters of the same kind", () => {
+            doTest("const t = 'str';", `"test'this'out"`, `const t = '"test\\'this\\'out"';`);
+        });
+
+        it("should escape any new lines", () => {
+            doTest(`const t = "str";`, `1\n'2'\r\n"3"`, `const t = "1\\\n'2'\\\r\n\\"3\\"";`);
+        });
+    });
+
     describe(nameof<StringLiteral>(n => n.isTerminated), () => {
         function doTest(text: string, expectedValue: boolean) {
             const literal = getStringLiteral(text);

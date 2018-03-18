@@ -42,6 +42,28 @@ describe(nameof(StringUtils), () => {
             expect(StringUtils.getLineNumberFromPos(str, pos)).to.equal(6);
         });
     });
+
+    describe(nameof(StringUtils.escapeChar), () => {
+        function doTest(input: string, char: string, expected: string) {
+            expect(StringUtils.escapeChar(input, char)).to.equal(expected);
+        }
+
+        it("should throw when specifying a char length > 1", () => {
+            expect(() => StringUtils.escapeChar("", "ab")).to.throw();
+        });
+
+        it("should throw when specifying a char length < 1", () => {
+            expect(() => StringUtils.escapeChar("", "")).to.throw();
+        });
+
+        it("should escape the single quotes when specified", () => {
+            doTest(`'testing "this" out'`, `'`, `\\'testing "this" out\\'`);
+        });
+
+        it("should escape regardless of if the character is already escaped", () => {
+            doTest(`"testing \\"this\\" out"`, `"`, `\\"testing \\\\"this\\\\" out\\"`);
+        });
+    });
 });
 
 describe(nameof(Es5StringUtils), () => {
