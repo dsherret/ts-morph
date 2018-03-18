@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.4.0"></a>
+# [9.4.0](https://github.com/dsherret/ts-simple-ast/compare/9.3.0...9.4.0) (2018-03-18)
+
+
+### Features
+
+* [#276](https://github.com/dsherret/ts-simple-ast/issues/276) - Improvements to moving source files. ([dd03789](https://github.com/dsherret/ts-simple-ast/commit/dd03789))
+* [#279](https://github.com/dsherret/ts-simple-ast/issues/279) - Add StatementedNode.getDescendantStatements(). ([3b8b093](https://github.com/dsherret/ts-simple-ast/commit/3b8b093))
+* [#279](https://github.com/dsherret/ts-simple-ast/issues/279) - Move .getDescendantStatements() to Node and improve performance. ([e397aa2](https://github.com/dsherret/ts-simple-ast/commit/e397aa2))
+* [#280](https://github.com/dsherret/ts-simple-ast/issues/280) - Add setLiteralValue to more literals. ([38c1570](https://github.com/dsherret/ts-simple-ast/commit/38c1570))
+* Ability to easily check if an external module reference is relative. ([f8676f0](https://github.com/dsherret/ts-simple-ast/commit/f8676f0))
+* Ability to easily get an ImportEqualsDeclaration and ExternalModuleReference's referenced source file. ([c6d7c7b](https://github.com/dsherret/ts-simple-ast/commit/c6d7c7b))
+* Add ImportEqualsDeclaration.setExternalModuleReference(...). ([e3396d3](https://github.com/dsherret/ts-simple-ast/commit/e3396d3))
+* Add StringLiteral.setLiteralValue(...). ([8d5ff33](https://github.com/dsherret/ts-simple-ast/commit/8d5ff33))
+
+
+
 <a name="9.3.0"></a>
 # [9.3.0](https://github.com/dsherret/ts-simple-ast/compare/9.1.0...9.3.0) (2018-03-17)
 
