@@ -15,6 +15,7 @@ import {TypeAliasDeclaration, Type} from "./../type";
 import {InterfaceDeclaration} from "./../interface";
 import {QuoteType} from "./../literal/QuoteType";
 import {NamespaceDeclaration} from "./../namespace";
+import {Statement, StatementedNode} from "./../statement";
 import {KindToNodeMappings} from "./../kindToNodeMappings";
 import {Symbol} from "./Symbol";
 import {SyntaxList} from "./SyntaxList";
@@ -395,6 +396,46 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     *getDescendantsIterator(): IterableIterator<Node> {
         for (const descendant of this.getCompilerDescendantsIterator())
             yield getWrappedNode(this, descendant);
+    }
+
+    /**
+     * Gets the node's descendant statements.
+     */
+    getDescendantStatements(): Statement[] {
+        type NodeWithStatements = ts.Node & { statements: ts.NodeArray<ts.Statement>; };
+        const statements: Statement[] = [];
+
+        handleNode(this, this.compilerNode);
+
+        return statements;
+
+        function handleNode(thisNode: Node, node: ts.Node) {
+            if (handleStatements(thisNode, node))
+                return;
+            else if (node.kind === SyntaxKind.ArrowFunction) {
+                const arrowFunction = (node as ts.ArrowFunction);
+                if (arrowFunction.body.kind !== SyntaxKind.Block)
+                    statements.push(thisNode.getNodeFromCompilerNode<Statement>(arrowFunction.body));
+                else
+                    handleNode(thisNode, arrowFunction.body);
+            }
+            else
+                handleChildren(thisNode, node);
+        }
+
+        function handleStatements(thisNode: Node, node: ts.Node) {
+            if ((node as NodeWithStatements).statements == null)
+                return false;
+            for (const statement of (node as NodeWithStatements).statements) {
+                statements.push(thisNode.getNodeFromCompilerNode<Statement>(statement));
+                handleChildren(thisNode, statement);
+            }
+            return true;
+        }
+
+        function handleChildren(thisNode: Node, node: ts.Node) {
+            ts.forEachChild(node, childNode => handleNode(thisNode, childNode));
+        }
     }
 
     /**

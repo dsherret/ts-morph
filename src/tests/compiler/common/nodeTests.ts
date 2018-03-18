@@ -255,6 +255,39 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getDescendantStatements), () => {
+        function doTest(text: string, expectedStatements: string[]) {
+            const {sourceFile} = getInfoFromText(text);
+            expect(sourceFile.getDescendantStatements().map(s => s.getText())).to.deep.equal(expectedStatements);
+        }
+
+        it("should get the descendant statements", () => {
+            const expected = [
+                `const a = () => {\n    const b = "";\n};`,
+                `const b = "";`,
+                `const c = 5;`,
+                `function d() {\n    function e() {\n        const f = "";\n    }\n}`,
+                `function e() {\n        const f = "";\n    }`,
+                `const f = "";`,
+                `class MyClass {\n    prop = () => console.log("here");\n}`,
+                `console.log("here")`
+            ];
+            doTest(`const a = () => {
+    const b = "";
+};
+const c = 5;
+function d() {
+    function e() {
+        const f = "";
+    }
+}
+class MyClass {
+    prop = () => console.log("here");
+}
+`, expected);
+        });
+    });
+
     describe(nameof<Node>(n => n.getStartLinePos), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const {firstChild} = getInfoFromText(text);

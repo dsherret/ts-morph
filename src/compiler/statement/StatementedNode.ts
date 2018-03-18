@@ -28,10 +28,6 @@ export interface StatementedNode {
      */
     getStatements(): Statement[];
     /**
-     * Gets the node's descendant statements.
-     */
-    getDescendantStatements(): Statement[];
-    /**
      * Gets the first statement that matches the provided condition or returns undefined if it doesn't exist.
      * @param findFunction - Function to find the statement by.
      */
@@ -444,30 +440,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         /* General */
         getStatements() {
             return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode<Statement>(s));
-        }
-
-        getDescendantStatements(): Statement[] {
-            // todo: Make this more efficient.
-            type NodeWithStatements = ts.Node & { statements: ts.NodeArray<ts.Statement>; };
-            return ArrayUtils.from(getDescendantStatements(this));
-
-            function* getDescendantStatements(thisNode: Node & StatementedNode) {
-                for (const childStatement of thisNode.getStatements()) {
-                    yield childStatement;
-
-                    for (const descendant of childStatement.getCompilerDescendantsIterator()) {
-                        if ((descendant as NodeWithStatements).statements != null) {
-                            for (const statement of (descendant as NodeWithStatements).statements)
-                                yield thisNode.getNodeFromCompilerNode<Statement>(statement);
-                        }
-                        else if (descendant.kind === SyntaxKind.ArrowFunction) {
-                            const arrowFunction = (descendant as ts.ArrowFunction);
-                            if (arrowFunction.body.kind !== SyntaxKind.Block)
-                                yield thisNode.getNodeFromCompilerNode<Statement>(arrowFunction.body);
-                        }
-                    }
-                }
-            }
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {
