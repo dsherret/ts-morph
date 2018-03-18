@@ -15,5 +15,6 @@ Literals:
 Methods:
 
 * `.getLiteralValue()` - Returns the string, number, boolean, or RegExp value.
+* `.setLiteralValue(...)` - Allows setting the literal value.
 * `isTerminated()` - If the literal is terminated.
 * `hasExtendedUnicodeEscape()` - If the literal has a unicode escape (ex. `\u{20bb7}`)

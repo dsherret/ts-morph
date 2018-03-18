@@ -62,6 +62,14 @@ const text = type.getText(parameter, TypeFormatFlags.NoTruncation | TypeFormatFl
 
 Look at the definition file for more available options for `TypeFormatFlags`.
 
+
+### Constraint and Default
+
+```ts
+const constraintType = type.getConstraint();
+const defaultType = type.getDefault();
+```
+
 ### Intersection types
 
 ```ts

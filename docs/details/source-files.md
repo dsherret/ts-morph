@@ -198,6 +198,20 @@ sourceFile.unindent(10, -1); // indent line containing position 10 (specify nega
 
 This will indent and unindent based on your [manipulation settings](../manipulation/settings).
 
+### Getting referencing files
+
+Getting the source files that reference this source file in nodes like import declarations, export declarations, import equals declarations, and dynamic imports can be found by using the following:
+
+```ts
+const referencingSourceFiles = sourceFile.getReferencingSourceFiles();
+```
+
+To get the nodes that reference the source file in other source files, use:
+
+```ts
+const referencingNodes = sourceFile.getReferencingNodesInOtherSourceFiles();
+```
+
 ### Getting Exported Declarations
 
 The exported declarations of a file can be retrieved via `.getExportedDeclarations()`.
