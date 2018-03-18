@@ -1,7 +1,8 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {Node} from "./../common";
-import {Expression} from "./../expression";
+import {ts, SyntaxKind} from "../../typescript";
+import {TypeGuards, StringUtils} from "../../utils";
+import * as errors from "../../errors";
+import {Node} from "../common";
+import {Expression} from "../expression";
 import {SourceFile} from "./SourceFile";
 
 export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
@@ -24,6 +25,18 @@ export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
      */
     getReferencedSourceFileOrThrow() {
         return errors.throwIfNullOrUndefined(this.getReferencedSourceFile(), "Expected to find the referenced source file.");
+    }
+
+    /**
+     * Gets if the external module reference is relative.
+     */
+    isRelative() {
+        const expression = this.getExpression();
+        if (expression == null || !TypeGuards.isStringLiteral(expression))
+            return false;
+        const text = expression.getLiteralText();
+        return StringUtils.startsWith(text, "./")
+            || StringUtils.startsWith(text, "../");
     }
 
     /**

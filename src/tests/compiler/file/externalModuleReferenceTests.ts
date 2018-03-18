@@ -26,6 +26,37 @@ describe(nameof(ExternalModuleReference), () => {
         });
     });
 
+    describe(nameof<ExternalModuleReference>(n => n.isRelative), () => {
+        function doTest(text: string, expected: boolean) {
+            const {descendant} = getNode(text);
+            expect(descendant.isRelative()).to.equal(expected);
+        }
+
+        it("should be when using ./", () => {
+            doTest("import test = require('./test');", true);
+        });
+
+        it("should be when using ../", () => {
+            doTest("import test = require('../test');", true);
+        });
+
+        it("should not be when using /", () => {
+            doTest("import test = require('/test');", false);
+        });
+
+        it("should not be when not", () => {
+            doTest("import test = require('test');", false);
+        });
+
+        it("should not be when empty", () => {
+            doTest("import test = require();", false);
+        });
+
+        it("should not be when a number for some reason", () => {
+            doTest("import test = require(5);", false);
+        });
+    });
+
     describe(nameof<ExternalModuleReference>(n => n.getReferencedSourceFile), () => {
         it("should get the referenced source file", () => {
             const project = new Project({ useVirtualFileSystem: true });

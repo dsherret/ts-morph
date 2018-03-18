@@ -31,6 +31,41 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportEqualsDeclaration>(n => n.isExternalModuleReferenceRelative), () => {
+        function doTest(text: string, expected: boolean) {
+            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            expect(firstChild.isExternalModuleReferenceRelative()).to.equal(expected);
+        }
+
+        it("should not be when specifying an entity", () => {
+            doTest("import test = Namespace.Test;", false);
+        });
+
+        it("should be when using ./", () => {
+            doTest("import test = require('./test');", true);
+        });
+
+        it("should be when using ../", () => {
+            doTest("import test = require('../test');", true);
+        });
+
+        it("should not be when using /", () => {
+            doTest("import test = require('/test');", false);
+        });
+
+        it("should not be when not", () => {
+            doTest("import test = require('test');", false);
+        });
+
+        it("should not be when empty", () => {
+            doTest("import test = require();", false);
+        });
+
+        it("should not be when a number for some reason", () => {
+            doTest("import test = require(5);", false);
+        });
+    });
+
     describe(nameof<ImportEqualsDeclaration>(n => n.setExternalModuleReference), () => {
         function doTest(text: string, externalModuleReference: string, expected: string) {
             const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);

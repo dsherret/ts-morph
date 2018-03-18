@@ -68,8 +68,8 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     isModuleSpecifierRelative() {
         const moduleSpecifier = this.getModuleSpecifier();
-        return StringUtils.startsWith(moduleSpecifier, "./") ||
-            StringUtils.startsWith(moduleSpecifier, "../");
+        return StringUtils.startsWith(moduleSpecifier, "./")
+            || StringUtils.startsWith(moduleSpecifier, "../");
     }
 
     /**

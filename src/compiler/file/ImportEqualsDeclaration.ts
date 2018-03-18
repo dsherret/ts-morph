@@ -17,6 +17,17 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
     }
 
     /**
+     * Gets if the external module reference is relative.
+     */
+    isExternalModuleReferenceRelative() {
+        const moduleReference = this.getModuleReference();
+        if (!TypeGuards.isExternalModuleReference(moduleReference))
+            return false;
+
+        return moduleReference.isRelative();
+    }
+
+    /**
      * Sets the external module reference.
      * @param externalModuleReference - External module reference as a string.
      */
