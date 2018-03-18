@@ -31,6 +31,32 @@ describe(nameof(ImportEqualsDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportEqualsDeclaration>(n => n.setExternalModuleReference), () => {
+        function doTest(text: string, externalModuleReference: string, expected: string) {
+            const {firstChild} = getInfoFromText<ImportEqualsDeclaration>(text);
+            firstChild.setExternalModuleReference(externalModuleReference);
+            expect(firstChild.getText()).to.equal(expected);
+        }
+
+        it("should set the external module reference when currently a namespace", () => {
+            doTest("import test = Namespace.Test;", "./test", `import test = require("./test");`);
+        });
+
+        it("should set the external module reference when currently a require with no text", () => {
+            doTest("import test = require();", "./test", `import test = require("./test");`);
+        });
+
+        it("should set the external module reference when currently a require with other text", () => {
+            doTest("import test = require('./test2');", "./test", `import test = require("./test");`);
+        });
+
+        it("should set the external module reference when specifying a source file", () => {
+            const {firstChild, sourceFile} = getInfoFromText<ImportEqualsDeclaration>("import test = require('./test2');");
+            firstChild.setExternalModuleReference(sourceFile.getDirectory().createSourceFile("test3.ts"));
+            expect(firstChild.getText()).to.equal(`import test = require("./test3");`);
+        });
+    });
+
     describe(nameof<ImportEqualsDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
             const {sourceFile} = getInfoFromText(text);
