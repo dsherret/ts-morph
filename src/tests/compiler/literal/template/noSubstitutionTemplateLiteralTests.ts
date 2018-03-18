@@ -18,4 +18,21 @@ describe(nameof(NoSubstitutionTemplateLiteral), () => {
             doTest("const t: `test`;", "test");
         });
     });
+
+    describe(nameof<NoSubstitutionTemplateLiteral>(n => n.setLiteralValue), () => {
+        function doTest(text: string, newValue: string, expectedText: string) {
+            const literal = getLiteral(text);
+            const sourceFile = literal.sourceFile;
+            expect(literal.setLiteralValue(newValue).wasForgotten()).to.be.false;
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should set the literal value", () => {
+            doTest("const t = `str`;", "new", "const t = `new`;");
+        });
+
+        it("should set the literal value and possibly add a template expression", () => {
+            doTest("const t = `str`;", "${testing}", "const t = `${testing}`;");
+        });
+    });
 });

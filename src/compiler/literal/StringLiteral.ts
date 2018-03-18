@@ -1,6 +1,6 @@
 import {ts} from "../../typescript";
 import {StringUtils} from "../../utils";
-import {insertIntoParentTextRange} from "../../manipulation";
+import {replaceNodeText} from "../../manipulation";
 import {LiteralExpression} from "../expression";
 import {QuoteType} from "./QuoteType";
 
@@ -15,17 +15,15 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
     }
 
     /**
-     * Sets the literal value text.
-     * @param text - Text to set.
+     * Sets the literal value.
+     * @param value - Value to set.
      */
-    setLiteralValue(text: string) {
-        insertIntoParentTextRange({
-            newText: StringUtils.escapeChar(text, this.getQuoteType()).replace(/(\r?\n)/g, "\\$1"),
-            insertPos: this.getStart() + 1,
-            replacing: {
-                textLength: this.getWidth() - 2
-            },
-            parent: this.getParentSyntaxList() || this.getParentOrThrow()
+    setLiteralValue(value: string) {
+        replaceNodeText({
+            sourceFile: this.sourceFile,
+            start: this.getStart() + 1,
+            replacingLength: this.getWidth() - 2,
+            newText: StringUtils.escapeChar(value, this.getQuoteType()).replace(/(\r?\n)/g, "\\$1")
         });
         return this;
     }

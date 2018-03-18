@@ -44,7 +44,12 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             throw new errors.NotImplementedError(`Not implemented to set a namespace name that uses dot notation. ${openIssueText}`);
         if (newName.indexOf(".") >= 0)
             throw new errors.NotImplementedError(`Not implemented to set a namespace name to a name containing a period. ${openIssueText}`);
-        replaceNodeText(this.sourceFile, nameNodes[0].getStart(), nameNodes[0].getEnd(), newName);
+        replaceNodeText({
+            sourceFile: this.sourceFile,
+            start: nameNodes[0].getStart(),
+            replacingLength: nameNodes[0].getWidth(),
+            newText: newName
+        });
         return this;
     }
 
@@ -102,7 +107,12 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         if (declarationTypeKeyword == null)
             throw new errors.NotImplementedError("Expected the declaration type keyword to exist on a namespace.");
 
-        replaceNodeText(this.getSourceFile(), declarationTypeKeyword.getStart(), declarationTypeKeyword.getEnd(), value ? "namespace" : "module");
+        replaceNodeText({
+            sourceFile: this.getSourceFile(),
+            start: declarationTypeKeyword.getStart(),
+            replacingLength: declarationTypeKeyword.getWidth(),
+            newText: value ? "namespace" : "module"
+        });
         return this;
     }
 

@@ -26,4 +26,34 @@ describe(nameof(RegularExpressionLiteral), () => {
             doTest("const t = /testing/;", "testing", "");
         });
     });
+
+    describe(nameof<RegularExpressionLiteral>(n => n.setLiteralValue), () => {
+        function doObjectTest(text: string, value: RegExp, expectedText: string) {
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
+            descendant.setLiteralValue(value);
+            expect(sourceFile.getText()).to.equal(expectedText);
+        }
+
+        it("should set the literal value for a RegExp object with flags", () => {
+            doObjectTest("const t = /testing/g;", new RegExp("t\\/test?", "gi"), "const t = /t\\/test?/gi;");
+        });
+
+        it("should set the literal value for a RegExp object without flags", () => {
+            doObjectTest("const t = /testing/g;", new RegExp("test"), "const t = /test/;");
+        });
+
+        function doStringTest(text: string, pattern: string, flags: string | undefined, expectedText: string) {
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);
+            descendant.setLiteralValue(pattern, flags);
+            expect(sourceFile.getText()).to.equal(expectedText);
+        }
+
+        it("should set the literal value for a string with flags", () => {
+            doStringTest("const t = /testing/g;", "t'test", "gi", "const t = /t'test/gi;");
+        });
+
+        it("should set the literal value for a string without flags", () => {
+            doStringTest("const t = /testing/g;", "test", undefined, "const t = /test/;");
+        });
+    });
 });

@@ -46,7 +46,7 @@ export interface BodyableNode {
 export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(Base: T): Constructor<BodyableNode> & T {
     return class extends Base implements BodyableNode {
         getBodyOrThrow() {
-            return errors.throwIfNullOrUndefined(this.getBody(), "A node body is required to do this operation.");
+            return errors.throwIfNullOrUndefined(this.getBody(), "Expected to find the node's body.");
         }
 
         getBody() {

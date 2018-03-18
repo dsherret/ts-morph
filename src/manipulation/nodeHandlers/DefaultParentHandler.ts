@@ -82,9 +82,6 @@ export class DefaultParentHandler implements NodeHandler {
         for (const mapping of customMappings) {
             const {currentNode, newNode} = mapping;
             const newCompilerNode = newNode.compilerNode;
-            // forget before replacing so that the node is removed from the cache
-            newNode.forget();
-            // now add the new node will be added to the cache
             currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newCompilerNode);
         }
     }

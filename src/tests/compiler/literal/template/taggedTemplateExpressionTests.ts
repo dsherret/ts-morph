@@ -8,9 +8,6 @@ function getExpression(text: string) {
 }
 
 describe(nameof(TaggedTemplateExpression), () => {
-    const tag = "(x + 1)";
-    const template = "`hello world`";
-    const expr = `${tag}${template}`;
     describe(nameof<TaggedTemplateExpression>(n => n.getTag), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
@@ -18,7 +15,7 @@ describe(nameof(TaggedTemplateExpression), () => {
         }
 
         it("should get the correct tag expression", () => {
-            doTest(expr, tag);
+            doTest("(x + 1)`hello world`", "(x + 1)");
         });
     });
 
@@ -29,7 +26,27 @@ describe(nameof(TaggedTemplateExpression), () => {
         }
 
         it("should get the correct template expression", () => {
-            doTest(expr, template);
+            doTest("(x + 1)`hello world`", "`hello world`");
+        });
+    });
+
+    describe(nameof<TaggedTemplateExpression>(n => n.removeTag), () => {
+        function doTest(text: string, expectedText: string) {
+            const expression = getExpression(text);
+            const sourceFile = expression.sourceFile;
+            const template = expression.getTemplate();
+            const templateText = template.getText();
+            expect(expression.removeTag().getText()).to.equal(templateText);
+            expect(template.getText()).to.equal(templateText, "should still know about the template");
+            expect(sourceFile.getText()).to.equal(expectedText);
+        }
+
+        it("should remove the tag when a no substitution template literal", () => {
+            doTest("(x + 1)`hello world`", "`hello world`");
+        });
+
+        it("should remove the tag when a tagged template", () => {
+            doTest("(x + 1)`hello ${world}`", "`hello ${world}`");
         });
     });
 });

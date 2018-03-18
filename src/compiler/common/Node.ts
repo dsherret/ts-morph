@@ -1029,7 +1029,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${SyntaxKind[kind]} is required to do this operation.`);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${SyntaxKind[kind]} was expected to be found.`);
     }
 
     /**

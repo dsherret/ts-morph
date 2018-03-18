@@ -6,7 +6,7 @@ import {PropertySignature, MethodSignature, ConstructSignatureDeclaration, CallS
 import {ExternalModuleReference} from "./file";
 import {CaseClause, DefaultClause} from "./statement";
 import {GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration} from "./class";
-import {StringLiteral, NumericLiteral} from "./literal";
+import {StringLiteral, NumericLiteral, TemplateExpression, NoSubstitutionTemplateLiteral} from "./literal";
 
 export type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
@@ -142,4 +142,18 @@ export type TypeElementTypes = PropertySignature | MethodSignature | ConstructSi
 /* istanbul ignore next */
 function typeElementTypes() {
     // todo: some way to validate this
+}
+
+export type TemplateLiteral = TemplateExpression | NoSubstitutionTemplateLiteral;
+
+/* istanbul ignore next */
+function templateLiteralValidation() {
+    const value: ts.TemplateLiteral = null as any;
+    switch (value.kind) {
+        case SyntaxKind.TemplateExpression:
+        case SyntaxKind.NoSubstitutionTemplateLiteral:
+            return;
+        default:
+            const ensureNever: never = value;
+    }
 }

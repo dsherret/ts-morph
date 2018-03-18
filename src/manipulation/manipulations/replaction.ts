@@ -5,6 +5,13 @@ import {doManipulation} from "./doManipulation";
 import {NodeHandlerFactory} from "./../nodeHandlers";
 import {InsertionTextManipulator, FullReplacementTextManipulator, RenameLocationTextManipulator} from "./../textManipulators";
 
+export interface ReplaceNodeTextOptions {
+    sourceFile: SourceFile;
+    start: number;
+    replacingLength: number;
+    newText: string;
+}
+
 /**
  * Replaces text in a source file. Will forget any changed nodes.
  * @param sourceFile - Source file to replace in.
@@ -12,14 +19,14 @@ import {InsertionTextManipulator, FullReplacementTextManipulator, RenameLocation
  * @param replaceEnd - End of where to replace.
  * @param newText - The new text to go in place.
  */
-export function replaceNodeText(sourceFile: SourceFile, replaceStart: number, replaceEnd: number, newText: string) {
-    doManipulation(sourceFile,
+export function replaceNodeText(opts: ReplaceNodeTextOptions) {
+    doManipulation(opts.sourceFile,
         new InsertionTextManipulator({
-            insertPos: replaceStart,
-            newText,
-            replacingLength: replaceEnd - replaceStart
+            insertPos: opts.start,
+            newText: opts.newText,
+            replacingLength: opts.replacingLength
         }),
-        new NodeHandlerFactory().getForForgetChanged(sourceFile.global.compilerFactory));
+        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile.global.compilerFactory));
 }
 
 /**

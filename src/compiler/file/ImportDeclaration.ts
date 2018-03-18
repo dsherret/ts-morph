@@ -21,15 +21,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
-        const stringLiteral = this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral);
-        insertIntoParentTextRange({
-            parent: this,
-            newText: text,
-            insertPos: stringLiteral.getStart() + 1,
-            replacing: {
-                textLength: stringLiteral.getWidth() - 2
-            }
-        });
+        this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral).setLiteralValue(text);
         return this;
     }
 

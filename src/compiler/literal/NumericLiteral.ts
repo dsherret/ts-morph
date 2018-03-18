@@ -1,5 +1,6 @@
-import {ts} from "./../../typescript";
-import {LiteralExpression} from "./../expression";
+import {ts} from "../../typescript";
+import {replaceNodeText} from "../../manipulation";
+import {LiteralExpression} from "../expression";
 
 export const NumericLiteralBase = LiteralExpression;
 export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {
@@ -11,5 +12,19 @@ export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {
         if (text.indexOf(".") >= 0)
             return parseFloat(text);
         return parseInt(text, 10);
+    }
+
+    /**
+     * Sets the literal value.
+     * @param value - Value to set.
+     */
+    setLiteralValue(value: number) {
+        replaceNodeText({
+            sourceFile: this.sourceFile,
+            start: this.getStart(),
+            replacingLength: this.getWidth(),
+            newText: value.toString(10)
+        });
+        return this;
     }
 }

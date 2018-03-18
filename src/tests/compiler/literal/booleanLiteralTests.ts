@@ -26,4 +26,24 @@ describe(nameof(BooleanLiteral), () => {
             doTest("var t = false;", false);
         });
     });
+
+    describe(nameof<BooleanLiteral>(n => n.setLiteralValue), () => {
+        function doTest(text: string, value: boolean, expectedText: string) {
+            const {literal, sourceFile} = getInfoFromTextWithBooleanLiteral(text);
+            literal.setLiteralValue(value);
+            expect(sourceFile.getText()).to.equal(expectedText);
+        }
+
+        it("should set the boolean from false to true", () => {
+            doTest("const t = false;", true, "const t = true;");
+        });
+
+        it("should set the boolean from true to false", () => {
+            doTest("const t = true;", false, "const t = false;");
+        });
+
+        it("should work ok if setting to the same value", () => {
+            doTest("const t = true;", true, "const t = true;");
+        });
+    });
 });

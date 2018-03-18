@@ -15,7 +15,12 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             return this;
 
         const start = nameNode.getStart();
-        replaceNodeText(this.sourceFile, start, start + nameNode.getWidth(), name);
+        replaceNodeText({
+            sourceFile: this.sourceFile,
+            start,
+            replacingLength: nameNode.getWidth(),
+            newText: name
+        });
 
         return this;
     }

@@ -8,9 +8,6 @@ function getExpression(text: string) {
 }
 
 describe(nameof(TemplateExpression), () => {
-    const templateHead = "`foo${";
-    const templateSpan = "test}`";
-    const expr = `${templateHead}${templateSpan}`;
     describe(nameof<TemplateExpression>(n => n.getHead), () => {
         function doTest(text: string, expectedText: string) {
             const expression = getExpression(text);
@@ -18,7 +15,7 @@ describe(nameof(TemplateExpression), () => {
         }
 
         it("should get the correct template head", () => {
-            doTest(expr, templateHead);
+            doTest("`foo${test}`", "`foo${");
         });
     });
 
@@ -29,7 +26,24 @@ describe(nameof(TemplateExpression), () => {
         }
 
         it("should get the correct template spans", () => {
-            doTest(expr, templateSpan);
+            doTest("`foo${test}`", "test}`");
+        });
+    });
+
+    describe(nameof<TemplateExpression>(n => n.setLiteralValue), () => {
+        function doTest(text: string, newText: string, expectedText: string) {
+            const expression = getExpression(text);
+            const sourceFile = expression.sourceFile;
+            expect(expression.setLiteralValue(newText).wasForgotten()).to.be.false;
+            expect(sourceFile.getText()).to.equal(expectedText);
+        }
+
+        it("should set the value", () => {
+            doTest("`foo${test}`", "testing${this}out", "`testing${this}out`");
+        });
+
+        it("should set the value to not have any tagged templates", () => {
+            doTest("`foo${test}`", "testing", "`testing`");
         });
     });
 });

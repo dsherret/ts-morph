@@ -32,16 +32,8 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
                 newText: ` from ${quoteType}${text}${quoteType}`
             });
         }
-        else {
-            insertIntoParentTextRange({
-                parent: this,
-                newText: text,
-                insertPos: stringLiteral.getStart() + 1,
-                replacing: {
-                    textLength: stringLiteral.getWidth() - 2
-                }
-            });
-        }
+        else
+            stringLiteral.setLiteralValue(text);
 
         return this;
     }
