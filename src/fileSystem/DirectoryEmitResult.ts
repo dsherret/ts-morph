@@ -1,4 +1,4 @@
-﻿import {Diagnostic} from "./../compiler";
+﻿import {Diagnostic} from "../compiler";
 
 export class DirectoryEmitResult {
     /** @internal */

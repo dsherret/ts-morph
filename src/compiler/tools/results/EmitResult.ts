@@ -1,7 +1,7 @@
-import {ts} from "./../../../typescript";
+import {ts} from "../../../typescript";
 import {Diagnostic} from "./Diagnostic";
-import {GlobalContainer} from "./../../../GlobalContainer";
-import {Memoize} from "./../../../utils";
+import {GlobalContainer} from "../../../GlobalContainer";
+import {Memoize} from "../../../utils";
 
 /**
  * Result of an emit.

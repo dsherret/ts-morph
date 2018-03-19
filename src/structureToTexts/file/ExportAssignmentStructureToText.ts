@@ -1,6 +1,6 @@
-﻿import * as errors from "./../../errors";
-import {ExportAssignmentStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import * as errors from "../../errors";
+import {ExportAssignmentStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class ExportAssignmentStructureToText extends StructureToText<ExportAssignmentStructure> {
     writeText(structure: ExportAssignmentStructure) {

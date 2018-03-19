@@ -1,5 +1,5 @@
-﻿import {ConstructSignatureDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {ConstructSignatureDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class ConstructSignatureDeclarationStructureToText extends StructureToText<ConstructSignatureDeclarationStructure> {
     writeText(structure: ConstructSignatureDeclarationStructure) {

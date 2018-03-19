@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {SyntaxKind} from "./../../../../typescript";
-import {JsxAttributedNode, JsxAttributeLike, Node} from "./../../../../compiler";
-import {JsxAttributeStructure} from "./../../../../structures";
-import {getInfoFromTextWithDescendant} from "./../../testHelpers";
+import {SyntaxKind} from "../../../../typescript";
+import {JsxAttributedNode, JsxAttributeLike, Node} from "../../../../compiler";
+import {JsxAttributeStructure} from "../../../../structures";
+import {getInfoFromTextWithDescendant} from "../../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxAttributedNode & Node>(text, SyntaxKind.JsxOpeningElement, { isJsx: true });

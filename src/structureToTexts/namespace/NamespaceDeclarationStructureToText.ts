@@ -1,6 +1,6 @@
-﻿import {NamespaceDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
+﻿import {NamespaceDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
 
 export class NamespaceDeclarationStructureToText extends StructureToText<NamespaceDeclarationStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);

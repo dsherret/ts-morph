@@ -1,5 +1,5 @@
-﻿import {MethodSignatureStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {MethodSignatureStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class MethodSignatureStructureToText extends StructureToText<MethodSignatureStructure> {
     writeText(structure: MethodSignatureStructure) {

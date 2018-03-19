@@ -1,4 +1,4 @@
-import {ts, SyntaxKind} from "./../typescript";
+import {ts, SyntaxKind} from "../typescript";
 import {Identifier, ComputedPropertyName, QualifiedName} from "./common";
 import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression} from "./expression";
 import {JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment} from "./jsx";

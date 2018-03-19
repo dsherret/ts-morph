@@ -1,6 +1,6 @@
-﻿import * as errors from "./../../errors";
-import {ExportDeclarationStructure, ExportSpecifierStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import * as errors from "../../errors";
+import {ExportDeclarationStructure, ExportSpecifierStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class ExportDeclarationStructureToText extends StructureToText<ExportDeclarationStructure> {
     writeText(structure: ExportDeclarationStructure) {

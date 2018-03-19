@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 
 /**
  * Gets the end index from a possibly undefined array.

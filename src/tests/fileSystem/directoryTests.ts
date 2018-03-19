@@ -1,12 +1,12 @@
 import {expect} from "chai";
-import {ts, CompilerOptions, ScriptTarget} from "./../../typescript";
-import {SourceFile} from "./../../compiler";
-import * as errors from "./../../errors";
-import {Project} from "./../../Project";
-import {SourceFileStructure} from "./../../structures";
-import {Directory, DirectoryEmitResult, FileSystemHost} from "./../../fileSystem";
-import {FileUtils} from "./../../utils";
-import {getFileSystemHostWithFiles, CustomFileSystemProps} from "./../testHelpers";
+import {ts, CompilerOptions, ScriptTarget} from "../../typescript";
+import {SourceFile} from "../../compiler";
+import * as errors from "../../errors";
+import {Project} from "../../Project";
+import {SourceFileStructure} from "../../structures";
+import {Directory, DirectoryEmitResult, FileSystemHost} from "../../fileSystem";
+import {FileUtils} from "../../utils";
+import {getFileSystemHostWithFiles, CustomFileSystemProps} from "../testHelpers";
 
 describe(nameof(Directory), () => {
     interface TreeNode {

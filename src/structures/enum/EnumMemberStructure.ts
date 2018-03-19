@@ -1,4 +1,4 @@
-﻿import {PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure} from "./../base";
+﻿import {PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure} from "../base";
 
 export interface EnumMemberStructure extends EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
 }

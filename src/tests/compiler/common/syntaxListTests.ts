@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts} from "./../../../typescript";
-import {SyntaxList, Node} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ts} from "../../../typescript";
+import {SyntaxList, Node} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(SyntaxList), () => {
     describe(nameof<SyntaxList>(s => s.insertChildText), () => {

@@ -1,5 +1,5 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node} from "./../common";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node} from "../common";
 import {Expression} from "./Expression";
 
 export const ConditionalExpressionBase = Expression;

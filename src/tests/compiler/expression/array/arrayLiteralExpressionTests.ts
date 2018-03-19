@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {ArrayLiteralExpression, VariableStatement} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {ArrayLiteralExpression, VariableStatement} from "../../../../compiler";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(ArrayLiteralExpression), () => {
     function getArrayLiteralExpression(text: string) {

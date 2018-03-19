@@ -1,9 +1,9 @@
 import {expect} from "chai";
-import Project from "./../../../main";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {ExportDeclaration, ExportSpecifier} from "./../../../compiler";
-import {ArrayUtils} from "./../../../utils";
-import {getInfoFromText} from "./../testHelpers";
+import Project from "../../../main";
+import {ts, SyntaxKind} from "../../../typescript";
+import {ExportDeclaration, ExportSpecifier} from "../../../compiler";
+import {ArrayUtils} from "../../../utils";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ExportSpecifier), () => {
     function getProject() {

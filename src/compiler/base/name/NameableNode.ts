@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {removeChildren, insertIntoParentTextRange} from "./../../../manipulation";
-import {StringUtils} from "./../../../utils";
-import {Node, Identifier} from "./../../common";
+import {ts, SyntaxKind} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {removeChildren, insertIntoParentTextRange} from "../../../manipulation";
+import {StringUtils} from "../../../utils";
+import {Node, Identifier} from "../../common";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 

@@ -1,6 +1,6 @@
 ﻿import * as path from "path";
-import Project, {NewLineKind} from "./../../src/main";
-import {rootFolder} from "./../config";
+import Project, {NewLineKind} from "../../src/main";
+import {rootFolder} from "../config";
 
 export function getProject() {
     const project = new Project({

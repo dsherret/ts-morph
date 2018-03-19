@@ -1,5 +1,5 @@
-import {ts, NewLineKind} from "./../typescript";
-import * as errors from "./../errors";
+import {ts, NewLineKind} from "../typescript";
+import * as errors from "../errors";
 
 export function newLineKindToString(kind: NewLineKind) {
     switch (kind) {

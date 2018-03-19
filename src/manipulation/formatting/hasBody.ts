@@ -1,6 +1,6 @@
-﻿import {SyntaxKind} from "./../../typescript";
-import {Node} from "./../../compiler";
-import {TypeGuards} from "./../../utils";
+﻿import {SyntaxKind} from "../../typescript";
+import {Node} from "../../compiler";
+import {TypeGuards} from "../../utils";
 
 export function hasBody(node: Node) {
     if (TypeGuards.isBodyableNode(node) && node.hasBody())

@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../manipulation";
-import * as errors from "./../../errors";
-import {Node} from "./../common";
-import {VariableDeclarationListStructure, VariableDeclarationStructure} from "./../../structures";
-import {ModifierableNode} from "./../base";
-import {callBaseFill} from "./../callBaseFill";
+import {ts, SyntaxKind} from "../../typescript";
+import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
+import * as errors from "../../errors";
+import {Node} from "../common";
+import {VariableDeclarationListStructure, VariableDeclarationStructure} from "../../structures";
+import {ModifierableNode} from "../base";
+import {callBaseFill} from "../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
 import {VariableDeclarationType} from "./VariableDeclarationType";
 

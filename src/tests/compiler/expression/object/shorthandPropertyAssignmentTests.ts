@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {ShorthandPropertyAssignment, PropertyAssignment} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {ShorthandPropertyAssignment, PropertyAssignment} from "../../../../compiler";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(ShorthandPropertyAssignment), () => {
     function getShorthandPropertyAssignemntExpression(text: string) {

@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {VirtualFileSystemHost, FileSystemWrapper} from "./../../../fileSystem";
-import {getFilePathsFromTsConfigParseResult, getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, FileUtils} from "./../../../utils";
-import * as errors from "./../../../errors";
+import {VirtualFileSystemHost, FileSystemWrapper} from "../../../fileSystem";
+import {getFilePathsFromTsConfigParseResult, getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, FileUtils} from "../../../utils";
+import * as errors from "../../../errors";
 
 describe(nameof(getFilePathsFromTsConfigParseResult), () => {
     function getFilePaths(fileSystem: VirtualFileSystemHost) {

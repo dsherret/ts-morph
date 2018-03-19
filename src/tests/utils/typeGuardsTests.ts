@@ -1,7 +1,7 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {expect} from "chai";
-import {TypeGuards} from "./../../utils";
-import {getInfoFromText} from "./../compiler/testHelpers";
+import {TypeGuards} from "../../utils";
+import {getInfoFromText} from "../compiler/testHelpers";
 
 describe(nameof(TypeGuards), () => {
     // most of the code in TypeGuards is not worth the effort to test... it's auto generated from code so it should be close to correct

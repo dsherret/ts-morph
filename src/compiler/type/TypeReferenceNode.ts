@@ -1,6 +1,6 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {TypeNode} from "./TypeNode";
-import {EntityName} from "./../aliases";
+import {EntityName} from "../aliases";
 
 export class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
     /**

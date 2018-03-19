@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ts, SymbolFlags} from "./../../../typescript";
-import {Symbol} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SymbolFlags} from "../../../typescript";
+import {Symbol} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(Symbol), () => {
     const {sourceFile: enumSourceFile} = getInfoFromText("enum MyEnum {}");

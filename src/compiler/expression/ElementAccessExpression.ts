@@ -1,6 +1,6 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
-import {Node} from "./../common";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
+import {Node} from "../common";
 import {Expression} from "./Expression";
 import {MemberExpression} from "./MemberExpression";
 import {LeftHandSideExpressionedNode} from "./expressioned";

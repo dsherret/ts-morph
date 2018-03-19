@@ -1,7 +1,7 @@
 ﻿import {PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure,
     AsyncableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure,
-    TypeParameteredNodeStructure} from "./../base";
-import {FunctionLikeDeclarationStructure} from "./../function";
+    TypeParameteredNodeStructure} from "../base";
+import {FunctionLikeDeclarationStructure} from "../function";
 
 export interface MethodDeclarationStructure
     extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure,

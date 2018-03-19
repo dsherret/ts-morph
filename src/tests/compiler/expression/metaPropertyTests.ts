@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {MetaProperty} from "./../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {MetaProperty} from "../../../compiler";
+import {getInfoFromTextWithDescendant} from "../testHelpers";
 
 describe(nameof(MetaProperty), () => {
     describe(nameof<MetaProperty>(n => n.getKeywordToken), () => {

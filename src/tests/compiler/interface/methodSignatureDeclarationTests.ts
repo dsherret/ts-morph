@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {MethodSignature, InterfaceDeclaration} from "./../../../compiler";
-import {MethodSignatureStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {MethodSignature, InterfaceDeclaration} from "../../../compiler";
+import {MethodSignatureStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(MethodSignature), () => {
     function getFirstMethodWithInfo(code: string) {

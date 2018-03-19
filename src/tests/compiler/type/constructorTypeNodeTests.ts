@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {ConstructorTypeNode} from "./../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {ConstructorTypeNode} from "../../../compiler";
+import {getInfoFromTextWithDescendant} from "../testHelpers";
 
 describe(nameof(ConstructorTypeNode), () => {
     function getNode(text: string) {

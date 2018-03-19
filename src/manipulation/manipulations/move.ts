@@ -1,8 +1,8 @@
-﻿import {Node} from "./../../compiler";
-import {FormattingKind} from "./../formatting";
+﻿import {Node} from "../../compiler";
+import {FormattingKind} from "../formatting";
 import {doManipulation} from "./doManipulation";
-import {NodeHandlerFactory} from "./../nodeHandlers";
-import {ChangingChildOrderTextManipulator} from "./../textManipulators";
+import {NodeHandlerFactory} from "../nodeHandlers";
+import {ChangingChildOrderTextManipulator} from "../textManipulators";
 
 export interface ChangeChildOrderOptions<TParentNode extends Node> {
     parent: TParentNode;

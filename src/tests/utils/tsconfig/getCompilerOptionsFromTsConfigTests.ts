@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {getCompilerOptionsFromTsConfig, FileUtils} from "./../../../utils";
-import * as errors from "./../../../errors";
-import * as testHelpers from "./../../testHelpers";
+import {getCompilerOptionsFromTsConfig, FileUtils} from "../../../utils";
+import * as errors from "../../../errors";
+import * as testHelpers from "../../testHelpers";
 
 describe(nameof(getCompilerOptionsFromTsConfig), () => {
     it("should throw an error when the path doesn't exist", () => {

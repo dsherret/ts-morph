@@ -1,5 +1,5 @@
-import {ts} from "./../../typescript";
-import {Node} from "./../common";
+import {ts} from "../../typescript";
+import {Node} from "../common";
 import {Expression} from "./Expression";
 
 export const BinaryExpressionBase = Expression;

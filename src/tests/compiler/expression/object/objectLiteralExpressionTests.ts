@@ -1,10 +1,10 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
+import {ts, SyntaxKind} from "../../../../typescript";
 import {ObjectLiteralExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, MethodDeclaration,
-    GetAccessorDeclaration, SetAccessorDeclaration} from "./../../../../compiler";
+    GetAccessorDeclaration, SetAccessorDeclaration} from "../../../../compiler";
 import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, GetAccessorDeclarationStructure,
-    SetAccessorDeclarationStructure, MethodDeclarationStructure} from "./../../../../structures";
-import {getInfoFromText} from "./../../testHelpers";
+    SetAccessorDeclarationStructure, MethodDeclarationStructure} from "../../../../structures";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(ObjectLiteralExpression), () => {
     function getObjectLiteralExpression(text: string) {

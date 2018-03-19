@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Es5WeakMap} from "./../../utils";
+import {Es5WeakMap} from "../../utils";
 
 describe(nameof(Es5WeakMap), () => {
     it("should hold a reference to the value on the key", () => {

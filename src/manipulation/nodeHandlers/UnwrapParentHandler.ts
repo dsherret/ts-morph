@@ -1,6 +1,6 @@
-﻿import {AdvancedIterator, ArrayUtils} from "./../../utils";
-import {Node, BodiedNode} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+﻿import {AdvancedIterator, ArrayUtils} from "../../utils";
+import {Node, BodiedNode} from "../../compiler";
+import {CompilerFactory} from "../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";

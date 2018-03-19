@@ -1,4 +1,4 @@
-﻿import {RenameLocation} from "./../../compiler";
+﻿import {RenameLocation} from "../../compiler";
 import {TextManipulator} from "./TextManipulator";
 
 export class RenameLocationTextManipulator implements TextManipulator {

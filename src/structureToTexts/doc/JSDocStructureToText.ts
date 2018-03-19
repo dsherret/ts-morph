@@ -1,5 +1,5 @@
-﻿import {JSDocStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {JSDocStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class JSDocStructureToText extends StructureToText<JSDocStructure> {
     writeText(structure: JSDocStructure) {

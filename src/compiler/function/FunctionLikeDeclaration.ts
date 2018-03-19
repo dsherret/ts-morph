@@ -1,8 +1,8 @@
-import {ts} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import {Node} from "./../common";
-import {JSDocableNode, ModifierableNode, TypeParameteredNode, SignaturedDeclaration} from "./../base";
-import {StatementedNode} from "./../statement";
+import {ts} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import {Node} from "../common";
+import {JSDocableNode, ModifierableNode, TypeParameteredNode, SignaturedDeclaration} from "../base";
+import {StatementedNode} from "../statement";
 
 export type FunctionLikeDeclarationExtensionType = Node<ts.FunctionLikeDeclaration>;
 

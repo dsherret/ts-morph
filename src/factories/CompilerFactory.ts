@@ -1,12 +1,12 @@
-import {ts, SyntaxKind, TypeFlags} from "./../typescript";
+import {ts, SyntaxKind, TypeFlags} from "../typescript";
 import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
-    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "./../compiler";
-import * as errors from "./../errors";
-import {SourceFileStructure} from "./../structures";
-import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "./../utils";
-import {GlobalContainer} from "./../GlobalContainer";
-import {Directory} from "./../fileSystem";
-import {createWrappedNode} from "./../createWrappedNode";
+    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "../compiler";
+import * as errors from "../errors";
+import {SourceFileStructure} from "../structures";
+import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "../utils";
+import {GlobalContainer} from "../GlobalContainer";
+import {Directory} from "../fileSystem";
+import {createWrappedNode} from "../createWrappedNode";
 import {createTempSourceFile} from "./createTempSourceFile";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 import {ForgetfulNodeCache} from "./ForgetfulNodeCache";

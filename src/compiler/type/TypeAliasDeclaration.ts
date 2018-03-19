@@ -1,8 +1,8 @@
-import {ts} from "./../../typescript";
-import {TypeAliasDeclarationStructure} from "./../../structures";
-import {callBaseFill} from "./../callBaseFill";
-import {Statement} from "./../statement";
-import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, ChildOrderableNode} from "./../base";
+import {ts} from "../../typescript";
+import {TypeAliasDeclarationStructure} from "../../structures";
+import {callBaseFill} from "../callBaseFill";
+import {Statement} from "../statement";
+import {NamedNode, TypedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, ChildOrderableNode} from "../base";
 
 // todo: type node should not be able to return undefined
 export const TypeAliasDeclarationBase = ChildOrderableNode(TypeParameteredNode(TypedNode(JSDocableNode(AmbientableNode(

@@ -1,7 +1,7 @@
-import {ts} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
+import {ts} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
 import {SuperExpression} from "../SuperExpression";
-import {Node} from "./../../common";
+import {Node} from "../../common";
 
 export type SuperExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.SuperExpression}>;
 

@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {Statement} from "./Statement";
 
 export const EmptyStatementBase = Statement;

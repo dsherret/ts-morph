@@ -1,22 +1,22 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
 import {insertIntoCreatableSyntaxList, insertIntoParentTextRange, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
-    verifyAndGetIndex} from "./../../manipulation";
-import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "./../../utils";
+    verifyAndGetIndex} from "../../manipulation";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
-    SetAccessorDeclarationStructure, ClassDeclarationStructure} from "./../../structures";
-import * as structureToTexts from "./../../structureToTexts";
-import {Node} from "./../common";
+    SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
+import * as structureToTexts from "../../structureToTexts";
+import {Node} from "../common";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
-    ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "./../base";
-import {HeritageClause} from "./../general";
+    ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "../base";
+import {HeritageClause} from "../general";
 import {AbstractableNode} from "./base";
-import {SourceFile} from "./../file";
-import {ParameterDeclaration} from "./../function";
-import {ExpressionWithTypeArguments, Type} from "./../type";
-import {NamespaceChildableNode} from "./../namespace";
-import {Statement} from "./../statement";
-import {callBaseFill} from "./../callBaseFill";
+import {SourceFile} from "../file";
+import {ParameterDeclaration} from "../function";
+import {ExpressionWithTypeArguments, Type} from "../type";
+import {NamespaceChildableNode} from "../namespace";
+import {Statement} from "../statement";
+import {callBaseFill} from "../callBaseFill";
 import {ConstructorDeclaration} from "./ConstructorDeclaration";
 import {MethodDeclaration} from "./MethodDeclaration";
 import {PropertyDeclaration} from "./PropertyDeclaration";

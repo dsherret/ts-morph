@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {getSyntaxKindName} from "./../../../utils";
-import {Expression} from "./../../expression";
-import {Node} from "./../../common";
-import {KindToExpressionMappings} from "./../../kindToNodeMappings";
+import {ts, SyntaxKind} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {getSyntaxKindName} from "../../../utils";
+import {Expression} from "../../expression";
+import {Node} from "../../common";
+import {KindToExpressionMappings} from "../../kindToNodeMappings";
 
 export type InitializerGetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
 

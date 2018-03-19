@@ -1,6 +1,6 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {replaceNodeText} from "../../manipulation";
-import {LiteralExpression} from "./../expression";
+import {LiteralExpression} from "../expression";
 
 export const RegularExpressionLiteralBase = LiteralExpression;
 export class RegularExpressionLiteral extends RegularExpressionLiteralBase<ts.RegularExpressionLiteral> {

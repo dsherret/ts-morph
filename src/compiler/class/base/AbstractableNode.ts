@@ -1,11 +1,11 @@
-import {ts, SyntaxKind} from "./../../../typescript";
-import {AbstractableNodeStructure} from "./../../../structures";
-import * as errors from "./../../../errors";
-import {Constructor} from "./../../../Constructor";
-import {Node} from "./../../common";
-import {ModifierableNode} from "./../../base";
-import {callBaseFill} from "./../../callBaseFill";
-import {callBaseGetStructure} from "./../../callBaseGetStructure";
+import {ts, SyntaxKind} from "../../../typescript";
+import {AbstractableNodeStructure} from "../../../structures";
+import * as errors from "../../../errors";
+import {Constructor} from "../../../Constructor";
+import {Node} from "../../common";
+import {ModifierableNode} from "../../base";
+import {callBaseFill} from "../../callBaseFill";
+import {callBaseGetStructure} from "../../callBaseGetStructure";
 
 export type AbstractableNodeExtensionType = Node & ModifierableNode;
 

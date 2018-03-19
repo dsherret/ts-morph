@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ScopeableNode, ClassDeclaration, ParameterDeclaration, Scope} from "./../../../compiler";
-import {ScopeableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ScopeableNode, ClassDeclaration, ParameterDeclaration, Scope} from "../../../compiler";
+import {ScopeableNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ScopeableNode), () => {
     function getFirstParameter(text: string) {

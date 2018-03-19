@@ -1,6 +1,6 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node} from "./../../compiler";
-import {TypeGuards} from "./../../utils";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node} from "../../compiler";
+import {TypeGuards} from "../../utils";
 
 /**
  * Gets the insert pos from an index.

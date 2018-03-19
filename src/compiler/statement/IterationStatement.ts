@@ -1,5 +1,5 @@
-import {ts} from "./../../typescript";
-import {ChildOrderableNode} from "./../base";
+import {ts} from "../../typescript";
+import {ChildOrderableNode} from "../base";
 import {Statement} from "./Statement";
 
 export const IterationStatementBase = ChildOrderableNode(Statement);

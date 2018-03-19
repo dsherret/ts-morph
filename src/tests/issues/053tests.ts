@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, PropertyDeclaration} from "./../../compiler";
-import {getInfoFromText} from "./../compiler/testHelpers";
+import {ClassDeclaration, PropertyDeclaration} from "../../compiler";
+import {getInfoFromText} from "../compiler/testHelpers";
 
 const code = `
 export class Class {

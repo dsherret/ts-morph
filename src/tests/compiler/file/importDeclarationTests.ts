@@ -1,9 +1,9 @@
 ﻿import {expect} from "chai";
-import {ImportDeclaration} from "./../../../compiler";
-import {Project} from "./../../../Project";
-import * as errors from "./../../../errors";
-import {ImportSpecifierStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ImportDeclaration} from "../../../compiler";
+import {Project} from "../../../Project";
+import * as errors from "../../../errors";
+import {ImportSpecifierStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.setModuleSpecifier), () => {

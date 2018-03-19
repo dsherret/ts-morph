@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {Node, AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration, PropertyDeclaration} from "./../../../compiler";
-import {AmbientableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {Node, AmbientableNode, ClassDeclaration, InterfaceDeclaration, TypeAliasDeclaration, NamespaceDeclaration, PropertyDeclaration} from "../../../compiler";
+import {AmbientableNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(AmbientableNode), () => {
     describe("navigation", () => {

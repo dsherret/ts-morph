@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {PrimaryExpression} from "./PrimaryExpression";
 
 export const ThisExpressionBase = PrimaryExpression;

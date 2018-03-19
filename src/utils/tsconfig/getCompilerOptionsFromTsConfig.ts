@@ -1,7 +1,7 @@
-import {ts, CompilerOptions} from "./../../typescript";
-import {Diagnostic} from "./../../compiler";
-import {DefaultFileSystemHost, FileSystemHost, FileSystemWrapper} from "./../../fileSystem";
-import {FileUtils} from "./../../utils";
+import {ts, CompilerOptions} from "../../typescript";
+import {Diagnostic} from "../../compiler";
+import {DefaultFileSystemHost, FileSystemHost, FileSystemWrapper} from "../../fileSystem";
+import {FileUtils} from "../../utils";
 import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult} from "./getInfoFromTsConfig";
 
 export interface CompilerOptionsFromTsConfigOptions {

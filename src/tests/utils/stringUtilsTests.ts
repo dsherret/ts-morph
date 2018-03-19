@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import * as errors from "./../../errors";
-import {StringUtils, Es5StringUtils} from "./../../utils";
+import * as errors from "../../errors";
+import {StringUtils, Es5StringUtils} from "../../utils";
 
 describe(nameof(StringUtils), () => {
     describe(nameof(StringUtils.getLineNumberFromPos), () => {

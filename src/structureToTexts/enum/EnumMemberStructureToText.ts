@@ -1,5 +1,5 @@
-﻿import {EnumMemberStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {EnumMemberStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class EnumMemberStructureToText extends StructureToText<EnumMemberStructure> {
     writeText(structure: EnumMemberStructure) {

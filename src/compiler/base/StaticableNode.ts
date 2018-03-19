@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import * as errors from "./../../errors";
-import {StaticableNodeStructure} from "./../../structures";
-import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
+import {ts, SyntaxKind} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import * as errors from "../../errors";
+import {StaticableNodeStructure} from "../../structures";
+import {callBaseFill} from "../callBaseFill";
+import {Node} from "../common";
 import {ModifierableNode} from "./ModifierableNode";
 
 export type StaticableNodeExtensionType = Node & ModifierableNode;

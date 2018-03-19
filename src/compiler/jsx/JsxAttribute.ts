@@ -1,9 +1,9 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
-import {removeChildren} from "./../../manipulation";
-import {NamedNode} from "./../base";
-import {Node} from "./../common";
-import {StringLiteral} from "./../literal";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
+import {removeChildren} from "../../manipulation";
+import {NamedNode} from "../base";
+import {Node} from "../common";
+import {StringLiteral} from "../literal";
 import {JsxExpression} from "./JsxExpression";
 
 export class JsxAttribute extends NamedNode(Node)<ts.JsxAttribute> {

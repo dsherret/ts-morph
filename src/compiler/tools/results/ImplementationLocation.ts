@@ -1,6 +1,6 @@
-import {ts} from "./../../../typescript";
-import {GlobalContainer} from "./../../../GlobalContainer";
-import {Memoize} from "./../../../utils";
+import {ts} from "../../../typescript";
+import {GlobalContainer} from "../../../GlobalContainer";
+import {Memoize} from "../../../utils";
 import {DocumentSpan} from "./DocumentSpan";
 import {SymbolDisplayPart} from "./SymbolDisplayPart";
 

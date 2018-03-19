@@ -1,5 +1,5 @@
-﻿import {Node} from "./../../compiler";
-import {FormattingKind} from "./../formatting";
+﻿import {Node} from "../../compiler";
+import {FormattingKind} from "../formatting";
 
 export interface GetSpacingBetweenNodesOptions<TParentNode extends Node> {
     parent: TParentNode;

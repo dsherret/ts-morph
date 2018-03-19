@@ -1,4 +1,4 @@
-﻿import * as errors from "./../errors";
+﻿import * as errors from "../errors";
 
 export class AdvancedIterator<T> {
     private readonly buffer: (T | undefined)[] = [undefined, undefined, undefined]; // previous, current, next

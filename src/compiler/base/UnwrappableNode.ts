@@ -1,8 +1,8 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
-import {Constructor} from "./../../Constructor";
-import {unwrapNode} from "./../../manipulation";
-import {Node} from "./../common";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
+import {Constructor} from "../../Constructor";
+import {unwrapNode} from "../../manipulation";
+import {Node} from "../common";
 
 export type UnwrappableNodeExtensionType = Node;
 

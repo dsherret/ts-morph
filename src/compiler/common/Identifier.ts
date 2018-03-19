@@ -1,7 +1,7 @@
-import {ts} from "./../../typescript";
-import {Type} from "./../type";
-import {ReferencedSymbol, DefinitionInfo, ImplementationLocation} from "./../tools";
-import {PrimaryExpression} from "./../expression/PrimaryExpression";
+import {ts} from "../../typescript";
+import {Type} from "../type";
+import {ReferencedSymbol, DefinitionInfo, ImplementationLocation} from "../tools";
+import {PrimaryExpression} from "../expression/PrimaryExpression";
 
 export class Identifier extends PrimaryExpression<ts.Identifier> {
     /**

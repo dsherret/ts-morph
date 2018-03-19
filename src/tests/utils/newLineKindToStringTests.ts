@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {ts, NewLineKind} from "./../../typescript";
-import {newLineKindToString} from "./../../utils";
+import {ts, NewLineKind} from "../../typescript";
+import {newLineKindToString} from "../../utils";
 
 describe(nameof(newLineKindToString), () => {
     it("should return carriage return line feed for like", () => {

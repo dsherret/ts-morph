@@ -21,8 +21,8 @@ export function createGetStructureFunctions(structures: Structure[]) {
     writer.writeLine("/* tslint:disable */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();
     writer.writeLine(`import * as objectAssign from "object-assign";`);
-    writer.writeLine(`import * as compiler from "./../../compiler";`);
-    writer.writeLine(`import * as structures from "./../../structures";`);
+    writer.writeLine(`import * as compiler from "../../compiler";`);
+    writer.writeLine(`import * as structures from "../../structures";`);
     writer.writeLine(`import * as getMixinStructureFuncs from "./getMixinStructureFunctions";`);
 
     for (const structure of structures.filter(s => shouldCreateForStructure(s.getName()))) {

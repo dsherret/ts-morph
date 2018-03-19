@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {ClassDeclaration, GetAccessorDeclaration} from "./../../../compiler";
-import {ArrayUtils} from "./../../../utils";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {ClassDeclaration, GetAccessorDeclaration} from "../../../compiler";
+import {ArrayUtils} from "../../../utils";
+import {getInfoFromText} from "../testHelpers";
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);

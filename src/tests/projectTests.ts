@@ -1,12 +1,12 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
-import {ts, SyntaxKind, CompilerOptions} from "./../typescript";
-import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "./../compiler";
-import {VirtualFileSystemHost} from "./../fileSystem";
-import {Project} from "./../Project";
-import {IndentationText} from "./../ManipulationSettings";
-import {FileUtils} from "./../utils";
-import * as errors from "./../errors";
+import {ts, SyntaxKind, CompilerOptions} from "../typescript";
+import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "../compiler";
+import {VirtualFileSystemHost} from "../fileSystem";
+import {Project} from "../Project";
+import {IndentationText} from "../ManipulationSettings";
+import {FileUtils} from "../utils";
+import * as errors from "../errors";
 import * as testHelpers from "./testHelpers";
 
 console.log("");

@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ts} from "./../../typescript";
-import {ClassDeclaration} from "./../../compiler";
-import {getInfoFromText} from "./../compiler/testHelpers";
+import {ts} from "../../typescript";
+import {ClassDeclaration} from "../../compiler";
+import {getInfoFromText} from "../compiler/testHelpers";
 
 describe("tests for issue #76", () => {
     it("should rename the class when there's a comment block above", () => {

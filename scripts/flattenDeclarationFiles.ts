@@ -5,7 +5,7 @@
  * ----------------------------------------------
  */
 import * as path from "path";
-import Project, {SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind} from "./../src/main";
+import Project, {SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind} from "../src/main";
 import {getDefinitionProject} from "./common";
 
 const project = getDefinitionProject();

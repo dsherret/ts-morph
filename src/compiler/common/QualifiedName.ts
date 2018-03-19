@@ -1,7 +1,7 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {Node} from "./Node";
 import {Identifier} from "./Identifier";
-import {EntityName} from "./../aliases";
+import {EntityName} from "../aliases";
 
 export class QualifiedName extends Node<ts.QualifiedName> {
     /**

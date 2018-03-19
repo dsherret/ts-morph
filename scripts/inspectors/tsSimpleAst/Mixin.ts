@@ -1,6 +1,6 @@
-﻿import {InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind} from "./../../../src/main";
-import {Memoize, TypeGuards, ArrayUtils} from "./../../../src/utils";
-import {WrapperFactory} from "./../WrapperFactory";
+﻿import {InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind} from "../../../src/main";
+import {Memoize, TypeGuards, ArrayUtils} from "../../../src/utils";
+import {WrapperFactory} from "../WrapperFactory";
 
 export class Mixin {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {

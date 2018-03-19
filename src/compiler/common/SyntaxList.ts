@@ -1,8 +1,8 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn} from "./../../manipulation";
-import {TypeGuards, StringUtils, getTextFromStringOrWriter} from "./../../utils";
-import * as errors from "./../../errors";
+import {verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn} from "../../manipulation";
+import {TypeGuards, StringUtils, getTextFromStringOrWriter} from "../../utils";
+import * as errors from "../../errors";
 import {Node} from "./Node";
 
 export class SyntaxList extends Node<ts.SyntaxList> {

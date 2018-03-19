@@ -1,9 +1,9 @@
-﻿import * as errors from "./../../errors";
-import {Constructor} from "./../../Constructor";
-import {removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node} from "./../common";
+﻿import * as errors from "../../errors";
+import {Constructor} from "../../Constructor";
+import {removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
+import {ArrayUtils} from "../../utils";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node} from "../common";
 
 export type ArgumentedNodeExtensionType = Node<ts.Node & { arguments: ts.NodeArray<ts.Node>; }>;
 

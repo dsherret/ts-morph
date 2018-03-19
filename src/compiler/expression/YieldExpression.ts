@@ -1,5 +1,5 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
 import {Expression} from "./Expression";
 import {GeneratorableNode} from "../base";
 

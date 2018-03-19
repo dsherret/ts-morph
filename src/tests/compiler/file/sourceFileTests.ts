@@ -1,14 +1,14 @@
 ﻿import {expect} from "chai";
-import * as errors from "./../../../errors";
-import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "./../../../typescript";
+import * as errors from "../../../errors";
+import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "../../../typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
-    FileSystemRefreshResult} from "./../../../compiler";
-import {IndentationText, ManipulationSettings} from "./../../../ManipulationSettings";
-import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
-import {getFileSystemHostWithFiles} from "./../../testHelpers";
-import {Project} from "./../../../Project";
-import {FileUtils} from "./../../../utils";
+    FileSystemRefreshResult} from "../../../compiler";
+import {IndentationText, ManipulationSettings} from "../../../ManipulationSettings";
+import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
+import {getFileSystemHostWithFiles} from "../../testHelpers";
+import {Project} from "../../../Project";
+import {FileUtils} from "../../../utils";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
@@ -165,8 +165,8 @@ describe(nameof(SourceFile), () => {
             const fileText = "export interface MyInterface {}\nexport class MyClass {};";
             const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";\nasync function t() { const test = await import('./MyInterface'); }`);
-            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";\nimport t = require("./../MyInterface");`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\nimport t = require("./../MyInterface");`);
             const file4Text = `export * from "./sub/MyInterface";\nimport "MyOtherFile";`;
             const file4 = project.createSourceFile("/file4.ts", file4Text);
             sourceFile.move("/dir/NewFile.ts");
@@ -197,13 +197,13 @@ describe(nameof(SourceFile), () => {
 
         it("should not change the module specifiers in the current file when moving to the same directory", () => {
             // using a weird module specifier to make sure it doesn't update automatically
-            const fileText = `import {OtherInterface} from "./../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "./../dir/OtherInterface";`;
+            const fileText = `import {OtherInterface} from "../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "../dir/OtherInterface";`;
             const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/dir/MyInterface.ts" });
             const otherFile = project.createSourceFile("/dir/OtherInterface.ts", `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`);
             sourceFile.move("NewFile.ts");
-            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "./../dir/OtherInterface";\n` +
+            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../dir/OtherInterface";\n` +
                 `export interface MyInterface {}\n` +
-                `export * from "./../dir/OtherInterface";`);
+                `export * from "../dir/OtherInterface";`);
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./NewFile";\nexport interface OtherInterface {}`);
         });
     });
@@ -1212,8 +1212,8 @@ function myFunction(param: MyClass) {
             const fileText = "export interface MyInterface {}\nexport class MyClass {}";
             const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
-            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";\n` +
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n` +
                 `import test = require("../MyInterface");\n` +
                 `async function t() { const u = await import("../MyInterface"); }`);
             const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
@@ -1252,8 +1252,8 @@ function myFunction(param: MyClass) {
             const fileText = "export interface MyInterface {}";
             const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
-            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "./../MyInterface";\nimport "./../MyInterface";`);
-            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "./../MyInterface";`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";`);
             const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
 
             const referencing = sourceFile.getReferencingSourceFiles();

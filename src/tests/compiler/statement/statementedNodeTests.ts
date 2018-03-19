@@ -1,9 +1,9 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "./../../../compiler";
-import {StatementedNodeStructure} from "./../../../structures";
-import {TypeGuards} from "./../../../utils";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "../../../compiler";
+import {StatementedNodeStructure} from "../../../structures";
+import {TypeGuards} from "../../../utils";
+import {getInfoFromText} from "../testHelpers";
 
 function getInfoFromTextWithSyntax<T extends Node>(text: string, kind?: SyntaxKind) {
     const obj = getInfoFromText(text);

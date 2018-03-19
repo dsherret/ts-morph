@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {ts} from "./../../../typescript";
-import {AwaitableNode, FunctionDeclaration, ClassDeclaration, ForOfStatement} from "./../../../compiler";
-import {AwaitableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ts} from "../../../typescript";
+import {AwaitableNode, FunctionDeclaration, ClassDeclaration, ForOfStatement} from "../../../compiler";
+import {AwaitableNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 describe(nameof(AwaitableNode), () => {
     const awaitForOfText = "for await (const x of [Promise.resolve(1)]) {}";
     const forOfText = "for (const x of [Promise.resolve(1)]) {}";

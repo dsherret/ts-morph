@@ -1,5 +1,5 @@
-import {ts} from "./../../typescript";
-import {LiteralLikeNode} from "./../base";
+import {ts} from "../../typescript";
+import {LiteralLikeNode} from "../base";
 import {PrimaryExpression} from "./PrimaryExpression";
 
 export const LiteralExpressionBase = LiteralLikeNode(PrimaryExpression);

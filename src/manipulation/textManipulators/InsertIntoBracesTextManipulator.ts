@@ -1,8 +1,8 @@
-﻿import {Node} from "./../../compiler";
-import {getInsertPosFromIndex} from "./../helpers";
+﻿import {Node} from "../../compiler";
+import {getInsertPosFromIndex} from "../helpers";
 import {InsertionTextManipulator} from "./InsertionTextManipulator";
-import {isBlankLineAtPos} from "./../textChecks";
-import {TypeGuards, StringUtils} from "./../../utils";
+import {isBlankLineAtPos} from "../textChecks";
+import {TypeGuards, StringUtils} from "../../utils";
 
 export interface InsertIntoBracesTextManipulatorOptions<TStructure> {
     parent: Node;

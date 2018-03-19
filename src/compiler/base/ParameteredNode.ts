@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import * as errors from "./../../errors";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "./../../manipulation";
-import {ParameterDeclarationStructure, ParameteredNodeStructure} from "./../../structures";
-import {ParameterDeclarationStructureToText} from "./../../structureToTexts";
-import {callBaseFill} from "./../callBaseFill";
-import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../utils";
-import {Node} from "./../common";
-import {ParameterDeclaration} from "./../function/ParameterDeclaration";
+import {ts, SyntaxKind} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import * as errors from "../../errors";
+import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "../../manipulation";
+import {ParameterDeclarationStructure, ParameteredNodeStructure} from "../../structures";
+import {ParameterDeclarationStructureToText} from "../../structureToTexts";
+import {callBaseFill} from "../callBaseFill";
+import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../utils";
+import {Node} from "../common";
+import {ParameterDeclaration} from "../function/ParameterDeclaration";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 

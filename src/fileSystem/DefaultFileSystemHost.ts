@@ -1,8 +1,8 @@
 ﻿import * as fs from "fs";
 import * as nodePath from "path";
 import * as globby from "globby";
-import * as errors from "./../errors";
-import {FileUtils} from "./../utils";
+import * as errors from "../errors";
+import {FileUtils} from "../utils";
 import {FileSystemHost} from "./FileSystemHost";
 
 export class DefaultFileSystemHost implements FileSystemHost {

@@ -1,8 +1,8 @@
-﻿import {ClassDeclaration, InterfaceDeclaration, Type} from "./../../../src/main";
-import {Memoize, ArrayUtils, TypeGuards} from "./../../../src/utils";
-import {hasDescendantNodeType} from "./../../common";
-import {WrapperFactory} from "./../WrapperFactory";
-import {TsNode} from "./../ts";
+﻿import {ClassDeclaration, InterfaceDeclaration, Type} from "../../../src/main";
+import {Memoize, ArrayUtils, TypeGuards} from "../../../src/utils";
+import {hasDescendantNodeType} from "../../common";
+import {WrapperFactory} from "../WrapperFactory";
+import {TsNode} from "../ts";
 import {Mixin} from "./Mixin";
 
 export class WrappedNode {

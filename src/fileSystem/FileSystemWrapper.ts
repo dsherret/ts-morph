@@ -1,5 +1,5 @@
-﻿import * as errors from "./../errors";
-import {createHashSet, HashSet, ArrayUtils, FileUtils} from "./../utils";
+﻿import * as errors from "../errors";
+import {createHashSet, HashSet, ArrayUtils, FileUtils} from "../utils";
 import {FileSystemHost} from "./FileSystemHost";
 
 /**

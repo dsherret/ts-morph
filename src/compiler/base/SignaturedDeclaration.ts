@@ -1,8 +1,8 @@
-import {ts} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
+import {ts} from "../../typescript";
+import {Constructor} from "../../Constructor";
 import {ReturnTypedNode} from "./ReturnTypedNode";
 import {ParameteredNode} from "./ParameteredNode";
-import {Node} from "./../common";
+import {Node} from "../common";
 
 export type SignaturedDeclarationExtensionType = Node<ts.SignatureDeclaration>;
 

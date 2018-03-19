@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {verifyAndGetIndex} from "./../../manipulation";
+import {verifyAndGetIndex} from "../../manipulation";
 
 describe(nameof(verifyAndGetIndex), () => {
     it("should get the index when zero and length is zero", () => {

@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ClassDeclaration, PropertyDeclaration, QuestionTokenableNode} from "./../../../compiler";
-import {QuestionTokenableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ClassDeclaration, PropertyDeclaration, QuestionTokenableNode} from "../../../compiler";
+import {QuestionTokenableNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(QuestionTokenableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {

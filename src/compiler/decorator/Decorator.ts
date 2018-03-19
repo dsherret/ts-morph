@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParentTextRange} from "./../../manipulation";
-import {TypeGuards} from "./../../utils";
-import {CallExpression, Expression} from "./../expression";
-import {Node, Identifier} from "./../common";
-import {TypeNode} from "./../type";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
+import {removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParentTextRange} from "../../manipulation";
+import {TypeGuards} from "../../utils";
+import {CallExpression, Expression} from "../expression";
+import {Node, Identifier} from "../common";
+import {TypeNode} from "../type";
 
 export const DecoratorBase = Node;
 export class Decorator extends DecoratorBase<ts.Decorator> {

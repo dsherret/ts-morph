@@ -1,8 +1,8 @@
-﻿import {Constructor} from "./../../Constructor";
-import {ScopedNodeStructure} from "./../../structures";
-import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
-import {Scope} from "./../common/Scope";
+﻿import {Constructor} from "../../Constructor";
+import {ScopedNodeStructure} from "../../structures";
+import {callBaseFill} from "../callBaseFill";
+import {Node} from "../common";
+import {Scope} from "../common/Scope";
 import {ModifierableNode} from "./ModifierableNode";
 import * as scopeableNode from "./ScopeableNode";
 

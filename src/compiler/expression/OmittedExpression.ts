@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {Expression} from "./Expression";
 
 export const OmittedExpressionBase = Expression;

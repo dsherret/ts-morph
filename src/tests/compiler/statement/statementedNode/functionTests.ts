@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, FunctionDeclaration} from "./../../../../compiler";
-import {FunctionDeclarationStructure} from "./../../../../structures";
-import {getInfoFromText} from "./../../testHelpers";
+import {StatementedNode, FunctionDeclaration} from "../../../../compiler";
+import {FunctionDeclarationStructure} from "../../../../structures";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertFunctions), () => {

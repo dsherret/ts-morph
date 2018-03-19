@@ -1,6 +1,6 @@
 ﻿import {TextManipulator} from "./TextManipulator";
-import {Node} from "./../../compiler";
-import {getPreviousMatchingPos, getNextMatchingPos} from "./../textSeek";
+import {Node} from "../../compiler";
+import {getPreviousMatchingPos, getNextMatchingPos} from "../textSeek";
 import {getTextForError} from "./getTextForError";
 
 export interface RemoveChildrenTextManipulatorOptions {

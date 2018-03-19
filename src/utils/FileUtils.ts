@@ -1,5 +1,5 @@
 ﻿import * as path from "path";
-import {FileSystemHost, FileSystemWrapper} from "./../fileSystem";
+import {FileSystemHost, FileSystemWrapper} from "../fileSystem";
 
 export class FileUtils {
     private static standardizeSlashesRegex = /\\/g;

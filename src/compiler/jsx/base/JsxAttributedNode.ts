@@ -1,12 +1,12 @@
-﻿import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {insertIntoParentTextRange, verifyAndGetIndex, getNodesToReturn} from "./../../../manipulation";
-import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "./../../../utils";
-import {Node} from "./../../common";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {JsxAttributeStructure} from "./../../../structures";
-import {JsxAttributeStructureToText, SpaceFormattingStructuresToText} from "./../../../structureToTexts";
-import {JsxAttributeLike} from "./../../aliases";
+﻿import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {insertIntoParentTextRange, verifyAndGetIndex, getNodesToReturn} from "../../../manipulation";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../../utils";
+import {Node} from "../../common";
+import {ts, SyntaxKind} from "../../../typescript";
+import {JsxAttributeStructure} from "../../../structures";
+import {JsxAttributeStructureToText, SpaceFormattingStructuresToText} from "../../../structureToTexts";
+import {JsxAttributeLike} from "../../aliases";
 import {JsxTagNamedNode} from "./JsxTagNamedNode";
 
 export type JsxAttributedNodeExtensionType = Node<ts.Node & { attributes: ts.JsxAttributes; }> & JsxTagNamedNode;

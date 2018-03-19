@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {UnaryExpression} from "./UnaryExpression";
 
 export const PrefixUnaryExpressionBase = UnaryExpression;

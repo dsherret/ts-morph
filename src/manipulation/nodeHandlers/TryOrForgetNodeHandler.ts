@@ -1,6 +1,6 @@
-﻿import {Node} from "./../../compiler";
-import * as errors from "./../../errors";
-import {TypeGuards} from "./../../utils";
+﻿import {Node} from "../../compiler";
+import * as errors from "../../errors";
+import {TypeGuards} from "../../utils";
 import {NodeHandler} from "./NodeHandler";
 
 /**

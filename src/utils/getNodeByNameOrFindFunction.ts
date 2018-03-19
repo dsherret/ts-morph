@@ -1,5 +1,5 @@
-﻿import {Node} from "./../compiler";
-import {ArrayUtils, TypeGuards} from "./../utils";
+﻿import {Node} from "../compiler";
+import {ArrayUtils, TypeGuards} from "../utils";
 
 export function getNodeByNameOrFindFunction<T extends Node>(items: T[], nameOrFindFunc: ((declaration: T) => boolean) | string) {
     let findFunc: (declaration: T) => boolean;

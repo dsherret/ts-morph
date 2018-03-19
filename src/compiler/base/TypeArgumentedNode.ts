@@ -1,11 +1,11 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import * as errors from "./../../errors";
+import {ts, SyntaxKind} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import * as errors from "../../errors";
 import {verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange, insertIntoCommaSeparatedNodes,
-    getNodesToReturn} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
-import {Node} from "./../common";
-import {TypeNode} from "./../type";
+    getNodesToReturn} from "../../manipulation";
+import {ArrayUtils} from "../../utils";
+import {Node} from "../common";
+import {TypeNode} from "../type";
 
 export type TypeArgumentedNodeExtensionType = Node<ts.Node & { typeArguments?: ts.NodeArray<ts.TypeNode>; }>;
 

@@ -1,5 +1,5 @@
 ﻿import {NamedNodeStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure,
-    JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "./../base";
+    JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "../base";
 import {PropertyDeclarationStructure} from "./PropertyDeclarationStructure";
 import {MethodDeclarationStructure} from "./MethodDeclarationStructure";
 import {ConstructorDeclarationStructure} from "./ConstructorDeclarationStructure";

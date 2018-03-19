@@ -7,7 +7,7 @@
  * This code verification ensures that an overload structure matches its "implementation" structure.
  * -----------------------------------------------------
  */
-import {ArrayUtils} from "./../src/utils";
+import {ArrayUtils} from "../src/utils";
 import {InspectorFactory, Structure} from "./inspectors";
 
 // setup

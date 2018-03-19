@@ -1,8 +1,8 @@
-﻿import {SourceFile, OutputFile} from "./../compiler";
-import * as errors from "./../errors";
-import {ArrayUtils, FileUtils} from "./../utils";
-import {SourceFileStructure} from "./../structures";
-import {GlobalContainer} from "./../GlobalContainer";
+﻿import {SourceFile, OutputFile} from "../compiler";
+import * as errors from "../errors";
+import {ArrayUtils, FileUtils} from "../utils";
+import {SourceFileStructure} from "../structures";
+import {GlobalContainer} from "../GlobalContainer";
 import {DirectoryEmitResult} from "./DirectoryEmitResult";
 
 export class Directory {

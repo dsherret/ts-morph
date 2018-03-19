@@ -1,4 +1,4 @@
-﻿import {GetAccessorDeclarationStructure, SetAccessorDeclarationStructure, MethodDeclarationStructure} from "./../../class";
+﻿import {GetAccessorDeclarationStructure, SetAccessorDeclarationStructure, MethodDeclarationStructure} from "../../class";
 import {PropertyAssignmentStructure} from "./PropertyAssignmentStructure";
 import {ShorthandPropertyAssignmentStructure} from "./ShorthandPropertyAssignmentStructure";
 import {SpreadAssignmentStructure} from "./SpreadAssignmentStructure";

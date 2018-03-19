@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {JSDoc} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {JSDoc} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(JSDoc), () => {
     describe(nameof<JSDoc>(d => d.remove), () => {

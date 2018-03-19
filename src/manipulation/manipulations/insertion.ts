@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node, SourceFile} from "./../../compiler";
-import {InsertionTextManipulator, InsertIntoBracesTextManipulator} from "./../textManipulators";
-import {NodeHandlerFactory} from "./../nodeHandlers";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node, SourceFile} from "../../compiler";
+import {InsertionTextManipulator, InsertIntoBracesTextManipulator} from "../textManipulators";
+import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions} from "./../helpers";
+import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions} from "../helpers";
 
 export interface InsertSyntaxListOptions {
     insertPos: number;

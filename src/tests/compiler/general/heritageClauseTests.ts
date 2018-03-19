@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {HeritageClause, ClassDeclaration} from "./../../../compiler";
-import {ArrayUtils} from "./../../../utils";
-import {getInfoFromText} from "./../testHelpers";
+import {HeritageClause, ClassDeclaration} from "../../../compiler";
+import {ArrayUtils} from "../../../utils";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(HeritageClause), () => {
     describe(nameof<HeritageClause>(n => n.getTypeNodes), () => {

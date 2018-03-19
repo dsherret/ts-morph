@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import * as path from "path";
-import {Project} from "./../../../Project";
-import {createWrappedNode} from "./../../../createWrappedNode";
-import {FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost} from "./../../../fileSystem";
-import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "./../../../typescript";
-import {Node, SourceFile, Diagnostic, Program} from "./../../../compiler";
+import {Project} from "../../../Project";
+import {createWrappedNode} from "../../../createWrappedNode";
+import {FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost} from "../../../fileSystem";
+import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "../../../typescript";
+import {Node, SourceFile, Diagnostic, Program} from "../../../compiler";
 
 function getTextForLibFile(fileName: string) {
     return {

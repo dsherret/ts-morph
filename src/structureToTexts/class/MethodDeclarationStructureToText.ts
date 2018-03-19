@@ -1,9 +1,9 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {MethodDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
-import {ParameterDeclarationStructureToText} from "./../function";
-import {JSDocStructureToText} from "./../doc";
+import {MethodDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
+import {ParameterDeclarationStructureToText} from "../function";
+import {JSDocStructureToText} from "../doc";
 
 export class MethodDeclarationStructureToText extends StructureToText<MethodDeclarationStructure> {
     private readonly jsDocWriter = new JSDocStructureToText(this.writer);

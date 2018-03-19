@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {TypeParameterDeclaration, FunctionDeclaration} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {TypeParameterDeclaration, FunctionDeclaration} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {
     function getTypeParameterFromText(text: string, index = 0) {

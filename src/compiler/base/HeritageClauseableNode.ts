@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {Constructor} from "./../../Constructor";
-import {ArrayUtils, getSyntaxKindName} from "./../../utils";
-import {Node} from "./../common";
-import {HeritageClause} from "./../general/HeritageClause";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
+import {Constructor} from "../../Constructor";
+import {ArrayUtils, getSyntaxKindName} from "../../utils";
+import {Node} from "../common";
+import {HeritageClause} from "../general/HeritageClause";
 
 export type HeritageClauseableNodeExtensionType = Node<ts.Node & { heritageClauses?: ts.NodeArray<ts.HeritageClause>; }>;
 

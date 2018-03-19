@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {NoSubstitutionTemplateLiteral} from "./../../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {NoSubstitutionTemplateLiteral} from "../../../../compiler";
+import {getInfoFromTextWithDescendant} from "../../testHelpers";
 
 function getLiteral(text: string) {
     return getInfoFromTextWithDescendant<NoSubstitutionTemplateLiteral>(text, SyntaxKind.NoSubstitutionTemplateLiteral).descendant;

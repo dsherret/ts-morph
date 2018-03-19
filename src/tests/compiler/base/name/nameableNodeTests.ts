@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {FunctionExpression, NameableNode, Identifier, VariableStatement} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {FunctionExpression, NameableNode, Identifier, VariableStatement} from "../../../../compiler";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(NameableNode), () => {
     function getFunctionExpression(startCode: string) {

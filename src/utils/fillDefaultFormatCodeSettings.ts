@@ -1,6 +1,6 @@
-import {ManipulationSettingsContainer} from "./../ManipulationSettings";
-import {ts} from "./../typescript";
-import {FormatCodeSettings} from "./../compiler";
+import {ManipulationSettingsContainer} from "../ManipulationSettings";
+import {ts} from "../typescript";
+import {FormatCodeSettings} from "../compiler";
 import {setValueIfUndefined} from "./setValueIfUndefined";
 import {fillDefaultEditorSettings} from "./fillDefaultEditorSettings";
 

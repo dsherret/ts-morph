@@ -1,12 +1,12 @@
-import {ts} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "./../../manipulation";
-import {JSDocStructure, JSDocableNodeStructure} from "./../../structures";
-import {JSDocStructureToText} from "./../../structureToTexts";
-import {callBaseFill} from "./../callBaseFill";
-import {ArrayUtils} from "./../../utils";
-import {Node} from "./../common";
-import {JSDoc} from "./../doc/JSDoc";
+import {ts} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "../../manipulation";
+import {JSDocStructure, JSDocableNodeStructure} from "../../structures";
+import {JSDocStructureToText} from "../../structureToTexts";
+import {callBaseFill} from "../callBaseFill";
+import {ArrayUtils} from "../../utils";
+import {Node} from "../common";
+import {JSDoc} from "../doc/JSDoc";
 
 export type JSDocableNodeExtensionType = Node<ts.Node & { jsDoc?: ts.NodeArray<ts.JSDoc>; }>;
 

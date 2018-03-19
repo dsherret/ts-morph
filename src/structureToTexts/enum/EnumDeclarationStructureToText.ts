@@ -1,6 +1,6 @@
-﻿import {EnumDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
+﻿import {EnumDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
 
 export class EnumDeclarationStructureToText extends StructureToText<EnumDeclarationStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);

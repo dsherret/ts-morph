@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../../typescript";
-import * as errors from "./../../../errors";
-import {insertIntoParentTextRange, removeChildren} from "./../../../manipulation";
-import {StringUtils} from "./../../../utils";
-import {NamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "./../../base";
-import {Expression} from "./../Expression";
-import {Node} from "./../../common";
+import {ts, SyntaxKind} from "../../../typescript";
+import * as errors from "../../../errors";
+import {insertIntoParentTextRange, removeChildren} from "../../../manipulation";
+import {StringUtils} from "../../../utils";
+import {NamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "../../base";
+import {Expression} from "../Expression";
+import {Node} from "../../common";
 import {PropertyAssignment} from "./PropertyAssignment";
 
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code

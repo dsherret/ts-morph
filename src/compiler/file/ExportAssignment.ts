@@ -1,7 +1,7 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
-import {Expression} from "./../expression";
-import {Statement} from "./../statement";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
+import {Expression} from "../expression";
+import {Statement} from "../statement";
 
 export class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**

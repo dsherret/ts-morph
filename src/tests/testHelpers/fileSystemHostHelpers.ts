@@ -1,6 +1,6 @@
-﻿import {FileNotFoundError} from "./../../errors";
-import {FileSystemHost} from "./../../fileSystem";
-import {ArrayUtils, KeyValueCache} from "./../../utils";
+﻿import {FileNotFoundError} from "../../errors";
+import {FileSystemHost} from "../../fileSystem";
+import {ArrayUtils, KeyValueCache} from "../../utils";
 
 export interface CustomFileSystemProps {
     getSyncWriteLog(): { filePath: string; fileText: string; }[];

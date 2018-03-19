@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {ObjectDestructuringAssignment} from "./../../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {ObjectDestructuringAssignment} from "../../../../compiler";
+import {getInfoFromTextWithDescendant} from "../../testHelpers";
 
 describe(nameof(ObjectDestructuringAssignment), () => {
     describe(nameof<ObjectDestructuringAssignment>(n => n.getLeft), () => {

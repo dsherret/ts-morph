@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Constructor} from "./../../Constructor";
-import * as errors from "./../../errors";
-import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
-import {ArrayUtils, getSyntaxKindName} from "./../../utils";
-import {Node} from "./../common";
-import {KindToNodeMappings} from "./../kindToNodeMappings";
+import {ts, SyntaxKind} from "../../typescript";
+import {Constructor} from "../../Constructor";
+import * as errors from "../../errors";
+import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "../../manipulation";
+import {ArrayUtils, getSyntaxKindName} from "../../utils";
+import {Node} from "../common";
+import {KindToNodeMappings} from "../kindToNodeMappings";
 
 export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";

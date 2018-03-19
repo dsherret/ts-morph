@@ -1,5 +1,5 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node, SourceFile} from "./../../compiler";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node, SourceFile} from "../../compiler";
 import {getRangeFromArray} from "./getRangeFromArray";
 
 export interface FillAndGetChildrenOptions<TNode extends Node, TStructure> {

@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {OverloadableNode, FunctionDeclaration, ClassDeclaration, ConstructorDeclaration} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {OverloadableNode, FunctionDeclaration, ClassDeclaration, ConstructorDeclaration} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(OverloadableNode), () => {
     const functionCode = `function myFunction();function myFunction() {}`;

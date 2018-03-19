@@ -1,5 +1,5 @@
-﻿import { IndexSignatureDeclarationStructure } from "./../../structures";
-import { StructureToText } from "./../StructureToText";
+﻿import { IndexSignatureDeclarationStructure } from "../../structures";
+import { StructureToText } from "../StructureToText";
 
 export class IndexSignatureDeclarationStructureToText extends StructureToText<IndexSignatureDeclarationStructure> {
     writeText(structure: IndexSignatureDeclarationStructure) {

@@ -1,5 +1,5 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {StructureToText} from "./../StructureToText";
+import {StructureToText} from "../StructureToText";
 
 export class SpaceFormattingStructuresToText<T> extends StructureToText<T[]> {
     constructor(writer: CodeBlockWriter, private readonly structureToText: StructureToText<T>) {

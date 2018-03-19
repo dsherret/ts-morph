@@ -1,5 +1,5 @@
-import {ts} from "./../../typescript";
-import * as errors from "./../../errors";
+import {ts} from "../../typescript";
+import * as errors from "../../errors";
 import {Block} from "./Block";
 import {Statement} from "./Statement";
 import {Node} from "../common";

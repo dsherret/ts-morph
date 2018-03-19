@@ -1,7 +1,7 @@
-import {ts, SyntaxKind} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {Node, Identifier} from "./../../common";
+import {ts, SyntaxKind} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {Node, Identifier} from "../../common";
 
 // todo: consolidate these named classes somehow
 

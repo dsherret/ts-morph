@@ -1,4 +1,4 @@
-﻿import {NamedNodeStructure} from "./../base";
+﻿import {NamedNodeStructure} from "../base";
 
 export interface JsxAttributeStructure extends NamedNodeStructure {
     isSpreadAttribute?: boolean;

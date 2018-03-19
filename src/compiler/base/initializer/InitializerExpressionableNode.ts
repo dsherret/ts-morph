@@ -1,6 +1,6 @@
-import {ts} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
-import {Node} from "./../../common";
+import {ts} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
+import {Node} from "../../common";
 import {InitializerGetExpressionableNode} from "./InitializerGetExpressionableNode";
 import {InitializerSetExpressionableNode} from "./InitializerSetExpressionableNode";
 

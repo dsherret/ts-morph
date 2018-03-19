@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {DecoratorStructure, DecoratableNodeStructure} from "./../../../structures";
-import {DecoratableNode, Decorator, ClassDeclaration} from "./../../../compiler";
-import {SyntaxKind} from "./../../../typescript";
-import {getInfoFromText, getInfoFromTextWithDescendant} from "./../testHelpers";
+import {DecoratorStructure, DecoratableNodeStructure} from "../../../structures";
+import {DecoratableNode, Decorator, ClassDeclaration} from "../../../compiler";
+import {SyntaxKind} from "../../../typescript";
+import {getInfoFromText, getInfoFromTextWithDescendant} from "../testHelpers";
 
 describe(nameof(DecoratableNode), () => {
     describe(nameof<DecoratableNode>(d => d.getDecorator), () => {

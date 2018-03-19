@@ -1,7 +1,7 @@
-﻿import * as errors from "./../../errors";
-import {changeChildOrder, getGeneralFormatting} from "./../../manipulation";
-import {Constructor} from "./../../Constructor";
-import {Node} from "./../common";
+﻿import * as errors from "../../errors";
+import {changeChildOrder, getGeneralFormatting} from "../../manipulation";
+import {Constructor} from "../../Constructor";
+import {Node} from "../common";
 
 export interface ChildOrderableNode {
     /**

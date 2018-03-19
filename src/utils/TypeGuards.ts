@@ -5,8 +5,8 @@
 // -----------------------
 
 /* tslint:disable */
-import * as compiler from "./../compiler";
-import {ts, SyntaxKind} from "./../typescript";
+import * as compiler from "../compiler";
+import {ts, SyntaxKind} from "../typescript";
 
 /**
  * Type guards for checking the type of a node.

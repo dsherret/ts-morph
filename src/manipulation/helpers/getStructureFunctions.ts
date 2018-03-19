@@ -2,8 +2,8 @@
 // DO NOT MANUALLY EDIT!! File generated via: npm run code-generate
 
 import * as objectAssign from "object-assign";
-import * as compiler from "./../../compiler";
-import * as structures from "./../../structures";
+import * as compiler from "../../compiler";
+import * as structures from "../../structures";
 import * as getMixinStructureFuncs from "./getMixinStructureFunctions";
 
 export function fromConstructorDeclarationOverload(node: compiler.ConstructorDeclaration): structures.ConstructorDeclarationOverloadStructure {

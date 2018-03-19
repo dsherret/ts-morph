@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {UnaryExpression} from "./UnaryExpression";
 import {Expression} from "./Expression";
 import {UnaryExpressionedNode} from "./expressioned";

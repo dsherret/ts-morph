@@ -1,5 +1,5 @@
-﻿import {Type} from "./../../src/compiler";
-import {ArrayUtils} from "./../../src/utils";
+﻿import {Type} from "../../src/compiler";
+import {ArrayUtils} from "../../src/utils";
 
 export function isNodeType(type: Type) {
     return type.getText() === "Node<NodeType>";

@@ -1,5 +1,5 @@
-﻿import {SpreadAssignmentStructure} from "./../../../structures";
-import {StructureToText} from "./../../StructureToText";
+﻿import {SpreadAssignmentStructure} from "../../../structures";
+import {StructureToText} from "../../StructureToText";
 
 export class SpreadAssignmentStructureToText extends StructureToText<SpreadAssignmentStructure> {
     writeText(structure: SpreadAssignmentStructure) {

@@ -1,5 +1,5 @@
-﻿import {PropertyAssignmentStructure} from "./../../../structures";
-import {StructureToText} from "./../../StructureToText";
+﻿import {PropertyAssignmentStructure} from "../../../structures";
+import {StructureToText} from "../../StructureToText";
 
 export class PropertyAssignmentStructureToText extends StructureToText<PropertyAssignmentStructure> {
     writeText(structure: PropertyAssignmentStructure) {

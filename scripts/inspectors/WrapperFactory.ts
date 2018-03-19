@@ -1,5 +1,5 @@
-﻿import {Node, ClassDeclaration, InterfaceDeclaration, PropertySignature} from "./../../src/main";
-import {KeyValueCache} from "./../../src/utils";
+﻿import {Node, ClassDeclaration, InterfaceDeclaration, PropertySignature} from "../../src/main";
+import {KeyValueCache} from "../../src/utils";
 import {WrappedNode, Structure, Mixin} from "./tsSimpleAst";
 import {TsNode, TsNodeProperty} from "./ts";
 

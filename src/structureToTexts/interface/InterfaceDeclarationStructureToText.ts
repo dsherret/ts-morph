@@ -1,6 +1,6 @@
-﻿import {InterfaceDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
+﻿import {InterfaceDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
 
 export class InterfaceDeclarationStructureToText extends StructureToText<InterfaceDeclarationStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);

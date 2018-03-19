@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {ExpressionWithTypeArguments, ClassDeclaration} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ExpressionWithTypeArguments, ClassDeclaration} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ExpressionWithTypeArguments), () => {
     function getFirstExpressionWithTypeArgs(text: string) {

@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {TypeReferenceNode, VariableDeclaration, QualifiedName} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {TypeReferenceNode, VariableDeclaration, QualifiedName} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(QualifiedName), () => {
     function getQualifiedName(text: string) {

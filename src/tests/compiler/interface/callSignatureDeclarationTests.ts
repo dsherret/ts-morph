@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {CallSignatureDeclaration, InterfaceDeclaration} from "./../../../compiler";
-import {CallSignatureDeclarationStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {CallSignatureDeclaration, InterfaceDeclaration} from "../../../compiler";
+import {CallSignatureDeclarationStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(CallSignatureDeclaration), () => {
     function getFirstCallSignatureWithInfo(code: string) {

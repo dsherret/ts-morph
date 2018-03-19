@@ -1,6 +1,6 @@
-﻿import Project, {InterfaceDeclaration, SourceFile, SyntaxKind} from "./../../src/main";
-import {Memoize, ArrayUtils} from "./../../src/utils";
-import {hasDescendantBaseType} from "./../common";
+﻿import Project, {InterfaceDeclaration, SourceFile, SyntaxKind} from "../../src/main";
+import {Memoize, ArrayUtils} from "../../src/utils";
+import {hasDescendantBaseType} from "../common";
 import {TsNode} from "./ts";
 import {WrapperFactory} from "./WrapperFactory";
 

@@ -1,10 +1,10 @@
 import CodeBlockWriter from "code-block-writer";
-import * as errors from "./../../errors";
-import {Constructor} from "./../../Constructor";
-import {insertIntoParentTextRange} from "./../../manipulation";
-import {ts, SyntaxKind} from "./../../typescript";
-import {TypeGuards, getTextFromStringOrWriter} from "./../../utils";
-import {Node} from "./../common";
+import * as errors from "../../errors";
+import {Constructor} from "../../Constructor";
+import {insertIntoParentTextRange} from "../../manipulation";
+import {ts, SyntaxKind} from "../../typescript";
+import {TypeGuards, getTextFromStringOrWriter} from "../../utils";
+import {Node} from "../common";
 
 export type TextInsertableNodeExtensionType = Node;
 

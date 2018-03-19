@@ -1,5 +1,5 @@
-﻿import {PropertySignatureStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {PropertySignatureStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class PropertySignatureStructureToText extends StructureToText<PropertySignatureStructure> {
     writeText(structure: PropertySignatureStructure) {

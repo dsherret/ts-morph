@@ -1,6 +1,6 @@
-﻿import {ParameterDeclarationStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
+﻿import {ParameterDeclarationStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
 
 export class ParameterDeclarationStructureToText extends StructureToText<ParameterDeclarationStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);

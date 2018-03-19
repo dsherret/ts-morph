@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import * as compiler from "./../../compiler";
-import * as structures from "./../../structures";
-import {getInfoFromText} from "./../compiler/testHelpers";
-import * as getMixinStructureFuncs from "./../../manipulation/helpers/getMixinStructureFunctions";
+import * as compiler from "../../compiler";
+import * as structures from "../../structures";
+import {getInfoFromText} from "../compiler/testHelpers";
+import * as getMixinStructureFuncs from "../../manipulation/helpers/getMixinStructureFunctions";
 
 describe(nameof(getMixinStructureFuncs.fromAbstractableNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.AbstractableNodeStructure>) {

@@ -1,5 +1,5 @@
-import {ts, SyntaxKind} from "./../typescript";
-import * as compiler from "./../compiler";
+import {ts, SyntaxKind} from "../typescript";
+import * as compiler from "../compiler";
 
 // when changing this, make sure to run `npm run code-generate`.
 // that will automatically update all other parts of the application that need to be updated when this changes.

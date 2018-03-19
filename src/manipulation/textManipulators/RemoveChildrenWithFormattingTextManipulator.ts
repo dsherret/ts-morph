@@ -1,7 +1,7 @@
 ﻿import {TextManipulator} from "./TextManipulator";
-import {Node} from "./../../compiler";
-import {FormattingKind, getFormattingKindText} from "./../formatting";
-import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "./../textSeek";
+import {Node} from "../../compiler";
+import {FormattingKind, getFormattingKindText} from "../formatting";
+import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "../textSeek";
 import {getSpacingBetweenNodes} from "./getSpacingBetweenNodes";
 import {getTextForError} from "./getTextForError";
 

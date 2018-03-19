@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {SpreadAssignment} from "./../../../../compiler";
-import {getInfoFromText} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {SpreadAssignment} from "../../../../compiler";
+import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {

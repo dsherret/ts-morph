@@ -1,8 +1,8 @@
 ﻿import {expect} from "chai";
-import {NamespaceDeclaration} from "./../../../compiler";
-import {NamespaceDeclarationSpecificStructure} from "./../../../structures";
-import * as errors from "./../../../errors";
-import {getInfoFromText} from "./../testHelpers";
+import {NamespaceDeclaration} from "../../../compiler";
+import {NamespaceDeclarationSpecificStructure} from "../../../structures";
+import * as errors from "../../../errors";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
     describe(nameof<NamespaceDeclaration>(d => d.getName), () => {

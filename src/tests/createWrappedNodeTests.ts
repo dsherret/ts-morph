@@ -1,10 +1,10 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
-import {Project} from "./../Project";
-import {createWrappedNode} from "./../createWrappedNode";
-import {ts, SyntaxKind, ScriptTarget} from "./../typescript";
-import {SourceFile} from "./../compiler";
-import * as errors from "./../errors";
+import {Project} from "../Project";
+import {createWrappedNode} from "../createWrappedNode";
+import {ts, SyntaxKind, ScriptTarget} from "../typescript";
+import {SourceFile} from "../compiler";
+import * as errors from "../errors";
 import * as testHelpers from "./testHelpers";
 
 describe(nameof(createWrappedNode), () => {

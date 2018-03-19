@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {JSDocTag} from "./JSDocTag";
 import {JSDocPropertyLikeTag} from "./base";
 

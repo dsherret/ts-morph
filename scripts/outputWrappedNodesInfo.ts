@@ -11,8 +11,8 @@ import * as path from "path";
 import * as fs from "fs";
 import {rootFolder} from "./config";
 import {InspectorFactory, TsNode, TsNodeProperty} from "./inspectors";
-import {MethodDeclaration} from "./../src/compiler";
-import {ArrayUtils} from "./../src/utils";
+import {MethodDeclaration} from "../src/compiler";
+import {ArrayUtils} from "../src/utils";
 
 // setup
 const inspectorFactory = new InspectorFactory();

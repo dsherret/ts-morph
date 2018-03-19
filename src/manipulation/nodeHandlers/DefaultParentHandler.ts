@@ -1,7 +1,7 @@
-import {AdvancedIterator, ArrayUtils} from "./../../utils";
-import {ts} from "./../../typescript";
-import {Node} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+import {AdvancedIterator, ArrayUtils} from "../../utils";
+import {ts} from "../../typescript";
+import {Node} from "../../compiler";
+import {CompilerFactory} from "../../factories";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";

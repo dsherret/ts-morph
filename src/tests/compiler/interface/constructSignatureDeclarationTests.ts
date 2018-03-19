@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ConstructSignatureDeclaration, InterfaceDeclaration} from "./../../../compiler";
-import {ConstructSignatureDeclarationStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ConstructSignatureDeclaration, InterfaceDeclaration} from "../../../compiler";
+import {ConstructSignatureDeclarationStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ConstructSignatureDeclaration), () => {
     function getFirstConstructSignatureWithInfo(code: string) {

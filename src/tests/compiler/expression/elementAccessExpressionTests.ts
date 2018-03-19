@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {ElementAccessExpression} from "./../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {ElementAccessExpression} from "../../../compiler";
+import {getInfoFromTextWithDescendant} from "../testHelpers";
 
 function getInfoFromTextWithElementAccessExpression(text: string) {
     const info = getInfoFromTextWithDescendant<ElementAccessExpression>(text, SyntaxKind.ElementAccessExpression);

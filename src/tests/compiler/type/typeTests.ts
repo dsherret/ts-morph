@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags} from "./../../../typescript";
-import {Type, VariableStatement, Node, FunctionDeclaration, TypeAliasDeclaration} from "./../../../compiler";
-import {VirtualFileSystemHost, DefaultFileSystemHost} from "./../../../fileSystem";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags} from "../../../typescript";
+import {Type, VariableStatement, Node, FunctionDeclaration, TypeAliasDeclaration} from "../../../compiler";
+import {VirtualFileSystemHost, DefaultFileSystemHost} from "../../../fileSystem";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(Type), () => {
     function getInfoFromTextWithTypeChecking<T extends Node>(text: string) {

@@ -1,7 +1,7 @@
-import {ts, CompilerOptions} from "./../../typescript";
-import {GlobalContainer} from "./../../GlobalContainer";
+import {ts, CompilerOptions} from "../../typescript";
+import {GlobalContainer} from "../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
-import {SourceFile} from "./../file";
+import {SourceFile} from "../file";
 import {EmitResult, Diagnostic} from "./results";
 
 /**

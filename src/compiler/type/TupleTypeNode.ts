@@ -1,4 +1,4 @@
-import {ts} from "./../../typescript";
+import {ts} from "../../typescript";
 import {TypeNode} from "./TypeNode";
 
 export class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {

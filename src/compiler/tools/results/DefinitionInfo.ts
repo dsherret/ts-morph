@@ -1,7 +1,7 @@
-import {GlobalContainer} from "./../../../GlobalContainer";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {SourceFile, Node} from "./../../../compiler";
-import {Memoize} from "./../../../utils";
+import {GlobalContainer} from "../../../GlobalContainer";
+import {ts, SyntaxKind} from "../../../typescript";
+import {SourceFile, Node} from "../../../compiler";
+import {Memoize} from "../../../utils";
 import {TextSpan} from "./TextSpan";
 
 /**

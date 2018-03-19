@@ -1,7 +1,7 @@
-import * as errors from "./../../errors";
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node, SourceFile} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+import * as errors from "../../errors";
+import {ts, SyntaxKind} from "../../typescript";
+import {Node, SourceFile} from "../../compiler";
+import {CompilerFactory} from "../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {DefaultParentHandler} from "./DefaultParentHandler";
 import {ParentFinderReplacementNodeHandler} from "./ParentFinderReplacementNodeHandler";

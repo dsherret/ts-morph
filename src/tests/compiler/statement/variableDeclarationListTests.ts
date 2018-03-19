@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {VariableDeclarationList, VariableDeclarationType, VariableDeclaration} from "./../../../compiler";
-import {VariableDeclarationListStructure, VariableDeclarationStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {VariableDeclarationList, VariableDeclarationType, VariableDeclaration} from "../../../compiler";
+import {VariableDeclarationListStructure, VariableDeclarationStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(VariableDeclarationList), () => {
     describe(nameof<VariableDeclarationList>(d => d.getDeclarationType), () => {

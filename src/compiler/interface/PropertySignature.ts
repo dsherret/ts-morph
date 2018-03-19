@@ -1,10 +1,10 @@
-import {ts} from "./../../typescript";
-import {removeInterfaceMember} from "./../../manipulation";
-import {PropertySignatureStructure} from "./../../structures";
-import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
+import {ts} from "../../typescript";
+import {removeInterfaceMember} from "../../manipulation";
+import {PropertySignatureStructure} from "../../structures";
+import {callBaseFill} from "../callBaseFill";
+import {Node} from "../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ReadonlyableNode, JSDocableNode, ModifierableNode,
-    ChildOrderableNode} from "./../base";
+    ChildOrderableNode} from "../base";
 import {TypeElement} from "./TypeElement";
 
 export const PropertySignatureBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(

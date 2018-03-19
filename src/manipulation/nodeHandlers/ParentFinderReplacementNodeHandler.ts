@@ -1,5 +1,5 @@
-﻿import {Node} from "./../../compiler";
-import {CompilerFactory} from "./../../factories";
+﻿import {Node} from "../../compiler";
+import {CompilerFactory} from "../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
 

@@ -1,9 +1,9 @@
 import {expect} from "chai";
-import {ts} from "./../../../typescript";
-import {EmitResult} from "./../../../compiler";
-import {Project} from "./../../../Project";
-import {FileUtils} from "./../../../utils";
-import * as testHelpers from "./../../testHelpers";
+import {ts} from "../../../typescript";
+import {EmitResult} from "../../../compiler";
+import {Project} from "../../../Project";
+import {FileUtils} from "../../../utils";
+import * as testHelpers from "../../testHelpers";
 
 describe(nameof(EmitResult), () => {
     it("should get the emit result when there are no errors", () => {

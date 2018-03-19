@@ -1,8 +1,8 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {insertIntoParentTextRange, replaceNodeText, removeCommaSeparatedChild} from "./../../manipulation";
-import {TypeGuards} from "./../../utils";
-import {Node, Identifier, Symbol} from "./../common";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
+import {insertIntoParentTextRange, replaceNodeText, removeCommaSeparatedChild} from "../../manipulation";
+import {TypeGuards} from "../../utils";
+import {Node, Identifier, Symbol} from "../common";
 import {ExportDeclaration} from "./ExportDeclaration";
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {

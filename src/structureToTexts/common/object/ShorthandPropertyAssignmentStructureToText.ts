@@ -1,5 +1,5 @@
-﻿import {ShorthandPropertyAssignmentStructure} from "./../../../structures";
-import {StructureToText} from "./../../StructureToText";
+﻿import {ShorthandPropertyAssignmentStructure} from "../../../structures";
+import {StructureToText} from "../../StructureToText";
 
 export class ShorthandPropertyAssignmentStructureToText extends StructureToText<ShorthandPropertyAssignmentStructure> {
     writeText(structure: ShorthandPropertyAssignmentStructure) {

@@ -1,5 +1,5 @@
-﻿import {JsxAttributeStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
+﻿import {JsxAttributeStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
 
 export class JsxAttributeStructureToText extends StructureToText<JsxAttributeStructure> {
     writeText(structure: JsxAttributeStructure) {

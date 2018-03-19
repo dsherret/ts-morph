@@ -1,6 +1,6 @@
-import {ts} from "./../../typescript";
-import {PrimaryExpression} from "./../expression";
-import {JsxChild} from "./../aliases";
+import {ts} from "../../typescript";
+import {PrimaryExpression} from "../expression";
+import {JsxChild} from "../aliases";
 import {JsxOpeningFragment} from "./JsxOpeningFragment";
 import {JsxClosingFragment} from "./JsxClosingFragment";
 

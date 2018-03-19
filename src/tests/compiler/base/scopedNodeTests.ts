@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {ScopedNode, ClassDeclaration, PropertyDeclaration, Scope} from "./../../../compiler";
-import {ScopedNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {ScopedNode, ClassDeclaration, PropertyDeclaration, Scope} from "../../../compiler";
+import {ScopedNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(ScopedNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {

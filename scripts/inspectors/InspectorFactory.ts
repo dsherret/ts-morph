@@ -1,5 +1,5 @@
-﻿import {Project} from "./../../src/Project";
-import {getProject} from "./../common";
+﻿import {Project} from "../../src/Project";
+import {getProject} from "../common";
 import {WrapperFactory} from "./WrapperFactory";
 import {TsSimpleAstInspector} from "./TsSimpleAstInspector";
 import {TsInspector} from "./TsInspector";

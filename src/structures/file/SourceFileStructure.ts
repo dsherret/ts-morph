@@ -1,4 +1,4 @@
-﻿import {StatementedNodeStructure} from "./../statement";
+﻿import {StatementedNodeStructure} from "../statement";
 import {ImportDeclarationStructure} from "./ImportDeclarationStructure";
 import {ExportDeclarationStructure} from "./ExportDeclarationStructure";
 

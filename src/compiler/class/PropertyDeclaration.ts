@@ -1,11 +1,11 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {PropertyDeclarationStructure} from "./../../structures";
-import {removeClassMember, removeInterfaceMember} from "./../../manipulation";
-import {callBaseFill} from "./../callBaseFill";
-import {Node} from "./../common";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
+import {PropertyDeclarationStructure} from "../../structures";
+import {removeClassMember, removeInterfaceMember} from "../../manipulation";
+import {callBaseFill} from "../callBaseFill";
+import {Node} from "../common";
 import {PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ExclamationTokenableNode, ReadonlyableNode, JSDocableNode, StaticableNode,
-    ModifierableNode, ScopedNode, DecoratableNode, ChildOrderableNode} from "./../base";
+    ModifierableNode, ScopedNode, DecoratableNode, ChildOrderableNode} from "../base";
 import {ClassDeclaration} from "./ClassDeclaration";
 import {AbstractableNode} from "./base";
 

@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {BooleanLiteral} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {BooleanLiteral} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 function getInfoFromTextWithBooleanLiteral(text: string) {
     const obj = getInfoFromText(text);

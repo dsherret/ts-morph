@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {getNextNonWhitespacePos} from "./../../../manipulation/textSeek";
+import {getNextNonWhitespacePos} from "../../../manipulation/textSeek";
 
 describe(nameof(getNextNonWhitespacePos), () => {
     function doTest(fileText: string, pos: number, expectedPos: number) {

@@ -1,4 +1,4 @@
-import {ts} from "./../../../typescript";
+import {ts} from "../../../typescript";
 
 /**
  * Represents a span of text.

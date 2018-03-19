@@ -1,7 +1,7 @@
-﻿import {VariableDeclarationType} from "./../../compiler/statement/VariableDeclarationType";
-import {VariableStatementStructure} from "./../../structures";
-import {StructureToText} from "./../StructureToText";
-import {ModifierableNodeStructureToText} from "./../base";
+﻿import {VariableDeclarationType} from "../../compiler/statement/VariableDeclarationType";
+import {VariableStatementStructure} from "../../structures";
+import {StructureToText} from "../StructureToText";
+import {ModifierableNodeStructureToText} from "../base";
 
 export class VariableStatementStructureToText extends StructureToText<VariableStatementStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);

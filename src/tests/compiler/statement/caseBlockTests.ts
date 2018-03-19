@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../typescript";
-import {CaseBlock, Node} from "./../../../compiler";
-import {getInfoFromText} from "./../testHelpers";
+import {ts, SyntaxKind} from "../../../typescript";
+import {CaseBlock, Node} from "../../../compiler";
+import {getInfoFromText} from "../testHelpers";
 
 function getCaseBlock(text: string) {
     const obj = getInfoFromText(text);

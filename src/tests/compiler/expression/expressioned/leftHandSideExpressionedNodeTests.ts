@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {NewExpression, LeftHandSideExpressionedNode} from "./../../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {NewExpression, LeftHandSideExpressionedNode} from "../../../../compiler";
+import {getInfoFromTextWithDescendant} from "../../testHelpers";
 
 describe(nameof(LeftHandSideExpressionedNode), () => {
     describe(nameof<LeftHandSideExpressionedNode>(n => n.getExpression), () => {

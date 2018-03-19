@@ -1,13 +1,13 @@
 ﻿// this file might be useful in the future...
 /*
-import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {PropertyNameableNodeStructure} from "./../../../structures";
-import {TypeGuards} from "./../../../utils";
-import {Node} from "./../../common";
-import {ts} from "./../../ts";
-import {callBaseFill} from "./../../callBaseFill";
-import {PropertyName} from "./../../aliases";
+import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {PropertyNameableNodeStructure} from "../../../structures";
+import {TypeGuards} from "../../../utils";
+import {Node} from "../../common";
+import {ts} from "../../ts";
+import {callBaseFill} from "../../callBaseFill";
+import {PropertyName} from "../../aliases";
 
 export type PropertyNameableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName; }>;
 

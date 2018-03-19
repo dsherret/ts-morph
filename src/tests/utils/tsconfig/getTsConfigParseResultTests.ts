@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {VirtualFileSystemHost, FileSystemWrapper} from "./../../../fileSystem";
-import {getTsConfigParseResult, FileUtils} from "./../../../utils";
-import * as errors from "./../../../errors";
+import {VirtualFileSystemHost, FileSystemWrapper} from "../../../fileSystem";
+import {getTsConfigParseResult, FileUtils} from "../../../utils";
+import * as errors from "../../../errors";
 
 describe(nameof(getTsConfigParseResult), () => {
     it("should throw an error when the path doesn't exist", () => {

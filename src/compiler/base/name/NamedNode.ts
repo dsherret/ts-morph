@@ -1,9 +1,9 @@
-import {ts} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
-import * as errors from "./../../../errors";
-import {NamedNodeStructure} from "./../../../structures";
-import {Node, Identifier} from "./../../common";
-import {callBaseFill} from "./../../callBaseFill";
+import {ts} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
+import * as errors from "../../../errors";
+import {NamedNodeStructure} from "../../../structures";
+import {Node, Identifier} from "../../common";
+import {callBaseFill} from "../../callBaseFill";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
 // (maybe NameableNode and rename some of the other "-ed" classes)

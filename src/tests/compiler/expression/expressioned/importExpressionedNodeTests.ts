@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {ts, SyntaxKind} from "./../../../../typescript";
-import {CallExpression, ImportExpressionedNode} from "./../../../../compiler";
-import {getInfoFromTextWithDescendant} from "./../../testHelpers";
+import {ts, SyntaxKind} from "../../../../typescript";
+import {CallExpression, ImportExpressionedNode} from "../../../../compiler";
+import {getInfoFromTextWithDescendant} from "../../testHelpers";
 
 describe(nameof(ImportExpressionedNode), () => {
     describe(nameof<ImportExpressionedNode>(n => n.getExpression), () => {

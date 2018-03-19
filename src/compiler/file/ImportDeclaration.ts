@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "./../../typescript";
-import * as errors from "./../../errors";
-import {ImportSpecifierStructure} from "./../../structures";
-import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "./../../manipulation";
-import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "./../../utils";
-import {Identifier} from "./../common";
-import {Statement} from "./../statement";
+import {ts, SyntaxKind} from "../../typescript";
+import * as errors from "../../errors";
+import {ImportSpecifierStructure} from "../../structures";
+import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "../../manipulation";
+import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
+import {Identifier} from "../common";
+import {Statement} from "../statement";
 import {ImportSpecifier} from "./ImportSpecifier";
 import {SourceFile} from "./SourceFile";
 

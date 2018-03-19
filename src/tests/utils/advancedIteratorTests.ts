@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {AdvancedIterator, ArrayUtils} from "./../../utils";
+import {AdvancedIterator, ArrayUtils} from "../../utils";
 
 describe(nameof(AdvancedIterator), () => {
     function *getNumIterator() {

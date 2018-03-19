@@ -1,7 +1,7 @@
-import {ts} from "./../../../typescript";
-import {Constructor} from "./../../../Constructor";
+import {ts} from "../../../typescript";
+import {Constructor} from "../../../Constructor";
 import {UnaryExpression} from "../UnaryExpression";
-import {Node} from "./../../common";
+import {Node} from "../../common";
 
 export type UnaryExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.UnaryExpression}>;
 

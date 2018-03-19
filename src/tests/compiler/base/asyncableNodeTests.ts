@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
-import {AsyncableNode, FunctionDeclaration} from "./../../../compiler";
-import {AsyncableNodeStructure} from "./../../../structures";
-import {getInfoFromText} from "./../testHelpers";
+import {AsyncableNode, FunctionDeclaration} from "../../../compiler";
+import {AsyncableNodeStructure} from "../../../structures";
+import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(AsyncableNode), () => {
     describe("navigation", () => {

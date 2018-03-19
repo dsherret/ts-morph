@@ -1,6 +1,6 @@
-import {ts} from "./../../typescript";
-import {Node} from "./../common";
-import {TextInsertableNode} from "./../base";
+import {ts} from "../../typescript";
+import {Node} from "../common";
+import {TextInsertableNode} from "../base";
 import {Statement} from "./Statement";
 import {StatementedNode} from "./StatementedNode";
 

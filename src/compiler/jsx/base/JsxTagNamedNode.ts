@@ -1,7 +1,7 @@
-﻿import {Constructor} from "./../../../Constructor";
-import {Node} from "./../../common";
-import {ts} from "./../../../typescript";
-import {JsxTagNameExpression} from "./../../aliases";
+﻿import {Constructor} from "../../../Constructor";
+import {Node} from "../../common";
+import {ts} from "../../../typescript";
+import {JsxTagNameExpression} from "../../aliases";
 
 export type JsxTagNamedNodeExtensionType = Node<ts.Node & { tagName: ts.JsxTagNameExpression; }>;
 

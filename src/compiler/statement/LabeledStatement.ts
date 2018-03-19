@@ -1,7 +1,7 @@
-import {ts} from "./../../typescript";
-import {Expression} from "./../expression";
-import {Node} from "./../common";
-import {ChildOrderableNode, JSDocableNode} from "./../base";
+import {ts} from "../../typescript";
+import {Expression} from "../expression";
+import {Node} from "../common";
+import {ChildOrderableNode, JSDocableNode} from "../base";
 import {Statement} from "./Statement";
 import {Identifier} from "../../main";
 
