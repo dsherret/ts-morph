@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="9.4.1"></a>
+## [9.4.1](https://github.com/dsherret/ts-simple-ast/compare/9.4.0...9.4.1) (2018-03-19)
+
+
+### Bug Fixes
+
+* Internally use the first name when getting the SyntaxKind name. ([cfab227](https://github.com/dsherret/ts-simple-ast/commit/cfab227))
+
+
+
 <a name="9.4.0"></a>
 # [9.4.0](https://github.com/dsherret/ts-simple-ast/compare/9.3.0...9.4.0) (2018-03-18)
 
