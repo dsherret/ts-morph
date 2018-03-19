@@ -107,7 +107,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             }
             else {
                 insertIntoCommaSeparatedNodes({
-                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
+                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.LessThanToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeParameters,
                     insertIndex: index,
                     newTexts: typeParamCodes

@@ -7,10 +7,10 @@ import {ts, SyntaxKind} from "./../typescript";
 export function isStringKind(kind: SyntaxKind) {
     switch (kind) {
         case SyntaxKind.StringLiteral:
-        case SyntaxKind.FirstTemplateToken:
+        case SyntaxKind.NoSubstitutionTemplateLiteral:
         case SyntaxKind.TemplateHead:
         case SyntaxKind.TemplateMiddle:
-        case SyntaxKind.LastTemplateToken:
+        case SyntaxKind.TemplateTail:
             return true;
         default:
             return false;

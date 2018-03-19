@@ -374,7 +374,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         let passedBrace = false;
         for (const child of node.getCompilerChildren()) {
             if (!passedBrace)
-                passedBrace = child.kind === SyntaxKind.FirstPunctuation;
+                passedBrace = child.kind === SyntaxKind.OpenBraceToken;
             else if (child.kind === SyntaxKind.SyntaxList)
                 return getWrappedNode(this, child) as SyntaxList;
         }

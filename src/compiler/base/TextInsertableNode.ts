@@ -113,7 +113,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
 
 function getValidRange(thisNode: Node): [number, number] {
     const rangeNode = getRangeNode();
-    const openBrace = TypeGuards.isSourceFile(rangeNode) ? undefined : rangeNode.getPreviousSiblingIfKind(SyntaxKind.FirstPunctuation);
+    const openBrace = TypeGuards.isSourceFile(rangeNode) ? undefined : rangeNode.getPreviousSiblingIfKind(SyntaxKind.OpenBraceToken);
     const closeBrace = openBrace == null ? undefined : rangeNode.getNextSiblingIfKind(SyntaxKind.CloseBraceToken);
     if (openBrace != null && closeBrace != null)
         return [openBrace.getEnd(), closeBrace.getStart()];

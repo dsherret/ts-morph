@@ -41,10 +41,8 @@ export interface KindToNodeMappings {
     [SyntaxKind.ExpressionWithTypeArguments]: compiler.ExpressionWithTypeArguments;
     [SyntaxKind.ExpressionStatement]: compiler.ExpressionStatement;
     [SyntaxKind.ExternalModuleReference]: compiler.ExternalModuleReference;
-    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
-    [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
-    [SyntaxKind.FirstNode]: compiler.QualifiedName;
     [SyntaxKind.QualifiedName]: compiler.QualifiedName;
+    [SyntaxKind.FirstNode]: compiler.QualifiedName;
     [SyntaxKind.ForInStatement]: compiler.ForInStatement;
     [SyntaxKind.ForOfStatement]: compiler.ForOfStatement;
     [SyntaxKind.ForStatement]: compiler.ForStatement;
@@ -62,6 +60,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
     [SyntaxKind.JSDocTag]: compiler.JSDocUnknownTag;
+    [SyntaxKind.FirstJSDocTagNode]: compiler.JSDocUnknownTag;
     [SyntaxKind.JSDocAugmentsTag]: compiler.JSDocAugmentsTag;
     [SyntaxKind.JSDocClassTag]: compiler.JSDocClassTag;
     [SyntaxKind.JSDocReturnTag]: compiler.JSDocReturnTag;
@@ -69,6 +68,8 @@ export interface KindToNodeMappings {
     [SyntaxKind.JSDocTypedefTag]: compiler.JSDocTypedefTag;
     [SyntaxKind.JSDocParameterTag]: compiler.JSDocParameterTag;
     [SyntaxKind.JSDocPropertyTag]: compiler.JSDocPropertyTag;
+    [SyntaxKind.LastJSDocNode]: compiler.JSDocPropertyTag;
+    [SyntaxKind.LastJSDocTagNode]: compiler.JSDocPropertyTag;
     [SyntaxKind.JsxAttribute]: compiler.JsxAttribute;
     [SyntaxKind.JsxClosingElement]: compiler.JsxClosingElement;
     [SyntaxKind.JsxClosingFragment]: compiler.JsxClosingFragment;
@@ -91,6 +92,10 @@ export interface KindToNodeMappings {
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
     [SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.LastLiteralToken]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.FirstTemplateToken]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
+    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression;
     [SyntaxKind.Parameter]: compiler.ParameterDeclaration;
@@ -117,6 +122,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.TemplateMiddle]: compiler.TemplateMiddle;
     [SyntaxKind.TemplateSpan]: compiler.TemplateSpan;
     [SyntaxKind.TemplateTail]: compiler.TemplateTail;
+    [SyntaxKind.LastTemplateToken]: compiler.TemplateTail;
     [SyntaxKind.ThrowStatement]: compiler.ThrowStatement;
     [SyntaxKind.TryStatement]: compiler.TryStatement;
     [SyntaxKind.TupleType]: compiler.TupleTypeNode;
@@ -130,6 +136,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList;
     [SyntaxKind.VariableStatement]: compiler.VariableStatement;
     [SyntaxKind.JSDocComment]: compiler.JSDoc;
+    [SyntaxKind.TypePredicate]: compiler.TypeNode;
     [SyntaxKind.FirstTypeNode]: compiler.TypeNode;
     [SyntaxKind.SemicolonToken]: compiler.Node;
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression;
@@ -165,8 +172,6 @@ export interface KindToExpressionMappings {
     [SyntaxKind.ConditionalExpression]: compiler.ConditionalExpression;
     [SyntaxKind.DeleteExpression]: compiler.DeleteExpression;
     [SyntaxKind.ElementAccessExpression]: compiler.ElementAccessExpression;
-    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
-    [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
     [SyntaxKind.FunctionExpression]: compiler.FunctionExpression;
     [SyntaxKind.Identifier]: compiler.Identifier;
     [SyntaxKind.JsxClosingFragment]: compiler.JsxClosingFragment;
@@ -180,6 +185,10 @@ export interface KindToExpressionMappings {
     [SyntaxKind.NewExpression]: compiler.NewExpression;
     [SyntaxKind.NonNullExpression]: compiler.NonNullExpression;
     [SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.LastLiteralToken]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.FirstTemplateToken]: compiler.NoSubstitutionTemplateLiteral;
+    [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
+    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression;
     [SyntaxKind.ParenthesizedExpression]: compiler.ParenthesizedExpression;

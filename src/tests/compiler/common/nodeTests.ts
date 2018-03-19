@@ -251,7 +251,7 @@ describe(nameof(Node), () => {
         });
 
         it("should return a the node at the specified pos when specifying a space", () => {
-            expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(SyntaxKind.FirstPunctuation);
+            expect(sourceFile.getDescendantAtPos(variableStatement.getPos() - 1)!.getKind()).to.equal(SyntaxKind.OpenBraceToken);
         });
     });
 

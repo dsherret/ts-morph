@@ -28,7 +28,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             const initializer = this.getInitializer();
             if (initializer == null)
                 return this;
-            const previousSibling = initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstAssignment);
+            const previousSibling = initializer.getPreviousSiblingIfKindOrThrow(SyntaxKind.EqualsToken);
 
             removeChildren({
                 children: [previousSibling, initializer],

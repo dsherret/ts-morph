@@ -600,7 +600,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1224,7 +1223,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1262,7 +1260,6 @@ export class TypeGuards {
      */
     static isLiteralExpression(node: compiler.Node): node is compiler.LiteralExpression {
         switch (node.getKind()) {
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1279,7 +1276,6 @@ export class TypeGuards {
      */
     static isLiteralLikeNode(node: compiler.Node): node is compiler.LiteralLikeNode & compiler.Node {
         switch (node.getKind()) {
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1298,13 +1294,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isLiteralTypeNode(node: compiler.Node): node is compiler.LiteralTypeNode {
-        switch (node.getKind()) {
-            case SyntaxKind.LiteralType:
-            case SyntaxKind.LastTypeNode:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.LiteralType;
     }
 
     /**
@@ -1328,7 +1318,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1517,13 +1506,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNumericLiteral(node: compiler.Node): node is compiler.NumericLiteral {
-        switch (node.getKind()) {
-            case SyntaxKind.FirstLiteralToken:
-            case SyntaxKind.NumericLiteral:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.NumericLiteral;
     }
 
     /**
@@ -1648,7 +1631,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -1719,13 +1701,7 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isQualifiedName(node: compiler.Node): node is compiler.QualifiedName {
-        switch (node.getKind()) {
-            case SyntaxKind.FirstNode:
-            case SyntaxKind.QualifiedName:
-                return true;
-            default:
-                return false;
-        }
+        return node.getKind() === SyntaxKind.QualifiedName;
     }
 
     /**
@@ -2220,14 +2196,13 @@ export class TypeGuards {
      */
     static isTypeNode(node: compiler.Node): node is compiler.TypeNode {
         switch (node.getKind()) {
-            case SyntaxKind.FirstTypeNode:
+            case SyntaxKind.TypePredicate:
             case SyntaxKind.ArrayType:
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
-            case SyntaxKind.LastTypeNode:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:
@@ -2337,7 +2312,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:
@@ -2422,7 +2396,6 @@ export class TypeGuards {
             case SyntaxKind.FalseKeyword:
             case SyntaxKind.TrueKeyword:
             case SyntaxKind.NullKeyword:
-            case SyntaxKind.FirstLiteralToken:
             case SyntaxKind.NumericLiteral:
             case SyntaxKind.RegularExpressionLiteral:
             case SyntaxKind.StringLiteral:

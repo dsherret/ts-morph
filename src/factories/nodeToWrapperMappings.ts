@@ -43,8 +43,7 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.ExpressionWithTypeArguments]: compiler.ExpressionWithTypeArguments,
     [SyntaxKind.ExpressionStatement]: compiler.ExpressionStatement,
     [SyntaxKind.ExternalModuleReference]: compiler.ExternalModuleReference,
-    [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral,
-    [SyntaxKind.FirstNode]: compiler.QualifiedName,
+    [SyntaxKind.QualifiedName]: compiler.QualifiedName,
     [SyntaxKind.ForInStatement]: compiler.ForInStatement,
     [SyntaxKind.ForOfStatement]: compiler.ForOfStatement,
     [SyntaxKind.ForStatement]: compiler.ForStatement,
@@ -102,7 +101,6 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.PropertyAssignment]: compiler.PropertyAssignment,
     [SyntaxKind.PropertyDeclaration]: compiler.PropertyDeclaration,
     [SyntaxKind.PropertySignature]: compiler.PropertySignature,
-    [SyntaxKind.QualifiedName]: compiler.QualifiedName,
     [SyntaxKind.RegularExpressionLiteral]: compiler.RegularExpressionLiteral,
     [SyntaxKind.ReturnStatement]: compiler.ReturnStatement,
     [SyntaxKind.SetAccessor]: compiler.SetAccessorDeclaration,
@@ -131,14 +129,13 @@ export const nodeToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.VariableDeclarationList]: compiler.VariableDeclarationList,
     [SyntaxKind.VariableStatement]: compiler.VariableStatement,
     [SyntaxKind.JSDocComment]: compiler.JSDoc,
-    [SyntaxKind.FirstTypeNode]: compiler.TypeNode, // todo: should be changed when implementing TypePredicateNode
-    [SyntaxKind.LastTypeNode]: compiler.LiteralTypeNode,
+    [SyntaxKind.TypePredicate]: compiler.TypeNode, // todo: should be changed when implementing TypePredicateNode
     [SyntaxKind.SemicolonToken]: compiler.Node,
     [SyntaxKind.TypeOfExpression]: compiler.TypeOfExpression,
     [SyntaxKind.WhileStatement]: compiler.WhileStatement,
     [SyntaxKind.WithStatement]: compiler.WithStatement,
     [SyntaxKind.YieldExpression]: compiler.YieldExpression,
-    // literals
+    // keywords
     [SyntaxKind.AnyKeyword]: compiler.Expression,
     [SyntaxKind.BooleanKeyword]: compiler.Expression,
     [SyntaxKind.FalseKeyword]: compiler.BooleanLiteral,

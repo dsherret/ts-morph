@@ -7,6 +7,7 @@ import {InspectorFactory} from "./inspectors";
 // setup
 const factory = new InspectorFactory();
 const inspector = factory.getTsSimpleAstInspector();
+const tsInspector = factory.getTsInspector();
 
 // create
 console.log("Creating get structure functions...");
@@ -16,6 +17,6 @@ createTypeGuardsUtility(inspector);
 console.log("Creating compiler api layer...");
 createCompilerApiLayer(factory);
 console.log("Creating kind to node mappings...");
-createKindToNodeMappings(inspector);
+createKindToNodeMappings(inspector, tsInspector);
 
 inspector.getProject().save();

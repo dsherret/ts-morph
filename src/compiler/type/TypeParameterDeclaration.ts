@@ -34,7 +34,7 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
         function removeAllTypeParameters() {
             const children = [
-                parentSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstBinaryOperator),
+                parentSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.LessThanToken),
                 parentSyntaxList,
                 parentSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
             ];

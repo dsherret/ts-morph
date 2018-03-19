@@ -6,13 +6,13 @@
  * ----------------------------------------------
  */
 import {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
-    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards} from "./../src/main";
+    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind} from "./../src/main";
 import {hasDescendantBaseType} from "./common";
-import {TsSimpleAstInspector} from "./inspectors";
+import {TsSimpleAstInspector, TsInspector} from "./inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)
 
-export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
+export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInspector: TsInspector) {
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.ts");
     const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
@@ -50,11 +50,13 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector) {
         for (const mapping of nodeToWrapperMappings) {
             if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
                 continue;
-            for (const kind of mapping.syntaxKindNames) {
-                newInterface.addProperty({
-                    name: `[SyntaxKind.${kind}]`,
-                    type: `compiler.${mapping.wrapperName}`
-                });
+            for (const kindName of mapping.syntaxKindNames) {
+                for (const possibleKindName of tsInspector.getNamesFromKind((SyntaxKind as any)[kindName])) {
+                    newInterface.addProperty({
+                        name: `[SyntaxKind.${possibleKindName}]`,
+                        type: `compiler.${mapping.wrapperName}`
+                    });
+                }
             }
         }
     }

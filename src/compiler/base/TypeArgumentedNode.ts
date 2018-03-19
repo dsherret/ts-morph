@@ -91,7 +91,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             }
             else {
                 insertIntoCommaSeparatedNodes({
-                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.FirstBinaryOperator).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
+                    parent: this.getFirstChildByKindOrThrow(SyntaxKind.LessThanToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeArguments,
                     insertIndex: index,
                     newTexts: argumentTexts
@@ -113,7 +113,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                 const childSyntaxList = typeArguments[0].getParentSyntaxListOrThrow();
                 removeChildren({
                     children: [
-                        childSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.FirstBinaryOperator),
+                        childSyntaxList.getPreviousSiblingIfKindOrThrow(SyntaxKind.LessThanToken),
                         childSyntaxList,
                         childSyntaxList.getNextSiblingIfKindOrThrow(SyntaxKind.GreaterThanToken)
                     ]

@@ -9,7 +9,7 @@ import {getBodyText} from "./getBodyText";
  */
 export function setBodyTextForNode(body: Node, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
     const newText = getBodyText(body.getWriterWithIndentation(), textOrWriterFunction);
-    const openBrace = body.getFirstChildByKindOrThrow(SyntaxKind.FirstPunctuation);
+    const openBrace = body.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
     const closeBrace = body.getFirstChildByKindOrThrow(SyntaxKind.CloseBraceToken);
 
     insertIntoParentTextRange({

@@ -1,4 +1,4 @@
-﻿import Project, {InterfaceDeclaration, SourceFile} from "./../../src/main";
+﻿import Project, {InterfaceDeclaration, SourceFile, SyntaxKind} from "./../../src/main";
 import {Memoize, ArrayUtils} from "./../../src/utils";
 import {hasDescendantBaseType} from "./../common";
 import {TsNode} from "./ts";
@@ -21,5 +21,23 @@ export class TsInspector {
                 interfaces.push(interfaceDec);
         }
         return ArrayUtils.sortByProperty(interfaces.map(i => this.wrapperFactory.getTsNode(i)), item => item.getName());
+    }
+
+    getNamesFromKind(kind: SyntaxKind) {
+        const kindToNameMappings = this.getKindToNameMappings();
+        return [...kindToNameMappings[kind]];
+    }
+
+    @Memoize
+    private getKindToNameMappings() {
+        const kindToNameMappings: { [kind: number]: string[]; } = {};
+        for (const name of Object.keys(SyntaxKind).filter(k => isNaN(parseInt(k, 10)))) {
+            const value = (SyntaxKind as any)[name];
+            if (kindToNameMappings[value] == null)
+                kindToNameMappings[value] = [];
+            kindToNameMappings[value].push(name);
+        }
+
+        return kindToNameMappings;
     }
 }
