@@ -1,6 +1,7 @@
-import {ts, SyntaxKind} from "./../typescript";
-import {Node} from "./../compiler";
-import {FileSystemWrapper} from "./../fileSystem";
+import {ts, SyntaxKind} from "../typescript";
+import {Node} from "../compiler";
+import {FileSystemWrapper} from "../fileSystem";
+import {getSyntaxKindName} from "../utils/getSyntaxKindName";
 import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
@@ -35,12 +36,12 @@ export function throwIfNotStringOrWhitespace(value: string, argName: string) {
 /**
  * Throws a NotImplementedError if a node doesn't match the expected syntax kind.
  * @param node - Node.
- * @param syntaxKind - Syntax kind that's expected.
+ * @param kind - Syntax kind that's expected.
  * @param message - Optional message to throw.
  */
-export function throwIfNotSyntaxKind(node: Node, syntaxKind: SyntaxKind, message?: string) {
-    if (node.getKind() !== syntaxKind)
-        throw new NotImplementedError(message || `Expected node to be syntax kind ${SyntaxKind[syntaxKind]}, but was ${node.getKindName()}.`);
+export function throwIfNotSyntaxKind(node: Node, kind: SyntaxKind, message?: string) {
+    if (node.getKind() !== kind)
+        throw new NotImplementedError(message || `Expected node to be syntax kind ${getSyntaxKindName(kind)}, but was ${node.getKindName()}.`);
 }
 
 /**
@@ -71,10 +72,10 @@ export function throwIfRangeOutOfRange(actualRange: [number, number], range: [nu
 
 /**
  * Gets an error saying that a feature is not implemented for a certain syntax kind.
- * @param syntaxKind - Syntax kind that isn't implemented.
+ * @param kind - Syntax kind that isn't implemented.
  */
-export function getNotImplementedForSyntaxKindError(syntaxKind: SyntaxKind) {
-    return new NotImplementedError(`Not implemented feature for syntax kind '${SyntaxKind[syntaxKind]}'.`);
+export function getNotImplementedForSyntaxKindError(kind: SyntaxKind) {
+    return new NotImplementedError(`Not implemented feature for syntax kind '${getSyntaxKindName(kind)}'.`);
 }
 
 /**

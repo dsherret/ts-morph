@@ -5,6 +5,7 @@ export * from "./Es5WeakMap";
 export * from "./EventContainer";
 export * from "./FileUtils";
 export * from "./fillDefaultEditorSettings";
+export * from "./getSyntaxKindName";
 export * from "./getTextFromStringOrWriter";
 export * from "./HashSet";
 export * from "./KeyValueCache";

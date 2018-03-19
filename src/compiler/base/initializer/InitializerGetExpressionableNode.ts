@@ -1,6 +1,7 @@
 import {ts, SyntaxKind} from "./../../../typescript";
 import {Constructor} from "./../../../Constructor";
 import * as errors from "./../../../errors";
+import {getSyntaxKindName} from "./../../../utils";
 import {Expression} from "./../../expression";
 import {Node} from "./../../common";
 import {KindToExpressionMappings} from "./../../kindToNodeMappings";
@@ -37,7 +38,7 @@ export function InitializerGetExpressionableNode<T extends Constructor<Initializ
         }
 
         getInitializerIfKindOrThrow(kind: SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initiailizer of kind '${SyntaxKind[kind]}'.`);
+            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initiailizer of kind '${getSyntaxKindName(kind)}'.`);
         }
 
         getInitializerIfKind(kind: SyntaxKind) {

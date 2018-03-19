@@ -6,7 +6,7 @@ import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDecla
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "./../../structures";
 import * as structureToTexts from "./../../structureToTexts";
 import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "./../../manipulation";
-import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils} from "./../../utils";
+import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName} from "./../../utils";
 import {callBaseFill} from "./../callBaseFill";
 import {Node} from "./../common";
 import {SourceFile} from "./../file";
@@ -456,7 +456,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getStatementByKindOrThrow(kind: SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${SyntaxKind[kind]}.`);
+            return errors.throwIfNullOrUndefined(this.getStatementByKind(kind), `Expected to find a statement with syntax kind ${getSyntaxKindName(kind)}.`);
         }
 
         addStatements(text: string): Statement[];

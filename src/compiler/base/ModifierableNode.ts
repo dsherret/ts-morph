@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "./../../typescript";
 import {Constructor} from "./../../Constructor";
 import * as errors from "./../../errors";
 import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "./../../manipulation";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, getSyntaxKindName} from "./../../utils";
 import {Node} from "./../common";
 import {KindToNodeMappings} from "./../kindToNodeMappings";
 
@@ -63,7 +63,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         getFirstModifierByKindOrThrow(kind: SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${SyntaxKind[kind]}`);
+            return errors.throwIfNullOrUndefined(this.getFirstModifierByKind(kind), `Expected a modifier of syntax kind: ${getSyntaxKindName(kind)}`);
         }
 
         getFirstModifierByKind(kind: SyntaxKind) {

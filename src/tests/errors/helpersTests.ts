@@ -41,8 +41,7 @@ describe("helpers", () => {
 
         it("should throw when not the expected syntax kind and no message is specified", () => {
             expect(() => errors.throwIfNotSyntaxKind(firstChild, SyntaxKind.AbstractKeyword))
-                .to.throw(errors.NotImplementedError, `Expected node to be syntax kind ${SyntaxKind[SyntaxKind.AbstractKeyword]}, but was ` +
-                    `${SyntaxKind[SyntaxKind.ClassDeclaration]}.`);
+                .to.throw(errors.NotImplementedError, `Expected node to be syntax kind AbstractKeyword, but was ClassDeclaration.`);
         });
 
         it("should throw when not the expected syntax kind and a message is specified", () => {

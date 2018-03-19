@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "./../../typescript";
 import * as errors from "./../../errors";
 import {Constructor} from "./../../Constructor";
-import {ArrayUtils} from "./../../utils";
+import {ArrayUtils, getSyntaxKindName} from "./../../utils";
 import {Node} from "./../common";
 import {HeritageClause} from "./../general/HeritageClause";
 
@@ -34,7 +34,7 @@ export function HeritageClauseableNode<T extends Constructor<HeritageClauseableN
         }
 
         getHeritageClauseByKindOrThrow(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {
-            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${SyntaxKind[kind]}.`);
+            return errors.throwIfNullOrUndefined(this.getHeritageClauseByKind(kind), `Expected to have heritage clause of kind ${getSyntaxKindName(kind)}.`);
         }
 
         getHeritageClauseByKind(kind: SyntaxKind.ExtendsKeyword | SyntaxKind.ImplementsKeyword) {

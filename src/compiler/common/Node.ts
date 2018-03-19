@@ -6,7 +6,7 @@ import {IndentationText} from "./../../ManipulationSettings";
 import {StructureToText} from "./../../structureToTexts";
 import {insertIntoParentTextRange, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
     getTextFromFormattingEdits} from "./../../manipulation";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils} from "./../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName} from "./../../utils";
 import {SourceFile} from "./../file";
 import {ConstructorDeclaration, MethodDeclaration} from "./../class";
 import {FunctionDeclaration} from "./../function";
@@ -107,7 +107,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the syntax kind name.
      */
     getKindName() {
-        return SyntaxKind[this.compilerNode.kind];
+        return getSyntaxKindName(this.compilerNode.kind);
     }
 
     /**
@@ -672,7 +672,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind to check for.
      */
     getParentWhileKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${SyntaxKind[kind]}.`);
+        return errors.throwIfNullOrUndefined(this.getParentWhileKind(kind), `The initial parent was not a syntax kind of ${getSyntaxKindName(kind)}.`);
     }
 
     /**
@@ -901,7 +901,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getFirstChildByKind(kind), `A child of the kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -918,7 +918,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getFirstChildIfKind(kind), `A first child of the kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -935,7 +935,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getLastChildByKind(kind), `A child of the kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -952,7 +952,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getLastChildIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getLastChildIfKind(kind), `A last child of the kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -970,7 +970,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${SyntaxKind[kind]}`);
+        return errors.throwIfNullOrUndefined(this.getChildAtIndexIfKind(index, kind), `Child at index ${index} was expected to be ${getSyntaxKindName(kind)}`);
     }
 
     /**
@@ -988,7 +988,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getPreviousSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getPreviousSiblingIfKind(kind), `A previous sibling of kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -996,7 +996,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Kind to check.
      */
     getNextSiblingIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${SyntaxKind[kind]} was expected.`);
+        return errors.throwIfNullOrUndefined(this.getNextSiblingIfKind(kind), `A next sibling of kind ${getSyntaxKindName(kind)} was expected.`);
     }
 
     /**
@@ -1029,7 +1029,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the parent if it's a certain syntax kind of throws.
      */
     getParentIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${SyntaxKind[kind]}.`);
+        return errors.throwIfNullOrUndefined(this.getParentIfKind(kind), `Expected a parent with a syntax kind of ${getSyntaxKindName(kind)}.`);
     }
 
     /**
@@ -1037,7 +1037,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] {
-        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${SyntaxKind[kind]}.`);
+        return errors.throwIfNullOrUndefined(this.getFirstAncestorByKind(kind), `Expected an ancestor with a syntax kind of ${getSyntaxKindName(kind)}.`);
     }
 
     /**
@@ -1070,7 +1070,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstDescendantByKindOrThrow<TKind extends SyntaxKind>(kind: TKind) {
-        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${SyntaxKind[kind]} was expected to be found.`);
+        return errors.throwIfNullOrUndefined(this.getFirstDescendantByKind(kind), `A descendant of kind ${getSyntaxKindName(kind)} was expected to be found.`);
     }
 
     /**

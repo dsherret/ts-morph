@@ -1,6 +1,7 @@
-import * as errors from "./../../errors";
-import {ts, SyntaxKind} from "./../../typescript";
-import {Node} from "./../../compiler";
+import * as errors from "../../errors";
+import {ts, SyntaxKind} from "../../typescript";
+import {getSyntaxKindName} from "../../utils";
+import {Node} from "../../compiler";
 
 export function getRangeFromArray<T extends Node>(array: Node[], index: number, length: number, expectedKind: SyntaxKind) {
     const children = array.slice(index, index + length);
@@ -9,7 +10,7 @@ export function getRangeFromArray<T extends Node>(array: Node[], index: number, 
         throw new errors.NotImplementedError(`Unexpected! Inserted ${length} child/children, but ${children.length} were inserted.`);
     for (const child of children) {
         if (child.getKind() !== expectedKind)
-            throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${SyntaxKind[expectedKind]}` +
+            throw new errors.NotImplementedError(`Unexpected! Inserting syntax kind of ${getSyntaxKindName(expectedKind)}` +
                 `, but ${child.getKindName()} was inserted.`);
     }
 
