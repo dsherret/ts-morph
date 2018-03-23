@@ -30,8 +30,9 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     getModuleSpecifier() {
         const moduleSpecifier = this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
-        const text = moduleSpecifier.getText();
-        return text.substring(1, text.length - 1);
+        if (!TypeGuards.isStringLiteral(moduleSpecifier))
+            throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
+        return moduleSpecifier.getLiteralValue();
     }
 
     /**

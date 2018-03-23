@@ -1291,6 +1291,16 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     {
         return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalNodeType, LocalCompilerNodeType>(compilerNode);
     }
+
+    /**
+     * Ensures that the binder has bound the node before.
+     * @internal
+     */
+    protected ensureBound() {
+        if ((this.compilerNode as any).symbol != null)
+            return;
+        this.getSymbol(); // binds the node
+    }
 }
 
 function getWrappedNode(thisNode: Node, compilerNode: ts.Node): Node {

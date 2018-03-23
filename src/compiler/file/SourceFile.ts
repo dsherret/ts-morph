@@ -14,6 +14,7 @@ import {callBaseFill} from "../callBaseFill";
 import {TextInsertableNode} from "../base";
 import {Node, Symbol, Identifier} from "../common";
 import {StatementedNode} from "../statement";
+import {StringLiteral} from "../literal";
 import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings} from "../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
@@ -170,13 +171,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         }
 
         function updateReferences(currentFile: SourceFile) {
-            const nodeReferences = ArrayUtils.from(currentFile._referenceContainer.getNodesReferencingOtherSourceFilesEntries());
+            const literalReferences = ArrayUtils.from(currentFile._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
 
             // update the nodes in this list to point to the nodes in the copied source file
-            for (const reference of nodeReferences)
-                reference[0] = copiedSourceFile.getChildSyntaxListOrThrow().getChildAtPos(reference[0].getStart())! as SourceFileReferencingNodes;
-            // update the import & export declarations in the copied file
-            updateNodeReferences(nodeReferences);
+            for (const reference of literalReferences)
+                reference[0] = copiedSourceFile.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth())! as StringLiteral;
+            // update the string literals in the copied file
+            updateStringLiteralReferences(literalReferences);
 
             // the current files references won't have changed after the modifications
             currentFile.global.lazyReferenceCoordinator.clearDityForSourceFile(currentFile);
@@ -225,8 +226,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         if (filePath === oldFilePath)
             return this;
 
-        const nodeReferences = ArrayUtils.from(this._referenceContainer.getNodesReferencingOtherSourceFilesEntries());
-        const referencingNodes = ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
+        const literalReferences = ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
+        const referencingLiterals = ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles());
 
         if (overwrite) {
             // remove the past file if it exists
@@ -248,11 +249,11 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         return this;
 
         function updateReferences(currentSourceFile: SourceFile) {
-            // update the import & export declarations in this file if the directory hasn't changed
+            // update the literals in this file if the directory hasn't changed
             if (oldDirPath !== currentSourceFile.getDirectoryPath())
-                updateNodeReferences(nodeReferences);
-            // update the import & export declarations in other files
-            updateNodeReferences(referencingNodes.map(node => ([node, currentSourceFile]) as [SourceFileReferencingNodes, SourceFile]));
+                updateStringLiteralReferences(literalReferences);
+            // update the string literals in other files
+            updateStringLiteralReferences(referencingLiterals.map(node => ([node, currentSourceFile]) as [StringLiteral, SourceFile]));
 
             // everything should be up to date, so ignore any modifications above
             currentSourceFile.global.lazyReferenceCoordinator.clearDirtySourceFiles();
@@ -370,6 +371,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the import and exports in other source files that reference this source file.
+     * @deprecated
      */
     getReferencingImportAndExportDeclarations() {
         console.warn(`${nameof(this.getReferencingImportAndExportDeclarations)} will be replaced with ${nameof(this.getReferencingNodesInOtherSourceFiles)} in v10.`);
@@ -390,6 +392,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getReferencingNodesInOtherSourceFiles() {
         return ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
+    }
+
+    /**
+     * Gets all the descendant string literals that reference a source file.
+     */
+    getImportStringLiterals() {
+        this.ensureBound();
+        const literals = ((this.compilerNode as any).imports || []) as ts.StringLiteral[];
+        return literals.map(l => this.getNodeFromCompilerNode<StringLiteral>(l));
     }
 
     /**
@@ -918,24 +929,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 }
 
-function updateNodeReferences(nodeReferences: [SourceFileReferencingNodes, SourceFile][]) {
-    for (const [node, sourceFile] of nodeReferences) {
-        if (TypeGuards.isImportDeclaration(node) || TypeGuards.isExportDeclaration(node)) {
-            if (node.isModuleSpecifierRelative())
-                node.setModuleSpecifier(sourceFile);
-        }
-        else if (TypeGuards.isImportEqualsDeclaration(node)) {
-            if (node.isExternalModuleReferenceRelative())
-                node.setExternalModuleReference(sourceFile);
-        }
-        else if (TypeGuards.isCallExpression(node)) {
-            const firstArg = node.getArguments()[0];
-            if (TypeGuards.isStringLiteral(firstArg) && ModuleUtils.isModuleSpecifierRelative(firstArg.getLiteralValue()))
-                firstArg.setLiteralValue(firstArg.sourceFile.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(sourceFile));
-        }
-        else {
-            const expectNever: never = node;
-            // do nothing
-        }
+function updateStringLiteralReferences(nodeReferences: [StringLiteral, SourceFile][]) {
+    for (const [stringLiteral, sourceFile] of nodeReferences) {
+        if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
+            stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(sourceFile));
     }
 }

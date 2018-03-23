@@ -42,11 +42,12 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Gets the module specifier or undefined if it doesn't exist.
      */
     getModuleSpecifier() {
-        const moduleSpecifier = this.compilerNode.moduleSpecifier;
+        const moduleSpecifier = this.getNodeFromCompilerNodeIfExists(this.compilerNode.moduleSpecifier);
         if (moduleSpecifier == null)
             return undefined;
-        const text = this.getNodeFromCompilerNode(moduleSpecifier).getText();
-        return text.substring(1, text.length - 1);
+        if (!TypeGuards.isStringLiteral(moduleSpecifier))
+            throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
+        return moduleSpecifier.getLiteralValue();
     }
 
     /**

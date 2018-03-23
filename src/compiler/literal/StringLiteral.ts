@@ -8,9 +8,10 @@ export const StringLiteralBase = LiteralExpression;
 export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
     /**
      * Gets the literal value.
+     *
+     * This is equivalent to .getLiteralText() for string literals and only exists for consistency with other literals.
      */
     getLiteralValue() {
-        // for consistency with other literals
         return this.compilerNode.text;
     }
 
