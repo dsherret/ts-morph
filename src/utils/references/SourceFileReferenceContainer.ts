@@ -2,9 +2,8 @@
 import {SyntaxKind} from "../../typescript";
 import {ArrayUtils} from "../ArrayUtils";
 import {TypeGuards} from "../TypeGuards";
-import {createHashSet} from "../HashSet";
-import {KeyValueCache} from "../KeyValueCache";
-import {ModuleUtils} from "../ModuleUtils";
+import {createHashSet, KeyValueCache} from "../collections";
+import {ModuleUtils} from "../compiler";
 
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 

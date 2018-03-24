@@ -1,5 +1,6 @@
 ﻿import {Node} from "../../compiler";
 import * as errors from "../../errors";
+import {ts} from "../../typescript";
 import {TypeGuards} from "../../utils";
 import {NodeHandler} from "./NodeHandler";
 
@@ -10,19 +11,19 @@ export class TryOrForgetNodeHandler implements NodeHandler {
     constructor(private readonly handler: NodeHandler) {
     }
 
-    handleNode(currentNode: Node, newNode: Node) {
+    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore next */
         if (!TypeGuards.isSourceFile(currentNode))
             throw new errors.InvalidOperationError(`Can only use a ${nameof(TryOrForgetNodeHandler)} with a source file.`);
 
         try {
-            this.handler.handleNode(currentNode, newNode);
+            this.handler.handleNode(currentNode, newNode, newSourceFile);
         } catch (ex) {
             currentNode.global.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
             // forget all the source file's nodes
             currentNode.getChildSyntaxListOrThrow().forget();
             // replace the source file with the temporary source file
-            currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+            currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newNode);
         }
     }
 }

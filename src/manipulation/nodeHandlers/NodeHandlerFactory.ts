@@ -14,10 +14,10 @@ import {UnwrapParentHandler} from "./UnwrapParentHandler";
 
 export interface DefaultReplaceTreeOptions {
     parent: Node;
-    isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
+    isFirstChild: (currentNode: ts.Node, newNode: ts.Node) => boolean;
     childCount: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 export interface ReplaceTreeCreatingSyntaxListOptions {
@@ -31,7 +31,7 @@ export interface ReplaceTreeWithRangeOptions {
     end: number;
     replacingLength?: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 export interface ReplaceTreeWithChildIndexOptions {
@@ -39,7 +39,7 @@ export interface ReplaceTreeWithChildIndexOptions {
     childIndex: number;
     childCount: number;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 export interface ReplaceTreeChangingChildOrderOptions {
@@ -73,7 +73,7 @@ export class NodeHandlerFactory {
         return this.getDefault({
             parent,
             childCount: 1,
-            isFirstChild: (currentNode, newNode) => newNode.getKind() === SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
+            isFirstChild: (currentNode, newNode) => newNode.kind === SyntaxKind.SyntaxList && insertPos <= newNode.getStart()
         });
     }
 

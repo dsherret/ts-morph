@@ -1,5 +1,5 @@
-﻿import {Symbol} from "../compiler/common/Symbol";
-import {ArrayUtils} from "../utils";
+﻿import {Symbol} from "../../compiler/common/Symbol";
+import {ArrayUtils} from "../ArrayUtils";
 
 // todo: merge with getNamedNodeByNameOrFindFunction
 export function getSymbolByNameOrFindFunction(items: Symbol[], nameOrFindFunc: ((declaration: Symbol) => boolean) | string) {

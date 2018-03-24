@@ -1,4 +1,4 @@
-import {Es5PropSaver} from "./Es5PropSaver";
+import {Es5PropSaver} from "../Es5PropSaver";
 
 export interface WeakDictionary<K extends object, V> {
     get(key: K): V | undefined;

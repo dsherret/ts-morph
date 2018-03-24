@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {printNode, PrintNodeOptions} from "../../utils";
-import {ts, ScriptTarget, ScriptKind, SyntaxKind, NewLineKind} from "../../typescript";
-import {getInfoFromText} from "../compiler/testHelpers";
+import {printNode, PrintNodeOptions} from "../../../utils";
+import {ts, ScriptTarget, ScriptKind, SyntaxKind, NewLineKind} from "../../../typescript";
+import {getInfoFromText} from "../../compiler/testHelpers";
 
 describe(nameof(printNode), () => {
     const nodeText = "class MyClass {\n    // comment\n    prop: string;\n}";

@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../typescript";
 import {Node} from "../compiler";
 import {FileSystemWrapper} from "../fileSystem";
-import {getSyntaxKindName} from "../utils/getSyntaxKindName";
+import {getSyntaxKindName} from "../utils/compiler/getSyntaxKindName";
 import {ArgumentError} from "./ArgumentError";
 import {ArgumentTypeError} from "./ArgumentTypeError";
 import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";

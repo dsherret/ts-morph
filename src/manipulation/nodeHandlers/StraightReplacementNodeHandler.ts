@@ -1,6 +1,7 @@
 ﻿import * as errors from "../../errors";
 import {ts} from "../../typescript";
 import {Node} from "../../compiler";
+import {getSyntaxKindName, ArrayUtils} from "../../utils";
 import {CompilerFactory} from "../../factories";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
@@ -15,21 +16,21 @@ export class StraightReplacementNodeHandler implements NodeHandler {
         this.helper = new NodeHandlerHelper(compilerFactory);
     }
 
-    handleNode(currentNode: Node, newNode: Node) {
+    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         /* istanbul ignore if */
-        if (currentNode.getKind() !== newNode.getKind())
+        if (currentNode.getKind() !== newNode.kind)
             throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted ` +
-                `(Current: ${currentNode.getKindName()} -- New: ${newNode.getKindName()}).`);
+                `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
 
-        const newNodeChildren = newNode.getChildrenIterator();
+        const newNodeChildren = ArrayUtils.toIterator(newNode.getChildren(newSourceFile));
 
         for (const currentNodeChild of currentNode.getCompilerChildren())
-            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value);
+            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value, newSourceFile);
 
         /* istanbul ignore if */
         if (!newNodeChildren.next().done)
             throw new Error("Error replacing tree: Should not have new children left over.");
 
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 }

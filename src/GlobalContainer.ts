@@ -2,7 +2,7 @@ import * as errors from "./errors";
 import {CompilerFactory} from "./factories";
 import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker} from "./compiler";
-import {createWrappedNode} from "./createWrappedNode";
+import {createWrappedNode} from "./utils/compiler/createWrappedNode";
 import {ManipulationSettingsContainer} from "./ManipulationSettings";
 import {FileSystemWrapper} from "./fileSystem";
 import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";

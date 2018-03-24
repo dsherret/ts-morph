@@ -8,9 +8,9 @@ import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
 export interface DefaultParentHandlerOptions {
     childCount: number;
-    isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
+    isFirstChild: (currentNode: ts.Node, newNode: ts.Node) => boolean;
     replacingNodes?: Node[];
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**
@@ -20,9 +20,9 @@ export class DefaultParentHandler implements NodeHandler {
     private readonly straightReplacementNodeHandler: StraightReplacementNodeHandler;
     private readonly helper: NodeHandlerHelper;
     private readonly childCount: number;
-    private readonly isFirstChild: (currentNode: ts.Node, newNode: Node) => boolean;
+    private readonly isFirstChild: (currentNode: ts.Node, newNode: ts.Node) => boolean;
     private readonly replacingNodes?: ts.Node[];
-    private readonly customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    private readonly customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 
     constructor(private readonly compilerFactory: CompilerFactory, opts: DefaultParentHandlerOptions) {
         this.straightReplacementNodeHandler = new StraightReplacementNodeHandler(compilerFactory);
@@ -33,9 +33,9 @@ export class DefaultParentHandler implements NodeHandler {
         this.customMappings = opts.customMappings;
     }
 
-    handleNode(currentNode: Node, newNode: Node) {
+    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const currentNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(currentNode.getCompilerChildren()));
-        const newNodeChildren = new AdvancedIterator(newNode.getChildrenIterator());
+        const newNodeChildren = new AdvancedIterator(ArrayUtils.toIterator(newNode.getChildren(newSourceFile)));
         let count = this.childCount;
 
         // handle any custom mappings
@@ -43,7 +43,7 @@ export class DefaultParentHandler implements NodeHandler {
 
         // get the first child
         while (!currentNodeChildren.done && !newNodeChildren.done && !this.isFirstChild(currentNodeChildren.peek, newNodeChildren.peek))
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next());
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
         // try replacing any nodes
         while (!currentNodeChildren.done && this.tryReplaceNode(currentNodeChildren.peek))
@@ -65,25 +65,22 @@ export class DefaultParentHandler implements NodeHandler {
 
         // handle the rest
         while (!currentNodeChildren.done)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next());
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren.next(), newNodeChildren.next(), newSourceFile);
 
         // ensure the new children iterator is done too
         if (!newNodeChildren.done)
             throw new Error("Error replacing tree: Should not have more children left over.");
 
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 
-    private handleCustomMappings(newParentNode: Node) {
+    private handleCustomMappings(newParentNode: ts.Node) {
         if (this.customMappings == null)
             return;
         const customMappings = this.customMappings(newParentNode);
 
-        for (const mapping of customMappings) {
-            const {currentNode, newNode} = mapping;
-            const newCompilerNode = newNode.compilerNode;
-            currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newCompilerNode);
-        }
+        for (const mapping of customMappings)
+            mapping.currentNode.global.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
 
     private tryReplaceNode(currentCompilerNode: ts.Node) {

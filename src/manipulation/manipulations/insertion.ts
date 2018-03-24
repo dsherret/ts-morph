@@ -32,7 +32,7 @@ export interface InsertIntoParentTextRangeOptions {
         textLength: number;
         nodes?: Node[];
     };
-    customMappings?: (newParentNode: Node) => { currentNode: Node; newNode: Node; }[];
+    customMappings?: (newParentNode: ts.Node) => { currentNode: Node; newNode: ts.Node; }[];
 }
 
 /**

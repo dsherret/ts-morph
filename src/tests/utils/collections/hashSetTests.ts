@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {Es5HashSet, ArrayUtils} from "../../utils";
+import {Es5HashSet, ArrayUtils} from "../../../utils";
 
 describe(nameof(Es5HashSet), () => {
     it("should add values to the hash set and say they exist when they do", () => {

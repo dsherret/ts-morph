@@ -3,10 +3,9 @@ import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signat
     JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "../compiler";
 import * as errors from "../errors";
 import {SourceFileStructure} from "../structures";
-import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils} from "../utils";
+import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile} from "../utils";
 import {GlobalContainer} from "../GlobalContainer";
 import {Directory} from "../fileSystem";
-import {createWrappedNode} from "../createWrappedNode";
 import {createTempSourceFile} from "./createTempSourceFile";
 import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
 import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
@@ -248,7 +247,7 @@ export class CompilerFactory {
     }
 
     private getSourceFileFromText(filePath: string, sourceText: string): SourceFile {
-        const compilerSourceFile = ts.createSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget(), true);
+        const compilerSourceFile = createCompilerSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget());
         return this.getSourceFile(compilerSourceFile);
     }
 

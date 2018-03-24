@@ -1,6 +1,6 @@
 import {ts} from "../../typescript";
 import {Node, SourceFile, RenameLocation} from "../../compiler";
-import {TypeGuards} from "../../utils";
+import {TypeGuards, createCompilerSourceFile} from "../../utils";
 import {doManipulation} from "./doManipulation";
 import {NodeHandlerFactory} from "../nodeHandlers";
 import {InsertionTextManipulator, FullReplacementTextManipulator, RenameLocationTextManipulator} from "../textManipulators";
@@ -87,6 +87,8 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
  */
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const {sourceFile, newFilePath} = opts;
-    const replacementSourceFile = sourceFile.global.compilerFactory.createTempSourceFileFromText(sourceFile.getFullText(), { filePath: newFilePath });
-    new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory).handleNode(sourceFile, replacementSourceFile);
+    const replacementSourceFile = createCompilerSourceFile(newFilePath, sourceFile.getFullText(), sourceFile.global.manipulationSettings.getScriptTarget());
+
+    new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory)
+        .handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
 }

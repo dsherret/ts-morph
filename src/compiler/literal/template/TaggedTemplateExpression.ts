@@ -30,7 +30,7 @@ export class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.Ta
         const index = this.getChildIndex();
         const template = this.getTemplate();
         insertIntoParentTextRange({
-            customMappings: newParent => [{ currentNode: template, newNode: newParent.getChildAtIndex(index) }],
+            customMappings: newParent => [{ currentNode: template, newNode: newParent.getChildren()[index] }],
             parent,
             insertPos: this.getStart(),
             newText: this.getTemplate().getText(),

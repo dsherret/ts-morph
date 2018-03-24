@@ -27,16 +27,16 @@ export class ChangeChildOrderParentHandler implements NodeHandler {
         this.newIndex = opts.newIndex;
     }
 
-    handleNode(currentNode: Node, newNode: Node) {
+    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
         const currentNodeChildren = this.getChildrenInNewOrder(currentNode.getCompilerChildren());
-        const newNodeChildren = newNode.getChildren();
+        const newNodeChildren = newNode.getChildren(newSourceFile);
 
         errors.throwIfNotEqual(newNodeChildren.length, currentNodeChildren.length, "New children length should match the old children length.");
 
         for (let i = 0; i < newNodeChildren.length; i++)
-            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren[i], newNodeChildren[i]);
+            this.helper.handleForValues(this.straightReplacementNodeHandler, currentNodeChildren[i], newNodeChildren[i], newSourceFile);
 
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 
     private getChildrenInNewOrder(children: ts.Node[]) {

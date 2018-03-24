@@ -6,7 +6,8 @@ import {IndentationText} from "../../ManipulationSettings";
 import {StructureToText} from "../../structureToTexts";
 import {insertIntoParentTextRange, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
     getTextFromFormattingEdits} from "../../manipulation";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName} from "../../utils";
+import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
+    getParentSyntaxList} from "../../utils";
 import {SourceFile} from "../file";
 import {ConstructorDeclaration, MethodDeclaration} from "../class";
 import {FunctionDeclaration} from "../function";
@@ -713,21 +714,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the parent if it's a syntax list.
      */
     getParentSyntaxList(): Node | undefined {
-        const parent = this.getParent();
-        if (parent == null)
-            return undefined;
-
-        const pos = this.getPos();
-        const end = this.getEnd();
-        for (const child of parent.getCompilerChildren()) {
-            if (child.pos > end || child === this.compilerNode)
-                return undefined;
-
-            if (child.kind === SyntaxKind.SyntaxList && child.pos <= pos && child.end >= end)
-                return getWrappedNode(this, child);
-        }
-
-        return undefined; // shouldn't happen
+        const syntaxList = getParentSyntaxList(this.compilerNode);
+        return this.getNodeFromCompilerNodeIfExists(syntaxList);
     }
 
     /**

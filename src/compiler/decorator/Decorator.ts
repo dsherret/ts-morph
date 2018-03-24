@@ -82,7 +82,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 },
                 customMappings: newParent => {
                     // the expression will move into the call expression
-                    return [{ currentNode: expression, newNode: (newParent as Decorator).getCallExpressionOrThrow().getExpression() }];
+                    return [{ currentNode: expression, newNode: ((newParent as ts.Decorator).expression as ts.CallExpression).expression }];
                 }
             });
         }
@@ -100,7 +100,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 },
                 customMappings: newParent => {
                     // the expression will move out of the call expression
-                    return [{ currentNode: expression, newNode: (newParent as Decorator).getExpression() }];
+                    return [{ currentNode: expression, newNode: (newParent as ts.Decorator).expression }];
                 }
             });
         }

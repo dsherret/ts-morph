@@ -1,6 +1,8 @@
 ﻿import * as errors from "../../errors";
 import {Node} from "../../compiler";
+import {ts} from "../../typescript";
 import {CompilerFactory} from "../../factories";
+import {ArrayUtils} from "../../utils";
 import {NodeHandler} from "./NodeHandler";
 import {NodeHandlerHelper} from "./NodeHandlerHelper";
 
@@ -14,17 +16,17 @@ export class ForgetChangedNodeHandler implements NodeHandler {
         this.helper = new NodeHandlerHelper(compilerFactory);
     }
 
-    handleNode(currentNode: Node, newNode: Node) {
-        if (currentNode.getKind() !== newNode.getKind()) {
+    handleNode(currentNode: Node, newNode: ts.Node, newSourceFile: ts.SourceFile) {
+        if (currentNode.getKind() !== newNode.kind) {
             currentNode.forget();
             return;
         }
 
-        const newNodeChildren = newNode.getChildrenIterator();
+        const newNodeChildren = ArrayUtils.toIterator(newNode.getChildren(newSourceFile));
 
         for (const currentNodeChild of currentNode.getCompilerChildren())
-            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value);
+            this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value, newSourceFile);
 
-        this.compilerFactory.replaceCompilerNode(currentNode, newNode.compilerNode);
+        this.compilerFactory.replaceCompilerNode(currentNode, newNode);
     }
 }

@@ -1,5 +1,5 @@
 ﻿import {Dictionary, Es5Map} from "./Es5Map";
-import {ArrayUtils} from "./ArrayUtils";
+import {ArrayUtils} from "../ArrayUtils";
 
 export class KeyValueCache<T, U> {
     private readonly cacheItems: Dictionary<T, U>;
