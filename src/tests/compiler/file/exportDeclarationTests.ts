@@ -234,22 +234,32 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
-        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string) {
+        function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            if (!surroundWithSpaces)
+                firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedExports(index, structures);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should insert named exports when doing a namespace export", () => {
-            doTest(`export * from "./test";`, 0, [{ name: "name", alias: "alias" }], `export {name as alias} from "./test";`);
+            doTest(`export * from "./test";`, 0, [{ name: "name", alias: "alias" }], `export { name as alias } from "./test";`);
         });
 
         it("should insert named exports at the start", () => {
-            doTest(`export {name3} from "./test";`, 0, [{ name: "name1" }, "name2"], `export {name1, name2, name3} from "./test";`);
+            doTest(`export { name3 } from "./test";`, 0, [{ name: "name1" }, "name2"], `export { name1, name2, name3 } from "./test";`);
+        });
+
+        it("should insert named exports at the start when it shouldn't use a space", () => {
+            doTest(`export {name2} from "./test";`, 0, ["name1"], `export {name1, name2} from "./test";`, false);
         });
 
         it("should insert named exports at the end", () => {
-            doTest(`export {name1} from "./test";`, 1, ["name2", { name: "name3" }], `export {name1, name2, name3} from "./test";`);
+            doTest(`export { name1 } from "./test";`, 1, ["name2", { name: "name3" }], `export { name1, name2, name3 } from "./test";`);
+        });
+
+        it("should insert named exports at the end when it shouldn't use a space", () => {
+            doTest(`export {name1} from "./test";`, 1, ["name2"], `export {name1, name2} from "./test";`, false);
         });
 
         it("should insert named exports in the middle", () => {
@@ -281,11 +291,11 @@ describe(nameof(ExportDeclaration), () => {
         }
 
         it("should add at the end", () => {
-            doTest(`export {name1, name2} from "./test";`, { name: "name3" }, `export {name1, name2, name3} from "./test";`);
+            doTest(`export { name1, name2 } from "./test";`, { name: "name3" }, `export { name1, name2, name3 } from "./test";`);
         });
 
         it("should add at the end as a string", () => {
-            doTest(`export {name1, name2} from "./test";`, "name3", `export {name1, name2, name3} from "./test";`);
+            doTest(`export { name1, name2 } from "./test";`, "name3", `export { name1, name2, name3 } from "./test";`);
         });
     });
 
@@ -297,7 +307,7 @@ describe(nameof(ExportDeclaration), () => {
         }
 
         it("should add named exports at the end", () => {
-            doTest(`export {name1} from "./test";`, [{ name: "name2" }, "name3"], `export {name1, name2, name3} from "./test";`);
+            doTest(`export { name1 } from "./test";`, [{ name: "name2" }, "name3"], `export { name1, name2, name3 } from "./test";`);
         });
     });
 

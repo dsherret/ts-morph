@@ -7,7 +7,8 @@ export function getProject() {
         tsConfigFilePath: path.join(rootFolder, "tsconfig.json"),
         addFilesFromTsConfig: false,
         manipulationSettings: {
-            newLineKind: NewLineKind.CarriageReturnLineFeed
+            newLineKind: NewLineKind.CarriageReturnLineFeed,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
         }
     });
     project.addExistingSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));

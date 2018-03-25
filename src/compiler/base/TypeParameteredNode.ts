@@ -4,6 +4,7 @@ import * as errors from "../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange,
     getNodesToReturn} from "../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "../../structures";
+import {CommaSeparatedStructuresToText, TypeParameterDeclarationStructureToText} from "../../structureToTexts";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {NamedNode} from "../base";
@@ -95,14 +96,17 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 return [];
 
             const typeParameters = this.getTypeParameters();
-            const typeParamCodes = structures.map(s => getStructureCode(s));
+            const writer = this.getWriterWithQueuedChildIndentation();
+            const structureToText = new CommaSeparatedStructuresToText(writer, new TypeParameterDeclarationStructureToText(writer));
             index = verifyAndGetIndex(index, typeParameters.length);
+
+            structureToText.writeText(structures);
 
             if (typeParameters.length === 0) {
                 insertIntoParentTextRange({
                     insertPos: getInsertPos(this),
                     parent: this,
-                    newText: `<${typeParamCodes.join(", ")}>`
+                    newText: `<${writer.toString()}>`
                 });
             }
             else {
@@ -110,7 +114,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                     parent: this.getFirstChildByKindOrThrow(SyntaxKind.LessThanToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeParameters,
                     insertIndex: index,
-                    newTexts: typeParamCodes
+                    newText: writer.toString()
                 });
             }
 
@@ -126,13 +130,6 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return this;
         }
     };
-}
-
-function getStructureCode(structure: TypeParameterDeclarationStructure) {
-    let code = structure.name;
-    if (structure.constraint != null && structure.constraint.length > 0)
-        code += ` extends ${structure.constraint}`;
-    return code;
 }
 
 function getInsertPos(node: TypeParameteredNode & Node) {

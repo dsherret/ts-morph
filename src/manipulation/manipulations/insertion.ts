@@ -84,24 +84,24 @@ export function insertIntoCreatableSyntaxList(opts: InsertIntoCreatableSyntaxLis
 export interface InsertIntoCommaSeparatedNodesOptions {
     currentNodes: Node[];
     insertIndex: number;
-    newTexts: string[];
+    newText: string;
     parent: Node;
     useNewLines?: boolean;
+    surroundWithSpaces?: boolean;
 }
 
 export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNodesOptions) {
     // todo: this needs to be fixed/cleaned up in the future, but this is good enough for now
-    const {currentNodes, insertIndex, newTexts, parent} = opts;
+    const {currentNodes, insertIndex, parent} = opts;
     const nextNode = currentNodes[insertIndex];
     const previousNode = currentNodes[insertIndex - 1];
-    const numberOfSyntaxListItemsInserting = newTexts.length * 2 - 1;
     const separator = opts.useNewLines ? parent.global.manipulationSettings.getNewLineKindAsString() : " ";
     const childIndentationText = parent.getParentOrThrow().getChildIndentationText();
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
         parentNextSibling.getKind() === SyntaxKind.CloseBraceToken || parentNextSibling.getKind() === SyntaxKind.CloseBracketToken
     );
-    let newText = newTexts.join(`,${separator}`);
+    let {newText} = opts;
 
     if (previousNode != null) {
         const nextEndStart = nextNode == null ? (isContained ? parentNextSibling!.getStart(true) : parent.getEnd()) : nextNode.getStart(true);
@@ -115,6 +115,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
         }
         else if (opts.useNewLines)
             newText += separator + parent.getParentOrThrow().getIndentationText();
+        else if (opts.surroundWithSpaces)
+            newText += " ";
 
         insertIntoParentTextRange({
             insertPos,
@@ -126,6 +128,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     else if (nextNode != null) {
         if (opts.useNewLines)
             newText = separator + newText;
+        else if (opts.surroundWithSpaces)
+            newText = " " + newText;
         newText += `,${separator}`;
         if (opts.useNewLines)
             newText += childIndentationText;
@@ -140,6 +144,8 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     else {
         if (opts.useNewLines)
             newText = separator + newText + parent.global.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getIndentationText();
+        else if (opts.surroundWithSpaces)
+            newText = ` ${newText} `;
 
         insertIntoParentTextRange({
             insertPos: parent.getPos(),

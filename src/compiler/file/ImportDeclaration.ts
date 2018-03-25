@@ -2,6 +2,7 @@ import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ImportSpecifierStructure} from "../../structures";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "../../manipulation";
+import {NamedImportExportSpecifierStructureToText} from "../../structureToTexts";
 import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
 import {Statement} from "../statement";
@@ -211,23 +212,18 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
                 return [];
 
         const namedImports = this.getNamedImports();
-        const codes = structuresOrNames.map(s => {
-            if (typeof s === "string")
-                return s;
-            let text = s.name;
-            if (s.alias != null && s.alias.length > 0)
-                text += ` as ${s.alias}`;
-            return text;
-        });
+        const writer = this.getWriterWithQueuedChildIndentation();
+        const namedImportStructureToText = new NamedImportExportSpecifierStructureToText(writer, this.global.getFormatCodeSettings());
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 
         if (namedImports.length === 0) {
+            namedImportStructureToText.writeTextsWithBraces(structuresOrNames);
             if (importClause == null)
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
                     parent: this,
-                    newText: ` {${codes.join(", ")}} from`
+                    newText: ` ${writer.toString()} from`
                 });
             else if (this.getNamespaceImport() != null)
                 throw new errors.InvalidOperationError("Cannot add a named import to an import declaration that has a namespace import.");
@@ -235,18 +231,20 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
                 insertIntoParentTextRange({
                     insertPos: this.getDefaultImport()!.getEnd(),
                     parent: importClause,
-                    newText: `, {${codes.join(", ")}}`
+                    newText: `, ${writer.toString()}`
                 });
         }
         else {
             if (importClause == null)
                 throw new errors.NotImplementedError("Expected to have an import clause.");
+            namedImportStructureToText.writeTexts(structuresOrNames);
 
             insertIntoCommaSeparatedNodes({
                 parent: importClause.getFirstChildByKindOrThrow(SyntaxKind.NamedImports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedImports,
                 insertIndex: index,
-                newTexts: codes
+                newText: writer.toString(),
+                surroundWithSpaces: this.global.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 

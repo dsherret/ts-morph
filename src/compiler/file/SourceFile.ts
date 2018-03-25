@@ -464,7 +464,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const texts = structures.map(structure => {
             // todo: pass the StructureToText to the method below
             const writer = this.getWriter();
-            const structureToText = new ImportDeclarationStructureToText(writer);
+            const structureToText = new ImportDeclarationStructureToText(writer, this.global.getFormatCodeSettings());
             structureToText.writeText(structure);
             return writer.toString();
         });
@@ -535,7 +535,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const texts = structures.map(structure => {
             // todo: pass the StructureToText to the method below
             const writer = this.getWriter();
-            const structureToText = new ExportDeclarationStructureToText(writer);
+            const structureToText = new ExportDeclarationStructureToText(writer, this.global.getFormatCodeSettings());
             structureToText.writeText(structure);
             return writer.toString();
         });

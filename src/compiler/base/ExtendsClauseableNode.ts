@@ -3,6 +3,7 @@ import {Constructor} from "../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "../../manipulation";
 import * as errors from "../../errors";
 import {ExtendsClauseableNodeStructure} from "../../structures";
+import {CommaSeparatedStructuresToText, StringStructureToText} from "../../structureToTexts";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
 import {HeritageClause} from "../general";
@@ -73,6 +74,11 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 return [];
             }
 
+            const writer = this.getWriterWithQueuedChildIndentation();
+            const structureToText = new CommaSeparatedStructuresToText(writer, new StringStructureToText(writer));
+
+            structureToText.writeText(texts);
+
             const extendsTypes = this.getExtends();
             index = verifyAndGetIndex(index, extendsTypes.length);
 
@@ -82,7 +88,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                     parent: extendsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: extendsTypes,
                     insertIndex: index,
-                    newTexts: texts
+                    newText: writer.toString()
                 });
                 return getNodeOrNodesToReturn(this.getExtends(), index, length);
             }
@@ -90,7 +96,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
-            let insertText = `extends ${texts.join(", ")} `;
+            let insertText = `extends ${writer.toString()} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 

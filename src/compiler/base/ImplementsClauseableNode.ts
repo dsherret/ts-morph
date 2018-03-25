@@ -2,6 +2,7 @@ import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "../../manipulation";
 import {ImplementsClauseableNodeStructure} from "../../structures";
+import {CommaSeparatedStructuresToText, StringStructureToText} from "../../structureToTexts";
 import {callBaseFill} from "../callBaseFill";
 import * as errors from "../../errors";
 import {Node} from "../common";
@@ -73,6 +74,11 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 return [];
             }
 
+            const writer = this.getWriterWithQueuedChildIndentation();
+            const structureToText = new CommaSeparatedStructuresToText(writer, new StringStructureToText(writer));
+
+            structureToText.writeText(texts);
+
             const heritageClauses = this.getHeritageClauses();
             const implementsTypes = this.getImplements();
             index = verifyAndGetIndex(index, implementsTypes.length);
@@ -83,7 +89,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                     parent: implementsClause.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: implementsTypes,
                     insertIndex: index,
-                    newTexts: texts
+                    newText: writer.toString()
                 });
                 return getNodeOrNodesToReturn(this.getImplements(), index, length);
             }
@@ -91,7 +97,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             const openBraceToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
             const openBraceStart = openBraceToken.getStart();
             const isLastSpace = /\s/.test(this.getSourceFile().getFullText()[openBraceStart - 1]);
-            let insertText = `implements ${texts.join(", ")} `;
+            let insertText = `implements ${writer.toString()} `;
             if (!isLastSpace)
                 insertText = " " + insertText;
 

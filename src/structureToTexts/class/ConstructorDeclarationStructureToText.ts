@@ -7,6 +7,6 @@ export class ConstructorDeclarationStructureToText extends StructureToText<Const
 
     writeText(structure: ConstructorDeclarationStructure) {
         this.modifierWriter.writeText(structure);
-        this.writer.write("constructor()").block();
+        this.writer.write("constructor()").space().inlineBlock();
     }
 }

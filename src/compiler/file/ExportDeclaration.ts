@@ -1,6 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ExportSpecifierStructure} from "../../structures";
+import {NamedImportExportSpecifierStructureToText} from "../../structureToTexts";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
 import {ArrayUtils, TypeGuards, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
@@ -165,33 +166,31 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
                 return [];
 
         const namedExports = this.getNamedExports();
-        const codes = structuresOrNames.map(s => {
-            if (typeof s === "string")
-                return s;
-            let text = s.name;
-            if (s.alias != null && s.alias.length > 0)
-                text += ` as ${s.alias}`;
-            return text;
-        });
+        const writer = this.getWriterWithQueuedChildIndentation();
+        const namedExportStructureToText = new NamedImportExportSpecifierStructureToText(writer, this.global.getFormatCodeSettings());
+
         index = verifyAndGetIndex(index, namedExports.length);
 
         if (namedExports.length === 0) {
+            namedExportStructureToText.writeTextsWithBraces(structuresOrNames);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
                 insertPos: asteriskToken.getStart(),
                 parent: this,
-                newText: `{${codes.join(", ")}}`,
+                newText: writer.toString(),
                 replacing: {
                     textLength: 1
                 }
             });
         }
         else {
+            namedExportStructureToText.writeTexts(structuresOrNames);
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.NamedExports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedExports,
                 insertIndex: index,
-                newTexts: codes
+                newText: writer.toString(),
+                surroundWithSpaces: this.global.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 

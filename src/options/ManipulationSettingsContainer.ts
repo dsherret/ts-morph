@@ -19,7 +19,7 @@ export enum IndentationText {
 /**
  * Manipulation settings.
  */
-export interface ManipulationSettings {
+export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
     /** Indentation text */
     indentationText: IndentationText;
     /** New line kind */
@@ -29,29 +29,63 @@ export interface ManipulationSettings {
 }
 
 /**
+ * FormatCodeSettings that are currently supported in the library.
+ */
+export interface SupportedFormatCodeSettings extends SupportedFormatCodeSettingsOnly, EditorSettings {
+}
+
+/**
+ * FormatCodeSettings that are currently supported in the library.
+ */
+export interface SupportedFormatCodeSettingsOnly {
+    /**
+     * Whether to insert a space after opening and before closing non-empty braces.
+     *
+     * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+     */
+    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: boolean;
+}
+
+/**
  * Holds the manipulation settings.
  */
 export class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
     private editorSettings: EditorSettings | undefined;
+    private formatCodeSettings: SupportedFormatCodeSettings | undefined;
 
     constructor() {
         super({
             indentationText: IndentationText.FourSpaces,
             newLineKind: NewLineKind.LineFeed,
-            quoteType: QuoteType.Double
+            quoteType: QuoteType.Double,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         });
     }
 
     /**
      * Gets the editor settings based on the current manipulation settings.
      */
-    getEditorSettings() {
+    getEditorSettings(): Readonly<EditorSettings> {
         if (this.editorSettings == null) {
             this.editorSettings = {};
             fillDefaultEditorSettings(this.editorSettings, this);
         }
 
-        return this.editorSettings;
+        return {...this.editorSettings};
+    }
+
+    /**
+     * Gets the format code settings.
+     */
+    getFormatCodeSettings(): Readonly<SupportedFormatCodeSettings> {
+        if (this.formatCodeSettings == null) {
+            this.formatCodeSettings = {
+                ...this.getEditorSettings(),
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: this.settings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+            };
+        }
+
+        return {...this.formatCodeSettings};
     }
 
     /**
@@ -89,5 +123,6 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
     set(settings: Partial<ManipulationSettings>) {
         super.set(settings);
         this.editorSettings = undefined;
+        this.formatCodeSettings = undefined;
     }
 }

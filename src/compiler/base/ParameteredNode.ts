@@ -3,7 +3,7 @@ import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "../../structures";
-import {ParameterDeclarationStructureToText} from "../../structureToTexts";
+import {ParameterDeclarationStructureToText, CommaSeparatedStructuresToText} from "../../structureToTexts";
 import {callBaseFill} from "../callBaseFill";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../utils";
 import {Node} from "../common";
@@ -94,19 +94,16 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             const syntaxList = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList);
             index = verifyAndGetIndex(index, parameters.length);
 
-            const newTexts = structures.map(s => {
-                // todo: pass the structure to text to the function below
-                const writer = this.getWriter();
-                const structureToText = new ParameterDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
+            const writer = this.getWriterWithQueuedChildIndentation();
+            const structureToText = new CommaSeparatedStructuresToText(writer, new ParameterDeclarationStructureToText(writer));
+
+            structureToText.writeText(structures);
 
             insertIntoCommaSeparatedNodes({
                 parent: syntaxList,
                 currentNodes: parameters,
                 insertIndex: index,
-                newTexts
+                newText: writer.toString()
             });
 
             const newParameters = getNodesToReturn(this.getParameters(), index, structures.length);

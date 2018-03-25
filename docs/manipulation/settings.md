@@ -54,3 +54,15 @@ project.manipulationSettings.set({
     indentationText: IndentationText.TwoSpaces
 });
 ```
+
+### Formatting
+
+There are some additional manipulation settings that are taken from the `ts.FormatCodeSettings`.
+They will slowly be supported and added to the manipulation settings. For example:
+
+```ts
+project.manipulationSettings.set({
+    // only one for now... will add more in the future
+    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false // default: true
+});
+```

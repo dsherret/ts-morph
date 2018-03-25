@@ -26,9 +26,7 @@ describe(nameof(IndentationText), () => {
 
 describe(nameof(ManipulationSettingsContainer), () => {
     function checkSettings(settings: ManipulationSettingsContainer, settingsSettings: ManipulationSettings) {
-        expect(settings.getQuoteType()).to.equal(settingsSettings.quoteType);
-        expect(settings.getNewLineKind()).to.equal(settingsSettings.newLineKind);
-        expect(settings.getIndentationText()).to.equal(settingsSettings.indentationText);
+        expect(settings.get()).to.deep.equal(settingsSettings);
     }
 
     it("should have the correct defaults", () => {
@@ -36,7 +34,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
         checkSettings(settings, {
             quoteType: QuoteType.Double,
             newLineKind: NewLineKind.LineFeed,
-            indentationText: IndentationText.FourSpaces
+            indentationText: IndentationText.FourSpaces,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         });
     });
 
@@ -49,7 +48,8 @@ describe(nameof(ManipulationSettingsContainer), () => {
         checkSettings(settings, {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.LineFeed,
-            indentationText: IndentationText.FourSpaces
+            indentationText: IndentationText.FourSpaces,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         });
     });
 
@@ -58,13 +58,15 @@ describe(nameof(ManipulationSettingsContainer), () => {
         settings.set({
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
-            indentationText: IndentationText.EightSpaces
+            indentationText: IndentationText.EightSpaces,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
         });
 
         checkSettings(settings, {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
-            indentationText: IndentationText.EightSpaces
+            indentationText: IndentationText.EightSpaces,
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
         });
     });
 

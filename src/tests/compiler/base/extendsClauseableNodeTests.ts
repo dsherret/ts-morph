@@ -58,7 +58,6 @@ describe(nameof(ExtendsClauseableNode), () => {
             const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>("interface Identifier extends Base1 {}");
             expect(() => firstChild.addExtends("")).to.throw();
             expect(() => firstChild.addExtends("  ")).to.throw();
-            expect(() => firstChild.addExtends(5 as any)).to.throw();
         });
     });
 

@@ -120,6 +120,13 @@ export class GlobalContainer {
     }
 
     /**
+     * Helper for getting the format code settings.
+     */
+    getFormatCodeSettings() {
+        return this.manipulationSettings.getFormatCodeSettings();
+    }
+
+    /**
      * Resets the program.
      */
     resetProgram() {

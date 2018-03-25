@@ -293,26 +293,36 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
-        function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string) {
+        function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
             const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            if (!surroundWithSpaces)
+                firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedImports(index, structuresOrNames);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should insert named imports when importing for the side effects", () => {
-            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }], `import {name, name as alias} from "./test";`);
+            doTest(`import "./test";`, 0, ["name", { name: "name", alias: "alias" }], `import { name, name as alias } from "./test";`);
         });
 
         it("should insert named imports when a default import exists", () => {
-            doTest(`import Default from "./test";`, 0, [{ name: "name" }, { name: "name2" }], `import Default, {name, name2} from "./test";`);
+            doTest(`import Default from "./test";`, 0, [{ name: "name" }, { name: "name2" }], `import Default, { name, name2 } from "./test";`);
         });
 
         it("should insert named imports at the start", () => {
-            doTest(`import {name3} from "./test";`, 0, [{ name: "name1" }, { name: "name2" }], `import {name1, name2, name3} from "./test";`);
+            doTest(`import { name3 } from "./test";`, 0, [{ name: "name1" }, { name: "name2" }], `import { name1, name2, name3 } from "./test";`);
+        });
+
+        it("should insert named imports at the start when it shouldn't use a space", () => {
+            doTest(`import {name2} from "./test";`, 0, ["name1"], `import {name1, name2} from "./test";`, false);
         });
 
         it("should insert named imports at the end", () => {
-            doTest(`import {name1} from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `import {name1, name2, name3} from "./test";`);
+            doTest(`import { name1 } from "./test";`, 1, [{ name: "name2" }, { name: "name3" }], `import { name1, name2, name3 } from "./test";`);
+        });
+
+        it("should insert named imports at the end when it shouldn't use a space", () => {
+            doTest(`import {name1} from "./test";`, 1, ["name2"], `import {name1, name2} from "./test";`, false);
         });
 
         it("should insert named imports in the middle", () => {
@@ -344,11 +354,11 @@ describe(nameof(ImportDeclaration), () => {
         }
 
         it("should add at the end", () => {
-            doTest(`import {name1, name2} from "./test";`, { name: "name3" }, `import {name1, name2, name3} from "./test";`);
+            doTest(`import { name1, name2 } from "./test";`, { name: "name3" }, `import { name1, name2, name3 } from "./test";`);
         });
 
         it("should add at the end as a string", () => {
-            doTest(`import {name1, name2} from "./test";`, "name3", `import {name1, name2, name3} from "./test";`);
+            doTest(`import { name1, name2 } from "./test";`, "name3", `import { name1, name2, name3 } from "./test";`);
         });
     });
 
@@ -360,7 +370,7 @@ describe(nameof(ImportDeclaration), () => {
         }
 
         it("should add named imports at the end", () => {
-            doTest(`import {name1} from "./test";`, [{ name: "name2" }, { name: "name3" }, "name4"], `import {name1, name2, name3, name4} from "./test";`);
+            doTest(`import { name1 } from "./test";`, [{ name: "name2" }, { name: "name3" }, "name4"], `import { name1, name2, name3, name4 } from "./test";`);
         });
     });
 

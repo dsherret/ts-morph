@@ -212,10 +212,7 @@ export class LanguageService {
      * @param settings - Settings.
      */
     getFormattingEditsForRange(filePath: string, range: [number, number], settings: FormatCodeSettings) {
-        // todo: don't modify passed in settings... not sure why a bunch of tests fail when I do `settings = {...settings};` on this line
-        fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
-
-        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], settings) || []).map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForRange(filePath, range[0], range[1], this._getFilledSettings(settings)) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -224,9 +221,7 @@ export class LanguageService {
      * @param settings - Format code settings.
      */
     getFormattingEditsForDocument(filePath: string, settings: FormatCodeSettings) {
-        fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
-
-        return (this.compilerObject.getFormattingEditsForDocument(filePath, settings) || []).map(e => new TextChange(e));
+        return (this.compilerObject.getFormattingEditsForDocument(filePath, this._getFilledSettings(settings)) || []).map(e => new TextChange(e));
     }
 
     /**
@@ -239,9 +234,10 @@ export class LanguageService {
         if (sourceFile == null)
             throw new errors.FileNotFoundError(filePath);
 
+        settings = this._getFilledSettings(settings);
         const formattingEdits = this.getFormattingEditsForDocument(filePath, settings);
         let newText = getTextFromFormattingEdits(sourceFile, formattingEdits);
-        const newLineChar = settings.newLineCharacter!; // this is filled in getFormattingEditsForDocument
+        const newLineChar = settings.newLineCharacter!;
 
         if (settings.ensureNewLineAtEndOfFile && !StringUtils.endsWith(newText, newLineChar))
             newText += newLineChar;
@@ -298,5 +294,14 @@ export class LanguageService {
         if (!this.global.compilerFactory.containsSourceFileAtPath(filePath))
             throw new errors.FileNotFoundError(filePath);
         return filePath;
+    }
+
+    private _getFilledSettings(settings: FormatCodeSettings) {
+        if ((settings as any)["_filled"]) // optimization
+            return settings;
+        settings = ObjectUtils.assign(this.global.getFormatCodeSettings(), settings);
+        fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
+        (settings as any)["_filled"] = true;
+        return settings;
     }
 }

@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "^6.6.0",
+    "code-block-writer": "^6.7.0",
     "globby": "^6.1.0",
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",

@@ -388,9 +388,9 @@ clone@^1.0.0, clone@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
 
-code-block-writer@^6.6.0:
-  version "6.6.0"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-6.6.0.tgz#4fedf70344fde47d944caa6ef0adb99824be9210"
+code-block-writer@^6.7.0:
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-6.7.0.tgz#64841a32455f7d2a783d2989f987830374761880"
 
 collection-visit@^1.0.0:
   version "1.0.0"

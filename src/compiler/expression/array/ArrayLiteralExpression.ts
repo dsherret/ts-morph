@@ -2,6 +2,7 @@ import {ts, SyntaxKind} from "../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../../errors";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn} from "../../../manipulation";
+import {CommaNewLineSeparatedStructuresToText, CommaSeparatedStructuresToText, StringStructureToText} from "../../../structureToTexts";
 import {Expression} from "../Expression";
 import {PrimaryExpression} from "../PrimaryExpression";
 
@@ -60,22 +61,22 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
         index = verifyAndGetIndex(index, elements.length);
         const useNewLines = getUseNewLines(this);
 
-        if (textsOrWriterFunction instanceof Function) {
-            const writer = this.getWriterWithChildIndentation();
-            textsOrWriterFunction(writer);
-            return insertTexts(this, [writer.toString()]);
-        }
-        else {
-            const childIndentationText = useNewLines ? this.getChildIndentationText() : "";
-            return insertTexts(this, textsOrWriterFunction.map(t => childIndentationText + t));
-        }
+        const writer = useNewLines ? this.getWriterWithChildIndentation() : this.getWriterWithQueuedChildIndentation();
+        const stringStructureToText = new StringStructureToText(writer);
+        const structureToText = useNewLines ?
+            new CommaNewLineSeparatedStructuresToText(writer, stringStructureToText) :
+            new CommaSeparatedStructuresToText(writer, stringStructureToText);
 
-        function insertTexts(node: ArrayLiteralExpression, newTexts: string[]) {
+        structureToText.writeText(textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
+
+        return insertTexts(this);
+
+        function insertTexts(node: ArrayLiteralExpression) {
             insertIntoCommaSeparatedNodes({
                 parent: node.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: elements,
                 insertIndex: index,
-                newTexts,
+                newText: writer.toString(),
                 useNewLines
             });
 

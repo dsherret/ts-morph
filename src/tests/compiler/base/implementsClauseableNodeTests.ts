@@ -63,7 +63,6 @@ describe(nameof(ImplementsClauseableNode), () => {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("class Identifier implements Base1 {}");
             expect(() => firstChild.addImplements("")).to.throw();
             expect(() => firstChild.addImplements("  ")).to.throw();
-            expect(() => firstChild.addImplements(5 as any)).to.throw();
         });
     });
 

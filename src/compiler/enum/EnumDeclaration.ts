@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "../../structures";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn} from "../../manipulation";
-import {EnumMemberStructureToText} from "../../structureToTexts";
+import {EnumMemberStructureToText, CommaNewLineSeparatedStructuresToText} from "../../structureToTexts";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "../base";
@@ -68,20 +68,17 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
             return [];
 
         // create member code
-        const newTexts = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = new EnumMemberStructureToText(writer);
-            structureToText.writeText(s);
-            return writer.toString();
-        });
+        // todo: pass in the StructureToText to the function below
+        const writer = this.getWriterWithChildIndentation();
+        const structureToText = new CommaNewLineSeparatedStructuresToText(writer, new EnumMemberStructureToText(writer));
+        structureToText.writeText(structures);
 
         // insert
         insertIntoCommaSeparatedNodes({
             parent: this.getChildSyntaxListOrThrow(),
             currentNodes: members,
             insertIndex: index,
-            newTexts,
+            newText: writer.toString(),
             useNewLines: true
         });
 

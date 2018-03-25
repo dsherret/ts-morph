@@ -407,8 +407,8 @@ describe(nameof(SourceFile), () => {
                 `import "./test";`,
                 `import identifier from "./test";`,
                 `import identifier, * as name from "./test";`,
-                `import identifier, {name1, name, name as alias} from "./test";`,
-                `import {name} from "./test";`,
+                `import identifier, { name1, name, name as alias } from "./test";`,
+                `import { name } from "./test";`,
                 `import * as name from "./test";`
             ].join("\n") + "\n");
         });
@@ -533,9 +533,9 @@ describe(nameof(SourceFile), () => {
                 { }
             ], [
                 `export * from "./test";`,
-                `export {name1, name, name as alias} from "./test";`,
-                `export {name};`,
-                `export {};`
+                `export { name1, name, name as alias } from "./test";`,
+                `export { name };`,
+                `export { };`
             ].join("\n") + "\n");
         });
 

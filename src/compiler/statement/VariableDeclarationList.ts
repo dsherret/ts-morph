@@ -3,6 +3,7 @@ import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToRetu
 import * as errors from "../../errors";
 import {Node} from "../common";
 import {VariableDeclarationListStructure, VariableDeclarationStructure} from "../../structures";
+import {VariableDeclarationStructureToText, CommaSeparatedStructuresToText} from "../../structureToTexts";
 import {ModifierableNode} from "../base";
 import {callBaseFill} from "../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
@@ -100,24 +101,19 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-        const texts = structures.map(structure => {
-            let text = structure.name;
-            if (structure.type != null)
-                text += ": " + structure.type;
-            if (structure.initializer != null)
-                text += " = " + structure.initializer;
-            return text;
-        });
+        const writer = this.getWriterWithQueuedChildIndentation();
+        const structureToText = new CommaSeparatedStructuresToText(writer, new VariableDeclarationStructureToText(writer));
+
+        structureToText.writeText(structures);
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             currentNodes: this.getDeclarations(),
             insertIndex: index,
-            newTexts: texts
+            newText: writer.toString()
         });
 
-        const declarations = getNodesToReturn(this.getDeclarations(), index, texts.length);
+        const declarations = getNodesToReturn(this.getDeclarations(), index, structures.length);
 
         for (let i = 0; i < structures.length; i++)
             declarations[i].fill(structures[i]);

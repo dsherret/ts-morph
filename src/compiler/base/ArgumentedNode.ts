@@ -79,7 +79,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: args,
                 insertIndex: index,
-                newTexts: argumentTexts
+                newText: argumentTexts.join(", ")
             });
 
             return getNodesToReturn(this.getArguments(), index, argumentTexts.length);

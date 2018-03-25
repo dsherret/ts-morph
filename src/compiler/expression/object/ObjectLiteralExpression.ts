@@ -4,7 +4,8 @@ import * as errors from "../../../errors";
 import {ArrayUtils} from "../../../utils";
 import {verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../../manipulation";
 import {StructureToText, PropertyAssignmentStructureToText, ShorthandPropertyAssignmentStructureToText, SpreadAssignmentStructureToText,
-    MethodDeclarationStructureToText, GetAccessorDeclarationStructureToText, SetAccessorDeclarationStructureToText} from "../../../structureToTexts";
+    MethodDeclarationStructureToText, GetAccessorDeclarationStructureToText, SetAccessorDeclarationStructureToText,
+    CommaNewLineSeparatedStructuresToText} from "../../../structureToTexts";
 import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
     MethodDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure} from "../../../structures";
 import {ObjectLiteralElementLike} from "../../aliases";
@@ -287,19 +288,16 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     private _insertProperty<T>(index: number, structures: T[], createStructureToText: (writer: CodeBlockWriter) => StructureToText<T>) {
         index = verifyAndGetIndex(index, this.compilerNode.properties.length);
-        const newTexts = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = createStructureToText(writer);
-            structureToText.writeText(s);
-            return writer.toString();
-        });
+        const writer = this.getWriterWithChildIndentation();
+        const structureToText = new CommaNewLineSeparatedStructuresToText(writer, createStructureToText(writer));
+
+        structureToText.writeText(structures);
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
             currentNodes: this.getProperties(),
             insertIndex: index,
-            newTexts,
+            newText: writer.toString(),
             useNewLines: true
         });
 

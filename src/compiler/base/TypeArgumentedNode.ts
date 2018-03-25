@@ -94,7 +94,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
                     parent: this.getFirstChildByKindOrThrow(SyntaxKind.LessThanToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                     currentNodes: typeArguments,
                     insertIndex: index,
-                    newTexts: argumentTexts
+                    newText: argumentTexts.join(", ")
                 });
             }
 
