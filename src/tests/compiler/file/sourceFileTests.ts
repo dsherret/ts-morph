@@ -880,15 +880,15 @@ describe(nameof(SourceFile), () => {
         }
 
         it("should format the text when it contains different spacing", () => {
-            doTest("class     MyClass{}", "class MyClass {}\n");
+            doTest("class     MyClass{}", "class MyClass { }\n");
         });
 
         it("should not add a newline when specifying not to ensure", () => {
-            doTest("class MyClass{}", "class MyClass {}", {}, { ensureNewLineAtEndOfFile: false });
+            doTest("class MyClass{ }", "class MyClass { }", {}, { ensureNewLineAtEndOfFile: false });
         });
 
-        it("should not by default add spaces immediately within named import braces", () => {
-            doTest("import {name, name2} from 'test';", "import {name, name2} from 'test';\n");
+        it("should by default add spaces immediately within named import braces", () => {
+            doTest("import {name, name2} from 'test';", "import { name, name2 } from 'test';\n");
         });
 
         it("should format the text with eight spaces", () => {
@@ -950,7 +950,7 @@ describe(nameof(SourceFile), () => {
         });
 
         it("should format the text when it contains syntax errors", () => {
-            doTest("function myTest(}{{{{}}) {}", "function myTest(}{{{{}}) {}\n");
+            doTest("function myTest(}{{{{}}) {}", "function myTest(}{{{{ }}) { }\n");
         });
 
         it("should format the text in the documentation as described", () => {
