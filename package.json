@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "dopublish": "gulp typescript && gulp scripts && node dist-scripts/scripts/flattenDeclarationFiles && npm run code-verification && npm publish",
+    "dopublish": "gulp typescript && gulp scripts && node dist-scripts/scripts/createDeclarationFile && npm run code-verification && npm publish",
     "test": "npm run build && npm run test-run",
     "build": "gulp typescript",
     "test-run": "gulp test-run",

@@ -1,4 +1,5 @@
-﻿import Project, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName} from "../../src/main";
+﻿import Project, {Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
+    Directory} from "../../src/main";
 import {Memoize, ArrayUtils, TypeGuards, createHashSet} from "../../src/utils";
 import {isNodeClass} from "../common";
 import {WrappedNode, Mixin, Structure, NodeToWrapperMapping} from "./tsSimpleAst";
@@ -10,6 +11,11 @@ export class TsSimpleAstInspector {
 
     getProject() {
         return this.project;
+    }
+
+    @Memoize
+    getSrcDirectory(): Directory {
+        return this.project.getDirectoryOrThrow("./src");
     }
 
     @Memoize

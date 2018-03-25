@@ -8,7 +8,13 @@ import {Node, Identifier} from "../../common";
 export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.BindingName; }>;
 
 export interface BindingNamedNode {
+    /**
+     * Gets the declaration's name node.
+     */
     getNameNode(): Identifier;
+    /**
+     * Gets the declaration's name as a string.
+     */
     getName(): string;
     /**
      * Renames the name.
