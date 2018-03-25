@@ -186,7 +186,7 @@ export class Project {
             fileGlobs = [fileGlobs];
 
         for (const filePath of this.global.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addSourceFileIfExists(filePath);
+            const sourceFile = this.addExistingSourceFileIfExists(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
@@ -200,7 +200,7 @@ export class Project {
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      */
-    addSourceFileIfExists(filePath: string): SourceFile | undefined {
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
         return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
     }
 
@@ -212,7 +212,7 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addExistingSourceFile(filePath: string): SourceFile {
-        const sourceFile = this.addSourceFileIfExists(filePath);
+        const sourceFile = this.addExistingSourceFileIfExists(filePath);
         if (sourceFile == null) {
             const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
             throw new errors.FileNotFoundError(absoluteFilePath);

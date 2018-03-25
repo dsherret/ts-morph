@@ -316,19 +316,19 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addSourceFileIfExists), () => {
+    describe(nameof<Directory>(d => d.addExistingSourceFileIfExists), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const fileSystem = getFileSystemHostWithFiles([]);
             const project = new Project(undefined, fileSystem);
             const directory = project.createDirectory("dir");
-            expect(directory.addSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+            expect(directory.addExistingSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
         });
 
         it("should add a source file that exists", () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
             const project = new Project(undefined, fileSystem);
             const directory = project.addExistingDirectory("dir");
-            const sourceFile = directory.addSourceFileIfExists("file.ts");
+            const sourceFile = directory.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
         });
     });

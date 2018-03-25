@@ -285,16 +285,16 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addSourceFileIfExists), () => {
+    describe(nameof<Project>(project => project.addExistingSourceFileIfExists), () => {
         it("should return undefined if adding a source file at a non-existent path", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(project.addSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
+            expect(project.addExistingSourceFileIfExists("non-existent-file.ts")).to.be.undefined;
         });
 
         it("should add a source file that exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
             const project = new Project(undefined, fileSystem);
-            const sourceFile = project.addSourceFileIfExists("file.ts");
+            const sourceFile = project.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
         });
     });

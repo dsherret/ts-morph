@@ -110,7 +110,7 @@ parentDir.isAncestorOf(childSourceFile);      // true
 ```ts
 const sourceFiles = directory.getSourceFiles();
 const sourceFile = directory.getSourceFile("someFile.ts"); // or getSourceFileOrThrow
-const indexFile = directory.addExistingSourceFile("index.ts"); // or addSourceFileIfExists
+const indexFile = directory.addExistingSourceFile("index.ts"); // or addExistingSourceFileIfExists
 const descendantSourceFiles = directory.getDescendantSourceFiles();
 ```
 

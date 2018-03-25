@@ -39,7 +39,7 @@ project.addExistingSourceFiles(["**/*.ts", "!**/*.d.ts"]);
 ### By file path
 
 ```ts
-const sourceFile = project.addExistingSourceFile("path/to/file.ts"); // or addSourceFileIfExists
+const sourceFile = project.addExistingSourceFile("path/to/file.ts"); // or addExistingSourceFileIfExists
 ```
 
 ### By structure

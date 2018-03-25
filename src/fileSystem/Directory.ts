@@ -288,7 +288,7 @@ export class Directory {
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
      */
-    addSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
     }
@@ -301,7 +301,7 @@ export class Directory {
      * @throws FileNotFoundError when the file doesn't exist.
      */
     addExistingSourceFile(relativeFilePath: string): SourceFile {
-        const sourceFile = this.addSourceFileIfExists(relativeFilePath);
+        const sourceFile = this.addExistingSourceFileIfExists(relativeFilePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath()));
         return sourceFile;
