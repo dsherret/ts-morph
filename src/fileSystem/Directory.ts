@@ -3,6 +3,7 @@ import * as errors from "../errors";
 import {ArrayUtils, FileUtils} from "../utils";
 import {SourceFileStructure} from "../structures";
 import {GlobalContainer} from "../GlobalContainer";
+import {CreateSourceFileOptions} from "../Project";
 import {DirectoryEmitResult} from "./DirectoryEmitResult";
 
 export class Directory {
@@ -261,21 +262,23 @@ export class Directory {
      * Note: The file will not be created and saved to the file system until .save() is called on the source file.
      * @param relativeFilePath - Relative file path of the source file to create.
      * @param sourceFileText - Text of the source file.
+     * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText: string): SourceFile;
+    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
     /**
      * Creates a source file in the AST, relative to this directory.
      *
      * Note: The file will not be created and saved to the file system until .save() is called on the source file.
      * @param relativeFilePath - Relative file path of the source file to create.
      * @param structure - Structure that represents the source file.
+     * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, structure: SourceFileStructure): SourceFile;
-    createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure) {
+    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure, options?: CreateSourceFileOptions) {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
+        return this.global.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
 
     /**

@@ -4,6 +4,7 @@ import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signat
 import * as errors from "../errors";
 import {SourceFileStructure} from "../structures";
 import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile} from "../utils";
+import {CreateSourceFileOptions} from "../Project";
 import {GlobalContainer} from "../GlobalContainer";
 import {Directory} from "../fileSystem";
 import {createTempSourceFile} from "./createTempSourceFile";
@@ -78,12 +79,13 @@ export class CompilerFactory {
      * Adds a source file by structure or text.
      * @param filePath - File path.
      * @param structureOrText - Structure or text.
+     * @param options - Options.
      */
-    createSourceFile(filePath: string, structureOrText?: string | SourceFileStructure) {
+    createSourceFile(filePath: string, structureOrText: string | SourceFileStructure, options: CreateSourceFileOptions) {
         if (structureOrText == null || typeof structureOrText === "string")
-            return this.createSourceFileFromText(filePath, structureOrText || "");
+            return this.createSourceFileFromText(filePath, structureOrText || "", options);
 
-        const sourceFile = this.createSourceFileFromText(filePath, "");
+        const sourceFile = this.createSourceFileFromText(filePath, "", options);
         sourceFile.fill(structureOrText);
         return sourceFile;
     }
@@ -93,10 +95,13 @@ export class CompilerFactory {
      * Adds it to the cache.
      * @param filePath - File path for the source file.
      * @param sourceText - Text to create the source file with.
+     * @param options - Options.
      * @throws InvalidOperationError if the file exists.
      */
-    createSourceFileFromText(filePath: string, sourceText: string) {
+    createSourceFileFromText(filePath: string, sourceText: string, options: CreateSourceFileOptions) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        if (options != null && options.overwrite === true)
+            return this.createOrOverwriteSourceFileFromText(filePath, sourceText);
         this.throwIfFileExists(filePath);
         return this.getSourceFileFromText(filePath, sourceText);
     }
@@ -113,13 +118,7 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    /**
-     * Creates or overwrites a source file and text.
-     * Adds it to the cache.
-     * @param filePath - File path for the source file.
-     * @param sourceText - Text to create the source file with.
-     */
-    createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
+    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath);
         if (existingSourceFile != null) {

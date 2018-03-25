@@ -16,5 +16,5 @@ export function createTempSourceFile(filePath: string, sourceText: string, opts:
     const globalContainer = new GlobalContainer(new FileSystemWrapper(new VirtualFileSystemHost()), compilerOptions, { createLanguageService });
     if (opts.manipulationSettings != null)
         globalContainer.manipulationSettings.set(opts.manipulationSettings);
-    return globalContainer.compilerFactory.createSourceFileFromText(filePath, sourceText);
+    return globalContainer.compilerFactory.createSourceFileFromText(filePath, sourceText, {});
 }

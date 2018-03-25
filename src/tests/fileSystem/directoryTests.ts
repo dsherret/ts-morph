@@ -289,6 +289,14 @@ describe(nameof(Directory), () => {
             const directory = project.addExistingDirectory("/");
             expect(() => directory.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
         });
+
+        it("should note throw an exception if creating a source file at an existing path on the disk and providing the overwrite option", () => {
+            const project = getProject([{ filePath: "/file.ts", text: "" }], ["/"]);
+            const directory = project.addExistingDirectory("/");
+            const fileText = "class Identifier {}";
+            const file = directory.createSourceFile("file.ts", fileText, { overwrite: true });
+            expect(file.getFullText()).to.equal(fileText);
+        });
     });
 
     describe(nameof<Directory>(d => d.addSourceFileIfExists), () => {

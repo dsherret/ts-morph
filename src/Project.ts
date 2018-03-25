@@ -22,6 +22,10 @@ export interface Options {
     useVirtualFileSystem?: boolean;
 }
 
+export interface CreateSourceFileOptions {
+    overwrite?: boolean;
+}
+
 /**
  * Project that holds source files.
  */
@@ -260,20 +264,22 @@ export class Project {
      * Note: The file will not be created and saved to the file system until .save() is called on the source file.
      * @param filePath - File path of the source file.
      * @param sourceFileText - Text of the source file.
+     * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText: string): SourceFile;
+    createSourceFile(filePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
     /**
      * Creates a source file at the specified file path with the specified text.
      *
      * Note: The file will not be created and saved to the file system until .save() is called on the source file.
      * @param filePath - File path of the source file.
      * @param structure - Structure that represents the source file.
+     * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, structure: SourceFileStructure): SourceFile;
-    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string): SourceFile {
-        return this.global.compilerFactory.createSourceFile(filePath, structureOrText);
+    createSourceFile(filePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string, options?: CreateSourceFileOptions): SourceFile {
+        return this.global.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
 
     /**

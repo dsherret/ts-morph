@@ -319,6 +319,16 @@ describe(nameof(Project), () => {
             }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: /file.ts`);
         });
 
+        it("should not throw an exception if creating a source file at an existing path when providing the overwrite option", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const file1 = project.createSourceFile("file.ts", "");
+            const newFileText = "class Identifier {}";
+            const file2 = project.createSourceFile("file.ts", newFileText, { overwrite: true });
+            expect(file1.getFullText()).to.equal(newFileText);
+            expect(file2.getFullText()).to.equal(newFileText);
+            expect(file1).to.equal(file2);
+        });
+
         it("should throw an exception if creating a source file at an existing path on the disk", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
             const project = new Project(undefined, fileSystem);

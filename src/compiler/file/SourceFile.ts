@@ -157,11 +157,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         return copiedSourceFile;
 
         function getCopiedSourceFile(currentFile: SourceFile) {
-            if (overwrite)
-                return currentFile.global.compilerFactory.createOrOverwriteSourceFileFromText(filePath, currentFile.getFullText());
-
             try {
-                return currentFile.global.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText());
+                return currentFile.global.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);

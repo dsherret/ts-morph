@@ -84,6 +84,15 @@ const sourceFile = project.createSourceFile("path/to/myNewFile.ts", fileText);
 
 Note: The file will not be created and saved to the file system until calling `.save()` on the source file.
 
+### Options
+
+`createSourceFile` will throw an error if the file already exists.
+To not throw an error, set the `overwrite` option to true.
+
+```ts
+const sourceFile = project.createSourceFile("path/to/myNewFile.ts", "", { overwrite: true });
+```
+
 ### Note
 
 Adding source files to the AST from a structure or text will act like any other source file, but they will not be saved to the disk unless you ask it to be.
