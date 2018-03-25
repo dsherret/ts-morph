@@ -368,27 +368,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the import and exports in other source files that reference this source file.
-     * @deprecated
-     */
-    getReferencingImportAndExportDeclarations() {
-        console.warn(`${nameof(this.getReferencingImportAndExportDeclarations)} will be replaced with ${nameof(this.getReferencingNodesInOtherSourceFiles)} in v10.`);
-
-        const nodes = this._referenceContainer.getReferencingNodesInOtherSourceFiles();
-        return ArrayUtils.from(filterNodes());
-
-        function* filterNodes() {
-            for (const node of nodes) {
-                if (TypeGuards.isImportDeclaration(node) || TypeGuards.isExportDeclaration(node))
-                    yield node;
-            }
-        }
-    }
-
-    /**
-     * Gets the import and exports in other source files that reference this source file.
      */
     getReferencingNodesInOtherSourceFiles() {
         return ArrayUtils.from(this._referenceContainer.getReferencingNodesInOtherSourceFiles());
+    }
+
+    /**
+     * Gets the string literals in other source files that reference this source file.
+     */
+    getReferencingLiteralsInOtherSourceFiles() {
+        return ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles());
     }
 
     /**

@@ -1247,6 +1247,26 @@ function myFunction(param: MyClass) {
         });
     });
 
+    describe(nameof<SourceFile>(s => s.getReferencingLiteralsInOtherSourceFiles), () => {
+        // the tests in getReferencingNodesInOtherSourceFiles cover most of the testing here
+
+        it("should get the imports, exports, import equals, and dynamic imports that reference this source file", () => {
+            const fileText = "export interface MyInterface {}\nexport class MyClass {}";
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
+            const file1 = project.createSourceFile("/file.ts", `import {MyInterface} from "./MyInterface";`);
+            const file2 = project.createSourceFile("/sub/file2.ts", `import * as interfaces from "../MyInterface";\nimport "./../MyInterface";`);
+            const file3 = project.createSourceFile("/sub/file3.ts", `export * from "../MyInterface";\n` +
+                `import test = require("../MyInterface");\n` +
+                `async function t() { const u = await import("../MyInterface"); }`);
+            const file4 = project.createSourceFile("/file4.ts", `export * from "./sub/MyInterface";\nimport "MyOtherFile";`);
+
+            const referencing = sourceFile.getReferencingLiteralsInOtherSourceFiles();
+            expect(referencing.map(r => r.getText()).sort()).to.deep.equal([...[...file1.getImportDeclarations(),
+            ...file2.getImportDeclarations(), ...file3.getExportDeclarations()].map(d => d.getModuleSpecifier()!.getText()),
+                `"../MyInterface"`, `"../MyInterface"`].sort());
+        });
+    });
+
     describe(nameof<SourceFile>(s => s.getReferencingSourceFiles), () => {
         it("should get the source files that reference this source file", () => {
             const fileText = "export interface MyInterface {}";
