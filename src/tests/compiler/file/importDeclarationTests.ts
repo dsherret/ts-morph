@@ -35,7 +35,18 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
-            expect(firstChild.getModuleSpecifier()).to.equal(expected);
+            expect(firstChild.getModuleSpecifier().getText()).to.equal(expected);
+        }
+
+        it("should get the module specifier", () => {
+            doTest("import * as test from './test'", "'./test'");
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierValue), () => {
+        function doTest(text: string, expected: string) {
+            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            expect(firstChild.getModuleSpecifierValue()).to.equal(expected);
         }
 
         it("should get the module specifier when using single quotes", () => {

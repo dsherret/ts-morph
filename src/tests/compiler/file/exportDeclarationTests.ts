@@ -74,7 +74,25 @@ describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string | undefined) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
-            expect(firstChild.getModuleSpecifier()).to.equal(expected);
+            if (expected == null)
+                expect(firstChild.getModuleSpecifier()).to.equal(undefined);
+            else
+                expect(firstChild.getModuleSpecifier()!.getText()).to.equal(expected);
+        }
+
+        it("should get the module specifier text", () => {
+            doTest("export * from './test'", "'./test'");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest(`export {name}`, undefined);
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.getModuleSpecifierValue), () => {
+        function doTest(text: string, expected: string | undefined) {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.getModuleSpecifierValue()).to.equal(expected);
         }
 
         it("should get the module specifier when using single quotes", () => {

@@ -4,6 +4,7 @@ import {ExportSpecifierStructure} from "../../structures";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
 import {ArrayUtils, TypeGuards, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
+import {StringLiteral} from "../literal";
 import {Statement} from "../statement";
 import {ExportSpecifier} from "./ExportSpecifier";
 import {SourceFile} from "./SourceFile";
@@ -21,7 +22,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
-        const stringLiteral = this.getLastChildByKind(SyntaxKind.StringLiteral);
+        const stringLiteral = this.getModuleSpecifier();
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
@@ -41,13 +42,21 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     /**
      * Gets the module specifier or undefined if it doesn't exist.
      */
-    getModuleSpecifier() {
+    getModuleSpecifier(): StringLiteral | undefined {
         const moduleSpecifier = this.getNodeFromCompilerNodeIfExists(this.compilerNode.moduleSpecifier);
         if (moduleSpecifier == null)
             return undefined;
         if (!TypeGuards.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
-        return moduleSpecifier.getLiteralValue();
+        return moduleSpecifier;
+    }
+
+    /**
+     * Gets the module specifier value or undefined if it doesn't exist.
+     */
+    getModuleSpecifierValue() {
+        const moduleSpecifier = this.getModuleSpecifier();
+        return moduleSpecifier == null ? undefined : moduleSpecifier.getLiteralValue();
     }
 
     /**
@@ -77,10 +86,10 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Gets if the module specifier starts with `./` or `../`.
      */
     isModuleSpecifierRelative() {
-        const moduleSpecifier = this.getModuleSpecifier();
-        if (moduleSpecifier == null)
+        const moduleSpecifierValue = this.getModuleSpecifierValue();
+        if (moduleSpecifierValue == null)
             return false;
-        return ModuleUtils.isModuleSpecifierRelative(moduleSpecifier);
+        return ModuleUtils.isModuleSpecifierRelative(moduleSpecifierValue);
     }
 
     /**

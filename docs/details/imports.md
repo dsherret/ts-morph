@@ -37,7 +37,13 @@ importDeclaration.remove();
 Get it:
 
 ```ts
-const moduleSpecifier = importDeclaration.getModuleSpecifier(); // returns: string
+const moduleSpecifier = importDeclaration.getModuleSpecifier(); // returns: StringLiteral
+```
+
+Or get it's value:
+
+```ts
+const moduleSpecifierValue = importDeclaration.getModuleSpecifierValue(); // returns: string
 ```
 
 _Example:_ For `import settings from "./settings";` would return `./settings`.

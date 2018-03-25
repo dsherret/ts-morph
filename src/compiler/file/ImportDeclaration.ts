@@ -5,6 +5,7 @@ import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNo
 import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
 import {Statement} from "../statement";
+import {StringLiteral} from "../literal";
 import {ImportSpecifier} from "./ImportSpecifier";
 import {SourceFile} from "./SourceFile";
 
@@ -21,18 +22,25 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
         const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
-        this.getLastChildByKindOrThrow(SyntaxKind.StringLiteral).setLiteralValue(text);
+        this.getModuleSpecifier().setLiteralValue(text);
         return this;
     }
 
     /**
      * Gets the module specifier.
      */
-    getModuleSpecifier() {
-        const moduleSpecifier = this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
+    getModuleSpecifier(): StringLiteral {
+        const moduleSpecifier =  this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
         if (!TypeGuards.isStringLiteral(moduleSpecifier))
             throw new errors.InvalidOperationError("Expected the module specifier to be a string literal.");
-        return moduleSpecifier.getLiteralValue();
+        return moduleSpecifier;
+    }
+
+    /**
+     * Gets the module specifier string literal value.
+     */
+    getModuleSpecifierValue() {
+        return this.getModuleSpecifier().getLiteralValue();
     }
 
     /**
@@ -46,8 +54,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Gets the source file referenced in the module specifier or returns undefined if it can't find it.
      */
     getModuleSpecifierSourceFile() {
-        const moduleSpecifier = this.getNodeFromCompilerNode(this.compilerNode.moduleSpecifier);
-        const symbol = moduleSpecifier.getSymbol();
+        const symbol = this.getModuleSpecifier().getSymbol();
         if (symbol == null)
             return undefined;
         return ModuleUtils.getReferencedSourceFileFromSymbol(symbol);
@@ -57,7 +64,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Gets if the module specifier starts with `./` or `../`.
      */
     isModuleSpecifierRelative() {
-        return ModuleUtils.isModuleSpecifierRelative(this.getModuleSpecifier());
+        return ModuleUtils.isModuleSpecifierRelative(this.getModuleSpecifierValue());
     }
 
     /**

@@ -74,7 +74,8 @@ exportDeclaration.hasNamedExports();
 // or if it's a namespace export
 exportDeclaration.isNamespaceExport();
 // get/set the module specifier
-exportDeclaration.getModuleSpecifier(); // returns: string | undefined
+exportDeclaration.getModuleSpecifier(); // returns: StringLiteral | undefined
+exportDeclaration.getModuleSpecifierValue(); // returns: string | undefined
 exportDeclaration.setModuleSpecifier("./new-file");
 exportDeclaration.setModuleSpecifier(someSourceFile);
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
