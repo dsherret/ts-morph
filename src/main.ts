@@ -2,7 +2,7 @@ export * from "./typescript";
 export * from "./compiler";
 export * from "./structures";
 export {Project as default} from "./Project";
-export {Options} from "./Project";
+export {Options, CreateSourceFileOptions} from "./Project";
 export {FileSystemHost, Directory, DirectoryEmitResult} from "./fileSystem";
 export * from "./ManipulationSettings";
 export {createWrappedNode, CreateWrappedNodeOptions} from "./utils/compiler/createWrappedNode";
