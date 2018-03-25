@@ -1,5 +1,6 @@
 ﻿import * as path from "path";
 import {FileSystemHost, FileSystemWrapper} from "../fileSystem";
+import {StringUtils} from "./StringUtils";
 
 export class FileUtils {
     private static standardizeSlashesRegex = /\\/g;
@@ -92,7 +93,7 @@ export class FileUtils {
      * @param fileOrDirPath - Path to get the directory name from.
      */
     static getDirPath(fileOrDirPath: string) {
-        return path.dirname(fileOrDirPath);
+        return FileUtils.standardizeSlashes(path.dirname(fileOrDirPath));
     }
 
     /**
@@ -155,11 +156,20 @@ export class FileUtils {
      * @param startsWithPath - Starts with path.
      */
     static pathStartsWith(fileOrDirPath: string | undefined, startsWithPath: string | undefined) {
+        const isfileOrDirPathEmpty = StringUtils.isNullOrWhitespace(fileOrDirPath);
+        const isStartsWithPathEmpty = StringUtils.isNullOrWhitespace(startsWithPath);
         const pathItems = FileUtils.splitPathBySlashes(fileOrDirPath);
         const startsWithItems = FileUtils.splitPathBySlashes(startsWithPath);
 
-        if (startsWithItems.length > pathItems.length)
+        if (isfileOrDirPathEmpty && isStartsWithPathEmpty)
+            return true;
+
+        if (isStartsWithPathEmpty || startsWithItems.length > pathItems.length)
             return false;
+
+        // return true for the root directory
+        if (startsWithItems.length === 1 && startsWithItems[0].length === 0)
+            return true;
 
         for (let i = 0; i < startsWithItems.length; i++) {
             if (startsWithItems[i] !== pathItems[i])
@@ -225,5 +235,13 @@ export class FileUtils {
     static getRelativePathTo(absolutePathFrom: string, absolutePathTo: string) {
         const relativePath = path.relative(path.dirname(absolutePathFrom), path.dirname(absolutePathTo));
         return FileUtils.standardizeSlashes(path.join(relativePath, path.basename(absolutePathTo)));
+    }
+
+    /**
+     * Gets if the path is for the root directory.
+     * @param path - Path.
+     */
+    static isRootDirPath(dirOrFilePath: string) {
+        return dirOrFilePath === FileUtils.getDirPath(dirOrFilePath);
     }
 }

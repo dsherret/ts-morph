@@ -19,6 +19,13 @@ export class DirectoryCache {
     }
 
     get(dirPath: string) {
+        if (!this.directoriesByPath.has(dirPath)) {
+            for (const orphanDir of this.orphanDirs.getValues()) {
+                if (FileUtils.pathStartsWith(orphanDir.getPath(), dirPath))
+                    return this.createOrAddIfNotExists(dirPath);
+            }
+            return undefined;
+        }
         return this.directoriesByPath.get(dirPath);
     }
 
@@ -61,7 +68,7 @@ export class DirectoryCache {
         return this.directoriesByPath.removeByKey(dirPath) || this.orphanDirs.removeByKey(dirPath);
     }
 
-    createOrAddIfNotExists(dirPath: string) {
+    createOrAddIfNotExists(dirPath: string): Directory {
         if (this.has(dirPath))
             return this.get(dirPath)!;
 
@@ -90,7 +97,7 @@ export class DirectoryCache {
                 parentDir._addDirectory(newDirectory);
         }
 
-        if (newDirectory.getParent() == null)
+        if (!newDirectory._hasLoadedParent())
             this.orphanDirs.set(path, newDirectory);
 
         this.directoriesByPath.set(path, newDirectory);

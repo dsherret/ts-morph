@@ -76,6 +76,7 @@ export class Directory {
      */
     getParent() {
         this.throwIfDeletedOrRemoved();
+        this._fillParentIfNotRoot();
         return this._parent;
     }
 
@@ -506,6 +507,19 @@ export class Directory {
     /** @internal */
     _wasRemoved() {
         return this._global == null;
+    }
+
+    /** @internal */
+    _hasLoadedParent() {
+        return this._parent != null;
+    }
+
+    /** @internal */
+    private _fillParentIfNotRoot() {
+        if (this._parent != null || FileUtils.isRootDirPath(this.getPath()))
+            return;
+
+        this.addDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
     }
 
     /** @internal */

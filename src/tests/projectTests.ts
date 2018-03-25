@@ -188,19 +188,40 @@ describe(nameof(Project), () => {
     });
 
     describe(nameof<Project>(project => project.getRootDirectories), () => {
-        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-        const project = new Project(undefined, fileSystem);
-        project.createSourceFile("dir/file.ts");
-        project.createSourceFile("dir/child/file.ts");
-        project.createSourceFile("dir2/file2.ts");
-        project.createSourceFile("dir2/child/file2.ts");
-        project.createSourceFile("dir3/child/file2.ts");
+        function getProject() {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+            const project = new Project(undefined, fileSystem);
+            project.createSourceFile("/dir/sub/file.ts");
+            project.createSourceFile("/dir/sub/child/file.ts");
+            project.createSourceFile("/dir/sub2/file2.ts");
+            project.createSourceFile("/dir/sub2/child/file2.ts");
+            project.createSourceFile("/dir/sub3/child/file2.ts");
+            return project;
+        }
 
         it("should get all the directories without a parent", () => {
+            const project = getProject();
             expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
-                project.getDirectoryOrThrow("dir"),
-                project.getDirectoryOrThrow("dir2"),
-                project.getDirectoryOrThrow("dir3/child")
+                project.getDirectoryOrThrow("/dir/sub"),
+                project.getDirectoryOrThrow("/dir/sub2"),
+                project.getDirectoryOrThrow("/dir/sub3/child")
+            ].map(d => d.getPath()));
+        });
+
+        it("should add an ancestor dir when requesting it", () => {
+            const project = getProject();
+            project.getDirectoryOrThrow("/dir");
+            expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
+                project.getDirectoryOrThrow("/dir")
+            ].map(d => d.getPath()));
+        });
+
+        it("should add the root directory when requesting it", () => {
+            const project = getProject();
+            expect(project.getDirectory("/otherDir")).to.be.undefined;
+            project.getDirectoryOrThrow("/");
+            expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal([
+                project.getDirectoryOrThrow("/")
             ].map(d => d.getPath()));
         });
     });

@@ -21,7 +21,7 @@ describe(nameof(Directory), () => {
 
     function testDirectoryTree(dir: Directory, tree: TreeNode, parent?: Directory) {
         expect(getDirPath(dir)).to.equal(getDirPath(tree.directory), "dir");
-        expect(getDirPath(dir.getParent())).to.equal(getDirPath(parent), `parent dir of ${getDirPath(dir)}`);
+        expect(getDirPath(!dir._hasLoadedParent() ? undefined : dir.getParent())).to.equal(getDirPath(parent), `parent dir of ${getDirPath(dir)}`);
         expect(dir.getDirectories().map(d => d.getPath())).to.deep.equal((tree.children || []).map(c => c.directory.getPath()), "child directories");
         expect(dir.getSourceFiles().map(s => s.getFilePath())).to.deep.equal((tree.sourceFiles || []).map(s => s.getFilePath()), "source files");
         for (const child of (tree.children || []))
@@ -107,10 +107,13 @@ describe(nameof(Directory), () => {
     });
 
     describe("getting parent, child directories, and source files in directory", () => {
-        it("should not have a parent if no parent exists", () => {
+        it("should not have a parent loaded initially, but should then load it on request", () => {
             const project = getProject();
             const sourceFile = project.createSourceFile("directory/file.ts");
-            expect(sourceFile.getDirectory().getParent()).to.be.undefined;
+            const directory = sourceFile.getDirectory();
+            expect(directory._hasLoadedParent()).to.be.false;
+            expect(directory.getParent()).to.not.be.undefined;
+            expect(directory._hasLoadedParent()).to.be.true;
         });
 
         it("should get the files in the alphabetical order", () => {
@@ -203,6 +206,20 @@ describe(nameof(Directory), () => {
                     sourceFiles: [file3]
                 }]
             });
+        });
+    });
+
+    describe(nameof<Directory>(d => d.getParent), () => {
+        const project = getProject();
+        const sourceFile = project.createSourceFile("/dir/file.ts");
+        const dir = sourceFile.getDirectory();
+
+        it("should get the parent when there's a parent", () => {
+            expect(dir.getParent()!.getPath()).to.equal("/");
+        });
+
+        it("should be undefined for the root directory", () => {
+            expect(dir.getParentOrThrow().getParent()).to.be.undefined;
         });
     });
 

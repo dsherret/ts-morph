@@ -65,6 +65,14 @@ describe(nameof(FileUtils), () => {
             expect(FileUtils.pathStartsWith("", "")).to.be.true;
         });
 
+        it("should return true for the root directory", () => {
+            expect(FileUtils.pathStartsWith("/dir", "/")).to.be.true;
+        });
+
+        it("should return true for the root directory on windows", () => {
+            expect(FileUtils.pathStartsWith("C:/dir", "C:/")).to.be.true;
+        });
+
         it("should return false for empty search", () => {
             expect(FileUtils.pathStartsWith("V:/dir/tests.ts", "")).to.be.false;
         });
