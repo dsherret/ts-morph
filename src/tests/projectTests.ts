@@ -1,6 +1,6 @@
 ﻿import * as path from "path";
 import {expect} from "chai";
-import {ts, SyntaxKind, CompilerOptions} from "../typescript";
+import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "../typescript";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "../compiler";
 import {VirtualFileSystemHost} from "../fileSystem";
 import {Project} from "../Project";
@@ -24,7 +24,7 @@ describe(nameof(Project), () => {
             expect(project.manipulationSettings.getIndentationText()).to.equal(IndentationText.EightSpaces);
         });
 
-        it("should add the files from tsconfig.json by default", () => {
+        it("should add the files from tsconfig.json by default with the target in the tsconfig.json", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             fs.writeFileSync("/otherFile.ts", "");
@@ -32,6 +32,7 @@ describe(nameof(Project), () => {
             fs.writeFileSync("/test/test2/file2.ts", "");
             const project = new Project({ tsConfigFilePath: "tsconfig.json" }, fs);
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(["/test/file.ts", "/test/test2/file2.ts"].sort());
+            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5, ScriptTarget.ES5]);
         });
 
         it("should add the files from tsconfig.json by default and also take into account the passed in compiler options", () => {
@@ -253,7 +254,7 @@ describe(nameof(Project), () => {
             expect(() => project.addSourceFilesFromTsConfig("tsconfig.json")).to.throw(errors.FileNotFoundError);
         });
 
-        it("should add the files from tsconfig.json", () => {
+        it("should add the files from tsconfig.json with the specified target", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
             fs.writeFileSync("/otherFile.ts", "");
@@ -265,6 +266,16 @@ describe(nameof(Project), () => {
             const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts"].sort();
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
             expect(returnedFiles.map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
+            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5, ScriptTarget.ES5]);
+        });
+
+        it("should add the files from tsconfig.json but allow overwriting the target", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            fs.writeFileSync("/test/file.ts", "");
+            const project = new Project({}, fs);
+            const returnedFiles = project.addSourceFilesFromTsConfig("tsconfig.json", { languageVersion: ScriptTarget.ES2015 });
+            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES2015]);
         });
     });
 
@@ -282,6 +293,15 @@ describe(nameof(Project), () => {
             const project = new Project(undefined, fileSystem);
             const sourceFile = project.addExistingSourceFile("file.ts");
             expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
+        });
+
+        it("should add a source file that exists and with the specified target", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
+            const project = new Project(undefined, fileSystem);
+            const sourceFile = project.addExistingSourceFile("file.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 
@@ -296,6 +316,15 @@ describe(nameof(Project), () => {
             const project = new Project(undefined, fileSystem);
             const sourceFile = project.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
+        });
+
+        it("should add a source file that exists and with the specified target", () => {
+            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
+            const project = new Project(undefined, fileSystem);
+            const sourceFile = project.addExistingSourceFileIfExists("file.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 
@@ -311,6 +340,7 @@ describe(nameof(Project), () => {
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
             expect(sourceFiles[0].getFilePath()).to.equal("/dir/file.ts");
+            expect(sourceFiles[0].getLanguageVersion()).to.equal(ScriptTarget.Latest);
             expect(sourceFiles[0].isSaved()).to.be.true; // should be saved because it was read from the disk
             expect(sourceFiles[1].getFilePath()).to.equal("/dir/subDir/file.ts");
         });
@@ -327,7 +357,15 @@ describe(nameof(Project), () => {
             expect(sourceFiles.length).to.equal(2);
             expect(result).to.deep.equal(sourceFiles);
             expect(sourceFiles[0].getFilePath()).to.equal("/dir/file.ts");
+            expect(sourceFiles[0].getLanguageVersion()).to.equal(ScriptTarget.Latest);
             expect(sourceFiles[1].getFilePath()).to.equal("/dir/subDir/file.ts");
+        });
+
+        it("should add with the specified target", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            project.getFileSystem().writeFileSync("file1.ts", "");
+            const result = project.addExistingSourceFiles("/**/*.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(project.getSourceFiles()[0].getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 
@@ -358,8 +396,30 @@ describe(nameof(Project), () => {
 
         it("should mark the source file as having not been saved", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            const sourceFile = project.createSourceFile("file.ts", "");
-            expect(sourceFile.isSaved()).to.be.false;
+            expect(project.createSourceFile("file.ts", "").isSaved()).to.be.false;
+        });
+
+        it("should create a source file with the default target", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.Latest);
+        });
+
+        it("should allow creating a source file with a specified target", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            expect(project.createSourceFile("file.ts", "", { languageVersion: ScriptTarget.ES5 }).getLanguageVersion()).to.equal(ScriptTarget.ES5);
+        });
+
+        it("should add a source file based on a structure", () => {
+            // basic test
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("MyFile.ts", {
+                enums: [{
+                    name: "MyEnum"
+                }],
+                imports: [{ moduleSpecifier: "./test" }],
+                exports: [{ moduleSpecifier: "./test" }]
+            });
+            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nexport * from "./test";\n`);
         });
 
         it("", () => {
@@ -376,35 +436,6 @@ describe(nameof(Project), () => {
             enumMember.rename("myNewMemberName");
             expect(enumMember.getValue()).to.equal(0);
             expect(sourceFile.getFullText()).to.equal("enum NewName {\n    myNewMemberName\n}\nlet myEnum: NewName;\nlet myOtherEnum: MyOtherNewName;\n\nenum MyOtherNewName {\n}\n");
-        });
-    });
-
-    describe(nameof<Project>(project => project.createSourceFile), () => {
-        it("should throw an exception if creating a source file at an existing path", () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            project.createSourceFile("file.ts", "");
-            expect(() => {
-                project.createSourceFile("file.ts", {});
-            }).to.throw(errors.InvalidOperationError, `A source file already exists at the provided file path: /file.ts`);
-        });
-
-        it("should mark the source file as having not been saved", () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            const sourceFile = project.createSourceFile("file.ts", {});
-            expect(sourceFile.isSaved()).to.be.false;
-        });
-
-        it("should add a source file based on a structure", () => {
-            // basic test
-            const project = new Project({ useVirtualFileSystem: true });
-            const sourceFile = project.createSourceFile("MyFile.ts", {
-                enums: [{
-                    name: "MyEnum"
-                }],
-                imports: [{ moduleSpecifier: "./test" }],
-                exports: [{ moduleSpecifier: "./test" }]
-            });
-            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nexport * from "./test";\n`);
         });
     });
 

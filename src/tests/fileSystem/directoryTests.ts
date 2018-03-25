@@ -286,6 +286,7 @@ describe(nameof(Directory), () => {
             expect(directory.getSourceFiles()).to.deep.equal([sourceFile]);
             expect(sourceFile.getFilePath()).to.equal("/dir/sourceFile.ts");
             expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         }
 
         it("should create a source file in the directory when specifying no text or structure", () => {
@@ -314,6 +315,12 @@ describe(nameof(Directory), () => {
             const file = directory.createSourceFile("file.ts", fileText, { overwrite: true });
             expect(file.getFullText()).to.equal(fileText);
         });
+
+        it("should create a source file with the specified script target", () => {
+            const project = getProject([], ["/"]);
+            const directory = project.addExistingDirectory("/");
+            expect(directory.createSourceFile("file.ts", "", { languageVersion: ScriptTarget.ES5 }).getLanguageVersion()).to.equal(ScriptTarget.ES5);
+        });
     });
 
     describe(nameof<Directory>(d => d.addExistingSourceFileIfExists), () => {
@@ -330,6 +337,16 @@ describe(nameof(Directory), () => {
             const directory = project.addExistingDirectory("dir");
             const sourceFile = directory.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
+        });
+
+        it("should add a source file that exists with the specified script target", () => {
+            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFile = directory.addExistingSourceFileIfExists("file.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 
@@ -349,6 +366,16 @@ describe(nameof(Directory), () => {
             const directory = project.addExistingDirectory("dir");
             const sourceFile = directory.addExistingSourceFile("file.ts");
             expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
+        });
+
+        it("should add a source file that exists with the specified script target", () => {
+            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFile = directory.addExistingSourceFile("file.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(sourceFile).to.not.be.undefined;
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 

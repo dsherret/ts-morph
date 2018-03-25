@@ -1,4 +1,4 @@
-import {ts, SyntaxKind, LanguageVariant} from "../../typescript";
+import {ts, SyntaxKind, LanguageVariant, ScriptTarget} from "../../typescript";
 import * as errors from "../../errors";
 import {GlobalContainer} from "../../GlobalContainer";
 import {Directory} from "../../fileSystem";
@@ -158,7 +158,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return currentFile.global.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
+                return currentFile.global.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), {
+                    overwrite,
+                    languageVersion: currentFile.getLanguageVersion()
+                });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -344,7 +347,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -355,7 +358,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
+            .map(f => this.global.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -390,7 +393,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the source file language variant.
+     * Gets the script target of the source file.
+     */
+    getLanguageVersion(): ScriptTarget {
+        return this.compilerNode.languageVersion;
+    }
+
+    /**
+     * Gets the language variant of the source file.
      */
     getLanguageVariant(): LanguageVariant {
         return this.compilerNode.languageVariant;

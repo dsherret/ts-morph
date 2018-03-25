@@ -1,5 +1,5 @@
 import * as errors from "./errors";
-import {ts, CompilerOptions} from "./typescript";
+import {ts, CompilerOptions, ScriptTarget} from "./typescript";
 import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
@@ -22,8 +22,12 @@ export interface Options {
     useVirtualFileSystem?: boolean;
 }
 
-export interface CreateSourceFileOptions {
+export interface CreateSourceFileOptions extends AddSourceFileOptions {
     overwrite?: boolean;
+}
+
+export interface AddSourceFileOptions {
+    languageVersion?: ScriptTarget;
 }
 
 /**
@@ -72,8 +76,11 @@ export class Project {
                 tsConfigParseResult,
                 compilerOptions
             });
+            const addOptions: AddSourceFileOptions = {};
+            if (compilerOptions.target != null)
+                addOptions.languageVersion = compilerOptions.target;
             for (const filePath of filePaths)
-                this.addExistingSourceFile(filePath);
+                this.addExistingSourceFile(filePath, addOptions);
         }
 
         function getCompilerOptions(): CompilerOptions {
@@ -170,23 +177,25 @@ export class Project {
     /**
      * Add source files based on a file glob.
      * @param fileGlobs - File glob to add files based on.
+     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlob: string): SourceFile[];
+    addExistingSourceFiles(fileGlob: string, options?: AddSourceFileOptions): SourceFile[];
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
+     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[]): SourceFile[];
-    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string[], options?: AddSourceFileOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[], options?: AddSourceFileOptions): SourceFile[] {
         const sourceFiles: SourceFile[] = [];
 
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
         for (const filePath of this.global.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addExistingSourceFileIfExists(filePath);
+            const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
@@ -199,9 +208,10 @@ export class Project {
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
+     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
-        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
+    addExistingSourceFileIfExists(filePath: string, options?: AddSourceFileOptions): SourceFile | undefined {
+        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
     }
 
     /**
@@ -209,10 +219,11 @@ export class Project {
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
+     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(filePath);
+    addExistingSourceFile(filePath: string, options?: AddSourceFileOptions): SourceFile {
+        const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
         if (sourceFile == null) {
             const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
             throw new errors.FileNotFoundError(absoluteFilePath);
@@ -226,8 +237,9 @@ export class Project {
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
+     * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[] {
+    addSourceFilesFromTsConfig(tsConfigFilePath: string, options: AddSourceFileOptions = {}): SourceFile[] {
         tsConfigFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
         const tsConfigParseResult = getTsConfigParseResult({
             tsConfigFilePath,
@@ -239,6 +251,7 @@ export class Project {
             fileSystemWrapper: this.global.fileSystemWrapper,
             tsConfigParseResult
         });
+
         const filePaths = getFilePathsFromTsConfigParseResult({
             tsConfigFilePath,
             encoding: this.global.getEncoding(),
@@ -247,7 +260,10 @@ export class Project {
             compilerOptions: compilerOptions.options
         });
 
-        return filePaths.map(path => this.addExistingSourceFile(path));
+        if (options.languageVersion == null && compilerOptions.options.target != null)
+            options.languageVersion = compilerOptions.options.target;
+
+        return filePaths.map(path => this.addExistingSourceFile(path, options));
     }
 
     /**

@@ -3,7 +3,7 @@ import * as errors from "../errors";
 import {ArrayUtils, FileUtils} from "../utils";
 import {SourceFileStructure} from "../structures";
 import {GlobalContainer} from "../GlobalContainer";
-import {CreateSourceFileOptions} from "../Project";
+import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
 import {DirectoryEmitResult} from "./DirectoryEmitResult";
 
 export class Directory {
@@ -287,10 +287,11 @@ export class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
+     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
+    addExistingSourceFileIfExists(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile | undefined {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
+        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
     }
 
     /**
@@ -298,10 +299,11 @@ export class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
+     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(relativeFilePath);
+    addExistingSourceFile(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile {
+        const sourceFile = this.addExistingSourceFileIfExists(relativeFilePath, options);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath()));
         return sourceFile;

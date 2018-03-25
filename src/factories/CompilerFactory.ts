@@ -4,7 +4,7 @@ import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signat
 import * as errors from "../errors";
 import {SourceFileStructure} from "../structures";
 import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile} from "../utils";
-import {CreateSourceFileOptions} from "../Project";
+import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
 import {GlobalContainer} from "../GlobalContainer";
 import {Directory} from "../fileSystem";
 import {createTempSourceFile} from "./createTempSourceFile";
@@ -101,9 +101,9 @@ export class CompilerFactory {
     createSourceFileFromText(filePath: string, sourceText: string, options: CreateSourceFileOptions) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options != null && options.overwrite === true)
-            return this.createOrOverwriteSourceFileFromText(filePath, sourceText);
+            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
         this.throwIfFileExists(filePath);
-        return this.getSourceFileFromText(filePath, sourceText);
+        return this.getSourceFileFromText(filePath, sourceText, options);
     }
 
     /**
@@ -118,14 +118,14 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
+    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: AddSourceFileOptions) {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath);
+        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
             existingSourceFile.replaceWithText(sourceText);
             return existingSourceFile;
         }
-        return this.getSourceFileFromText(filePath, sourceText);
+        return this.getSourceFileFromText(filePath, sourceText, options);
     }
 
     /**
@@ -156,13 +156,13 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: string): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: string, options: AddSourceFileOptions): SourceFile | undefined {
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             if (this.global.fileSystemWrapper.fileExistsSync(filePath)) {
                 this.global.logger.log(`Loading file: ${filePath}`);
-                sourceFile = this.getSourceFileFromText(filePath, this.global.fileSystemWrapper.readFileSync(filePath, this.global.getEncoding()));
+                sourceFile = this.getSourceFileFromText(filePath, this.global.fileSystemWrapper.readFileSync(filePath, this.global.getEncoding()), options);
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -245,8 +245,9 @@ export class CompilerFactory {
             return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node));
     }
 
-    private getSourceFileFromText(filePath: string, sourceText: string): SourceFile {
-        const compilerSourceFile = createCompilerSourceFile(filePath, sourceText, this.global.manipulationSettings.getScriptTarget());
+    private getSourceFileFromText(filePath: string, sourceText: string, options: AddSourceFileOptions): SourceFile {
+        const compilerSourceFile = createCompilerSourceFile(filePath, sourceText,
+            options.languageVersion != null ? options.languageVersion : this.global.manipulationSettings.getScriptTarget());
         return this.getSourceFile(compilerSourceFile);
     }
 

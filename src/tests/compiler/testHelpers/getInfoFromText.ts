@@ -41,6 +41,7 @@ export interface GetInfoFromTextOptions {
     host?: FileSystemHost;
     disableErrorCheck?: boolean;
     compilerOptions?: CompilerOptions;
+    languageVersion?: ScriptTarget;
     includeLibDts?: boolean;
     isJsx?: boolean;
 }
@@ -65,7 +66,7 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: st
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
     const {isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
-        compilerOptions = undefined, includeLibDts = false} = opts || {};
+        compilerOptions = undefined, includeLibDts = false, languageVersion = undefined} = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)
@@ -73,13 +74,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     }
 
     const project = new Project({ compilerOptions }, host);
-    const sourceFile = project.createSourceFile(getFilePath(), text);
-
-    // disabled because the tests will run out of memory (I believe this is a ts compiler issue)
-    /*
-    if (!disableErrorCheck)
-        ensureNoCompileErrorsInSourceFile(sourceFile);
-    */
+    const sourceFile = project.createSourceFile(getFilePath(), text, { languageVersion });
 
     return {project, sourceFile};
 
@@ -89,36 +84,5 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
         if (isJsx)
             return "testFile.tsx";
         return isDefinitionFile ? "testFile.d.ts" : "testFile.ts";
-    }
-}
-
-function ensureNoCompileErrorsInSourceFile(sourceFile: SourceFile) {
-    const diagnostics = sourceFile.getDiagnostics().filter(checkAllowDiagnostic);
-    if (diagnostics.length === 0)
-        return;
-
-    console.log("SOURCE FILE");
-    console.log("===========");
-    console.log(sourceFile.getText());
-    console.log("===========");
-
-    for (const diagnostic of diagnostics) {
-        console.log(diagnostic.getCode());
-        console.log(diagnostic.getMessageText());
-    }
-
-    throw new Error("Compile error!");
-}
-
-function checkAllowDiagnostic(diagnostic: Diagnostic) {
-    switch (diagnostic.getCode()) {
-        case 7005: // no implicit any
-        case 7025: // no implicit any
-        case 2304: // cannot find name
-        case 4020: // extends clause is using private name
-        case 4019: // implements clause is using private name
-            return false;
-        default:
-            return true;
     }
 }

@@ -87,7 +87,7 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
  */
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const {sourceFile, newFilePath} = opts;
-    const replacementSourceFile = createCompilerSourceFile(newFilePath, sourceFile.getFullText(), sourceFile.global.manipulationSettings.getScriptTarget());
+    const replacementSourceFile = createCompilerSourceFile(newFilePath, sourceFile.getFullText(), sourceFile.getLanguageVersion());
 
     new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory)
         .handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
