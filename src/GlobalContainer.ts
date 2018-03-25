@@ -3,7 +3,7 @@ import {CompilerFactory} from "./factories";
 import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./utils/compiler/createWrappedNode";
-import {ManipulationSettingsContainer} from "./ManipulationSettings";
+import {ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
 import {FileSystemWrapper} from "./fileSystem";
 import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";
 
@@ -25,13 +25,13 @@ export class GlobalContainer {
     private readonly _lazyReferenceCoordinator: LazyReferenceCoordinator;
     private readonly _languageService: LanguageService | undefined;
     private readonly _fileSystemWrapper: FileSystemWrapper;
-    private readonly _compilerOptions: CompilerOptions;
+    private readonly _compilerOptions = new CompilerOptionsContainer();
     private readonly _customTypeChecker: TypeChecker | undefined;
     private readonly _logger = new ConsoleLogger();
 
     constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: GlobalContainerOptions) {
         this._fileSystemWrapper = fileSystemWrapper;
-        this._compilerOptions = compilerOptions;
+        this._compilerOptions.set(compilerOptions);
         this._compilerFactory = new CompilerFactory(this);
         this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
@@ -116,7 +116,7 @@ export class GlobalContainer {
      * Gets the encoding.
      */
     getEncoding() {
-        return this.compilerOptions.charset || "utf-8";
+        return this.compilerOptions.get().charset || "utf-8";
     }
 
     /**

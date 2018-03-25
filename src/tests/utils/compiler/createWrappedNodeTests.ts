@@ -44,7 +44,7 @@ describe(nameof(createWrappedNode), () => {
         const compilerOptions = { target: ScriptTarget.ES2016 };
         const node = createWrappedNode(child, { compilerOptions });
 
-        expect(node.global.compilerOptions).to.deep.equal(compilerOptions);
+        expect(node.global.compilerOptions.get()).to.deep.equal(compilerOptions);
     });
 
     it("should be able to provide a type checker", () => {

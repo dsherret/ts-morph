@@ -4,7 +4,7 @@ import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "../typescript";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "../compiler";
 import {VirtualFileSystemHost} from "../fileSystem";
 import {Project} from "../Project";
-import {IndentationText} from "../ManipulationSettings";
+import {IndentationText} from "../options";
 import {FileUtils} from "../utils";
 import * as errors from "../errors";
 import * as testHelpers from "./testHelpers";

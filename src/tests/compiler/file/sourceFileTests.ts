@@ -3,7 +3,7 @@ import * as errors from "../../../errors";
 import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "../../../typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
     FileSystemRefreshResult} from "../../../compiler";
-import {IndentationText, ManipulationSettings} from "../../../ManipulationSettings";
+import {IndentationText, ManipulationSettings} from "../../../options";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "../../../structures";
 import {getInfoFromText} from "../testHelpers";
 import {getFileSystemHostWithFiles} from "../../testHelpers";

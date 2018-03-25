@@ -6,7 +6,7 @@ import {SourceFileStructure} from "./structures";
 import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getFilePathsFromTsConfigParseResult, TsConfigParseResult,
     FileUtils, ArrayUtils, matchGlobs} from "./utils";
 import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory} from "./fileSystem";
-import {ManipulationSettings, ManipulationSettingsContainer} from "./ManipulationSettings";
+import {ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
 import {GlobalContainer} from "./GlobalContainer";
 
 export interface Options {
@@ -104,6 +104,11 @@ export class Project {
     /** Gets the manipulation settings. */
     get manipulationSettings(): ManipulationSettingsContainer {
         return this.global.manipulationSettings;
+    }
+
+    /** Gets the compiler options for modification. */
+    get compilerOptions(): CompilerOptionsContainer {
+        return this.global.compilerOptions;
     }
 
     /**
@@ -489,8 +494,7 @@ export class Project {
      * Gets the compiler options.
      */
     getCompilerOptions(): CompilerOptions {
-        // return a copy
-        return {...this.global.compilerOptions};
+        return this.global.compilerOptions.get();
     }
 
     /**

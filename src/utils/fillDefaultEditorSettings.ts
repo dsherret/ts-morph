@@ -1,4 +1,4 @@
-﻿import {ManipulationSettingsContainer, IndentationText} from "../ManipulationSettings";
+﻿import {ManipulationSettingsContainer, IndentationText} from "../options";
 import {ts, IndentStyle, EditorSettings} from "../typescript";
 import {setValueIfUndefined} from "./setValueIfUndefined";
 

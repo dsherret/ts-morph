@@ -138,7 +138,7 @@ export class CompilerFactory {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
         return createTempSourceFile(filePath, sourceText, {
             createLanguageService,
-            compilerOptions: this.global.compilerOptions,
+            compilerOptions: this.global.compilerOptions.get(),
             manipulationSettings: this.global.manipulationSettings.get()
         });
     }
@@ -247,7 +247,7 @@ export class CompilerFactory {
 
     private getSourceFileFromText(filePath: string, sourceText: string, options: AddSourceFileOptions): SourceFile {
         const compilerSourceFile = createCompilerSourceFile(filePath, sourceText,
-            options.languageVersion != null ? options.languageVersion : this.global.manipulationSettings.getScriptTarget());
+            options.languageVersion != null ? options.languageVersion : this.global.compilerOptions.get().target);
         return this.getSourceFile(compilerSourceFile);
     }
 

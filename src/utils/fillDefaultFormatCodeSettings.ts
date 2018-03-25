@@ -1,4 +1,4 @@
-import {ManipulationSettingsContainer} from "../ManipulationSettings";
+import {ManipulationSettingsContainer} from "../options";
 import {ts} from "../typescript";
 import {FormatCodeSettings} from "../compiler";
 import {setValueIfUndefined} from "./setValueIfUndefined";

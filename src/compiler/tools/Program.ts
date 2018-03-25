@@ -53,7 +53,7 @@ export class Program {
      * @internal
      */
     reset(rootNames: string[], host: ts.CompilerHost) {
-        const compilerOptions = this.global.compilerOptions;
+        const compilerOptions = this.global.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
             if (this._createdCompilerObject == null)
                 this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);

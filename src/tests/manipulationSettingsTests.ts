@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
-import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "../ManipulationSettings";
-import {ts, ScriptTarget, NewLineKind, EditorSettings, IndentStyle} from "../typescript";
+import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "../options";
+import {ts, NewLineKind, EditorSettings, IndentStyle} from "../typescript";
 import {QuoteType} from "../compiler";
 import {StringUtils} from "../utils";
 
@@ -29,7 +29,6 @@ describe(nameof(ManipulationSettingsContainer), () => {
         expect(settings.getQuoteType()).to.equal(settingsSettings.quoteType);
         expect(settings.getNewLineKind()).to.equal(settingsSettings.newLineKind);
         expect(settings.getIndentationText()).to.equal(settingsSettings.indentationText);
-        expect(settings.getScriptTarget()).to.equal(settingsSettings.scriptTarget);
     }
 
     it("should have the correct defaults", () => {
@@ -37,8 +36,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
         checkSettings(settings, {
             quoteType: QuoteType.Double,
             newLineKind: NewLineKind.LineFeed,
-            indentationText: IndentationText.FourSpaces,
-            scriptTarget: ScriptTarget.Latest
+            indentationText: IndentationText.FourSpaces
         });
     });
 
@@ -51,8 +49,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
         checkSettings(settings, {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.LineFeed,
-            indentationText: IndentationText.FourSpaces,
-            scriptTarget: ScriptTarget.Latest
+            indentationText: IndentationText.FourSpaces
         });
     });
 
@@ -61,15 +58,13 @@ describe(nameof(ManipulationSettingsContainer), () => {
         settings.set({
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
-            indentationText: IndentationText.EightSpaces,
-            scriptTarget: ScriptTarget.ES3
+            indentationText: IndentationText.EightSpaces
         });
 
         checkSettings(settings, {
             quoteType: QuoteType.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
-            indentationText: IndentationText.EightSpaces,
-            scriptTarget: ScriptTarget.ES3
+            indentationText: IndentationText.EightSpaces
         });
     });
 

@@ -1,7 +1,8 @@
 import * as objectAssign from "object-assign";
-import {ts, ScriptTarget, NewLineKind, EditorSettings} from "./typescript";
-import {QuoteType} from "./compiler";
-import {newLineKindToString, fillDefaultEditorSettings} from "./utils";
+import {ts, NewLineKind, EditorSettings} from "../typescript";
+import {QuoteType} from "../compiler";
+import {newLineKindToString, fillDefaultEditorSettings} from "../utils";
+import {SettingsContainer} from "./SettingsContainer";
 
 /** Kinds of indentation */
 export enum IndentationText {
@@ -23,8 +24,6 @@ export interface ManipulationSettings {
     indentationText: IndentationText;
     /** New line kind */
     newLineKind: NewLineKind;
-    /** Script target. */
-    scriptTarget: ScriptTarget;
     /** Quote type used for string literals. */
     quoteType: QuoteType;
 }
@@ -32,14 +31,16 @@ export interface ManipulationSettings {
 /**
  * Holds the manipulation settings.
  */
-export class ManipulationSettingsContainer {
-    private readonly settings: ManipulationSettings = {
-        indentationText: IndentationText.FourSpaces,
-        newLineKind: NewLineKind.LineFeed,
-        scriptTarget: ScriptTarget.Latest,
-        quoteType: QuoteType.Double
-    };
+export class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
     private editorSettings: EditorSettings | undefined;
+
+    constructor() {
+        super({
+            indentationText: IndentationText.FourSpaces,
+            newLineKind: NewLineKind.LineFeed,
+            quoteType: QuoteType.Double
+        });
+    }
 
     /**
      * Gets the editor settings based on the current manipulation settings.
@@ -82,25 +83,11 @@ export class ManipulationSettingsContainer {
     }
 
     /**
-     * Gets the script target.
-     */
-    getScriptTarget() {
-        return this.settings.scriptTarget;
-    }
-
-    /**
-     * Gets a copy of the manipulations settings as an object.
-     */
-    get(): ManipulationSettings {
-        return {...this.settings};
-    }
-
-    /**
      * Sets one or all of the settings.
      * @param settings - Settings to set.
      */
     set(settings: Partial<ManipulationSettings>) {
-        objectAssign(this.settings, settings);
+        super.set(settings);
         this.editorSettings = undefined;
     }
 }

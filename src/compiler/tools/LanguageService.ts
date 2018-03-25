@@ -32,7 +32,7 @@ export class LanguageService {
         let version = 0;
         const fileExistsSync = (path: string) => this.global.compilerFactory.containsSourceFileAtPath(path) || global.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
-            getCompilationSettings: () => global.compilerOptions,
+            getCompilationSettings: () => global.compilerOptions.get(),
             getNewLine: () => global.manipulationSettings.getNewLineKindAsString(),
             getScriptFileNames: () => this.global.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
@@ -46,9 +46,9 @@ export class LanguageService {
             getCurrentDirectory: () => global.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
                 if (this.global.fileSystemWrapper.getFileSystem() instanceof DefaultFileSystemHost)
-                    return ts.getDefaultLibFilePath(global.compilerOptions);
+                    return ts.getDefaultLibFilePath(global.compilerOptions.get());
                 else
-                    return FileUtils.pathJoin(global.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions));
+                    return FileUtils.pathJoin(global.fileSystemWrapper.getCurrentDirectory(), "node_modules/typescript/lib/" + ts.getDefaultLibFileName(global.compilerOptions.get()));
             },
             useCaseSensitiveFileNames: () => true,
             readFile: (path, encoding) => {

@@ -1,7 +1,7 @@
 import {ts, CompilerOptions, ScriptTarget} from "../typescript";
 import {SourceFile} from "../compiler";
 import {GlobalContainer} from "../GlobalContainer";
-import {ManipulationSettings} from "../ManipulationSettings";
+import {ManipulationSettings} from "../options";
 import {VirtualFileSystemHost} from "../fileSystem/VirtualFileSystemHost";
 import {FileSystemWrapper} from "../fileSystem/FileSystemWrapper";
 

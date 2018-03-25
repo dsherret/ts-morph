@@ -7,7 +7,7 @@ title: Manipulation Settings
 The manipulation settings can be set when creating the main AST object:
 
 ```ts
-import Project, {QuoteType, NewLineKind, IndentationText, ScriptTarget} from "ts-simple-ast";
+import Project, {QuoteType, NewLineKind, IndentationText} from "ts-simple-ast";
 
 const project = new Project({
     // these are the defaults
@@ -16,8 +16,6 @@ const project = new Project({
         indentationText: IndentationText.FourSpaces,
         // LineFeed or CarriageReturnLineFeed
         newLineKind: NewLineKind.LineFeed,
-        // defines what ts.ScriptTarget source files are created with
-        scriptTarget: ScriptTarget.Latest,
         // Single or Double
         quoteType: QuoteType.Double
     }
@@ -40,7 +38,6 @@ Get more details about the settings by looking at the `manipulationSettings` pro
 project.manipulationSettings.getIndentationText();
 project.manipulationSettings.getNewLineKind();
 project.manipulationSettings.getQuoteType();
-project.manipulationSettings.getScriptTarget();
 ```
 
 ### Updating

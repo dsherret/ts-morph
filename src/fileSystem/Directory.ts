@@ -361,7 +361,7 @@ export class Directory {
         const isDtsFile = options.declarationDir == null && options.outDir == null ? undefined : /\.d\.ts$/i;
         const getStandardizedPath = (path: string | undefined) => path == null ? undefined : this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
         const getSubDirPath = (path: string | undefined, dir: Directory) => path == null ? undefined : FileUtils.pathJoin(path, dir.getBaseName());
-        const hasDeclarationDir = this.global.compilerOptions.declarationDir != null || options.declarationDir != null;
+        const hasDeclarationDir = this.global.compilerOptions.get().declarationDir != null || options.declarationDir != null;
 
         return emitDirectory(this, getStandardizedPath(options.outDir), getStandardizedPath(options.declarationDir));
 
