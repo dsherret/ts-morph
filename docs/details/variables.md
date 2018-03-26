@@ -25,10 +25,10 @@ Add or insert variable statements to a source file, namespace, or function like 
 `insertVariableStatement()`, or `insertVariableStatements()`.
 
 ```ts
-import Project, {VariableDeclarationType} from "ts-simple-ast";
+import Project, {VariableDeclarationKind} from "ts-simple-ast";
 
 const variableStatement = sourceFile.addVariableStatement({
-    declarationType: VariableDeclarationType.Const // defaults to "let"
+    declarationKind: VariableDeclarationKind.Const // defaults to "let"
     declarations: [{
         name: "myNumber",
         initializer: "5"
@@ -53,23 +53,23 @@ variableStatement.remove();
 Get:
 
 ```ts
-const declarationType = variableStatement.getDeclarationType();
+const declarationKind = variableStatement.getDeclarationKind();
 ```
 
 It will return one of the following values:
 
 ```ts
-import {VariableDeclarationType} from "ts-simple-ast";
+import {VariableDeclarationKind} from "ts-simple-ast";
 
-VariableDeclarationType.Let;
-VariableDeclarationType.Const;
-VariableDeclarationType.Var;
+VariableDeclarationKind.Let;
+VariableDeclarationKind.Const;
+VariableDeclarationKind.Var;
 ```
 
 Set:
 
 ```ts
-variableStatement.setDeclarationType(VariableDeclarationType.Const);
+variableStatement.setDeclarationKind(VariableDeclarationKind.Const);
 ```
 
 ## Variable Declaration

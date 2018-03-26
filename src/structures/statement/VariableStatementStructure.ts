@@ -1,4 +1,4 @@
-﻿import {VariableDeclarationType} from "../../compiler";
+﻿import {VariableDeclarationKind} from "../../compiler";
 import {JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure} from "../base";
 import {VariableDeclarationStructure} from "./VariableDeclarationStructure";
 
@@ -7,6 +7,6 @@ export interface VariableStatementStructure extends VariableStatementSpecificStr
 }
 
 export interface VariableStatementSpecificStructure {
-    declarationType?: VariableDeclarationType;
+    declarationKind?: VariableDeclarationKind;
     declarations: VariableDeclarationStructure[];
 }

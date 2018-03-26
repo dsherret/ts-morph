@@ -7,7 +7,7 @@ import {VariableDeclarationStructureToText, CommaSeparatedStructuresToText} from
 import {ModifierableNode} from "../base";
 import {callBaseFill} from "../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
-import {VariableDeclarationType} from "./VariableDeclarationType";
+import {VariableDeclarationKind} from "./VariableDeclarationKind";
 
 export const VariableDeclarationListBase = ModifierableNode(Node);
 export class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
@@ -19,45 +19,45 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     }
 
     /**
-     * Gets the variable declaration type.
+     * Gets the variable declaration kind.
      */
-    getDeclarationType(): VariableDeclarationType {
+    getDeclarationKind(): VariableDeclarationKind {
         const nodeFlags = this.compilerNode.flags;
 
         if (nodeFlags & ts.NodeFlags.Let)
-            return VariableDeclarationType.Let;
+            return VariableDeclarationKind.Let;
         else if (nodeFlags & ts.NodeFlags.Const)
-            return VariableDeclarationType.Const;
+            return VariableDeclarationKind.Const;
         else
-            return VariableDeclarationType.Var;
+            return VariableDeclarationKind.Var;
     }
 
     /**
-     * Gets the variable declaration type keyword.
+     * Gets the variable declaration kind keyword.
      */
-    getDeclarationTypeKeyword(): Node {
-        const declarationType = this.getDeclarationType();
-        switch (declarationType) {
-            case VariableDeclarationType.Const:
+    getDeclarationKindKeyword(): Node {
+        const declarationKind = this.getDeclarationKind();
+        switch (declarationKind) {
+            case VariableDeclarationKind.Const:
                 return this.getFirstChildByKindOrThrow(SyntaxKind.ConstKeyword);
-            case VariableDeclarationType.Let:
+            case VariableDeclarationKind.Let:
                 return this.getFirstChildByKindOrThrow(SyntaxKind.LetKeyword);
-            case VariableDeclarationType.Var:
+            case VariableDeclarationKind.Var:
                 return this.getFirstChildByKindOrThrow(SyntaxKind.VarKeyword);
             default:
-                throw errors.getNotImplementedForNeverValueError(declarationType);
+                throw errors.getNotImplementedForNeverValueError(declarationKind);
         }
     }
 
     /**
-     * Sets the variable declaration type.
+     * Sets the variable declaration kind.
      * @param type - Type to set.
      */
-    setDeclarationType(type: VariableDeclarationType) {
-        if (this.getDeclarationType() === type)
+    setDeclarationKind(type: VariableDeclarationKind) {
+        if (this.getDeclarationKind() === type)
             return this;
 
-        const keyword = this.getDeclarationTypeKeyword();
+        const keyword = this.getDeclarationKindKeyword();
         insertIntoParentTextRange({
             insertPos: keyword.getStart(),
             newText: type,
@@ -128,8 +128,8 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     fill(structure: Partial<VariableDeclarationListStructure>) {
         callBaseFill(VariableDeclarationListBase.prototype, this, structure);
 
-        if (structure.declarationType != null)
-            this.setDeclarationType(structure.declarationType);
+        if (structure.declarationKind != null)
+            this.setDeclarationKind(structure.declarationKind);
         if (structure.declarations != null)
             this.addDeclarations(structure.declarations);
 

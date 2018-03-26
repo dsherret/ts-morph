@@ -1,68 +1,68 @@
 ﻿import {expect} from "chai";
-import {VariableStatement, VariableDeclarationType, VariableDeclaration} from "../../../compiler";
+import {VariableStatement, VariableDeclarationKind, VariableDeclaration} from "../../../compiler";
 import {VariableStatementStructure, VariableDeclarationStructure} from "../../../structures";
 import {getInfoFromText} from "../testHelpers";
 
 describe(nameof(VariableStatement), () => {
-    describe(nameof<VariableStatement>(d => d.getDeclarationType), () => {
-        function doTest(code: string, expectedType: VariableDeclarationType) {
+    describe(nameof<VariableStatement>(d => d.getDeclarationKind), () => {
+        function doTest(code: string, expectedType: VariableDeclarationKind) {
             const {firstChild} = getInfoFromText<VariableStatement>(code);
-            expect(firstChild.getDeclarationType()).to.equal(expectedType);
+            expect(firstChild.getDeclarationKind()).to.equal(expectedType);
         }
 
         it("should get var for a var variable", () => {
-            doTest("var myVar;", VariableDeclarationType.Var);
+            doTest("var myVar;", VariableDeclarationKind.Var);
         });
 
         it("should get let for a let variable", () => {
-            doTest("let myVar;", VariableDeclarationType.Let);
+            doTest("let myVar;", VariableDeclarationKind.Let);
         });
 
         it("should get const for a const variable", () => {
-            doTest("const myVar = 3;", VariableDeclarationType.Const);
+            doTest("const myVar = 3;", VariableDeclarationKind.Const);
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.getDeclarationTypeKeyword), () => {
-        function doTest(code: string, expectedType: VariableDeclarationType) {
+    describe(nameof<VariableStatement>(d => d.getDeclarationKindKeyword), () => {
+        function doTest(code: string, expectedType: VariableDeclarationKind) {
             const {firstChild} = getInfoFromText<VariableStatement>(code);
-            expect(firstChild.getDeclarationTypeKeyword().getText()).to.equal(expectedType);
+            expect(firstChild.getDeclarationKindKeyword().getText()).to.equal(expectedType);
         }
 
         it("should get var for a var variable", () => {
-            doTest("var myVar;", VariableDeclarationType.Var);
+            doTest("var myVar;", VariableDeclarationKind.Var);
         });
 
         it("should get let for a let variable", () => {
-            doTest("let myVar;", VariableDeclarationType.Let);
+            doTest("let myVar;", VariableDeclarationKind.Let);
         });
 
         it("should get const for a const variable", () => {
-            doTest("const myVar = 3;", VariableDeclarationType.Const);
+            doTest("const myVar = 3;", VariableDeclarationKind.Const);
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.setDeclarationType), () => {
-        function doTest(code: string, newType: VariableDeclarationType, expectedCode: string) {
+    describe(nameof<VariableStatement>(d => d.setDeclarationKind), () => {
+        function doTest(code: string, newType: VariableDeclarationKind, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(code);
-            firstChild.setDeclarationType(newType);
+            firstChild.setDeclarationKind(newType);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should not change the type when it is the same", () => {
-            doTest("var myVar;", VariableDeclarationType.Var, "var myVar;");
+            doTest("var myVar;", VariableDeclarationKind.Var, "var myVar;");
         });
 
         it("should change to let", () => {
-            doTest("var myVar;", VariableDeclarationType.Let, "let myVar;");
+            doTest("var myVar;", VariableDeclarationKind.Let, "let myVar;");
         });
 
         it("should change to const", () => {
-            doTest("var myVar;", VariableDeclarationType.Const, "const myVar;");
+            doTest("var myVar;", VariableDeclarationKind.Const, "const myVar;");
         });
 
         it("should change to var", () => {
-            doTest("let myVar;", VariableDeclarationType.Var, "var myVar;");
+            doTest("let myVar;", VariableDeclarationKind.Var, "var myVar;");
         });
     });
 
@@ -148,8 +148,8 @@ describe(nameof(VariableStatement), () => {
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
-        it("should set the variable declaration type", () => {
-            doTest("const t = '';", { declarationType: VariableDeclarationType.Let }, "let t = '';");
+        it("should set the variable declaration kind", () => {
+            doTest("const t = '';", { declarationKind: VariableDeclarationKind.Let }, "let t = '';");
         });
 
         it("should add declarations", () => {

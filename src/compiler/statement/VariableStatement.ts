@@ -7,7 +7,7 @@ import {ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, ChildO
 import {NamespaceChildableNode} from "../namespace";
 import {callBaseFill} from "../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
-import {VariableDeclarationType} from "./VariableDeclarationType";
+import {VariableDeclarationKind} from "./VariableDeclarationKind";
 import {Statement} from "./Statement";
 import {VariableDeclarationList} from "./VariableDeclarationList";
 
@@ -16,7 +16,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     /**
      * Get variable declaration list.
      */
-    getDeclarationList(): VariableDeclarationList {
+    getDeclarationList() {
         return this.getNodeFromCompilerNode<VariableDeclarationList>(this.compilerNode.declarationList);
     }
 
@@ -28,25 +28,25 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     }
 
     /**
-     * Gets the variable declaration type.
+     * Gets the variable declaration kind.
      */
-    getDeclarationType(): VariableDeclarationType {
-        return this.getDeclarationList().getDeclarationType();
+    getDeclarationKind(): VariableDeclarationKind {
+        return this.getDeclarationList().getDeclarationKind();
     }
 
     /**
-     * Gets the variable declaration type keyword.
+     * Gets the variable declaration kind keyword.
      */
-    getDeclarationTypeKeyword(): Node {
-        return this.getDeclarationList().getDeclarationTypeKeyword();
+    getDeclarationKindKeyword() {
+        return this.getDeclarationList().getDeclarationKindKeyword();
     }
 
     /**
-     * Sets the variable declaration type.
+     * Sets the variable declaration kind.
      * @param type - Type to set.
      */
-    setDeclarationType(type: VariableDeclarationType) {
-        return this.getDeclarationList().setDeclarationType(type);
+    setDeclarationKind(type: VariableDeclarationKind) {
+        return this.getDeclarationList().setDeclarationKind(type);
     }
 
     /**
@@ -90,8 +90,8 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     fill(structure: Partial<VariableStatementStructure>) {
         callBaseFill(VariableStatementBase.prototype, this, structure);
 
-        if (structure.declarationType != null)
-            this.setDeclarationType(structure.declarationType);
+        if (structure.declarationKind != null)
+            this.setDeclarationKind(structure.declarationKind);
         if (structure.declarations != null)
             this.addDeclarations(structure.declarations);
 

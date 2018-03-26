@@ -53,7 +53,7 @@ namespaceDeclaration.setHasNamespaceKeyword();
 Or get the keyword:
 
 ```ts
-namespaceDeclaration.getDeclarationTypeKeyword(); // returns: the module or namespace keyword
+namespaceDeclaration.getDeclarationKindKeyword(); // returns: the module or namespace keyword
 ```
 
 ### Unwrap

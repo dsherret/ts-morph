@@ -1,4 +1,4 @@
-﻿import {VariableDeclarationType} from "../../compiler/statement/VariableDeclarationType";
+﻿import {VariableDeclarationKind} from "../../compiler/statement/VariableDeclarationKind";
 import {VariableStatementStructure} from "../../structures";
 import {StructureToText} from "../StructureToText";
 import {ModifierableNodeStructureToText} from "../base";
@@ -11,7 +11,7 @@ export class VariableStatementStructureToText extends StructureToText<VariableSt
 
     writeText(structure: VariableStatementStructure) {
         this.modifierWriter.writeText(structure);
-        this.writer.write(`${structure.declarationType || VariableDeclarationType.Let} `);
+        this.writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);
         this.declarationsWriter.writeText(structure.declarations);
         this.writer.write(";");
     }

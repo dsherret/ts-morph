@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationType} from "../../../../compiler";
+import {StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationKind} from "../../../../compiler";
 import {VariableStatementStructure} from "../../../../structures";
 import {getInfoFromText} from "../../testHelpers";
 
@@ -15,7 +15,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert to an empty file", () => {
             doTest("", 0, [{
                 isExported: true,
-                declarationType: VariableDeclarationType.Var,
+                declarationKind: VariableDeclarationKind.Var,
                 declarations: [{
                     name: "Identifier",
                     initializer: `'test'`

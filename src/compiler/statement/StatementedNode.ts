@@ -18,7 +18,7 @@ import {NamespaceDeclaration} from "../namespace";
 import {TypeAliasDeclaration} from "../type";
 import {KindToNodeMappings} from "../kindToNodeMappings";
 import {Statement, VariableStatement, VariableDeclaration} from "../statement";
-import {VariableDeclarationType} from "./VariableDeclarationType";
+import {VariableDeclarationKind} from "./VariableDeclarationKind";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
 
@@ -821,7 +821,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             const newChildren = this._insertMainChildren<VariableStatement>(index, texts, structures, SyntaxKind.VariableStatement, (child, i) => {
                 const structure = {...structures[i]};
                 delete structure.declarations;
-                delete structure.declarationType;
+                delete structure.declarationKind;
                 child.fill(structure);
             }, {
                 previousBlanklineWhen: previousMember => !TypeGuards.isVariableStatement(previousMember),

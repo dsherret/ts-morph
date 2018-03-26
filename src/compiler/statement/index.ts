@@ -24,7 +24,7 @@ export * from "./ThrowStatement";
 export * from "./TryStatement";
 export * from "./VariableDeclaration";
 export * from "./VariableDeclarationList";
-export * from "./VariableDeclarationType";
+export * from "./VariableDeclarationKind";
 export * from "./VariableStatement";
 export * from "./WhileStatement";
 export * from "./WithStatement";

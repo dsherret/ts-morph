@@ -148,7 +148,7 @@ export function cloneFunctions(node: StatementedNode, functions: FunctionDeclara
 export function cloneVariables(node: StatementedNode, variables: VariableStatement[]) {
     node.addVariableStatements(variables.map(v => ({
         isExported: true,
-        declarationType: v.getDeclarationType(),
+        declarationKind: v.getDeclarationKind(),
         hasDeclareKeyword: true,
         docs: v.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
         declarations: v.getDeclarations().map(d => ({

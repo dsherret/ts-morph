@@ -1,10 +1,10 @@
-import {VariableDeclarationType} from "../../compiler";
+import {VariableDeclarationKind} from "../../compiler";
 import {VariableDeclarationStructure} from "./VariableDeclarationStructure";
 
 export interface VariableDeclarationListStructure extends VariableDeclarationListSpecificStructure {
 }
 
 export interface VariableDeclarationListSpecificStructure {
-    declarationType?: VariableDeclarationType;
+    declarationKind?: VariableDeclarationKind;
     declarations: VariableDeclarationStructure[];
 }

@@ -95,26 +95,26 @@ describe(nameof(NamespaceDeclaration), () => {
         });
     });
 
-    describe(nameof<NamespaceDeclaration>(d => d.getDeclarationTypeKeyword), () => {
-        it("should get the declaration type keyword for a namespace", () => {
+    describe(nameof<NamespaceDeclaration>(d => d.getDeclarationKindKeyword), () => {
+        it("should get the declaration kind keyword for a namespace", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
-            expect(firstChild.getDeclarationTypeKeyword()!.getText()).equals("namespace");
+            expect(firstChild.getDeclarationKindKeyword()!.getText()).equals("namespace");
         });
 
-        it("should get the declaration type keyword for a module", () => {
+        it("should get the declaration kind keyword for a module", () => {
             const {firstChild} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
-            expect(firstChild.getDeclarationTypeKeyword()!.getText()).equals("module");
+            expect(firstChild.getDeclarationKindKeyword()!.getText()).equals("module");
         });
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.setHasNamespaceKeyword), () => {
-        it("should change the declaration type when a module", () => {
+        it("should change the declaration kind when a module", () => {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
             firstChild.setHasNamespaceKeyword();
             expect(sourceFile.getText()).equals("namespace Identifier {}");
         });
 
-        it("should change the declaration type when a namespace", () => {
+        it("should change the declaration kind when a namespace", () => {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
             firstChild.setHasNamespaceKeyword(false);
             expect(sourceFile.getText()).equals("module Identifier {}");
@@ -128,13 +128,13 @@ describe(nameof(NamespaceDeclaration), () => {
     });
 
     describe(nameof<NamespaceDeclaration>(d => d.setHasModuleKeyword), () => {
-        it("should change the declaration type when a namespace", () => {
+        it("should change the declaration kind when a namespace", () => {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("namespace Identifier {}");
             firstChild.setHasModuleKeyword();
             expect(sourceFile.getText()).equals("module Identifier {}");
         });
 
-        it("should change the declaration type when a module", () => {
+        it("should change the declaration kind when a module", () => {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>("module Identifier {}");
             firstChild.setHasModuleKeyword(false);
             expect(sourceFile.getText()).equals("namespace Identifier {}");
