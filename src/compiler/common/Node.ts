@@ -14,7 +14,7 @@ import {FunctionDeclaration} from "../function";
 import {FormatCodeSettings} from "../tools";
 import {TypeAliasDeclaration, Type} from "../type";
 import {InterfaceDeclaration} from "../interface";
-import {QuoteType} from "../literal/QuoteType";
+import {QuoteKind} from "../literal/QuoteKind";
 import {NamespaceDeclaration} from "../namespace";
 import {Statement, StatementedNode} from "../statement";
 import {KindToNodeMappings} from "../kindToNodeMappings";
@@ -1256,7 +1256,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             newLine: this.global.manipulationSettings.getNewLineKindAsString(),
             indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
             useTabs: indentationText === IndentationText.Tab,
-            useSingleQuote: this.global.manipulationSettings.getQuoteType() === QuoteType.Single
+            useSingleQuote: this.global.manipulationSettings.getQuoteKind() === QuoteKind.Single
         });
     }
 

@@ -1,6 +1,6 @@
 import * as objectAssign from "object-assign";
 import {ts, NewLineKind, EditorSettings} from "../typescript";
-import {QuoteType} from "../compiler";
+import {QuoteKind} from "../compiler";
 import {newLineKindToString, fillDefaultEditorSettings} from "../utils";
 import {SettingsContainer} from "./SettingsContainer";
 
@@ -25,7 +25,7 @@ export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
     /** New line kind */
     newLineKind: NewLineKind;
     /** Quote type used for string literals. */
-    quoteType: QuoteType;
+    quoteKind: QuoteKind;
 }
 
 /**
@@ -57,7 +57,7 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         super({
             indentationText: IndentationText.FourSpaces,
             newLineKind: NewLineKind.LineFeed,
-            quoteType: QuoteType.Double,
+            quoteKind: QuoteKind.Double,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         });
     }
@@ -89,10 +89,10 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
     }
 
     /**
-     * Gets the quote type used for string literals.
+     * Gets the quote kind used for string literals.
      */
-    getQuoteType() {
-        return this.settings.quoteType;
+    getQuoteKind() {
+        return this.settings.quoteKind;
     }
 
     /**

@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import * as errors from "../../../errors";
 import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "../../../typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteType,
+import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteKind,
     FileSystemRefreshResult} from "../../../compiler";
 import {IndentationText, ManipulationSettings} from "../../../options";
 import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "../../../structures";
@@ -389,7 +389,7 @@ describe(nameof(SourceFile), () => {
         function doTest(startCode: string, index: number, structures: ImportDeclarationStructure[], expectedCode: string, useSingleQuotes = false) {
             const {sourceFile, project} = getInfoFromText(startCode);
             if (useSingleQuotes)
-                project.manipulationSettings.set({ quoteType: QuoteType.Single });
+                project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
             const result = sourceFile.insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getText()).to.equal(expectedCode);

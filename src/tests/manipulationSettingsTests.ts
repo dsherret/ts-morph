@@ -1,7 +1,7 @@
 ﻿import {expect} from "chai";
 import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "../options";
 import {ts, NewLineKind, EditorSettings, IndentStyle} from "../typescript";
-import {QuoteType} from "../compiler";
+import {QuoteKind} from "../compiler";
 import {StringUtils} from "../utils";
 
 describe(nameof(IndentationText), () => {
@@ -32,7 +32,7 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should have the correct defaults", () => {
         const settings = new ManipulationSettingsContainer();
         checkSettings(settings, {
-            quoteType: QuoteType.Double,
+            quoteKind: QuoteKind.Double,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
@@ -42,11 +42,11 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should set the settings when partially setting them", () => {
         const settings = new ManipulationSettingsContainer();
         settings.set({
-            quoteType: QuoteType.Single
+            quoteKind: QuoteKind.Single
         });
 
         checkSettings(settings, {
-            quoteType: QuoteType.Single,
+            quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.LineFeed,
             indentationText: IndentationText.FourSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
@@ -56,14 +56,14 @@ describe(nameof(ManipulationSettingsContainer), () => {
     it("should set the settings when setting all of them", () => {
         const settings = new ManipulationSettingsContainer();
         settings.set({
-            quoteType: QuoteType.Single,
+            quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
         });
 
         checkSettings(settings, {
-            quoteType: QuoteType.Single,
+            quoteKind: QuoteKind.Single,
             newLineKind: NewLineKind.CarriageReturnLineFeed,
             indentationText: IndentationText.EightSpaces,
             insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false

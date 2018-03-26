@@ -2,7 +2,7 @@ import {ts} from "../../typescript";
 import {StringUtils} from "../../utils";
 import {replaceNodeText} from "../../manipulation";
 import {LiteralExpression} from "../expression";
-import {QuoteType} from "./QuoteType";
+import {QuoteKind} from "./QuoteKind";
 
 export const StringLiteralBase = LiteralExpression;
 export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
@@ -24,15 +24,15 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
             sourceFile: this.sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
-            newText: StringUtils.escapeChar(value, this.getQuoteType()).replace(/(\r?\n)/g, "\\$1")
+            newText: StringUtils.escapeChar(value, this.getQuoteKind()).replace(/(\r?\n)/g, "\\$1")
         });
         return this;
     }
 
     /**
-     * Gets the quote type.
+     * Gets the quote kind.
      */
-    getQuoteType() {
-        return this.getText()[0] === "'" ? QuoteType.Single : QuoteType.Double;
+    getQuoteKind() {
+        return this.getText()[0] === "'" ? QuoteKind.Single : QuoteKind.Double;
     }
 }

@@ -27,11 +27,11 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
-            const quoteType = this.global.manipulationSettings.getQuoteType();
+            const quoteKind = this.global.manipulationSettings.getQuoteKind();
             insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
-                newText: ` from ${quoteType}${text}${quoteType}`
+                newText: ` from ${quoteKind}${text}${quoteKind}`
             });
         }
         else

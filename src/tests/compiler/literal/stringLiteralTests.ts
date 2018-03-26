@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {ts, SyntaxKind} from "../../../typescript";
-import {StringLiteral, QuoteType} from "../../../compiler";
+import {StringLiteral, QuoteKind} from "../../../compiler";
 import {getInfoFromTextWithDescendant} from "../testHelpers";
 
 function getStringLiteral(text: string) {
@@ -73,18 +73,18 @@ describe(nameof(StringLiteral), () => {
         });
     });
 
-    describe(nameof<StringLiteral>(n => n.getQuoteType), () => {
-        function doTest(text: string, quoteType: QuoteType) {
+    describe(nameof<StringLiteral>(n => n.getQuoteKind), () => {
+        function doTest(text: string, quoteKind: QuoteKind) {
             const literal = getStringLiteral(text);
-            expect(literal.getQuoteType()).to.equal(quoteType);
+            expect(literal.getQuoteKind()).to.equal(quoteKind);
         }
 
         it("should be a double when a double", () => {
-            doTest(`const t = "str";`, QuoteType.Double);
+            doTest(`const t = "str";`, QuoteKind.Double);
         });
 
         it("should be a single when a single", () => {
-            doTest("const t = 'str';", QuoteType.Single);
+            doTest("const t = 'str';", QuoteKind.Single);
         });
     });
 });

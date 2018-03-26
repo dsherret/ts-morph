@@ -7,7 +7,7 @@ title: Manipulation Settings
 The manipulation settings can be set when creating the main AST object:
 
 ```ts
-import Project, {QuoteType, NewLineKind, IndentationText} from "ts-simple-ast";
+import Project, {QuoteKind, NewLineKind, IndentationText} from "ts-simple-ast";
 
 const project = new Project({
     // these are the defaults
@@ -17,7 +17,7 @@ const project = new Project({
         // LineFeed or CarriageReturnLineFeed
         newLineKind: NewLineKind.LineFeed,
         // Single or Double
-        quoteType: QuoteType.Double
+        quoteKind: QuoteKind.Double
     }
 });
 ```
@@ -37,7 +37,7 @@ Get more details about the settings by looking at the `manipulationSettings` pro
 ```ts
 project.manipulationSettings.getIndentationText();
 project.manipulationSettings.getNewLineKind();
-project.manipulationSettings.getQuoteType();
+project.manipulationSettings.getQuoteKind();
 ```
 
 ### Updating
@@ -46,11 +46,11 @@ You can update these settings later if you wish by using the `set` method:
 
 ```ts
 // set only one
-project.manipulationSettings.set({ quoteType: QuoteType.Single });
+project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
 
 // or multiple
 project.manipulationSettings.set({
-    quoteType: QuoteType.Single,
+    quoteKind: QuoteKind.Single,
     indentationText: IndentationText.TwoSpaces
 });
 ```
