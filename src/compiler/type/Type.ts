@@ -265,7 +265,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is an anonymous type.
      */
     isAnonymousType() {
-        return (this.getObjectFlags() & ObjectFlags.Anonymous) !== 0;
+        return this._hasObjectFlag(ObjectFlags.Anonymous);
     }
 
     /**
@@ -282,63 +282,84 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a boolean type.
      */
     isBooleanType() {
-        return (this.compilerType.flags & TypeFlags.Boolean) !== 0;
+        return this._hasTypeFlag(TypeFlags.Boolean);
     }
 
     /**
      * Gets if this is a string type.
      */
     isStringType() {
-        return (this.compilerType.flags & TypeFlags.String) !== 0;
+        return this._hasTypeFlag(TypeFlags.String);
     }
 
     /**
      * Gets if this is a number type.
      */
     isNumberType() {
-        return (this.compilerType.flags & TypeFlags.Number) !== 0;
+        return this._hasTypeFlag(TypeFlags.Number);
+    }
+
+    /**
+     * Gets if this is a boolean literal type.
+     */
+    isBooleanLiteralType() {
+        return this._hasTypeFlag(TypeFlags.BooleanLiteral);
+    }
+
+    /**
+     * Gets if this is a literal string type.
+     */
+    isStringLiteralType() {
+        return this._hasTypeFlag(TypeFlags.StringLiteral);
+    }
+
+    /**
+     * Gets if this is a literal number type.
+     */
+    isNumberLiteralType() {
+        return this._hasTypeFlag(TypeFlags.NumberLiteral);
     }
 
     /**
      * Gets if this is an enum type.
      */
     isEnumType() {
-        return (this.compilerType.flags & TypeFlags.Enum) !== 0;
+        return this._hasTypeFlag(TypeFlags.Enum);
     }
 
     /**
      * Gets if this is an interface type.
      */
     isInterfaceType() {
-        return (this.getObjectFlags() & ObjectFlags.Interface) !== 0;
+        return this._hasObjectFlag(ObjectFlags.Interface);
     }
 
     /**
      * Gets if this is an intersection type.
      */
     isIntersectionType() {
-        return (this.compilerType.flags & TypeFlags.Intersection) !== 0;
+        return this._hasTypeFlag(TypeFlags.Intersection);
     }
 
     /**
      * Gets if this is the null type.
      */
     isNullType() {
-        return (this.compilerType.flags & TypeFlags.Null) !== 0;
+        return this._hasTypeFlag(TypeFlags.Null);
     }
 
     /**
      * Gets if this is an object type.
      */
     isObjectType() {
-        return (this.compilerType.flags & TypeFlags.Object) !== 0;
+        return this._hasTypeFlag(TypeFlags.Object);
     }
 
     /**
      * Gets if this is a type parameter.
      */
     isTypeParameter(): this is TypeParameter {
-        return (this.compilerType.flags & TypeFlags.TypeParameter) !== 0;
+        return this._hasTypeFlag(TypeFlags.TypeParameter);
     }
 
     /**
@@ -348,21 +369,21 @@ export class Type<TType extends ts.Type = ts.Type> {
         const targetType = this.getTargetType();
         if (targetType == null)
             return false;
-        return (targetType.getObjectFlags() & ObjectFlags.Tuple) !== 0;
+        return targetType._hasObjectFlag(ObjectFlags.Tuple);
     }
 
     /**
      * Gets if this is a union type.
      */
     isUnionType() {
-        return (this.compilerType.flags & TypeFlags.Union) !== 0;
+        return this._hasTypeFlag(TypeFlags.Union);
     }
 
     /**
      * Gets if this is the undefined type.
      */
     isUndefinedType() {
-        return (this.compilerType.flags & TypeFlags.Undefined) !== 0;
+        return this._hasTypeFlag(TypeFlags.Undefined);
     }
 
     /**
@@ -380,5 +401,13 @@ export class Type<TType extends ts.Type = ts.Type> {
             return 0;
 
         return (this.compilerType as any as ts.ObjectType).objectFlags || 0;
+    }
+
+    private _hasTypeFlag(flag: TypeFlags) {
+        return (this.compilerType.flags & flag) !== 0;
+    }
+
+    private _hasObjectFlag(flag: ObjectFlags) {
+        return (this.getObjectFlags() & flag) !== 0;
     }
 }
