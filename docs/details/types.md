@@ -106,6 +106,12 @@ const prop2 = type.getApparentProperty(p => p.getName() === "prop2");
 const baseTypes = type.getBaseTypes();
 ```
 
+### Base type of a literal type
+
+```ts
+const numberType = numberLiteralType.getBaseTypeOfLiteralType();
+```
+
 ### Call signatures
 
 ```ts

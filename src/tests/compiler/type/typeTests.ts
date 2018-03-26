@@ -474,6 +474,32 @@ let stringWithUndefinedAndNullType: string | undefined | null;
                 doTest("stringType", []);
             });
         });
+
+        describe(nameof<Type>(t => t.getBaseTypeOfLiteralType), () => {
+            function doTest(typeName: string, expected: string) {
+                expect(typesByName[typeName].getBaseTypeOfLiteralType().getText()).to.equal(expected);
+            }
+
+            it("should get it for a number literal", () => {
+                doTest("numberLiteralType", "number");
+            });
+
+            it("should get it for a boolean literal", () => {
+                doTest("booleanLiteralType", "boolean");
+            });
+
+            it("should get it for a string literal", () => {
+                doTest("stringLiteralType", "string");
+            });
+
+            it("should return the same type for a string type", () => {
+                doTest("stringType", "string");
+            });
+
+            it("should return the same type for any other type", () => {
+                doTest("interfaceType", "MyInterface");
+            });
+        });
     });
 
     describe(nameof<Type>(t => t.getText), () => {

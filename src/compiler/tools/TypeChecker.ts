@@ -148,10 +148,10 @@ export class TypeChecker {
      * Gets a signature from a node.
      * @param node - Node to get the signature from.
      */
-    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
-        const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
-        return signature == null ? undefined : this.global.compilerFactory.getSignature(signature);
-    }
+getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined {
+    const signature = this.compilerObject.getSignatureFromDeclaration(node.compilerNode);
+    return signature == null ? undefined : this.global.compilerFactory.getSignature(signature);
+}
 
     /**
      * Gets the exports of a module.
@@ -159,7 +159,7 @@ export class TypeChecker {
      */
     getExportsOfModule(moduleSymbol: Symbol) {
         const symbols = this.compilerObject.getExportsOfModule(moduleSymbol.compilerSymbol);
-        return (symbols || []).map(s => this.global.compilerFactory.getSymbol(s));
+        return(symbols || []).map(s => this.global.compilerFactory.getSymbol(s));
     }
 
     /**
@@ -169,6 +169,16 @@ export class TypeChecker {
     getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier) {
         const symbol = this.compilerObject.getExportSpecifierLocalTargetSymbol(exportSpecifier.compilerNode);
         return symbol == null ? undefined : this.global.compilerFactory.getSymbol(symbol);
+    }
+
+    /**
+     * Gets the base type of a literal type.
+     *
+     * For example, for a number literal type it will return the number type.
+     * @param type - Literal type to get the base type of.
+     */
+    getBaseTypeOfLiteralType(type: Type) {
+        return this.global.compilerFactory.getType(this.compilerObject.getBaseTypeOfLiteralType(type.compilerType));
     }
 
     private getDefaultTypeFormatFlags(enclosingNode?: Node) {

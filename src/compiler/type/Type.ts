@@ -87,6 +87,15 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets the base type of a literal type.
+     *
+     * For example, for a number literal type it will return the number type.
+     */
+    getBaseTypeOfLiteralType() {
+        return this.global.typeChecker.getBaseTypeOfLiteralType(this);
+    }
+
+    /**
      * Gets the call signatures.
      */
     getCallSignatures(): Signature[] {
