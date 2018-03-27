@@ -48,6 +48,10 @@ describe(nameof(EnumMember), () => {
             doTest("enum MyEnum { member }", "st\"r", `enum MyEnum { member = "st\\"r" }`);
         });
 
+        it("should escape a string with a newline in it", () => {
+            doTest("enum MyEnum { member }", "st\nr", `enum MyEnum { member = "st\\\nr" }`);
+        });
+
         it("should set the value for to a number", () => {
             doTest("enum MyEnum { member }", 5, `enum MyEnum { member = 5 }`);
         });

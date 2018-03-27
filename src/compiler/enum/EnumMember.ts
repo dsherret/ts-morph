@@ -36,7 +36,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
         let text: string;
         if (typeof value === "string") {
             const quoteKind = this.global.manipulationSettings.getQuoteKind();
-            text = quoteKind + StringUtils.escapeChar(value, quoteKind) + quoteKind;
+            text = quoteKind + StringUtils.escapeForWithinString(value, quoteKind) + quoteKind;
         }
         else {
             text = value.toString();

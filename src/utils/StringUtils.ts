@@ -1,4 +1,5 @@
-﻿import * as errors from "../errors";
+﻿import {QuoteKind} from "../compiler";
+import * as errors from "../errors";
 
 export class StringUtils {
     private constructor() {
@@ -38,6 +39,10 @@ export class StringUtils {
         }
 
         return count + 1; // convert count to line number
+    }
+
+    static escapeForWithinString(str: string, quoteKind: QuoteKind) {
+        return StringUtils.escapeChar(str, quoteKind).replace(/(\r?\n)/g, "\\$1");
     }
 
     /**

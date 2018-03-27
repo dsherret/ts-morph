@@ -24,7 +24,7 @@ export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {
             sourceFile: this.sourceFile,
             start: this.getStart() + 1,
             replacingLength: this.getWidth() - 2,
-            newText: StringUtils.escapeChar(value, this.getQuoteKind()).replace(/(\r?\n)/g, "\\$1")
+            newText: StringUtils.escapeForWithinString(value, this.getQuoteKind())
         });
         return this;
     }

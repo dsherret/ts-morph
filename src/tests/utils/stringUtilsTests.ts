@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import * as errors from "../../errors";
+import {QuoteKind} from "../../compiler";
 import {StringUtils, Es5StringUtils} from "../../utils";
 
 describe(nameof(StringUtils), () => {
@@ -40,6 +41,16 @@ describe(nameof(StringUtils), () => {
             const pos = str.length;
             str += "out\r\nmore and more";
             expect(StringUtils.getLineNumberFromPos(str, pos)).to.equal(6);
+        });
+    });
+
+    describe(nameof(StringUtils.escapeForWithinString), () => {
+        function doTest(input: string, expected: string) {
+            expect(StringUtils.escapeForWithinString(input, QuoteKind.Double)).to.equal(expected);
+        }
+
+        it("should escape the quotes and newline", () => {
+            doTest(`"testing\n this out"`, `\\"testing\\\n this out\\"`);
         });
     });
 
