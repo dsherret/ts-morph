@@ -6,6 +6,14 @@ import {GlobalContainer} from "../GlobalContainer";
 import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
 import {DirectoryEmitResult} from "./DirectoryEmitResult";
 
+export interface AddDirectoryOptions {
+    /**
+     * Whether to also recursively add all the directory's descendant directories.
+     * @remarks Defaults to false.
+     */
+    recursive?: boolean;
+}
+
 export class Directory {
     private _global: GlobalContainer | undefined;
     private readonly _pathParts: string[];
@@ -218,35 +226,33 @@ export class Directory {
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param path - Directory name or path to the directory that should be added.
+     * @param dirPath - Directory name or path to the directory that should be added.
+     * @param options - Options.
      */
-    addDirectoryIfExists(path: string) {
-        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        return this.global.compilerFactory.getDirectoryFromPath(dirPath);
+    addDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}) {
+        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this.global.directoryCoordinator.addDirectoryIfExists(dirPath, options);
     }
 
     /**
      * Adds an existing directory to the AST from the relative path or directory name, or throws if it doesn't exist.
      *
      * Will return the directory if it was already added.
-     * @param path - Directory name or path to the directory that should be added.
+     * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(path: string) {
-        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        const directory = this.addDirectoryIfExists(dirPath);
-        if (directory == null)
-            throw new errors.DirectoryNotFoundError(dirPath);
-        return directory;
+    addExistingDirectory(dirPath: string, options: AddDirectoryOptions = {}) {
+        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this.global.directoryCoordinator.addExistingDirectory(dirPath, options);
     }
 
     /**
      * Creates a directory if it doesn't exist.
-     * @param path - Relative or absolute path to the directory that should be created.
+     * @param dirPath - Relative or absolute path to the directory that should be created.
      */
-    createDirectory(path: string) {
-        const dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(path, this.getPath());
-        return this.global.compilerFactory.createDirectory(dirPath);
+    createDirectory(dirPath: string) {
+        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
+        return this.global.directoryCoordinator.createDirectory(dirPath);
     }
 
     /**

@@ -109,6 +109,23 @@ describe(nameof(Project), () => {
             const dir = project.addDirectoryIfExists("someDir");
             expect(dir).to.not.be.undefined;
         });
+
+        it("should add a directory and all its descendant directories when specifying the recursive option", () => {
+            const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
+            const project = new Project({ useVirtualFileSystem: true });
+            directories.forEach(d => project.getFileSystem().mkdirSync(d));
+            expect(project.addDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+
+            testHelpers.testDirectoryTree(project.getDirectoryOrThrow("dir"), {
+                directory: project.getDirectoryOrThrow("dir"),
+                children: [{
+                    directory: project.getDirectoryOrThrow("dir/child1"),
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                }, {
+                    directory: project.getDirectoryOrThrow("dir/child2")
+                }]
+            }, project.getDirectoryOrThrow("/"));
+        });
     });
 
     describe(nameof<Project>(project => project.addExistingDirectory), () => {
@@ -125,6 +142,23 @@ describe(nameof(Project), () => {
             const project = new Project(undefined, fileSystem);
             const dir = project.addExistingDirectory("someDir");
             expect(dir).to.not.be.undefined;
+        });
+
+        it("should add a directory and all its descendant directories when specifying the recursive option", () => {
+            const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
+            const project = new Project({ useVirtualFileSystem: true });
+            directories.forEach(d => project.getFileSystem().mkdirSync(d));
+            expect(project.addExistingDirectory("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+
+            testHelpers.testDirectoryTree(project.getDirectoryOrThrow("dir"), {
+                directory: project.getDirectoryOrThrow("dir"),
+                children: [{
+                    directory: project.getDirectoryOrThrow("dir/child1"),
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                }, {
+                    directory: project.getDirectoryOrThrow("dir/child2")
+                }]
+            }, project.getDirectoryOrThrow("/"));
         });
     });
 

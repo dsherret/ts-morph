@@ -244,4 +244,20 @@ export class FileUtils {
     static isRootDirPath(dirOrFilePath: string) {
         return dirOrFilePath === FileUtils.getDirPath(dirOrFilePath);
     }
+
+    /**
+     * Gets the descendant directories of the specified directory.
+     * @param dirPath - Directory path.
+     */
+    static getDescendantDirectories(fileSystemWrapper: FileSystemWrapper, dirPath: string) {
+        return Array.from(getDescendantDirectories(dirPath));
+
+        function* getDescendantDirectories(currentDirPath: string): IterableIterator<string> {
+            const subDirPaths = fileSystemWrapper.readDirSync(currentDirPath).filter(d => fileSystemWrapper.directoryExistsSync(currentDirPath));
+            for (const subDirPath of subDirPaths) {
+                yield subDirPath;
+                yield* getDescendantDirectories(subDirPath);
+            }
+        }
+    }
 }

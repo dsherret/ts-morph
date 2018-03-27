@@ -4,7 +4,7 @@ import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker} from "./compiler";
 import {createWrappedNode} from "./utils/compiler/createWrappedNode";
 import {ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
-import {FileSystemWrapper} from "./fileSystem";
+import {FileSystemWrapper, DirectoryCoordinator} from "./fileSystem";
 import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";
 
 /**
@@ -23,6 +23,7 @@ export class GlobalContainer {
     private readonly _manipulationSettings = new ManipulationSettingsContainer();
     private readonly _compilerFactory: CompilerFactory;
     private readonly _lazyReferenceCoordinator: LazyReferenceCoordinator;
+    private readonly _directoryCoordinator: DirectoryCoordinator;
     private readonly _languageService: LanguageService | undefined;
     private readonly _fileSystemWrapper: FileSystemWrapper;
     private readonly _compilerOptions = new CompilerOptionsContainer();
@@ -34,6 +35,7 @@ export class GlobalContainer {
         this._compilerOptions.set(compilerOptions);
         this._compilerFactory = new CompilerFactory(this);
         this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
+        this._directoryCoordinator = new DirectoryCoordinator(this._compilerFactory, fileSystemWrapper);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
 
         if (opts.typeChecker != null) {
@@ -103,6 +105,11 @@ export class GlobalContainer {
     /** Gets the lazy reference coordinator. */
     get lazyReferenceCoordinator() {
         return this._lazyReferenceCoordinator;
+    }
+
+    /** Gets the directory coordinator. */
+    get directoryCoordinator() {
+        return this._directoryCoordinator;
     }
 
     /**

@@ -6,30 +6,11 @@ import {Project} from "../../Project";
 import {SourceFileStructure} from "../../structures";
 import {Directory, DirectoryEmitResult, FileSystemHost} from "../../fileSystem";
 import {FileUtils} from "../../utils";
-import {getFileSystemHostWithFiles, CustomFileSystemProps} from "../testHelpers";
+import {getFileSystemHostWithFiles, CustomFileSystemProps, testDirectoryTree} from "../testHelpers";
 
 describe(nameof(Directory), () => {
-    interface TreeNode {
-        directory: Directory;
-        sourceFiles?: SourceFile[];
-        children?: TreeNode[];
-    }
-
     function getProject(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {
         return new Project(undefined, getFileSystemHostWithFiles(initialFiles, initialDirectories));
-    }
-
-    function testDirectoryTree(dir: Directory, tree: TreeNode, parent?: Directory) {
-        expect(getDirPath(dir)).to.equal(getDirPath(tree.directory), "dir");
-        expect(getDirPath(!dir._hasLoadedParent() ? undefined : dir.getParent())).to.equal(getDirPath(parent), `parent dir of ${getDirPath(dir)}`);
-        expect(dir.getDirectories().map(d => d.getPath())).to.deep.equal((tree.children || []).map(c => c.directory.getPath()), "child directories");
-        expect(dir.getSourceFiles().map(s => s.getFilePath())).to.deep.equal((tree.sourceFiles || []).map(s => s.getFilePath()), "source files");
-        for (const child of (tree.children || []))
-            testDirectoryTree(child.directory, child, dir);
-
-        function getDirPath(directory: Directory | undefined) {
-            return directory == null ? undefined : directory.getPath();
-        }
     }
 
     describe(nameof<Directory>(d => d.getPath), () => {
@@ -430,6 +411,34 @@ describe(nameof(Directory), () => {
             const directory = project.addExistingDirectory("dir");
             expect(directory.addDirectoryIfExists("child")).to.equal(project.getDirectoryOrThrow("dir/child"));
             expect(directory.addDirectoryIfExists("../dir2")).to.equal(project.getDirectoryOrThrow("dir2"));
+
+            testDirectoryTree(directory.getParentOrThrow(), {
+                directory: directory.getParentOrThrow(),
+                children: [{
+                    directory,
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child") }]
+                }, {
+                    directory: project.getDirectoryOrThrow("dir2")
+                }]
+            });
+        });
+
+        it("should add a directory and all its descendant directories when specifying the recursive option", () => {
+            const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
+            const project = new Project({ useVirtualFileSystem: true });
+            directories.forEach(d => project.getFileSystem().mkdirSync(d));
+            const rootDir = project.addExistingDirectory("/");
+            expect(rootDir.addDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+
+            testDirectoryTree(project.getDirectoryOrThrow("dir"), {
+                directory: project.getDirectoryOrThrow("dir"),
+                children: [{
+                    directory: project.getDirectoryOrThrow("dir/child1"),
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                }, {
+                    directory: project.getDirectoryOrThrow("dir/child2")
+                }]
+            }, project.getDirectoryOrThrow("/"));
         });
     });
 
@@ -447,6 +456,24 @@ describe(nameof(Directory), () => {
             const directory = project.addExistingDirectory("dir");
             expect(directory.addExistingDirectory("child")).to.equal(project.getDirectoryOrThrow("dir/child"));
             expect(directory.addExistingDirectory("../dir2")).to.equal(project.getDirectoryOrThrow("dir2"));
+        });
+
+        it("should add a directory and all its descendant directories when specifying the recursive option", () => {
+            const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
+            const project = new Project({ useVirtualFileSystem: true });
+            directories.forEach(d => project.getFileSystem().mkdirSync(d));
+            const rootDir = project.addExistingDirectory("/");
+            expect(rootDir.addExistingDirectory("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+
+            testDirectoryTree(project.getDirectoryOrThrow("dir"), {
+                directory: project.getDirectoryOrThrow("dir"),
+                children: [{
+                    directory: project.getDirectoryOrThrow("dir/child1"),
+                    children: [{ directory: project.getDirectoryOrThrow("dir/child1/grandChild1") }]
+                }, {
+                    directory: project.getDirectoryOrThrow("dir/child2")
+                }]
+            }, project.getDirectoryOrThrow("/"));
         });
     });
 
