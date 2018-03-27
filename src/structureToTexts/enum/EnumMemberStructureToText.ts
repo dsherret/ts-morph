@@ -8,5 +8,7 @@ export class EnumMemberStructureToText extends StructureToText<EnumMemberStructu
             this.writer.write(` = `).quote(structure.value);
         else if (typeof structure.value === "number")
             this.writer.write(` = ${structure.value}`);
+        else if (structure.initializer != null)
+            this.writer.write(` = ${structure.initializer}`);
     }
 }

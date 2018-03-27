@@ -57,6 +57,10 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum MyEnum {\n}\n", 0, [{ name: "myName", value: 5 }], "enum MyEnum {\n    myName = 5\n}\n");
         });
 
+        it("should insert a member with an initializer", () => {
+            doTest("enum MyEnum {\n}\n", 0, [{ name: "myName", initializer: "SomeKind" }], "enum MyEnum {\n    myName = SomeKind\n}\n");
+        });
+
         it("should insert a member with a string value", () => {
             doTest("enum MyEnum {\n}\n", 0, [{ name: "myName", value: "str" }], "enum MyEnum {\n    myName = \"str\"\n}\n");
         });
