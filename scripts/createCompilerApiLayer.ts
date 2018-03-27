@@ -46,6 +46,8 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             isExported: true
         });
 
+        addEnumExports();
+
         cloneNamespaces(tsNamespace, ArrayUtils.flatten(tsNamespaces.map(n => n.getNamespaces())));
         cloneInterfaces(tsNamespace, allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) === -1));
         cloneEnums(tsNamespace, allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) === -1));
@@ -83,11 +85,11 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             writer.write("ObjectUtils.assign((ts as any), tsCompiler);");
         });
 
-        sourceFile.replaceWithText(sourceFile.getFullText().replace(/\r?\n/g, "\r\n"));
+        sourceFile.replaceWithText(sourceFile.getFullText().replace(/\r?\n/g, "\r\n").replace(/(\r\n)+$/, "\r\n"));
 
         function addSeparatedDeclarations() {
             for (const enumDec of allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0))
-                cloneEnums(sourceFile, [enumDec]);
+                cloneEnums(sourceFile, [enumDec]).forEach(e => e.setHasDeclareKeyword(true).setIsExported(false));
 
             for (const interfaceDec of allInterfaces.filter(i => interfacesToSeparate.indexOf(i.getName()) >= 0))
                 cloneInterfaces(sourceFile, [interfaceDec]);
@@ -100,6 +102,31 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             returnTypeNode.getTypeNodes().map(n => {
                 if (n.getText() === "CompilerOptionsValue" || n.getText() === "JsonSourceFile")
                     n.replaceWithText(`ts.${n.getText()}`);
+            });
+        }
+
+        function addEnumExports() {
+            const filteredEnums = allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0);
+            sourceFile.addStatements(writer => {
+                writer.newLine();
+                writer.writeLine("// this is a trick to get the enums defined in the local scope by their name, but have the compiler");
+                writer.writeLine("// understand this as exporting the ambient declarations above (so it works at compile time and run time)");
+                writer.writeLine("// @ts-ignore: Implicit use of this.");
+                writer.writeLine("const tempThis = this as any;");
+                for (let i = 0; i < filteredEnums.length; i++) {
+                    const enumName = filteredEnums[i].getName();
+                    writer.writeLine(`tempThis["${enumName}"] = tsCompiler.${enumName};`);
+                }
+                writer.blankLine();
+
+                writer.write(`export `).inlineBlock(() => {
+                    for (let i = 0; i < filteredEnums.length; i++) {
+                        const enumName = filteredEnums[i].getName();
+                        if (i > 0)
+                            writer.write(",").newLine();
+                        writer.write(`${enumName}`);
+                    }
+                }).write(";");
             });
         }
     }

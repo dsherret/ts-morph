@@ -10,7 +10,7 @@
 import * as tsCompiler from "typescript";
 import {ObjectUtils} from "../utils/ObjectUtils";
 
-export enum SyntaxKind {
+declare enum SyntaxKind {
     Unknown = 0,
     EndOfFileToken = 1,
     SingleLineCommentTrivia = 2,
@@ -339,7 +339,7 @@ export enum SyntaxKind {
     LastJSDocTagNode = 289
 }
 
-export enum TypeFormatFlags {
+declare enum TypeFormatFlags {
     None = 0,
     NoTruncation = 1,
     WriteArrayAsGenericType = 2,
@@ -367,7 +367,7 @@ export enum TypeFormatFlags {
     NodeBuilderFlagsMask = 9469295
 }
 
-export enum SymbolFlags {
+declare enum SymbolFlags {
     None = 0,
     FunctionScopedVariable = 1,
     BlockScopedVariable = 2,
@@ -430,7 +430,7 @@ export enum SymbolFlags {
     ClassMember = 106500
 }
 
-export enum TypeFlags {
+declare enum TypeFlags {
     Any = 1,
     String = 2,
     Number = 4,
@@ -471,7 +471,7 @@ export enum TypeFlags {
     NotUnionOrUnit = 33620481
 }
 
-export enum ObjectFlags {
+declare enum ObjectFlags {
     Class = 1,
     Interface = 2,
     Reference = 4,
@@ -487,18 +487,18 @@ export enum ObjectFlags {
     ClassOrInterface = 3
 }
 
-export enum DiagnosticCategory {
+declare enum DiagnosticCategory {
     Warning = 0,
     Error = 1,
     Message = 2
 }
 
-export enum ModuleResolutionKind {
+declare enum ModuleResolutionKind {
     Classic = 1,
     NodeJs = 2
 }
 
-export enum ModuleKind {
+declare enum ModuleKind {
     None = 0,
     CommonJS = 1,
     AMD = 2,
@@ -508,19 +508,19 @@ export enum ModuleKind {
     ESNext = 6
 }
 
-export enum JsxEmit {
+declare enum JsxEmit {
     None = 0,
     Preserve = 1,
     React = 2,
     ReactNative = 3
 }
 
-export enum NewLineKind {
+declare enum NewLineKind {
     CarriageReturnLineFeed = 0,
     LineFeed = 1
 }
 
-export enum ScriptKind {
+declare enum ScriptKind {
     Unknown = 0,
     JS = 1,
     JSX = 2,
@@ -530,7 +530,7 @@ export enum ScriptKind {
     JSON = 6
 }
 
-export enum ScriptTarget {
+declare enum ScriptTarget {
     ES3 = 0,
     ES5 = 1,
     ES2015 = 2,
@@ -541,12 +541,12 @@ export enum ScriptTarget {
     Latest = 6
 }
 
-export enum LanguageVariant {
+declare enum LanguageVariant {
     Standard = 0,
     JSX = 1
 }
 
-export enum EmitHint {
+declare enum EmitHint {
     SourceFile = 0,
     Expression = 1,
     IdentifierName = 2,
@@ -554,7 +554,7 @@ export enum EmitHint {
     Unspecified = 4
 }
 
-export enum IndentStyle {
+declare enum IndentStyle {
     None = 0,
     Block = 1,
     Smart = 2
@@ -5710,3 +5710,41 @@ export namespace ts {
     // overwrite this namespace with the TypeScript compiler
     ObjectUtils.assign((ts as any), tsCompiler);
 }
+
+// this is a trick to get the enums defined in the local scope by their name, but have the compiler
+// understand this as exporting the ambient declarations above (so it works at compile time and run time)
+// @ts-ignore: Implicit use of this.
+const tempThis = this as any;
+tempThis["SyntaxKind"] = tsCompiler.SyntaxKind;
+tempThis["TypeFormatFlags"] = tsCompiler.TypeFormatFlags;
+tempThis["SymbolFlags"] = tsCompiler.SymbolFlags;
+tempThis["TypeFlags"] = tsCompiler.TypeFlags;
+tempThis["ObjectFlags"] = tsCompiler.ObjectFlags;
+tempThis["DiagnosticCategory"] = tsCompiler.DiagnosticCategory;
+tempThis["ModuleResolutionKind"] = tsCompiler.ModuleResolutionKind;
+tempThis["ModuleKind"] = tsCompiler.ModuleKind;
+tempThis["JsxEmit"] = tsCompiler.JsxEmit;
+tempThis["NewLineKind"] = tsCompiler.NewLineKind;
+tempThis["ScriptKind"] = tsCompiler.ScriptKind;
+tempThis["ScriptTarget"] = tsCompiler.ScriptTarget;
+tempThis["LanguageVariant"] = tsCompiler.LanguageVariant;
+tempThis["EmitHint"] = tsCompiler.EmitHint;
+tempThis["IndentStyle"] = tsCompiler.IndentStyle;
+
+export {
+    SyntaxKind,
+    TypeFormatFlags,
+    SymbolFlags,
+    TypeFlags,
+    ObjectFlags,
+    DiagnosticCategory,
+    ModuleResolutionKind,
+    ModuleKind,
+    JsxEmit,
+    NewLineKind,
+    ScriptKind,
+    ScriptTarget,
+    LanguageVariant,
+    EmitHint,
+    IndentStyle
+};

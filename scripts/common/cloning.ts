@@ -67,13 +67,13 @@ export function cloneInterfaces(node: StatementedNode, cloningInterfaces: Interf
 }
 
 export function cloneEnums(node: StatementedNode, cloningEnums: EnumDeclaration[]) {
-    node.addEnums(cloningEnums.map(cloningEnum => ({
+    return node.addEnums(cloningEnums.map(cloningEnum => ({
         name: cloningEnum.getName(),
         isExported: true,
         members: cloningEnum.getMembers().map(m => ({
             name: m.getName(),
             docs: m.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
-            value: m.getValue()
+            initializer: m.getInitializerOrThrow().getText()
         }) as EnumMemberStructure)
     })));
 }
