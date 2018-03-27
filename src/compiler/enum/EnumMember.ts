@@ -1,6 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {removeChildrenWithFormatting, FormattingKind} from "../../manipulation";
 import {EnumMemberStructure} from "../../structures";
+import {StringUtils} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
 import {PropertyNamedNode, InitializerExpressionableNode, JSDocableNode} from "../base";
@@ -35,7 +36,7 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
         let text: string;
         if (typeof value === "string") {
             const quoteKind = this.global.manipulationSettings.getQuoteKind();
-            text = quoteKind + value + quoteKind;
+            text = quoteKind + StringUtils.escapeChar(value, quoteKind) + quoteKind;
         }
         else {
             text = value.toString();

@@ -44,6 +44,10 @@ describe(nameof(EnumMember), () => {
             doTest("enum MyEnum { member }", "str", `enum MyEnum { member = "str" }`);
         });
 
+        it("should escape a string with a quote in it", () => {
+            doTest("enum MyEnum { member }", "st\"r", `enum MyEnum { member = "st\\"r" }`);
+        });
+
         it("should set the value for to a number", () => {
             doTest("enum MyEnum { member }", 5, `enum MyEnum { member = 5 }`);
         });
