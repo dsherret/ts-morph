@@ -309,10 +309,24 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     /**
+     * Gets if this is a literal type.
+     */
+    isLiteralType() {
+        return this._hasAnyTypeFlag(TypeFlags.Literal);
+    }
+
+    /**
      * Gets if this is a boolean literal type.
      */
     isBooleanLiteralType() {
         return this._hasTypeFlag(TypeFlags.BooleanLiteral);
+    }
+
+    /**
+     * Gets if this is an enum literal type.
+     */
+    isEnumLiteralType() {
+        return this._hasTypeFlag(TypeFlags.EnumLiteral);
     }
 
     /**
@@ -413,10 +427,14 @@ export class Type<TType extends ts.Type = ts.Type> {
     }
 
     private _hasTypeFlag(flag: TypeFlags) {
+        return (this.compilerType.flags & flag) === flag;
+    }
+
+    private _hasAnyTypeFlag(flag: TypeFlags) {
         return (this.compilerType.flags & flag) !== 0;
     }
 
     private _hasObjectFlag(flag: ObjectFlags) {
-        return (this.getObjectFlags() & flag) !== 0;
+        return (this.getObjectFlags() & flag) === flag;
     }
 }

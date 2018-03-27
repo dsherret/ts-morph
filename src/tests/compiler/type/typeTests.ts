@@ -22,19 +22,20 @@ describe(nameof(Type), () => {
     // todo: move all the tests to happen in here because this will speed up the tests quite a lot
     describe("fast test", () => {
         const text = `
-enum MyEnum {}
+enum EmptyEnum { }
+enum MyEnum { value, value2 }
 interface MyInterface {}
 class MyClass {}
 
 let anonymousType: { str: string; };
 let stringType: string;
-let stringLiteralType: string;
 let booleanType: boolean;
 let numberType: number;
 let booleanLiteralType: true;
 let numberLiteralType: 5;
 let stringLiteralType: 'test';
-let enumType: MyEnum;
+let enumType: EmptyEnum; // no clue why, but this is only an enum type for empty enums
+let enumLiteralType: MyEnum.value;
 let interfaceType: MyInterface;
 let intersectionType: string & number;
 let unionType: string | number;
@@ -156,6 +157,32 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
+        describe(nameof<Type>(t => t.isLiteralType), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isLiteralType()).to.equal(expected);
+            }
+
+            it("should get when it is a boolean literal", () => {
+                doTest("booleanLiteralType", true);
+            });
+
+            it("should get when it is a string literal", () => {
+                doTest("stringLiteralType", true);
+            });
+
+            it("should get when it is an enum literal", () => {
+                doTest("enumLiteralType", true);
+            });
+
+            it("should get when it is a number literal", () => {
+                doTest("numberLiteralType", true);
+            });
+
+            it("should get when it's not", () => {
+                doTest("booleanType", false);
+            });
+        });
+
         describe(nameof<Type>(t => t.isBooleanLiteralType), () => {
             function doTest(typeName: string, expected: boolean) {
                 expect(typesByName[typeName].isBooleanLiteralType()).to.equal(expected);
@@ -167,6 +194,20 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
             it("should get when it's not", () => {
                 doTest("booleanType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isEnumLiteralType), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isEnumLiteralType()).to.equal(expected);
+            }
+
+            it("should get when it is", () => {
+                doTest("enumLiteralType", true);
+            });
+
+            it("should get when it's not", () => {
+                doTest("enumType", false);
             });
         });
 
@@ -208,7 +249,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
 
             it("should get when it's not an enum type", () => {
-                doTest("stringType", false);
+                doTest("enumLiteralType", false);
             });
         });
 
