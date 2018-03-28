@@ -1,4 +1,4 @@
-﻿import {NamedNodeStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure,
+﻿import {NameableNodeStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure,
     JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure} from "../base";
 import {PropertyDeclarationStructure} from "./PropertyDeclarationStructure";
 import {MethodDeclarationStructure} from "./MethodDeclarationStructure";
@@ -7,9 +7,14 @@ import {GetAccessorDeclarationStructure} from "./GetAccessorDeclarationStructure
 import {SetAccessorDeclarationStructure} from "./SetAccessorDeclarationStructure";
 
 export interface ClassDeclarationStructure
-    extends NamedNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure,
+    extends NameableNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure,
         TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure
 {
+    /**
+     * The class name.
+     * @remarks Can be undefined. For example: `export default class { ... }`
+     */
+    name?: string;
 }
 
 export interface ClassDeclarationSpecificStructure {

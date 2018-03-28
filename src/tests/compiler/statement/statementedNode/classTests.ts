@@ -18,6 +18,10 @@ describe(nameof(StatementedNode), () => {
             }], "class Identifier {\n}\n");
         });
 
+        it("should insert without a name", () => {
+            doTest("", 0, [{ isDefaultExport: true }], "export default class {\n}\n");
+        });
+
         it("should insert at the start of a file", () => {
             doTest("enum Enum {\n}\n", 0, [{ name: "Identifier" }], "class Identifier {\n}\n\nenum Enum {\n}\n");
         });

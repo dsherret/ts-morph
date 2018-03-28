@@ -12,6 +12,18 @@ const class1 = sourceFile.getClass("Class1");
 const firstClassWithConstructor = sourceFile.getClass(c => c.getConstructors().length > 0);
 ```
 
+### Name
+
+It's important to note that class declarations may not have a name. For example:
+
+```ts
+export default class {
+    // etc...
+}
+```
+
+For this reason, the methods like `.getName()` and `.getNameNode()` are nullable on `ClassDeclaration`.
+
 ### Add/Insert
 
 Add or insert classes to a source file, namespace, or function like declarations by calling `addClass()`, `addClasses()`, `insertClass()`, or `insertClasses()`.

@@ -1,9 +1,11 @@
 import {ts, SyntaxKind} from "../../../typescript";
 import {Constructor} from "../../../Constructor";
+import {NameableNodeStructure} from "../../../structures";
 import * as errors from "../../../errors";
 import {removeChildren, insertIntoParentTextRange} from "../../../manipulation";
 import {StringUtils} from "../../../utils";
 import {Node, Identifier} from "../../common";
+import {callBaseFill} from "../../callBaseFill";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 
@@ -74,6 +76,15 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             }
             else
                 nameNode.rename(newName);
+
+            return this;
+        }
+
+        fill(structure: Partial<NameableNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.name != null)
+                this.rename(structure.name);
 
             return this;
         }

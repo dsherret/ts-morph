@@ -7,7 +7,7 @@ import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDec
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
 import * as structureToTexts from "../../structureToTexts";
 import {Node} from "../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
+import {NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "../base";
 import {HeritageClause} from "../general";
 import {AbstractableNode} from "./base";
@@ -31,7 +31,7 @@ export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyType
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
+    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement)))))))
 ))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -927,8 +927,11 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     private getImmediateDerivedClasses() {
-        const references = this.getNameNode().findReferences();
         const classes: ClassDeclaration[] = [];
+        const nameNode = this.getNameNode();
+        if (nameNode == null)
+            return classes;
+        const references = nameNode.findReferences();
         for (const reference of references) {
             for (const ref of reference.getReferences()) {
                 if (ref.isDefinition())

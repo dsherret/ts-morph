@@ -5,7 +5,7 @@ export class StringUtils {
     private constructor() {
     }
 
-    static isNullOrWhitespace(str: string | undefined) {
+    static isNullOrWhitespace(str: string | undefined): str is undefined {
         return typeof str !== "string" || str.trim().length === 0;
     }
 

@@ -1,4 +1,5 @@
-﻿import {ClassDeclarationStructure} from "../../structures";
+﻿import {StringUtils} from "../../utils";
+import {ClassDeclarationStructure} from "../../structures";
 import {StructureToText} from "../StructureToText";
 import {ModifierableNodeStructureToText} from "../base";
 
@@ -7,6 +8,10 @@ export class ClassDeclarationStructureToText extends StructureToText<ClassDeclar
 
     writeText(structure: ClassDeclarationStructure) {
         this.modifierWriter.writeText(structure);
-        this.writer.write(`class ${structure.name}`).block();
+        this.writer.write(`class `);
+        // can be null, ex. `export default class { ... }`
+        if (!StringUtils.isNullOrWhitespace(structure.name))
+            this.writer.write(structure.name).write(" ");
+        this.writer.inlineBlock();
     }
 }

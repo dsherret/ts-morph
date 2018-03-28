@@ -254,11 +254,11 @@ describe(nameof(getMixinStructureFuncs.fromInitializerExpressionableNode), () =>
 
 describe(nameof(getMixinStructureFuncs.fromNamedNode), () => {
     function doTest(startingCode: string, expectedStructure: MakeRequired<structures.NamedNodeStructure>) {
-        const {firstChild} = getInfoFromText<compiler.ClassDeclaration>(startingCode);
+        const {firstChild} = getInfoFromText<compiler.InterfaceDeclaration>(startingCode);
         expect(getMixinStructureFuncs.fromNamedNode(firstChild)).to.deep.equal(expectedStructure);
     }
 
     it("should get the name", () => {
-        doTest("class Identifier { }", { name: "Identifier" });
+        doTest("interface Identifier { }", { name: "Identifier" });
     });
 });
