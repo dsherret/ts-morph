@@ -303,7 +303,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: languageVariant
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
-    * :x: languageVersion
+    * :heavy_check_mark: languageVersion
 * [SpreadAssignment](src/compiler/expression/object/SpreadAssignment.ts)
     * :heavy_check_mark: expression
 * [SpreadElement](src/compiler/expression/SpreadElement.ts)
@@ -390,7 +390,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 49
+**Total:** 51
 
 * ArrayBindingPattern
 * BindingElement
@@ -398,10 +398,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ClassElement
 * ClassExpression
 * ClassLikeDeclarationBase
+* ConditionalTypeNode
 * DeclarationStatement
 * ImportCall
 * ImportClause
 * IndexedAccessTypeNode
+* InferTypeNode
 * JSDocAllType
 * JSDocFunctionType
 * JSDocNamespaceDeclaration

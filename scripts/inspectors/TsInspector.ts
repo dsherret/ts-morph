@@ -14,7 +14,7 @@ export class TsInspector {
 
     @Memoize
     getTsNodes() {
-        const compilerApiFile = this.project.getSourceFileOrThrow("typescript/typescript.ts");
+        const compilerApiFile = this.project.getSourceFileOrThrow("src/typescript/typescript.ts");
         const interfaces: InterfaceDeclaration[] = [];
         for (const interfaceDec of ArrayUtils.flatten(compilerApiFile.getNamespaces().map(n => n.getInterfaces()))) {
             if (interfaceDec.getBaseTypes().some(t => hasDescendantBaseType(t, checkingType => checkingType.getText() === "ts.Node")))
