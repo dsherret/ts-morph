@@ -290,16 +290,22 @@ describe(nameof(Project), () => {
 
         it("should add the files from tsconfig.json with the specified target", () => {
             const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
+            // todo: why did I need a slash at the start of `/test/exclude`?
+            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "exclude": ["/test/exclude"] }`);
             fs.writeFileSync("/otherFile.ts", "");
             fs.writeFileSync("/test/file.ts", "");
             fs.writeFileSync("/test/test2/file2.ts", "");
+            fs.writeFileSync("/test/exclude/file.ts", "");
+            fs.mkdirSync("/test/emptyDir");
             const project = new Project({}, fs);
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal([].sort());
+            expect(project.getDirectories().map(s => s.getPath()).sort()).to.deep.equal([].sort());
             const returnedFiles = project.addSourceFilesFromTsConfig("tsconfig.json");
             const expectedFiles = ["/test/file.ts", "/test/test2/file2.ts"].sort();
+            const expectedDirs = ["/test", "/test/test2", "/test/emptyDir"].sort();
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
             expect(returnedFiles.map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
+            expect(project.getDirectories().map(s => s.getPath()).sort()).to.deep.equal(expectedDirs);
             expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5, ScriptTarget.ES5]);
         });
 

@@ -1,10 +1,10 @@
 ﻿import {expect} from "chai";
 import {VirtualFileSystemHost, FileSystemWrapper} from "../../../fileSystem";
-import {getFilePathsFromTsConfigParseResult, getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, FileUtils} from "../../../utils";
+import {getPathsFromTsConfigParseResult, getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, FileUtils} from "../../../utils";
 import * as errors from "../../../errors";
 
-describe(nameof(getFilePathsFromTsConfigParseResult), () => {
-    function getFilePaths(fileSystem: VirtualFileSystemHost) {
+describe(nameof(getPathsFromTsConfigParseResult), () => {
+    function getFileAndDirPaths(fileSystem: VirtualFileSystemHost) {
         const fileSystemWrapper = new FileSystemWrapper(fileSystem);
         const tsConfigParseResult = getTsConfigParseResult({
             tsConfigFilePath: "tsconfig.json",
@@ -16,23 +16,33 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
             fileSystemWrapper,
             tsConfigParseResult
         });
-        return getFilePathsFromTsConfigParseResult({
+        const result = getPathsFromTsConfigParseResult({
             tsConfigFilePath: "tsconfig.json",
             encoding: "utf-8",
             fileSystemWrapper,
             tsConfigParseResult,
             compilerOptions: compilerOptions.options
         });
+        return {
+            filePaths: result.filePaths.sort(),
+            directoryPaths: result.directoryPaths.sort()
+        };
     }
 
-    function doTest(fileSystem: VirtualFileSystemHost, expectedPaths: string[]) {
-        expect(getFilePaths(fileSystem).sort()).to.deep.equal(expectedPaths.sort());
+    function doTest(fileSystem: VirtualFileSystemHost, expectedPaths: { files: string[]; dirs: string[]; }) {
+        expect(getFileAndDirPaths(fileSystem)).to.deep.equal({
+            filePaths: expectedPaths.files.sort(),
+            directoryPaths: expectedPaths.dirs.sort()
+        });
     }
 
     it("should get the file paths when there are none", () => {
         const fs = new VirtualFileSystemHost();
         fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
-        doTest(fs, []);
+        doTest(fs, {
+            files: [],
+            dirs: ["/test"]
+        });
     });
 
     it("should add the files from tsconfig.json, but exclude the outDir", () => {
@@ -41,7 +51,10 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/otherFile.ts", "");
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test2/file2.ts", "");
-        doTest(fs, ["/otherFile.ts", "/test/file.ts"]);
+        doTest(fs, {
+            files: ["/otherFile.ts", "/test/file.ts"],
+            dirs: ["/", "/test"]
+        });
     });
 
     it("should add the files from tsconfig.json, but exclude the specified exclude", () => {
@@ -50,7 +63,10 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/otherFile.ts", "");
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test2/file2.ts", "");
-        doTest(fs, ["/otherFile.ts", "/test/file.ts"]);
+        doTest(fs, {
+            files: ["/otherFile.ts", "/test/file.ts"],
+            dirs: ["/", "/test"]
+        });
     });
 
     it("should add the files from tsconfig.json, but only include the specified include", () => {
@@ -59,7 +75,10 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/otherFile.ts", "");
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test2/file2.ts", "");
-        doTest(fs, ["/test2/file2.ts"]);
+        doTest(fs, {
+            files: ["/test2/file2.ts"],
+            dirs: ["/test2"]
+        });
     });
 
     it("should add the files from tsconfig.json when using rootDir", () => {
@@ -68,7 +87,10 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/otherFile.ts", "");
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test/test2/file2.ts", "");
-        doTest(fs, ["/test/file.ts", "/test/test2/file2.ts"]);
+        doTest(fs, {
+            files: ["/test/file.ts", "/test/test2/file2.ts"],
+            dirs: ["/test", "/test/test2"]
+        });
     });
 
     it("should add the files from tsconfig.json when using rootDirs", () => {
@@ -77,7 +99,11 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test/test1/file1.ts", "");
         fs.writeFileSync("/test/test2/file2.ts", "");
-        doTest(fs, ["/test/test1/file1.ts", "/test/test2/file2.ts"]);
+        fs.writeFileSync("/test/test2/sub/file3.ts", "");
+        doTest(fs, {
+            files: ["/test/test1/file1.ts", "/test/test2/file2.ts", "/test/test2/sub/file3.ts"],
+            dirs: ["/test/test1", "/test/test2", "/test/test2/sub"]
+        });
     });
 
     it("should add the files from tsconfig.json when using rootDir and rootDirs", () => {
@@ -86,6 +112,9 @@ describe(nameof(getFilePathsFromTsConfigParseResult), () => {
         fs.writeFileSync("/test/file.ts", "");
         fs.writeFileSync("/test/test1/file1.ts", "");
         fs.writeFileSync("/test/test2/file2.ts", "");
-        doTest(fs, ["/test/test1/file1.ts", "/test/test2/file2.ts"]);
+        doTest(fs, {
+            files: ["/test/test1/file1.ts", "/test/test2/file2.ts"],
+            dirs: ["/test/test1", "/test/test2"]
+        });
     });
 });

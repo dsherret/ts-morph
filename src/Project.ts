@@ -3,7 +3,7 @@ import {ts, CompilerOptions, ScriptTarget} from "./typescript";
 import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
 import * as factories from "./factories";
 import {SourceFileStructure} from "./structures";
-import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getFilePathsFromTsConfigParseResult, TsConfigParseResult,
+import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getPathsFromTsConfigParseResult, TsConfigParseResult,
     FileUtils, ArrayUtils, matchGlobs} from "./utils";
 import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, AddDirectoryOptions} from "./fileSystem";
 import {ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
@@ -68,20 +68,8 @@ export class Project {
             this.global.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
-        if (tsConfigParseResult != null && options.addFilesFromTsConfig !== false) {
-            const filePaths = getFilePathsFromTsConfigParseResult({
-                tsConfigFilePath: options.tsConfigFilePath!,
-                encoding: this.global.getEncoding(),
-                fileSystemWrapper,
-                tsConfigParseResult,
-                compilerOptions
-            });
-            const addOptions: AddSourceFileOptions = {};
-            if (compilerOptions.target != null)
-                addOptions.languageVersion = compilerOptions.target;
-            for (const filePath of filePaths)
-                this.addExistingSourceFile(filePath, addOptions);
-        }
+        if (tsConfigParseResult != null && options.addFilesFromTsConfig !== false)
+            this._addSourceFilesForTsConfigParseResult(options.tsConfigFilePath!, tsConfigParseResult, compilerOptions, {});
 
         function getCompilerOptions(): CompilerOptions {
             return {
@@ -259,20 +247,32 @@ export class Project {
             tsConfigFilePath,
             fileSystemWrapper: this.global.fileSystemWrapper,
             tsConfigParseResult
-        });
+        }).options;
 
-        const filePaths = getFilePathsFromTsConfigParseResult({
+        return this._addSourceFilesForTsConfigParseResult(tsConfigFilePath, tsConfigParseResult, compilerOptions, options);
+    }
+
+    private _addSourceFilesForTsConfigParseResult(
+        tsConfigFilePath: string,
+        tsConfigParseResult: TsConfigParseResult,
+        compilerOptions: CompilerOptions,
+        addOptions: AddSourceFileOptions)
+    {
+        const paths = getPathsFromTsConfigParseResult({
             tsConfigFilePath,
             encoding: this.global.getEncoding(),
             fileSystemWrapper: this.global.fileSystemWrapper,
             tsConfigParseResult,
-            compilerOptions: compilerOptions.options
+            compilerOptions
         });
 
-        if (options.languageVersion == null && compilerOptions.options.target != null)
-            options.languageVersion = compilerOptions.options.target;
+        if (addOptions.languageVersion == null && compilerOptions.target != null)
+            addOptions.languageVersion = compilerOptions.target;
 
-        return filePaths.map(path => this.addExistingSourceFile(path, options));
+        const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p, addOptions));
+        for (const dirPath of paths.directoryPaths)
+            this.addDirectoryIfExists(dirPath);
+        return addedSourceFiles;
     }
 
     /**
