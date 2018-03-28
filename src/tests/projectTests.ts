@@ -401,6 +401,25 @@ describe(nameof(Project), () => {
             const result = project.addExistingSourceFiles("/**/*.ts", { languageVersion: ScriptTarget.ES5 });
             expect(project.getSourceFiles()[0].getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
+
+        it("should add the directory's descendant directories specified in the glob and ignore negated globs", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const fs = project.getFileSystem();
+            ["/dir", "/dir2", "/dir/child", "/dir/child/grandChild", "/dir3"].forEach(d => fs.mkdir(d));
+            const result = project.addExistingSourceFiles(["/dir/**/*.ts", "!/dir2", "/dir3/**/*.ts"]);
+            testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir"), {
+                directory: project.getDirectoryOrThrow("/dir"),
+                children: [{
+                    directory: project.getDirectoryOrThrow("/dir/child"),
+                    children: [{
+                        directory: project.getDirectoryOrThrow("/dir/child/grandChild")
+                    }]
+                }]
+            });
+            testHelpers.testDirectoryTree(project.getDirectoryOrThrow("/dir3"), {
+                directory: project.getDirectoryOrThrow("/dir3")
+            });
+        });
     });
 
     describe(nameof<Project>(project => project.createSourceFile), () => {

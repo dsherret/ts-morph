@@ -194,16 +194,20 @@ export class Project {
      */
     addExistingSourceFiles(fileGlobs: string[], options?: AddSourceFileOptions): SourceFile[];
     addExistingSourceFiles(fileGlobs: string | string[], options?: AddSourceFileOptions): SourceFile[] {
-        const sourceFiles: SourceFile[] = [];
-
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
+
+        const sourceFiles: SourceFile[] = [];
+        const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
         for (const filePath of this.global.fileSystemWrapper.glob(fileGlobs)) {
             const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
+
+        for (const dirPath of globbedDirectories)
+            this.addDirectoryIfExists(dirPath, { recursive: true });
 
         return sourceFiles;
     }

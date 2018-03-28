@@ -1,6 +1,10 @@
 ﻿import * as path from "path";
+import globParent = require("glob-parent");
+import isNegatedGlob = require("is-negated-glob");
+import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import {FileSystemHost, FileSystemWrapper} from "../fileSystem";
 import {StringUtils} from "./StringUtils";
+import {ArrayUtils} from "./ArrayUtils";
 
 export class FileUtils {
     private static standardizeSlashesRegex = /\\/g;
@@ -185,6 +189,21 @@ export class FileUtils {
     }
 
     /**
+     * Gets the parent most paths out of the list of paths.
+     * @param paths - File or directory paths.
+     */
+    static getParentMostPaths(paths: string[]) {
+        const finalPaths: string[] = [];
+
+        for (const fileOrDirPath of ArrayUtils.sortByProperty(paths, p => p.length)) {
+            if (finalPaths.every(p => !FileUtils.pathStartsWith(fileOrDirPath, p)))
+                finalPaths.push(fileOrDirPath);
+        }
+
+        return finalPaths;
+    }
+
+    /**
      * Reads a file or returns false if the file doesn't exist.
      * @param fileSystem - File System.
      * @param filePath - Path to file.
@@ -250,14 +269,40 @@ export class FileUtils {
      * @param dirPath - Directory path.
      */
     static getDescendantDirectories(fileSystemWrapper: FileSystemWrapper, dirPath: string) {
+        // todo: unit tests...
         return Array.from(getDescendantDirectories(dirPath));
 
         function* getDescendantDirectories(currentDirPath: string): IterableIterator<string> {
-            const subDirPaths = fileSystemWrapper.readDirSync(currentDirPath).filter(d => fileSystemWrapper.directoryExistsSync(currentDirPath));
+            const subDirPaths = fileSystemWrapper.readDirSync(currentDirPath).filter(d => fileSystemWrapper.directoryExistsSync(d));
             for (const subDirPath of subDirPaths) {
                 yield subDirPath;
                 yield* getDescendantDirectories(subDirPath);
             }
         }
+    }
+
+    /**
+     * Gets the glob as absolute.
+     * @param glob - Glob.
+     * @param cwd - Current working directory.
+     */
+    static toAbsoluteGlob(glob: string, cwd: string) {
+        return toAbsoluteGlob(glob, { cwd });
+    }
+
+    /**
+     * Gets if the glob is a negated glob.
+     * @param glob - Glob.
+     */
+    static isNegatedGlob(glob: string) {
+        return isNegatedGlob(glob).negated;
+    }
+
+    /**
+     * Gets the glob's directory.
+     * @param glob - Glob.
+     */
+    static getGlobDir(glob: string) {
+        return globParent(glob);
     }
 }

@@ -1,10 +1,10 @@
-﻿import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
-import * as multimatch from "multimatch";
+﻿import * as multimatch from "multimatch";
+import {FileUtils} from "./FileUtils";
 
 export function matchGlobs(paths: string[], patterns: string[] | string, cwd: string) {
     if (typeof patterns === "string")
-        patterns = toAbsoluteGlob(patterns, { cwd });
+        patterns = FileUtils.toAbsoluteGlob(patterns, cwd);
     else
-        patterns = patterns.map(p => toAbsoluteGlob(p, { cwd }));
+        patterns = patterns.map(p => FileUtils.toAbsoluteGlob(p, cwd));
     return multimatch(paths, patterns);
 }

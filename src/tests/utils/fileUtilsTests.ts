@@ -156,6 +156,20 @@ describe(nameof(FileUtils), () => {
         });
     });
 
+    describe(nameof(FileUtils.getParentMostPaths), () => {
+        function doTest(paths: string[], expected: string[]) {
+            expect(FileUtils.getParentMostPaths(paths).sort()).to.deep.equal(expected.sort());
+        }
+
+        it("should get the parent-most paths", () => {
+            doTest(["/dir/child", "/dir", "/dir/child/2"], ["/dir"]);
+        });
+
+        it("should get the parent-most paths for sub directories", () => {
+            doTest(["/dir/child", "/dir/child2"], ["/dir/child", "/dir/child2"]);
+        });
+    });
+
     describe(nameof(FileUtils.getRelativePathTo), () => {
         function doTest(from: string, to: string, expected: string) {
             expect(FileUtils.getRelativePathTo(from, to)).to.equal(expected);
