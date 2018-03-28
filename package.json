@@ -54,14 +54,14 @@
     "tslint": "^5.8.0"
   },
   "dependencies": {
-    "@dsherret/to-absolute-glob": "2.0.2",
-    "code-block-writer": "6.7.1",
+    "@dsherret/to-absolute-glob": "^2.0.2",
+    "code-block-writer": "^6.7.1",
     "glob-parent": "^3.1.0",
-    "globby": "6.1.0",
+    "globby": "^6.1.0",
     "is-negated-glob": "^1.0.0",
-    "multimatch": "2.1.0",
-    "object-assign": "4.1.1",
-    "typescript": "2.7.1"
+    "multimatch": "^2.1.0",
+    "object-assign": "^4.1.1",
+    "typescript": "2.8.1"
   },
   "standard-version": {
     "tagPrefix": ""
