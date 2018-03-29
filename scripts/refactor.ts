@@ -12,9 +12,15 @@ const factory = new InspectorFactory();
 const tsaInspector = factory.getTsSimpleAstInspector();
 const project = factory.getProject();
 const directory = tsaInspector.getSrcDirectory();
+const sourceFiles = directory.getDescendantSourceFiles();
+const start = new Date();
 
-for (const sourceFile of directory.getDescendantSourceFiles()) {
+for (let i = 0; i < sourceFiles.length; i++) {
+    const sourceFile = sourceFiles[i];
+    console.log(`[${i + 1}/${sourceFiles.length}] Updating: ${sourceFile.getFilePath()}`);
     /* DON'T CHECK IN THE CHANGES WITHIN THIS BLOCK */
 }
 
 project.save();
+const end = new Date().getTime() - start.getTime();
+console.log(`FINISHED: ${end / 1000}s`);
