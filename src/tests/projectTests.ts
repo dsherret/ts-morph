@@ -96,17 +96,17 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.addDirectoryIfExists), () => {
+    describe(nameof<Project>(project => project.addExistingDirectoryIfExists), () => {
         it("should throw if the directory doesn't exist", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project(undefined, fileSystem);
-            expect(project.addDirectoryIfExists("someDir")).to.be.undefined;
+            expect(project.addExistingDirectoryIfExists("someDir")).to.be.undefined;
         });
 
         it("should add the directory if it exists", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["someDir"]);
             const project = new Project(undefined, fileSystem);
-            const dir = project.addDirectoryIfExists("someDir");
+            const dir = project.addExistingDirectoryIfExists("someDir");
             expect(dir).to.not.be.undefined;
         });
 
@@ -114,7 +114,7 @@ describe(nameof(Project), () => {
             const directories = ["/", "dir", "dir/child1", "dir/child2", "dir/child1/grandChild1"];
             const project = new Project({ useVirtualFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
-            expect(project.addDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+            expect(project.addExistingDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
             testHelpers.testDirectoryTree(project.getDirectoryOrThrow("dir"), {
                 directory: project.getDirectoryOrThrow("dir"),

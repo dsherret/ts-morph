@@ -13,7 +13,7 @@ export class DirectoryCoordinator {
     constructor(private readonly compilerFactory: CompilerFactory, private readonly fileSystemWrapper: FileSystemWrapper) {
     }
 
-    addDirectoryIfExists(dirPath: string, options: AddDirectoryOptions) {
+    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions) {
         const directory = this.compilerFactory.getDirectoryFromPath(dirPath);
         if (directory == null)
             return undefined;
@@ -27,7 +27,7 @@ export class DirectoryCoordinator {
     }
 
     addExistingDirectory(dirPath: string, options: AddDirectoryOptions) {
-        const directory = this.addDirectoryIfExists(dirPath, options);
+        const directory = this.addExistingDirectoryIfExists(dirPath, options);
         if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
         return directory;

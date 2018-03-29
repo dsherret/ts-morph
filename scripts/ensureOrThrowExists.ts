@@ -46,12 +46,12 @@ function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method
     switch (parent.getName()) {
         case nameof(Project):
             return matches(method.getName(), [
-                    nameof<Project>(a => a.addDirectoryIfExists),
+                    nameof<Project>(a => a.addExistingDirectoryIfExists),
                     nameof<Project>(a => a.addExistingSourceFileIfExists)
                 ]);
         case nameof(Directory):
             return matches(method.getName(), [
-                    nameof<Directory>(a => a.addDirectoryIfExists),
+                    nameof<Directory>(a => a.addExistingDirectoryIfExists),
                     nameof<Directory>(a => a.addExistingSourceFileIfExists)
                 ]);
         default:

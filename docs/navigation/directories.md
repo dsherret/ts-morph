@@ -42,13 +42,13 @@ project.getDirectoryOrThrow("path/to/directory");
 On a directory:
 
 ```ts
-const childDirectory = directory.addExistingDirectory("childDir"); // or addDirectoryIfExists
+const childDirectory = directory.addExistingDirectory("childDir"); // or addExistingDirectoryIfExists
 ```
 
 Or main `project` object:
 
 ```ts
-const directory = project.addExistingDirectory("path/to/dir"); // or addDirectoryIfExists
+const directory = project.addExistingDirectory("path/to/dir"); // or addExistingDirectoryIfExists
 ```
 
 ### Creating

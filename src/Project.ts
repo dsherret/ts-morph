@@ -106,9 +106,9 @@ export class Project {
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
      */
-    addDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}): Directory | undefined {
+    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}): Directory | undefined {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.directoryCoordinator.addDirectoryIfExists(dirPath, options);
+        return this.global.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
 
     /**
@@ -195,7 +195,7 @@ export class Project {
         }
 
         for (const dirPath of globbedDirectories)
-            this.addDirectoryIfExists(dirPath, { recursive: true });
+            this.addExistingDirectoryIfExists(dirPath, { recursive: true });
 
         return sourceFiles;
     }
@@ -271,7 +271,7 @@ export class Project {
 
         const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p, addOptions));
         for (const dirPath of paths.directoryPaths)
-            this.addDirectoryIfExists(dirPath);
+            this.addExistingDirectoryIfExists(dirPath);
         return addedSourceFiles;
     }
 

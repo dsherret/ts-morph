@@ -397,20 +397,20 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.addDirectoryIfExists), () => {
+    describe(nameof<Directory>(d => d.addExistingDirectoryIfExists), () => {
         it("should return undefined when the directory doesn't exist", () => {
             const fileSystem = getFileSystemHostWithFiles([], ["dir"]);
             const project = new Project(undefined, fileSystem);
             const directory = project.addExistingDirectory("dir");
-            expect(directory.addDirectoryIfExists("someDir")).to.be.undefined;
+            expect(directory.addExistingDirectoryIfExists("someDir")).to.be.undefined;
         });
 
         it("should add a directory relative to the specified directory", () => {
             const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir", "dir2", "dir/child"]);
             const project = new Project(undefined, fileSystem);
             const directory = project.addExistingDirectory("dir");
-            expect(directory.addDirectoryIfExists("child")).to.equal(project.getDirectoryOrThrow("dir/child"));
-            expect(directory.addDirectoryIfExists("../dir2")).to.equal(project.getDirectoryOrThrow("dir2"));
+            expect(directory.addExistingDirectoryIfExists("child")).to.equal(project.getDirectoryOrThrow("dir/child"));
+            expect(directory.addExistingDirectoryIfExists("../dir2")).to.equal(project.getDirectoryOrThrow("dir2"));
 
             testDirectoryTree(directory.getParentOrThrow(), {
                 directory: directory.getParentOrThrow(),
@@ -428,7 +428,7 @@ describe(nameof(Directory), () => {
             const project = new Project({ useVirtualFileSystem: true });
             directories.forEach(d => project.getFileSystem().mkdirSync(d));
             const rootDir = project.addExistingDirectory("/");
-            expect(rootDir.addDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
+            expect(rootDir.addExistingDirectoryIfExists("dir", { recursive: true })).to.equal(project.getDirectoryOrThrow("dir"));
 
             testDirectoryTree(project.getDirectoryOrThrow("dir"), {
                 directory: project.getDirectoryOrThrow("dir"),

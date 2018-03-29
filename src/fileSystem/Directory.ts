@@ -229,9 +229,9 @@ export class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}) {
+    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}) {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this.global.directoryCoordinator.addDirectoryIfExists(dirPath, options);
+        return this.global.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
 
     /**
@@ -527,7 +527,7 @@ export class Directory {
         if (this._parent != null || FileUtils.isRootDirPath(this.getPath()))
             return;
 
-        this.addDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
+        this.addExistingDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
     }
 
     /** @internal */
