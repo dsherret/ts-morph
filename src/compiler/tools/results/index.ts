@@ -4,6 +4,7 @@ export * from "./DiagnosticMessageChain";
 export * from "./DocumentSpan";
 export * from "./EmitOutput";
 export * from "./EmitResult";
+export * from "./FileTextChanges";
 export * from "./ImplementationLocation";
 export * from "./OutputFile";
 export * from "./ReferencedSymbol";

@@ -8,7 +8,8 @@ import {SourceFile} from "../file";
 import {Node} from "../common";
 import {Program} from "./Program";
 import {FormatCodeSettings} from "./inputs";
-import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput} from "./results";
+import {ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput,
+    FileTextChanges} from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -285,6 +286,29 @@ export class LanguageService {
         else
             fillDefaultEditorSettings(settings, this.global.manipulationSettings);
         return this.compilerObject.getIndentationAtPosition(filePath, position, settings);
+    }
+
+    /**
+     * Gets the file text changes for organizing the imports in a source file.
+     *
+     * @param sourceFile - Source file.
+     * @param settings - Format code settings.
+     */
+    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings): FileTextChanges[];
+    /**
+     * Gets the file text changes for organizing the imports in a source file.
+     *
+     * @param filePath - File path of the source file.
+     * @param settings - Format code settings.
+     */
+    organizeImports(filePath: string, settings?: FormatCodeSettings): FileTextChanges[];
+    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}): FileTextChanges[] {
+        const scope: ts.OrganizeImportsScope = {
+            type: "file",
+            fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
+        };
+        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings))
+            .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 
     private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile: SourceFile | string) {

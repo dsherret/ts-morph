@@ -1,5 +1,6 @@
 import {ts} from "../../../typescript";
 import {TextSpan} from "./TextSpan";
+import {Memoize} from "../../../utils";
 
 /**
  * Represents a text change.
@@ -7,7 +8,6 @@ import {TextSpan} from "./TextSpan";
 export class TextChange {
     /** @internal */
     private readonly _compilerObject: ts.TextChange;
-    private _span: TextSpan | undefined;
 
     /** @internal */
     constructor(compilerObject: ts.TextChange) {
@@ -22,8 +22,9 @@ export class TextChange {
     /**
      * Gets the text span.
      */
+    @Memoize
     getSpan() {
-        return this._span || (this._span = new TextSpan(this.compilerObject.span));
+        return new TextSpan(this.compilerObject.span);
     }
 
     /**
