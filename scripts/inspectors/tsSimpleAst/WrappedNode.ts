@@ -10,7 +10,7 @@ export class WrappedNode {
     }
 
     getName() {
-        return this.node.getName();
+        return this.node.getNameOrThrow();
     }
 
     getFilePath() {

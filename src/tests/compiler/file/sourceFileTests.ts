@@ -1336,9 +1336,9 @@ function myFunction(param: MyClass) {
         it("should organize imports and remove unused ones", () => {
             const startText = "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n" +
                 "import UnusedInterface from './UnusedInterface';\n\n" +
-                "const myVar: MyInterface = new MyClass();"
+                "const myVar: MyInterface = new MyClass();";
             const expectedText = "import MyClass from './MyClass';\nimport MyInterface from './MyInterface';\n\n" +
-                "const myVar: MyInterface = new MyClass();"
+                "const myVar: MyInterface = new MyClass();";
             doTest(startText, [
                 { path: "/MyClass.ts", text: "export default class MyClass {}" },
                 { path: "/MyInterface.ts", text: "export default interface MyInterface {}" },
