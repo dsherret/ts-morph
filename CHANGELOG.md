@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.0.0"></a>
+# [10.0.0](https://github.com/dsherret/ts-simple-ast/compare/9.5.0...10.0.0) (2018-03-29)
+
+
+### Bug Fixes
+
+* Change formatting settings insertSpaceAfterSemicolonInForStatements to be true by default. ([b74dfd9](https://github.com/dsherret/ts-simple-ast/commit/b74dfd9))
+* Setting string literal value by string should escape newlines and quote chars. ([d68b6b9](https://github.com/dsherret/ts-simple-ast/commit/d68b6b9))
+* Should escape quote char in passed in string to EnumMember.setValue(...); ([7134702](https://github.com/dsherret/ts-simple-ast/commit/7134702))
+* Should write initializer if provided in EnumMemberStructure. ([35095dc](https://github.com/dsherret/ts-simple-ast/commit/35095dc))
+
+
+### Code Refactoring
+
+* addDirectoryIfExists -> addExistingDirectoryIfExists ([6bb08cd](https://github.com/dsherret/ts-simple-ast/commit/6bb08cd))
+* Project & Directory, addSourceFileIfExists -> addExistingSourceFileIfExists. ([18caa1c](https://github.com/dsherret/ts-simple-ast/commit/18caa1c))
+* Renamed QuoteType to QuoteKind. ([964571a](https://github.com/dsherret/ts-simple-ast/commit/964571a))
+
+
+### Features
+
+* [#154](https://github.com/dsherret/ts-simple-ast/issues/154) - Configuration for spaces surrounding named imports and exports. ([76ce4ad](https://github.com/dsherret/ts-simple-ast/commit/76ce4ad))
+* [#268](https://github.com/dsherret/ts-simple-ast/issues/268) - Ancestor directories are now lazily loaded. ([1169b54](https://github.com/dsherret/ts-simple-ast/commit/1169b54))
+* [#273](https://github.com/dsherret/ts-simple-ast/issues/273) - Add overwrite option to createSourceFile. ([ddcd03e](https://github.com/dsherret/ts-simple-ast/commit/ddcd03e))
+* [#286](https://github.com/dsherret/ts-simple-ast/issues/286) - Populate all directories as specified in tsconfig.json ([206e795](https://github.com/dsherret/ts-simple-ast/commit/206e795))
+* [#287](https://github.com/dsherret/ts-simple-ast/issues/287) - Descendant directories are populated based on file globs passed to addExistingSourceFiles ([402d395](https://github.com/dsherret/ts-simple-ast/commit/402d395))
+* [#291](https://github.com/dsherret/ts-simple-ast/issues/291) - Add Type: isNumberLiteral, isStringLiteral(), and isBooleanLiteral(). ([10e40cb](https://github.com/dsherret/ts-simple-ast/commit/10e40cb))
+* [#293](https://github.com/dsherret/ts-simple-ast/issues/293) - Upgrade to TypeScript 2.8.1 ([16e5962](https://github.com/dsherret/ts-simple-ast/commit/16e5962))
+* [#294](https://github.com/dsherret/ts-simple-ast/issues/294) - Add sourceFile.organizeImports() ([4f3b2ff](https://github.com/dsherret/ts-simple-ast/commit/4f3b2ff))
+* [#294](https://github.com/dsherret/ts-simple-ast/issues/294) - Wrap languageService.organizeImports(...). ([154bf2e](https://github.com/dsherret/ts-simple-ast/commit/154bf2e))
+* [#295](https://github.com/dsherret/ts-simple-ast/issues/295) - ClassDeclaration now has a nullable name. ([96b9857](https://github.com/dsherret/ts-simple-ast/commit/96b9857))
+* Add ImportDeclaration & ExportDeclaration .getModuleSpecifierValue(). ([1785054](https://github.com/dsherret/ts-simple-ast/commit/1785054))
+* Add new project.compilerOptions property that has the ability to change the compiler options. ([4da80ba](https://github.com/dsherret/ts-simple-ast/commit/4da80ba))
+* Add SourceFile.getLanguageVersion(). Language version is now specific to file. ([117433e](https://github.com/dsherret/ts-simple-ast/commit/117433e))
+* Add sourceFile.getReferencingLiteralsInOtherSourceFiles(). ([9f009cf](https://github.com/dsherret/ts-simple-ast/commit/9f009cf))
+* Add type.isEnumLiteralType() and type.isLiteral() ([56b26f8](https://github.com/dsherret/ts-simple-ast/commit/56b26f8))
+* addExistingDirectory and addDirectoryExists now has a recursive option. ([45efb2f](https://github.com/dsherret/ts-simple-ast/commit/45efb2f))
+* Rename VariableDeclarationType to VariableDeclarationKind. ([ce52ce3](https://github.com/dsherret/ts-simple-ast/commit/ce52ce3))
+
+
+### Performance Improvements
+
+* [#283](https://github.com/dsherret/ts-simple-ast/issues/283) - Do not temporarily wrap new tree when doing a manipulation. ([824819f](https://github.com/dsherret/ts-simple-ast/commit/824819f))
+
+
+### BREAKING CHANGES
+
+* addDirectoryIfExists is now addExistingDirectoryIfExists for consistency with addExistingDirectory.
+* `.getName()` and `.getNameNode()` on ClassDeclaration can now possibly return undefined (ex. `export default class { ... }`).
+* VariableDeclarationType is now VariableDeclarationKind. .getDeclarationType() is now .getDeclarationKind()
+
+This was done to reduce confusion with the word "Type".
+* QuoteType is now QuoteKind.
+
+This was done to make it consistent with NewLineKind.
+* ScriptTarget was moved from manipulation settings to be stored exclusively in the compiler options.
+* `getReferencingImportAndExportDeclarations()` was removed. Use `getReferencingNodesInOtherSourceFiles()`.
+* `ImportDeclaration` & `ExportDeclaration` `.getModuleSpecifier()` now returns the StringLiteral. Use `.getModuleSpecifierValue()` for the previous behaviour.
+* Project & Directory's addSourceFileIfExists is now addExistingSourceFileIfExists.
+
+This was done for consistency with addExistingSourceFile.
+* Requesting an ancestor directory will no longer return undefined if it is an ancestor of a "root" directory.
+
+
+
 <a name="9.5.0"></a>
 # [9.5.0](https://github.com/dsherret/ts-simple-ast/compare/9.4.2...9.5.0) (2018-03-23)
 
