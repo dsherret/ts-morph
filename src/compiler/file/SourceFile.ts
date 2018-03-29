@@ -2,7 +2,7 @@ import {ts, SyntaxKind, LanguageVariant, ScriptTarget} from "../../typescript";
 import * as errors from "../../errors";
 import {GlobalContainer} from "../../GlobalContainer";
 import {Directory} from "../../fileSystem";
-import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting,
+import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting, getTextFromFormattingEdits, replaceNodeText,
     replaceSourceFileForFilePathMove} from "../../manipulation";
 import {getPreviousMatchingPos, getNextMatchingPos} from "../../manipulation/textSeek";
 import {Constructor} from "../../Constructor";
@@ -15,7 +15,7 @@ import {TextInsertableNode} from "../base";
 import {Node, Symbol, Identifier} from "../common";
 import {StatementedNode} from "../statement";
 import {StringLiteral} from "../literal";
-import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings} from "../tools";
+import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings, TextChange} from "../tools";
 import {ImportDeclaration} from "./ImportDeclaration";
 import {ExportDeclaration} from "./ExportDeclaration";
 import {ExportAssignment} from "./ExportAssignment";
@@ -907,6 +907,35 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             this._modifiedEventContainer.subscribe(subscription);
         else
             this._modifiedEventContainer.unsubscribe(subscription);
+        return this;
+    }
+
+    /**
+     * Organizes the imports in the file.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param settings - Format code settings.
+     */
+    organizeImports(settings: FormatCodeSettings = {}) {
+        this.applyTextChanges(ArrayUtils.flatten(this.global.languageService.organizeImports(this, settings).map(r => r.getTextChanges())));
+        return this;
+    }
+
+    /**
+     * Applies the text changes to the source file.
+     *
+     * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
+     * @param textChanges - Text changes.
+     */
+    applyTextChanges(textChanges: TextChange[]) {
+        this.getChildSyntaxListOrThrow().forget();
+        replaceNodeText({
+            sourceFile: this.sourceFile,
+            start: 0,
+            replacingLength: this.getFullWidth(),
+            newText: getTextFromFormattingEdits(this, textChanges)
+        });
+        return this;
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {

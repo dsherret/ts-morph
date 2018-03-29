@@ -1324,4 +1324,25 @@ function myFunction(param: MyClass) {
             doTest("/MyInterface.d.ts", "MyInterface");
         });
     });
+
+    describe(nameof<SourceFile>(s => s.organizeImports), () => {
+        function doTest(fileText: string, otherFiles: { path: string; text: string; }[], expectedText: string) {
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/main.ts" });
+            otherFiles.forEach(f => project.createSourceFile(f.path, f.text));
+            sourceFile.organizeImports();
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should organize imports and remove unused ones", () => {
+            const startText = "import MyInterface from './MyInterface';\nimport MyClass from './MyClass';\n" +
+                "import UnusedInterface from './UnusedInterface';\n\n" +
+                "const myVar: MyInterface = new MyClass();"
+            const expectedText = "import MyClass from './MyClass';\nimport MyInterface from './MyInterface';\n\n" +
+                "const myVar: MyInterface = new MyClass();"
+            doTest(startText, [
+                { path: "/MyClass.ts", text: "export default class MyClass {}" },
+                { path: "/MyInterface.ts", text: "export default interface MyInterface {}" },
+                { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" }], expectedText);
+        });
+    });
 });

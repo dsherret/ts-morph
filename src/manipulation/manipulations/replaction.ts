@@ -14,10 +14,6 @@ export interface ReplaceNodeTextOptions {
 
 /**
  * Replaces text in a source file. Will forget any changed nodes.
- * @param sourceFile - Source file to replace in.
- * @param replaceStart - Start of where to replace.
- * @param replaceEnd - End of where to replace.
- * @param newText - The new text to go in place.
  */
 export function replaceNodeText(opts: ReplaceNodeTextOptions) {
     doManipulation(opts.sourceFile,

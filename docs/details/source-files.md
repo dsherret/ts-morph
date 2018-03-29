@@ -280,3 +280,14 @@ Or to get the module specifier text from one source file to another.
 ```ts
 const moduleSpecifier = sourceFileFrom.getRelativePathToSourceFileAsModuleSpecifier(sourceFileTo);
 ```
+
+### Organizing Imports
+
+It's possible to organize all the imports in a source file via the ["organize imports"](https://blogs.msdn.microsoft.com/typescript/2018/03/27/announcing-typescript-2-8/)
+feature from TypeScript 2.8.
+
+```ts
+sourceFile.organizeImports();
+```
+
+Note: This will forget all the previously navigated nodes so it's recommended to make this either the first or last action you do to a source file.
