@@ -1,4 +1,4 @@
-import {ts, SyntaxKind, LanguageVariant, ScriptTarget} from "../../typescript";
+import {ts, SyntaxKind, LanguageVariant, ScriptTarget, ModuleResolutionKind} from "../../typescript";
 import * as errors from "../../errors";
 import {GlobalContainer} from "../../GlobalContainer";
 import {Directory} from "../../fileSystem";
@@ -892,9 +892,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param sourceFile - Source file.
      */
     getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile) {
-        const sourceFilePath = sourceFile.getFilePath().replace(/\/index(\.d\.ts|\.ts|\.js)$/i, "");
-        const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), sourceFilePath).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+        const moduleResolution = this.global.program.getEmitModuleResolutionKind();
+        const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), getSourceFilePath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
         return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
+
+        function getSourceFilePath() {
+            switch (moduleResolution) {
+                case ModuleResolutionKind.NodeJs:
+                    return sourceFile.getFilePath().replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
+                case ModuleResolutionKind.Classic:
+                    return sourceFile.getFilePath();
+                default:
+                    throw errors.getNotImplementedForNeverValueError(moduleResolution);
+            }
+        }
     }
 
     /**

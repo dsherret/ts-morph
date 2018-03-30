@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import {ImportDeclaration} from "../../../compiler";
 import {Project} from "../../../Project";
+import {ModuleResolutionKind, ScriptTarget} from "../../../typescript";
 import * as errors from "../../../errors";
 import {ImportSpecifierStructure} from "../../../structures";
 import {getInfoFromText} from "../testHelpers";
@@ -94,6 +95,15 @@ describe(nameof(ImportDeclaration), () => {
             const classSourceFile = project.createSourceFile("class/index.ts", `export class Class {}`);
 
             expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.equal(classSourceFile);
+        });
+
+        it("should not get the source file when it's an index.ts file and using classic module resolution", () => {
+            // needs to be NodeJs resolution to work
+            const project = new Project({ useVirtualFileSystem: true, compilerOptions: { moduleResolution: ModuleResolutionKind.Classic } });
+            const mainSourceFile = project.createSourceFile("main.ts", `import {Class} from "./class";`);
+            const classSourceFile = project.createSourceFile("class/index.ts", `export class Class {}`);
+
+            expect(mainSourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFile()).to.be.undefined;
         });
 
         it("should return undefined when it doesn't exist", () => {

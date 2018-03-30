@@ -1,4 +1,4 @@
-import {ts, CompilerOptions} from "../../typescript";
+import {ts, CompilerOptions, ModuleResolutionKind} from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 import {GlobalContainer} from "../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
@@ -124,7 +124,7 @@ export class Program {
     /**
      * Gets the emit module resolution kind.
      */
-    getEmitModuleResolutionKind() {
+    getEmitModuleResolutionKind(): ModuleResolutionKind {
         return tsInternal.getEmitModuleResolutionKind(this.compilerObject.getCompilerOptions());
     }
 }

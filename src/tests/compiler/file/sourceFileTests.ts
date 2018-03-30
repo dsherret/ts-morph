@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import * as errors from "../../../errors";
-import {ts, LanguageVariant, ScriptTarget, NewLineKind} from "../../../typescript";
+import {ts, LanguageVariant, ScriptTarget, NewLineKind, CompilerOptions, ModuleResolutionKind} from "../../../typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteKind,
     FileSystemRefreshResult} from "../../../compiler";
 import {IndentationText, ManipulationSettings} from "../../../options";
@@ -1164,8 +1164,8 @@ function myFunction(param: MyClass) {
     });
 
     describe(nameof<SourceFile>(s => s.getRelativePathToSourceFileAsModuleSpecifier), () => {
-        function doTest(from: string, to: string, expected: string) {
-            const project = new Project({ useVirtualFileSystem: true });
+        function doTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
+            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
             const fromFile = project.createSourceFile(from);
             const toFile = from === to ? fromFile : project.createSourceFile(to);
             expect(fromFile.getRelativePathToSourceFileAsModuleSpecifier(toFile)).to.equal(expected);
@@ -1205,6 +1205,14 @@ function myFunction(param: MyClass) {
 
         it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
             doTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2");
+        });
+
+        it("should use an explicit index when the module resolution strategy is classic", () => {
+            doTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
+        });
+
+        it("should use an explicit index when something else in the compiler options means the module resolution will be classic", () => {
+            doTest("/dir/file.ts", "/dir2/index.d.ts", "../dir2/index", { target: ScriptTarget.ES2015 });
         });
 
         it("should use an implicit index when specifying the index file in the same directory", () => {

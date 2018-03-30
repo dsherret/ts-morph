@@ -14,7 +14,7 @@ describe(nameof(tsInternal), () => {
             });
         }
 
-        const getAllModules = () => [undefined, ...Object.keys(ModuleKind).map(key => (ModuleKind as any)[key]).filter(value => typeof value === "number")]
+        const getAllModules = () => [undefined, ...Object.keys(ModuleKind).map(key => (ModuleKind as any)[key]).filter(value => typeof value === "number")];
         const getAllTargets = () => [undefined, ...Object.keys(ModuleKind).map(key => (ModuleKind as any)[key]).filter(value => typeof value === "number")];
 
         for (const module of getAllModules()) {
