@@ -952,14 +952,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /** @internal */
     private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ts.CommentRange[] | undefined) {
-        if (!shouldGetCommentsForKind(this.getKind()))
+        if (this.getKind() === SyntaxKind.SourceFile)
             return [];
 
         return (getComments(this.sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this.sourceFile));
-
-        function shouldGetCommentsForKind(kind: number) {
-            return kind !== SyntaxKind.SourceFile && kind !== SyntaxKind.SyntaxList;
-        }
     }
 
     /**
