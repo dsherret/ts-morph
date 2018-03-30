@@ -1,5 +1,6 @@
 import * as errors from "../../errors";
 import {ts, CompilerOptions} from "../../typescript";
+import * as tsInternal from "../../typescript/tsInternal";
 import {Diagnostic} from "../../compiler";
 import {FileSystemWrapper} from "../../fileSystem";
 import {ArrayUtils, FileUtils, createHashSet} from "../../utils";
@@ -66,12 +67,12 @@ export function getPathsFromTsConfigParseResult(opts: PathsFromTsConfigParseResu
             // start: code from compiler api
             const useCaseSensitiveFileNames = false; // shouldn't this be true?
             const regexFlag = useCaseSensitiveFileNames ? "" : "i";
-            const patterns = tsGetFileMatcherPatterns(rootDir, excludes || [], includes, useCaseSensitiveFileNames, currentDir);
+            const patterns = tsInternal.getFileMatcherPatterns(rootDir, excludes || [], includes, useCaseSensitiveFileNames, currentDir);
             const includeDirectoryRegex = patterns.includeDirectoryPattern && new RegExp(patterns.includeDirectoryPattern, regexFlag);
             const excludeRegex = patterns.excludePattern && new RegExp(patterns.excludePattern, regexFlag);
             // end
 
-            return tsMatchFiles(rootDir, extensions, excludes || [], includes, useCaseSensitiveFileNames, currentDir, undefined,
+            return tsInternal.matchFiles(rootDir, extensions, excludes || [], includes, useCaseSensitiveFileNames, currentDir, undefined,
                 path => {
                     const includeDir = dirPathMatches(path);
                     path = fileSystemWrapper.getStandardizedAbsolutePath(path);
@@ -125,49 +126,7 @@ export function getPathsFromTsConfigParseResult(opts: PathsFromTsConfigParseResu
     }
 }
 
-// todo: move this somewhere common
-/* tslint:disable:align */
-function tsMatchFiles(this: any,
-    path: string,
-    extensions: ReadonlyArray<string>,
-    excludes: ReadonlyArray<string>,
-    includes: ReadonlyArray<string>,
-    useCaseSensitiveFileNames: boolean,
-    currentDirectory: string,
-    depth: number | undefined,
-    getEntries: (path: string) => FileSystemEntries
-): string[] {
-    return (ts as any).matchFiles.apply(this, arguments);
-}
-
-interface FileMatcherPatterns {
-    /** One pattern for each "include" spec. */
-    includeFilePatterns: ReadonlyArray<string>;
-    /** One pattern matching one of any of the "include" specs. */
-    includeFilePattern: string;
-    includeDirectoryPattern: string;
-    excludePattern: string;
-    basePaths: ReadonlyArray<string>;
-}
-
-function tsGetFileMatcherPatterns(
-    this: any,
-    path: string,
-    excludes: ReadonlyArray<string>,
-    includes: ReadonlyArray<string>,
-    useCaseSensitiveFileNames: boolean,
-    currentDirectory: string
-): FileMatcherPatterns {
-    return (ts as any).getFileMatcherPatterns.apply(this, arguments);
-}
-/* tslint:enable:align */
-
-interface FileSystemEntries {
-    readonly files: ReadonlyArray<string>;
-    readonly directories: ReadonlyArray<string>;
-}
-
-function getFileSystemEntries(path: string, fileSystemWrapper: FileSystemWrapper): FileSystemEntries {
+function getFileSystemEntries(path: string, fileSystemWrapper: FileSystemWrapper): tsInternal.FileSystemEntries {
     const files: string[] = [];
     const directories: string[] = [];
     try {

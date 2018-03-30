@@ -1,4 +1,5 @@
 import {ts, CompilerOptions} from "../../typescript";
+import * as tsInternal from "../../typescript/tsInternal";
 import {GlobalContainer} from "../../GlobalContainer";
 import {TypeChecker} from "./TypeChecker";
 import {SourceFile} from "../file";
@@ -118,5 +119,12 @@ export class Program {
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
         return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+    }
+
+    /**
+     * Gets the emit module resolution kind.
+     */
+    getEmitModuleResolutionKind() {
+        return tsInternal.getEmitModuleResolutionKind(this.compilerObject.getCompilerOptions());
     }
 }
