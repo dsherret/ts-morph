@@ -757,4 +757,71 @@ class MyClass {
                 });
         });
     });
+
+    describe(nameof<Node>(n => n.getLeadingCommentRanges), () => {
+        it("should return nothing for a source file", () => {
+            const {sourceFile} = getInfoFromText("// before1\nvar t = 5;");
+            expect(sourceFile.getLeadingCommentRanges().length).to.equal(0);
+        });
+
+        it("should return nothing for a syntax list", () => {
+            const {sourceFile} = getInfoFromText("// before1\nvar t = 5;");
+            expect(sourceFile.getChildSyntaxListOrThrow().getLeadingCommentRanges().length).to.equal(0);
+        });
+
+        it("should get the leading comment ranges", () => {
+            const {firstChild, sourceFile} = getInfoFromText("// before1\n// before2\n/* before3 */var t = 5; // after");
+            expect(firstChild.getLeadingCommentRanges().map(r => r.getText())).to.deep.equal(["// before1", "// before2", "/* before3 */"]);
+        });
+
+        it("should forget the leading comment range after forgetting the node", () => {
+            const {firstChild, sourceFile} = getInfoFromText("// before\nvar t = 5;");
+            const commentRange = firstChild.getLeadingCommentRanges()[0];
+            expect(commentRange).to.not.be.undefined;
+            firstChild.forget();
+            expect(commentRange.wasForgotten()).to.be.true;
+            expect(() => commentRange.getText()).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should forget a leading comment range after a manipulation", () => {
+            const {firstChild, sourceFile} = getInfoFromText("// before\nvar t = 5;");
+            const commentRange = firstChild.getLeadingCommentRanges()[0];
+            expect(commentRange).to.not.be.undefined;
+            sourceFile.addEnum({ name: "Enum" });
+            expect(commentRange.wasForgotten()).to.be.true;
+            expect(() => commentRange.getText()).to.throw(errors.InvalidOperationError);
+            expect(firstChild.getLeadingCommentRanges()[0].getText()).to.equal("// before");
+        });
+    });
+
+    describe(nameof<Node>(n => n.getTrailingCommentRanges), () => {
+        it("should get the trailing comment ranges", () => {
+            const {firstChild, sourceFile} = getInfoFromText("// before\nvar t = 5; // after1\n// after2\n/* after3 */");
+            expect(firstChild.getTrailingCommentRanges().map(r => r.getText())).to.deep.equal(["// after1"]);
+        });
+
+        it("should get the trailing comment ranges when there are multiple", () => {
+            const {firstChild, sourceFile} = getInfoFromText("// before\nvar t = 5; /* after1 *//* after2 *//* after3 */");
+            expect(firstChild.getTrailingCommentRanges().map(r => r.getText())).to.deep.equal(["/* after1 */", "/* after2 */", "/* after3 */"]);
+        });
+
+        it("should forget the trailing comment range after forgetting the node", () => {
+            const {firstChild, sourceFile} = getInfoFromText("var t = 5; // after");
+            const commentRange = firstChild.getTrailingCommentRanges()[0];
+            expect(commentRange).to.not.be.undefined;
+            firstChild.forget();
+            expect(commentRange.wasForgotten()).to.be.true;
+            expect(() => commentRange.getText()).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should forget a trailing comment range after a manipulation", () => {
+            const {firstChild, sourceFile} = getInfoFromText("var t = 5; // after");
+            const commentRange = firstChild.getTrailingCommentRanges()[0];
+            expect(commentRange).to.not.be.undefined;
+            sourceFile.insertEnum(0, { name: "Enum" });
+            expect(commentRange.wasForgotten()).to.be.true;
+            expect(() => commentRange.getText()).to.throw(errors.InvalidOperationError);
+            expect(firstChild.getTrailingCommentRanges()[0].getText()).to.equal("// after");
+        });
+    });
 });

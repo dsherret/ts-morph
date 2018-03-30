@@ -1,3 +1,4 @@
+export * from "./CommentRange";
 export * from "./ComputedPropertyName";
 export * from "./Identifier";
 export * from "./Node";

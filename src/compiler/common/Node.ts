@@ -20,6 +20,7 @@ import {Statement, StatementedNode} from "../statement";
 import {KindToNodeMappings} from "../kindToNodeMappings";
 import {Symbol} from "./Symbol";
 import {SyntaxList} from "./SyntaxList";
+import {CommentRange} from "./CommentRange";
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
@@ -28,6 +29,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     private _compilerNode: NodeType | undefined;
     /** @internal */
     private _childStringRanges: [number, number][] | undefined;
+    /** @internal */
+    private _leadingCommentRanges: CommentRange[] | undefined;
+    /** @internal */
+    private _trailingCommentRanges: CommentRange[] | undefined;
     /** @internal */
     sourceFile: SourceFile;
 
@@ -85,7 +90,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             return;
 
         this.global.compilerFactory.removeNodeFromCache(this);
-        this._compilerNode = undefined;
+        this._clearInternals();
     }
 
     /**
@@ -95,6 +100,32 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     wasForgotten() {
         return this._compilerNode == null;
+    }
+
+    /**
+     * @internal
+     *
+     * WARNING: This should only be called by the compiler factory!
+     */
+    replaceCompilerNodeFromFactory(compilerNode: NodeType) {
+        this._clearInternals();
+        this._compilerNode = compilerNode;
+    }
+
+    /** @internal */
+    private _clearInternals() {
+        this._compilerNode = undefined;
+        this._childStringRanges = undefined;
+        clearCommentRanges(this._leadingCommentRanges);
+        clearCommentRanges(this._trailingCommentRanges);
+        this._leadingCommentRanges = undefined;
+        this._trailingCommentRanges = undefined;
+
+        function clearCommentRanges(commentRanges: CommentRange[] | undefined) {
+            if (commentRanges == null)
+                return;
+            commentRanges.forEach(r => r.forget());
+        }
     }
 
     /**
@@ -580,16 +611,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * @internal
-     *
-     * WARNING: This should only be called by the compiler factory!
-     */
-    replaceCompilerNodeFromFactory(compilerNode: NodeType) {
-        this._compilerNode = compilerNode;
-        this._childStringRanges = undefined;
-    }
-
-    /**
      * Gets the source file.
      */
     getSourceFile(): SourceFile {
@@ -881,6 +902,32 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             sourceFile: this.sourceFile,
             newText: getTextFromFormattingEdits(this.sourceFile, formattingEdits)
         });
+    }
+
+    /**
+     * Gets the leading comment ranges of the current node.
+     */
+    getLeadingCommentRanges(): CommentRange[] {
+        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getPos(), ts.getLeadingCommentRanges));
+    }
+
+    /**
+     * Gets the trailing comment ranges of the current node.
+     */
+    getTrailingCommentRanges(): CommentRange[] {
+        return this._trailingCommentRanges || (this._trailingCommentRanges = this._getCommentsAtPos(this.getEnd(), ts.getTrailingCommentRanges));
+    }
+
+    /** @internal */
+    private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ts.CommentRange[] | undefined) {
+        if (!shouldGetCommentsForKind(this.getKind()))
+            return [];
+
+        return (getComments(this.sourceFile.getFullText(), pos) || []).map(r => new CommentRange(r, this.sourceFile));
+
+        function shouldGetCommentsForKind(kind: number) {
+            return kind !== SyntaxKind.SourceFile && kind !== SyntaxKind.SyntaxList;
+        }
     }
 
     /**
