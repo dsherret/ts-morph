@@ -552,6 +552,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
+     * Gets the leading trivia width.
+     */
+    getLeadingTriviaWidth() {
+        return this.compilerNode.getLeadingTriviaWidth(this.sourceFile.compilerNode);
+    }
+
+    /**
      * Gets the text without leading trivia.
      */
     getText() {
