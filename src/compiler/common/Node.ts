@@ -4,7 +4,7 @@ import * as errors from "../../errors";
 import {GlobalContainer} from "../../GlobalContainer";
 import {IndentationText} from "../../options";
 import {StructureToText} from "../../structureToTexts";
-import {insertIntoParentTextRange, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
+import {insertIntoParentTextRange, getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
     getTextFromFormattingEdits} from "../../manipulation";
 import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
     getParentSyntaxList} from "../../utils";
@@ -587,6 +587,38 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getLeadingTriviaWidth() {
         return this.compilerNode.getLeadingTriviaWidth(this.sourceFile.compilerNode);
+    }
+
+    /**
+     * Gets the trailing trivia width.
+     *
+     * This is the width from the end of the current node to the next significant token or new line.
+     */
+    getTrailingTriviaWidth() {
+        return this.getTrailingTriviaEnd() - this.getEnd();
+    }
+
+    /**
+     * Gets the trailing trivia end.
+     *
+     * This is the position of the next significant token or new line.
+     */
+    getTrailingTriviaEnd() {
+        const parent = this.getParent();
+        if (parent == null)
+            return 0;
+        const end = this.getEnd();
+        const parentEnd = parent.getEnd();
+        if (parentEnd === end)
+            return 0;
+        const trailingComments = this.getTrailingCommentRanges();
+        const searchStart = getSearchStart();
+
+        return getNextMatchingPos(this.sourceFile.getFullText(), searchStart, char => char !== " " && char !== "\t");
+
+        function getSearchStart() {
+            return trailingComments.length > 0 ? trailingComments[trailingComments.length - 1].getEnd() : end;
+        }
     }
 
     /**

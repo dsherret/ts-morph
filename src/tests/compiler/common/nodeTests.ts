@@ -824,4 +824,39 @@ class MyClass {
             expect(firstChild.getTrailingCommentRanges()[0].getText()).to.equal("// after");
         });
     });
+
+    describe(nameof<Node>(n => n.getTrailingTriviaEnd), () => {
+        function doTest(text: string, expected: number) {
+            const {firstChild, sourceFile} = getInfoFromText(text);
+            expect(firstChild.getTrailingTriviaEnd()).to.equal(expected);
+        }
+
+        it("should get the trailing trivia end at a new line", () => {
+            const startText = "   var t = 5; // testing";
+            doTest(startText + "\n //next", startText.length);
+        });
+
+        it("should get the trailing trivia end at the next significant token", () => {
+            const startText = "   var t = 5; /* testing */ /* next */ \t ";
+            doTest(startText + "var m = 4;", startText.length);
+        });
+
+        it("should get the trailing trivia end at the end of a file", () => {
+            const startText = "var t = 5; \t  \t";
+            doTest(startText, startText.length);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getTrailingTriviaWidth), () => {
+        function doTest(text: string, expected: number) {
+            const {firstChild, sourceFile} = getInfoFromText(text);
+            expect(firstChild.getTrailingTriviaWidth()).to.equal(expected);
+        }
+
+        it("should get the trailing trivia width", () => {
+            const startText = "var t = 5;";
+            const triviaText = "\t  \t /* testing */  \t";
+            doTest(startText + triviaText, triviaText.length);
+        });
+    });
 });
