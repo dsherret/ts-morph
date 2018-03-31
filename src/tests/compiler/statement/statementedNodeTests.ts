@@ -270,7 +270,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements at the end case clause", () => {
-            doFirstChildTest<CaseClause>(caseClause, [1, 2], "switch (x) {\n    case 1:\n        x = 0;\n\n}", SyntaxKind.CaseClause);
+            doFirstChildTest<CaseClause>(caseClause, [1, 2], "switch (x) {\n    case 1:\n        x = 0;\n}", SyntaxKind.CaseClause);
         });
 
         const defaultClause = "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n}";
@@ -283,7 +283,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements at the end default clause", () => {
-            doFirstChildTest<DefaultClause>(defaultClause, [1, 2], "switch (x) {\n    default:\n        x = 0;\n\n}", SyntaxKind.DefaultClause);
+            doFirstChildTest<DefaultClause>(defaultClause, [1, 2], "switch (x) {\n    default:\n        x = 0;\n}", SyntaxKind.DefaultClause);
         });
     });
 

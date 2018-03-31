@@ -790,13 +790,13 @@ describe(nameof(SourceFile), () => {
             expect(sourceFile.getFullText()).to.equal("");
         });
 
-        it("should return the default export symbol when one exists", () => {
+        it("should remove the default export symbol when one exists", () => {
             const {sourceFile} = getInfoFromText("export default class Identifier {}");
             sourceFile.removeDefaultExport();
             expect(sourceFile.getFullText()).to.equal("class Identifier {}");
         });
 
-        it("should return the default export symbol when default exported on a separate statement", () => {
+        it("should remove the default export symbol when default exported on a separate statement", () => {
             const {sourceFile} = getInfoFromText("namespace Identifier {}\nclass Identifier {}\nexport default Identifier;\n");
             sourceFile.removeDefaultExport();
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {}\nclass Identifier {}\n");

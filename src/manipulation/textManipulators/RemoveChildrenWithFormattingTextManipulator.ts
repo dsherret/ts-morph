@@ -1,7 +1,8 @@
 ﻿import {TextManipulator} from "./TextManipulator";
 import {Node} from "../../compiler";
 import {FormattingKind, getFormattingKindText} from "../formatting";
-import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine} from "../textSeek";
+import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAfterPreviousNonBlankLine, getPosAtEndOfPreviousLine} from "../textSeek";
+import {isNewLineAtPos} from "../textChecks";
 import {getSpacingBetweenNodes} from "./getSpacingBetweenNodes";
 import {getTextForError} from "./getTextForError";
 
@@ -27,6 +28,9 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         const removalPos = getRemovalPos();
         this.removalPos = removalPos;
 
+        // console.log(JSON.stringify(fullText.substring(0, removalPos)));
+        // console.log(JSON.stringify(fullText.substring(getRemovalEnd())));
+
         return getPrefix() + getSpacing() + getSuffix();
 
         function getPrefix() {
@@ -48,13 +52,15 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         }
 
         function getRemovalPos() {
-            if (previousSibling != null && nextSibling != null)
-                return previousSibling.getEnd();
+            if (previousSibling != null) {
+                const trailingEnd = previousSibling.getTrailingTriviaEnd();
+                return isNewLineAtPos(fullText, trailingEnd) ? trailingEnd : previousSibling.getEnd();
+            }
 
             if (parent.getPos() === children[0].getPos())
                 return children[0].getNonWhitespaceStart(); // do not shift the parent
 
-            return children[0].isFirstNodeOnLine() ? getPosAfterPreviousNonBlankLine(fullText, children[0].getNonWhitespaceStart()) : children[0].getNonWhitespaceStart();
+            return children[0].isFirstNodeOnLine() ? children[0].getPos() : children[0].getNonWhitespaceStart();
         }
 
         function getRemovalEnd() {
@@ -66,16 +72,23 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
                         return nextSiblingStartLinePos;
                 }
 
-                return nextSibling.getStart();
+                return nextSibling.getStart(true);
             }
 
             if (parent.getEnd() === children[children.length - 1].getEnd())
                 return children[children.length - 1].getEnd(); // do not shift the parent
 
-            const nextNonSpaceOrTabChar = getNextMatchingPos(fullText, children[children.length - 1].getEnd(), char => char !== " " && char !== "\t");
-            if (fullText[nextNonSpaceOrTabChar] === "\r" || fullText[nextNonSpaceOrTabChar] === "\n")
-                return getPosAtNextNonBlankLine(fullText, nextNonSpaceOrTabChar);
-            return nextNonSpaceOrTabChar;
+            const triviaEnd = children[children.length - 1].getTrailingTriviaEnd();
+            if (isNewLineAtPos(fullText, triviaEnd)) {
+                if (previousSibling == null && children[0].getPos() === 0)
+                    return getPosAtNextNonBlankLine(fullText, triviaEnd);
+                return getPosAtEndOfPreviousLine(fullText, getPosAtNextNonBlankLine(fullText, triviaEnd));
+            }
+
+            if (previousSibling == null)
+                return triviaEnd;
+            else
+                return children[children.length - 1].getEnd();
         }
     }
 

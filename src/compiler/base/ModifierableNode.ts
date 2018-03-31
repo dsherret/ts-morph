@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
-import {insertIntoCreatableSyntaxList, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind} from "../../manipulation";
+import {insertIntoCreatableSyntaxList, removeChildren, FormattingKind} from "../../manipulation";
 import {ArrayUtils, getSyntaxKindName} from "../../utils";
 import {Node} from "../common";
 import {KindToNodeMappings} from "../kindToNodeMappings";
@@ -160,14 +160,16 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         removeModifier(text: ModifierTexts) {
-            const modifier = ArrayUtils.find(this.getModifiers(), m => m.getText() === text);
+            const modifiers = this.getModifiers();
+            const modifier = ArrayUtils.find(modifiers, m => m.getText() === text);
             if (modifier == null)
                 return false;
 
-            removeChildrenWithFormattingFromCollapsibleSyntaxList({
-                children: [modifier],
-                getSiblingFormatting: () => FormattingKind.Space
+            removeChildren({
+                children: [modifiers.length === 1 ? modifier.getParentSyntaxListOrThrow() : modifier],
+                removeFollowingSpaces: true
             });
+
             return true;
         }
 
