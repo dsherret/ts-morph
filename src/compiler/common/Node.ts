@@ -1339,13 +1339,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     getWriter() {
-        const indentationText = this.global.manipulationSettings.getIndentationText();
-        return new CodeBlockWriter({
-            newLine: this.global.manipulationSettings.getNewLineKindAsString(),
-            indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
-            useTabs: indentationText === IndentationText.Tab,
-            useSingleQuote: this.global.manipulationSettings.getQuoteKind() === QuoteKind.Single
-        });
+        return this.global.createWriter();
     }
 
     /**

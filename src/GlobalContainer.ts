@@ -1,9 +1,10 @@
+import CodeBlockWriter from "code-block-writer";
 import * as errors from "./errors";
 import {CompilerFactory} from "./factories";
 import {ts, CompilerOptions} from "./typescript";
-import {LanguageService, TypeChecker} from "./compiler";
+import {LanguageService, TypeChecker, QuoteKind} from "./compiler";
 import {createWrappedNode} from "./utils/compiler/createWrappedNode";
-import {ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
+import {ManipulationSettingsContainer, CompilerOptionsContainer, IndentationText} from "./options";
 import {FileSystemWrapper, DirectoryCoordinator} from "./fileSystem";
 import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";
 
@@ -138,6 +139,19 @@ export class GlobalContainer {
      */
     resetProgram() {
         this.languageService.resetProgram();
+    }
+
+    /**
+     * Creates a code block writer.
+     */
+    createWriter() {
+        const indentationText = this.manipulationSettings.getIndentationText();
+        return new CodeBlockWriter({
+            newLine: this.manipulationSettings.getNewLineKindAsString(),
+            indentNumberOfSpaces: indentationText === IndentationText.Tab ? undefined : indentationText.length,
+            useTabs: indentationText === IndentationText.Tab,
+            useSingleQuote: this.manipulationSettings.getQuoteKind() === QuoteKind.Single
+        });
     }
 
     private getToolRequiredError(name: string) {

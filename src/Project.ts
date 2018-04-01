@@ -1,3 +1,4 @@
+import CodeBlockWriter from "code-block-writer";
 import * as errors from "./errors";
 import {ts, CompilerOptions, ScriptTarget} from "./typescript";
 import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
@@ -499,6 +500,14 @@ export class Project {
      */
     getCompilerOptions(): CompilerOptions {
         return this.global.compilerOptions.get();
+    }
+
+    /**
+     * Creates a writer with the current manipulation settings.
+     * @remarks Generally it's best to use a provided writer, but this may be useful in some scenarios.
+     */
+    createWriter(): CodeBlockWriter {
+        return this.global.createWriter();
     }
 
     /**
