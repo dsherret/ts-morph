@@ -113,6 +113,26 @@ const t = MyNamespace.MyClass;
         });
     });
 
+    describe(nameof<Identifier>(n => n.getDefinitionReferencingNodes), () => {
+        it("should find all the references and exclude the definition", () => {
+            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
+            const referencingNodes = firstChild.getNameNode().getDefinitionReferencingNodes();
+            expect(referencingNodes.length).to.equal(2);
+            expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
+            expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");
+        });
+    });
+
+    describe(nameof<Identifier>(n => n.getDefinitionNodes), () => {
+        it("should get the definition nodes", () => {
+            const {sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const definitionNodes = sourceFile.getVariableDeclarationOrThrow("reference").getInitializerIfKindOrThrow(SyntaxKind.Identifier).getDefinitionNodes();
+            expect(definitionNodes.length).to.equal(1);
+            expect(definitionNodes[0].getText()).to.equal("function myFunction() {}");
+        });
+    });
+
     describe(nameof<Identifier>(n => n.getType), () => {
         function doTest(text: string, expectedTypes: string[]) {
             const {sourceFile} = getInfoFromText(text);

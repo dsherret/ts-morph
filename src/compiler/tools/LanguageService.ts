@@ -3,7 +3,7 @@ import {GlobalContainer} from "../../GlobalContainer";
 import {replaceSourceFileTextForRename, getTextFromFormattingEdits} from "../../manipulation";
 import * as errors from "../../errors";
 import {DefaultFileSystemHost} from "../../fileSystem";
-import {KeyValueCache, FileUtils, StringUtils, fillDefaultFormatCodeSettings, fillDefaultEditorSettings, ObjectUtils} from "../../utils";
+import {KeyValueCache, ArrayUtils, FileUtils, StringUtils, ObjectUtils, fillDefaultFormatCodeSettings, fillDefaultEditorSettings} from "../../utils";
 import {SourceFile} from "../file";
 import {Node} from "../common";
 import {Program} from "./Program";
@@ -184,6 +184,25 @@ export class LanguageService {
      */
     findReferences(node: Node) {
         return this.findReferencesAtPosition(node.sourceFile, node.getStart());
+    }
+
+    /**
+     * Finds the nodes that reference the definition(s) of the specified node.
+     * @param node - Node.
+     */
+    getDefinitionReferencingNodes(node: Node) {
+        const references = this.findReferences(node);
+        return ArrayUtils.from(getReferencingNodes());
+
+        function* getReferencingNodes() {
+            for (const referenceSymbol of references) {
+                const isAlias = referenceSymbol.getDefinition().getKind() === ts.ScriptElementKind.alias;
+                for (const reference of referenceSymbol.getReferences()) {
+                    if (isAlias || !reference.isDefinition())
+                        yield reference.getNode();
+                }
+            }
+        }
     }
 
     /**

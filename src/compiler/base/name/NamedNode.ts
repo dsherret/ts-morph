@@ -3,6 +3,7 @@ import {Constructor} from "../../../Constructor";
 import * as errors from "../../../errors";
 import {NamedNodeStructure} from "../../../structures";
 import {Node, Identifier} from "../../common";
+import {ReferencedSymbol} from "../../tools";
 import {callBaseFill} from "../../callBaseFill";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
@@ -23,6 +24,14 @@ export interface NamedNode {
      * @param newName - New name.
      */
     rename(newName: string): this;
+    /**
+     * Finds the references of the node.
+     */
+    findReferences(): ReferencedSymbol[];
+    /**
+     * Gets the nodes that reference the node.
+     */
+    getReferencingNodes(): Node[];
 }
 
 export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T {
@@ -42,6 +51,14 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
             errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
             this.getNameNode().rename(newName);
             return this;
+        }
+
+        findReferences() {
+            return this.getNameNode().findReferences();
+        }
+
+        getReferencingNodes() {
+            return this.getNameNode().getDefinitionReferencingNodes();
         }
 
         fill(structure: Partial<NamedNodeStructure>) {

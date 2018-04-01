@@ -3,8 +3,9 @@ import {Constructor} from "../../../Constructor";
 import {NameableNodeStructure} from "../../../structures";
 import * as errors from "../../../errors";
 import {removeChildren, insertIntoParentTextRange} from "../../../manipulation";
-import {StringUtils} from "../../../utils";
+import {StringUtils, TypeGuards} from "../../../utils";
 import {Node, Identifier} from "../../common";
+import {ReferencedSymbol} from "../../tools";
 import {callBaseFill} from "../../callBaseFill";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
@@ -31,6 +32,14 @@ export interface NameableNode {
      * @param newName - New name.
      */
     rename(newName: string): this;
+    /**
+     * Finds the references of the node.
+     */
+    findReferences(): ReferencedSymbol[];
+    /**
+     * Gets the nodes that reference the node.
+     */
+    getReferencingNodes(): Node[];
 }
 
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
@@ -80,6 +89,20 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             return this;
         }
 
+        findReferences() {
+            const nameNode = this.getNameNode();
+            if (nameNode != null)
+                return nameNode.findReferences();
+            return this.global.languageService.findReferences(getNodeForReferences(this));
+        }
+
+        getReferencingNodes() {
+            const nameNode = this.getNameNode();
+            if (nameNode != null)
+                return nameNode.getDefinitionReferencingNodes();
+            return this.global.languageService.getDefinitionReferencingNodes(getNodeForReferences(this));
+        }
+
         fill(structure: Partial<NameableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
@@ -89,4 +112,10 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             return this;
         }
     };
+}
+
+function getNodeForReferences(node: Node) {
+    if (TypeGuards.isExportableNode(node))
+        return node.getDefaultKeyword() || node;
+    return node;
 }

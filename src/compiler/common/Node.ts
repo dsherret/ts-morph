@@ -515,18 +515,24 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param width - Width of the node to search for.
      */
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
-        let nextNode: Node | undefined = this.getSourceFile();
         let foundNode: Node | undefined;
 
-        do {
-            nextNode = nextNode.getChildAtPos(start);
-            if (nextNode != null) {
-                if (nextNode.getStart() === start && nextNode.getWidth() === width)
-                    foundNode = nextNode;
-                else if (foundNode != null)
-                    break; // no need to keep looking
-            }
-        } while (nextNode != null);
+        this.global.compilerFactory.forgetNodesCreatedInBlock(remember => {
+            let nextNode: Node | undefined = this.getSourceFile();
+
+            do {
+                nextNode = nextNode.getChildAtPos(start);
+                if (nextNode != null) {
+                    if (nextNode.getStart() === start && nextNode.getWidth() === width)
+                        foundNode = nextNode;
+                    else if (foundNode != null)
+                        break; // no need to keep looking
+                }
+            } while (nextNode != null);
+
+            if (foundNode != null)
+                remember(foundNode);
+        });
 
         return foundNode;
     }

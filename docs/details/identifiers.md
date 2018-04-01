@@ -57,6 +57,12 @@ Gets the definitions of the identifier. This is similar to "go to definition" fu
 const definitions = identifier.getDefinitions();
 ```
 
+Or just get the nodes:
+
+```ts
+const nodes = identifier.getDefinitionNodes();
+```
+
 ### Get Implementations
 
 Gets the implementations of the identifier. This is similar to "go to implementation" functionality that exists with TypeScript in most IDEs.

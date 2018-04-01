@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {FunctionExpression, NameableNode, Identifier, VariableStatement} from "../../../../compiler";
+import {ClassDeclaration, FunctionExpression, NameableNode, Identifier, VariableStatement} from "../../../../compiler";
 import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(NameableNode), () => {
@@ -78,13 +78,50 @@ describe(nameof(NameableNode), () => {
 
     describe(nameof<NameableNode>(n => n.getNameNodeOrThrow), () => {
         it("should get the name when it exists", () => {
-            const {funcExpr, sourceFile} = getFunctionExpression("const v = function name() {};");
+            const {funcExpr} = getFunctionExpression("const v = function name() {};");
             expect(funcExpr.getNameNodeOrThrow().getText()).to.equal("name");
         });
 
         it("should throw when it doesn't exist", () => {
-            const {funcExpr, sourceFile} = getFunctionExpression("const v = function() {};");
+            const {funcExpr} = getFunctionExpression("const v = function() {};");
             expect(() => funcExpr.getNameNodeOrThrow()).to.throw();
+        });
+    });
+
+    describe(nameof<NameableNode>(n => n.findReferences), () => {
+        it("should find the references when there is a name", () => {
+            // most of the tests for this are in identifierTests
+            const {firstChild, project} = getInfoFromText<ClassDeclaration>("class MyClass {}");
+            const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
+            const referencedSymbols = firstChild.findReferences();
+            expect(referencedSymbols.length).to.equal(1);
+        });
+
+        it("should find the references when there isn't a name", () => {
+            const {firstChild, project} = getInfoFromText<ClassDeclaration>("export default class {}");
+            const secondSourceFile = project.createSourceFile("/second.ts", "import MyClass from './MyClass';\nconst reference2 = MyClass;");
+            const referencedSymbols = firstChild.findReferences();
+            expect(referencedSymbols.length).to.equal(1);
+        });
+    });
+
+    describe(nameof<NameableNode>(n => n.getReferencingNodes), () => {
+        it("should find all the references and exclude the definition when there is a name", () => {
+            const {firstChild, project} = getInfoFromText<ClassDeclaration>("class MyClass {}\nconst reference = MyClass;");
+            const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
+            const referencingNodes = firstChild.getReferencingNodes();
+            expect(referencingNodes.length).to.equal(2);
+            expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = MyClass");
+            expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = MyClass");
+        });
+
+        it("should find all the references and exclude the definition when there isn't a name", () => {
+            const {firstChild, project} = getInfoFromText<ClassDeclaration>("export default class {}", { filePath: "/MyClass.ts" });
+            const secondSourceFile = project.createSourceFile("/second.ts", "import MyClass from './MyClass';\nconst reference2 = MyClass;");
+            const referencingNodes = firstChild.getReferencingNodes();
+            expect(referencingNodes.length).to.equal(2);
+            expect(referencingNodes[0].getParentOrThrow().getParentOrThrow().getText()).to.equal("import MyClass from './MyClass';");
+            expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = MyClass");
         });
     });
 });

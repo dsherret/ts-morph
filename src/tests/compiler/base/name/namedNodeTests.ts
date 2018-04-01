@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {EnumDeclaration, NamedNode, Identifier} from "../../../../compiler";
+import {FunctionDeclaration, EnumDeclaration, NamedNode, Identifier} from "../../../../compiler";
 import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {
@@ -50,6 +50,26 @@ describe(nameof(NamedNode), () => {
 
         it("should be of correct instance", () => {
             expect(nameNode).to.be.instanceOf(Identifier);
+        });
+    });
+
+    describe(nameof<NamedNode>(n => n.findReferences), () => {
+        it("should find all the references", () => {
+            // most of the tests for this are in identifierTests
+            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const referencedSymbols = firstChild.findReferences();
+            expect(referencedSymbols.length).to.equal(1);
+        });
+    });
+
+    describe(nameof<NamedNode>(n => n.getReferencingNodes), () => {
+        it("should find all the references and exclude the definition", () => {
+            const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
+            const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
+            const referencingNodes = firstChild.getReferencingNodes();
+            expect(referencingNodes.length).to.equal(2);
+            expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
+            expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");
         });
     });
 
