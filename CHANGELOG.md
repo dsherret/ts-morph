@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.1.0"></a>
+# [10.1.0](https://github.com/dsherret/ts-simple-ast/compare/10.0.1...10.1.0) (2018-04-01)
+
+
+### Bug Fixes
+
+* [#219](https://github.com/dsherret/ts-simple-ast/issues/219) - Removing the last statement in a default or case clause will cause a double newline. ([d46cbd0](https://github.com/dsherret/ts-simple-ast/commit/d46cbd0))
+* [#261](https://github.com/dsherret/ts-simple-ast/issues/261) - sourceFile.getRelativePathToSourceFileAsModuleSpecifier(...) should not strip "index" file name when module resolution is classic. ([5ce71ac](https://github.com/dsherret/ts-simple-ast/commit/5ce71ac))
+* Update to code-block-writer 6.7.2. ([eb5bd38](https://github.com/dsherret/ts-simple-ast/commit/eb5bd38))
+
+
+### Features
+
+* [#237](https://github.com/dsherret/ts-simple-ast/issues/237) - Add node.getLeadingCommentRanges() and .getTrailingCommentRanges(). ([9678b3d](https://github.com/dsherret/ts-simple-ast/commit/9678b3d))
+* [#297](https://github.com/dsherret/ts-simple-ast/issues/297) - Simpler findReferences() and getDefinitions() that only returns nodes. ([4048116](https://github.com/dsherret/ts-simple-ast/commit/4048116))
+* Add Node.getLeadingTriviaWidth(). ([09bdd01](https://github.com/dsherret/ts-simple-ast/commit/09bdd01))
+* Add Node.getTrailingTriviaEnd() and .getTrailingTriviaWidth() ([98cd0b0](https://github.com/dsherret/ts-simple-ast/commit/98cd0b0))
+* Add Program.getEmitModuleResolutionKind(). ([447573f](https://github.com/dsherret/ts-simple-ast/commit/447573f))
+* Add Project.createWriter(). ([914f503](https://github.com/dsherret/ts-simple-ast/commit/914f503))
+
+
+
 <a name="10.0.0"></a>
 # [10.0.0](https://github.com/dsherret/ts-simple-ast/compare/9.5.0...10.0.0) (2018-03-29)
 
