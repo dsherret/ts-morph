@@ -1,9 +1,11 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Node, SourceFile} from "../../compiler";
-import {InsertionTextManipulator, InsertIntoBracesTextManipulator} from "../textManipulators";
+import {StringUtils, TypeGuards} from "../../utils";
+import {InsertionTextManipulator} from "../textManipulators";
+import {isBlankLineAtPos} from "../textChecks";
 import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions} from "../helpers";
+import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions, getInsertPosFromIndex} from "../helpers";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -129,16 +131,61 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
  * Used to insert non-comma separated nodes into braces or a source file.
  */
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
-    const {parent, index, childCodes, separator, children} = opts;
-
-    if (childCodes.length === 0)
+    if (opts.childCodes.length === 0)
         return;
 
-    doManipulation(parent.sourceFile, new InsertIntoBracesTextManipulator(opts), new NodeHandlerFactory().getForChildIndex({
+    const {parent, index, childCodes, separator, children} = opts;
+    const insertPos = getInsertPosFromIndex(index, parent, children);
+
+    doManipulation(parent.sourceFile, new InsertionTextManipulator({ insertPos, newText: getNewText() }), new NodeHandlerFactory().getForChildIndex({
         parent: parent.getChildSyntaxListOrThrow(),
         childIndex: index,
         childCount: childCodes.length
     }));
+
+    function getNewText() {
+        const sourceFile = parent.getSourceFile();
+        const newLineChar = sourceFile.global.manipulationSettings.getNewLineKindAsString();
+
+        let newText = "";
+
+        for (let i = 0; i < childCodes.length; i++) {
+            if (i > 0) {
+                newText += separator;
+                if (opts.separatorNewlineWhen != null && opts.separatorNewlineWhen(opts.structures![i - 1], opts.structures![i]))
+                    newText += newLineChar;
+            }
+            newText += childCodes[i];
+        }
+
+        if (index !== 0)
+            newText = separator + newText;
+        else if (insertPos !== 0)
+            newText = newLineChar + newText;
+        else if (parent.getFullWidth() > 0)
+            newText = newText + separator;
+
+        if (opts.previousBlanklineWhen != null) {
+            const previousMember: Node | undefined = children[index - 1];
+            const firstStructure = opts.structures![0];
+            if (previousMember != null && opts.previousBlanklineWhen(previousMember, firstStructure))
+                newText = newLineChar + newText;
+        }
+
+        const nextMember: Node | undefined = children[index];
+        if (opts.nextBlanklineWhen != null) {
+            const lastStructure = opts.structures![opts.structures!.length - 1];
+            if (nextMember != null && opts.nextBlanklineWhen(nextMember, lastStructure)) {
+                if (!isBlankLineAtPos(sourceFile, insertPos))
+                    newText = newText + newLineChar;
+            }
+        }
+
+        if (TypeGuards.isSourceFile(parent) && nextMember == null && !StringUtils.endsWith(newText, newLineChar) && !StringUtils.endsWith(sourceFile.getFullText(), "\n"))
+            newText = newText + newLineChar;
+
+        return newText;
+    }
 }
 
 export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
