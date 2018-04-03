@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
-import {insertIntoCreatableSyntaxList, removeChildren, FormattingKind} from "../../manipulation";
+import {insertIntoParentTextRange, removeChildren, FormattingKind} from "../../manipulation";
 import {ArrayUtils, getSyntaxKindName} from "../../utils";
 import {Node} from "../common";
 import {KindToNodeMappings} from "../kindToNodeMappings";
@@ -119,11 +119,10 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             }
 
             // insert
-            insertIntoCreatableSyntaxList({
-                parent: this,
+            insertIntoParentTextRange({
+                parent: modifiers.length === 0 ? this : modifiers[0].getParentSyntaxListOrThrow(),
                 insertPos,
-                newText,
-                syntaxList: modifiers.length === 0 ? undefined : modifiers[0].getParentSyntaxListOrThrow()
+                newText
             });
 
             return ArrayUtils.find(this.getModifiers(), m => m.getStart() === startPos) as Node<ts.Modifier>;

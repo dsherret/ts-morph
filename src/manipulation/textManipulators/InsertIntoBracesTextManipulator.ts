@@ -18,7 +18,6 @@ export interface InsertIntoBracesTextManipulatorOptions<TStructure> {
 
 export class InsertIntoBracesTextManipulator<TStructure> extends InsertionTextManipulator {
     constructor(opts: InsertIntoBracesTextManipulatorOptions<TStructure>) {
-        // todo: doing this doesn't seem right, but I'd rather have all these text manipulations happening in here
         super({
             insertPos: getInsertPosFromIndex(opts.index, opts.parent, opts.children),
             newText: getNewText()

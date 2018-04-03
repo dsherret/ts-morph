@@ -5,25 +5,6 @@ import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
 import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions} from "../helpers";
 
-export interface InsertSyntaxListOptions {
-    insertPos: number;
-    newText: string;
-    parent: Node;
-}
-
-export function insertSyntaxList(opts: InsertSyntaxListOptions) {
-    const {insertPos, newText, parent} = opts;
-
-    doManipulation(parent.sourceFile,
-        new InsertionTextManipulator({
-            insertPos,
-            newText
-        }), new NodeHandlerFactory().getForCreatingSyntaxList({
-            parent,
-            insertPos
-        }));
-}
-
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
     newText: string;
@@ -55,30 +36,6 @@ export function insertIntoParentTextRange(opts: InsertIntoParentTextRangeOptions
             replacingNodes: opts.replacing == null ? undefined : opts.replacing.nodes,
             customMappings: opts.customMappings
         }));
-}
-
-export interface InsertIntoCreatableSyntaxListOptions {
-    insertPos: number;
-    newText: string;
-    parent: Node;
-    syntaxList: Node | undefined;
-}
-
-export function insertIntoCreatableSyntaxList(opts: InsertIntoCreatableSyntaxListOptions) {
-    const {insertPos, newText, parent, syntaxList} = opts;
-
-    if (syntaxList == null)
-        insertSyntaxList({
-            parent,
-            insertPos,
-            newText
-        });
-    else
-        insertIntoParentTextRange({
-            insertPos,
-            newText,
-            parent: syntaxList
-        });
 }
 
 export interface InsertIntoCommaSeparatedNodesOptions {

@@ -1,6 +1,6 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
-import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoCreatableSyntaxList} from "../../manipulation";
+import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoParentTextRange} from "../../manipulation";
 import {ImplementsClauseableNodeStructure} from "../../structures";
 import {CommaSeparatedStructuresToText, StringStructureToText} from "../../structureToTexts";
 import {callBaseFill} from "../callBaseFill";
@@ -102,11 +102,10 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
                 insertText = " " + insertText;
 
             // assumes there can only be another extends heritage clause
-            insertIntoCreatableSyntaxList({
-                parent: this,
+            insertIntoParentTextRange({
+                parent: heritageClauses.length === 0 ? this : heritageClauses[0].getParentSyntaxListOrThrow(),
                 insertPos: openBraceStart,
-                newText: insertText,
-                syntaxList: heritageClauses.length === 0 ? undefined : heritageClauses[0].getParentSyntaxListOrThrow()
+                newText: insertText
             });
 
             return getNodeOrNodesToReturn(this.getImplements(), index, length);

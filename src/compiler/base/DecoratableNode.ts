@@ -3,7 +3,7 @@ import {Constructor} from "../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "../../structures";
 import * as errors from "../../errors";
 import {callBaseFill} from "../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoCreatableSyntaxList, getNewInsertCode, FormattingKind, getNodesToReturn} from "../../manipulation";
+import {getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn} from "../../manipulation";
 import {getNextNonWhitespacePos} from "../../manipulation/textSeek";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../utils";
 import {Node} from "../common";
@@ -107,11 +107,10 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 nextFormattingKind: previousDecorator == null ? formattingKind : FormattingKind.None
             });
 
-            insertIntoCreatableSyntaxList({
-                parent: this,
+            insertIntoParentTextRange({
+                parent: decorators.length === 0 ? this : decorators[0].getParentSyntaxListOrThrow(),
                 insertPos: decorators[index - 1] == null ? this.getStart() : decorators[index - 1].getEnd(),
-                newText: decoratorCode,
-                syntaxList: decorators.length === 0 ? undefined : decorators[0].getParentSyntaxListOrThrow()
+                newText: decoratorCode
             });
 
             return getNodesToReturn(this.getDecorators(), index, structures.length);
