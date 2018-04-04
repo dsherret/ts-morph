@@ -6,17 +6,25 @@ import {TypeGuards} from "../../../utils";
 import {Node} from "../../common";
 import {PropertyName} from "../../aliases";
 import {callBaseFill} from "../../callBaseFill";
+import {ReferenceFindableNode} from "./ReferenceFindableNode";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
-export interface PropertyNamedNode {
+export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export interface PropertyNamedNodeSpecific {
     getNameNode(): PropertyName;
     getName(): string;
     rename(text: string): this;
 }
 
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
-    return class extends Base implements PropertyNamedNode {
+    return PropertyNamedNodeInternal(ReferenceFindableNode(Base));
+}
+
+function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNodeSpecific> & T {
+    return class extends Base implements PropertyNamedNodeSpecific {
         getNameNode() {
             return this.getNodeFromCompilerNode<PropertyName>(this.compilerNode.name);
         }

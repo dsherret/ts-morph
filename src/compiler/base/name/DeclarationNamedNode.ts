@@ -2,13 +2,17 @@ import {ts, SyntaxKind} from "../../../typescript";
 import {Constructor} from "../../../Constructor";
 import * as errors from "../../../errors";
 import {Node, Identifier} from "../../common";
+import {ReferenceFindableNode} from "./ReferenceFindableNode";
 
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
 
 export type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
 
-export interface DeclarationNamedNode {
+export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export interface DeclarationNamedNodeSpecific {
     /**
      * Gets the name node.
      */
@@ -33,7 +37,11 @@ export interface DeclarationNamedNode {
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
-    return class extends Base implements DeclarationNamedNode {
+    return DeclarationNamedNodeInternal(ReferenceFindableNode(Base));
+}
+
+function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNodeSpecific> & T {
+    return class extends Base implements DeclarationNamedNodeSpecific {
         getNameNodeOrThrow() {
             const nameNode = this.getNameNode();
             if (nameNode == null)

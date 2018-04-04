@@ -3,3 +3,4 @@ export * from "./DeclarationNamedNode";
 export * from "./NameableNode";
 export * from "./NamedNode";
 export * from "./PropertyNamedNode";
+export * from "./ReferenceFindableNode";

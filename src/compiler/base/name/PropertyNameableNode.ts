@@ -17,6 +17,7 @@ export interface PropertyNameableNode {
     getName(): string | undefined;
     getNameOrThrow(): string;
     rename(text: string): this;
+    findReferences()...etc...
 }
 
 export function PropertyNameableNode<T extends Constructor<PropertyNameableNodeExtensionType>>(Base: T): Constructor<PropertyNameableNode> & T {

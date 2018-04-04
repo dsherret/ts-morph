@@ -9,6 +9,6 @@ export class SetAccessorDeclarationStructureToText extends StructureToText<SetAc
         this.modifierWriter.writeText(structure);
         this.writer.write(`set ${structure.name}()`);
         this.writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
-        this.writer.spaceIfLastNotSpace().inlineBlock();
+        this.writer.spaceIfLastNot().inlineBlock();
     }
 }

@@ -27,6 +27,6 @@ export class MethodDeclarationStructureToText extends StructureToText<MethodDecl
         if (this.opts.isAmbient)
             this.writer.write(";");
         else
-            this.writer.spaceIfLastNotSpace().inlineBlock();
+            this.writer.spaceIfLastNot().inlineBlock();
     }
 }
