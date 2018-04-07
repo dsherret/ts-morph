@@ -2,7 +2,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
-import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "../../manipulation";
+import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "../../utils";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
     CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure} from "../../structures";
@@ -438,13 +438,12 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
     expectedKind: SyntaxKind;
     createStructureToText: (writer: CodeBlockWriter) => ({ writeTexts(structures: TStructure[]): void; });
 }): TNode[] {
-    return insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode, TStructure>({
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
         getIndexedChildren: () => opts.thisNode.getMembers(),
         parent: opts.thisNode,
         index: opts.index,
         structures: opts.structures,
         expectedKind: opts.expectedKind,
-        fillFunction: (node, struct) => node.fill(struct),
         write: (writer, info) => {
             writer.newLineIfLastNot();
             opts.createStructureToText(writer).writeTexts(opts.structures);

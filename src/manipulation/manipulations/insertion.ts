@@ -6,7 +6,7 @@ import {InsertionTextManipulator} from "../textManipulators";
 import {isBlankLineAtPos} from "../textChecks";
 import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
+import {verifyAndGetIndex, fillAndGetChildren, getRangeFromArray, FillAndGetChildrenOptions, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -159,15 +159,10 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     }
 }
 
-export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
-    getIndexedChildren: () => Node[];
-    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
-    // for child functions
-    expectedKind: SyntaxKind;
-    structures: TStructure[];
+export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure>
+    extends InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode, TStructure>
+{
     fillFunction?: (child: TNode, structure: TStructure) => void;
-    parent: Node;
-    index: number;
 }
 
 /**
@@ -176,6 +171,35 @@ export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode
  */
 export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends Node, TStructure>(
     opts: InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode, TStructure>
+) {
+    if (opts.structures.length === 0)
+        return [];
+
+    const children = insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>(opts);
+    if (opts.fillFunction != null) {
+        for (let i = 0; i < children.length; i++) {
+            opts.fillFunction(children[i], opts.structures[i]);
+        }
+    }
+    return children;
+}
+
+export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
+    getIndexedChildren: () => Node[];
+    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
+    // for child functions
+    expectedKind: SyntaxKind;
+    structures: TStructure[];
+    parent: Node;
+    index: number;
+}
+
+/**
+ * Glues together insertIntoBracesOrSourceFile and fillAndGetChildren.
+ * @param opts - Options to do this operation.
+ */
+export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, TStructure>(
+    opts: InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode, TStructure>
 ) {
     if (opts.structures.length === 0)
         return [];
@@ -192,14 +216,7 @@ export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends
         write: opts.write
     });
 
-    return fillAndGetChildren<TNode, TStructure>({
-        sourceFile: opts.parent.sourceFile,
-        allChildren: opts.getIndexedChildren(),
-        index,
-        structures: opts.structures,
-        expectedKind: opts.expectedKind,
-        fillFunction: opts.fillFunction
-    });
+    return getRangeFromArray<TNode>(opts.getIndexedChildren(), opts.index, opts.structures.length, opts.expectedKind);
 
     function getChildIndex() {
         if (index === 0)

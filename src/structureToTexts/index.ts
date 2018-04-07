@@ -1,5 +1,6 @@
 export * from "./base";
 export * from "./doc";
+export * from "./decorator";
 export * from "./StructureToText";
 export * from "./class";
 export * from "./common";

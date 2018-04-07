@@ -3,13 +3,14 @@ import {MethodDeclarationStructure} from "../../structures";
 import {StructureToText} from "../StructureToText";
 import {ModifierableNodeStructureToText} from "../base";
 import {ParameterDeclarationStructureToText} from "../function";
-import {CommaSeparatedStructuresToText} from "../formatting";
 import {JSDocStructureToText} from "../doc";
+import {TypeParameterDeclarationStructureToText} from "../types";
 
 export class MethodDeclarationStructureToText extends StructureToText<MethodDeclarationStructure> {
     private readonly jsDocWriter = new JSDocStructureToText(this.writer);
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);
-    private readonly parametersWriter = new CommaSeparatedStructuresToText(this.writer, new ParameterDeclarationStructureToText(this.writer));
+    private readonly parametersWriter = new ParameterDeclarationStructureToText(this.writer);
+    private readonly typeParametersWriter = new TypeParameterDeclarationStructureToText(this.writer);
 
     constructor(writer: CodeBlockWriter, private readonly opts: { isAmbient: boolean; }) {
         super(writer);
@@ -30,9 +31,10 @@ export class MethodDeclarationStructureToText extends StructureToText<MethodDecl
     writeText(structure: MethodDeclarationStructure) {
         this.jsDocWriter.writeDocs(structure.docs);
         this.modifierWriter.writeText(structure);
-        this.writer.write(`${structure.name}(`);
-        if (structure.parameters != null)
-            this.parametersWriter.writeText(structure.parameters);
+        this.writer.write(structure.name);
+        this.typeParametersWriter.writeTexts(structure.typeParameters);
+        this.writer.write("(");
+        this.parametersWriter.writeTexts(structure.parameters);
         this.writer.write(`)`);
         this.writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
 

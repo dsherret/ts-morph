@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {ParameteredNode, FunctionDeclaration, ParameterDeclaration} from "../../../compiler";
+import {ParameteredNode, FunctionDeclaration, ParameterDeclaration, Scope} from "../../../compiler";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "../../../structures";
 import {getInfoFromText} from "../testHelpers";
 
@@ -119,6 +119,24 @@ describe(nameof(ParameteredNode), () => {
 
         it("should insert in the middle", () => {
             doTest("function identifier(param1, param3) {}", 1, [{ name: "param2" }], "function identifier(param1, param2, param3) {}");
+        });
+
+        it("should write type when it has a question token", () => {
+            doTest("function identifier() {}", 0, [{ name: "param", hasQuestionToken: true }], "function identifier(param?: any) {}");
+        });
+
+        it("should insert everything in the structure", () => {
+            const structure: MakeRequired<ParameterDeclarationStructure> = {
+                name: "param",
+                decorators: [{ name: "dec" }],
+                hasQuestionToken: true,
+                initializer: "[5]",
+                isReadonly: true,
+                scope: Scope.Public,
+                isRestParameter: true,
+                type: "number[]"
+            };
+            doTest("function identifier() {}", 0, [structure], "function identifier(@dec public readonly ...param?: number[] = [5]) {}");
         });
     });
 

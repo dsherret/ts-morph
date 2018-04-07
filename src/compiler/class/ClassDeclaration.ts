@@ -579,9 +579,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                 const params = structure.parameters;
                 delete structure.docs;
                 delete structure.parameters;
+                delete structure.typeParameters;
                 node.fill(structure);
-                if (params)
-                    node.getParameters().forEach((p, i) => p.fill(params[i]));
             }
         });
     }

@@ -22,6 +22,16 @@ describe(nameof(TypeElementMemberedNode), () => {
             doTest("interface i {\n    method1();\n    method2();\n}", 1, [{ returnType: "string" }, { }],
                 "interface i {\n    method1();\n    new(): string;\n    new();\n    method2();\n}");
         });
+
+        it("should insert when the structure has everything", () => {
+            const structure: MakeRequired<ConstructSignatureDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                parameters: [{ name: "param" }],
+                returnType: "T",
+                typeParameters: [{ name: "T" }]
+            };
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    new<T>(param): T;\n}");
+        });
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignature), () => {
@@ -124,6 +134,17 @@ describe(nameof(TypeElementMemberedNode), () => {
             doTest("interface i {\n    method1();\n    method2();\n}", 1,
                 [{ returnType: "number" }, { keyName: "key2", keyType: "number", returnType: "Date" }],
                 "interface i {\n    method1();\n    [key: string]: number;\n    [key2: number]: Date;\n    method2();\n}");
+        });
+
+        it("should insert when the structure has everything", () => {
+            const structure: MakeRequired<IndexSignatureDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                returnType: "string",
+                isReadonly: true,
+                keyName: "keyName",
+                keyType: "number"
+            };
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    readonly [keyName: number]: string;\n}");
         });
     });
 
@@ -343,6 +364,18 @@ describe(nameof(TypeElementMemberedNode), () => {
             doTest("interface i {\n    method1();\n    method4();\n}", 1, [{ name: "method2", hasQuestionToken: true, returnType: "string" }, { name: "method3" }],
                 "interface i {\n    method1();\n    method2?(): string;\n    method3();\n    method4();\n}");
         });
+
+        it("should insert all the method's properties when specified", () => {
+            const structure: MakeRequired<MethodSignatureStructure> = {
+                docs: [{ description: "Test" }],
+                name: "method",
+                hasQuestionToken: true,
+                returnType: "number",
+                parameters: [{ name: "param" }],
+                typeParameters: [{ name: "T" }]
+            };
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    method?<T>(param): number;\n}");
+        });
     });
 
     describe(nameof<TypeElementMemberedNode>(d => d.insertMethod), () => {
@@ -452,6 +485,18 @@ describe(nameof(TypeElementMemberedNode), () => {
         it("should insert multiple into other properties", () => {
             doTest("interface i {\n    prop1;\n    prop4;\n}", 1, [{ name: "prop2", hasQuestionToken: true, type: "string" }, { name: "prop3" }],
                 "interface i {\n    prop1;\n    prop2?: string;\n    prop3;\n    prop4;\n}");
+        });
+
+        it("should insert all the property's properties when specified", () => {
+            const structure: MakeRequired<PropertySignatureStructure> = {
+                name: "prop",
+                isReadonly: true,
+                docs: [{ description: "Test" }],
+                hasQuestionToken: true,
+                type: "number",
+                initializer: "5" // doesn't make sense
+            };
+            doTest("interface i {\n}", 0, [structure], "interface i {\n    /**\n     * Test\n     */\n    readonly prop?: number = 5;\n}");
         });
     });
 

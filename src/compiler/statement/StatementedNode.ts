@@ -609,8 +609,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     const params = structures[i].parameters;
                     delete structures[i].parameters;
                     child.fill(structures[i]);
-                    if (params != null)
-                        child.getParameters().forEach((p, j) => p.fill(params[j]));
                 }, {
                     previousBlanklineWhen: (previousMember, firstStructure) => !firstStructure.hasDeclareKeyword || hasBody(previousMember),
                     separatorNewlineWhen: (previousStructure, nextStructure) => !previousStructure.hasDeclareKeyword || !nextStructure.hasDeclareKeyword,

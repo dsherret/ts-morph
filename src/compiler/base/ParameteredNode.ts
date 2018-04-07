@@ -106,9 +106,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 newText: writer.toString()
             });
 
-            const newParameters = getNodesToReturn(this.getParameters(), index, structures.length);
-            newParameters.forEach((p, i) => p.fill(structures[i]));
-            return newParameters;
+            return getNodesToReturn(this.getParameters(), index, structures.length);
         }
 
         fill(structure: Partial<ParameteredNodeStructure>) {

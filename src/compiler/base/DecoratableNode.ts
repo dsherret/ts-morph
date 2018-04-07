@@ -1,6 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "../../structures";
+import {DecoratorStructureToText} from "../../structureToTexts";
 import * as errors from "../../errors";
 import {callBaseFill} from "../callBaseFill";
 import {getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn} from "../../manipulation";
@@ -92,7 +93,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
-            const decoratorLines = getDecoratorLines(structures);
+            const decoratorLines = getDecoratorLines(this, structures);
             const decorators = this.getDecorators();
             index = verifyAndGetIndex(index, decorators.length);
             const formattingKind = getDecoratorFormattingKind(this, decorators);
@@ -127,13 +128,14 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
     };
 }
 
-function getDecoratorLines(structures: DecoratorStructure[]) {
+function getDecoratorLines(node: Node, structures: DecoratorStructure[]) {
     const lines: string[] = [];
     for (const structure of structures) {
-        let line = `@${structure.name}`;
-        if (structure.arguments != null)
-            line += `(${structure.arguments.join(", ")})`;
-        lines.push(line);
+        // todo: temporary code... refactor this later
+        const writer = node.getWriter();
+        const structureToText = new DecoratorStructureToText(writer);
+        structureToText.writeText(structure);
+        lines.push(writer.toString());
     }
     return lines;
 }
