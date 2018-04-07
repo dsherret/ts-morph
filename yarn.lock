@@ -396,9 +396,9 @@ clone@^1.0.0, clone@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
 
-code-block-writer@^6.10.0:
-  version "6.10.0"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-6.10.0.tgz#ce3d8867ee9f48dc120ba402dba0226a1f0d9e6e"
+code-block-writer@^6.12.0:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-6.12.0.tgz#d6f5db443fc5c5777494eb44a600e174e6c63284"
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -444,6 +444,10 @@ component-emitter@^1.2.1:
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
+
+conditional-type-checks@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/conditional-type-checks/-/conditional-type-checks-0.5.0.tgz#f06567a2d416f23a5b6b01830b1855368bc617ff"
 
 convert-source-map@^1.1.1:
   version "1.5.1"

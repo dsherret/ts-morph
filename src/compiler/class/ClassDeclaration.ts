@@ -1,7 +1,6 @@
 import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
-import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, fillAndGetChildren,
-    insertIntoBracesOrSourceFileWithFillAndGetChildren} from "../../manipulation";
+import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
@@ -151,13 +150,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         const isAmbient = this.isAmbient();
 
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
+        return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
             index,
             structures: [structure],
             expectedKind: SyntaxKind.Constructor,
-            fillFunction: (node, struct) => node.fill(struct),
             write: (writer, info) => {
                 if (!isAmbient && info.previousMember != null)
                     writer.blankLineIfLastNot();
@@ -208,13 +206,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
+        return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
             index,
             structures,
             expectedKind: SyntaxKind.GetAccessor,
-            fillFunction: (node, struct) => node.fill(struct),
             write: (writer, info) => {
                 if (info.previousMember != null)
                     writer.blankLineIfLastNot();
@@ -258,13 +255,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
+        return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
             index,
             structures,
             expectedKind: SyntaxKind.SetAccessor,
-            fillFunction: (node, struct) => node.fill(struct),
             write: (writer, info) => {
                 if (info.previousMember != null)
                     writer.blankLineIfLastNot();
@@ -308,13 +304,12 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertyDeclarationStructure[]) {
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
+        return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
             index,
             structures,
             expectedKind: SyntaxKind.PropertyDeclaration,
-            fillFunction: (node, struct) => node.fill(struct),
             write: (writer, info) => {
                 if (info.previousMember != null && TypeGuards.hasBody(info.previousMember))
                     writer.blankLineIfLastNot();
@@ -553,13 +548,11 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the methods.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
         const isAmbient = this.isAmbient();
         structures = structures.map(s => ({...s}));
 
         // insert, fill, and get created nodes
-        return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
+        return insertIntoBracesOrSourceFileWithGetChildren<MethodDeclaration, MethodDeclarationStructure>({
             parent: this,
             index,
             getIndexedChildren: () => this.getMembers(),
@@ -573,15 +566,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
             },
             structures,
-            expectedKind: SyntaxKind.MethodDeclaration,
-            fillFunction: (node, structure) => {
-                // todo: remove filling when writing
-                const params = structure.parameters;
-                delete structure.docs;
-                delete structure.parameters;
-                delete structure.typeParameters;
-                node.fill(structure);
-            }
+            expectedKind: SyntaxKind.MethodDeclaration
         });
     }
 

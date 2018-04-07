@@ -2,7 +2,7 @@
 import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
     ConstructorDeclaration, ParameterDeclaration, Scope} from "../../../compiler";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
-    GetAccessorDeclarationStructure} from "../../../structures";
+    GetAccessorDeclarationStructure, SetAccessorDeclarationStructure} from "../../../structures";
 import {getInfoFromText} from "../testHelpers";
 import {TypeGuards} from "../../../utils";
 
@@ -129,6 +129,30 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    prop1;\n    prop2;\n}", 1, {},
                 "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    prop2;\n}");
         });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<ConstructorDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                overloads: [{}, { scope: Scope.Private }],
+                scope: Scope.Public,
+                parameters: [{ name: "param" }],
+                returnType: "number", // won't be written out
+                typeParameters: [{ name: "T" }],
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+            doTest("class c {\n}", 0, structure,
+                "class c {\n    public constructor();\n    private constructor();\n    /**\n     * Test\n     */\n    public constructor<T>(param) {\n" +
+                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
+                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
+                "        console.log('here');\n" +
+                "    }\n}");
+        });
     });
 
     describe(nameof<ClassDeclaration>(d => d.addConstructor), () => {
@@ -187,6 +211,33 @@ describe(nameof(ClassDeclaration), () => {
         it("should insert multiple into other methods", () => {
             doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
                 "class c {\n    m1() {\n    }\n\n    static get m2(): string {\n    }\n\n    get m3() {\n    }\n\n    m4() {\n    }\n}");
+        });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<GetAccessorDeclarationStructure> = {
+                decorators: [{ name: "dec" }],
+                isAbstract: false,
+                isStatic: true,
+                name: "prop",
+                docs: [{ description: "Test" }],
+                scope: Scope.Public,
+                parameters: [{ name: "param" }],
+                returnType: "number",
+                typeParameters: [{ name: "T" }],
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+            doTest("class c {\n}", 0, [structure],
+                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static get prop<T>(param): number {\n" +
+                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
+                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
+                "        console.log('here');\n" +
+                "    }\n}");
         });
     });
 
@@ -257,6 +308,25 @@ describe(nameof(ClassDeclaration), () => {
         it("should add an extra newline if inserting ater non-property", () => {
             doTest("class c {\n    myMethod() {}\n}", 1, [{ name: "prop" }],
                 "class c {\n    myMethod() {}\n\n    prop;\n}");
+        });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<PropertyDeclarationStructure> = {
+                decorators: [{ name: "dec" }],
+                isStatic: true,
+                name: "prop",
+                docs: [{ description: "Test" }],
+                scope: Scope.Public,
+                type: "number",
+                hasExclamationToken: true, // will favour question token
+                hasQuestionToken: true,
+                initializer: "5",
+                isAbstract: false,
+                isReadonly: true
+            };
+            doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true}],
+                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n" +
+                "}");
         });
     });
 
@@ -374,6 +444,93 @@ describe(nameof(ClassDeclaration), () => {
 
         it("should throw when it doesn't exists", () => {
             expect(() => firstChild.getSetAccessorOrThrow("member3")).to.throw();
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertSetAccessors), () => {
+        function doTest(startCode: string, insertIndex: number, structures: SetAccessorDeclarationStructure[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertSetAccessors(insertIndex, structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should insert when none exists", () => {
+            doTest("class c {\n}", 0, [{ name: "identifier" }], "class c {\n    set identifier() {\n    }\n}");
+        });
+
+        it("should insert multiple into other methods", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m4() {\n    }\n}", 1, [{ isStatic: true, name: "m2", returnType: "string" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    static set m2(): string {\n    }\n\n    set m3() {\n    }\n\n    m4() {\n    }\n}");
+        });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<SetAccessorDeclarationStructure> = {
+                decorators: [{ name: "dec" }],
+                isAbstract: false,
+                isStatic: true,
+                name: "prop",
+                docs: [{ description: "Test" }],
+                scope: Scope.Public,
+                parameters: [{ name: "param" }],
+                returnType: "number",
+                typeParameters: [{ name: "T" }],
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+            doTest("class c {\n}", 0, [structure],
+                "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static set prop<T>(param): number {\n" +
+                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
+                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
+                "        console.log('here');\n" +
+                "    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertSetAccessor), () => {
+        function doTest(startCode: string, insertIndex: number, structure: SetAccessorDeclarationStructure, expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertSetAccessor(insertIndex, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(SetAccessorDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n\n    m3() {\n    }\n}", 1, { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    set m2() {\n    }\n\n    m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addSetAccessors), () => {
+        function doTest(startCode: string, structures: SetAccessorDeclarationStructure[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addSetAccessors(structures);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structures.length);
+        }
+
+        it("should add multiple", () => {
+            doTest("class c {\n    m1() {\n    }\n}", [{ name: "m2" }, { name: "m3" }],
+                "class c {\n    m1() {\n    }\n\n    set m2() {\n    }\n\n    set m3() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addSetAccessor), () => {
+        function doTest(startCode: string, structure: SetAccessorDeclarationStructure, expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addSetAccessor(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result).to.be.instanceOf(SetAccessorDeclaration);
+        }
+
+        it("should insert", () => {
+            doTest("class c {\n    m1() {\n    }\n}", { name: "m2" },
+                "class c {\n    m1() {\n    }\n\n    set m2() {\n    }\n}");
         });
     });
 
@@ -556,14 +713,35 @@ describe(nameof(ClassDeclaration), () => {
                 "class c {\n    m1() {\n    }\n\n    static m2(): string {\n    }\n\n    m3() {\n    }\n\n    m4() {\n    }\n}");
         });
 
-        it("should insert when the structure has everything the writer supports", () => {
-            const getJsDoc = (desc: string) => `    /**\n     * ${desc}\n     */\n`;
-            doTest("class Identifier {\n}", 0, [{
-                    docs: [{ description: "First." }, { description: "Second." }],
-                    name: "m1",
-                    parameters: [{ name: "p1" }, { name: "p2" }], returnType: "number"
-                }],
-                `class Identifier {\n${getJsDoc("First.")}${getJsDoc("Second.")}    m1(p1, p2): number {\n    }\n}`);
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<MethodDeclarationStructure> = {
+                decorators: [{ name: "dec" }],
+                isAbstract: false,
+                isStatic: true,
+                name: "myMethod",
+                docs: [{ description: "Test" }],
+                scope: Scope.Public,
+                isAsync: true,
+                isGenerator: true,
+                overloads: [{}, { scope: Scope.Private, isStatic: false }],
+                parameters: [{ name: "param" }],
+                returnType: "number",
+                typeParameters: [{ name: "T" }],
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+            doTest("class c {\n}", 0, [structure],
+                "class c {\n    public static myMethod();\n    private myMethod();\n" +
+                "    /**\n     * Test\n     */\n    @dec\n    public static async myMethod<T>(param): number {\n" +
+                "        type T = string;\n\n        interface I {\n        }\n\n        enum E {\n        }\n\n" +
+                "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
+                "        console.log('here');\n" +
+                "    }\n}");
         });
     });
 

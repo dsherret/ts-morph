@@ -10,10 +10,7 @@ export class ExportAssignmentStructureToText extends StructureToText<ExportAssig
         else
             this.writer.write(" default ");
 
-        if (typeof structure.expression === "string")
-            this.writer.write(structure.expression);
-        else
-            structure.expression(this.writer);
+        this.writeTextOrWriterFunc(structure.expression);
 
         this.writer.write(";");
     }
