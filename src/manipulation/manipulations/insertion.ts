@@ -6,7 +6,7 @@ import {InsertionTextManipulator} from "../textManipulators";
 import {isBlankLineAtPos} from "../textChecks";
 import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, fillAndGetChildren, getRangeFromArray, FillAndGetChildrenOptions, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
+import {verifyAndGetIndex, getRangeFromArray, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -159,31 +159,6 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     }
 }
 
-export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure>
-    extends InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode, TStructure>
-{
-    fillFunction?: (child: TNode, structure: TStructure) => void;
-}
-
-/**
- * Glues together insertIntoBracesOrSourceFile and fillAndGetChildren.
- * @param opts - Options to do this operation.
- */
-export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends Node, TStructure>(
-    opts: InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode, TStructure>
-) {
-    if (opts.structures.length === 0)
-        return [];
-
-    const children = insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>(opts);
-    if (opts.fillFunction != null) {
-        for (let i = 0; i < children.length; i++) {
-            opts.fillFunction(children[i], opts.structures[i]);
-        }
-    }
-    return children;
-}
-
 export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
     getIndexedChildren: () => Node[];
     write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
@@ -195,7 +170,7 @@ export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extend
 }
 
 /**
- * Glues together insertIntoBracesOrSourceFile and fillAndGetChildren.
+ * Glues together insertIntoBracesOrSourceFile and getRangeFromArray.
  * @param opts - Options to do this operation.
  */
 export function insertIntoBracesOrSourceFileWithGetChildren<TNode extends Node, TStructure>(
