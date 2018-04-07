@@ -2,8 +2,8 @@
 /node_modules
 /coverage
 /.vscode
-/code-generation
-/dist-cg
+/scripts
+/dist-scripts
 /dist/tests
 /src
 *.js.map
