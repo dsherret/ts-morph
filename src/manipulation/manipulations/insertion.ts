@@ -1,11 +1,12 @@
-import {ts, SyntaxKind} from "../../typescript";
+import CodeBlockWriter from "code-block-writer";
+import { ts, SyntaxKind } from "../../typescript";
 import {Node, SourceFile} from "../../compiler";
 import {StringUtils, TypeGuards} from "../../utils";
 import {InsertionTextManipulator} from "../textManipulators";
 import {isBlankLineAtPos} from "../textChecks";
 import {NodeHandlerFactory} from "../nodeHandlers";
 import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions, getInsertPosFromIndex} from "../helpers";
+import {verifyAndGetIndex, fillAndGetChildren, FillAndGetChildrenOptions, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;
@@ -115,7 +116,101 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
 }
 
-export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
+export interface InsertIntoBracesOrSourceFileOptionsNew<TStructure> {
+    parent: Node;
+    children: Node[];
+    index: number;
+    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
+}
+
+/**
+ * Used to insert non-comma separated nodes into braces or a source file.
+ */
+export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptionsNew<TStructure>) {
+    const {parent, index, children} = opts;
+    const fullText = parent.sourceFile.getFullText();
+    const insertPos = getInsertPosFromIndex(index, parent, children);
+    const endPos = getEndPosFromIndex(index, parent, children, fullText);
+    const replacingLength = endPos - insertPos;
+    const newText = getNewText();
+
+    doManipulation(parent.sourceFile, new InsertionTextManipulator({ insertPos, replacingLength, newText }), new NodeHandlerFactory().getForRange({
+        parent: parent.getChildSyntaxListOrThrow(),
+        start: insertPos,
+        end: insertPos + newText.length,
+        replacingLength
+    }));
+
+    function getNewText() {
+        // todo: make this configurable
+        const writer = parent.getWriterWithChildIndentation();
+        opts.write(writer, { previousMember: getChild(children[index - 1]), nextMember: getChild(children[index]) });
+        return writer.toString();
+
+        function getChild(child: Node | undefined) {
+            // ensure it passes the implementation
+            if (child == null)
+                return child;
+            else if (TypeGuards.isOverloadableNode(child))
+                return child.getImplementation() || child;
+            else
+                return child;
+        }
+    }
+}
+
+export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
+    getIndexedChildren: () => Node[];
+    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
+    // for child functions
+    expectedKind: SyntaxKind;
+    structures: TStructure[];
+    fillFunction?: (child: TNode, structure: TStructure) => void;
+    parent: Node;
+    index: number;
+}
+
+/**
+ * Glues together insertIntoBracesOrSourceFile and fillAndGetChildren.
+ * @param opts - Options to do this operation.
+ */
+export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends Node, TStructure>(
+    opts: InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode, TStructure>
+) {
+    if (opts.structures.length === 0)
+        return [];
+
+    const startChildren = opts.getIndexedChildren();
+    const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
+    const index = verifyAndGetIndex(opts.index, startChildren.length);
+    const childIndex = getChildIndex();
+
+    insertIntoBracesOrSourceFile({
+        parent: opts.parent,
+        index: getChildIndex(),
+        children: parentSyntaxList.getChildren(),
+        write: opts.write
+    });
+
+    return fillAndGetChildren<TNode, TStructure>({
+        sourceFile: opts.parent.sourceFile,
+        allChildren: opts.getIndexedChildren(),
+        index,
+        structures: opts.structures,
+        expectedKind: opts.expectedKind,
+        fillFunction: opts.fillFunction
+    });
+
+    function getChildIndex() {
+        if (index === 0)
+            return 0;
+
+        // get the previous member in order to get the implementation signature + 1
+        return startChildren[index - 1].getChildIndex() + 1;
+    }
+}
+
+export interface InsertIntoBracesOrSourceFileOptionsOld<TStructure> {
     parent: Node;
     children: Node[];
     index: number;
@@ -130,7 +225,8 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
 /**
  * Used to insert non-comma separated nodes into braces or a source file.
  */
-export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
+export function insertIntoBracesOrSourceFileOld<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptionsOld<TStructure>) {
+    // todo: REMOVE
     if (opts.childCodes.length === 0)
         return;
 
@@ -185,57 +281,5 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
             newText = newText + newLineChar;
 
         return newText;
-    }
-}
-
-export interface InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode extends Node, TStructure> {
-    getIndexedChildren: () => Node[];
-    // for child functions
-    sourceFile: SourceFile;
-    expectedKind: SyntaxKind;
-    structures: TStructure[];
-    fillFunction?: (child: TNode, structure: TStructure) => void;
-    parent: Node;
-    index: number;
-    childCodes: string[];
-    previousBlanklineWhen?: (previousMember: Node, firstStructure: TStructure) => boolean;
-    nextBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean;
-    separatorNewlineWhen?: (previousStructure: TStructure, nextStructure: TStructure) => boolean;
-}
-
-/**
- * Glues together insertIntoBracesOrSourceFile and fillAndGetChildren.
- * @param opts - Options to do this operation.
- */
-export function insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode extends Node, TStructure>(
-    opts: InsertIntoBracesOrSourceFileWithFillAndGetChildrenOptions<TNode, TStructure>
-) {
-    if (opts.structures.length === 0)
-        return [];
-
-    const startChildren = opts.getIndexedChildren();
-    const parentSyntaxList = opts.parent.getChildSyntaxListOrThrow();
-    const index = verifyAndGetIndex(opts.index, startChildren.length);
-    const childIndex = getChildIndex();
-
-    insertIntoBracesOrSourceFile({
-        ...opts,
-        children: parentSyntaxList.getChildren(),
-        separator: opts.sourceFile.global.manipulationSettings.getNewLineKindAsString(),
-        index: childIndex
-    } as InsertIntoBracesOrSourceFileOptions<TStructure>);
-
-    return fillAndGetChildren<TNode, TStructure>({
-        ...opts,
-        allChildren: opts.getIndexedChildren(),
-        index
-    } as FillAndGetChildrenOptions<TNode, TStructure>);
-
-    function getChildIndex() {
-        if (index === 0)
-            return 0;
-
-        // get the previous member in order to get the implementation signature + 1
-        return startChildren[index - 1].getChildIndex() + 1;
     }
 }

@@ -15,6 +15,18 @@ export class MethodDeclarationStructureToText extends StructureToText<MethodDecl
         super(writer);
     }
 
+    writeTexts(structures: MethodDeclarationStructure[]) {
+        for (let i = 0; i < structures.length; i++) {
+            if (i > 0) {
+                if (this.opts.isAmbient)
+                    this.writer.newLine();
+                else
+                    this.writer.blankLine();
+            }
+            this.writeText(structures[i]);
+        }
+    }
+
     writeText(structure: MethodDeclarationStructure) {
         this.jsDocWriter.writeDocs(structure.docs);
         this.modifierWriter.writeText(structure);

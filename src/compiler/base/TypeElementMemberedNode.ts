@@ -1,4 +1,5 @@
-﻿import {ts, SyntaxKind} from "../../typescript";
+﻿import CodeBlockWriter from "code-block-writer";
+import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
 import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren} from "../../manipulation";
@@ -242,27 +243,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertConstructSignatures(index, [structure])[0];
         }
 
-        insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]) {
-            const indentationText = this.getChildIndentationText();
-
-            // create code
-            const codes = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
-                const structureToText = new structureToTexts.ConstructSignatureDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
-
-            return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
-                getIndexedChildren: () => this.getMembers(),
-                sourceFile: this.getSourceFile(),
-                parent: this,
+        insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[] {
+            return insertChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
+                thisNode: this,
                 index,
-                childCodes: codes,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                fillFunction: (node, structure) => node.fill(structure)
+                createStructureToText: writer => new structureToTexts.ConstructSignatureDeclarationStructureToText(writer)
             });
         }
 
@@ -291,27 +278,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertCallSignatures(index, [structure])[0];
         }
 
-        insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]) {
-            const indentationText = this.getChildIndentationText();
-
-            // create code
-            const codes = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
-                const structureToText = new structureToTexts.CallSignatureDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
-
-            return insertIntoBracesOrSourceFileWithFillAndGetChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
-                getIndexedChildren: () => this.getMembers(),
-                sourceFile: this.getSourceFile(),
-                parent: this,
+        insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[] {
+            return insertChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
+                thisNode: this,
                 index,
-                childCodes: codes,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                fillFunction: (node, structure) => node.fill(structure)
+                createStructureToText: writer => new structureToTexts.CallSignatureDeclarationStructureToText(writer)
             });
         }
 
@@ -340,27 +313,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertIndexSignatures(index, [structure])[0];
         }
 
-        insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]) {
-            const indentationText = this.getChildIndentationText();
-
-            // create code
-            const codes = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
-                const structureToText = new structureToTexts.IndexSignatureDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
-
-            return insertIntoBracesOrSourceFileWithFillAndGetChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
-                getIndexedChildren: () => this.getMembers(),
-                sourceFile: this.getSourceFile(),
-                parent: this,
+        insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[] {
+            return insertChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
+                thisNode: this,
                 index,
-                childCodes: codes,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                fillFunction: (node, structure) => node.fill(structure)
+                createStructureToText: writer => new structureToTexts.IndexSignatureDeclarationStructureToText(writer)
             });
         }
 
@@ -389,28 +348,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: MethodSignatureStructure[]) {
-            const indentationText = this.getChildIndentationText();
-
-            // create code
-            const codes = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
-                const structureToText = new structureToTexts.MethodSignatureStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
-
-            // insert, fill, and get created nodes
-            return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodSignature, MethodSignatureStructure>({
-                getIndexedChildren: () => this.getMembers(),
-                sourceFile: this.getSourceFile(),
-                parent: this,
+        insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[] {
+            return insertChildren<MethodSignature, MethodSignatureStructure>({
+                thisNode: this,
                 index,
-                childCodes: codes,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                fillFunction: (node, structure) => node.fill(structure)
+                createStructureToText: writer => new structureToTexts.MethodSignatureStructureToText(writer)
             });
         }
 
@@ -440,27 +384,13 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: PropertySignatureStructure[]) {
-            const indentationText = this.getChildIndentationText();
-
-            // create code
-            const codes = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriterWithChildIndentation();
-                const structureToText = new structureToTexts.PropertySignatureStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
-            });
-
-            return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertySignature, PropertySignatureStructure>({
-                getIndexedChildren: () => this.getMembers(),
-                sourceFile: this.getSourceFile(),
-                parent: this,
+        insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[] {
+            return insertChildren<PropertySignature, PropertySignatureStructure>({
+                thisNode: this,
                 index,
-                childCodes: codes,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                fillFunction: (node, structure) => node.fill(structure)
+                createStructureToText: writer => new structureToTexts.PropertySignatureStructureToText(writer)
             });
         }
 
@@ -499,4 +429,25 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this;
         }
     };
+}
+
+function insertChildren<TNode extends Node & { fill(structure: TStructure): void; }, TStructure>(opts: {
+    thisNode: Node & TypeElementMemberedNode,
+    index: number;
+    structures: TStructure[];
+    expectedKind: SyntaxKind;
+    createStructureToText: (writer: CodeBlockWriter) => ({ writeTexts(structures: TStructure[]): void; });
+}): TNode[] {
+    return insertIntoBracesOrSourceFileWithFillAndGetChildren<TNode, TStructure>({
+        getIndexedChildren: () => opts.thisNode.getMembers(),
+        parent: opts.thisNode,
+        index: opts.index,
+        structures: opts.structures,
+        expectedKind: opts.expectedKind,
+        fillFunction: (node, struct) => node.fill(struct),
+        write: (writer, info) => {
+            writer.newLineIfLastNot();
+            opts.createStructureToText(writer).writeTexts(opts.structures);
+        }
+    });
 }

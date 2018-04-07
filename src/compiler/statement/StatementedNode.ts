@@ -5,7 +5,7 @@ import * as errors from "../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "../../structures";
 import * as structureToTexts from "../../structureToTexts";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFile, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "../../manipulation";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFileOld, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
@@ -747,6 +747,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]) {
+            structures = structures.map(s => ({ ...s }));
             const texts = structures.map(s => {
                 // todo: pass in the StructureToText to the function below
                 const writer = this.getWriter();
@@ -756,6 +757,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             });
             const newChildren = this._insertMainChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>(
                 index, texts, structures, SyntaxKind.TypeAliasDeclaration, (child, i) => {
+                    delete structures[i].type;
                     child.fill(structures[i]);
                 }, {
                     previousBlanklineWhen: previousMember => !TypeGuards.isTypeAliasDeclaration(previousMember),
@@ -934,7 +936,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             // insert
             const doBlankLine = () => true;
-            insertIntoBracesOrSourceFile<TStructure>({
+            insertIntoBracesOrSourceFileOld<TStructure>({
                 parent: this as any as Node,
                 children: mainChildren,
                 index,

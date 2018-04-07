@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
-import {insertIntoParentTextRange, getEndIndexFromArray, insertIntoBracesOrSourceFileWithFillAndGetChildren,
-    verifyAndGetIndex} from "../../manipulation";
+import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, fillAndGetChildren,
+    insertIntoBracesOrSourceFileWithFillAndGetChildren} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
@@ -149,22 +149,24 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         for (const c of this.getConstructors())
             c.remove();
 
-        const writer = this.getWriterWithChildIndentation();
-        const structureToText = new structureToTexts.ConstructorDeclarationStructureToText(writer);
-        structureToText.writeText(structure);
-        const code = writer.toString();
+        const isAmbient = this.isAmbient();
 
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
-            sourceFile: this.getSourceFile(),
             parent: this,
             index,
-            childCodes: [code],
             structures: [structure],
-            previousBlanklineWhen: () => true,
-            nextBlanklineWhen: () => true,
             expectedKind: SyntaxKind.Constructor,
-            fillFunction: (node, struct) => node.fill(struct)
+            fillFunction: (node, struct) => node.fill(struct),
+            write: (writer, info) => {
+                if (!isAmbient && info.previousMember != null)
+                    writer.blankLineIfLastNot();
+                else
+                    writer.newLineIfLastNot();
+                new structureToTexts.ConstructorDeclarationStructureToText(writer, { isAmbient }).writeText(structure);
+                if (!isAmbient && info.nextMember != null)
+                    writer.newLineIfLastNot();
+            }
         })[0];
     }
 
@@ -206,29 +208,22 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-
-        // create code
-        const codes = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = new structureToTexts.GetAccessorDeclarationStructureToText(writer);
-            structureToText.writeText(s);
-            return writer.toString();
-        });
-
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
-            sourceFile: this.getSourceFile(),
             parent: this,
             index,
-            childCodes: codes,
             structures,
-            previousBlanklineWhen: () => true,
-            separatorNewlineWhen: () => true,
-            nextBlanklineWhen: () => true,
             expectedKind: SyntaxKind.GetAccessor,
-            fillFunction: (node, structure) => node.fill(structure)
+            fillFunction: (node, struct) => node.fill(struct),
+            write: (writer, info) => {
+                if (info.previousMember != null)
+                    writer.blankLineIfLastNot();
+                else
+                    writer.newLineIfLastNot();
+                new structureToTexts.GetAccessorDeclarationStructureToText(writer).writeTexts(structures);
+                if (info.nextMember != null)
+                    writer.newLineIfLastNot();
+            }
         });
     }
 
@@ -263,30 +258,22 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
-
-        // create code
-        const codes = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = new structureToTexts.SetAccessorDeclarationStructureToText(writer);
-            structureToText.writeText(s);
-            return writer.toString();
-        });
-
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
-            sourceFile: this.getSourceFile(),
             parent: this,
             index,
-            childCodes: codes,
             structures,
-            previousBlanklineWhen: () => true,
-            separatorNewlineWhen: () => true,
-            nextBlanklineWhen: () => true,
             expectedKind: SyntaxKind.SetAccessor,
-            fillFunction: (node, structure) => node.fill(structure)
+            fillFunction: (node, struct) => node.fill(struct),
+            write: (writer, info) => {
+                if (info.previousMember != null)
+                    writer.blankLineIfLastNot();
+                else
+                    writer.newLineIfLastNot();
+                new structureToTexts.SetAccessorDeclarationStructureToText(writer).writeTexts(structures);
+                if (info.nextMember != null)
+                    writer.newLineIfLastNot();
+            }
         });
     }
 
@@ -321,28 +308,22 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertyDeclarationStructure[]) {
-        const indentationText = this.getChildIndentationText();
-
-        // create code
-        const codes = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = new structureToTexts.PropertyDeclarationStructureToText(writer);
-            structureToText.writeText(s);
-            return writer.toString();
-        });
-
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
-            sourceFile: this.getSourceFile(),
             parent: this,
             index,
-            childCodes: codes,
             structures,
-            previousBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
-            nextBlanklineWhen: n => TypeGuards.isBodyableNode(n) || TypeGuards.isBodiedNode(n),
             expectedKind: SyntaxKind.PropertyDeclaration,
-            fillFunction: (node, structure) => node.fill(structure)
+            fillFunction: (node, struct) => node.fill(struct),
+            write: (writer, info) => {
+                if (info.previousMember != null && TypeGuards.hasBody(info.previousMember))
+                    writer.blankLineIfLastNot();
+                else
+                    writer.newLineIfLastNot();
+                new structureToTexts.PropertyDeclarationStructureToText(writer).writeTexts(structures);
+                if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
+                    writer.newLineIfLastNot();
+            }
         });
     }
 
@@ -577,26 +558,21 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         const isAmbient = this.isAmbient();
         structures = structures.map(s => ({...s}));
 
-        // create code
-        const codes = structures.map(s => {
-            // todo: pass in the StructureToText to the function below
-            const writer = this.getWriterWithChildIndentation();
-            const structureToText = new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient });
-            structureToText.writeText(s);
-            return writer.toString();
-        });
-
         // insert, fill, and get created nodes
         return insertIntoBracesOrSourceFileWithFillAndGetChildren<MethodDeclaration, MethodDeclarationStructure>({
-            getIndexedChildren: () => this.getMembers(),
-            sourceFile: this.getSourceFile(),
             parent: this,
             index,
-            childCodes: codes,
+            getIndexedChildren: () => this.getMembers(),
+            write: (writer, info) => {
+                if (!isAmbient && info.previousMember != null)
+                    writer.blankLineIfLastNot();
+                else
+                    writer.newLineIfLastNot();
+                new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient }).writeTexts(structures);
+                if (!isAmbient && info.nextMember != null)
+                    writer.newLineIfLastNot();
+            },
             structures,
-            previousBlanklineWhen: () => !isAmbient,
-            nextBlanklineWhen: () => !isAmbient,
-            separatorNewlineWhen: () => !isAmbient,
             expectedKind: SyntaxKind.MethodDeclaration,
             fillFunction: (node, structure) => {
                 // todo: remove filling when writing

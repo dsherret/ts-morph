@@ -5,6 +5,14 @@ import {ModifierableNodeStructureToText} from "../base";
 export class PropertyDeclarationStructureToText extends StructureToText<PropertyDeclarationStructure> {
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);
 
+    writeTexts(structures: PropertyDeclarationStructure[]) {
+        for (let i = 0; i < structures.length; i++) {
+            if (i > 0)
+                this.writer.newLine();
+            this.writeText(structures[i]);
+        }
+    }
+
     writeText(structure: PropertyDeclarationStructure) {
         this.modifierWriter.writeText(structure);
         this.writer.write(structure.name);

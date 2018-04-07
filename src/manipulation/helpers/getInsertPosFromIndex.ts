@@ -1,6 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Node} from "../../compiler";
 import {TypeGuards} from "../../utils";
+import {getPosAtEndOfPreviousLineOrNonWhitespace} from "../textSeek";
 
 /**
  * Gets the insert pos from an index.
@@ -21,6 +22,28 @@ export function getInsertPosFromIndex(index: number, parent: Node, children: Nod
     }
 
     return children[index - 1].getEnd();
+}
+
+export function getEndPosFromIndex(index: number, parent: Node, children: Node[], fullText: string) {
+    let endPos: number;
+    if (index === children.length) {
+        if (TypeGuards.isSourceFile(parent))
+            endPos = parent.getEnd();
+        else if (TypeGuards.isCaseClause(parent) || TypeGuards.isDefaultClause(parent))
+            endPos = parent.getEnd();
+        else {
+            const parentContainer = getParentContainer(parent);
+            const closeBraceToken = parentContainer.getLastChildByKind(SyntaxKind.CloseBraceToken);
+            if (closeBraceToken == null)
+                endPos = parent.getEnd();
+            else
+                endPos = closeBraceToken.getNonWhitespaceStart();
+        }
+    }
+    else
+        endPos = children[index].getNonWhitespaceStart();
+
+    return getPosAtEndOfPreviousLineOrNonWhitespace(fullText, endPos);
 }
 
 function getParentContainer(parent: Node) {
