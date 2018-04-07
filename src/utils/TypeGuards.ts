@@ -38,6 +38,17 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node has a body.
+     * @param node - Node to check.
+     */
+    static hasBody(node: compiler.Node): node is compiler.Node & { getBody(): compiler.Node; } {
+        // this method is manually maintained
+        if ((node as any).getBody == null)
+            return false;
+        return (node as any).getBody() != null;
+    }
+
+    /**
      * Gets if the node is an AbstractableNode.
      * @param node - Node to check.
      */
