@@ -2,12 +2,16 @@ import {ts, SyntaxKind} from "../../../typescript";
 import {Constructor} from "../../../Constructor";
 import * as errors from "../../../errors";
 import {Node, Identifier} from "../../common";
+import {ReferenceFindableNode} from "./ReferenceFindableNode";
 
 // todo: consolidate these named classes somehow
 
 export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.BindingName; }>;
 
-export interface BindingNamedNode {
+export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export interface BindingNamedNodeSpecific {
     /**
      * Gets the declaration's name node.
      */
@@ -24,7 +28,11 @@ export interface BindingNamedNode {
 }
 
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
-    return class extends Base implements BindingNamedNode {
+    return BindingNamedNodeInternal(ReferenceFindableNode(Base));
+}
+
+function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNodeSpecific> & T {
+    return class extends Base implements BindingNamedNodeSpecific {
         getNameNode() {
             const compilerNameNode = this.compilerNode.name;
 

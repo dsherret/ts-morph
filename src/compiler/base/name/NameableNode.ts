@@ -7,10 +7,14 @@ import {StringUtils, TypeGuards} from "../../../utils";
 import {Node, Identifier} from "../../common";
 import {ReferencedSymbol} from "../../tools";
 import {callBaseFill} from "../../callBaseFill";
+import {ReferenceFindableNode} from "./ReferenceFindableNode";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 
-export interface NameableNode {
+export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode {
+}
+
+export interface NameableNodeSpecific {
     /**
      * Gets the name node if it exists.
      */
@@ -32,18 +36,14 @@ export interface NameableNode {
      * @param newName - New name.
      */
     rename(newName: string): this;
-    /**
-     * Finds the references of the node.
-     */
-    findReferences(): ReferencedSymbol[];
-    /**
-     * Gets the nodes that reference the node.
-     */
-    getReferencingNodes(): Node[];
 }
 
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
-    return class extends Base implements NameableNode {
+    return NameableNodeInternal(ReferenceFindableNode(Base));
+}
+
+function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNodeSpecific> & T {
+    return class extends Base implements NameableNodeSpecific {
         getNameNode() {
             return this.getNodeFromCompilerNodeIfExists<Identifier>(this.compilerNode.name);
         }
@@ -89,20 +89,6 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             return this;
         }
 
-        findReferences() {
-            const nameNode = this.getNameNode();
-            if (nameNode != null)
-                return nameNode.findReferences();
-            return this.global.languageService.findReferences(getNodeForReferences(this));
-        }
-
-        getReferencingNodes() {
-            const nameNode = this.getNameNode();
-            if (nameNode != null)
-                return nameNode.getDefinitionReferencingNodes();
-            return this.global.languageService.getDefinitionReferencingNodes(getNodeForReferences(this));
-        }
-
         fill(structure: Partial<NameableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
@@ -112,10 +98,4 @@ export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(B
             return this;
         }
     };
-}
-
-function getNodeForReferences(node: Node) {
-    if (TypeGuards.isExportableNode(node))
-        return node.getDefaultKeyword() || node;
-    return node;
 }

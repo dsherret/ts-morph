@@ -38,6 +38,7 @@
     "@types/node": "^6.0.48",
     "@types/object-assign": "^4.0.30",
     "chai": "^3.5.0",
+    "conditional-type-checks": "^0.5.0",
     "coveralls": "^2.13.1",
     "del": "^2.0.2",
     "gulp": "^3.9.1",
@@ -55,7 +56,7 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "^6.7.2",
+    "code-block-writer": "^6.10.0",
     "glob-parent": "^3.1.0",
     "globby": "^6.1.0",
     "is-negated-glob": "^1.0.0",
