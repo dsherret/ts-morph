@@ -57,6 +57,10 @@ describe(nameof(StatementedNode), () => {
                 "function func(p1, p2) {\n}\n");
         });
 
+        it("should insert with only a body text", () => {
+            doTest("", 0, [{ name: "func", bodyText: "console.log('testing');" }], "function func() {\n    console.log('testing');\n}\n");
+        });
+
         it("should insert all the properties of the structure", () => {
             const structure: MakeRequired<FunctionDeclarationStructure> = {
                 docs: [{ description: "Test" }],

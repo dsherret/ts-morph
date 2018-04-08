@@ -21,7 +21,8 @@ export class BodyTextStructurePrinter extends StructurePrinter<BodyTextStructure
         const newWriter = new CodeBlockWriter(this.writer.getOptions());
         this.printTextOrWriterFunc((structure as BodyableNodeStructure).bodyText, newWriter);
         if (newWriter.getLength() > 0) {
-            this.writer.blankLineIfLastNot();
+            if (!this.writer.isAtStartOfFirstLineOfBlock())
+                this.writer.blankLineIfLastNot();
             this.writer.write(newWriter.toString());
         }
     }
