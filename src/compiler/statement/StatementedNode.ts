@@ -592,27 +592,22 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertFunctions(index, [structure])[0];
         }
 
-        insertFunctions(index: number, structures: FunctionDeclarationStructure[]) {
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.FunctionDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+        insertFunctions(index: number, structures: FunctionDeclarationStructure[]): FunctionDeclaration[] {
+            return insertChildren<FunctionDeclaration, FunctionDeclarationStructure>(this, {
+                expectedKind: SyntaxKind.FunctionDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.FunctionDeclarationStructureToText(writer).writeTexts(structures);
+                    }, {
+                        previousNewLine: previousMember =>
+                            structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
+                        nextNewLine: nextMember =>
+                            structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
+                    });
+                }
             });
-            const newChildren = this._insertMainChildren<FunctionDeclaration, FunctionDeclarationStructure>(index, texts, structures, SyntaxKind.FunctionDeclaration,
-                (child, i) => {
-                    // todo: remove filling when writing
-                    const params = structures[i].parameters;
-                    delete structures[i].parameters;
-                    child.fill(structures[i]);
-                }, {
-                    previousBlanklineWhen: (previousMember, firstStructure) => !firstStructure.hasDeclareKeyword || hasBody(previousMember),
-                    separatorNewlineWhen: (previousStructure, nextStructure) => !previousStructure.hasDeclareKeyword || !nextStructure.hasDeclareKeyword,
-                    nextBlanklineWhen: (nextMember, lastStructure) => !lastStructure.hasDeclareKeyword || hasBody(nextMember)
-                });
-
-            return newChildren;
         }
 
         getFunctions(): FunctionDeclaration[] {
@@ -748,9 +743,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     standardWrite(writer, info, () => {
                         new structureToTexts.TypeAliasDeclarationStructureToText(writer).writeTexts(structures);
                     }, {
-                            previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
-                            nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
-                        });
+                        previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
+                    });
                 }
             });
         }

@@ -56,6 +56,36 @@ describe(nameof(StatementedNode), () => {
             doTest("", 0, [{ name: "func", parameters: [{ name: "p1" }, { name: "p2" }] }],
                 "function func(p1, p2) {\n}\n");
         });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<FunctionDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                name: "f",
+                parameters: [{ name: "param" }],
+                overloads: [{}],
+                isAsync: true,
+                isGenerator: true,
+                returnType: "string",
+                typeParameters: [{ name: "T" }],
+                hasDeclareKeyword: false,
+                isDefaultExport: false,
+                isExported: true,
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+
+            doTest("", 0, [structure],
+                "export function f();\n/**\n * Test\n */\nexport async function* f<T>(param): string {\n" +
+                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
+                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
+                "    console.log('here');\n" +
+                "}\n");
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertFunction), () => {
