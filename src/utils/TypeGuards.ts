@@ -1403,7 +1403,13 @@ export class TypeGuards {
      * @param node - Node to check.
      */
     static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
-        return node.getKind() === SyntaxKind.FunctionExpression;
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.FunctionExpression:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -1412,7 +1418,6 @@ export class TypeGuards {
      */
     static isNamedNode(node: compiler.Node): node is compiler.NamedNode & compiler.Node {
         switch (node.getKind()) {
-            case SyntaxKind.ClassDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
@@ -1743,6 +1748,41 @@ export class TypeGuards {
             case SyntaxKind.Parameter:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.PropertySignature:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a ReferenceFindableNode.
+     * @param node - Node to check.
+     */
+    static isReferenceFindableNode(node: compiler.Node): node is compiler.ReferenceFindableNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeParameter:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
             default:
                 return false;

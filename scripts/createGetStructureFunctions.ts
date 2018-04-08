@@ -16,7 +16,7 @@ import {Structure} from "./inspectors";
 // todo: a lot of this code was written before this library supported manipulation
 
 export function createGetStructureFunctions(structures: Structure[]) {
-    const writer = new CodeBlockWriter();
+    const writer = new CodeBlockWriter({ newLine: "\r\n" });
 
     writer.writeLine("/* tslint:disable */");
     writer.writeLine("// DO NOT MANUALLY EDIT!! File generated via: npm run code-generate").newLine();

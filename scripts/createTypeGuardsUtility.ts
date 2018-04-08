@@ -83,7 +83,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         return ArrayUtils.sortByProperty(methodInfos.getValuesAsArray(), info => info.name);
 
         function fillBase(node: WrappedNode, nodeBase: WrappedNode) {
-            if (nodeBase.getName() === "Node")
+            if (!isAllowedName(nodeBase.getName()))
                 return;
             const nodeBaseBase = nodeBase.getBase();
             if (nodeBaseBase != null)
@@ -95,6 +95,8 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
 
         function fillMixinable(node: WrappedNode, mixinable: WrappedNode | Mixin) {
             for (const mixin of mixinable.getMixins()) {
+                if (!isAllowedName(mixin.getName()))
+                    continue;
                 getMethodInfoForMixin(mixin).syntaxKinds.push(...getSyntaxKindsForName(node.getName()));
                 fillMixinable(node, mixin);
             }
@@ -135,6 +137,12 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
             return nodeToWrapperVM.syntaxKindNames;
         }
     }
+}
+
+function isAllowedName(name: string) {
+    if (name === "Node" || name.endsWith("Specific"))
+        return false;
+    return true;
 }
 
 function isAllowedClass(name: string) {

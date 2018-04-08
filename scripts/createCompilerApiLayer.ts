@@ -85,7 +85,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             writer.write("ObjectUtils.assign((ts as any), tsCompiler);");
         });
 
-        sourceFile.replaceWithText(sourceFile.getFullText().replace(/\r?\n/g, "\r\n").replace(/(\r\n)+$/, "\r\n"));
+        sourceFile.replaceWithText(sourceFile.getFullText().replace(/ *\r?\n/g, "\r\n").replace(/(\r\n)+$/, "\r\n"));
 
         function addSeparatedDeclarations() {
             for (const enumDec of allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0))

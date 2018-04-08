@@ -696,12 +696,12 @@ export namespace ts {
      */
     export interface Iterator<T> {
         next(): {
-                value: T;
-                done: false;
-            } | {
-                value: never;
-                done: true;
-            };
+                    value: T;
+                    done: false;
+                } | {
+                    value: never;
+                    done: true;
+                };
     }
 
     /**
@@ -1882,8 +1882,8 @@ export namespace ts {
     export interface JSDocAugmentsTag extends JSDocTag {
         kind: SyntaxKind.JSDocAugmentsTag;
         class: ExpressionWithTypeArguments & {
-                expression: Identifier | PropertyAccessEntityNameExpression;
-            };
+                    expression: Identifier | PropertyAccessEntityNameExpression;
+                };
     }
 
     export interface JSDocClassTag extends JSDocTag {
@@ -2173,8 +2173,8 @@ export namespace ts {
          * Note that the resulting nodes cannot be checked.
          */
         signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration?: Node, flags?: NodeBuilderFlags): SignatureDeclaration & {
-                typeArguments?: NodeArray<TypeNode>;
-            } | undefined;
+                    typeArguments?: NodeArray<TypeNode>;
+                } | undefined;
         /**
          * Note that the resulting nodes cannot be checked.
          */
