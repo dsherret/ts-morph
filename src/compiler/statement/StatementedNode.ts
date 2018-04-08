@@ -739,26 +739,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertTypeAliases(index, [structure])[0];
         }
 
-        insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]) {
-            structures = structures.map(s => ({ ...s }));
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.TypeAliasDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+        insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[] {
+            return insertChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>(this, {
+                expectedKind: SyntaxKind.TypeAliasDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.TypeAliasDeclarationStructureToText(writer).writeTexts(structures);
+                    }, {
+                            previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
+                            nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
+                        });
+                }
             });
-            const newChildren = this._insertMainChildren<TypeAliasDeclaration, TypeAliasDeclarationStructure>(
-                index, texts, structures, SyntaxKind.TypeAliasDeclaration, (child, i) => {
-                    delete structures[i].type;
-                    child.fill(structures[i]);
-                }, {
-                    previousBlanklineWhen: previousMember => !TypeGuards.isTypeAliasDeclaration(previousMember),
-                    separatorNewlineWhen: () => false,
-                    nextBlanklineWhen: nextMember => !TypeGuards.isTypeAliasDeclaration(nextMember)
-                });
-
-            return newChildren;
         }
 
         getTypeAliases(): TypeAliasDeclaration[] {
@@ -805,26 +799,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertVariableStatements(index, [structure])[0];
         }
 
-        insertVariableStatements(index: number, structures: VariableStatementStructure[]) {
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.VariableStatementStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+        insertVariableStatements(index: number, structures: VariableStatementStructure[]): VariableStatement[] {
+            return insertChildren<VariableStatement, VariableStatementStructure>(this, {
+                expectedKind: SyntaxKind.VariableStatement,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.VariableStatementStructureToText(writer).writeTexts(structures);
+                    }, {
+                        previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
+                    });
+                }
             });
-            const newChildren = this._insertMainChildren<VariableStatement>(index, texts, structures, SyntaxKind.VariableStatement, (child, i) => {
-                const structure = {...structures[i]};
-                delete structure.declarations;
-                delete structure.declarationKind;
-                child.fill(structure);
-            }, {
-                previousBlanklineWhen: previousMember => !TypeGuards.isVariableStatement(previousMember),
-                separatorNewlineWhen: () => false,
-                nextBlanklineWhen: nextMember => !TypeGuards.isVariableStatement(nextMember)
-            });
-
-            return newChildren;
         }
 
         /* Variable declarations */
@@ -910,6 +898,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 nextBlanklineWhen?: (nextMember: Node, lastStructure: TStructure) => boolean
             } = {}
         ) {
+            // todo: REMOVE THIS!
             const syntaxList = this.getChildSyntaxListOrThrow();
             const mainChildren = syntaxList.getChildren();
             const newLineChar = this.global.manipulationSettings.getNewLineKindAsString();
@@ -964,15 +953,25 @@ function insertChildren<TNode extends Node, TStructure>(node: Node & Statemented
     });
 }
 
-function standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void) {
-    if (info.previousMember != null)
+interface StandardWriteOptions {
+    previousNewLine?: (previousMember: Node) => void;
+    nextNewLine?: (nextMember: Node) => void;
+}
+
+function standardWrite(
+    writer: CodeBlockWriter,
+    info: InsertIntoBracesOrSourceFileOptionsWriteInfo,
+    writeStructures: () => void,
+    opts: StandardWriteOptions = {}
+) {
+    if (info.previousMember != null && (opts.previousNewLine == null || !opts.previousNewLine(info.previousMember)))
         writer.blankLine();
     else if (!info.isStartOfFile)
         writer.newLine();
 
     writeStructures();
 
-    if (info.nextMember != null)
+    if (info.nextMember != null && (opts.nextNewLine == null || !opts.nextNewLine(info.nextMember)))
         writer.blankLine();
     else
         writer.newLine();

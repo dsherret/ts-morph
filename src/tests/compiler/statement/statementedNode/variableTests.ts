@@ -1,6 +1,6 @@
 ﻿import {expect} from "chai";
 import {StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationKind} from "../../../../compiler";
-import {VariableStatementStructure} from "../../../../structures";
+import {VariableStatementStructure, VariableDeclarationStructure} from "../../../../structures";
 import {getInfoFromText} from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
@@ -58,6 +58,25 @@ describe(nameof(StatementedNode), () => {
             namespaceDec.insertVariableStatements(0, [{ declarations: [{ name: "Identifier" }] }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {\n    let Identifier;\n}\n");
+        });
+
+        it("should insert everything from the structure", () => {
+            const varStructure: MakeRequired<VariableDeclarationStructure> = {
+                hasExclamationToken: true,
+                name: "v",
+                initializer: "5",
+                type: "number"
+            };
+            const structure: MakeRequired<VariableStatementStructure> = {
+                docs: [{ description: "Testing" }],
+                hasDeclareKeyword: false,
+                declarationKind: VariableDeclarationKind.Var,
+                declarations: [varStructure],
+                isDefaultExport: false,
+                isExported: true
+            };
+            const expectedText = "/**\n * Testing\n */\nexport var v!: number = 5;\n";
+            doTest("", 0, [structure], expectedText);
         });
     });
 

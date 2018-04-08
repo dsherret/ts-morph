@@ -54,6 +54,20 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("namespace Identifier {\n    type Identifier = string;\n}\n");
         });
+
+        it("should insert everything from the structure", () => {
+            const structure: MakeRequired<TypeAliasDeclarationStructure> = {
+                docs: [{ description: "Testing" }],
+                hasDeclareKeyword: false,
+                name: "Name",
+                type: "number",
+                isDefaultExport: false,
+                isExported: true,
+                typeParameters: [{ name: "T" }]
+            };
+            const expectedText = "/**\n * Testing\n */\nexport type Name<T> = number;\n";
+            doTest("", 0, [structure], expectedText);
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertTypeAlias), () => {

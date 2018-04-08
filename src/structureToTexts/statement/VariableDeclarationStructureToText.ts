@@ -7,6 +7,7 @@ export class VariableDeclarationStructureToText extends StructureToText<Variable
 
     writeText(structure: VariableDeclarationStructure) {
         this.writer.write(structure.name);
+        this.writer.conditionalWrite(structure.hasExclamationToken, "!");
         if (structure.type != null)
             this.writer.write(": " + structure.type);
         if (structure.initializer != null)
