@@ -1,7 +1,7 @@
-﻿import {NamedNodeStructure} from "../base";
-import {JsxAttributeStructure} from "./JsxAttributeStructure";
+﻿import {JsxAttributeStructure} from "./JsxAttributeStructure";
 
-export interface JsxElementStructure extends NamedNodeStructure {
+export interface JsxElementStructure {
+    name: string;
     attributes?: JsxAttributeStructure[];
     isSelfClosing?: boolean;
     children?: JsxElementStructure[];
