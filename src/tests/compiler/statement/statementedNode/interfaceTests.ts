@@ -45,6 +45,31 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    interface Identifier {\n    }\n}\n");
         });
+
+        it("should insert everything in a structure", () => {
+            const structure: MakeRequired<InterfaceDeclarationStructure> = {
+                name: "I",
+                docs: [{ description: "Test" }],
+                extends: ["IBase", "IBase2"],
+                hasDeclareKeyword: false,
+                isDefaultExport: true,
+                isExported: true,
+                typeParameters: [{ name: "T" }],
+                callSignatures: [{}],
+                constructSignatures: [{}],
+                indexSignatures: [{ returnType: "string" }],
+                properties: [{ name: "p" }],
+                methods: [{ name: "m" }]
+            };
+            const expectedText = "/**\n * Test\n */\nexport default interface I<T> extends IBase, IBase2 {\n" +
+                "    (): void;\n" +
+                "    new();\n" +
+                "    [key: string]: string;\n" +
+                "    p;\n" +
+                "    m();\n" +
+                "}\n";
+            doTest("", 0, [structure], expectedText);
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertInterface), () => {

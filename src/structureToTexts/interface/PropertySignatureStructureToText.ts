@@ -2,18 +2,16 @@
 import {PropertySignatureStructure} from "../../structures";
 import {StructureToText} from "../StructureToText";
 import {ModifierableNodeStructureToText} from "../base";
+import {NewLineFormattingStructuresToText} from "../formatting";
 import {JSDocStructureToText} from "../doc";
 
 export class PropertySignatureStructureToText extends StructureToText<PropertySignatureStructure> {
     private readonly jsDocWriter = new JSDocStructureToText(this.writer);
     private readonly modifierableWriter = new ModifierableNodeStructureToText(this.writer);
+    private readonly multipleWriter = new NewLineFormattingStructuresToText(this.writer, this);
 
-    writeTexts(structures: PropertySignatureStructure[]) {
-        for (let i = 0; i < structures.length; i++) {
-            if (i > 0)
-                this.writer.newLine();
-            this.writeText(structures[i]);
-        }
+    writeTexts(structures: PropertySignatureStructure[] | undefined) {
+        this.multipleWriter.writeText(structures);
     }
 
     writeText(structure: PropertySignatureStructure) {

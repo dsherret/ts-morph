@@ -2,15 +2,21 @@
 import * as errors from "../../errors";
 import {ImportDeclarationStructure, ImportSpecifierStructure} from "../../structures";
 import {SupportedFormatCodeSettings} from "../../options";
+import {NewLineFormattingStructuresToText} from "../formatting";
 import {StructureToText} from "../StructureToText";
 import {NamedImportExportSpecifierStructureToText} from "./NamedImportExportSpecifierStructureToText";
 
 export class ImportDeclarationStructureToText extends StructureToText<ImportDeclarationStructure> {
     private readonly namedImportExportSpecifierStructureToText: NamedImportExportSpecifierStructureToText;
+    private readonly multipleWriter = new NewLineFormattingStructuresToText(this.writer, this);
 
     constructor(writer: CodeBlockWriter, private readonly formatSettings: SupportedFormatCodeSettings) {
         super(writer);
         this.namedImportExportSpecifierStructureToText = new NamedImportExportSpecifierStructureToText(writer, formatSettings);
+    }
+
+    writeTexts(structures: ImportDeclarationStructure[] | undefined) {
+        this.multipleWriter.writeText(structures);
     }
 
     writeText(structure: ImportDeclarationStructure) {

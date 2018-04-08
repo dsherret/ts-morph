@@ -460,19 +460,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]) {
-        const texts = structures.map(structure => {
-            // todo: pass the StructureToText to the method below
-            const writer = this.getWriter();
-            const structureToText = new ImportDeclarationStructureToText(writer, this.global.getFormatCodeSettings());
-            structureToText.writeText(structure);
-            return writer.toString();
-        });
-
-        return this._insertMainChildren<ImportDeclaration>(index, texts, structures, SyntaxKind.ImportDeclaration, undefined, {
-            previousBlanklineWhen: previousMember => !(TypeGuards.isImportDeclaration(previousMember)),
-            nextBlanklineWhen: nextMember => !(TypeGuards.isImportDeclaration(nextMember)),
-            separatorNewlineWhen: () => false
+    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[] {
+        return this._insertChildren<ImportDeclaration, ImportDeclarationStructure>({
+            expectedKind: SyntaxKind.ImportDeclaration,
+            index,
+            structures,
+            write: (writer, info) => {
+                this._standardWrite(writer, info, () => {
+                    new ImportDeclarationStructureToText(writer, this.global.getFormatCodeSettings()).writeTexts(structures);
+                }, {
+                    previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember),
+                    nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
+                });
+            }
         });
     }
 
@@ -531,19 +531,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]) {
-        const texts = structures.map(structure => {
-            // todo: pass the StructureToText to the method below
-            const writer = this.getWriter();
-            const structureToText = new ExportDeclarationStructureToText(writer, this.global.getFormatCodeSettings());
-            structureToText.writeText(structure);
-            return writer.toString();
-        });
-
-        return this._insertMainChildren<ExportDeclaration>(index, texts, structures, SyntaxKind.ExportDeclaration, undefined, {
-            previousBlanklineWhen: previousMember => !(TypeGuards.isExportDeclaration(previousMember)),
-            nextBlanklineWhen: nextMember => !(TypeGuards.isExportDeclaration(nextMember)),
-            separatorNewlineWhen: () => false
+    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[] {
+        return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
+            expectedKind: SyntaxKind.ExportDeclaration,
+            index,
+            structures,
+            write: (writer, info) => {
+                this._standardWrite(writer, info, () => {
+                    new ExportDeclarationStructureToText(writer, this.global.getFormatCodeSettings()).writeTexts(structures);
+                }, {
+                    previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
+                    nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
+                });
+            }
         });
     }
 
@@ -647,19 +647,19 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]) {
-        const texts = structures.map(structure => {
-            // todo: pass the StructureToText to the method below
-            const writer = this.getWriter();
-            const structureToText = new ExportAssignmentStructureToText(writer);
-            structureToText.writeText(structure);
-            return writer.toString();
-        });
-
-        return this._insertMainChildren<ExportAssignment>(index, texts, structures, SyntaxKind.ExportAssignment, undefined, {
-            previousBlanklineWhen: previousMember => !(TypeGuards.isExportAssignment(previousMember)),
-            nextBlanklineWhen: nextMember => !(TypeGuards.isExportAssignment(nextMember)),
-            separatorNewlineWhen: () => false
+    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[] {
+        return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
+            expectedKind: SyntaxKind.ExportAssignment,
+            index,
+            structures,
+            write: (writer, info) => {
+                this._standardWrite(writer, info, () => {
+                    new ExportAssignmentStructureToText(writer).writeTexts(structures);
+                }, {
+                    previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
+                    nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)
+                });
+            }
         });
     }
 
