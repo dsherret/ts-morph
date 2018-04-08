@@ -3,7 +3,7 @@ import {Constructor} from "../../Constructor";
 import * as errors from "../../errors";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "../../manipulation";
 import {ParameterDeclarationStructure, ParameteredNodeStructure} from "../../structures";
-import {ParameterDeclarationStructureToText, CommaSeparatedStructuresToText} from "../../structureToTexts";
+import {ParameterDeclarationStructurePrinter, CommaSeparatedStructuresPrinter} from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../utils";
 import {Node} from "../common";
@@ -95,9 +95,9 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             index = verifyAndGetIndex(index, parameters.length);
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structureToText = new CommaSeparatedStructuresToText(writer, new ParameterDeclarationStructureToText(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new ParameterDeclarationStructurePrinter(writer));
 
-            structureToText.writeText(structures);
+            structurePrinter.printText(structures);
 
             insertIntoCommaSeparatedNodes({
                 parent: syntaxList,

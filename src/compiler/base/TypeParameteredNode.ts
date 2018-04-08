@@ -4,7 +4,7 @@ import * as errors from "../../errors";
 import {insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange,
     getNodesToReturn} from "../../manipulation";
 import {TypeParameteredNodeStructure, TypeParameterDeclarationStructure} from "../../structures";
-import {CommaSeparatedStructuresToText, TypeParameterDeclarationStructureToText} from "../../structureToTexts";
+import {CommaSeparatedStructuresPrinter, TypeParameterDeclarationStructurePrinter} from "../../structurePrinters";
 import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {NamedNode} from "../base";
@@ -97,10 +97,10 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             const typeParameters = this.getTypeParameters();
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structureToText = new CommaSeparatedStructuresToText(writer, new TypeParameterDeclarationStructureToText(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new TypeParameterDeclarationStructurePrinter(writer));
             index = verifyAndGetIndex(index, typeParameters.length);
 
-            structureToText.writeText(structures);
+            structurePrinter.printText(structures);
 
             if (typeParameters.length === 0) {
                 insertIntoParentTextRange({

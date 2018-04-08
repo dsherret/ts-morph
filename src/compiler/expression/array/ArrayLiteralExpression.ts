@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../../errors";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn} from "../../../manipulation";
-import {CommaNewLineSeparatedStructuresToText, CommaSeparatedStructuresToText, StringStructureToText} from "../../../structureToTexts";
+import {CommaNewLineSeparatedStructuresPrinter, CommaSeparatedStructuresPrinter, StringStructurePrinter} from "../../../structurePrinters";
 import {Expression} from "../Expression";
 import {PrimaryExpression} from "../PrimaryExpression";
 
@@ -62,12 +62,12 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
         const useNewLines = getUseNewLines(this);
 
         const writer = useNewLines ? this.getWriterWithChildIndentation() : this.getWriterWithQueuedChildIndentation();
-        const stringStructureToText = new StringStructureToText(writer);
-        const structureToText = useNewLines ?
-            new CommaNewLineSeparatedStructuresToText(writer, stringStructureToText) :
-            new CommaSeparatedStructuresToText(writer, stringStructureToText);
+        const stringStructurePrinter = new StringStructurePrinter(writer);
+        const structurePrinter = useNewLines ?
+            new CommaNewLineSeparatedStructuresPrinter(writer, stringStructurePrinter) :
+            new CommaSeparatedStructuresPrinter(writer, stringStructurePrinter);
 
-        structureToText.writeText(textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
+        structurePrinter.printText(textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
 
         return insertTexts(this);
 

@@ -1,5 +1,5 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {writeTextFromStringOrWriter} from "../../../utils";
+import {printTextFromStringOrWriter} from "../../../utils";
 import {Node} from "../../common";
 
 /**
@@ -9,7 +9,7 @@ export function getBodyText(writer: CodeBlockWriter, textOrWriterFunction: strin
     writer.newLineIfLastNot();
     if (typeof textOrWriterFunction !== "string" || textOrWriterFunction.length > 0)
         writer.indentBlock(() => {
-            writeTextFromStringOrWriter(writer, textOrWriterFunction);
+            printTextFromStringOrWriter(writer, textOrWriterFunction);
         });
     writer.newLineIfLastNot();
     writer.write(""); // write last line's indentation

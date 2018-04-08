@@ -6,7 +6,7 @@ import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren} from 
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "../../utils";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
     CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure} from "../../structures";
-import * as structureToTexts from "../../structureToTexts";
+import * as structurePrinters from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
 import {PropertySignature, MethodSignature, IndexSignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration} from "../interface";
@@ -249,7 +249,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructureToText: writer => new structureToTexts.ConstructSignatureDeclarationStructureToText(writer)
+                createStructurePrinter: writer => new structurePrinters.ConstructSignatureDeclarationStructurePrinter(writer)
             });
         }
 
@@ -284,7 +284,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructureToText: writer => new structureToTexts.CallSignatureDeclarationStructureToText(writer)
+                createStructurePrinter: writer => new structurePrinters.CallSignatureDeclarationStructurePrinter(writer)
             });
         }
 
@@ -319,7 +319,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructureToText: writer => new structureToTexts.IndexSignatureDeclarationStructureToText(writer)
+                createStructurePrinter: writer => new structurePrinters.IndexSignatureDeclarationStructurePrinter(writer)
             });
         }
 
@@ -354,7 +354,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructureToText: writer => new structureToTexts.MethodSignatureStructureToText(writer)
+                createStructurePrinter: writer => new structurePrinters.MethodSignatureStructurePrinter(writer)
             });
         }
 
@@ -390,7 +390,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructureToText: writer => new structureToTexts.PropertySignatureStructureToText(writer)
+                createStructurePrinter: writer => new structurePrinters.PropertySignatureStructurePrinter(writer)
             });
         }
 
@@ -436,7 +436,7 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
     index: number;
     structures: TStructure[];
     expectedKind: SyntaxKind;
-    createStructureToText: (writer: CodeBlockWriter) => ({ writeTexts(structures: TStructure[]): void; });
+    createStructurePrinter: (writer: CodeBlockWriter) => ({ printTexts(structures: TStructure[]): void; });
 }): TNode[] {
     return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
         getIndexedChildren: () => opts.thisNode.getMembers(),
@@ -446,7 +446,7 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
         expectedKind: opts.expectedKind,
         write: (writer, info) => {
             writer.newLineIfLastNot();
-            opts.createStructureToText(writer).writeTexts(opts.structures);
+            opts.createStructurePrinter(writer).printTexts(opts.structures);
             writer.newLineIfLastNot();
         }
     });

@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoParentTextRange} from "../../manipulation";
 import {ImplementsClauseableNodeStructure} from "../../structures";
-import {CommaSeparatedStructuresToText, StringStructureToText} from "../../structureToTexts";
+import {CommaSeparatedStructuresPrinter, StringStructurePrinter} from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import * as errors from "../../errors";
 import {Node} from "../common";
@@ -75,9 +75,9 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             }
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structureToText = new CommaSeparatedStructuresToText(writer, new StringStructureToText(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new StringStructurePrinter(writer));
 
-            structureToText.writeText(texts);
+            structurePrinter.printText(texts);
 
             const heritageClauses = this.getHeritageClauses();
             const implementsTypes = this.getImplements();

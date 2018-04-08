@@ -7,6 +7,7 @@
  */
 
 import {InspectorFactory} from "./inspectors";
+import {SyntaxKind} from "../src/main";
 
 const factory = new InspectorFactory();
 const tsaInspector = factory.getTsSimpleAstInspector();

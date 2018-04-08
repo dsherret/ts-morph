@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ExportSpecifierStructure} from "../../structures";
-import {NamedImportExportSpecifierStructureToText} from "../../structureToTexts";
+import {NamedImportExportSpecifierStructurePrinter} from "../../structurePrinters";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
 import {ArrayUtils, TypeGuards, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
@@ -167,12 +167,12 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         const namedExports = this.getNamedExports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedExportStructureToText = new NamedImportExportSpecifierStructureToText(writer, this.global.getFormatCodeSettings());
+        const namedExportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, this.global.getFormatCodeSettings());
 
         index = verifyAndGetIndex(index, namedExports.length);
 
         if (namedExports.length === 0) {
-            namedExportStructureToText.writeTextsWithBraces(structuresOrNames);
+            namedExportStructurePrinter.printTextsWithBraces(structuresOrNames);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
                 insertPos: asteriskToken.getStart(),
@@ -184,7 +184,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
             });
         }
         else {
-            namedExportStructureToText.writeTexts(structuresOrNames);
+            namedExportStructurePrinter.printTexts(structuresOrNames);
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.NamedExports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedExports,

@@ -3,7 +3,7 @@ import {Constructor} from "../../Constructor";
 import {getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoParentTextRange} from "../../manipulation";
 import * as errors from "../../errors";
 import {ExtendsClauseableNodeStructure} from "../../structures";
-import {CommaSeparatedStructuresToText, StringStructureToText} from "../../structureToTexts";
+import {CommaSeparatedStructuresPrinter, StringStructurePrinter} from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
 import {HeritageClause} from "../general";
@@ -75,9 +75,9 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             }
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structureToText = new CommaSeparatedStructuresToText(writer, new StringStructureToText(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new StringStructurePrinter(writer));
 
-            structureToText.writeText(texts);
+            structurePrinter.printText(texts);
 
             const extendsTypes = this.getExtends();
             index = verifyAndGetIndex(index, extendsTypes.length);

@@ -2,7 +2,7 @@ import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ImportSpecifierStructure} from "../../structures";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "../../manipulation";
-import {NamedImportExportSpecifierStructureToText} from "../../structureToTexts";
+import {NamedImportExportSpecifierStructurePrinter} from "../../structurePrinters";
 import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
 import {Statement} from "../statement";
@@ -213,12 +213,12 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const namedImports = this.getNamedImports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedImportStructureToText = new NamedImportExportSpecifierStructureToText(writer, this.global.getFormatCodeSettings());
+        const namedImportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, this.global.getFormatCodeSettings());
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 
         if (namedImports.length === 0) {
-            namedImportStructureToText.writeTextsWithBraces(structuresOrNames);
+            namedImportStructurePrinter.printTextsWithBraces(structuresOrNames);
             if (importClause == null)
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
@@ -237,7 +237,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         else {
             if (importClause == null)
                 throw new errors.NotImplementedError("Expected to have an import clause.");
-            namedImportStructureToText.writeTexts(structuresOrNames);
+            namedImportStructurePrinter.printTexts(structuresOrNames);
 
             insertIntoCommaSeparatedNodes({
                 parent: importClause.getFirstChildByKindOrThrow(SyntaxKind.NamedImports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),

@@ -5,7 +5,7 @@ import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunctio
 import {Node} from "../../common";
 import {ts, SyntaxKind} from "../../../typescript";
 import {JsxAttributeStructure} from "../../../structures";
-import {JsxAttributeStructureToText, SpaceFormattingStructuresToText} from "../../../structureToTexts";
+import {JsxAttributeStructurePrinter, SpaceFormattingStructuresPrinter} from "../../../structurePrinters";
 import {JsxAttributeLike} from "../../aliases";
 import {JsxTagNamedNode} from "./JsxTagNamedNode";
 
@@ -89,8 +89,8 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
 
             const insertPos = index === 0 ? this.getTagName().getEnd() : this.getAttributes()[index - 1].getEnd();
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structuresToText = new SpaceFormattingStructuresToText(writer, new JsxAttributeStructureToText(writer));
-            structuresToText.writeText(structures);
+            const structuresPrinter = new SpaceFormattingStructuresPrinter(writer, new JsxAttributeStructurePrinter(writer));
+            structuresPrinter.printText(structures);
 
             insertIntoParentTextRange({
                 insertPos,

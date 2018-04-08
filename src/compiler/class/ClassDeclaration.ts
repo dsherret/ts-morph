@@ -4,7 +4,7 @@ import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, inse
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
-import * as structureToTexts from "../../structureToTexts";
+import * as structurePrinters from "../../structurePrinters";
 import {Node} from "../common";
 import {NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "../base";
@@ -161,7 +161,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.ConstructorDeclarationStructureToText(writer, { isAmbient }).writeText(structure);
+                new structurePrinters.ConstructorDeclarationStructurePrinter(writer, { isAmbient }).printText(structure);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -219,7 +219,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.GetAccessorDeclarationStructureToText(writer, { isAmbient: this.isAmbient() }).writeTexts(structures);
+                new structurePrinters.GetAccessorDeclarationStructurePrinter(writer, { isAmbient: this.isAmbient() }).printTexts(structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -270,7 +270,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.SetAccessorDeclarationStructureToText(writer, { isAmbient: this.isAmbient() }).writeTexts(structures);
+                new structurePrinters.SetAccessorDeclarationStructurePrinter(writer, { isAmbient: this.isAmbient() }).printTexts(structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -321,7 +321,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.PropertyDeclarationStructureToText(writer).writeTexts(structures);
+                new structurePrinters.PropertyDeclarationStructurePrinter(writer).printTexts(structures);
                 if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
                     writer.blankLineIfLastNot();
                 else
@@ -569,7 +569,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient }).writeTexts(structures);
+                new structurePrinters.MethodDeclarationStructurePrinter(writer, { isAmbient }).printTexts(structures);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else

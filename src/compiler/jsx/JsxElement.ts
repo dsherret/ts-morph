@@ -1,7 +1,7 @@
 import CodeBlockWriter from "code-block-writer";
 import {ts} from "../../typescript";
 import {insertIntoParentTextRange} from "../../manipulation";
-import {getTextFromStringOrWriter, writeTextFromStringOrWriter} from "../../utils";
+import {getTextFromStringOrWriter, printTextFromStringOrWriter} from "../../utils";
 import {getBodyText} from "../base/helpers";
 import {PrimaryExpression} from "../expression";
 import {JsxChild} from "../aliases";
@@ -58,7 +58,7 @@ export class JsxElement extends PrimaryExpression<ts.JsxElement> {
     setBodyTextInline(text: string): this;
     setBodyTextInline(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
         const writer = this.getWriterWithQueuedChildIndentation();
-        writeTextFromStringOrWriter(writer, textOrWriterFunction);
+        printTextFromStringOrWriter(writer, textOrWriterFunction);
         if (writer.isLastNewLine()) {
             writer.setIndentationLevel(Math.max(0, this.getIndentationLevel() - 1));
             writer.write(""); // indentation

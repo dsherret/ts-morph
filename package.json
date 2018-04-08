@@ -10,6 +10,7 @@
     "build": "gulp typescript",
     "test-run": "gulp test-run",
     "code-generate": "gulp scripts && node dist-scripts/scripts/code-generate",
+    "refactor": "gulp scripts && node dist-scripts/scripts/refactor",
     "output-wrapped-nodes": "gulp scripts && node dist-scripts/scripts/outputWrappedNodesInfo",
     "code-verification": "node dist-scripts/scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-scripts/scripts/ensureOverloadStructuresMatch",
     "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors"

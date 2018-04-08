@@ -1,7 +1,7 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import {DecoratorStructure, DecoratableNodeStructure} from "../../structures";
-import {DecoratorStructureToText} from "../../structureToTexts";
+import {DecoratorStructurePrinter} from "../../structurePrinters";
 import * as errors from "../../errors";
 import {callBaseFill} from "../callBaseFill";
 import {getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn} from "../../manipulation";
@@ -133,8 +133,8 @@ function getDecoratorLines(node: Node, structures: DecoratorStructure[]) {
     for (const structure of structures) {
         // todo: temporary code... refactor this later
         const writer = node.getWriter();
-        const structureToText = new DecoratorStructureToText(writer);
-        structureToText.writeText(structure);
+        const structurePrinter = new DecoratorStructurePrinter(writer);
+        structurePrinter.printText(structure);
         lines.push(writer.toString());
     }
     return lines;

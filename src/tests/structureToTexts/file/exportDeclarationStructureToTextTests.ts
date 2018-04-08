@@ -1,14 +1,14 @@
 ﻿import {expect} from "chai";
 import CodeBlockWriter from "code-block-writer";
-import {ImportDeclarationStructureToText} from "../../../structureToTexts";
+import {ImportDeclarationStructurePrinter} from "../../../structurePrinters";
 import {ImportDeclarationStructure} from "../../../structures";
 import {FormatCodeSettings} from "../../../compiler";
 import {getDefaultFormatCodeSettings} from "../../testHelpers";
 
-describe(nameof(ImportDeclarationStructureToText), () => {
+describe(nameof(ImportDeclarationStructurePrinter), () => {
     function doTest(structure: ImportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
         const writer = new CodeBlockWriter();
-        new ImportDeclarationStructureToText(writer, getDefaultFormatCodeSettings(formatCodeSettings)).writeText(structure);
+        new ImportDeclarationStructurePrinter(writer, getDefaultFormatCodeSettings(formatCodeSettings)).printText(structure);
         expect(writer.toString()).to.equal(expectedOutput);
     }
 

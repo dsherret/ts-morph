@@ -3,7 +3,7 @@ import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signat
     JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "../compiler";
 import * as errors from "../errors";
 import {SourceFileStructure} from "../structures";
-import {SourceFileStructureToText} from "../structureToTexts";
+import {SourceFileStructurePrinter} from "../structurePrinters";
 import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile} from "../utils";
 import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
 import {GlobalContainer} from "../GlobalContainer";
@@ -87,11 +87,11 @@ export class CompilerFactory {
             return this.createSourceFileFromText(filePath, structureOrText || "", options);
 
         const writer = this.global.createWriter();
-        const structureToText = new SourceFileStructureToText(writer, {
+        const structurePrinter = new SourceFileStructurePrinter(writer, {
             formatSettings: this.global.getFormatCodeSettings(),
             isAmbient: FileUtils.getExtension(filePath) === ".d.ts"
         });
-        structureToText.writeText(structureOrText);
+        structurePrinter.printText(structureOrText);
 
         return this.createSourceFileFromText(filePath, writer.toString(), options);
     }
