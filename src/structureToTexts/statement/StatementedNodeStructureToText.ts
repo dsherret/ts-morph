@@ -10,12 +10,16 @@ import {NamespaceDeclarationStructureToText} from "../namespace";
 import {TypeAliasDeclarationStructureToText} from "../types";
 
 export class StatementedNodeStructureToText extends StructureToText<StatementedNodeStructure> {
-    private readonly classWriter = new ClassDeclarationStructureToText(this.writer);
+    private readonly classWriter = new ClassDeclarationStructureToText(this.writer, this.options);
     private readonly interfaceWriter = new InterfaceDeclarationStructureToText(this.writer);
     private readonly enumWriter = new EnumDeclarationStructureToText(this.writer);
     private readonly functionWriter = new FunctionDeclarationStructureToText(this.writer);
-    private readonly namespaceWriter = new NamespaceDeclarationStructureToText(this.writer);
+    private readonly namespaceWriter = new NamespaceDeclarationStructureToText(this.writer, this.options);
     private readonly typeAliasWriter = new TypeAliasDeclarationStructureToText(this.writer);
+
+    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
+        super(writer);
+    }
 
     writeText(structure: StatementedNodeStructure) {
         conditionalBlankLine(this.writer, structure.typeAliases);

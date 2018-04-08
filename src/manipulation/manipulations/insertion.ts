@@ -116,17 +116,23 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
 }
 
-export interface InsertIntoBracesOrSourceFileOptionsNew<TStructure> {
+export interface InsertIntoBracesOrSourceFileOptionsWriteInfo {
+    previousMember: Node | undefined;
+    nextMember: Node | undefined;
+    isStartOfFile: boolean;
+}
+
+export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
     parent: Node;
     children: Node[];
     index: number;
-    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; isStartOfFile: boolean; }) => void;
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
 }
 
 /**
  * Used to insert non-comma separated nodes into braces or a source file.
  */
-export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptionsNew<TStructure>) {
+export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
     const {parent, index, children} = opts;
     const fullText = parent.sourceFile.getFullText();
     const insertPos = getInsertPosFromIndex(index, parent, children);
@@ -165,7 +171,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
 
 export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
     getIndexedChildren: () => Node[];
-    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; isStartOfFile: boolean; }) => void;
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
     // for child functions
     expectedKind: SyntaxKind;
     structures: TStructure[];

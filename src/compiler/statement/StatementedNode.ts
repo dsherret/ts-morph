@@ -5,7 +5,8 @@ import * as errors from "../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "../../structures";
 import * as structureToTexts from "../../structureToTexts";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFileOld, getRangeFromArray, removeStatementedNodeChildren, hasBody} from "../../manipulation";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFileOld, insertIntoBracesOrSourceFileWithGetChildren, getRangeFromArray,
+    removeStatementedNodeChildren, hasBody, InsertIntoBracesOrSourceFileOptionsWriteInfo} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
@@ -502,18 +503,16 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[] {
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.ClassDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+            return insertChildren<ClassDeclaration, ClassDeclarationStructure>(this, {
+                expectedKind: SyntaxKind.ClassDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.ClassDeclarationStructureToText(writer, { isAmbient: this.sourceFile.isDeclarationFile() }).writeTexts(structures);
+                    });
+                }
             });
-            const newChildren = this._insertMainChildren<ClassDeclaration>(index, texts, structures, SyntaxKind.ClassDeclaration, (child, i) => {
-                child.fill(structures[i]);
-            });
-
-            return newChildren;
         }
 
         getClasses(): ClassDeclaration[] {
@@ -548,19 +547,17 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertEnums(index, [structure])[0];
         }
 
-        insertEnums(index: number, structures: EnumDeclarationStructure[]) {
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.EnumDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+        insertEnums(index: number, structures: EnumDeclarationStructure[]): EnumDeclaration[] {
+            return insertChildren<EnumDeclaration, EnumDeclarationStructure>(this, {
+                expectedKind: SyntaxKind.EnumDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.EnumDeclarationStructureToText(writer).writeTexts(structures);
+                    });
+                }
             });
-            const newChildren = this._insertMainChildren<EnumDeclaration>(index, texts, structures, SyntaxKind.EnumDeclaration, (child, i) => {
-                child.fill(structures[i]);
-            });
-
-            return newChildren;
         }
 
         getEnums(): EnumDeclaration[] {
@@ -698,19 +695,17 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this.insertNamespaces(index, [structure])[0];
         }
 
-        insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]) {
-            const texts = structures.map(s => {
-                // todo: pass in the StructureToText to the function below
-                const writer = this.getWriter();
-                const structureToText = new structureToTexts.NamespaceDeclarationStructureToText(writer);
-                structureToText.writeText(s);
-                return writer.toString();
+        insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[] {
+            return insertChildren<NamespaceDeclaration, NamespaceDeclarationStructure>(this, {
+                expectedKind: SyntaxKind.ModuleDeclaration,
+                index,
+                structures,
+                write: (writer, info) => {
+                    standardWrite(writer, info, () => {
+                        new structureToTexts.NamespaceDeclarationStructureToText(writer, { isAmbient: this.sourceFile.isDeclarationFile() }).writeTexts(structures);
+                    });
+                }
             });
-            const newChildren = this._insertMainChildren<NamespaceDeclaration>(index, texts, structures, SyntaxKind.ModuleDeclaration, (child, i) => {
-                child.fill(structures[i]);
-            });
-
-            return newChildren;
         }
 
         getNamespaces(): NamespaceDeclaration[] {
@@ -950,4 +945,35 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return getRangeFromArray<U>(syntaxList.getChildren(), index, childCodes.length, expectedSyntaxKind);
         }
     };
+}
+
+interface InsertChildrenOptions<TStructure> {
+    expectedKind: SyntaxKind;
+    index: number;
+    structures: TStructure[];
+    write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
+}
+function insertChildren<TNode extends Node, TStructure>(node: Node & StatementedNode, opts: InsertChildrenOptions<TStructure>) {
+    return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
+        expectedKind: opts.expectedKind,
+        getIndexedChildren: () => node.getStatements(),
+        index: opts.index,
+        parent: node,
+        structures: opts.structures,
+        write: (writer, info) => opts.write(writer, info)
+    });
+}
+
+function standardWrite(writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo, writeStructures: () => void) {
+    if (info.previousMember != null)
+        writer.blankLine();
+    else if (!info.isStartOfFile)
+        writer.newLine();
+
+    writeStructures();
+
+    if (info.nextMember != null)
+        writer.blankLine();
+    else
+        writer.newLine();
 }

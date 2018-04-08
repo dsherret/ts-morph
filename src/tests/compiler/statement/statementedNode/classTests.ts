@@ -1,5 +1,5 @@
 ﻿import {expect} from "chai";
-import {StatementedNode, ClassDeclaration} from "../../../../compiler";
+import {StatementedNode, ClassDeclaration, Scope} from "../../../../compiler";
 import {ClassDeclarationStructure} from "../../../../structures";
 import {getInfoFromText} from "../../testHelpers";
 
@@ -46,6 +46,34 @@ describe(nameof(StatementedNode), () => {
             }]);
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    class Identifier {\n    }\n}\n");
+        });
+
+        it("should insert everything in a structure", () => {
+            const structure: MakeRequired<ClassDeclarationStructure> = {
+                name: "C",
+                ctor: {},
+                decorators: [{ name: "D" }],
+                docs: [{ description: "Test" }],
+                extends: "Base",
+                implements: ["IBase", "IBase2"],
+                hasDeclareKeyword: false,
+                isAbstract: true,
+                isDefaultExport: true,
+                isExported: true,
+                typeParameters: [{ name: "T" }],
+                properties: [{ name: "p" }],
+                methods: [{ name: "m" }],
+                getAccessors: [{ name: "g" }, { name: "s" }, { name: "g2" }, { name: "g3" }],
+                setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }]
+            };
+            const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n" +
+                "    p;\n\n" +
+                "    constructor() {\n    }\n\n" +
+                "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n" +
+                "    get g2() {\n    }\n\n    get g3() {\n    }\n\n    set s2() {\n    }\n\n" +
+                "    m() {\n    }\n" +
+                "}\n";
+            doTest("", 0, [structure], expectedText);
         });
     });
 

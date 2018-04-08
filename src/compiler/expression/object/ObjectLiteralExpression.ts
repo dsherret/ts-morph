@@ -244,7 +244,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the get accessors to insert.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
-        return this._insertProperty(index, structures, writer => new GetAccessorDeclarationStructureToText(writer)) as GetAccessorDeclaration[];
+        return this._insertProperty(index, structures, writer => new GetAccessorDeclarationStructureToText(writer, { isAmbient: false })) as GetAccessorDeclaration[];
     }
 
     /* Set Accessor Declarations */
@@ -280,7 +280,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the set accessors to insert.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
-        return this._insertProperty(index, structures, writer => new SetAccessorDeclarationStructureToText(writer)) as SetAccessorDeclaration[];
+        return this._insertProperty(index, structures, writer => new SetAccessorDeclarationStructureToText(writer, { isAmbient: false })) as SetAccessorDeclaration[];
     }
 
     /**

@@ -46,6 +46,20 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("namespace MyNamespace {\n    enum MyEnum {\n        member\n    }\n}\n");
         });
+
+        it("should insert everything from the structure", () => {
+            const structure: MakeRequired<EnumDeclarationStructure> = {
+                name: "Enum",
+                docs: [{ description: "Testing" }],
+                hasDeclareKeyword: false,
+                isConst: true,
+                isDefaultExport: false,
+                isExported: true,
+                members: [{ name: "member1" }, { name: "member2" }]
+            };
+            const expectedText = "/**\n * Testing\n */\nexport const enum Enum {\n    member1,\n    member2\n}\n";
+            doTest("", 0, [structure], expectedText);
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertEnum), () => {

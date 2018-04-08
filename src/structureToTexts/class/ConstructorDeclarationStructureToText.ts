@@ -13,16 +13,16 @@ export class ConstructorDeclarationStructureToText extends StructureToText<Const
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);
     private readonly parameterWriter = new ParameterDeclarationStructureToText(this.writer);
     private readonly typeParameterWriter = new TypeParameterDeclarationStructureToText(this.writer);
-    private readonly bodyWriter = new BodyTextStructureToText(this.writer);
+    private readonly bodyWriter = new BodyTextStructureToText(this.writer, this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly opts: { isAmbient: boolean; }) {
+    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
         super(writer);
     }
 
     writeText(structure: ConstructorDeclarationStructure) {
         this.writeOverloads(getOverloadStructures());
         this.writeBase(structure);
-        if (this.opts.isAmbient)
+        if (this.options.isAmbient)
             this.writer.write(";");
         else
             this.writer.space().inlineBlock(() => {

@@ -8,9 +8,6 @@ export class InterfaceDeclarationStructureToText extends StructureToText<Interfa
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresToText(this.writer, this);
 
     writeTexts(structures: InterfaceDeclarationStructure[] | undefined) {
-        if (structures == null || structures.length === 0)
-            return;
-
         this.blankLineFormattingWriter.writeText(structures);
     }
 

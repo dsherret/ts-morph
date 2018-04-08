@@ -6,7 +6,10 @@ export class CommaNewLineSeparatedStructuresToText<T> extends StructureToText<T[
         super(writer);
     }
 
-    writeText(structures: T[]) {
+    writeText(structures: T[] | undefined) {
+        if (structures == null)
+            return;
+
         for (let i = 0; i < structures.length; i++) {
             if (i > 0)
                 this.writer.write(",").newLine();

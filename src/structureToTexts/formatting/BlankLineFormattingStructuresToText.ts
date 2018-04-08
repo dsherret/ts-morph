@@ -6,7 +6,10 @@ export class BlankLineFormattingStructuresToText<T> extends StructureToText<T[]>
         super(writer);
     }
 
-    writeText(structures: T[]) {
+    writeText(structures: T[] | undefined) {
+        if (structures == null)
+            return;
+
         for (let i = 0; i < structures.length; i++) {
             this.writer.conditionalBlankLine(i > 0);
             this.structureToText.writeText(structures[i]);

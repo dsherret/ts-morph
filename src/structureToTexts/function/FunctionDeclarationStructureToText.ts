@@ -10,9 +10,6 @@ export class FunctionDeclarationStructureToText extends StructureToText<Function
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresToText(this.writer, this);
 
     writeTexts(structures: FunctionDeclarationStructure[] | undefined) {
-        if (structures == null || structures.length === 0)
-            return;
-
         this.blankLineFormattingWriter.writeText(structures);
     }
 

@@ -12,7 +12,7 @@ export class PropertyDeclarationStructureToText extends StructureToText<Property
     private readonly decoratorWriter = new DecoratorStructureToText(this.writer);
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);
 
-    writeTexts(structures: PropertyDeclarationStructure[]) {
+    writeTexts(structures: PropertyDeclarationStructure[] | undefined) {
         this.newLineWriter.writeText(structures);
     }
 

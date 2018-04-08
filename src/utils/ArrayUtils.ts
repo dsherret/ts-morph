@@ -34,6 +34,14 @@ export class ArrayUtils {
         return undefined;
     }
 
+    static findIndex<T>(items: T[], condition: (item: T) => boolean) {
+        for (let i = 0; i < items.length; i++) {
+            if (condition(items[i]))
+                return i;
+        }
+        return -1;
+    }
+
     static from<T>(items: Iterable<T> | ts.Iterator<T>) {
         const a: T[] = [];
         for (const item of items)
@@ -48,7 +56,7 @@ export class ArrayUtils {
     }
 
     static sortByProperty<T>(items: T[], getProp: (item: T) => string | number) {
-        items.sort((a, b) => getProp(a) < getProp(b) ? -1 : 1);
+        items.sort((a, b) => getProp(a) <= getProp(b) ? -1 : 1);
         return items;
     }
 

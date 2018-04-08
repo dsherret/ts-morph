@@ -15,16 +15,19 @@ export class MethodDeclarationStructureToText extends StructureToText<MethodDecl
     private readonly decoratorWriter = new DecoratorStructureToText(this.writer);
     private readonly parametersWriter = new ParameterDeclarationStructureToText(this.writer);
     private readonly typeParametersWriter = new TypeParameterDeclarationStructureToText(this.writer);
-    private readonly bodyWriter = new BodyTextStructureToText(this.writer);
+    private readonly bodyWriter = new BodyTextStructureToText(this.writer, this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly opts: { isAmbient: boolean; }) {
+    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
         super(writer);
     }
 
-    writeTexts(structures: MethodDeclarationStructure[]) {
+    writeTexts(structures: MethodDeclarationStructure[] | undefined) {
+        if (structures == null)
+            return;
+
         for (let i = 0; i < structures.length; i++) {
             if (i > 0) {
-                if (this.opts.isAmbient)
+                if (this.options.isAmbient)
                     this.writer.newLine();
                 else
                     this.writer.blankLine();
@@ -37,7 +40,7 @@ export class MethodDeclarationStructureToText extends StructureToText<MethodDecl
         this.writeOverloads(structure.name, getOverloadStructures());
         this.writeBase(structure.name, structure);
 
-        if (this.opts.isAmbient)
+        if (this.options.isAmbient)
             this.writer.write(";");
         else
             this.writer.spaceIfLastNot().inlineBlock(() => {

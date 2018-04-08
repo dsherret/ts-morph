@@ -219,7 +219,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.GetAccessorDeclarationStructureToText(writer).writeTexts(structures);
+                new structureToTexts.GetAccessorDeclarationStructureToText(writer, { isAmbient: this.isAmbient() }).writeTexts(structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -270,7 +270,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structureToTexts.SetAccessorDeclarationStructureToText(writer).writeTexts(structures);
+                new structureToTexts.SetAccessorDeclarationStructureToText(writer, { isAmbient: this.isAmbient() }).writeTexts(structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else

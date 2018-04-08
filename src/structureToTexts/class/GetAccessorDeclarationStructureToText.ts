@@ -1,4 +1,5 @@
-﻿import {GetAccessorDeclarationStructure} from "../../structures";
+﻿import CodeBlockWriter from "code-block-writer";
+import {GetAccessorDeclarationStructure} from "../../structures";
 import {StringUtils} from "../../utils";
 import {StructureToText} from "../StructureToText";
 import {ModifierableNodeStructureToText} from "../base";
@@ -16,9 +17,13 @@ export class GetAccessorDeclarationStructureToText extends StructureToText<GetAc
     private readonly modifierWriter = new ModifierableNodeStructureToText(this.writer);
     private readonly parameterWriter = new ParameterDeclarationStructureToText(this.writer);
     private readonly typeParameterWriter = new TypeParameterDeclarationStructureToText(this.writer);
-    private readonly bodyWriter = new BodyTextStructureToText(this.writer);
+    private readonly bodyWriter = new BodyTextStructureToText(this.writer, this.options);
 
-    writeTexts(structures: GetAccessorDeclarationStructure[]) {
+    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
+        super(writer);
+    }
+
+    writeTexts(structures: GetAccessorDeclarationStructure[] | undefined) {
         this.blankLineWriter.writeText(structures);
     }
 

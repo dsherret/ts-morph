@@ -46,6 +46,31 @@ describe(nameof(StatementedNode), () => {
 
             expect(sourceFile.getFullText()).to.equal("namespace Namespace {\n    namespace Identifier {\n    }\n}\n");
         });
+
+        it("should insert all the properties of the structure", () => {
+            const structure: MakeRequired<NamespaceDeclarationStructure> = {
+                docs: [{ description: "Test" }],
+                name: "n",
+                hasDeclareKeyword: false,
+                hasModuleKeyword: true,
+                isDefaultExport: false,
+                isExported: true,
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+
+            doTest("", 0, [structure],
+                "/**\n * Test\n */\nexport module n {\n" +
+                "    type T = string;\n\n    interface I {\n    }\n\n    enum E {\n    }\n\n" +
+                "    function F() {\n    }\n\n    class C {\n    }\n\n    namespace N {\n    }\n\n" +
+                "    console.log('here');\n" +
+                "}\n");
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {
