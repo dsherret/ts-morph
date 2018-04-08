@@ -163,6 +163,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
                 new structureToTexts.ConstructorDeclarationStructureToText(writer, { isAmbient }).writeText(structure);
                 if (!isAmbient && info.nextMember != null)
+                    writer.blankLineIfLastNot();
+                else
                     writer.newLineIfLastNot();
             }
         })[0];
@@ -219,6 +221,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
                 new structureToTexts.GetAccessorDeclarationStructureToText(writer).writeTexts(structures);
                 if (info.nextMember != null)
+                    writer.blankLineIfLastNot();
+                else
                     writer.newLineIfLastNot();
             }
         });
@@ -268,6 +272,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
                 new structureToTexts.SetAccessorDeclarationStructureToText(writer).writeTexts(structures);
                 if (info.nextMember != null)
+                    writer.blankLineIfLastNot();
+                else
                     writer.newLineIfLastNot();
             }
         });
@@ -317,6 +323,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
                 new structureToTexts.PropertyDeclarationStructureToText(writer).writeTexts(structures);
                 if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
+                    writer.blankLineIfLastNot();
+                else
                     writer.newLineIfLastNot();
             }
         });
@@ -563,6 +571,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.newLineIfLastNot();
                 new structureToTexts.MethodDeclarationStructureToText(writer, { isAmbient }).writeTexts(structures);
                 if (!isAmbient && info.nextMember != null)
+                    writer.blankLineIfLastNot();
+                else
                     writer.newLineIfLastNot();
             },
             structures,

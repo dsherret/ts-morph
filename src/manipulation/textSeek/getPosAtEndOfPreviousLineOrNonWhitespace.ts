@@ -3,13 +3,13 @@
         pos--;
 
         const currentChar = fullText[pos];
-        if (currentChar === " " || currentChar === "\t")
-            continue;
-        else if (currentChar === "\n") {
+        if (currentChar === "\n") {
             if (fullText[pos - 1] === "\r")
                 return pos - 1;
             return pos;
         }
+        else if (currentChar !== " " && currentChar !== "\t")
+            return pos + 1;
     }
 
     return pos;

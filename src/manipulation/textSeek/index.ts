@@ -5,4 +5,5 @@ export * from "./getPosAfterPreviousNonBlankLine";
 export * from "./getPosAtNextNonBlankLine";
 export * from "./getPosAtEndOfPreviousLine";
 export * from "./getPosAtEndOfPreviousLineOrNonWhitespace";
+export * from "./getPosAtStartOfLineOrNonWhitespace";
 export * from "./getPreviousMatchingPos";

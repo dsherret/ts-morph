@@ -120,7 +120,7 @@ export interface InsertIntoBracesOrSourceFileOptionsNew<TStructure> {
     parent: Node;
     children: Node[];
     index: number;
-    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
+    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; isStartOfFile: boolean; }) => void;
 }
 
 /**
@@ -144,7 +144,11 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
     function getNewText() {
         // todo: make this configurable
         const writer = parent.getWriterWithChildIndentation();
-        opts.write(writer, { previousMember: getChild(children[index - 1]), nextMember: getChild(children[index]) });
+        opts.write(writer, {
+            previousMember: getChild(children[index - 1]),
+            nextMember: getChild(children[index]),
+            isStartOfFile: insertPos === 0
+        });
         return writer.toString();
 
         function getChild(child: Node | undefined) {
@@ -161,7 +165,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
 
 export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extends Node, TStructure> {
     getIndexedChildren: () => Node[];
-    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; }) => void;
+    write: (writer: CodeBlockWriter, info: { previousMember: Node | undefined; nextMember: Node | undefined; isStartOfFile: boolean; }) => void;
     // for child functions
     expectedKind: SyntaxKind;
     structures: TStructure[];

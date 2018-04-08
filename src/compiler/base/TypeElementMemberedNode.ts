@@ -447,6 +447,7 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
         write: (writer, info) => {
             writer.newLineIfLastNot();
             opts.createStructureToText(writer).writeTexts(opts.structures);
+            writer.newLineIfLastNot();
         }
     });
 }

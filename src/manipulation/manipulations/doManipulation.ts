@@ -14,7 +14,7 @@ export function doManipulation(sourceFile: SourceFile, textManipulator: TextMani
         throw new errors.InvalidOperationError(err.message + "\n" +
             `-- Details --\n` +
             `Path: ${sourceFile.getFilePath()}\n` +
-            `Text: ${textManipulator.getTextForError(newFileText)}`
+            `Text: ${JSON.stringify(textManipulator.getTextForError(newFileText))}`
         );
     }
 }
