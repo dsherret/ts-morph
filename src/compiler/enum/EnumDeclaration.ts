@@ -83,9 +83,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         });
 
         // get the members
-        const newMembers = getNodesToReturn(this.getMembers(), index, structures.length);
-        newMembers.forEach((m, i) => m.fill(structures[i]));
-        return newMembers as EnumMember[];
+        return getNodesToReturn(this.getMembers(), index, structures.length) as EnumMember[];
     }
 
     /**

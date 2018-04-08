@@ -113,12 +113,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             newText: writer.toString()
         });
 
-        const declarations = getNodesToReturn(this.getDeclarations(), index, structures.length);
-
-        for (let i = 0; i < structures.length; i++)
-            declarations[i].fill(structures[i]);
-
-        return declarations;
+        return getNodesToReturn(this.getDeclarations(), index, structures.length);
     }
 
     /**

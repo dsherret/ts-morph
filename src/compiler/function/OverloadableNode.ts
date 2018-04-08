@@ -125,6 +125,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     });
 
     const children = getRangeFromArray<TNode>(parentSyntaxList.getChildren(), mainIndex, structures.length, opts.expectedSyntaxKind);
+    // todo: Do not fill here... this should be printed
     children.forEach((child, i) => {
         opts.fillNodeFromStructure(child, structures[i]);
     });

@@ -82,6 +82,17 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum MyEnum {\n}\n", 0, [{ name: "member1" }, { name: "member2", value: 2, docs: [{ description: "description" }] }, { name: "member3" }],
                 "enum MyEnum {\n    member1,\n    /**\n     * description\n     */\n    member2 = 2,\n    member3\n}\n");
         });
+
+        it("should insert for all the structure's properties", () => {
+            const structure: MakeRequired<EnumMemberStructure> = {
+                docs: [{ description: "testing" }],
+                initializer: "5",
+                value: 5,
+                name: "member"
+            };
+            doTest("enum MyEnum {\n}\n", 0, [structure],
+                "enum MyEnum {\n    /**\n     * testing\n     */\n    member = 5\n}\n");
+        });
     });
 
     describe(nameof<EnumDeclaration>(d => d.insertMember), () => {
