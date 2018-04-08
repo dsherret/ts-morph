@@ -5,8 +5,8 @@ import * as errors from "../../errors";
 import {ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure} from "../../structures";
 import * as structureToTexts from "../../structureToTexts";
-import {verifyAndGetIndex, insertIntoBracesOrSourceFileOld, insertIntoBracesOrSourceFileWithGetChildren, getRangeFromArray,
-    removeStatementedNodeChildren, hasBody, InsertIntoBracesOrSourceFileOptionsWriteInfo} from "../../manipulation";
+import {verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren, getRangeFromArray, removeStatementedNodeChildren,
+    hasBody, InsertIntoBracesOrSourceFileOptionsWriteInfo} from "../../manipulation";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
