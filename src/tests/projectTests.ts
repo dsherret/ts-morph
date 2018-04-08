@@ -2,6 +2,7 @@
 import {expect} from "chai";
 import {ts, SyntaxKind, CompilerOptions, ScriptTarget} from "../typescript";
 import {EmitResult, Node, SourceFile, NamespaceDeclaration, InterfaceDeclaration, ClassDeclaration} from "../compiler";
+import {SourceFileStructure} from "../structures";
 import {VirtualFileSystemHost} from "../fileSystem";
 import {Project} from "../Project";
 import {IndentationText} from "../options";
@@ -479,6 +480,27 @@ describe(nameof(Project), () => {
                 exports: [{ moduleSpecifier: "./test" }]
             });
             expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nexport * from "./test";\n`);
+        });
+
+        it("should add for everything in the structure", () => {
+            const structure: MakeRequired<SourceFileStructure> = {
+                imports: [{ moduleSpecifier: "./test" }],
+                exports: [{ moduleSpecifier: "./test2" }],
+                classes: [{ name: "C" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                namespaces: [{ name: "N" }],
+                bodyText: "console.log('here');"
+            };
+            const sourceFile = new Project({ useVirtualFileSystem: true }).createSourceFile("MyFile.ts", structure);
+            const expectedText = `import "./test";\n\n` +
+                "type T = string;\n\ninterface I {\n}\n\nenum E {\n}\n\n" +
+                "function F() {\n}\n\nclass C {\n}\n\nnamespace N {\n}\n\n" +
+                "console.log('here');\n\n" +
+                `export * from "./test2";\n`;
+            expect(sourceFile.getFullText()).to.equal(expectedText);
         });
 
         it("", () => {

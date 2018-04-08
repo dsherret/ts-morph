@@ -6,10 +6,10 @@ export abstract class StructureToText<TStructure> {
 
     abstract writeText(structure: TStructure): void;
 
-    protected writeTextOrWriterFunc(textOrWriterFunc: string | ((writer: CodeBlockWriter) => void) | undefined) {
+    protected writeTextOrWriterFunc(textOrWriterFunc: string | ((writer: CodeBlockWriter) => void) | undefined, writer = this.writer) {
         if (typeof textOrWriterFunc === "string")
-            this.writer.write(textOrWriterFunc);
+            writer.write(textOrWriterFunc);
         else if (textOrWriterFunc != null)
-            textOrWriterFunc(this.writer);
+            textOrWriterFunc(writer);
     }
 }
