@@ -34,13 +34,15 @@ describe(nameof(RegularExpressionLiteral), () => {
             expect(sourceFile.getText()).to.equal(expectedText);
         }
 
-        it("should set the literal value for a RegExp object with flags", () => {
-            doObjectTest("const t = /testing/g;", new RegExp("t\\/test?", "gi"), "const t = /t\\/test?/gi;");
-        });
+        if (isWindows) {
+            it("should set the literal value for a RegExp object with flags", () => {
+                doObjectTest("const t = /testing/g;", new RegExp("t\\/test?", "gi"), "const t = /t\\/test?/gi;");
+            });
 
-        it("should set the literal value for a RegExp object without flags", () => {
-            doObjectTest("const t = /testing/g;", new RegExp("test"), "const t = /test/;");
-        });
+            it("should set the literal value for a RegExp object without flags", () => {
+                doObjectTest("const t = /testing/g;", new RegExp("test"), "const t = /test/;");
+            });
+        }
 
         function doStringTest(text: string, pattern: string, flags: string | undefined, expectedText: string) {
             const {descendant, sourceFile} = getInfoFromTextWithDescendant<RegularExpressionLiteral>(text, SyntaxKind.RegularExpressionLiteral);

@@ -47,7 +47,7 @@ gulp.task("pre-test", function () {
 gulp.task("test-run", ["pre-test"], function() {
     return gulp.src("dist/tests/**/*.js")
         .pipe(mocha({ reporter: "progress", timeout: 10000 }))
-        //.on('error', process.exit.bind(process, 1))
+        .on('error', process.exit.bind(process, 1))
         .pipe(istanbul.writeReports());
 });
 
