@@ -57,8 +57,8 @@ const myEnumFile = project.createSourceFile("src/MyEnum.ts", {
 // get information from ast
 const myClass = myClassFile.getClassOrThrow("MyClass");
 myClass.getName();          // returns: "MyClass"
-myClass.hasExportKeyword(); // returns: false
-myClass.isDefaultExport();  // returns: true
+myClass.hasExportKeyword(); // returns: true
+myClass.isDefaultExport();  // returns: false
 
 // manipulate ast
 const myInterface = myClassFile.addInterface({
