@@ -1,8 +1,9 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {ShorthandPropertyAssignmentStructure} from "../../../structures";
 import {StructurePrinter} from "../../StructurePrinter";
 
 export class ShorthandPropertyAssignmentStructurePrinter extends StructurePrinter<ShorthandPropertyAssignmentStructure> {
-    printText(structure: ShorthandPropertyAssignmentStructure) {
-        this.writer.write(`${structure.name}`);
+    printText(writer: CodeBlockWriter, structure: ShorthandPropertyAssignmentStructure) {
+        writer.write(`${structure.name}`);
     }
 }

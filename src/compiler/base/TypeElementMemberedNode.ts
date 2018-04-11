@@ -249,7 +249,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructurePrinter: writer => new structurePrinters.ConstructSignatureDeclarationStructurePrinter(writer)
+                createStructurePrinter: () => new structurePrinters.ConstructSignatureDeclarationStructurePrinter()
             });
         }
 
@@ -284,7 +284,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructurePrinter: writer => new structurePrinters.CallSignatureDeclarationStructurePrinter(writer)
+                createStructurePrinter: () => new structurePrinters.CallSignatureDeclarationStructurePrinter()
             });
         }
 
@@ -319,7 +319,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructurePrinter: writer => new structurePrinters.IndexSignatureDeclarationStructurePrinter(writer)
+                createStructurePrinter: () => new structurePrinters.IndexSignatureDeclarationStructurePrinter()
             });
         }
 
@@ -354,7 +354,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructurePrinter: writer => new structurePrinters.MethodSignatureStructurePrinter(writer)
+                createStructurePrinter: () => new structurePrinters.MethodSignatureStructurePrinter()
             });
         }
 
@@ -390,7 +390,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructurePrinter: writer => new structurePrinters.PropertySignatureStructurePrinter(writer)
+                createStructurePrinter: () => new structurePrinters.PropertySignatureStructurePrinter()
             });
         }
 
@@ -436,7 +436,7 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
     index: number;
     structures: TStructure[];
     expectedKind: SyntaxKind;
-    createStructurePrinter: (writer: CodeBlockWriter) => ({ printTexts(structures: TStructure[]): void; });
+    createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: TStructure[]): void; });
 }): TNode[] {
     return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
         getIndexedChildren: () => opts.thisNode.getMembers(),
@@ -446,7 +446,7 @@ function insertChildren<TNode extends Node & { fill(structure: TStructure): void
         expectedKind: opts.expectedKind,
         write: (writer, info) => {
             writer.newLineIfLastNot();
-            opts.createStructurePrinter(writer).printTexts(opts.structures);
+            opts.createStructurePrinter().printTexts(writer, opts.structures);
             writer.newLineIfLastNot();
         }
     });

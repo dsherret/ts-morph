@@ -7,23 +7,23 @@ import {StatementedNodeStructurePrinter} from "./StatementedNodeStructurePrinter
 export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string; };
 
 export class BodyTextStructurePrinter extends StructurePrinter<BodyTextStructures> {
-    private readonly statementWriter = new StatementedNodeStructurePrinter(this.writer, this.options);
+    private readonly statementWriter = new StatementedNodeStructurePrinter(this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printText(structure: BodyTextStructures) {
-        this.statementWriter.printText(structure as StatementedNodeStructure);
+    printText(writer: CodeBlockWriter, structure: BodyTextStructures) {
+        this.statementWriter.printText(writer, structure as StatementedNodeStructure);
 
         // todo: hacky, will need to change this in the future...
         // basically, need a way to make this only do the blank line if the user does a write
-        const newWriter = new CodeBlockWriter(this.writer.getOptions());
-        this.printTextOrWriterFunc((structure as BodyableNodeStructure).bodyText, newWriter);
+        const newWriter = new CodeBlockWriter(writer.getOptions());
+        this.printTextOrWriterFunc(newWriter, (structure as BodyableNodeStructure).bodyText);
         if (newWriter.getLength() > 0) {
-            if (!this.writer.isAtStartOfFirstLineOfBlock())
-                this.writer.blankLineIfLastNot();
-            this.writer.write(newWriter.toString());
+            if (!writer.isAtStartOfFirstLineOfBlock())
+                writer.blankLineIfLastNot();
+            writer.write(newWriter.toString());
         }
     }
 }

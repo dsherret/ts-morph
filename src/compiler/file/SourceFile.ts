@@ -467,7 +467,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             structures,
             write: (writer, info) => {
                 this._standardWrite(writer, info, () => {
-                    new ImportDeclarationStructurePrinter(writer, this.global.getFormatCodeSettings()).printTexts(structures);
+                    new ImportDeclarationStructurePrinter(this.global.getFormatCodeSettings()).printTexts(writer, structures);
                 }, {
                     previousNewLine: previousMember => TypeGuards.isImportDeclaration(previousMember),
                     nextNewLine: nextMember => TypeGuards.isImportDeclaration(nextMember)
@@ -538,7 +538,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             structures,
             write: (writer, info) => {
                 this._standardWrite(writer, info, () => {
-                    new ExportDeclarationStructurePrinter(writer, this.global.getFormatCodeSettings()).printTexts(structures);
+                    new ExportDeclarationStructurePrinter(this.global.getFormatCodeSettings()).printTexts(writer, structures);
                 }, {
                     previousNewLine: previousMember => TypeGuards.isExportDeclaration(previousMember),
                     nextNewLine: nextMember => TypeGuards.isExportDeclaration(nextMember)
@@ -654,7 +654,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             structures,
             write: (writer, info) => {
                 this._standardWrite(writer, info, () => {
-                    new ExportAssignmentStructurePrinter(writer).printTexts(structures);
+                    new ExportAssignmentStructurePrinter().printTexts(writer, structures);
                 }, {
                     previousNewLine: previousMember => TypeGuards.isExportAssignment(previousMember),
                     nextNewLine: nextMember => TypeGuards.isExportAssignment(nextMember)

@@ -87,11 +87,11 @@ export class CompilerFactory {
             return this.createSourceFileFromText(filePath, structureOrText || "", options);
 
         const writer = this.global.createWriter();
-        const structurePrinter = new SourceFileStructurePrinter(writer, {
+        const structurePrinter = new SourceFileStructurePrinter({
             formatSettings: this.global.getFormatCodeSettings(),
             isAmbient: FileUtils.getExtension(filePath) === ".d.ts"
         });
-        structurePrinter.printText(structureOrText);
+        structurePrinter.printText(writer, structureOrText);
 
         return this.createSourceFileFromText(filePath, writer.toString(), options);
     }

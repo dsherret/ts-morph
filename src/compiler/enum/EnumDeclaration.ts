@@ -70,8 +70,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // create member code
         // todo: pass in the StructureToText to the function below
         const writer = this.getWriterWithChildIndentation();
-        const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(writer, new EnumMemberStructurePrinter(writer));
-        structurePrinter.printText(structures);
+        const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(new EnumMemberStructurePrinter());
+        structurePrinter.printText(writer, structures);
 
         // insert
         insertIntoCommaSeparatedNodes({

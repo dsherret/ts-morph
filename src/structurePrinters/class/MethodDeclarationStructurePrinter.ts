@@ -10,41 +10,41 @@ import {BodyTextStructurePrinter} from "../statement";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 
 export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly decoratorWriter = new DecoratorStructurePrinter(this.writer);
-    private readonly parametersWriter = new ParameterDeclarationStructurePrinter(this.writer);
-    private readonly typeParametersWriter = new TypeParameterDeclarationStructurePrinter(this.writer);
-    private readonly bodyWriter = new BodyTextStructurePrinter(this.writer, this.options);
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly decoratorWriter = new DecoratorStructurePrinter();
+    private readonly parametersWriter = new ParameterDeclarationStructurePrinter();
+    private readonly typeParametersWriter = new TypeParameterDeclarationStructurePrinter();
+    private readonly bodyWriter = new BodyTextStructurePrinter(this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printTexts(structures: MethodDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: MethodDeclarationStructure[] | undefined) {
         if (structures == null)
             return;
 
         for (let i = 0; i < structures.length; i++) {
             if (i > 0) {
                 if (this.options.isAmbient)
-                    this.writer.newLine();
+                    writer.newLine();
                 else
-                    this.writer.blankLine();
+                    writer.blankLine();
             }
-            this.printText(structures[i]);
+            this.printText(writer, structures[i]);
         }
     }
 
-    printText(structure: MethodDeclarationStructure) {
-        this.printOverloads(structure.name, getOverloadStructures());
-        this.printBase(structure.name, structure);
+    printText(writer: CodeBlockWriter, structure: MethodDeclarationStructure) {
+        this.printOverloads(writer, structure.name, getOverloadStructures());
+        this.printBase(writer, structure.name, structure);
 
         if (this.options.isAmbient)
-            this.writer.write(";");
+            writer.write(";");
         else
-            this.writer.spaceIfLastNot().inlineBlock(() => {
-                this.bodyWriter.printText(structure);
+            writer.spaceIfLastNot().inlineBlock(() => {
+                this.bodyWriter.printText(writer, structure);
             });
 
         function getOverloadStructures() {
@@ -63,30 +63,30 @@ export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDe
         }
     }
 
-    private printOverloads(name: string, structures: MethodDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string, structures: MethodDeclarationOverloadStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
         for (const structure of structures) {
-            this.printOverload(name, structure);
-            this.writer.newLine();
+            this.printOverload(writer, name, structure);
+            writer.newLine();
         }
     }
 
-    printOverload(name: string, structure: MethodDeclarationOverloadStructure) {
-        this.printBase(name, structure);
-        this.writer.write(";");
+    printOverload(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure) {
+        this.printBase(writer, name, structure);
+        writer.write(";");
     }
 
-    private printBase(name: string, structure: MethodDeclarationOverloadStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.decoratorWriter.printTexts(structure.decorators);
-        this.modifierWriter.printText(structure);
-        this.writer.write(name);
-        this.typeParametersWriter.printTexts(structure.typeParameters);
-        this.writer.write("(");
-        this.parametersWriter.printTexts(structure.parameters);
-        this.writer.write(`)`);
-        this.writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
+    private printBase(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.decoratorWriter.printTexts(writer, structure.decorators);
+        this.modifierWriter.printText(writer, structure);
+        writer.write(name);
+        this.typeParametersWriter.printTexts(writer, structure.typeParameters);
+        writer.write("(");
+        this.parametersWriter.printTexts(writer, structure.parameters);
+        writer.write(`)`);
+        writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
     }
 }

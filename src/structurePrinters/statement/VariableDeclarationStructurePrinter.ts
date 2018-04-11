@@ -1,16 +1,17 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {VariableDeclarationStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";
 
 export class VariableDeclarationStructurePrinter extends StructurePrinter<VariableDeclarationStructure> {
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
 
-    printText(structure: VariableDeclarationStructure) {
-        this.writer.write(structure.name);
-        this.writer.conditionalWrite(structure.hasExclamationToken, "!");
+    printText(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
+        writer.write(structure.name);
+        writer.conditionalWrite(structure.hasExclamationToken, "!");
         if (structure.type != null)
-            this.writer.write(": " + structure.type);
+            writer.write(": " + structure.type);
         if (structure.initializer != null)
-            this.writer.write(" = " + structure.initializer);
+            writer.write(" = " + structure.initializer);
     }
 }

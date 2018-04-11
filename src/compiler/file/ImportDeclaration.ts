@@ -213,12 +213,12 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const namedImports = this.getNamedImports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedImportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, this.global.getFormatCodeSettings());
+        const namedImportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.global.getFormatCodeSettings());
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 
         if (namedImports.length === 0) {
-            namedImportStructurePrinter.printTextsWithBraces(structuresOrNames);
+            namedImportStructurePrinter.printTextsWithBraces(writer, structuresOrNames);
             if (importClause == null)
                 insertIntoParentTextRange({
                     insertPos: this.getFirstChildByKindOrThrow(SyntaxKind.ImportKeyword).getEnd(),
@@ -237,7 +237,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         else {
             if (importClause == null)
                 throw new errors.NotImplementedError("Expected to have an import clause.");
-            namedImportStructurePrinter.printTexts(structuresOrNames);
+            namedImportStructurePrinter.printTexts(writer, structuresOrNames);
 
             insertIntoCommaSeparatedNodes({
                 parent: importClause.getFirstChildByKindOrThrow(SyntaxKind.NamedImports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),

@@ -1,3 +1,4 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {TypeElementMemberedNodeStructure} from "../../structures";
 import {ArrayUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
@@ -8,30 +9,30 @@ import {MethodSignatureStructurePrinter} from "./MethodSignatureStructurePrinter
 import {PropertySignatureStructurePrinter} from "./PropertySignatureStructurePrinter";
 
 export class TypeElementMemberedNodeStructurePrinter extends StructurePrinter<TypeElementMemberedNodeStructure> {
-    private readonly callSignatureWriter = new CallSignatureDeclarationStructurePrinter(this.writer);
-    private readonly constructSignatureWriter = new ConstructSignatureDeclarationStructurePrinter(this.writer);
-    private readonly indexSignatureWriter = new IndexSignatureDeclarationStructurePrinter(this.writer);
-    private readonly methodWriter = new MethodSignatureStructurePrinter(this.writer);
-    private readonly propertyWriter = new PropertySignatureStructurePrinter(this.writer);
+    private readonly callSignatureWriter = new CallSignatureDeclarationStructurePrinter();
+    private readonly constructSignatureWriter = new ConstructSignatureDeclarationStructurePrinter();
+    private readonly indexSignatureWriter = new IndexSignatureDeclarationStructurePrinter();
+    private readonly methodWriter = new MethodSignatureStructurePrinter();
+    private readonly propertyWriter = new PropertySignatureStructurePrinter();
 
-    printText(structure: TypeElementMemberedNodeStructure) {
-        this.callSignatureWriter.printTexts(structure.callSignatures);
+    printText(writer: CodeBlockWriter, structure: TypeElementMemberedNodeStructure) {
+        this.callSignatureWriter.printTexts(writer, structure.callSignatures);
 
-        this.conditionalSeparator(structure.constructSignatures);
-        this.constructSignatureWriter.printTexts(structure.constructSignatures);
+        this.conditionalSeparator(writer, structure.constructSignatures);
+        this.constructSignatureWriter.printTexts(writer, structure.constructSignatures);
 
-        this.conditionalSeparator(structure.indexSignatures);
-        this.indexSignatureWriter.printTexts(structure.indexSignatures);
+        this.conditionalSeparator(writer, structure.indexSignatures);
+        this.indexSignatureWriter.printTexts(writer, structure.indexSignatures);
 
-        this.conditionalSeparator(structure.properties);
-        this.propertyWriter.printTexts(structure.properties);
+        this.conditionalSeparator(writer, structure.properties);
+        this.propertyWriter.printTexts(writer, structure.properties);
 
-        this.conditionalSeparator(structure.methods);
-        this.methodWriter.printTexts(structure.methods);
+        this.conditionalSeparator(writer, structure.methods);
+        this.methodWriter.printTexts(writer, structure.methods);
     }
 
-    private conditionalSeparator(structures: any[] | undefined) {
-        if (!ArrayUtils.isNullOrEmpty(structures) && !this.writer.isAtStartOfFirstLineOfBlock())
-            this.writer.newLine();
+    private conditionalSeparator(writer: CodeBlockWriter, structures: any[] | undefined) {
+        if (!ArrayUtils.isNullOrEmpty(structures) && !writer.isAtStartOfFirstLineOfBlock())
+            writer.newLine();
     }
 }

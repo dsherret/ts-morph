@@ -1,25 +1,26 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {JsxElementStructure, JsxAttributeStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {JsxAttributeStructurePrinter} from "./JsxAttributeStructurePrinter";
 
 export class JsxElementStructurePrinter extends StructurePrinter<JsxElementStructure> {
-    private readonly jsxAttributeStructurePrinter = new JsxAttributeStructurePrinter(this.writer);
+    private readonly jsxAttributeStructurePrinter = new JsxAttributeStructurePrinter();
 
-    printText(structure: JsxElementStructure) {
-        this.writer.write(`<${structure.name}`);
+    printText(writer: CodeBlockWriter, structure: JsxElementStructure) {
+        writer.write(`<${structure.name}`);
         if (structure.attributes)
-            this.printAttributes(structure.attributes);
+            this.printAttributes(writer, structure.attributes);
 
         if (this.isSelfClosing(structure)) {
-            this.writer.write(" />");
+            writer.write(" />");
             return;
         }
-        this.writer.write(">");
+        writer.write(">");
 
         if (structure.children != null)
-            this.printChildren(structure.children);
+            this.printChildren(writer, structure.children);
 
-        this.writer.write(`</${structure.name}>`);
+        writer.write(`</${structure.name}>`);
     }
 
     private isSelfClosing(structure: JsxElementStructure) {
@@ -28,19 +29,19 @@ export class JsxElementStructurePrinter extends StructurePrinter<JsxElementStruc
         return structure.isSelfClosing == null && structure.children == null;
     }
 
-    private printAttributes(attributes: JsxAttributeStructure[]) {
+    private printAttributes(writer: CodeBlockWriter, attributes: JsxAttributeStructure[]) {
         for (const attrib of attributes) {
-            this.writer.space();
-            this.jsxAttributeStructurePrinter.printText(attrib);
+            writer.space();
+            this.jsxAttributeStructurePrinter.printText(writer, attrib);
         }
     }
 
-    private printChildren(children: JsxElementStructure[]) {
-        this.writer.newLine();
-        this.writer.indentBlock(() => {
+    private printChildren(writer: CodeBlockWriter, children: JsxElementStructure[]) {
+        writer.newLine();
+        writer.indentBlock(() => {
             for (const child of children) {
-                this.printText(child);
-                this.writer.newLine();
+                this.printText(writer, child);
+                writer.newLine();
             }
         });
     }

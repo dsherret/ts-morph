@@ -1,3 +1,4 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {PropertyDeclarationStructure} from "../../structures";
 import {StringUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
@@ -7,24 +8,24 @@ import {JSDocStructurePrinter} from "../doc";
 import {DecoratorStructurePrinter} from "../decorator";
 
 export class PropertyDeclarationStructurePrinter extends StructurePrinter<PropertyDeclarationStructure> {
-    private readonly newLineWriter = new NewLineFormattingStructuresPrinter(this.writer, this);
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly decoratorWriter = new DecoratorStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
+    private readonly newLineWriter = new NewLineFormattingStructuresPrinter(this);
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly decoratorWriter = new DecoratorStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
 
-    printTexts(structures: PropertyDeclarationStructure[] | undefined) {
-        this.newLineWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: PropertyDeclarationStructure[] | undefined) {
+        this.newLineWriter.printText(writer, structures);
     }
 
-    printText(structure: PropertyDeclarationStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.decoratorWriter.printTexts(structure.decorators);
-        this.modifierWriter.printText(structure);
-        this.writer.write(structure.name);
-        this.writer.conditionalWrite(structure.hasQuestionToken, "?");
-        this.writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
-        this.writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.type), `: ${structure.type}`);
-        this.writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.initializer), ` = ${structure.initializer}`);
-        this.writer.write(";");
+    printText(writer: CodeBlockWriter, structure: PropertyDeclarationStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.decoratorWriter.printTexts(writer, structure.decorators);
+        this.modifierWriter.printText(writer, structure);
+        writer.write(structure.name);
+        writer.conditionalWrite(structure.hasQuestionToken, "?");
+        writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
+        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.type), `: ${structure.type}`);
+        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.initializer), ` = ${structure.initializer}`);
+        writer.write(";");
     }
 }

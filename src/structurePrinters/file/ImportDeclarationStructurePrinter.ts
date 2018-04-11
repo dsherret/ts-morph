@@ -8,41 +8,41 @@ import {NamedImportExportSpecifierStructurePrinter} from "./NamedImportExportSpe
 
 export class ImportDeclarationStructurePrinter extends StructurePrinter<ImportDeclarationStructure> {
     private readonly namedImportExportSpecifierStructurePrinter: NamedImportExportSpecifierStructurePrinter;
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this.writer, this);
+    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    constructor(writer: CodeBlockWriter, private readonly formatSettings: SupportedFormatCodeSettings) {
-        super(writer);
-        this.namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, formatSettings);
+    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
+        super();
+        this.namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(formatSettings);
     }
 
-    printTexts(structures: ImportDeclarationStructure[] | undefined) {
-        this.multipleWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: ImportDeclarationStructure[] | undefined) {
+        this.multipleWriter.printText(writer, structures);
     }
 
-    printText(structure: ImportDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: ImportDeclarationStructure) {
         const hasNamedImport = structure.namedImports != null && structure.namedImports.length > 0;
         // validation
         if (hasNamedImport && structure.namespaceImport != null)
             throw new errors.InvalidOperationError("An import declaration cannot have both a namespace import and a named import.");
 
-        this.writer.write("import");
+        writer.write("import");
         // default import
         if (structure.defaultImport != null) {
-            this.writer.write(` ${structure.defaultImport}`);
-            this.writer.conditionalWrite(hasNamedImport || structure.namespaceImport != null, ",");
+            writer.write(` ${structure.defaultImport}`);
+            writer.conditionalWrite(hasNamedImport || structure.namespaceImport != null, ",");
         }
         // namespace import
         if (structure.namespaceImport != null)
-            this.writer.write(` * as ${structure.namespaceImport}`);
+            writer.write(` * as ${structure.namespaceImport}`);
         // named imports
         if (structure.namedImports != null && structure.namedImports.length > 0) {
-            this.writer.space();
-            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(structure.namedImports);
+            writer.space();
+            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(writer, structure.namedImports);
         }
         // from keyword
-        this.writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
-        this.writer.write(" ");
-        this.writer.quote(structure.moduleSpecifier);
-        this.writer.write(";");
+        writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");
+        writer.write(" ");
+        writer.quote(structure.moduleSpecifier);
+        writer.write(";");
     }
 }

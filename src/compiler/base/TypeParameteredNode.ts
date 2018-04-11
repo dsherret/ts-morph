@@ -97,10 +97,10 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             const typeParameters = this.getTypeParameters();
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new TypeParameterDeclarationStructurePrinter(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(new TypeParameterDeclarationStructurePrinter());
             index = verifyAndGetIndex(index, typeParameters.length);
 
-            structurePrinter.printText(structures);
+            structurePrinter.printText(writer, structures);
 
             if (typeParameters.length === 0) {
                 insertIntoParentTextRange({

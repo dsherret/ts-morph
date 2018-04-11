@@ -1,12 +1,13 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {JsxAttributeStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 
 export class JsxAttributeStructurePrinter extends StructurePrinter<JsxAttributeStructure> {
-    printText(structure: JsxAttributeStructure) {
+    printText(writer: CodeBlockWriter, structure: JsxAttributeStructure) {
         if (structure.isSpreadAttribute)
-            this.writer.write("...");
-        this.writer.write(structure.name);
+            writer.write("...");
+        writer.write(structure.name);
         if (structure.initializer != null)
-            this.writer.write("=").write(structure.initializer);
+            writer.write("=").write(structure.initializer);
     }
 }

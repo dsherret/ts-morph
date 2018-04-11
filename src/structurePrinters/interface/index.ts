@@ -1,3 +1,5 @@
+import CodeBlockWriter from "code-block-writer";
+
 export * from "./CallSignatureDeclarationStructurePrinter";
 export * from "./ConstructSignatureDeclarationStructurePrinter";
 export * from "./IndexSignatureDeclarationStructurePrinter";

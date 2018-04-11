@@ -2,16 +2,16 @@
 import {StructurePrinter} from "../StructurePrinter";
 
 export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<T[]> {
-    constructor(writer: CodeBlockWriter, private readonly structurePrinter: StructurePrinter<T>) {
-        super(writer);
+    constructor(private readonly structurePrinter: StructurePrinter<T>) {
+        super();
     }
 
-    printText(structures: T[] | undefined) {
+    printText(writer: CodeBlockWriter, structures: T[] | undefined) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {
-            this.writer.conditionalNewLine(i > 0);
-            this.structurePrinter.printText(structures[i]);
+            writer.conditionalNewLine(i > 0);
+            this.structurePrinter.printText(writer, structures[i]);
         }
     }
 }

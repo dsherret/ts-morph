@@ -75,9 +75,9 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             }
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new StringStructurePrinter(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(new StringStructurePrinter());
 
-            structurePrinter.printText(texts);
+            structurePrinter.printText(writer, texts);
 
             const extendsTypes = this.getExtends();
             index = verifyAndGetIndex(index, extendsTypes.length);

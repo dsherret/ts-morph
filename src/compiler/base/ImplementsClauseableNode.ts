@@ -75,9 +75,9 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             }
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new StringStructurePrinter(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(new StringStructurePrinter());
 
-            structurePrinter.printText(texts);
+            structurePrinter.printText(writer, texts);
 
             const heritageClauses = this.getHeritageClauses();
             const implementsTypes = this.getImplements();

@@ -8,27 +8,27 @@ import {ImportDeclarationStructurePrinter} from "./ImportDeclarationStructurePri
 import {ExportDeclarationStructurePrinter} from "./ExportDeclarationStructurePrinter";
 
 export class SourceFileStructurePrinter extends StructurePrinter<SourceFileStructure> {
-    private readonly bodyTextWriter = new BodyTextStructurePrinter(this.writer, { isAmbient: this.options.isAmbient });
-    private readonly importWriter = new ImportDeclarationStructurePrinter(this.writer, this.options.formatSettings);
-    private readonly exportWriter = new ExportDeclarationStructurePrinter(this.writer, this.options.formatSettings);
+    private readonly bodyTextWriter = new BodyTextStructurePrinter({ isAmbient: this.options.isAmbient });
+    private readonly importWriter = new ImportDeclarationStructurePrinter(this.options.formatSettings);
+    private readonly exportWriter = new ExportDeclarationStructurePrinter(this.options.formatSettings);
 
-    constructor(writer: CodeBlockWriter, private readonly options: { formatSettings: SupportedFormatCodeSettings; isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { formatSettings: SupportedFormatCodeSettings; isAmbient: boolean; }) {
+        super();
     }
 
-    printText(structure: SourceFileStructure) {
-        this.importWriter.printTexts(structure.imports);
+    printText(writer: CodeBlockWriter, structure: SourceFileStructure) {
+        this.importWriter.printTexts(writer, structure.imports);
 
-        this.bodyTextWriter.printText(structure);
+        this.bodyTextWriter.printText(writer, structure);
 
-        this.conditionalBlankLine(structure.exports);
-        this.exportWriter.printTexts(structure.exports);
+        this.conditionalBlankLine(writer, structure.exports);
+        this.exportWriter.printTexts(writer, structure.exports);
 
-        this.writer.conditionalNewLine(!this.writer.isAtStartOfFirstLineOfBlock() && !this.writer.isLastNewLine());
+        writer.conditionalNewLine(!writer.isAtStartOfFirstLineOfBlock() && !writer.isLastNewLine());
     }
 
-    private conditionalBlankLine(structures: any[] | undefined) {
+    private conditionalBlankLine(writer: CodeBlockWriter, structures: any[] | undefined) {
         if (!ArrayUtils.isNullOrEmpty(structures))
-            this.writer.conditionalBlankLine(!this.writer.isAtStartOfFirstLineOfBlock());
+            writer.conditionalBlankLine(!writer.isAtStartOfFirstLineOfBlock());
     }
 }

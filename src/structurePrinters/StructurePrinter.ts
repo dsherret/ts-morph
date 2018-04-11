@@ -1,12 +1,10 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 
 export abstract class StructurePrinter<TStructure> {
-    constructor(protected readonly writer: CodeBlockWriter) {
-    }
+    abstract printText(writer: CodeBlockWriter, structure: TStructure): void;
 
-    abstract printText(structure: TStructure): void;
-
-    protected printTextOrWriterFunc(textOrWriterFunc: string | ((writer: CodeBlockWriter) => void) | undefined, writer = this.writer) {
+    // todo: this should not be a method on the base
+    protected printTextOrWriterFunc(writer: CodeBlockWriter, textOrWriterFunc: string | ((writer: CodeBlockWriter) => void) | undefined) {
         if (typeof textOrWriterFunc === "string")
             writer.write(textOrWriterFunc);
         else if (textOrWriterFunc != null)

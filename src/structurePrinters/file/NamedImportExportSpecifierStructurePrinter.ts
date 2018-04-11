@@ -9,27 +9,27 @@ export type NamedImportExportSpecifierStructureToTextItem = ImportSpecifierStruc
 export class NamedImportExportSpecifierStructurePrinter extends StructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly commaSeparatedWriter: CommaSeparatedStructuresPrinter<NamedImportExportSpecifierStructureToTextItem>;
 
-    constructor(writer: CodeBlockWriter, private readonly formatSettings: SupportedFormatCodeSettings) {
-        super(writer);
-        this.commaSeparatedWriter = new CommaSeparatedStructuresPrinter(writer, this);
+    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
+        super();
+        this.commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this);
     }
 
-    printTextsWithBraces(structures: NamedImportExportSpecifierStructureToTextItem[]) {
-        this.writer.write("{").conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
-        this.printTexts(structures);
-        this.writer.conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
+    printTextsWithBraces(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
+        writer.write("{").conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
+        this.printTexts(writer, structures);
+        writer.conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
     }
 
-    printTexts(structures: NamedImportExportSpecifierStructureToTextItem[]) {
-        this.commaSeparatedWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
+        this.commaSeparatedWriter.printText(writer, structures);
     }
 
-    printText(structure: NamedImportExportSpecifierStructureToTextItem) {
+    printText(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {
         if (typeof structure === "string")
-            this.writer.write(structure);
+            writer.write(structure);
         else {
-            this.writer.write(structure.name);
-            this.writer.conditionalWrite(structure.alias != null, ` as ${structure.alias}`);
+            writer.write(structure.name);
+            writer.conditionalWrite(structure.alias != null, ` as ${structure.alias}`);
         }
     }
 }

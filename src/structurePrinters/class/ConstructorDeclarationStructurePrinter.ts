@@ -9,24 +9,24 @@ import {BodyTextStructurePrinter} from "../statement";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 
 export class ConstructorDeclarationStructurePrinter extends StructurePrinter<ConstructorDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly parameterWriter = new ParameterDeclarationStructurePrinter(this.writer);
-    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter(this.writer);
-    private readonly bodyWriter = new BodyTextStructurePrinter(this.writer, this.options);
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly parameterWriter = new ParameterDeclarationStructurePrinter();
+    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter();
+    private readonly bodyWriter = new BodyTextStructurePrinter(this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printText(structure: ConstructorDeclarationStructure) {
-        this.printOverloads(getOverloadStructures());
-        this.printBase(structure);
+    printText(writer: CodeBlockWriter, structure: ConstructorDeclarationStructure) {
+        this.printOverloads(writer, getOverloadStructures());
+        this.printBase(writer, structure);
         if (this.options.isAmbient)
-            this.writer.write(";");
+            writer.write(";");
         else
-            this.writer.space().inlineBlock(() => {
-                this.bodyWriter.printText(structure);
+            writer.space().inlineBlock(() => {
+                this.bodyWriter.printText(writer, structure);
             });
 
         function getOverloadStructures() {
@@ -35,36 +35,35 @@ export class ConstructorDeclarationStructurePrinter extends StructurePrinter<Con
             if (overloads == null || overloads.length === 0)
                 return;
 
-            for (const overload of overloads) {
+            for (const overload of overloads)
                 setValueIfUndefined(overload, "scope", structure.scope);
-            }
 
             return overloads;
         }
     }
 
-    private printOverloads(structures: ConstructorDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, structures: ConstructorDeclarationOverloadStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
         for (const structure of structures) {
-            this.printOverload(structure);
-            this.writer.newLine();
+            this.printOverload(writer, structure);
+            writer.newLine();
         }
     }
 
-    printOverload(structure: ConstructorDeclarationOverloadStructure) {
-        this.printBase(structure);
-        this.writer.write(";");
+    printOverload(writer: CodeBlockWriter, structure: ConstructorDeclarationOverloadStructure) {
+        this.printBase(writer, structure);
+        writer.write(";");
     }
 
-    private printBase(structure: ConstructorDeclarationOverloadStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.modifierWriter.printText(structure);
-        this.writer.write("constructor");
-        this.typeParameterWriter.printTexts(structure.typeParameters);
-        this.writer.write("(");
-        this.parameterWriter.printTexts(structure.parameters);
-        this.writer.write(")");
+    private printBase(writer: CodeBlockWriter, structure: ConstructorDeclarationOverloadStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.modifierWriter.printText(writer, structure);
+        writer.write("constructor");
+        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        writer.write("(");
+        this.parameterWriter.printTexts(writer, structure.parameters);
+        writer.write(")");
     }
 }

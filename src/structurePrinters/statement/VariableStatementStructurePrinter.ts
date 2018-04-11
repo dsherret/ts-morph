@@ -1,3 +1,4 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {VariableDeclarationKind} from "../../compiler/statement/VariableDeclarationKind";
 import {VariableStatementStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
@@ -7,22 +8,22 @@ import {VariableDeclarationStructurePrinter} from "./VariableDeclarationStructur
 import {CommaSeparatedStructuresPrinter, NewLineFormattingStructuresPrinter} from "../formatting";
 
 export class VariableStatementStructurePrinter extends StructurePrinter<VariableStatementStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly declarationsWriter = new CommaSeparatedStructuresPrinter(this.writer, new VariableDeclarationStructurePrinter(this.writer));
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this.writer, this);
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly declarationsWriter = new CommaSeparatedStructuresPrinter(new VariableDeclarationStructurePrinter());
+    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(structures: VariableStatementStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: VariableStatementStructure[] | undefined) {
         if (structures == null)
             return;
-        this.multipleWriter.printText(structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
-    printText(structure: VariableStatementStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.modifierWriter.printText(structure);
-        this.writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);
-        this.declarationsWriter.printText(structure.declarations);
-        this.writer.write(";");
+    printText(writer: CodeBlockWriter, structure: VariableStatementStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.modifierWriter.printText(writer, structure);
+        writer.write(`${structure.declarationKind || VariableDeclarationKind.Let} `);
+        this.declarationsWriter.printText(writer, structure.declarations);
+        writer.write(";");
     }
 }

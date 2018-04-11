@@ -1,3 +1,4 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {ParameterDeclarationStructure} from "../../structures";
 import {StringUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
@@ -6,25 +7,25 @@ import {DecoratorStructurePrinter} from "../decorator";
 import {CommaSeparatedStructuresPrinter} from "../formatting";
 
 export class ParameterDeclarationStructurePrinter extends StructurePrinter<ParameterDeclarationStructure> {
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this.writer, this);
-    private readonly decoratorWriter = new DecoratorStructurePrinter(this.writer);
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this);
+    private readonly decoratorWriter = new DecoratorStructurePrinter();
 
-    printTexts(structures: ParameterDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ParameterDeclarationStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
-        this.commaSeparatedWriter.printText(structures);
+        this.commaSeparatedWriter.printText(writer, structures);
     }
 
-    printText(structure: ParameterDeclarationStructure) {
-        this.decoratorWriter.printTextsInline(structure.decorators);
-        this.modifierWriter.printText(structure);
-        this.writer.conditionalWrite(structure.isRestParameter, "...");
-        this.writer.write(structure.name);
-        this.writer.conditionalWrite(structure.hasQuestionToken, "?");
+    printText(writer: CodeBlockWriter, structure: ParameterDeclarationStructure) {
+        this.decoratorWriter.printTextsInline(writer, structure.decorators);
+        this.modifierWriter.printText(writer, structure);
+        writer.conditionalWrite(structure.isRestParameter, "...");
+        writer.write(structure.name);
+        writer.conditionalWrite(structure.hasQuestionToken, "?");
         if (!StringUtils.isNullOrWhitespace(structure.type) || structure.hasQuestionToken)
-            this.writer.write(`: ${structure.type || "any"}`);
+            writer.write(`: ${structure.type || "any"}`);
         if (!StringUtils.isNullOrWhitespace(structure.initializer))
-            this.writer.write(` = ${structure.initializer}`);
+            writer.write(` = ${structure.initializer}`);
     }
 }

@@ -1,24 +1,25 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import * as errors from "../../errors";
 import {ExportAssignmentStructure} from "../../structures";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
 import {StructurePrinter} from "../StructurePrinter";
 
 export class ExportAssignmentStructurePrinter extends StructurePrinter<ExportAssignmentStructure> {
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this.writer, this);
+    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(structures: ExportAssignmentStructure[] | undefined) {
-        this.multipleWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: ExportAssignmentStructure[] | undefined) {
+        this.multipleWriter.printText(writer, structures);
     }
 
-    printText(structure: ExportAssignmentStructure) {
-        this.writer.write("export");
+    printText(writer: CodeBlockWriter, structure: ExportAssignmentStructure) {
+        writer.write("export");
         if (structure.isEqualsExport == null || structure.isEqualsExport === true)
-            this.writer.write(" = ");
+            writer.write(" = ");
         else
-            this.writer.write(" default ");
+            writer.write(" default ");
 
-        this.printTextOrWriterFunc(structure.expression);
+        this.printTextOrWriterFunc(writer, structure.expression);
 
-        this.writer.write(";");
+        writer.write(";");
     }
 }

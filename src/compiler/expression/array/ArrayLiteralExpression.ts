@@ -62,12 +62,12 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
         const useNewLines = getUseNewLines(this);
 
         const writer = useNewLines ? this.getWriterWithChildIndentation() : this.getWriterWithQueuedChildIndentation();
-        const stringStructurePrinter = new StringStructurePrinter(writer);
+        const stringStructurePrinter = new StringStructurePrinter();
         const structurePrinter = useNewLines ?
-            new CommaNewLineSeparatedStructuresPrinter(writer, stringStructurePrinter) :
-            new CommaSeparatedStructuresPrinter(writer, stringStructurePrinter);
+            new CommaNewLineSeparatedStructuresPrinter(stringStructurePrinter) :
+            new CommaSeparatedStructuresPrinter(stringStructurePrinter);
 
-        structurePrinter.printText(textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
+        structurePrinter.printText(writer, textsOrWriterFunction instanceof Function ? [textsOrWriterFunction] : textsOrWriterFunction);
 
         return insertTexts(this);
 

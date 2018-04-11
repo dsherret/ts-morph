@@ -89,8 +89,8 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
 
             const insertPos = index === 0 ? this.getTagName().getEnd() : this.getAttributes()[index - 1].getEnd();
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structuresPrinter = new SpaceFormattingStructuresPrinter(writer, new JsxAttributeStructurePrinter(writer));
-            structuresPrinter.printText(structures);
+            const structuresPrinter = new SpaceFormattingStructuresPrinter(new JsxAttributeStructurePrinter());
+            structuresPrinter.printText(writer, structures);
 
             insertIntoParentTextRange({
                 insertPos,

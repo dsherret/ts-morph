@@ -11,34 +11,34 @@ import {ParameterDeclarationStructurePrinter} from "../function";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 
 export class SetAccessorDeclarationStructurePrinter extends StructurePrinter<SetAccessorDeclarationStructure> {
-    private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this.writer, this);
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly decoratorWriter = new DecoratorStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly parameterWriter = new ParameterDeclarationStructurePrinter(this.writer);
-    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter(this.writer);
-    private readonly bodyWriter = new BodyTextStructurePrinter(this.writer, this.options);
+    private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this);
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly decoratorWriter = new DecoratorStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly parameterWriter = new ParameterDeclarationStructurePrinter();
+    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter();
+    private readonly bodyWriter = new BodyTextStructurePrinter(this.options);
 
-    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printTexts(structures: SetAccessorDeclarationStructure[] | undefined) {
-        this.blankLineWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: SetAccessorDeclarationStructure[] | undefined) {
+        this.blankLineWriter.printText(writer, structures);
     }
 
-    printText(structure: SetAccessorDeclarationStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.decoratorWriter.printTexts(structure.decorators);
-        this.modifierWriter.printText(structure);
-        this.writer.write(`set ${structure.name}`);
-        this.typeParameterWriter.printTexts(structure.typeParameters);
-        this.writer.write("(");
-        this.parameterWriter.printTexts(structure.parameters);
-        this.writer.write(")");
-        this.writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.returnType), `: ${structure.returnType}`);
-        this.writer.spaceIfLastNot().inlineBlock(() => {
-            this.bodyWriter.printText(structure);
+    printText(writer: CodeBlockWriter, structure: SetAccessorDeclarationStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.decoratorWriter.printTexts(writer, structure.decorators);
+        this.modifierWriter.printText(writer, structure);
+        writer.write(`set ${structure.name}`);
+        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        writer.write("(");
+        this.parameterWriter.printTexts(writer, structure.parameters);
+        writer.write(")");
+        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.returnType), `: ${structure.returnType}`);
+        writer.spaceIfLastNot().inlineBlock(() => {
+            this.bodyWriter.printText(writer, structure);
         });
     }
 }

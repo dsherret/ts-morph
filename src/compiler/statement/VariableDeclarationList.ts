@@ -102,9 +102,9 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
         const writer = this.getWriterWithQueuedChildIndentation();
-        const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new VariableDeclarationStructurePrinter(writer));
+        const structurePrinter = new CommaSeparatedStructuresPrinter(new VariableDeclarationStructurePrinter());
 
-        structurePrinter.printText(structures);
+        structurePrinter.printText(writer, structures);
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),

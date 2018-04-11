@@ -95,9 +95,9 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             index = verifyAndGetIndex(index, parameters.length);
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = new CommaSeparatedStructuresPrinter(writer, new ParameterDeclarationStructurePrinter(writer));
+            const structurePrinter = new CommaSeparatedStructuresPrinter(new ParameterDeclarationStructurePrinter());
 
-            structurePrinter.printText(structures);
+            structurePrinter.printText(writer, structures);
 
             insertIntoCommaSeparatedNodes({
                 parent: syntaxList,

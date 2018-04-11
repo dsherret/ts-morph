@@ -2,17 +2,17 @@
 import {StructurePrinter} from "../StructurePrinter";
 
 export class BlankLineFormattingStructuresPrinter<T> extends StructurePrinter<T[]> {
-    constructor(writer: CodeBlockWriter, private readonly structurePrinter: StructurePrinter<T>) {
-        super(writer);
+    constructor(private readonly structurePrinter: StructurePrinter<T>) {
+        super();
     }
 
-    printText(structures: T[] | undefined) {
+    printText(writer: CodeBlockWriter, structures: T[] | undefined) {
         if (structures == null)
             return;
 
         for (let i = 0; i < structures.length; i++) {
-            this.writer.conditionalBlankLine(i > 0);
-            this.structurePrinter.printText(structures[i]);
+            writer.conditionalBlankLine(i > 0);
+            this.structurePrinter.printText(writer, structures[i]);
         }
     }
 }

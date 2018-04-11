@@ -7,36 +7,35 @@ import {StructurePrinter} from "../StructurePrinter";
 import {NamedImportExportSpecifierStructurePrinter} from "./NamedImportExportSpecifierStructurePrinter";
 
 export class ExportDeclarationStructurePrinter extends StructurePrinter<ExportDeclarationStructure> {
-    private readonly namedImportExportSpecifierStructurePrinter: NamedImportExportSpecifierStructurePrinter;
-    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this.writer, this);
+    private readonly namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.formatSettings);
+    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    constructor(writer: CodeBlockWriter, private readonly formatSettings: SupportedFormatCodeSettings) {
-        super(writer);
-        this.namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, formatSettings);
+    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
+        super();
     }
 
-    printTexts(structures: ExportDeclarationStructure[] | undefined) {
-        this.multipleWriter.printText(structures);
+    printTexts(writer: CodeBlockWriter, structures: ExportDeclarationStructure[] | undefined) {
+        this.multipleWriter.printText(writer, structures);
     }
 
-    printText(structure: ExportDeclarationStructure) {
+    printText(writer: CodeBlockWriter, structure: ExportDeclarationStructure) {
         const hasModuleSpecifier = structure.moduleSpecifier != null && structure.moduleSpecifier.length > 0;
-        this.writer.write("export");
+        writer.write("export");
         if (structure.namedExports != null && structure.namedExports.length > 0) {
-            this.writer.space();
-            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(structure.namedExports);
+            writer.space();
+            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(writer, structure.namedExports);
         }
         else if (!hasModuleSpecifier)
-            this.writer.write(" {")
+            writer.write(" {")
                 .conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ") // compiler does this
                 .write("}");
         else
-            this.writer.write(` *`);
+            writer.write(` *`);
 
         if (hasModuleSpecifier) {
-            this.writer.write(" from ");
-            this.writer.quote(structure.moduleSpecifier!);
+            writer.write(" from ");
+            writer.quote(structure.moduleSpecifier!);
         }
-        this.writer.write(";");
+        writer.write(";");
     }
 }

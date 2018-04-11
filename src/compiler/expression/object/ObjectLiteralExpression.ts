@@ -100,7 +100,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the property assignments to insert.
      */
     insertPropertyAssignments(index: number, structures: PropertyAssignmentStructure[]) {
-        return this._insertProperty(index, structures, writer => new PropertyAssignmentStructurePrinter(writer)) as PropertyAssignment[];
+        return this._insertProperty(index, structures, () => new PropertyAssignmentStructurePrinter()) as PropertyAssignment[];
     }
 
     /* Shorthand Property Assignments */
@@ -136,7 +136,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
     insertShorthandPropertyAssignments(index: number, structures: ShorthandPropertyAssignmentStructure[]) {
-        return this._insertProperty(index, structures, writer => new ShorthandPropertyAssignmentStructurePrinter(writer)) as ShorthandPropertyAssignment[];
+        return this._insertProperty(index, structures, () => new ShorthandPropertyAssignmentStructurePrinter()) as ShorthandPropertyAssignment[];
     }
 
     /* Spread Assignments */
@@ -172,7 +172,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the spread assignments to insert.
      */
     insertSpreadAssignments(index: number, structures: SpreadAssignmentStructure[]) {
-        return this._insertProperty(index, structures, writer => new SpreadAssignmentStructurePrinter(writer)) as SpreadAssignment[];
+        return this._insertProperty(index, structures, () => new SpreadAssignmentStructurePrinter()) as SpreadAssignment[];
     }
 
     /* Method Declarations */
@@ -208,7 +208,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the methods to insert.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
-        return this._insertProperty(index, structures, writer => new MethodDeclarationStructurePrinter(writer, { isAmbient: false })) as MethodDeclaration[];
+        return this._insertProperty(index, structures, () => new MethodDeclarationStructurePrinter({ isAmbient: false })) as MethodDeclaration[];
     }
 
     /* Get Accessor Declarations */
@@ -244,7 +244,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the get accessors to insert.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
-        return this._insertProperty(index, structures, writer => new GetAccessorDeclarationStructurePrinter(writer, { isAmbient: false })) as GetAccessorDeclaration[];
+        return this._insertProperty(index, structures, () => new GetAccessorDeclarationStructurePrinter({ isAmbient: false })) as GetAccessorDeclaration[];
     }
 
     /* Set Accessor Declarations */
@@ -280,18 +280,18 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      * @param structures - Structures that represent the set accessors to insert.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
-        return this._insertProperty(index, structures, writer => new SetAccessorDeclarationStructurePrinter(writer, { isAmbient: false })) as SetAccessorDeclaration[];
+        return this._insertProperty(index, structures, () => new SetAccessorDeclarationStructurePrinter({ isAmbient: false })) as SetAccessorDeclaration[];
     }
 
     /**
      * @internal
      */
-    private _insertProperty<T>(index: number, structures: T[], createStructurePrinter: (writer: CodeBlockWriter) => StructurePrinter<T>) {
+    private _insertProperty<T>(index: number, structures: T[], createStructurePrinter: () => StructurePrinter<T>) {
         index = verifyAndGetIndex(index, this.compilerNode.properties.length);
         const writer = this.getWriterWithChildIndentation();
-        const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(writer, createStructurePrinter(writer));
+        const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(createStructurePrinter());
 
-        structurePrinter.printText(structures);
+        structurePrinter.printText(writer, structures);
 
         insertIntoCommaSeparatedNodes({
             parent: this.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),

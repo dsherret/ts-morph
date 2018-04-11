@@ -10,35 +10,35 @@ import {NamespaceDeclarationStructurePrinter} from "../namespace";
 import {TypeAliasDeclarationStructurePrinter} from "../types";
 
 export class StatementedNodeStructurePrinter extends StructurePrinter<StatementedNodeStructure> {
-    private readonly classWriter = new ClassDeclarationStructurePrinter(this.writer, this.options);
-    private readonly interfaceWriter = new InterfaceDeclarationStructurePrinter(this.writer);
-    private readonly enumWriter = new EnumDeclarationStructurePrinter(this.writer);
-    private readonly functionWriter = new FunctionDeclarationStructurePrinter(this.writer);
-    private readonly namespaceWriter = new NamespaceDeclarationStructurePrinter(this.writer, this.options);
-    private readonly typeAliasWriter = new TypeAliasDeclarationStructurePrinter(this.writer);
+    private readonly classWriter = new ClassDeclarationStructurePrinter(this.options);
+    private readonly interfaceWriter = new InterfaceDeclarationStructurePrinter();
+    private readonly enumWriter = new EnumDeclarationStructurePrinter();
+    private readonly functionWriter = new FunctionDeclarationStructurePrinter();
+    private readonly namespaceWriter = new NamespaceDeclarationStructurePrinter(this.options);
+    private readonly typeAliasWriter = new TypeAliasDeclarationStructurePrinter();
 
-    constructor(writer: CodeBlockWriter, private readonly options: { isAmbient: boolean; }) {
-        super(writer);
+    constructor(private readonly options: { isAmbient: boolean; }) {
+        super();
     }
 
-    printText(structure: StatementedNodeStructure) {
-        conditionalBlankLine(this.writer, structure.typeAliases);
-        this.typeAliasWriter.printTexts(structure.typeAliases);
+    printText(writer: CodeBlockWriter, structure: StatementedNodeStructure) {
+        conditionalBlankLine(writer, structure.typeAliases);
+        this.typeAliasWriter.printTexts(writer, structure.typeAliases);
 
-        conditionalBlankLine(this.writer, structure.interfaces);
-        this.interfaceWriter.printTexts(structure.interfaces);
+        conditionalBlankLine(writer, structure.interfaces);
+        this.interfaceWriter.printTexts(writer, structure.interfaces);
 
-        conditionalBlankLine(this.writer, structure.enums);
-        this.enumWriter.printTexts(structure.enums);
+        conditionalBlankLine(writer, structure.enums);
+        this.enumWriter.printTexts(writer, structure.enums);
 
-        conditionalBlankLine(this.writer, structure.functions);
-        this.functionWriter.printTexts(structure.functions);
+        conditionalBlankLine(writer, structure.functions);
+        this.functionWriter.printTexts(writer, structure.functions);
 
-        conditionalBlankLine(this.writer, structure.classes);
-        this.classWriter.printTexts(structure.classes);
+        conditionalBlankLine(writer, structure.classes);
+        this.classWriter.printTexts(writer, structure.classes);
 
-        conditionalBlankLine(this.writer, structure.namespaces);
-        this.namespaceWriter.printTexts(structure.namespaces);
+        conditionalBlankLine(writer, structure.namespaces);
+        this.namespaceWriter.printTexts(writer, structure.namespaces);
 
         function conditionalBlankLine(writer: CodeBlockWriter, structures: any[] | undefined) {
             if (!writer.isAtStartOfFirstLineOfBlock() && !ArrayUtils.isNullOrEmpty(structures))

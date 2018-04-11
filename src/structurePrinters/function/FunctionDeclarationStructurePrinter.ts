@@ -1,20 +1,20 @@
+import CodeBlockWriter from "code-block-writer";
 ﻿import {FunctionDeclarationStructure, FunctionDeclarationOverloadStructure} from "../../structures";
 import {StringUtils, setValueIfUndefined, ObjectUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
 import {ParameterDeclarationStructurePrinter} from "./ParameterDeclarationStructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";
 import {JSDocStructurePrinter} from "../doc";
-import {CommaSeparatedStructuresPrinter} from "../formatting";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 import {BodyTextStructurePrinter} from "../statement";
 
 export class FunctionDeclarationStructurePrinter extends StructurePrinter<FunctionDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter(this.writer);
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter(this.writer);
-    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter(this.writer);
-    private readonly parametersWriter = new CommaSeparatedStructuresPrinter(this.writer, new ParameterDeclarationStructurePrinter(this.writer));
+    private readonly jsDocWriter = new JSDocStructurePrinter();
+    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter();
+    private readonly parametersWriter = new ParameterDeclarationStructurePrinter();
 
-    printTexts(structures: FunctionDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: FunctionDeclarationStructure[] | undefined) {
         if (structures == null)
             return;
 
@@ -23,23 +23,23 @@ export class FunctionDeclarationStructurePrinter extends StructurePrinter<Functi
             if (i > 0) {
                 const previousStructure = structures[i - 1];
                 if (previousStructure.hasDeclareKeyword && currentStructure.hasDeclareKeyword)
-                    this.writer.newLine();
+                    writer.newLine();
                 else
-                    this.writer.blankLine();
+                    writer.blankLine();
             }
 
-            this.printText(currentStructure);
+            this.printText(writer, currentStructure);
         }
     }
 
-    printText(structure: FunctionDeclarationStructure) {
-        this.printOverloads(structure.name, getOverloadStructures());
-        this.printBase(structure.name, structure);
+    printText(writer: CodeBlockWriter, structure: FunctionDeclarationStructure) {
+        this.printOverloads(writer, structure.name, getOverloadStructures());
+        this.printBase(writer, structure.name, structure);
         if (structure.hasDeclareKeyword)
-            this.writer.write(";");
+            writer.write(";");
         else
-            this.writer.space().inlineBlock(() => {
-                new BodyTextStructurePrinter(this.writer, { isAmbient: false }).printText(structure);
+            writer.space().inlineBlock(() => {
+                new BodyTextStructurePrinter({ isAmbient: false }).printText(writer, structure);
             });
 
         function getOverloadStructures() {
@@ -58,33 +58,33 @@ export class FunctionDeclarationStructurePrinter extends StructurePrinter<Functi
         }
     }
 
-    private printOverloads(name: string, structures: FunctionDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string, structures: FunctionDeclarationOverloadStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
         for (const structure of structures) {
-            this.printOverload(name, structure);
-            this.writer.newLine();
+            this.printOverload(writer, name, structure);
+            writer.newLine();
         }
     }
 
-    printOverload(name: string, structure: FunctionDeclarationOverloadStructure) {
-        this.printBase(name, structure);
-        this.writer.write(";");
+    printOverload(writer: CodeBlockWriter, name: string, structure: FunctionDeclarationOverloadStructure) {
+        this.printBase(writer, name, structure);
+        writer.write(";");
     }
 
-    private printBase(name: string, structure: FunctionDeclarationOverloadStructure) {
-        this.jsDocWriter.printDocs(structure.docs);
-        this.modifierWriter.printText(structure);
-        this.writer.write(`function`);
-        this.writer.conditionalWrite(structure.isGenerator, "*");
-        this.writer.write(` ${name}`);
-        this.typeParameterWriter.printTexts(structure.typeParameters);
-        this.writer.write("(");
+    private printBase(writer: CodeBlockWriter, name: string, structure: FunctionDeclarationOverloadStructure) {
+        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.modifierWriter.printText(writer, structure);
+        writer.write(`function`);
+        writer.conditionalWrite(structure.isGenerator, "*");
+        writer.write(` ${name}`);
+        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        writer.write("(");
         if (structure.parameters != null)
-            this.parametersWriter.printText(structure.parameters);
-        this.writer.write(`)`);
+            this.parametersWriter.printTexts(writer, structure.parameters);
+        writer.write(`)`);
         if (!StringUtils.isNullOrWhitespace(structure.returnType))
-            this.writer.write(`: ${structure.returnType}`);
+            writer.write(`: ${structure.returnType}`);
     }
 }

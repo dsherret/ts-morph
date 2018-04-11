@@ -167,12 +167,12 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         const namedExports = this.getNamedExports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedExportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(writer, this.global.getFormatCodeSettings());
+        const namedExportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.global.getFormatCodeSettings());
 
         index = verifyAndGetIndex(index, namedExports.length);
 
         if (namedExports.length === 0) {
-            namedExportStructurePrinter.printTextsWithBraces(structuresOrNames);
+            namedExportStructurePrinter.printTextsWithBraces(writer, structuresOrNames);
             const asteriskToken = this.getFirstChildByKindOrThrow(SyntaxKind.AsteriskToken);
             insertIntoParentTextRange({
                 insertPos: asteriskToken.getStart(),
@@ -184,7 +184,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
             });
         }
         else {
-            namedExportStructurePrinter.printTexts(structuresOrNames);
+            namedExportStructurePrinter.printTexts(writer, structuresOrNames);
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.NamedExports).getFirstChildByKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: namedExports,

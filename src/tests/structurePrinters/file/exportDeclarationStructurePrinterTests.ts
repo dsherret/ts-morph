@@ -8,7 +8,7 @@ import {getDefaultFormatCodeSettings} from "../../testHelpers";
 describe(nameof(ImportDeclarationStructurePrinter), () => {
     function doTest(structure: ImportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
         const writer = new CodeBlockWriter();
-        new ImportDeclarationStructurePrinter(writer, getDefaultFormatCodeSettings(formatCodeSettings)).printText(structure);
+        new ImportDeclarationStructurePrinter(getDefaultFormatCodeSettings(formatCodeSettings)).printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
