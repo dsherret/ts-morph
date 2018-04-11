@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.0"></a>
+# [10.3.0](https://github.com/dsherret/ts-simple-ast/compare/10.1.0...10.3.0) (2018-04-11)
+
+
+### Bug Fixes
+
+* Fix out of date TypeGuards by regenerating them. ([23eca82](https://github.com/dsherret/ts-simple-ast/commit/23eca82))
+
+
+### Features
+
+* [#300](https://github.com/dsherret/ts-simple-ast/issues/300) - Fix more nodes to have .findReferences() and .getReferencingNodes() ([9ae7383](https://github.com/dsherret/ts-simple-ast/commit/9ae7383))
+* [#306](https://github.com/dsherret/ts-simple-ast/issues/306) - Add Node.forEachChild and Node.forEachDescendant ([9eabe57](https://github.com/dsherret/ts-simple-ast/commit/9eabe57))
+* TypeGuards.hasBody(node). ([4041dfd](https://github.com/dsherret/ts-simple-ast/commit/4041dfd))
+
+
+
 <a name="10.2.0"></a>
 # [10.2.0](https://github.com/dsherret/ts-simple-ast/compare/10.1.0...10.2.0) (2018-04-08)
 
