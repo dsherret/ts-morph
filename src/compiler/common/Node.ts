@@ -338,7 +338,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the children of the node.
+     * Gets all the children of the node.
      */
     getChildren(): Node[] {
         return this.getCompilerChildren().map(n => this.getNodeFromCompilerNode(n));
@@ -412,6 +412,63 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         }
 
         return undefined;
+    }
+
+    /**
+     * Invokes the `cbNode` callback for each child and the `cbNodeArray` for every array of nodes stored in properties of the node.
+     * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
+     *
+     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @param cbNode - Callback invoked for each child.
+     * @param cbNodeArray - Callback invoked for each array of nodes.
+     */
+    forEachChild(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+        let stop = false;
+        const stopFunc = () => stop = true;
+        const nodeCallback = (node: ts.Node) => {
+            cbNode(this.getNodeFromCompilerNode(node), stopFunc);
+            return stop;
+        };
+        const arrayCallback = cbNodeArray == null ? undefined : (nodes: ts.NodeArray<ts.Node>) => {
+            cbNodeArray(nodes.map(n => this.getNodeFromCompilerNode(n)), stopFunc);
+            return stop;
+        };
+
+        this.compilerNode.forEachChild(nodeCallback, arrayCallback);
+    }
+
+    /**
+     * Invokes the `cbNode` callback for each descendant and the `cbNodeArray` for every array of nodes stored in properties of the node and descendant nodes.
+     * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
+     *
+     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @param cbNode - Callback invoked for each descendant.
+     * @param cbNodeArray - Callback invoked for each array of nodes.
+     */
+    forEachDescendant(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+        let stop = false;
+        const stopFunc = () => stop = true;
+        const nodeCallback = (node: Node) => {
+            if (stop) return true;
+            cbNode(node, stopFunc);
+            if (stop) return true;
+            node.forEachChild(nodeCallback, arrayCallback);
+            return stop;
+        };
+        const arrayCallback = cbNodeArray == null ? undefined : (nodes: Node[]) => {
+            if (stop) return true;
+            cbNodeArray(nodes, stopFunc);
+            if (stop) return true;
+
+            for (const node of nodes) {
+                node.forEachChild(nodeCallback, arrayCallback);
+                if (stop) return true;
+            }
+
+            return stop;
+        };
+
+        this.forEachChild(nodeCallback, arrayCallback);
     }
 
     /**

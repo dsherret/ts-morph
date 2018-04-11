@@ -859,4 +859,163 @@ class MyClass {
             doTest(startText + triviaText, triviaText.length);
         });
     });
+
+    describe(nameof<Node>(n => n.forEachChild), () => {
+        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (child: Node, stop: () => void) => void) {
+            const foundKinds: SyntaxKind[] = [];
+            node.forEachChild((child, stop) => {
+                foundKinds.push(child.getKind());
+                if (callback)
+                    callback(child, stop);
+            });
+            expect(foundKinds).to.deep.equal(expectedKinds);
+        }
+
+        it("should iterate over all the children of a source file", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Interface {}");
+            doNodeCbSyntaxKindTest(sourceFile, [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EndOfFileToken]);
+        });
+
+        it("should iterate over all the children when it includes an array", () => {
+            const {firstChild} = getInfoFromText("class Test { prop: string; method() {} }");
+            doNodeCbSyntaxKindTest(firstChild, [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]);
+        });
+
+        it("should stop iteration when calling stop in a node callback", () => {
+            const {firstChild} = getInfoFromText("class Test { prop: string; method() {} }");
+            doNodeCbSyntaxKindTest(firstChild, [SyntaxKind.Identifier, SyntaxKind.PropertyDeclaration], (node, stop) => {
+                if (node.getKind() === SyntaxKind.PropertyDeclaration)
+                    stop();
+            });
+        });
+
+        function doNodeArrayCbSyntaxKindTest(node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][], forceStop = false) {
+            const foundNodeKinds: SyntaxKind[] = [];
+            const foundArrayKinds: SyntaxKind[][] = [];
+            node.forEachChild(child => foundNodeKinds.push(child.getKind()), (childArray, stop) => {
+                foundArrayKinds.push(childArray.map(c => c.getKind()));
+                if (forceStop)
+                    stop();
+            });
+
+            expect(foundNodeKinds).to.deep.equal(expectedNodeKinds);
+            expect(foundArrayKinds).to.deep.equal(expectedArrayKinds);
+        }
+
+        it("should iterate over all the children when it includes an array when using an array callback", () => {
+            const {firstChild} = getInfoFromText("export class Test { prop: string; method() {} }");
+            doNodeArrayCbSyntaxKindTest(firstChild, [SyntaxKind.Identifier], [
+                [SyntaxKind.ExportKeyword],
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]
+            ]);
+        });
+
+        it("should stop iteration when calling stop in an array callback", () => {
+            const {firstChild} = getInfoFromText("export class Test { prop: string; method() {} }");
+            doNodeArrayCbSyntaxKindTest(firstChild, [], [[SyntaxKind.ExportKeyword]], true);
+        });
+
+        it("should not stop when both callbacks return values", () => {
+            const {firstChild} = getInfoFromText("class Test { prop: string; method() {} }");
+            const foundNodeKinds: SyntaxKind[] = [];
+            const foundArrayKinds: SyntaxKind[][] = [];
+            firstChild.forEachChild(node => foundNodeKinds.push(node.getKind()), nodeArray => foundArrayKinds.push(nodeArray.map(n => n.getKind())));
+            expect(foundNodeKinds).to.deep.equal([SyntaxKind.Identifier]);
+            expect(foundArrayKinds).to.deep.equal([[SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]]);
+        });
+    });
+
+    describe(nameof<Node>(n => n.forEachDescendant), () => {
+        function doNodeCbSyntaxKindTest(node: Node, expectedKinds: SyntaxKind[], callback?: (node: Node, stop: () => void) => void) {
+            const foundKinds: SyntaxKind[] = [];
+            node.forEachDescendant((child, stop) => {
+                foundKinds.push(child.getKind());
+                if (callback)
+                    callback(child, stop);
+            });
+            expect(foundKinds).to.deep.equal(expectedKinds);
+        }
+
+        it("should iterate over all the descendants of a source file", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Interface {}");
+            doNodeCbSyntaxKindTest(sourceFile, [
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.Identifier,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKind.Identifier,
+                SyntaxKind.EndOfFileToken
+            ]);
+        });
+
+        it("should iterate until stop is called when at the child level", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Interface {}");
+            doNodeCbSyntaxKindTest(sourceFile, [
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.Identifier,
+                SyntaxKind.InterfaceDeclaration
+            ], (node, stop) => {
+                if (node.getKind() === SyntaxKind.InterfaceDeclaration)
+                    stop();
+            });
+        });
+
+        it("should iterate until stop is called when at the grandchild level", () => {
+            const {sourceFile} = getInfoFromText("class Test {} interface Interface {}");
+            doNodeCbSyntaxKindTest(sourceFile, [
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.Identifier
+            ], (node, stop) => {
+                if (node.getKind() === SyntaxKind.Identifier)
+                    stop();
+            });
+        });
+
+        function doNodeArrayCbSyntaxKindTest(node: Node, expectedNodeKinds: SyntaxKind[], expectedArrayKinds: SyntaxKind[][], callback?: (children: Node[], stop: () => void) => void) {
+            const foundNodeKinds: SyntaxKind[] = [];
+            const foundArrayKinds: SyntaxKind[][] = [];
+            node.forEachDescendant(child => foundNodeKinds.push(child.getKind()), (childArray, stop) => {
+                foundArrayKinds.push(childArray.map(c => c.getKind()));
+                if (callback)
+                    callback(childArray, stop);
+            });
+
+            expect(foundNodeKinds).to.deep.equal(expectedNodeKinds);
+            expect(foundArrayKinds).to.deep.equal(expectedArrayKinds);
+        }
+
+        it("should iterate all the descendants when using an array callback", () => {
+            const {sourceFile} = getInfoFromText("export class Test { prop; method() {} } interface Test { prop; }");
+            doNodeArrayCbSyntaxKindTest(sourceFile, [SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.Block,
+                    SyntaxKind.Identifier, SyntaxKind.Identifier, SyntaxKind.EndOfFileToken], [
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                [SyntaxKind.ExportKeyword],
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
+                [],
+                [],
+                [SyntaxKind.PropertySignature]
+            ]);
+        });
+
+        it("should stop iteration when calling stop in an array callback at the child level", () => {
+            const {sourceFile} = getInfoFromText("export class Test { prop: string; method() {} } interface Test { prop: string; }");
+            doNodeArrayCbSyntaxKindTest(sourceFile, [], [
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration]
+            ], (nodes, stop) => {
+                if (nodes.some(n => n.getKind() === SyntaxKind.ClassDeclaration))
+                    stop();
+            });
+        });
+
+        it("should stop iteration when calling stop in an array callback at the grandchild level", () => {
+            const {sourceFile} = getInfoFromText("export class Test { prop: string; method() {} } interface Test { prop: string; }");
+            doNodeArrayCbSyntaxKindTest(sourceFile, [SyntaxKind.Identifier], [
+                [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
+                [SyntaxKind.ExportKeyword],
+                [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]
+            ], (nodes, stop) => {
+                if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
+                    stop();
+            });
+        });
+    });
 });

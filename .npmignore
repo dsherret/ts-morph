@@ -6,6 +6,7 @@
 /dist-scripts
 /dist/tests
 /src
+/docs
 *.js.map
 /obj
 /temp
@@ -14,3 +15,11 @@
 *.csproj
 *.csproj.user
 *.sln
+.travis.yml
+.npmignore
+breaking-changes.md
+CHANGELOG.md
+gulpfile.js
+tsconfig.json
+tslint.json
+wrapped-nodes.md
