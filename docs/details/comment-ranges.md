@@ -31,3 +31,7 @@ Once you have a comment range, there are several self explanatory methods:
 * `.getWidth()` - Width (`end - pos`)
 * `.getText()` - Text.
 * `.wasForgotten()` - Returns true if the node was forgotten because a manipulation occured to the source file or its associated node was forgotten.
+
+### More Details
+
+Read more about comments in the compiler API documentation here: https://github.com/Microsoft/TypeScript/wiki/Architectural-Overview#trivia
