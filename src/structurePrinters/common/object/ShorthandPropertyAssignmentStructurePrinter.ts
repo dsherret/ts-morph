@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {ShorthandPropertyAssignmentStructure} from "../../../structures";
+import {ShorthandPropertyAssignmentStructure} from "../../../structures";
 import {StructurePrinter} from "../../StructurePrinter";
 
 export class ShorthandPropertyAssignmentStructurePrinter extends StructurePrinter<ShorthandPropertyAssignmentStructure> {

@@ -83,7 +83,7 @@ export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDe
         this.decoratorWriter.printTexts(writer, structure.decorators);
         this.modifierWriter.printText(writer, structure);
         writer.write(name);
-        this.typeParametersWriter.printTexts(writer, structure.typeParameters);
+        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.parametersWriter.printTexts(writer, structure.parameters);
         writer.write(`)`);

@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {EnumMemberStructure} from "../../structures";
+import {EnumMemberStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {JSDocStructurePrinter} from "../doc";
 import {CommaNewLineSeparatedStructuresPrinter} from "../formatting";

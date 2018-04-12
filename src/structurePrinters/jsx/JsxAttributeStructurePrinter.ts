@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {JsxAttributeStructure} from "../../structures";
+import {JsxAttributeStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 
 export class JsxAttributeStructurePrinter extends StructurePrinter<JsxAttributeStructure> {

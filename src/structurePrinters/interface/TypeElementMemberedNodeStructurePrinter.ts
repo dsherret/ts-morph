@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {TypeElementMemberedNodeStructure} from "../../structures";
+import {TypeElementMemberedNodeStructure} from "../../structures";
 import {ArrayUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
 import {CallSignatureDeclarationStructurePrinter} from "./CallSignatureDeclarationStructurePrinter";

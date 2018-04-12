@@ -1,3 +1,1 @@
-import CodeBlockWriter from "code-block-writer";
-
-﻿export * from "./DecoratorStructurePrinter";
+export * from "./DecoratorStructurePrinter";

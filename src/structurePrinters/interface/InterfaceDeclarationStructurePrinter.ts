@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {InterfaceDeclarationStructure} from "../../structures";
+import {InterfaceDeclarationStructure} from "../../structures";
 import {ArrayUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";
@@ -23,7 +23,7 @@ export class InterfaceDeclarationStructurePrinter extends StructurePrinter<Inter
         this.jsDocWriter.printDocs(writer, structure.docs);
         this.modifierWriter.printText(writer, structure);
         writer.write(`interface ${structure.name}`);
-        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
         if (!ArrayUtils.isNullOrEmpty(structure.extends))
             writer.write(`extends ${structure.extends.join(", ")} `);

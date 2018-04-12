@@ -32,7 +32,7 @@ export class GetAccessorDeclarationStructurePrinter extends StructurePrinter<Get
         this.decoratorWriter.printTexts(writer, structure.decorators);
         this.modifierWriter.printText(writer, structure);
         writer.write(`get ${structure.name}`);
-        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.parameterWriter.printTexts(writer, structure.parameters);
         writer.write(")");

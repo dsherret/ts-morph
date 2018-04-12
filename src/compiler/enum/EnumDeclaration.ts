@@ -2,7 +2,6 @@ import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {EnumMemberStructure, EnumDeclarationStructure} from "../../structures";
 import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn} from "../../manipulation";
-import {EnumMemberStructurePrinter, CommaNewLineSeparatedStructuresPrinter} from "../../structurePrinters";
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "../../utils";
 import {callBaseFill} from "../callBaseFill";
 import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "../base";
@@ -70,8 +69,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // create member code
         // todo: pass in the StructureToText to the function below
         const writer = this.getWriterWithChildIndentation();
-        const structurePrinter = new CommaNewLineSeparatedStructuresPrinter(new EnumMemberStructurePrinter());
-        structurePrinter.printText(writer, structures);
+        const structurePrinter = this.global.structurePrinterFactory.forEnumMember();
+        structurePrinter.printTexts(writer, structures);
 
         // insert
         insertIntoCommaSeparatedNodes({

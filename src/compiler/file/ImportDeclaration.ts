@@ -2,7 +2,6 @@ import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ImportSpecifierStructure} from "../../structures";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "../../manipulation";
-import {NamedImportExportSpecifierStructurePrinter} from "../../structurePrinters";
 import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
 import {Statement} from "../statement";
@@ -213,7 +212,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const namedImports = this.getNamedImports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedImportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.global.getFormatCodeSettings());
+        const namedImportStructurePrinter = this.global.structurePrinterFactory.forNamedImportExportSpecifier();
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 

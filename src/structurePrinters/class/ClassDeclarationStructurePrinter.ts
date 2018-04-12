@@ -38,7 +38,7 @@ export class ClassDeclarationStructurePrinter extends StructurePrinter<ClassDecl
         // can be null, ex. `export default class { ... }`
         if (!StringUtils.isNullOrWhitespace(structure.name))
             writer.space().write(structure.name);
-        this.typeParametersWriter.printTexts(writer, structure.typeParameters);
+        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
         if (!StringUtils.isNullOrWhitespace(structure.extends))
             writer.write(`extends ${structure.extends} `);

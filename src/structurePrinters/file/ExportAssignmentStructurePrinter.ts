@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import * as errors from "../../errors";
+import * as errors from "../../errors";
 import {ExportAssignmentStructure} from "../../structures";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
 import {StructurePrinter} from "../StructurePrinter";

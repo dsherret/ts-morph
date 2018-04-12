@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {PropertyAssignmentStructure} from "../../../structures";
+import {PropertyAssignmentStructure} from "../../../structures";
 import {StructurePrinter} from "../../StructurePrinter";
 
 export class PropertyAssignmentStructurePrinter extends StructurePrinter<PropertyAssignmentStructure> {

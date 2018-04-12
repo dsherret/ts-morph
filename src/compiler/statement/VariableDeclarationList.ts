@@ -3,7 +3,7 @@ import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToRetu
 import * as errors from "../../errors";
 import {Node} from "../common";
 import {VariableDeclarationListStructure, VariableDeclarationStructure} from "../../structures";
-import {VariableDeclarationStructurePrinter, CommaSeparatedStructuresPrinter} from "../../structurePrinters";
+import {CommaSeparatedStructuresPrinter} from "../../structurePrinters";
 import {ModifierableNode} from "../base";
 import {callBaseFill} from "../callBaseFill";
 import {VariableDeclaration} from "./VariableDeclaration";
@@ -102,7 +102,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
         const writer = this.getWriterWithQueuedChildIndentation();
-        const structurePrinter = new CommaSeparatedStructuresPrinter(new VariableDeclarationStructurePrinter());
+        const structurePrinter = new CommaSeparatedStructuresPrinter(this.global.structurePrinterFactory.forVariableDeclaration());
 
         structurePrinter.printText(writer, structures);
 

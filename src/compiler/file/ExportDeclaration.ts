@@ -1,7 +1,6 @@
 import {ts, SyntaxKind} from "../../typescript";
 import * as errors from "../../errors";
 import {ExportSpecifierStructure} from "../../structures";
-import {NamedImportExportSpecifierStructurePrinter} from "../../structurePrinters";
 import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
 import {ArrayUtils, TypeGuards, ModuleUtils} from "../../utils";
 import {Identifier} from "../common";
@@ -167,7 +166,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         const namedExports = this.getNamedExports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedExportStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.global.getFormatCodeSettings());
+        const namedExportStructurePrinter = this.global.structurePrinterFactory.forNamedImportExportSpecifier();
 
         index = verifyAndGetIndex(index, namedExports.length);
 

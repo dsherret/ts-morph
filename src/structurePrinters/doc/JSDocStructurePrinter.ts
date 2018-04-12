@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {JSDocStructure} from "../../structures";
+import {JSDocStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 
 export class JSDocStructurePrinter extends StructurePrinter<JSDocStructure> {

@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {MethodSignatureStructure} from "../../structures";
+import {MethodSignatureStructure} from "../../structures";
 import {JSDocStructurePrinter} from "../doc";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 import {ParameterDeclarationStructurePrinter} from "../function";
@@ -20,7 +20,7 @@ export class MethodSignatureStructurePrinter extends StructurePrinter<MethodSign
         this.jsDocWriter.printDocs(writer, structure.docs);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
-        this.typeParametersWriter.printTexts(writer, structure.typeParameters);
+        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.parametersWriter.printTexts(writer, structure.parameters);
         writer.write(")");

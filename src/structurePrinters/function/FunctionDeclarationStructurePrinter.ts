@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {FunctionDeclarationStructure, FunctionDeclarationOverloadStructure} from "../../structures";
+import {FunctionDeclarationStructure, FunctionDeclarationOverloadStructure} from "../../structures";
 import {StringUtils, setValueIfUndefined, ObjectUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
 import {ParameterDeclarationStructurePrinter} from "./ParameterDeclarationStructurePrinter";
@@ -79,7 +79,7 @@ export class FunctionDeclarationStructurePrinter extends StructurePrinter<Functi
         writer.write(`function`);
         writer.conditionalWrite(structure.isGenerator, "*");
         writer.write(` ${name}`);
-        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         if (structure.parameters != null)
             this.parametersWriter.printTexts(writer, structure.parameters);

@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {PropertyDeclarationStructure} from "../../structures";
+import { PropertyDeclarationStructure } from "../../structures";
 import {StringUtils} from "../../utils";
 import {StructurePrinter} from "../StructurePrinter";
 import {NewLineFormattingStructuresPrinter} from "../formatting";

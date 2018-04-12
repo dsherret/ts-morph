@@ -61,7 +61,7 @@ export class ConstructorDeclarationStructurePrinter extends StructurePrinter<Con
         this.jsDocWriter.printDocs(writer, structure.docs);
         this.modifierWriter.printText(writer, structure);
         writer.write("constructor");
-        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.parameterWriter.printTexts(writer, structure.parameters);
         writer.write(")");

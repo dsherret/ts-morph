@@ -9,10 +9,10 @@ import {ExportDeclarationStructurePrinter} from "./ExportDeclarationStructurePri
 
 export class SourceFileStructurePrinter extends StructurePrinter<SourceFileStructure> {
     private readonly bodyTextWriter = new BodyTextStructurePrinter({ isAmbient: this.options.isAmbient });
-    private readonly importWriter = new ImportDeclarationStructurePrinter(this.options.formatSettings);
-    private readonly exportWriter = new ExportDeclarationStructurePrinter(this.options.formatSettings);
+    private readonly importWriter = new ImportDeclarationStructurePrinter(this.formatSettings);
+    private readonly exportWriter = new ExportDeclarationStructurePrinter(this.formatSettings);
 
-    constructor(private readonly options: { formatSettings: SupportedFormatCodeSettings; isAmbient: boolean; }) {
+    constructor(private readonly formatSettings: SupportedFormatCodeSettings, private readonly options: { isAmbient: boolean; }) {
         super();
     }
 

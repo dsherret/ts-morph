@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {TypeAliasDeclarationStructure} from "../../structures";
+import {TypeAliasDeclarationStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";
 import {JSDocStructurePrinter} from "../doc";
@@ -20,7 +20,7 @@ export class TypeAliasDeclarationStructurePrinter extends StructurePrinter<TypeA
         this.jsDocWriter.printDocs(writer, structure.docs);
         this.modifierWriter.printText(writer, structure);
         writer.write(`type ${structure.name}`);
-        this.typeParameterWriter.printTexts(writer, structure.typeParameters);
+        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write(` = ${ structure.type };`);
     }
 }

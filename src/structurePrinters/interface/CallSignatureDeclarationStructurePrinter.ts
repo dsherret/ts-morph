@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {CallSignatureDeclarationStructure} from "../../structures";
+import {CallSignatureDeclarationStructure} from "../../structures";
 import {JSDocStructurePrinter} from "../doc";
 import {TypeParameterDeclarationStructurePrinter} from "../types";
 import {ParameterDeclarationStructurePrinter} from "../function";
@@ -18,7 +18,7 @@ export class CallSignatureDeclarationStructurePrinter extends StructurePrinter<C
 
     printText(writer: CodeBlockWriter, structure: CallSignatureDeclarationStructure) {
         this.jsDocWriter.printDocs(writer, structure.docs);
-        this.typeParametersWriter.printTexts(writer, structure.typeParameters);
+        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         this.parametersWriter.printTexts(writer, structure.parameters);
         writer.write(")");

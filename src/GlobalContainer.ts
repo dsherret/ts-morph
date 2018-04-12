@@ -1,6 +1,6 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./errors";
-import {CompilerFactory} from "./factories";
+import {CompilerFactory, StructurePrinterFactory} from "./factories";
 import {ts, CompilerOptions} from "./typescript";
 import {LanguageService, TypeChecker, QuoteKind} from "./compiler";
 import {createWrappedNode} from "./utils/compiler/createWrappedNode";
@@ -23,6 +23,7 @@ export interface GlobalContainerOptions {
 export class GlobalContainer {
     private readonly _manipulationSettings = new ManipulationSettingsContainer();
     private readonly _compilerFactory: CompilerFactory;
+    private readonly _structurePrinterFactory: StructurePrinterFactory;
     private readonly _lazyReferenceCoordinator: LazyReferenceCoordinator;
     private readonly _directoryCoordinator: DirectoryCoordinator;
     private readonly _languageService: LanguageService | undefined;
@@ -35,6 +36,7 @@ export class GlobalContainer {
         this._fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
         this._compilerFactory = new CompilerFactory(this);
+        this._structurePrinterFactory = new StructurePrinterFactory(this);
         this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
         this._directoryCoordinator = new DirectoryCoordinator(this._compilerFactory, fileSystemWrapper);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;
@@ -64,6 +66,11 @@ export class GlobalContainer {
     /** Gets the compiler factory. */
     get compilerFactory() {
         return this._compilerFactory;
+    }
+
+    /** Gets the structure printer factory. */
+    get structurePrinterFactory() {
+        return this._structurePrinterFactory;
     }
 
     /** Gets the language service. Throws an exception if it doesn't exist. */

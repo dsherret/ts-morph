@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {StringUtils} from "../../utils";
+import {StringUtils} from "../../utils";
 import {PropertySignatureStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";

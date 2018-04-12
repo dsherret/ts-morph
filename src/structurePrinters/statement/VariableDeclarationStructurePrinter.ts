@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {VariableDeclarationStructure} from "../../structures";
+import {VariableDeclarationStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {ModifierableNodeStructurePrinter} from "../base";
 

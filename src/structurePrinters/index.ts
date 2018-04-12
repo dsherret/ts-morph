@@ -1,5 +1,3 @@
-import CodeBlockWriter from "code-block-writer";
-
 export * from "./base";
 export * from "./doc";
 export * from "./decorator";

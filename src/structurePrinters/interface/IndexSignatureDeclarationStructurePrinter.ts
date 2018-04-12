@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {IndexSignatureDeclarationStructure} from "../../structures";
+import {IndexSignatureDeclarationStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
 import {ModifierableNodeStructurePrinter} from "../base";

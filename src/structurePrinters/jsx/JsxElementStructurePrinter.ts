@@ -1,5 +1,5 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {JsxElementStructure, JsxAttributeStructure} from "../../structures";
+import {JsxElementStructure, JsxAttributeStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {JsxAttributeStructurePrinter} from "./JsxAttributeStructurePrinter";
 

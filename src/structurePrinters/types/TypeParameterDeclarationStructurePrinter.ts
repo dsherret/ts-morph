@@ -1,17 +1,21 @@
 import CodeBlockWriter from "code-block-writer";
-﻿import {TypeParameterDeclarationStructure} from "../../structures";
+import {TypeParameterDeclarationStructure} from "../../structures";
 import {StructurePrinter} from "../StructurePrinter";
 import {CommaSeparatedStructuresPrinter} from "../formatting";
 
 export class TypeParameterDeclarationStructurePrinter extends StructurePrinter<TypeParameterDeclarationStructure> {
     private readonly commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: TypeParameterDeclarationStructure[] | undefined) {
+    printTextsWithBrackets(writer: CodeBlockWriter, structures: TypeParameterDeclarationStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
         writer.write("<");
-        this.commaSeparatedWriter.printText(writer, structures);
+        this.printTexts(writer, structures);
         writer.write(">");
+    }
+
+    printTexts(writer: CodeBlockWriter, structures: TypeParameterDeclarationStructure[] | undefined) {
+        this.commaSeparatedWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: TypeParameterDeclarationStructure) {

@@ -2,7 +2,6 @@ import {ts} from "../../typescript";
 import {Constructor} from "../../Constructor";
 import {insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn} from "../../manipulation";
 import {JSDocStructure, JSDocableNodeStructure} from "../../structures";
-import {JSDocStructurePrinter} from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import {ArrayUtils} from "../../utils";
 import {Node} from "../common";
@@ -65,7 +64,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
                 return [];
 
             const writer = this.getWriterWithQueuedIndentation();
-            const structurePrinter = new JSDocStructurePrinter();
+            const structurePrinter = this.global.structurePrinterFactory.forJSDoc();
             structurePrinter.printDocs(writer, structures);
             writer.write(""); // final indentation
             const code = writer.toString();

@@ -22,25 +22,25 @@ export class StatementedNodeStructurePrinter extends StructurePrinter<Statemente
     }
 
     printText(writer: CodeBlockWriter, structure: StatementedNodeStructure) {
-        conditionalBlankLine(writer, structure.typeAliases);
+        conditionalBlankLine(structure.typeAliases);
         this.typeAliasWriter.printTexts(writer, structure.typeAliases);
 
-        conditionalBlankLine(writer, structure.interfaces);
+        conditionalBlankLine(structure.interfaces);
         this.interfaceWriter.printTexts(writer, structure.interfaces);
 
-        conditionalBlankLine(writer, structure.enums);
+        conditionalBlankLine(structure.enums);
         this.enumWriter.printTexts(writer, structure.enums);
 
-        conditionalBlankLine(writer, structure.functions);
+        conditionalBlankLine(structure.functions);
         this.functionWriter.printTexts(writer, structure.functions);
 
-        conditionalBlankLine(writer, structure.classes);
+        conditionalBlankLine(structure.classes);
         this.classWriter.printTexts(writer, structure.classes);
 
-        conditionalBlankLine(writer, structure.namespaces);
+        conditionalBlankLine(structure.namespaces);
         this.namespaceWriter.printTexts(writer, structure.namespaces);
 
-        function conditionalBlankLine(writer: CodeBlockWriter, structures: any[] | undefined) {
+        function conditionalBlankLine(structures: any[] | undefined) {
             if (!writer.isAtStartOfFirstLineOfBlock() && !ArrayUtils.isNullOrEmpty(structures))
                 writer.blankLine();
         }
