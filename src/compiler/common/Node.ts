@@ -1003,7 +1003,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the leading comment ranges of the current node.
      */
     getLeadingCommentRanges(): CommentRange[] {
-        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getPos(), ts.getLeadingCommentRanges));
+        return this._leadingCommentRanges || (this._leadingCommentRanges = this._getCommentsAtPos(this.getFullStart(), ts.getLeadingCommentRanges));
     }
 
     /**
