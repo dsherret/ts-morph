@@ -1,19 +1,10 @@
 import CodeBlockWriter from "code-block-writer";
 import {FunctionDeclarationStructure, FunctionDeclarationOverloadStructure} from "../../structures";
 import {StringUtils, setValueIfUndefined, ObjectUtils} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
-import {ParameterDeclarationStructurePrinter} from "./ParameterDeclarationStructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {JSDocStructurePrinter} from "../doc";
-import {TypeParameterDeclarationStructurePrinter} from "../types";
-import {BodyTextStructurePrinter} from "../statement";
+import {StructurePrinterFactory} from "../../factories";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class FunctionDeclarationStructurePrinter extends StructurePrinter<FunctionDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
-    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter();
-    private readonly parametersWriter = new ParameterDeclarationStructurePrinter();
-
+export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<FunctionDeclarationStructure> {
     printTexts(writer: CodeBlockWriter, structures: FunctionDeclarationStructure[] | undefined) {
         if (structures == null)
             return;
@@ -39,7 +30,7 @@ export class FunctionDeclarationStructurePrinter extends StructurePrinter<Functi
             writer.write(";");
         else
             writer.space().inlineBlock(() => {
-                new BodyTextStructurePrinter({ isAmbient: false }).printText(writer, structure);
+                this.factory.forBodyText({ isAmbient: false }).printText(writer, structure);
             });
 
         function getOverloadStructures() {
@@ -74,15 +65,15 @@ export class FunctionDeclarationStructurePrinter extends StructurePrinter<Functi
     }
 
     private printBase(writer: CodeBlockWriter, name: string, structure: FunctionDeclarationOverloadStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`function`);
         writer.conditionalWrite(structure.isGenerator, "*");
         writer.write(` ${name}`);
-        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         if (structure.parameters != null)
-            this.parametersWriter.printTexts(writer, structure.parameters);
+            this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(`)`);
         if (!StringUtils.isNullOrWhitespace(structure.returnType))
             writer.write(`: ${structure.returnType}`);

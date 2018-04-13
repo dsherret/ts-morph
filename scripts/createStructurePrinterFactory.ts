@@ -1,7 +1,7 @@
 ﻿/**
  * Code Manipulation - Creates the StructurePrinterFactory
  * --------------------------------------------------------
- * Todo some description...
+ * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
 import {TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope} from "../src/main";
@@ -22,21 +22,21 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
         moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/options/index.ts"))
     });
     sourceFile.addImportDeclaration({
-        namedImports: ["GlobalContainer"],
-        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/GlobalContainer.ts"))
+        namedImports: ["Memoize"],
+        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/utils/index.ts"))
     });
 
     sourceFile.addClass({
+        docs: [{ description: "Cached lazy factory for StructurePrinters." }],
         isExported: true,
         name: "StructurePrinterFactory",
         ctor: {
-            parameters: [{ isReadonly: true, scope: Scope.Private, name: "global", type: "GlobalContainer" }]
+            parameters: [{ isReadonly: true, scope: Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }]
         },
         methods: [{
-            scope: Scope.Private,
             name: "getFormatCodeSettings",
             returnType: "SupportedFormatCodeSettings",
-            bodyText: "return this.global.getFormatCodeSettings();"
+            bodyText: "return this._getFormatCodeSettings();"
         }, ...getMethods()]
     });
 
@@ -51,14 +51,16 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
         const methods: MethodDeclarationStructure[] = [];
 
         for (const structurePrinter of structurePrinters) {
-            const ctor = structurePrinter.getConstructors()[0];
+            const ctor = structurePrinter.getConstructors()[0] || structurePrinter.getBaseClassOrThrow().getConstructors()[0];
             const ctorParams = ctor == null ? [] : ctor.getParameters();
+            const exposedCtorParams = ctorParams.filter(exposeCtorParam);
             const name = structurePrinter.getNameOrThrow();
             methods.push({
+                decorators: [{ name: "Memoize" }],
                 name: `for${name.replace(/StructurePrinter$/, "")}`,
                 returnType: `structurePrinters.${name}`,
                 bodyText: `return new structurePrinters.${name}(${ctorParams.map(ctorParamToArgument).join(", ")});`,
-                parameters: ctorParams.filter(exposeCtorParam).map(p => ({
+                parameters: exposedCtorParams.map(p => ({
                     name: p.getNameOrThrow(),
                     type: p.getTypeNodeOrThrow().getText()
                 }))
@@ -68,14 +70,16 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
         return methods;
 
         function exposeCtorParam(ctorParam: ParameterDeclaration) {
-            if (ctorParam.getTypeNodeOrThrow().getText() === "SupportedFormatCodeSettings")
+            const typeName = ctorParam.getTypeNodeOrThrow().getText();
+            if (typeName === "StructurePrinterFactory")
                 return false;
             return true;
         }
 
         function ctorParamToArgument(ctorParam: ParameterDeclaration) {
-            if (ctorParam.getTypeNodeOrThrow().getText() === "SupportedFormatCodeSettings")
-                return "this.getFormatCodeSettings()";
+            const typeName = ctorParam.getTypeNodeOrThrow().getText();
+            if (typeName === "StructurePrinterFactory")
+                return "this";
             return ctorParam.getNameOrThrow();
         }
     }
@@ -83,11 +87,13 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
     function isAllowedStructurePrinter(name: string) {
         switch (name) {
             case "StructurePrinter":
+            case "FactoryStructurePrinter":
             case "BlankLineFormattingStructuresPrinter":
             case "NewLineFormattingStructuresPrinter":
             case "SpaceFormattingStructuresPrinter":
             case "CommaSeparatedStructuresPrinter":
             case "CommaNewLineSeparatedStructuresPrinter":
+            case "StringStructurePrinter":
                 return false;
         }
         return true;

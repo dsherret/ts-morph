@@ -1,24 +1,12 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {MethodDeclarationStructure, MethodDeclarationOverloadStructure} from "../../structures";
 import {ObjectUtils, setValueIfUndefined} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {DecoratorStructurePrinter} from "../decorator";
-import {ParameterDeclarationStructurePrinter} from "../function";
-import {JSDocStructurePrinter} from "../doc";
-import {BodyTextStructurePrinter} from "../statement";
-import {TypeParameterDeclarationStructurePrinter} from "../types";
+import {StructurePrinterFactory} from "../../factories";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
-    private readonly decoratorWriter = new DecoratorStructurePrinter();
-    private readonly parametersWriter = new ParameterDeclarationStructurePrinter();
-    private readonly typeParametersWriter = new TypeParameterDeclarationStructurePrinter();
-    private readonly bodyWriter = new BodyTextStructurePrinter(this.options);
-
-    constructor(private readonly options: { isAmbient: boolean; }) {
-        super();
+export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<MethodDeclarationStructure> {
+    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super(factory);
     }
 
     printTexts(writer: CodeBlockWriter, structures: MethodDeclarationStructure[] | undefined) {
@@ -44,7 +32,7 @@ export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDe
             writer.write(";");
         else
             writer.spaceIfLastNot().inlineBlock(() => {
-                this.bodyWriter.printText(writer, structure);
+                this.factory.forBodyText(this.options).printText(writer, structure);
             });
 
         function getOverloadStructures() {
@@ -79,13 +67,13 @@ export class MethodDeclarationStructurePrinter extends StructurePrinter<MethodDe
     }
 
     private printBase(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.decoratorWriter.printTexts(writer, structure.decorators);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forDecorator().printTexts(writer, structure.decorators);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(name);
-        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
-        this.parametersWriter.printTexts(writer, structure.parameters);
+        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(`)`);
         writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
     }

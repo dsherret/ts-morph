@@ -3,10 +3,17 @@ import {Memoize} from "../../../utils/decorators/Memoize";
 
 describe(nameof(Memoize), () => {
     let val = 0;
+    let argIncrement = 0;
     class MyClass {
         @Memoize
         getNumber() {
             return ++val;
+        }
+
+        @Memoize
+        getArgumentedValue(argValue: boolean) {
+            argIncrement++;
+            return argValue.toString() + argIncrement;
         }
 
         @Memoize
@@ -34,8 +41,13 @@ describe(nameof(Memoize), () => {
         expect(a.value).to.not.equal(b.value);
     });
 
-    it("should throw if supplying arguments", () => {
-        expect(() => (a as any).getNumber(2)).to.throw(Error);
+    it("should work when supplying arguments", () => {
+        const val1 = a.getArgumentedValue(false);
+        const val2 = a.getArgumentedValue(true);
+        expect("false1").to.equal(a.getArgumentedValue(false));
+        expect("true2").to.equal(a.getArgumentedValue(true));
+        expect(val1).to.equal(a.getArgumentedValue(false));
+        expect(val2).to.equal(a.getArgumentedValue(true));
     });
 
     it("should throw when using memoize on a set accessor", () => {

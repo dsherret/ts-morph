@@ -36,7 +36,7 @@ export class GlobalContainer {
         this._fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
         this._compilerFactory = new CompilerFactory(this);
-        this._structurePrinterFactory = new StructurePrinterFactory(this);
+        this._structurePrinterFactory = new StructurePrinterFactory(() => this.manipulationSettings.getFormatCodeSettings());
         this._lazyReferenceCoordinator = new LazyReferenceCoordinator(this._compilerFactory);
         this._directoryCoordinator = new DirectoryCoordinator(this._compilerFactory, fileSystemWrapper);
         this._languageService = opts.createLanguageService ? new LanguageService(this) : undefined;

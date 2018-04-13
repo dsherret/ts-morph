@@ -1,18 +1,11 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../errors";
-import {SupportedFormatCodeSettings} from "../../options";
 import {ExportDeclarationStructure, ExportSpecifierStructure} from "../../structures";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {StructurePrinter} from "../StructurePrinter";
-import {NamedImportExportSpecifierStructurePrinter} from "./NamedImportExportSpecifierStructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class ExportDeclarationStructurePrinter extends StructurePrinter<ExportDeclarationStructure> {
-    private readonly namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(this.formatSettings);
+export class ExportDeclarationStructurePrinter extends FactoryStructurePrinter<ExportDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
-
-    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
-        super();
-    }
 
     printTexts(writer: CodeBlockWriter, structures: ExportDeclarationStructure[] | undefined) {
         this.multipleWriter.printText(writer, structures);
@@ -23,11 +16,11 @@ export class ExportDeclarationStructurePrinter extends StructurePrinter<ExportDe
         writer.write("export");
         if (structure.namedExports != null && structure.namedExports.length > 0) {
             writer.space();
-            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(writer, structure.namedExports);
+            this.factory.forNamedImportExportSpecifier().printTextsWithBraces(writer, structure.namedExports);
         }
         else if (!hasModuleSpecifier)
             writer.write(" {")
-                .conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ") // compiler does this
+                .conditionalWrite(this.factory.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ") // compiler does this
                 .write("}");
         else
             writer.write(` *`);

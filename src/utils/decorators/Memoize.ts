@@ -12,11 +12,10 @@ function getNewFunction(originalFunction: () => void) {
     const identifier = ++counter;
 
     function decorator(this: any) {
-        const propName = `__memoized_value_${identifier}`;
-        let returnedValue: any;
-
+        let propName = `__memoized_value_${identifier}`;
         if (arguments.length > 0)
-            throw new Error("Should not use memoize with a function that requires arguments.");
+            propName += "_" + JSON.stringify(arguments);
+        let returnedValue: any;
 
         if (this.hasOwnProperty(propName))
             returnedValue = this[propName];

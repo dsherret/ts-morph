@@ -1,15 +1,9 @@
 import CodeBlockWriter from "code-block-writer";
 import {MethodSignatureStructure} from "../../structures";
-import {JSDocStructurePrinter} from "../doc";
-import {TypeParameterDeclarationStructurePrinter} from "../types";
-import {ParameterDeclarationStructurePrinter} from "../function";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class MethodSignatureStructurePrinter extends StructurePrinter<MethodSignatureStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly typeParametersWriter = new TypeParameterDeclarationStructurePrinter();
-    private readonly parametersWriter = new ParameterDeclarationStructurePrinter();
+export class MethodSignatureStructurePrinter extends FactoryStructurePrinter<MethodSignatureStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: MethodSignatureStructure[] | undefined) {
@@ -17,12 +11,12 @@ export class MethodSignatureStructurePrinter extends StructurePrinter<MethodSign
     }
 
     printText(writer: CodeBlockWriter, structure: MethodSignatureStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
-        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
-        this.parametersWriter.printTexts(writer, structure.parameters);
+        this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(")");
         if (structure.returnType != null && structure.returnType.length > 0)
             writer.write(`: ${structure.returnType}`);

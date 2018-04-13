@@ -1,26 +1,20 @@
 import CodeBlockWriter from "code-block-writer";
 import { PropertyDeclarationStructure } from "../../structures";
 import {StringUtils} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {JSDocStructurePrinter} from "../doc";
-import {DecoratorStructurePrinter} from "../decorator";
 
-export class PropertyDeclarationStructurePrinter extends StructurePrinter<PropertyDeclarationStructure> {
-    private readonly newLineWriter = new NewLineFormattingStructuresPrinter(this);
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly decoratorWriter = new DecoratorStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+export class PropertyDeclarationStructurePrinter extends FactoryStructurePrinter<PropertyDeclarationStructure> {
+    private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: PropertyDeclarationStructure[] | undefined) {
-        this.newLineWriter.printText(writer, structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: PropertyDeclarationStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.decoratorWriter.printTexts(writer, structure.decorators);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forDecorator().printTexts(writer, structure.decorators);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");

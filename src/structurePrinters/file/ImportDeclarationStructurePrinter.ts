@@ -1,19 +1,11 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../errors";
 import {ImportDeclarationStructure, ImportSpecifierStructure} from "../../structures";
-import {SupportedFormatCodeSettings} from "../../options";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {StructurePrinter} from "../StructurePrinter";
-import {NamedImportExportSpecifierStructurePrinter} from "./NamedImportExportSpecifierStructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class ImportDeclarationStructurePrinter extends StructurePrinter<ImportDeclarationStructure> {
-    private readonly namedImportExportSpecifierStructurePrinter: NamedImportExportSpecifierStructurePrinter;
+export class ImportDeclarationStructurePrinter extends FactoryStructurePrinter<ImportDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
-
-    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
-        super();
-        this.namedImportExportSpecifierStructurePrinter = new NamedImportExportSpecifierStructurePrinter(formatSettings);
-    }
 
     printTexts(writer: CodeBlockWriter, structures: ImportDeclarationStructure[] | undefined) {
         this.multipleWriter.printText(writer, structures);
@@ -37,7 +29,7 @@ export class ImportDeclarationStructurePrinter extends StructurePrinter<ImportDe
         // named imports
         if (structure.namedImports != null && structure.namedImports.length > 0) {
             writer.space();
-            this.namedImportExportSpecifierStructurePrinter.printTextsWithBraces(writer, structure.namedImports);
+            this.factory.forNamedImportExportSpecifier().printTextsWithBraces(writer, structure.namedImports);
         }
         // from keyword
         writer.conditionalWrite(structure.defaultImport != null || hasNamedImport || structure.namespaceImport != null, " from");

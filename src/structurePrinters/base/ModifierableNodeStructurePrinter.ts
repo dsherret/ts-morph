@@ -1,13 +1,13 @@
 import CodeBlockWriter from "code-block-writer";
 import {AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure,
     ReadonlyableNodeStructure, ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
 export type ModifierableNodeStructures = AbstractableNodeStructure | AmbientableNodeStructure | AsyncableNodeStructure |
     ExportableNodeStructure | ReadonlyableNodeStructure | ScopeableNodeStructure | ScopedNodeStructure |
     StaticableNodeStructure;
 
-export class ModifierableNodeStructurePrinter extends StructurePrinter<ModifierableNodeStructures> {
+export class ModifierableNodeStructurePrinter extends FactoryStructurePrinter<ModifierableNodeStructures> {
     printText(writer: CodeBlockWriter, structure: ModifierableNodeStructures) {
         const scope = (structure as ScopeableNodeStructure).scope;
         if ((structure as ExportableNodeStructure).isDefaultExport)

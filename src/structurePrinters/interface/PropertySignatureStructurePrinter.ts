@@ -1,14 +1,10 @@
 import CodeBlockWriter from "code-block-writer";
 import {StringUtils} from "../../utils";
 import {PropertySignatureStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {JSDocStructurePrinter} from "../doc";
 
-export class PropertySignatureStructurePrinter extends StructurePrinter<PropertySignatureStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly modifierableWriter = new ModifierableNodeStructurePrinter();
+export class PropertySignatureStructurePrinter extends FactoryStructurePrinter<PropertySignatureStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: PropertySignatureStructure[] | undefined) {
@@ -16,8 +12,8 @@ export class PropertySignatureStructurePrinter extends StructurePrinter<Property
     }
 
     printText(writer: CodeBlockWriter, structure: PropertySignatureStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.modifierableWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         if (!StringUtils.isNullOrWhitespace(structure.type))

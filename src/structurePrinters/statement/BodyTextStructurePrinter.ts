@@ -1,20 +1,18 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {StatementedNodeStructure, BodiedNodeStructure, BodyableNodeStructure} from "../../structures";
 import {ArrayUtils} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
-import {StatementedNodeStructurePrinter} from "./StatementedNodeStructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import {StructurePrinterFactory} from "../../factories";
 
 export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string; };
 
-export class BodyTextStructurePrinter extends StructurePrinter<BodyTextStructures> {
-    private readonly statementWriter = new StatementedNodeStructurePrinter(this.options);
-
-    constructor(private readonly options: { isAmbient: boolean; }) {
-        super();
+export class BodyTextStructurePrinter extends FactoryStructurePrinter<BodyTextStructures> {
+    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super(factory);
     }
 
     printText(writer: CodeBlockWriter, structure: BodyTextStructures) {
-        this.statementWriter.printText(writer, structure as StatementedNodeStructure);
+        this.factory.forStatementedNode(this.options).printText(writer, structure as StatementedNodeStructure);
 
         // todo: hacky, will need to change this in the future...
         // basically, need a way to make this only do the blank line if the user does a write

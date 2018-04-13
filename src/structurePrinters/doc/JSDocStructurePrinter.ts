@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
 import {JSDocStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class JSDocStructurePrinter extends StructurePrinter<JSDocStructure> {
+export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructure> {
     printText(writer: CodeBlockWriter, structure: JSDocStructure) {
         const lines = structure.description.split(/\r?\n/);
         writer.writeLine("/**");

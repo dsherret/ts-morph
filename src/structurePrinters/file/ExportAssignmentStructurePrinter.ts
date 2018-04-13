@@ -2,9 +2,9 @@ import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../errors";
 import {ExportAssignmentStructure} from "../../structures";
 import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class ExportAssignmentStructurePrinter extends StructurePrinter<ExportAssignmentStructure> {
+export class ExportAssignmentStructurePrinter extends FactoryStructurePrinter<ExportAssignmentStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ExportAssignmentStructure[] | undefined) {

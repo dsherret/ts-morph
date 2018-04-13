@@ -6,7 +6,6 @@ import {getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren} from 
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils} from "../../utils";
 import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
     CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure} from "../../structures";
-import * as structurePrinters from "../../structurePrinters";
 import {callBaseFill} from "../callBaseFill";
 import {Node} from "../common";
 import {PropertySignature, MethodSignature, IndexSignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration} from "../interface";
@@ -249,7 +248,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructurePrinter: () => new structurePrinters.ConstructSignatureDeclarationStructurePrinter()
+                createStructurePrinter: () => this.global.structurePrinterFactory.forConstructSignatureDeclaration()
             });
         }
 
@@ -284,7 +283,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructurePrinter: () => new structurePrinters.CallSignatureDeclarationStructurePrinter()
+                createStructurePrinter: () => this.global.structurePrinterFactory.forCallSignatureDeclaration()
             });
         }
 
@@ -319,7 +318,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructurePrinter: () => new structurePrinters.IndexSignatureDeclarationStructurePrinter()
+                createStructurePrinter: () => this.global.structurePrinterFactory.forIndexSignatureDeclaration()
             });
         }
 
@@ -354,7 +353,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructurePrinter: () => new structurePrinters.MethodSignatureStructurePrinter()
+                createStructurePrinter: () => this.global.structurePrinterFactory.forMethodSignature()
             });
         }
 
@@ -390,7 +389,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructurePrinter: () => new structurePrinters.PropertySignatureStructurePrinter()
+                createStructurePrinter: () => this.global.structurePrinterFactory.forPropertySignature()
             });
         }
 

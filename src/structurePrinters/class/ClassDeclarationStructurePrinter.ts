@@ -1,61 +1,49 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {ArrayUtils, StringUtils} from "../../utils";
 import {ClassDeclarationStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
+import {StructurePrinterFactory} from "../../factories";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {BlankLineFormattingStructuresPrinter} from "../formatting";
 import {ModifierableNodeStructurePrinter} from "../base";
-import {JSDocStructurePrinter} from "../doc";
-import {DecoratorStructurePrinter} from "../decorator";
-import {TypeParameterDeclarationStructurePrinter} from "../types";
-import {PropertyDeclarationStructurePrinter} from "./PropertyDeclarationStructurePrinter";
-import {ConstructorDeclarationStructurePrinter} from "./ConstructorDeclarationStructurePrinter";
-import {MethodDeclarationStructurePrinter} from "./MethodDeclarationStructurePrinter";
-import {GetAccessorDeclarationStructurePrinter} from "./GetAccessorDeclarationStructurePrinter";
-import {SetAccessorDeclarationStructurePrinter} from "./SetAccessorDeclarationStructurePrinter";
 
-export class ClassDeclarationStructurePrinter extends StructurePrinter<ClassDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly decoratorWriter = new DecoratorStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
-    private readonly typeParametersWriter = new TypeParameterDeclarationStructurePrinter();
-    private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
-    private readonly propertyWriter = new PropertyDeclarationStructurePrinter();
+export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<ClassDeclarationStructure> {
+    private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-    constructor(private readonly options: { isAmbient: boolean; }) {
-        super();
+    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super(factory);
     }
 
     printTexts(writer: CodeBlockWriter, structures: ClassDeclarationStructure[] | undefined) {
-        this.blankLineFormattingWriter.printText(writer, structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: ClassDeclarationStructure) {
         const isAmbient = structure.hasDeclareKeyword || this.options.isAmbient;
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.decoratorWriter.printTexts(writer, structure.decorators);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forDecorator().printTexts(writer, structure.decorators);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`class`);
         // can be null, ex. `export default class { ... }`
         if (!StringUtils.isNullOrWhitespace(structure.name))
             writer.space().write(structure.name);
-        this.typeParametersWriter.printTextsWithBrackets(writer, structure.typeParameters);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
         if (!StringUtils.isNullOrWhitespace(structure.extends))
             writer.write(`extends ${structure.extends} `);
         if (!ArrayUtils.isNullOrEmpty(structure.implements))
             writer.write(`implements ${structure.implements.join(", ")} `);
         writer.inlineBlock(() => {
-            this.propertyWriter.printTexts(writer, structure.properties);
+            this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
             if (structure.ctor != null) {
                 this.conditionalSeparator(writer, isAmbient);
-                new ConstructorDeclarationStructurePrinter({ isAmbient }).printText(writer, structure.ctor);
+                this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, structure.ctor);
             }
 
             this.printGetAndSet(writer, structure, isAmbient);
 
             if (!ArrayUtils.isNullOrEmpty(structure.methods)) {
                 this.conditionalSeparator(writer, isAmbient);
-                new MethodDeclarationStructurePrinter({ isAmbient }).printTexts(writer, structure.methods);
+                this.factory.forMethodDeclaration({ isAmbient }).printTexts(writer, structure.methods);
             }
         });
     }
@@ -63,8 +51,8 @@ export class ClassDeclarationStructurePrinter extends StructurePrinter<ClassDecl
     private printGetAndSet(writer: CodeBlockWriter, structure: ClassDeclarationStructure, isAmbient: boolean) {
         const getAccessors = [...structure.getAccessors || []];
         const setAccessors = [...structure.setAccessors || []];
-        const getAccessorWriter = new GetAccessorDeclarationStructurePrinter({ isAmbient });
-        const setAccessorWriter = new SetAccessorDeclarationStructurePrinter({ isAmbient });
+        const getAccessorWriter = this.factory.forGetAccessorDeclaration({ isAmbient });
+        const setAccessorWriter = this.factory.forSetAccessorDeclaration({ isAmbient });
 
         for (const getAccessor of getAccessors) {
             this.conditionalSeparator(writer, isAmbient);

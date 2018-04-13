@@ -4,7 +4,6 @@ import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, inse
 import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
 import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
     SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
-import * as structurePrinters from "../../structurePrinters";
 import {Node} from "../common";
 import {NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
     ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "../base";
@@ -161,7 +160,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structurePrinters.ConstructorDeclarationStructurePrinter({ isAmbient }).printText(writer, structure);
+                this.global.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printText(writer, structure);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -219,7 +218,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structurePrinters.GetAccessorDeclarationStructurePrinter({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
+                this.global.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -270,7 +269,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structurePrinters.SetAccessorDeclarationStructurePrinter({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
+                this.global.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -321,7 +320,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structurePrinters.PropertyDeclarationStructurePrinter().printTexts(writer, structures);
+                this.global.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
                 if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
                     writer.blankLineIfLastNot();
                 else
@@ -569,7 +568,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                new structurePrinters.MethodDeclarationStructurePrinter({ isAmbient }).printTexts(writer, structures);
+                this.global.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else

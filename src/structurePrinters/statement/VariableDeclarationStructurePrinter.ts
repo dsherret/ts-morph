@@ -1,10 +1,14 @@
 import CodeBlockWriter from "code-block-writer";
 import {VariableDeclarationStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import {CommaSeparatedStructuresPrinter} from "../formatting";
 
-export class VariableDeclarationStructurePrinter extends StructurePrinter<VariableDeclarationStructure> {
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+export class VariableDeclarationStructurePrinter extends FactoryStructurePrinter<VariableDeclarationStructure> {
+    private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
+
+    printTexts(writer: CodeBlockWriter, structures: VariableDeclarationStructure[]) {
+        this.multipleWriter.printText(writer, structures);
+    }
 
     printText(writer: CodeBlockWriter, structure: VariableDeclarationStructure) {
         writer.write(structure.name);

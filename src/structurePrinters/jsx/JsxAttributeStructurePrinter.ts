@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
 import {JsxAttributeStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class JsxAttributeStructurePrinter extends StructurePrinter<JsxAttributeStructure> {
+export class JsxAttributeStructurePrinter extends FactoryStructurePrinter<JsxAttributeStructure> {
     printText(writer: CodeBlockWriter, structure: JsxAttributeStructure) {
         if (structure.isSpreadAttribute)
             writer.write("...");

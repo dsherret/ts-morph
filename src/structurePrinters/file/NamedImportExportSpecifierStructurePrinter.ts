@@ -1,27 +1,22 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {ImportSpecifierStructure, ExportSpecifierStructure} from "../../structures";
-import {SupportedFormatCodeSettings} from "../../options";
-import {StructurePrinter} from "../StructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {CommaSeparatedStructuresPrinter} from "../formatting";
 
 export type NamedImportExportSpecifierStructureToTextItem = ImportSpecifierStructure | ExportSpecifierStructure | string;
 
-export class NamedImportExportSpecifierStructurePrinter extends StructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
-    private readonly commaSeparatedWriter: CommaSeparatedStructuresPrinter<NamedImportExportSpecifierStructureToTextItem>;
-
-    constructor(private readonly formatSettings: SupportedFormatCodeSettings) {
-        super();
-        this.commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this);
-    }
+export class NamedImportExportSpecifierStructurePrinter extends FactoryStructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
+    private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTextsWithBraces(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
-        writer.write("{").conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
+        const formatSettings = this.factory.getFormatCodeSettings();
+        writer.write("{").conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
         this.printTexts(writer, structures);
-        writer.conditionalWrite(this.formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
+        writer.conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
     }
 
     printTexts(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
-        this.commaSeparatedWriter.printText(writer, structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: NamedImportExportSpecifierStructureToTextItem) {

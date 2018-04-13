@@ -1,25 +1,21 @@
 import CodeBlockWriter from "code-block-writer";
 import {ParameterDeclarationStructure} from "../../structures";
 import {StringUtils} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {DecoratorStructurePrinter} from "../decorator";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {CommaSeparatedStructuresPrinter} from "../formatting";
 
-export class ParameterDeclarationStructurePrinter extends StructurePrinter<ParameterDeclarationStructure> {
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
-    private readonly commaSeparatedWriter = new CommaSeparatedStructuresPrinter(this);
-    private readonly decoratorWriter = new DecoratorStructurePrinter();
+export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinter<ParameterDeclarationStructure> {
+    private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: ParameterDeclarationStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
-        this.commaSeparatedWriter.printText(writer, structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: ParameterDeclarationStructure) {
-        this.decoratorWriter.printTextsInline(writer, structure.decorators);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forDecorator().printTextsInline(writer, structure.decorators);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.conditionalWrite(structure.isRestParameter, "...");
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");

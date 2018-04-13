@@ -1,34 +1,26 @@
 import CodeBlockWriter from "code-block-writer";
 import {InterfaceDeclarationStructure} from "../../structures";
 import {ArrayUtils} from "../../utils";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {JSDocStructurePrinter} from "../doc";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {BlankLineFormattingStructuresPrinter} from "../formatting";
-import {TypeParameterDeclarationStructurePrinter} from "../types";
-import {TypeElementMemberedNodeStructurePrinter} from "./TypeElementMemberedNodeStructurePrinter";
 
-export class InterfaceDeclarationStructurePrinter extends StructurePrinter<InterfaceDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
-    private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
-    private readonly typeParameterWriter = new TypeParameterDeclarationStructurePrinter();
-    private readonly typeElementMembersWriter = new TypeElementMemberedNodeStructurePrinter();
+export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<InterfaceDeclarationStructure> {
+    private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
     printTexts(writer: CodeBlockWriter, structures: InterfaceDeclarationStructure[] | undefined) {
-        this.blankLineFormattingWriter.printText(writer, structures);
+        this.multipleWriter.printText(writer, structures);
     }
 
     printText(writer: CodeBlockWriter, structure: InterfaceDeclarationStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`interface ${structure.name}`);
-        this.typeParameterWriter.printTextsWithBrackets(writer, structure.typeParameters);
+        this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.space();
         if (!ArrayUtils.isNullOrEmpty(structure.extends))
             writer.write(`extends ${structure.extends.join(", ")} `);
         writer.inlineBlock(() => {
-            this.typeElementMembersWriter.printText(writer, structure);
+            this.factory.forTypeElementMemberedNode().printText(writer, structure);
         });
     }
 }

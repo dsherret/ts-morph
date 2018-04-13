@@ -1,18 +1,14 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import {NamespaceDeclarationStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
-import {ModifierableNodeStructurePrinter} from "../base";
-import {JSDocStructurePrinter} from "../doc";
+import {StructurePrinterFactory} from "../../factories";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 import {BlankLineFormattingStructuresPrinter} from "../formatting";
-import {BodyTextStructurePrinter} from "../statement";
 
-export class NamespaceDeclarationStructurePrinter extends StructurePrinter<NamespaceDeclarationStructure> {
-    private readonly jsDocWriter = new JSDocStructurePrinter();
-    private readonly modifierWriter = new ModifierableNodeStructurePrinter();
+export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinter<NamespaceDeclarationStructure> {
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);
 
-    constructor(private readonly options: { isAmbient: boolean; }) {
-        super();
+    constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
+        super(factory);
     }
 
     printTexts(writer: CodeBlockWriter, structures: NamespaceDeclarationStructure[] | undefined) {
@@ -20,10 +16,10 @@ export class NamespaceDeclarationStructurePrinter extends StructurePrinter<Names
     }
 
     printText(writer: CodeBlockWriter, structure: NamespaceDeclarationStructure) {
-        this.jsDocWriter.printDocs(writer, structure.docs);
-        this.modifierWriter.printText(writer, structure);
+        this.factory.forJSDoc().printDocs(writer, structure.docs);
+        this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`${structure.hasModuleKeyword ? "module" : "namespace"} ${structure.name} `).inlineBlock(() => {
-            new BodyTextStructurePrinter({
+            this.factory.forBodyText({
                 isAmbient: structure.hasDeclareKeyword || this.options.isAmbient
             }).printText(writer, structure);
         });

@@ -1,11 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
 import {JsxElementStructure, JsxAttributeStructure} from "../../structures";
-import {StructurePrinter} from "../StructurePrinter";
-import {JsxAttributeStructurePrinter} from "./JsxAttributeStructurePrinter";
+import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
 
-export class JsxElementStructurePrinter extends StructurePrinter<JsxElementStructure> {
-    private readonly jsxAttributeStructurePrinter = new JsxAttributeStructurePrinter();
-
+export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxElementStructure> {
     printText(writer: CodeBlockWriter, structure: JsxElementStructure) {
         writer.write(`<${structure.name}`);
         if (structure.attributes)
@@ -30,9 +27,10 @@ export class JsxElementStructurePrinter extends StructurePrinter<JsxElementStruc
     }
 
     private printAttributes(writer: CodeBlockWriter, attributes: JsxAttributeStructure[]) {
+        const attributePrinter = this.factory.forJsxAttribute();
         for (const attrib of attributes) {
             writer.space();
-            this.jsxAttributeStructurePrinter.printText(writer, attrib);
+            attributePrinter.printText(writer, attrib);
         }
     }
 

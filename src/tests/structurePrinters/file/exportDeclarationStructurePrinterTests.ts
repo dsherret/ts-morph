@@ -1,6 +1,7 @@
 ﻿import {expect} from "chai";
 import CodeBlockWriter from "code-block-writer";
 import {ImportDeclarationStructurePrinter} from "../../../structurePrinters";
+import {StructurePrinterFactory} from "../../../factories";
 import {ImportDeclarationStructure} from "../../../structures";
 import {FormatCodeSettings} from "../../../compiler";
 import {getDefaultFormatCodeSettings} from "../../testHelpers";
@@ -8,7 +9,8 @@ import {getDefaultFormatCodeSettings} from "../../testHelpers";
 describe(nameof(ImportDeclarationStructurePrinter), () => {
     function doTest(structure: ImportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {
         const writer = new CodeBlockWriter();
-        new ImportDeclarationStructurePrinter(getDefaultFormatCodeSettings(formatCodeSettings)).printText(writer, structure);
+        const factory = new StructurePrinterFactory(() => getDefaultFormatCodeSettings(formatCodeSettings));
+        factory.forImportDeclaration().printText(writer, structure);
         expect(writer.toString()).to.equal(expectedOutput);
     }
 
