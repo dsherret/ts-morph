@@ -8,7 +8,7 @@ export function getProject() {
         addFilesFromTsConfig: false,
         manipulationSettings: {
             newLineKind: NewLineKind.CarriageReturnLineFeed,
-            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false
+            insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true
         }
     });
     project.addExistingSourceFiles(path.join(rootFolder, "src/**/*{.d.ts,.ts}"));
