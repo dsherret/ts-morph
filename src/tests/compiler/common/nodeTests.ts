@@ -2,7 +2,7 @@ import CodeBlockWriter from "code-block-writer";
 import {expect} from "chai";
 import {ts, SyntaxKind, NewLineKind} from "../../../typescript";
 import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
-    SourceFile, FormatCodeSettings} from "../../../compiler";
+    SourceFile, FormatCodeSettings, CallExpression} from "../../../compiler";
 import * as errors from "../../../errors";
 import {TypeGuards} from "../../../utils";
 import {getInfoFromText} from "../testHelpers";
@@ -708,6 +708,14 @@ class MyClass {
             const result = firstChild.replaceWithText("var t;");
             expect(sourceFile.getFullText()).to.equal("var t;");
             expect(result).to.equal(sourceFile.getStatements()[0]);
+        });
+
+        it("should replace midway through a prop access expression", () => {
+            const {sourceFile} = getInfoFromText("var t = this.writer.space();");
+            const varDeclaration = sourceFile.getVariableDeclarations()[0];
+            const propAccess = ((varDeclaration.getInitializerOrThrow() as CallExpression).getExpression() as PropertyAccessExpression).getExpression();
+            propAccess.replaceWithText("writer");
+            expect(sourceFile.getFullText()).to.equal("var t = writer.space();");
         });
 
         it("should throw when replacing with more than one node", () => {
