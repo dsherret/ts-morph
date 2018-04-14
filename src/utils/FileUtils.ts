@@ -3,6 +3,7 @@ import globParent = require("glob-parent");
 import isNegatedGlob = require("is-negated-glob");
 import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
 import {FileSystemHost, FileSystemWrapper} from "../fileSystem";
+import { Chars } from "../constants";
 import {StringUtils} from "./StringUtils";
 import {ArrayUtils} from "./ArrayUtils";
 
@@ -240,10 +241,9 @@ export class FileUtils {
      * @param text - Text.
      */
     static getTextWithByteOrderMark(text: string) {
-        const bom = "\ufeff";
-        if (text[0] === bom)
+        if (text[0] === Chars.BOM)
             return text;
-        return bom + text;
+        return Chars.BOM + text;
     }
 
     /**

@@ -1,4 +1,5 @@
 import {expect} from "chai";
+import { Chars } from "../../../constants";
 import {ts, SyntaxKind} from "../../../typescript";
 import {CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node} from "../../../compiler";
 import {StatementedNodeStructure} from "../../../structures";
@@ -109,6 +110,10 @@ describe(nameof(StatementedNode), () => {
         it("should insert statements into an empty source file", () => {
             doSourceFileTest("", 0, "newText;\nsecondText;", 2,
                 "newText;\nsecondText;\n");
+        });
+
+        it("should insert statements after a utf-8 bom", () => {
+            doSourceFileTest(Chars.BOM, 0, "newText;", 1, Chars.BOM + "newText;\n");
         });
 
         it("should allow inserting nothing", () => {

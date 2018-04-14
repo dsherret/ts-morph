@@ -1,5 +1,6 @@
 import CodeBlockWriter from "code-block-writer";
 import { ts, SyntaxKind } from "../../typescript";
+import { Chars } from "../../constants";
 import {Node, SourceFile} from "../../compiler";
 import {StringUtils, TypeGuards} from "../../utils";
 import {InsertionTextManipulator} from "../textManipulators";
@@ -153,7 +154,7 @@ export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBr
         opts.write(writer, {
             previousMember: getChild(children[index - 1]),
             nextMember: getChild(children[index]),
-            isStartOfFile: insertPos === 0
+            isStartOfFile: insertPos === 0 || insertPos === 1 && fullText[0] === Chars.BOM
         });
         return writer.toString();
 

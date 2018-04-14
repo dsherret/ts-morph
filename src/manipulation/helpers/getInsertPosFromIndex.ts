@@ -1,5 +1,6 @@
 import {ts, SyntaxKind} from "../../typescript";
 import {Node} from "../../compiler";
+import {Chars} from "../../constants";
 import {TypeGuards} from "../../utils";
 import {getPosAtStartOfLineOrNonWhitespace} from "../textSeek";
 
@@ -9,7 +10,7 @@ import {getPosAtStartOfLineOrNonWhitespace} from "../textSeek";
 export function getInsertPosFromIndex(index: number, parent: Node, children: Node[]) {
     if (index === 0) {
         if (TypeGuards.isSourceFile(parent))
-            return 0;
+            return parent.getFullText()[0] === Chars.BOM ? 1 : 0;
         else if (TypeGuards.isCaseClause(parent) || TypeGuards.isDefaultClause(parent)) {
             const colonToken = parent.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
             return colonToken.getEnd();

@@ -1,5 +1,6 @@
 ﻿import {expect} from "chai";
 import * as errors from "../../../errors";
+import { Chars } from "../../../constants";
 import {ts, LanguageVariant, ScriptTarget, NewLineKind, CompilerOptions, ModuleResolutionKind} from "../../../typescript";
 import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteKind,
     FileSystemRefreshResult} from "../../../compiler";
@@ -392,7 +393,7 @@ describe(nameof(SourceFile), () => {
                 project.manipulationSettings.set({ quoteKind: QuoteKind.Single });
             const result = sourceFile.insertImportDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
-            expect(sourceFile.getText()).to.equal(expectedCode);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should insert the different kinds of imports", () => {
@@ -419,6 +420,10 @@ describe(nameof(SourceFile), () => {
             expect(() => {
                 sourceFile.insertImportDeclarations(0, [{ namespaceImport: "name", namedImports: ["name"], moduleSpecifier: "file" }]);
             }).to.throw();
+        });
+
+        it("should insert an import after a utf-8 bom", () => {
+            doTest(Chars.BOM, 0, [{ moduleSpecifier: "./test" }], `${Chars.BOM}import "./test";\n`);
         });
 
         it("should insert at the beginning and use single quotes when specified", () => {
