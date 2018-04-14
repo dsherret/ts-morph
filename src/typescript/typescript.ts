@@ -8,7 +8,7 @@
  * Note: The TypeScript compiler is licensed under the Apache 2.0 license.
  */
 import * as tsCompiler from "typescript";
-import {ObjectUtils} from "../utils/ObjectUtils";
+import { ObjectUtils } from "../utils/ObjectUtils";
 
 declare enum SyntaxKind {
     Unknown = 0,

@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
-import {StringUtils} from "../../utils";
-import {replaceNodeText} from "../../manipulation";
-import {LiteralExpression} from "../expression";
-import {QuoteKind} from "./QuoteKind";
+import { ts } from "../../typescript";
+import { StringUtils } from "../../utils";
+import { replaceNodeText } from "../../manipulation";
+import { LiteralExpression } from "../expression";
+import { QuoteKind } from "./QuoteKind";
 
 export const StringLiteralBase = LiteralExpression;
 export class StringLiteral extends StringLiteralBase<ts.StringLiteral> {

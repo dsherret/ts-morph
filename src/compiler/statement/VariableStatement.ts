@@ -1,15 +1,15 @@
-import {ts} from "../../typescript";
-import {insertIntoCommaSeparatedNodes} from "../../manipulation";
+import { ts } from "../../typescript";
+import { insertIntoCommaSeparatedNodes } from "../../manipulation";
 import * as errors from "../../errors";
-import {Node} from "../common";
-import {VariableStatementStructure, VariableDeclarationStructure} from "../../structures";
-import {ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, ChildOrderableNode} from "../base";
-import {NamespaceChildableNode} from "../namespace";
-import {callBaseFill} from "../callBaseFill";
-import {VariableDeclaration} from "./VariableDeclaration";
-import {VariableDeclarationKind} from "./VariableDeclarationKind";
-import {Statement} from "./Statement";
-import {VariableDeclarationList} from "./VariableDeclarationList";
+import { Node } from "../common";
+import { VariableStatementStructure, VariableDeclarationStructure } from "../../structures";
+import { ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, ChildOrderableNode } from "../base";
+import { NamespaceChildableNode } from "../namespace";
+import { callBaseFill } from "../callBaseFill";
+import { VariableDeclaration } from "./VariableDeclaration";
+import { VariableDeclarationKind } from "./VariableDeclarationKind";
+import { Statement } from "./Statement";
+import { VariableDeclarationList } from "./VariableDeclarationList";
 
 export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {

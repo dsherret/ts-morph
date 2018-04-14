@@ -1,12 +1,12 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import * as objectAssign from "object-assign";
-import {Constructor} from "../../Constructor";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {verifyAndGetIndex, insertIntoParentTextRange, getRangeFromArray} from "../../manipulation";
-import {ArrayUtils} from "../../utils";
-import {getNextNonWhitespacePos} from "../../manipulation/textSeek";
-import {BodyableNode, NamedNode} from "../base";
-import {Node} from "../common";
+import { verifyAndGetIndex, insertIntoParentTextRange, getRangeFromArray } from "../../manipulation";
+import { ArrayUtils } from "../../utils";
+import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
+import { BodyableNode, NamedNode } from "../base";
+import { Node } from "../common";
 
 export type OverloadableNodeExtensionType = Node & BodyableNode;
 

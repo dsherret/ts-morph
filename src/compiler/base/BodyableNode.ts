@@ -1,12 +1,12 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {Constructor} from "../../Constructor";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {BodyableNodeStructure} from "../../structures";
-import {Node} from "../common";
-import {callBaseFill} from "../callBaseFill";
-import {ts, SyntaxKind} from "../../typescript";
-import {insertIntoParentTextRange} from "../../manipulation";
-import {setBodyTextForNode} from "./helpers/setBodyTextForNode";
+import { BodyableNodeStructure } from "../../structures";
+import { Node } from "../common";
+import { callBaseFill } from "../callBaseFill";
+import { ts, SyntaxKind } from "../../typescript";
+import { insertIntoParentTextRange } from "../../manipulation";
+import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 

@@ -4,8 +4,8 @@
  * Automatically maintains this class based on changes in the application.
  * --------------------------------------------------------
  */
-import {TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope} from "../src/main";
-import {TsSimpleAstInspector} from "./inspectors";
+import { TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope } from "../src/main";
+import { TsSimpleAstInspector } from "./inspectors";
 
 export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();

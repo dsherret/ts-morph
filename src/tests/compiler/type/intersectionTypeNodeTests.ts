@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {IntersectionTypeNode} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { IntersectionTypeNode } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(IntersectionTypeNode), () => {
     function getNode(text: string) {

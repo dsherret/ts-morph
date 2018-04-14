@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {getCompilerOptionsFromTsConfig, FileUtils} from "../../../utils";
+﻿import { expect } from "chai";
+import { getCompilerOptionsFromTsConfig, FileUtils } from "../../../utils";
 import * as errors from "../../../errors";
 import * as testHelpers from "../../testHelpers";
 

@@ -1,10 +1,10 @@
-﻿import {AdvancedIterator, ArrayUtils} from "../../utils";
-import {Node} from "../../compiler";
-import {ts, SyntaxKind} from "../../typescript";
-import {CompilerFactory} from "../../factories";
-import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
-import {NodeHandler} from "./NodeHandler";
-import {NodeHandlerHelper} from "./NodeHandlerHelper";
+﻿import { AdvancedIterator, ArrayUtils } from "../../utils";
+import { Node } from "../../compiler";
+import { ts, SyntaxKind } from "../../typescript";
+import { CompilerFactory } from "../../factories";
+import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
+import { NodeHandler } from "./NodeHandler";
+import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
 export interface RangeParentHandlerOptions {
     start: number;

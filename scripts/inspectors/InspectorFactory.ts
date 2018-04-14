@@ -1,8 +1,8 @@
-﻿import {Project} from "../../src/Project";
-import {getProject} from "../common";
-import {WrapperFactory} from "./WrapperFactory";
-import {TsSimpleAstInspector} from "./TsSimpleAstInspector";
-import {TsInspector} from "./TsInspector";
+﻿import { Project } from "../../src/Project";
+import { getProject } from "../common";
+import { WrapperFactory } from "./WrapperFactory";
+import { TsSimpleAstInspector } from "./TsSimpleAstInspector";
+import { TsInspector } from "./TsInspector";
 
 export class InspectorFactory {
     private readonly tsSimpleAstInspector: TsSimpleAstInspector;

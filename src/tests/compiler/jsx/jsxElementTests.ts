@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {JsxElement} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { JsxElement } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxElement>(text, SyntaxKind.JsxElement, { isJsx: true });

@@ -1,8 +1,8 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {MethodDeclarationStructure, MethodDeclarationOverloadStructure} from "../../structures";
-import {ObjectUtils, setValueIfUndefined} from "../../utils";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { MethodDeclarationStructure, MethodDeclarationOverloadStructure } from "../../structures";
+import { ObjectUtils, setValueIfUndefined } from "../../utils";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<MethodDeclarationStructure> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

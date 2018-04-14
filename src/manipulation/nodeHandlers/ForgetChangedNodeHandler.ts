@@ -1,10 +1,10 @@
 ﻿import * as errors from "../../errors";
-import {Node} from "../../compiler";
-import {ts} from "../../typescript";
-import {CompilerFactory} from "../../factories";
-import {ArrayUtils} from "../../utils";
-import {NodeHandler} from "./NodeHandler";
-import {NodeHandlerHelper} from "./NodeHandlerHelper";
+import { Node } from "../../compiler";
+import { ts } from "../../typescript";
+import { CompilerFactory } from "../../factories";
+import { ArrayUtils } from "../../utils";
+import { NodeHandler } from "./NodeHandler";
+import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
 /**
  * Replacement handler that goes through the tree and forgets any nodes that have changed kind.

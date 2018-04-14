@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import {replaceNodeText} from "../../manipulation";
-import {NamespaceDeclarationStructure} from "../../structures";
-import {callBaseFill} from "../callBaseFill";
-import {Node, Identifier} from "../common";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, BodiedNode, TextInsertableNode, UnwrappableNode,
-    ChildOrderableNode} from "../base";
-import {StatementedNode, Statement} from "../statement";
-import {NamespaceChildableNode} from "./NamespaceChildableNode";
+import { replaceNodeText } from "../../manipulation";
+import { NamespaceDeclarationStructure } from "../../structures";
+import { callBaseFill } from "../callBaseFill";
+import { Node, Identifier } from "../common";
+import { NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, BodiedNode, TextInsertableNode, UnwrappableNode,
+    ChildOrderableNode } from "../base";
+import { StatementedNode, Statement } from "../statement";
+import { NamespaceChildableNode } from "./NamespaceChildableNode";
 
 export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(
     AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))

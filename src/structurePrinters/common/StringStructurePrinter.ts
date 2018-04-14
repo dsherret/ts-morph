@@ -1,5 +1,5 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {StructurePrinter} from "../StructurePrinter";
+import { StructurePrinter } from "../StructurePrinter";
 
 export type StringStructureToTextItem = string | ((writer: CodeBlockWriter) => void);
 

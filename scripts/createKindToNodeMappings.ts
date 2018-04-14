@@ -5,10 +5,10 @@
  * the getDescendantsOfKind, getChildrenOfKind, etc... methods.
  * ----------------------------------------------
  */
-import {ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
-    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind} from "../src/main";
-import {hasDescendantBaseType} from "./common";
-import {TsSimpleAstInspector, TsInspector} from "./inspectors";
+import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
+    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "../src/main";
+import { hasDescendantBaseType } from "./common";
+import { TsSimpleAstInspector, TsInspector } from "./inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)
 

@@ -1,4 +1,4 @@
-﻿import {JsxAttributeStructure} from "./JsxAttributeStructure";
+﻿import { JsxAttributeStructure } from "./JsxAttributeStructure";
 
 export interface JsxElementStructure {
     name: string;

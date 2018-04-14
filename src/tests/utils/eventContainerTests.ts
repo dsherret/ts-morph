@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {EventContainer} from "../../utils";
+﻿import { expect } from "chai";
+import { EventContainer } from "../../utils";
 
 describe(nameof(EventContainer), () => {
     it("should support subscribing", () => {

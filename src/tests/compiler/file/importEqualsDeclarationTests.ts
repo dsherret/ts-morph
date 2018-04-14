@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {ImportEqualsDeclaration} from "../../../compiler";
-import {Project} from "../../../Project";
-import {SyntaxKind} from "../../../typescript";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ImportEqualsDeclaration } from "../../../compiler";
+import { Project } from "../../../Project";
+import { SyntaxKind } from "../../../typescript";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ImportEqualsDeclaration), () => {
     describe(nameof<ImportEqualsDeclaration>(n => n.getName), () => {

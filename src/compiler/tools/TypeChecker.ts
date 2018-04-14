@@ -1,10 +1,10 @@
-import {ts, SyntaxKind, SymbolFlags, TypeFormatFlags} from "../../typescript";
-import {GlobalContainer} from "../../GlobalContainer";
-import {EnumMember} from "../enum";
-import {Expression} from "../expression";
-import {Node, Symbol, Signature} from "../common";
-import {ExportSpecifier} from "../file";
-import {Type} from "../type";
+import { ts, SyntaxKind, SymbolFlags, TypeFormatFlags } from "../../typescript";
+import { GlobalContainer } from "../../GlobalContainer";
+import { EnumMember } from "../enum";
+import { Expression } from "../expression";
+import { Node, Symbol, Signature } from "../common";
+import { ExportSpecifier } from "../file";
+import { Type } from "../type";
 
 /**
  * Wrapper around the TypeChecker.

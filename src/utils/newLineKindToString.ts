@@ -1,4 +1,4 @@
-import {ts, NewLineKind} from "../typescript";
+import { ts, NewLineKind } from "../typescript";
 import * as errors from "../errors";
 
 export function newLineKindToString(kind: NewLineKind) {

@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {DiagnosticCategory} from "../../../typescript";
-import {Diagnostic} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { expect } from "chai";
+import { DiagnosticCategory } from "../../../typescript";
+import { Diagnostic } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Diagnostic), () => {
     const {project, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true });

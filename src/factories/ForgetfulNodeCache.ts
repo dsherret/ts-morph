@@ -1,7 +1,7 @@
 import * as errors from "../errors";
-import {ts, SyntaxKind} from "../typescript";
-import {Node} from "../compiler";
-import {KeyValueCache, createHashSet, HashSet} from "../utils";
+import { ts, SyntaxKind } from "../typescript";
+import { Node } from "../compiler";
+import { KeyValueCache, createHashSet, HashSet } from "../utils";
 
 /**
  * Extension of KeyValueCache that allows for "forget points."

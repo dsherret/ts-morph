@@ -1,25 +1,25 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import {insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren} from "../../manipulation";
-import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils} from "../../utils";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
-    SetAccessorDeclarationStructure, ClassDeclarationStructure} from "../../structures";
-import {Node} from "../common";
-import {NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
-    ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode} from "../base";
-import {HeritageClause} from "../general";
-import {AbstractableNode} from "./base";
-import {SourceFile} from "../file";
-import {ParameterDeclaration} from "../function";
-import {ExpressionWithTypeArguments, Type} from "../type";
-import {NamespaceChildableNode} from "../namespace";
-import {Statement} from "../statement";
-import {callBaseFill} from "../callBaseFill";
-import {ConstructorDeclaration} from "./ConstructorDeclaration";
-import {MethodDeclaration} from "./MethodDeclaration";
-import {PropertyDeclaration} from "./PropertyDeclaration";
-import {GetAccessorDeclaration} from "./GetAccessorDeclaration";
-import {SetAccessorDeclaration} from "./SetAccessorDeclaration";
+import { insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils } from "../../utils";
+import { PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
+    SetAccessorDeclarationStructure, ClassDeclarationStructure } from "../../structures";
+import { Node } from "../common";
+import { NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
+    ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode } from "../base";
+import { HeritageClause } from "../general";
+import { AbstractableNode } from "./base";
+import { SourceFile } from "../file";
+import { ParameterDeclaration } from "../function";
+import { ExpressionWithTypeArguments, Type } from "../type";
+import { NamespaceChildableNode } from "../namespace";
+import { Statement } from "../statement";
+import { callBaseFill } from "../callBaseFill";
+import { ConstructorDeclaration } from "./ConstructorDeclaration";
+import { MethodDeclaration } from "./MethodDeclaration";
+import { PropertyDeclaration } from "./PropertyDeclaration";
+import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
+import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;

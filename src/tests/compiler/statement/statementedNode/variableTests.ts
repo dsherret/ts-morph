@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationKind} from "../../../../compiler";
-import {VariableStatementStructure, VariableDeclarationStructure} from "../../../../structures";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { StatementedNode, VariableStatement, VariableDeclaration, VariableDeclarationKind } from "../../../../compiler";
+import { VariableStatementStructure, VariableDeclarationStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertVariableStatements), () => {

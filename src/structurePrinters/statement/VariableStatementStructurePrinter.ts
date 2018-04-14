@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {VariableDeclarationKind} from "../../compiler/statement/VariableDeclarationKind";
-import {VariableStatementStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {NewLineFormattingStructuresPrinter} from "../formatting";
+import { VariableDeclarationKind } from "../../compiler/statement/VariableDeclarationKind";
+import { VariableStatementStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
 
 export class VariableStatementStructurePrinter extends FactoryStructurePrinter<VariableStatementStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

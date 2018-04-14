@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration, ClassDeclaration, InterfaceDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration, ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Identifier), () => {
     describe(nameof<Identifier>(n => n.rename), () => {

@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {StatementedNode, NamespaceDeclaration} from "../../../../compiler";
-import {NamespaceDeclarationStructure} from "../../../../structures";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { StatementedNode, NamespaceDeclaration } from "../../../../compiler";
+import { NamespaceDeclarationStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertNamespaces), () => {

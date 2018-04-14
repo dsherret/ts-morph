@@ -1,8 +1,8 @@
-﻿import Project, {InterfaceDeclaration, SourceFile, SyntaxKind} from "../../src/main";
-import {Memoize, ArrayUtils} from "../../src/utils";
-import {hasDescendantBaseType} from "../common";
-import {TsNode} from "./ts";
-import {WrapperFactory} from "./WrapperFactory";
+﻿import Project, { InterfaceDeclaration, SourceFile, SyntaxKind } from "../../src/main";
+import { Memoize, ArrayUtils } from "../../src/utils";
+import { hasDescendantBaseType } from "../common";
+import { TsNode } from "./ts";
+import { WrapperFactory } from "./WrapperFactory";
 
 export class TsInspector {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly project: Project) {

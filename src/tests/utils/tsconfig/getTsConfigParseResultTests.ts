@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {VirtualFileSystemHost, FileSystemWrapper} from "../../../fileSystem";
-import {getTsConfigParseResult, FileUtils} from "../../../utils";
+﻿import { expect } from "chai";
+import { VirtualFileSystemHost, FileSystemWrapper } from "../../../fileSystem";
+import { getTsConfigParseResult, FileUtils } from "../../../utils";
 import * as errors from "../../../errors";
 
 describe(nameof(getTsConfigParseResult), () => {

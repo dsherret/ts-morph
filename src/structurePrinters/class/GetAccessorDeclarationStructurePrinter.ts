@@ -1,9 +1,9 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {GetAccessorDeclarationStructure} from "../../structures";
-import {StringUtils} from "../../utils";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {BlankLineFormattingStructuresPrinter} from "../formatting";
+import { GetAccessorDeclarationStructure } from "../../structures";
+import { StringUtils } from "../../utils";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
 export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrinter<GetAccessorDeclarationStructure> {
     private readonly blankLineWriter = new BlankLineFormattingStructuresPrinter(this);

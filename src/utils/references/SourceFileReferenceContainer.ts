@@ -1,9 +1,9 @@
-﻿import {Node, StringLiteral, ImportDeclaration, ExportDeclaration, ImportEqualsDeclaration, SourceFile, StatementedNode, CallExpression} from "../../compiler";
-import {SyntaxKind} from "../../typescript";
-import {ArrayUtils} from "../ArrayUtils";
-import {TypeGuards} from "../TypeGuards";
-import {createHashSet, KeyValueCache} from "../collections";
-import {ModuleUtils} from "../compiler";
+﻿import { Node, StringLiteral, ImportDeclaration, ExportDeclaration, ImportEqualsDeclaration, SourceFile, StatementedNode, CallExpression } from "../../compiler";
+import { SyntaxKind } from "../../typescript";
+import { ArrayUtils } from "../ArrayUtils";
+import { TypeGuards } from "../TypeGuards";
+import { createHashSet, KeyValueCache } from "../collections";
+import { ModuleUtils } from "../compiler";
 
 export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
 

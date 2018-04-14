@@ -1,9 +1,9 @@
 ﻿import * as path from "path";
-import {expect} from "chai";
-import {Project} from "../../../Project";
-import {createWrappedNode} from "../../../utils/compiler/createWrappedNode";
-import {ts, SyntaxKind, ScriptTarget} from "../../../typescript";
-import {SourceFile} from "../../../compiler";
+import { expect } from "chai";
+import { Project } from "../../../Project";
+import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
+import { ts, SyntaxKind, ScriptTarget } from "../../../typescript";
+import { SourceFile } from "../../../compiler";
 import * as errors from "../../../errors";
 import * as testHelpers from "../../testHelpers";
 

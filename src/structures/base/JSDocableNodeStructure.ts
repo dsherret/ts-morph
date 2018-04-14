@@ -1,4 +1,4 @@
-﻿import {JSDocStructure} from "../doc";
+﻿import { JSDocStructure } from "../doc";
 
 export interface JSDocableNodeStructure {
     docs?: JSDocStructure[];

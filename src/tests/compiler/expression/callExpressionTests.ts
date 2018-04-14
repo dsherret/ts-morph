@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {CallExpression} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { CallExpression } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(CallExpression), () => {
     describe(nameof<CallExpression>(e => e.getReturnType), () => {

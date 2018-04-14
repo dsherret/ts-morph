@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Node} from "../common";
-import {insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild} from "../../manipulation";
-import {ParameterDeclarationStructure} from "../../structures";
-import {DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode} from "../base";
-import {callBaseFill} from "../callBaseFill";
+import { ts, SyntaxKind } from "../../typescript";
+import { Node } from "../common";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../manipulation";
+import { ParameterDeclarationStructure } from "../../structures";
+import { DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode } from "../base";
+import { callBaseFill } from "../callBaseFill";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))

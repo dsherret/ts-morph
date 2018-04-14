@@ -1,10 +1,10 @@
-import {AdvancedIterator, ArrayUtils} from "../../utils";
-import {ts} from "../../typescript";
-import {Node} from "../../compiler";
-import {CompilerFactory} from "../../factories";
-import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
-import {NodeHandler} from "./NodeHandler";
-import {NodeHandlerHelper} from "./NodeHandlerHelper";
+import { AdvancedIterator, ArrayUtils } from "../../utils";
+import { ts } from "../../typescript";
+import { Node } from "../../compiler";
+import { CompilerFactory } from "../../factories";
+import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
+import { NodeHandler } from "./NodeHandler";
+import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
 export interface DefaultParentHandlerOptions {
     childCount: number;

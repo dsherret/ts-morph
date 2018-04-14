@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {ForInStatement} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { ForInStatement } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getStatement(text: string) {
     return getInfoFromTextWithDescendant<ForInStatement>(text, SyntaxKind.ForInStatement).descendant;

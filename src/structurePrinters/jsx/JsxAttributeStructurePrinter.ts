@@ -1,6 +1,6 @@
 import CodeBlockWriter from "code-block-writer";
-import {JsxAttributeStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { JsxAttributeStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxAttributeStructurePrinter extends FactoryStructurePrinter<JsxAttributeStructure> {
     printText(writer: CodeBlockWriter, structure: JsxAttributeStructure) {

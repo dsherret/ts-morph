@@ -1,6 +1,6 @@
-﻿import {Node, ClassDeclaration} from "../../compiler";
-import {TypeGuards} from "../../utils";
-import {FormattingKind} from "./FormattingKind";
+﻿import { Node, ClassDeclaration } from "../../compiler";
+import { TypeGuards } from "../../utils";
+import { FormattingKind } from "./FormattingKind";
 
 export function getClassMemberFormatting(parent: ClassDeclaration, member: Node) {
     if (parent.isAmbient())

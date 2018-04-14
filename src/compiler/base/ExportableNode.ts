@@ -1,12 +1,12 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {removeChildrenWithFormatting, FormattingKind} from "../../manipulation";
-import {ExportableNodeStructure} from "../../structures";
-import {TypeGuards} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {Node, SyntaxList} from "../common";
-import {ModifierableNode} from "./ModifierableNode";
+import { removeChildrenWithFormatting, FormattingKind } from "../../manipulation";
+import { ExportableNodeStructure } from "../../structures";
+import { TypeGuards } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { Node, SyntaxList } from "../common";
+import { ModifierableNode } from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;
 

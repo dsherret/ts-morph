@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {CompilerOptions, ModuleResolutionKind, ModuleKind, ScriptTarget} from "../../typescript";
+﻿import { expect } from "chai";
+import { CompilerOptions, ModuleResolutionKind, ModuleKind, ScriptTarget } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 
 describe(nameof(tsInternal), () => {

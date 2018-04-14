@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import {ImportSpecifierStructure} from "../../structures";
-import {insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn} from "../../manipulation";
-import {ArrayUtils, TypeGuards, StringUtils, ModuleUtils} from "../../utils";
-import {Identifier} from "../common";
-import {Statement} from "../statement";
-import {StringLiteral} from "../literal";
-import {ImportSpecifier} from "./ImportSpecifier";
-import {SourceFile} from "./SourceFile";
+import { ImportSpecifierStructure } from "../../structures";
+import { insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn } from "../../manipulation";
+import { ArrayUtils, TypeGuards, StringUtils, ModuleUtils } from "../../utils";
+import { Identifier } from "../common";
+import { Statement } from "../statement";
+import { StringLiteral } from "../literal";
+import { ImportSpecifier } from "./ImportSpecifier";
+import { SourceFile } from "./SourceFile";
 
 export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**

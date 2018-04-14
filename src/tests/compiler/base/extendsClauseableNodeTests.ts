@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ExtendsClauseableNode, InterfaceDeclaration} from "../../../compiler";
-import {ExtendsClauseableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ExtendsClauseableNode, InterfaceDeclaration } from "../../../compiler";
+import { ExtendsClauseableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExtendsClauseableNode), () => {
     describe(nameof<ExtendsClauseableNode>(n => n.getExtends), () => {

@@ -1,6 +1,6 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {printTextFromStringOrWriter} from "../../../utils";
-import {Node} from "../../common";
+import { printTextFromStringOrWriter } from "../../../utils";
+import { Node } from "../../common";
 
 /**
  * @internal

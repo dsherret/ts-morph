@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration} from "../../../../compiler";
-import {InitializerSetExpressionableNodeStructure} from "../../../../structures";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
+import { InitializerSetExpressionableNodeStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(InitializerSetExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {

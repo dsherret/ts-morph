@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {GeneratorableNode, FunctionDeclaration, ClassDeclaration} from "../../../compiler";
-import {GeneratorableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { GeneratorableNode, FunctionDeclaration, ClassDeclaration } from "../../../compiler";
+import { GeneratorableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(GeneratorableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("function* Identifier() {}\nfunction Identifier2() {}");

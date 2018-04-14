@@ -1,12 +1,12 @@
-import {ts, SyntaxKind} from "../../../typescript";
-import {Constructor} from "../../../Constructor";
+import { ts, SyntaxKind } from "../../../typescript";
+import { Constructor } from "../../../Constructor";
 import * as errors from "../../../errors";
-import {InitializerSetExpressionableNodeStructure} from "../../../structures";
-import {callBaseFill} from "../../callBaseFill";
-import {insertIntoParentTextRange, removeChildren} from "../../../manipulation";
-import {Expression} from "../../expression";
-import {Node} from "../../common";
-import {InitializerGetExpressionableNode} from "./InitializerGetExpressionableNode";
+import { InitializerSetExpressionableNodeStructure } from "../../../structures";
+import { callBaseFill } from "../../callBaseFill";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { Expression } from "../../expression";
+import { Node } from "../../common";
+import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
 
 export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
 

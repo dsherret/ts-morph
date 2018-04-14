@@ -1,13 +1,13 @@
-import {AssertTrue, IsExactType} from "conditional-type-checks";
-import {ts, SyntaxKind} from "../typescript";
-import {Identifier, ComputedPropertyName, QualifiedName, Node} from "./common";
-import {PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression} from "./expression";
-import {JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment} from "./jsx";
-import {PropertySignature, MethodSignature, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration} from "./interface";
-import {ExternalModuleReference} from "./file";
-import {CaseClause, DefaultClause} from "./statement";
-import {GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration} from "./class";
-import {StringLiteral, NumericLiteral, TemplateExpression, NoSubstitutionTemplateLiteral} from "./literal";
+import { AssertTrue, IsExactType } from "conditional-type-checks";
+import { ts, SyntaxKind } from "../typescript";
+import { Identifier, ComputedPropertyName, QualifiedName, Node } from "./common";
+import { PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression } from "./expression";
+import { JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment } from "./jsx";
+import { PropertySignature, MethodSignature, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration } from "./interface";
+import { ExternalModuleReference } from "./file";
+import { CaseClause, DefaultClause } from "./statement";
+import { GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration } from "./class";
+import { StringLiteral, NumericLiteral, TemplateExpression, NoSubstitutionTemplateLiteral } from "./literal";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 

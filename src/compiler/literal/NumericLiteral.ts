@@ -1,6 +1,6 @@
-import {ts} from "../../typescript";
-import {replaceNodeText} from "../../manipulation";
-import {LiteralExpression} from "../expression";
+import { ts } from "../../typescript";
+import { replaceNodeText } from "../../manipulation";
+import { LiteralExpression } from "../expression";
 
 export const NumericLiteralBase = LiteralExpression;
 export class NumericLiteral extends NumericLiteralBase<ts.NumericLiteral> {

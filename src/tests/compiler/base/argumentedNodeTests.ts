@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {ArgumentedNode, ClassDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ArgumentedNode, ClassDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ArgumentedNode), () => {
     describe(nameof<ArgumentedNode>(n => n.getArguments), () => {

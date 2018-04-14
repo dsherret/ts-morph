@@ -1,6 +1,6 @@
 ﻿/* barrel:ignore */
 import * as objectAssign from "object-assign";
-import {Node} from "./common";
+import { Node } from "./common";
 
 // todo: add code verification to ensure all fill functions call this
 

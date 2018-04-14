@@ -1,6 +1,6 @@
 ﻿import * as errors from "../errors";
-import {createHashSet, HashSet, ArrayUtils, FileUtils} from "../utils";
-import {FileSystemHost} from "./FileSystemHost";
+import { createHashSet, HashSet, ArrayUtils, FileUtils } from "../utils";
+import { FileSystemHost } from "./FileSystemHost";
 
 /**
  * File system host wrapper that allows queuing deletions to the file system.

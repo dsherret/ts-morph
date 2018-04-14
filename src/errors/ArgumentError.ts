@@ -1,4 +1,4 @@
-﻿import {BaseError} from "./BaseError";
+﻿import { BaseError } from "./BaseError";
 
 export class ArgumentError extends BaseError {
     constructor(public readonly argName: string, message: string, prototype: any = ArgumentError.prototype) {

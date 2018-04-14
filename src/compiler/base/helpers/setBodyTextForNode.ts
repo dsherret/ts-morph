@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {SyntaxKind} from "../../../typescript";
-import {insertIntoParentTextRange} from "../../../manipulation";
-import {Node} from "../../common";
-import {getBodyText} from "./getBodyText";
+import { SyntaxKind } from "../../../typescript";
+import { insertIntoParentTextRange } from "../../../manipulation";
+import { Node } from "../../common";
+import { getBodyText } from "./getBodyText";
 
 /**
  * @internal

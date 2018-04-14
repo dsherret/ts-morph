@@ -1,11 +1,11 @@
-import {ts} from "../../typescript";
+import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import {TypeGuards} from "../../utils";
-import {ModuleReference} from "../aliases";
-import {JSDocableNode, NamedNode} from "../base";
-import {Node} from "../common";
-import {Statement} from "../statement";
-import {SourceFile} from "./SourceFile";
+import { TypeGuards } from "../../utils";
+import { ModuleReference } from "../aliases";
+import { JSDocableNode, NamedNode } from "../base";
+import { Node } from "../common";
+import { Statement } from "../statement";
+import { SourceFile } from "./SourceFile";
 
 export const ImportEqualsDeclarationBase = JSDocableNode(NamedNode(Statement));
 export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {

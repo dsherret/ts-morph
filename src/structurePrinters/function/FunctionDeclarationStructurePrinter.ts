@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {FunctionDeclarationStructure, FunctionDeclarationOverloadStructure} from "../../structures";
-import {StringUtils, setValueIfUndefined, ObjectUtils} from "../../utils";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure } from "../../structures";
+import { StringUtils, setValueIfUndefined, ObjectUtils } from "../../utils";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<FunctionDeclarationStructure> {
     printTexts(writer: CodeBlockWriter, structures: FunctionDeclarationStructure[] | undefined) {

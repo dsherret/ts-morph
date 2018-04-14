@@ -1,10 +1,10 @@
 ﻿import * as errors from "../../errors";
-import {ts} from "../../typescript";
-import {Node} from "../../compiler";
-import {getSyntaxKindName, ArrayUtils} from "../../utils";
-import {CompilerFactory} from "../../factories";
-import {NodeHandler} from "./NodeHandler";
-import {NodeHandlerHelper} from "./NodeHandlerHelper";
+import { ts } from "../../typescript";
+import { Node } from "../../compiler";
+import { getSyntaxKindName, ArrayUtils } from "../../utils";
+import { CompilerFactory } from "../../factories";
+import { NodeHandler } from "./NodeHandler";
+import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
 /**
  * Replacement handler for replacing parts of the tree that should be equal.

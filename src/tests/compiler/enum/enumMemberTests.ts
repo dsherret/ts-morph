@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {EnumDeclaration, EnumMember} from "../../../compiler";
-import {EnumMemberSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { EnumDeclaration, EnumMember } from "../../../compiler";
+import { EnumMemberSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 function getInfoFromTextWithFirstMember(text: string) {
     const obj = getInfoFromText<EnumDeclaration>(text);

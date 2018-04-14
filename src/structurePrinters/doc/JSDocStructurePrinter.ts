@@ -1,6 +1,6 @@
 import CodeBlockWriter from "code-block-writer";
-import {JSDocStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { JSDocStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructure> {
     printText(writer: CodeBlockWriter, structure: JSDocStructure) {

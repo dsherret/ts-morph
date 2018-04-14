@@ -1,5 +1,5 @@
-﻿import {TextManipulator} from "./TextManipulator";
-import {getTextForError} from "./getTextForError";
+﻿import { TextManipulator } from "./TextManipulator";
+import { getTextForError } from "./getTextForError";
 
 export interface InsertionTextManipulatorOptions {
     insertPos: number;

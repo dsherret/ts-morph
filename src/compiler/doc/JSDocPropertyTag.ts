@@ -1,6 +1,6 @@
-import {ts} from "../../typescript";
-import {JSDocTag} from "./JSDocTag";
-import {JSDocPropertyLikeTag} from "./base";
+import { ts } from "../../typescript";
+import { JSDocTag } from "./JSDocTag";
+import { JSDocPropertyLikeTag } from "./base";
 
 export const JSDocPropertyTagBase = JSDocPropertyLikeTag(JSDocTag);
 /**

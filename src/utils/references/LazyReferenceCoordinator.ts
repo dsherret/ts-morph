@@ -1,6 +1,6 @@
-﻿import {CompilerFactory} from "../../factories";
-import {SourceFile} from "../../compiler";
-import {createHashSet} from "../collections";
+﻿import { CompilerFactory } from "../../factories";
+import { SourceFile } from "../../compiler";
+import { createHashSet } from "../collections";
 
 /**
  * Updates all the source file's reference containers.

@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Node, OverloadableNode, ClassDeclaration} from "../../compiler";
-import {FormattingKind, getClausedNodeChildFormatting, getClassMemberFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting} from "../formatting";
-import {doManipulation} from "./doManipulation";
-import {RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator} from "../textManipulators";
-import {NodeHandlerFactory} from "../nodeHandlers";
+import { ts, SyntaxKind } from "../../typescript";
+import { Node, OverloadableNode, ClassDeclaration } from "../../compiler";
+import { FormattingKind, getClausedNodeChildFormatting, getClassMemberFormatting, getInterfaceMemberFormatting, getStatementedNodeChildFormatting } from "../formatting";
+import { doManipulation } from "./doManipulation";
+import { RemoveChildrenTextManipulator, RemoveChildrenWithFormattingTextManipulator, UnwrapTextManipulator } from "../textManipulators";
+import { NodeHandlerFactory } from "../nodeHandlers";
 
 export interface RemoveChildrenOptions {
     children: Node[];

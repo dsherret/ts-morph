@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ParameteredNode, FunctionDeclaration, ParameterDeclaration, Scope} from "../../../compiler";
-import {ParameterDeclarationStructure, ParameteredNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ParameteredNode, FunctionDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
+import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ParameteredNode), () => {
     describe(nameof<ParameteredNode>(d => d.getParameter), () => {

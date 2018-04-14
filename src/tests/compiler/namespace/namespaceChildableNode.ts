@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {NamespaceDeclaration, NamespaceChildableNode} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { NamespaceDeclaration, NamespaceChildableNode } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(NamespaceChildableNode), () => {
     describe(nameof<NamespaceChildableNode>(d => d.getParentNamespace), () => {

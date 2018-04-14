@@ -1,4 +1,4 @@
-﻿import {WrappedNode} from "./WrappedNode";
+﻿import { WrappedNode } from "./WrappedNode";
 
 export interface NodeToWrapperMapping {
     wrapperName: string;

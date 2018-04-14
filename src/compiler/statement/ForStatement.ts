@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
+import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import {Expression} from "../expression";
-import {IterationStatement} from "./IterationStatement";
-import {VariableDeclarationList} from "./VariableDeclarationList";
+import { Expression } from "../expression";
+import { IterationStatement } from "./IterationStatement";
+import { VariableDeclarationList } from "./VariableDeclarationList";
 
 export const ForStatementBase = IterationStatement;
 export class ForStatement extends ForStatementBase<ts.ForStatement> {

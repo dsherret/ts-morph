@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration, ConstructorDeclaration} from "../../../compiler";
-import {ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ClassDeclaration, ConstructorDeclaration } from "../../../compiler";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {

@@ -1,9 +1,9 @@
-import {ts, SymbolFlags} from "../../typescript";
-import {GlobalContainer} from "../../GlobalContainer";
+import { ts, SymbolFlags } from "../../typescript";
+import { GlobalContainer } from "../../GlobalContainer";
 import * as errors from "../../errors";
-import {ArrayUtils} from "../../utils";
-import {Node} from "../common";
-import {Type} from "../type";
+import { ArrayUtils } from "../../utils";
+import { Node } from "../common";
+import { Type } from "../type";
 
 export class Symbol {
     /** @internal */

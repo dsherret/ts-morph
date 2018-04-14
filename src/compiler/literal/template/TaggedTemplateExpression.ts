@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "../../../typescript";
-import {insertIntoParentTextRange} from "../../../manipulation";
-import {LeftHandSideExpression, MemberExpression} from "../../expression";
-import {TemplateLiteral} from "../../aliases";
-import {TemplateExpression} from "./TemplateExpression";
-import {NoSubstitutionTemplateLiteral} from "./NoSubstitutionTemplateLiteral";
+import { ts, SyntaxKind } from "../../../typescript";
+import { insertIntoParentTextRange } from "../../../manipulation";
+import { LeftHandSideExpression, MemberExpression } from "../../expression";
+import { TemplateLiteral } from "../../aliases";
+import { TemplateExpression } from "./TemplateExpression";
+import { NoSubstitutionTemplateLiteral } from "./NoSubstitutionTemplateLiteral";
 
 export const TaggedTemplateExpressionBase = MemberExpression;
 export class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.TaggedTemplateExpression> {

@@ -7,6 +7,7 @@
   "scripts": {
     "dopublish": "gulp typescript && gulp scripts && node dist-scripts/scripts/createDeclarationFile && npm run code-verification && npm publish",
     "test": "npm run build && npm run test-run",
+    "lint": "gulp tslint",
     "build": "gulp typescript",
     "test-run": "gulp test-run",
     "code-generate": "gulp scripts && node dist-scripts/scripts/code-generate",

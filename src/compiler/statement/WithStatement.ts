@@ -1,7 +1,7 @@
-import {ts} from "../../typescript";
-import {ChildOrderableNode} from "../base";
-import {Expression} from "../expression";
-import {Statement} from "./Statement";
+import { ts } from "../../typescript";
+import { ChildOrderableNode } from "../base";
+import { Expression } from "../expression";
+import { Statement } from "./Statement";
 
 export const WithStatementBase = ChildOrderableNode(Statement);
 export class WithStatement extends WithStatementBase<ts.WithStatement> {

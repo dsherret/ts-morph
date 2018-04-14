@@ -1,9 +1,9 @@
-﻿import {expect} from "chai";
-import {Project} from "../../../Project";
-import {ts, SyntaxKind} from "../../../typescript";
-import {ExternalModuleReference} from "../../../compiler";
+﻿import { expect } from "chai";
+import { Project } from "../../../Project";
+import { ts, SyntaxKind } from "../../../typescript";
+import { ExternalModuleReference } from "../../../compiler";
 import * as errors from "../../../errors";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ExternalModuleReference), () => {
     function getNode(text: string) {

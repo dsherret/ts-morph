@@ -1,8 +1,8 @@
-﻿import {Node} from "../../compiler";
+﻿import { Node } from "../../compiler";
 import * as errors from "../../errors";
-import {ts} from "../../typescript";
-import {TypeGuards} from "../../utils";
-import {NodeHandler} from "./NodeHandler";
+import { ts } from "../../typescript";
+import { TypeGuards } from "../../utils";
+import { NodeHandler } from "./NodeHandler";
 
 /**
  * Attempts to use a node handler, but if it fails it will forget all the nodes' children.

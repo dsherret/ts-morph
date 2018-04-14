@@ -1,9 +1,9 @@
-﻿import {ClassDeclarationStructure} from "../class";
-import {EnumDeclarationStructure} from "../enum";
-import {FunctionDeclarationStructure} from "../function";
-import {InterfaceDeclarationStructure} from "../interface";
-import {NamespaceDeclarationStructure} from "../namespace";
-import {TypeAliasDeclarationStructure} from "../type";
+﻿import { ClassDeclarationStructure } from "../class";
+import { EnumDeclarationStructure } from "../enum";
+import { FunctionDeclarationStructure } from "../function";
+import { InterfaceDeclarationStructure } from "../interface";
+import { NamespaceDeclarationStructure } from "../namespace";
+import { TypeAliasDeclarationStructure } from "../type";
 
 export interface StatementedNodeStructure {
     classes?: ClassDeclarationStructure[];

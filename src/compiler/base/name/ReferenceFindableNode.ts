@@ -1,8 +1,8 @@
-﻿import {ts} from "../../../typescript";
-import {Constructor} from "../../../Constructor";
-import {TypeGuards} from "../../../utils";
-import {Node} from "../../common";
-import {ReferencedSymbol} from "../../tools";
+﻿import { ts } from "../../../typescript";
+import { Constructor } from "../../../Constructor";
+import { TypeGuards } from "../../../utils";
+import { Node } from "../../common";
+import { ReferencedSymbol } from "../../tools";
 
 export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.PropertyName | ts.BindingName; }>;
 

@@ -1,14 +1,14 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import {EnumMemberStructure, EnumDeclarationStructure} from "../../structures";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn} from "../../manipulation";
-import {getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode} from "../base";
-import {Node} from "../common";
-import {NamespaceChildableNode} from "../namespace";
-import {Statement} from "../statement";
-import {EnumMember} from "./EnumMember";
+import { EnumMemberStructure, EnumDeclarationStructure } from "../../structures";
+import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn } from "../../manipulation";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode } from "../base";
+import { Node } from "../common";
+import { NamespaceChildableNode } from "../namespace";
+import { Statement } from "../statement";
+import { EnumMember } from "./EnumMember";
 
 export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Statement))

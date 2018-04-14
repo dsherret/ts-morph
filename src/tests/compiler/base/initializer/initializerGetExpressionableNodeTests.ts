@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../../typescript";
-import {EnumDeclaration, InitializerGetExpressionableNode, Expression} from "../../../../compiler";
-import {getInfoFromText} from "../../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../../typescript";
+import { EnumDeclaration, InitializerGetExpressionableNode, Expression } from "../../../../compiler";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(InitializerGetExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {

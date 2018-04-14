@@ -1,9 +1,9 @@
-import {ts} from "../../typescript";
-import {GlobalContainer} from "../../GlobalContainer";
-import {SymbolDisplayPart} from "../tools";
-import {JSDocTagInfo} from "../doc";
-import {TypeParameter, Type} from "../type";
-import {Symbol} from "./Symbol";
+import { ts } from "../../typescript";
+import { GlobalContainer } from "../../GlobalContainer";
+import { SymbolDisplayPart } from "../tools";
+import { JSDocTagInfo } from "../doc";
+import { TypeParameter, Type } from "../type";
+import { Symbol } from "./Symbol";
 
 export class Signature {
     /** @internal */

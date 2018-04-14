@@ -1,5 +1,5 @@
-import {ts} from "../../../typescript";
-import {DocumentSpan} from "./DocumentSpan";
+import { ts } from "../../../typescript";
+import { DocumentSpan } from "./DocumentSpan";
 
 /**
  * Rename location.

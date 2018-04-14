@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {JsxSpreadAttribute, JsxSelfClosingElement} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { JsxSpreadAttribute, JsxSelfClosingElement } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getInfo(text: string) {
     return getInfoFromTextWithDescendant<JsxSpreadAttribute>(text, SyntaxKind.JsxSpreadAttribute, { isJsx: true });

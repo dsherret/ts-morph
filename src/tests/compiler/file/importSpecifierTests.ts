@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ImportDeclaration, ImportSpecifier} from "../../../compiler";
-import {ArrayUtils} from "../../../utils";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ImportDeclaration, ImportSpecifier } from "../../../compiler";
+import { ArrayUtils } from "../../../utils";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ImportSpecifier), () => {
     describe(nameof<ImportSpecifier>(n => n.setName), () => {

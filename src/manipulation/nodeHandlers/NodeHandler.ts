@@ -1,5 +1,5 @@
-﻿import {Node} from "../../compiler";
-import {ts} from "../../typescript";
+﻿import { Node } from "../../compiler";
+import { ts } from "../../typescript";
 
 /**
  * Handler for replacing node.

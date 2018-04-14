@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {getEndIndexFromArray} from "../../manipulation";
+﻿import { expect } from "chai";
+import { getEndIndexFromArray } from "../../manipulation";
 
 describe(nameof(getEndIndexFromArray), () => {
     it("should return 0 when undefined", () => {

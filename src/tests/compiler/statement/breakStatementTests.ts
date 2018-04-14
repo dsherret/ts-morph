@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {BreakStatement} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { BreakStatement } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getBreakStatement(text: string) {
     return getInfoFromTextWithDescendant<BreakStatement>(text, SyntaxKind.BreakStatement).descendant;

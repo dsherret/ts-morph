@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {CatchClause} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { CatchClause } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getCatchClause(text: string) {
     return getInfoFromTextWithDescendant<CatchClause>(text, SyntaxKind.CatchClause).descendant;

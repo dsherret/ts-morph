@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
-import {Node} from "../../compiler";
-import {TypeGuards} from "../../utils";
-import {FormattingKind} from "./FormattingKind";
-import {hasBody} from "./hasBody";
+import { ts } from "../../typescript";
+import { Node } from "../../compiler";
+import { TypeGuards } from "../../utils";
+import { FormattingKind } from "./FormattingKind";
+import { hasBody } from "./hasBody";
 
 export function getStatementedNodeChildFormatting(parent: Node, member: Node) {
     if (hasBody(member))

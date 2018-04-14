@@ -1,8 +1,8 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {StatementedNodeStructure, BodiedNodeStructure, BodyableNodeStructure} from "../../structures";
-import {ArrayUtils} from "../../utils";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {StructurePrinterFactory} from "../../factories";
+import { StatementedNodeStructure, BodiedNodeStructure, BodyableNodeStructure } from "../../structures";
+import { ArrayUtils } from "../../utils";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { StructurePrinterFactory } from "../../factories";
 
 export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string; };
 

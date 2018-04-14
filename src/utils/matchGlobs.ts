@@ -1,5 +1,5 @@
 ﻿import * as multimatch from "multimatch";
-import {FileUtils} from "./FileUtils";
+import { FileUtils } from "./FileUtils";
 
 export function matchGlobs(paths: string[], patterns: string[] | string, cwd: string) {
     if (typeof patterns === "string")

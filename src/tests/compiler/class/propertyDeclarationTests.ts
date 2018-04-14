@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {PropertyDeclaration, ClassDeclaration} from "../../../compiler";
-import {PropertyDeclarationStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { PropertyDeclaration, ClassDeclaration } from "../../../compiler";
+import { PropertyDeclarationStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(PropertyDeclaration), () => {
     function getFirstPropertyWithInfo(code: string) {

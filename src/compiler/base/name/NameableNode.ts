@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../../typescript";
-import {Constructor} from "../../../Constructor";
-import {NameableNodeStructure} from "../../../structures";
+import { ts, SyntaxKind } from "../../../typescript";
+import { Constructor } from "../../../Constructor";
+import { NameableNodeStructure } from "../../../structures";
 import * as errors from "../../../errors";
-import {removeChildren, insertIntoParentTextRange} from "../../../manipulation";
-import {StringUtils, TypeGuards} from "../../../utils";
-import {Node, Identifier} from "../../common";
-import {ReferencedSymbol} from "../../tools";
-import {callBaseFill} from "../../callBaseFill";
-import {ReferenceFindableNode} from "./ReferenceFindableNode";
+import { removeChildren, insertIntoParentTextRange } from "../../../manipulation";
+import { StringUtils, TypeGuards } from "../../../utils";
+import { Node, Identifier } from "../../common";
+import { ReferencedSymbol } from "../../tools";
+import { callBaseFill } from "../../callBaseFill";
+import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 

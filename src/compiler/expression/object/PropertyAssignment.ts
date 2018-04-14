@@ -1,9 +1,9 @@
-import {ts, SyntaxKind} from "../../../typescript";
+import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
-import {insertIntoParentTextRange} from "../../../manipulation";
-import {PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode} from "../../base";
-import {Node} from "../../common";
-import {ShorthandPropertyAssignment} from "./ShorthandPropertyAssignment";
+import { insertIntoParentTextRange } from "../../../manipulation";
+import { PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode } from "../../base";
+import { Node } from "../../common";
+import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)

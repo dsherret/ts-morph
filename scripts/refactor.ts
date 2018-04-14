@@ -6,8 +6,8 @@
  * ----------------------------
  */
 
-import {InspectorFactory} from "./inspectors";
-import {SyntaxKind, TypeGuards} from "../src/main";
+import { InspectorFactory } from "./inspectors";
+import { SyntaxKind, TypeGuards } from "../src/main";
 
 const factory = new InspectorFactory();
 const tsaInspector = factory.getTsSimpleAstInspector();

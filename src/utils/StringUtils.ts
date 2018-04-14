@@ -1,4 +1,4 @@
-﻿import {QuoteKind} from "../compiler";
+﻿import { QuoteKind } from "../compiler";
 import * as errors from "../errors";
 
 export class StringUtils {

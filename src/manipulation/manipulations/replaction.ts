@@ -1,9 +1,9 @@
-import {ts} from "../../typescript";
-import {Node, SourceFile, RenameLocation} from "../../compiler";
-import {TypeGuards, createCompilerSourceFile} from "../../utils";
-import {doManipulation} from "./doManipulation";
-import {NodeHandlerFactory} from "../nodeHandlers";
-import {InsertionTextManipulator, FullReplacementTextManipulator, RenameLocationTextManipulator} from "../textManipulators";
+import { ts } from "../../typescript";
+import { Node, SourceFile, RenameLocation } from "../../compiler";
+import { TypeGuards, createCompilerSourceFile } from "../../utils";
+import { doManipulation } from "./doManipulation";
+import { NodeHandlerFactory } from "../nodeHandlers";
+import { InsertionTextManipulator, FullReplacementTextManipulator, RenameLocationTextManipulator } from "../textManipulators";
 
 export interface ReplaceNodeTextOptions {
     sourceFile: SourceFile;

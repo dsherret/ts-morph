@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../../typescript";
-import {TemplateExpression} from "../../../../compiler";
-import {getInfoFromTextWithDescendant} from "../../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../../typescript";
+import { TemplateExpression } from "../../../../compiler";
+import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getExpression(text: string) {
     return getInfoFromTextWithDescendant<TemplateExpression>(text, SyntaxKind.TemplateExpression).descendant;

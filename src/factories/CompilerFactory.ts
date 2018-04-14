@@ -1,17 +1,17 @@
-import {ts, SyntaxKind, TypeFlags} from "../typescript";
-import {SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
-    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry} from "../compiler";
+import { ts, SyntaxKind, TypeFlags } from "../typescript";
+import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
+    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry } from "../compiler";
 import * as errors from "../errors";
-import {SourceFileStructure} from "../structures";
-import {SourceFileStructurePrinter} from "../structurePrinters";
-import {KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile} from "../utils";
-import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
-import {GlobalContainer} from "../GlobalContainer";
-import {Directory} from "../fileSystem";
-import {createTempSourceFile} from "./createTempSourceFile";
-import {nodeToWrapperMappings} from "./nodeToWrapperMappings";
-import {ForgetfulNodeCache} from "./ForgetfulNodeCache";
-import {DirectoryCache} from "./DirectoryCache";
+import { SourceFileStructure } from "../structures";
+import { SourceFileStructurePrinter } from "../structurePrinters";
+import { KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile } from "../utils";
+import { CreateSourceFileOptions, AddSourceFileOptions } from "../Project";
+import { GlobalContainer } from "../GlobalContainer";
+import { Directory } from "../fileSystem";
+import { createTempSourceFile } from "./createTempSourceFile";
+import { nodeToWrapperMappings } from "./nodeToWrapperMappings";
+import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
+import { DirectoryCache } from "./DirectoryCache";
 
 /**
  * Factory for creating compiler wrappers.

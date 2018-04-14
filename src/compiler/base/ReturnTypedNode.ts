@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
-import {ReturnTypedNodeStructure} from "../../structures";
-import {callBaseFill} from "../callBaseFill";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
+import { ReturnTypedNodeStructure } from "../../structures";
+import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";
-import {removeChildren, insertIntoParentTextRange} from "../../manipulation";
-import {StringUtils} from "../../utils";
-import {Node} from "../common";
-import {Type} from "../type/Type";
-import {TypeNode} from "../type/TypeNode";
+import { removeChildren, insertIntoParentTextRange } from "../../manipulation";
+import { StringUtils } from "../../utils";
+import { Node } from "../common";
+import { Type } from "../type/Type";
+import { TypeNode } from "../type/TypeNode";
 
 export type ReturnTypedNodeExtensionReturnType = Node<ts.SignatureDeclaration>;
 

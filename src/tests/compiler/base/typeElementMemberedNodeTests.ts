@@ -1,9 +1,9 @@
-﻿import {expect} from "chai";
-import {TypeElementMemberedNode, InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, CallSignatureDeclaration, ClassDeclaration,
-    IndexSignatureDeclaration} from "../../../compiler";
-import {ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, CallSignatureDeclarationStructure,
-    IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { TypeElementMemberedNode, InterfaceDeclaration, MethodSignature, PropertySignature, ConstructSignatureDeclaration, CallSignatureDeclaration, ClassDeclaration,
+    IndexSignatureDeclaration } from "../../../compiler";
+import { ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure, CallSignatureDeclarationStructure,
+    IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeElementMemberedNode), () => {
     describe(nameof<TypeElementMemberedNode>(d => d.insertConstructSignatures), () => {

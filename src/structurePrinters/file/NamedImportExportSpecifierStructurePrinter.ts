@@ -1,7 +1,7 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {ImportSpecifierStructure, ExportSpecifierStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {CommaSeparatedStructuresPrinter} from "../formatting";
+import { ImportSpecifierStructure, ExportSpecifierStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { CommaSeparatedStructuresPrinter } from "../formatting";
 
 export type NamedImportExportSpecifierStructureToTextItem = ImportSpecifierStructure | ExportSpecifierStructure | string;
 

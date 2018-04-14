@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {removeChildrenWithFormatting, FormattingKind} from "../../manipulation";
-import {EnumMemberStructure} from "../../structures";
-import {StringUtils} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {Node} from "../common";
-import {PropertyNamedNode, InitializerExpressionableNode, JSDocableNode} from "../base";
+import { ts, SyntaxKind } from "../../typescript";
+import { removeChildrenWithFormatting, FormattingKind } from "../../manipulation";
+import { EnumMemberStructure } from "../../structures";
+import { StringUtils } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
+import { PropertyNamedNode, InitializerExpressionableNode, JSDocableNode } from "../base";
 
 export const EnumMemberBase = JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {

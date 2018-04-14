@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import CodeBlockWriter from "code-block-writer";
-import {BodyableNode, ClassDeclaration, FunctionDeclaration} from "../../../compiler";
-import {BodyableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../compiler";
+import { BodyableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(BodyableNode), () => {
     describe(nameof<BodyableNode>(n => n.setBodyText), () => {

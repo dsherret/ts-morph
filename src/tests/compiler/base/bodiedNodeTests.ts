@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import CodeBlockWriter from "code-block-writer";
-import {BodiedNode, NamespaceDeclaration} from "../../../compiler";
-import {BodiedNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+import { BodiedNode, NamespaceDeclaration } from "../../../compiler";
+import { BodiedNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(BodiedNode), () => {
     describe(nameof<BodiedNode>(n => n.setBodyText), () => {

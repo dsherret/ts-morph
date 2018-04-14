@@ -1,5 +1,5 @@
-﻿import {PropertySignatureStructure, MethodSignatureStructure, ConstructSignatureDeclarationStructure, CallSignatureDeclarationStructure,
-    IndexSignatureDeclarationStructure} from "../interface";
+﻿import { PropertySignatureStructure, MethodSignatureStructure, ConstructSignatureDeclarationStructure, CallSignatureDeclarationStructure,
+    IndexSignatureDeclarationStructure } from "../interface";
 
 export interface TypeElementMemberedNodeStructure {
     callSignatures?: CallSignatureDeclarationStructure[];

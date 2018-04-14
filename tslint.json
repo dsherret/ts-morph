@@ -49,6 +49,7 @@
         "prefer-for-of": false,
         "no-implicit-dependencies": [ "dev" ],
         "typeof-compare": false,
-        "no-invalid-template-strings": false
+        "no-invalid-template-strings": false,
+        "whitespace": [true, "check-module"]
     }
 }

@@ -1,7 +1,7 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
-import {Node} from "../common";
-import {NamespaceDeclaration} from "./NamespaceDeclaration";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
+import { Node } from "../common";
+import { NamespaceDeclaration } from "./NamespaceDeclaration";
 
 export type NamespaceChildableNodeExtensionType = Node;
 

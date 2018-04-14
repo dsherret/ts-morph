@@ -1,4 +1,4 @@
-import {ts, SyntaxKind} from "../typescript";
+import { ts, SyntaxKind } from "../typescript";
 import * as compiler from "../compiler";
 
 // when changing this, make sure to run `npm run code-generate`.

@@ -1,9 +1,9 @@
-﻿import {createGetStructureFunctions} from "./createGetStructureFunctions";
-import {createTypeGuardsUtility} from "./createTypeGuardsUtility";
-import {createCompilerApiLayer} from "./createCompilerApiLayer";
-import {createKindToNodeMappings} from "./createKindToNodeMappings";
-import {createStructurePrinterFactory} from "./createStructurePrinterFactory";
-import {InspectorFactory} from "./inspectors";
+﻿import { createGetStructureFunctions } from "./createGetStructureFunctions";
+import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
+import { createCompilerApiLayer } from "./createCompilerApiLayer";
+import { createKindToNodeMappings } from "./createKindToNodeMappings";
+import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
+import { InspectorFactory } from "./inspectors";
 
 // setup
 const factory = new InspectorFactory();

@@ -1,11 +1,11 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {insertIntoParentTextRange, removeChildren} from "../../manipulation";
-import {ExclamationTokenableNodeStructure} from "../../structures";
-import {TypeGuards} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {Node} from "../common";
+import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
+import { ExclamationTokenableNodeStructure } from "../../structures";
+import { TypeGuards } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
 
 export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken; }>;
 

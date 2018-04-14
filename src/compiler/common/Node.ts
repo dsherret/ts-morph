@@ -1,26 +1,26 @@
-import {ts, SyntaxKind} from "../../typescript";
+import { ts, SyntaxKind } from "../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../errors";
-import {GlobalContainer} from "../../GlobalContainer";
-import {IndentationText} from "../../options";
-import {StructurePrinter} from "../../structurePrinters";
-import {insertIntoParentTextRange, getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
-    getTextFromFormattingEdits} from "../../manipulation";
-import {TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
-    getParentSyntaxList} from "../../utils";
-import {SourceFile} from "../file";
-import {ConstructorDeclaration, MethodDeclaration} from "../class";
-import {FunctionDeclaration} from "../function";
-import {FormatCodeSettings} from "../tools";
-import {TypeAliasDeclaration, Type} from "../type";
-import {InterfaceDeclaration} from "../interface";
-import {QuoteKind} from "../literal/QuoteKind";
-import {NamespaceDeclaration} from "../namespace";
-import {Statement, StatementedNode} from "../statement";
-import {KindToNodeMappings} from "../kindToNodeMappings";
-import {Symbol} from "./Symbol";
-import {SyntaxList} from "./SyntaxList";
-import {CommentRange} from "./CommentRange";
+import { GlobalContainer } from "../../GlobalContainer";
+import { IndentationText } from "../../options";
+import { StructurePrinter } from "../../structurePrinters";
+import { insertIntoParentTextRange, getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
+    getTextFromFormattingEdits } from "../../manipulation";
+import { TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
+    getParentSyntaxList } from "../../utils";
+import { SourceFile } from "../file";
+import { ConstructorDeclaration, MethodDeclaration } from "../class";
+import { FunctionDeclaration } from "../function";
+import { FormatCodeSettings } from "../tools";
+import { TypeAliasDeclaration, Type } from "../type";
+import { InterfaceDeclaration } from "../interface";
+import { QuoteKind } from "../literal/QuoteKind";
+import { NamespaceDeclaration } from "../namespace";
+import { Statement, StatementedNode } from "../statement";
+import { KindToNodeMappings } from "../kindToNodeMappings";
+import { Symbol } from "./Symbol";
+import { SyntaxList } from "./SyntaxList";
+import { CommentRange } from "./CommentRange";
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */

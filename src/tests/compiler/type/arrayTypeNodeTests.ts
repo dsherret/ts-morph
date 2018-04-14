@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {ArrayTypeNode} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { ArrayTypeNode } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ArrayTypeNode), () => {
     function getNode(text: string) {

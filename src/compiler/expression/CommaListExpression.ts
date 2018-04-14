@@ -1,5 +1,5 @@
-import {ts} from "../../typescript";
-import {Expression} from "./Expression";
+import { ts } from "../../typescript";
+import { Expression } from "./Expression";
 
 export const CommaListExpressionBase = Expression;
 export class CommaListExpression extends CommaListExpressionBase<ts.CommaListExpression> {

@@ -1,5 +1,5 @@
-﻿import {Node} from "../../compiler";
-import {InsertionTextManipulator} from "./InsertionTextManipulator";
+﻿import { Node } from "../../compiler";
+import { InsertionTextManipulator } from "./InsertionTextManipulator";
 
 export class UnwrapTextManipulator extends InsertionTextManipulator {
     constructor(node: Node) {

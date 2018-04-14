@@ -1,15 +1,15 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Node} from "../common";
-import {FunctionDeclarationOverloadStructure, FunctionDeclarationStructure} from "../../structures";
-import {verifyAndGetIndex, removeOverloadableStatementedNodeChild} from "../../manipulation";
+import { ts, SyntaxKind } from "../../typescript";
+import { Node } from "../common";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../structures";
+import { verifyAndGetIndex, removeOverloadableStatementedNodeChild } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import {NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode, TextInsertableNode,
-    UnwrappableNode, ChildOrderableNode} from "../base";
-import {StatementedNode} from "../statement";
-import {NamespaceChildableNode} from "../namespace";
-import {callBaseFill} from "../callBaseFill";
-import {FunctionLikeDeclaration} from "./FunctionLikeDeclaration";
-import {OverloadableNode, insertOverloads} from "./OverloadableNode";
+import { NamedNode, ModifierableNode, ExportableNode, AmbientableNode, AsyncableNode, GeneratorableNode, BodyableNode, TextInsertableNode,
+    UnwrappableNode, ChildOrderableNode } from "../base";
+import { StatementedNode } from "../statement";
+import { NamespaceChildableNode } from "../namespace";
+import { callBaseFill } from "../callBaseFill";
+import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
+import { OverloadableNode, insertOverloads } from "./OverloadableNode";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))

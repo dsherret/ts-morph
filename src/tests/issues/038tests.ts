@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration, Expression, PropertyDeclaration} from "../../compiler";
-import {getInfoFromText} from "../compiler/testHelpers";
+﻿import { expect } from "chai";
+import { ClassDeclaration, Expression, PropertyDeclaration } from "../../compiler";
+import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #38", () => {
     it("should set the initializer when it's a string", () => {

@@ -1,8 +1,8 @@
 import * as objectAssign from "object-assign";
-import {ts, NewLineKind, EditorSettings} from "../typescript";
-import {QuoteKind} from "../compiler";
-import {newLineKindToString, fillDefaultEditorSettings} from "../utils";
-import {SettingsContainer} from "./SettingsContainer";
+import { ts, NewLineKind, EditorSettings } from "../typescript";
+import { QuoteKind } from "../compiler";
+import { newLineKindToString, fillDefaultEditorSettings } from "../utils";
+import { SettingsContainer } from "./SettingsContainer";
 
 /** Kinds of indentation */
 export enum IndentationText {

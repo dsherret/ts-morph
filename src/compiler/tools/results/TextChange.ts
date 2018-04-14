@@ -1,6 +1,6 @@
-import {ts} from "../../../typescript";
-import {TextSpan} from "./TextSpan";
-import {Memoize} from "../../../utils";
+import { ts } from "../../../typescript";
+import { TextSpan } from "./TextSpan";
+import { Memoize } from "../../../utils";
 
 /**
  * Represents a text change.

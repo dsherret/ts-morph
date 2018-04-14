@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import * as errors from "../../../errors";
-import {UnwrappableNode, SourceFile} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { UnwrappableNode, SourceFile } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(UnwrappableNode), () => {
     describe(nameof<UnwrappableNode>(n => n.unwrap), () => {

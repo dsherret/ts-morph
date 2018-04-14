@@ -1,5 +1,5 @@
-import {ts} from "../../typescript";
-import {TypeNode} from "./TypeNode";
+import { ts } from "../../typescript";
+import { TypeNode } from "./TypeNode";
 
 export class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
     /**

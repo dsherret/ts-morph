@@ -1,7 +1,7 @@
 import * as errors from "../../errors";
-import {ts, SyntaxKind} from "../../typescript";
-import {getSyntaxKindName} from "../../utils";
-import {Node} from "../../compiler";
+import { ts, SyntaxKind } from "../../typescript";
+import { getSyntaxKindName } from "../../utils";
+import { Node } from "../../compiler";
 
 export function getRangeFromArray<T extends Node>(array: Node[], index: number, length: number, expectedKind: SyntaxKind) {
     const children = array.slice(index, index + length);

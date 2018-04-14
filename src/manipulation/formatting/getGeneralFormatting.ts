@@ -1,9 +1,9 @@
-﻿import {Node} from "../../compiler";
-import {TypeGuards} from "../../utils";
-import {FormattingKind} from "./FormattingKind";
-import {getInterfaceMemberFormatting} from "./getInterfaceMemberFormatting";
-import {getClassMemberFormatting} from "./getClassMemberFormatting";
-import {getStatementedNodeChildFormatting} from "./getStatementedNodeChildFormatting";
+﻿import { Node } from "../../compiler";
+import { TypeGuards } from "../../utils";
+import { FormattingKind } from "./FormattingKind";
+import { getInterfaceMemberFormatting } from "./getInterfaceMemberFormatting";
+import { getClassMemberFormatting } from "./getClassMemberFormatting";
+import { getStatementedNodeChildFormatting } from "./getStatementedNodeChildFormatting";
 
 export function getGeneralFormatting(parent: Node, child: Node) {
     // todo: support more

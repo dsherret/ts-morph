@@ -1,4 +1,4 @@
-import {WeakDictionary, Es5WeakMap} from "./Es5WeakMap";
+import { WeakDictionary, Es5WeakMap } from "./Es5WeakMap";
 
 export class WeakCache<T extends object, U> {
     private readonly cacheItems: WeakDictionary<T, U>;

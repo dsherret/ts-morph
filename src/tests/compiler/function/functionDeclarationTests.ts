@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {FunctionDeclaration} from "../../../compiler";
-import {FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { FunctionDeclaration } from "../../../compiler";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {

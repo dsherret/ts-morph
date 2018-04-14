@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
-import {DecoratorStructure, DecoratableNodeStructure} from "../../structures";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
+import { DecoratorStructure, DecoratableNodeStructure } from "../../structures";
 import * as errors from "../../errors";
-import {callBaseFill} from "../callBaseFill";
-import {getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn} from "../../manipulation";
-import {getNextNonWhitespacePos} from "../../manipulation/textSeek";
-import {ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction} from "../../utils";
-import {Node} from "../common";
-import {Decorator} from "../decorator/Decorator";
+import { callBaseFill } from "../callBaseFill";
+import { getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn } from "../../manipulation";
+import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { Node } from "../common";
+import { Decorator } from "../decorator/Decorator";
 
 export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
 

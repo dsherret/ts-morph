@@ -1,5 +1,5 @@
-import {ts} from "../../typescript";
-import {Node} from "../common";
+import { ts } from "../../typescript";
+import { Node } from "../common";
 
 export class JsxText extends Node<ts.JsxText> {
     /**

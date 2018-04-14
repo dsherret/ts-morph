@@ -1,4 +1,4 @@
-﻿import {ExportSpecifierStructure} from "./ExportSpecifierStructure";
+﻿import { ExportSpecifierStructure } from "./ExportSpecifierStructure";
 
 export interface ExportDeclarationStructure {
     namedExports?: (string | ExportSpecifierStructure)[];

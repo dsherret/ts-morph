@@ -1,4 +1,4 @@
-﻿import {TextManipulator} from "./TextManipulator";
+﻿import { TextManipulator } from "./TextManipulator";
 
 export class FullReplacementTextManipulator implements TextManipulator {
     constructor(private readonly newText: string) {

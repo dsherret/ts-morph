@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {StringUtils} from "../../utils";
-import {PropertySignatureStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {NewLineFormattingStructuresPrinter} from "../formatting";
+import { StringUtils } from "../../utils";
+import { PropertySignatureStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
 
 export class PropertySignatureStructurePrinter extends FactoryStructurePrinter<PropertySignatureStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

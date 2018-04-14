@@ -1,9 +1,9 @@
-﻿import {Node} from "../../compiler";
-import {CompilerFactory} from "../../factories";
-import {ts} from "../../typescript";
-import {getParentSyntaxList} from "../../utils";
-import {NodeHandler} from "./NodeHandler";
-import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
+﻿import { Node } from "../../compiler";
+import { CompilerFactory } from "../../factories";
+import { ts } from "../../typescript";
+import { getParentSyntaxList } from "../../utils";
+import { NodeHandler } from "./NodeHandler";
+import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
 
 /**
  * Replacement handler that tries to find the parents.

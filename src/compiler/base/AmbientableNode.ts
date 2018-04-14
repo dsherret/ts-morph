@@ -1,11 +1,11 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {AmbientableNodeStructure} from "../../structures";
-import {TypeGuards} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {Node} from "../common";
-import {ModifierableNode} from "./ModifierableNode";
+import { AmbientableNodeStructure } from "../../structures";
+import { TypeGuards } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
+import { ModifierableNode } from "./ModifierableNode";
 
 export type AmbientableNodeExtensionType = Node & ModifierableNode;
 

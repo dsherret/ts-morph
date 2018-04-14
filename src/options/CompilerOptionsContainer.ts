@@ -1,5 +1,5 @@
-﻿import {CompilerOptions} from "../typescript";
-import {SettingsContainer} from "./SettingsContainer";
+﻿import { CompilerOptions } from "../typescript";
+import { SettingsContainer } from "./SettingsContainer";
 
 /**
  * Holds the compiler options.

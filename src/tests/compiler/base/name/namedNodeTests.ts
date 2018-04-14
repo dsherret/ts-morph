@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {FunctionDeclaration, EnumDeclaration, NamedNode, Identifier} from "../../../../compiler";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { FunctionDeclaration, EnumDeclaration, NamedNode, Identifier } from "../../../../compiler";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {
     describe(nameof<NamedNode>(n => n.rename), () => {

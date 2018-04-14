@@ -1,7 +1,7 @@
-import {ts} from "../../../typescript";
-import {GlobalContainer} from "../../../GlobalContainer";
-import {Memoize} from "../../../utils";
-import {OutputFile} from "./OutputFile";
+import { ts } from "../../../typescript";
+import { GlobalContainer } from "../../../GlobalContainer";
+import { Memoize } from "../../../utils";
+import { OutputFile } from "./OutputFile";
 
 /**
  * Output of an emit on a single file.

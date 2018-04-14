@@ -1,7 +1,7 @@
 import CodeBlockWriter from "code-block-writer";
-import {TypeAliasDeclarationStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {NewLineFormattingStructuresPrinter} from "../formatting";
+import { TypeAliasDeclarationStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
 
 export class TypeAliasDeclarationStructurePrinter extends FactoryStructurePrinter<TypeAliasDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

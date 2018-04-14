@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
-import {PrimaryExpression} from "../expression";
-import {JsxChild} from "../aliases";
-import {JsxOpeningFragment} from "./JsxOpeningFragment";
-import {JsxClosingFragment} from "./JsxClosingFragment";
+import { ts } from "../../typescript";
+import { PrimaryExpression } from "../expression";
+import { JsxChild } from "../aliases";
+import { JsxOpeningFragment } from "./JsxOpeningFragment";
+import { JsxClosingFragment } from "./JsxClosingFragment";
 
 export class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
     /**

@@ -1,10 +1,10 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
-    ConstructorDeclaration, ParameterDeclaration, Scope} from "../../../compiler";
-import {PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
-    GetAccessorDeclarationStructure, SetAccessorDeclarationStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
-import {TypeGuards} from "../../../utils";
+﻿import { expect } from "chai";
+import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDeclaration, SetAccessorDeclaration, ExpressionWithTypeArguments,
+    ConstructorDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
+import { PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
+    GetAccessorDeclarationStructure, SetAccessorDeclarationStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
+import { TypeGuards } from "../../../utils";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(c => c.fill), () => {

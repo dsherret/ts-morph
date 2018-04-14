@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ReturnTypedNode, FunctionDeclaration} from "../../../compiler";
-import {ReturnTypedNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ReturnTypedNode, FunctionDeclaration } from "../../../compiler";
+import { ReturnTypedNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("function myImplicit() { return 5; }\nfunction myExplicit(): string { return ''; }");

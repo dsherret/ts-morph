@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {ParameterDeclarationStructure} from "../../structures";
-import {StringUtils} from "../../utils";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {CommaSeparatedStructuresPrinter} from "../formatting";
+import { ParameterDeclarationStructure } from "../../structures";
+import { StringUtils } from "../../utils";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { CommaSeparatedStructuresPrinter } from "../formatting";
 
 export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinter<ParameterDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);

@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {ModifierableNode, ClassDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { ModifierableNode, ClassDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ModifierableNode), () => {
     describe(nameof<ModifierableNode>(n => n.getFirstModifierByKind), () => {

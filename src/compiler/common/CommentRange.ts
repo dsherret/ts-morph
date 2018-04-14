@@ -1,6 +1,6 @@
 ﻿import * as errors from "../../errors";
-import {ts} from "../../typescript";
-import {SourceFile} from "../file";
+import { ts } from "../../typescript";
+import { SourceFile } from "../file";
 
 export class CommentRange {
     /** @internal */

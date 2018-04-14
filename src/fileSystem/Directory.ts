@@ -1,10 +1,10 @@
-﻿import {SourceFile, OutputFile} from "../compiler";
+﻿import { SourceFile, OutputFile } from "../compiler";
 import * as errors from "../errors";
-import {ArrayUtils, FileUtils} from "../utils";
-import {SourceFileStructure} from "../structures";
-import {GlobalContainer} from "../GlobalContainer";
-import {CreateSourceFileOptions, AddSourceFileOptions} from "../Project";
-import {DirectoryEmitResult} from "./DirectoryEmitResult";
+import { ArrayUtils, FileUtils } from "../utils";
+import { SourceFileStructure } from "../structures";
+import { GlobalContainer } from "../GlobalContainer";
+import { CreateSourceFileOptions, AddSourceFileOptions } from "../Project";
+import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
 export interface AddDirectoryOptions {
     /**

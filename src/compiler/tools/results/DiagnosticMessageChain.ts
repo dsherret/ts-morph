@@ -1,4 +1,4 @@
-import {ts, DiagnosticCategory} from "../../../typescript";
+import { ts, DiagnosticCategory } from "../../../typescript";
 
 /**
  * Diagnostic message chain.

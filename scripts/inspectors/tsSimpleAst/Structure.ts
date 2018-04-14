@@ -1,7 +1,7 @@
-﻿import {InterfaceDeclaration} from "../../../src/main";
-import {Memoize, TypeGuards, ArrayUtils} from "../../../src/utils";
-import {WrapperFactory} from "../WrapperFactory";
-import {isOverloadStructure} from "../../config";
+﻿import { InterfaceDeclaration } from "../../../src/main";
+import { Memoize, TypeGuards, ArrayUtils } from "../../../src/utils";
+import { WrapperFactory } from "../WrapperFactory";
+import { isOverloadStructure } from "../../config";
 
 export class Structure {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {

@@ -1,12 +1,12 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./errors";
-import {CompilerFactory, StructurePrinterFactory} from "./factories";
-import {ts, CompilerOptions} from "./typescript";
-import {LanguageService, TypeChecker, QuoteKind} from "./compiler";
-import {createWrappedNode} from "./utils/compiler/createWrappedNode";
-import {ManipulationSettingsContainer, CompilerOptionsContainer, IndentationText} from "./options";
-import {FileSystemWrapper, DirectoryCoordinator} from "./fileSystem";
-import {Logger, ConsoleLogger, LazyReferenceCoordinator} from "./utils";
+import { CompilerFactory, StructurePrinterFactory } from "./factories";
+import { ts, CompilerOptions } from "./typescript";
+import { LanguageService, TypeChecker, QuoteKind } from "./compiler";
+import { createWrappedNode } from "./utils/compiler/createWrappedNode";
+import { ManipulationSettingsContainer, CompilerOptionsContainer, IndentationText } from "./options";
+import { FileSystemWrapper, DirectoryCoordinator } from "./fileSystem";
+import { Logger, ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 
 /**
  * @internal

@@ -1,12 +1,12 @@
 import CodeBlockWriter from "code-block-writer";
-import {ts} from "../../typescript";
-import {insertIntoParentTextRange} from "../../manipulation";
-import {getTextFromStringOrWriter, printTextFromStringOrWriter} from "../../utils";
-import {getBodyText} from "../base/helpers";
-import {PrimaryExpression} from "../expression";
-import {JsxChild} from "../aliases";
-import {JsxOpeningElement} from "./JsxOpeningElement";
-import {JsxClosingElement} from "./JsxClosingElement";
+import { ts } from "../../typescript";
+import { insertIntoParentTextRange } from "../../manipulation";
+import { getTextFromStringOrWriter, printTextFromStringOrWriter } from "../../utils";
+import { getBodyText } from "../base/helpers";
+import { PrimaryExpression } from "../expression";
+import { JsxChild } from "../aliases";
+import { JsxOpeningElement } from "./JsxOpeningElement";
+import { JsxClosingElement } from "./JsxClosingElement";
 
 export class JsxElement extends PrimaryExpression<ts.JsxElement> {
     /**

@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {IndexSignatureDeclaration, InterfaceDeclaration} from "../../../compiler";
-import {IndexSignatureDeclarationStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
+import { IndexSignatureDeclarationStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(IndexSignatureDeclaration), () => {
     function getFirstIndexSignatureWithInfo(code: string) {

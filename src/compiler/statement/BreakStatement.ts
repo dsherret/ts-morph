@@ -1,10 +1,10 @@
-import {ts} from "../../typescript";
+import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import {Expression} from "../expression";
-import {Node} from "../common";
-import {ChildOrderableNode} from "../base";
-import {Statement} from "./Statement";
-import {Identifier} from "../../main";
+import { Expression } from "../expression";
+import { Node } from "../common";
+import { ChildOrderableNode } from "../base";
+import { Statement } from "./Statement";
+import { Identifier } from "../../main";
 
 export const BreakStatementBase = ChildOrderableNode(Statement);
 export class BreakStatement extends BreakStatementBase<ts.BreakStatement> {

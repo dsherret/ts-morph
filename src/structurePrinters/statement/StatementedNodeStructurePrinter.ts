@@ -1,8 +1,8 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {StatementedNodeStructure} from "../../structures";
-import {ArrayUtils} from "../../utils";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { StatementedNodeStructure } from "../../structures";
+import { ArrayUtils } from "../../utils";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class StatementedNodeStructurePrinter extends FactoryStructurePrinter<StatementedNodeStructure> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

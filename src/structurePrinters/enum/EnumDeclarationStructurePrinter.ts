@@ -1,7 +1,7 @@
 import CodeBlockWriter from "code-block-writer";
-import {EnumDeclarationStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {BlankLineFormattingStructuresPrinter} from "../formatting";
+import { EnumDeclarationStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
 export class EnumDeclarationStructurePrinter extends FactoryStructurePrinter<EnumDeclarationStructure> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);

@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {EnumMemberStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {JSDocStructurePrinter} from "../doc";
-import {CommaNewLineSeparatedStructuresPrinter} from "../formatting";
+import { EnumMemberStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { JSDocStructurePrinter } from "../doc";
+import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 
 export class EnumMemberStructurePrinter extends FactoryStructurePrinter<EnumMemberStructure> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);

@@ -1,4 +1,4 @@
-﻿import {SyntaxKind} from "../../typescript";
+﻿import { SyntaxKind } from "../../typescript";
 
 export function getSyntaxKindName(kind: SyntaxKind) {
     return getKindCache()[kind];

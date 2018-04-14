@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {VariableDeclaration, TryStatement} from "../../../compiler";
-import {VariableDeclarationStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { VariableDeclaration, TryStatement } from "../../../compiler";
+import { VariableDeclarationStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(VariableDeclaration), () => {
     describe(nameof<VariableDeclaration>(d => d.remove), () => {

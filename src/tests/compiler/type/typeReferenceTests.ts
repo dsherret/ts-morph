@@ -1,7 +1,7 @@
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {TypeReferenceNode, VariableDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { TypeReferenceNode, VariableDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeReferenceNode), () => {
     function getTypeReferenceNode(text: string) {

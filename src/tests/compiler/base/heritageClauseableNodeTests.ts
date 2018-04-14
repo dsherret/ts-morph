@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {HeritageClauseableNode, ClassDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { HeritageClauseableNode, ClassDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(HeritageClauseableNode), () => {
     describe(nameof<HeritageClauseableNode>(n => n.getHeritageClauses), () => {

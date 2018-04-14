@@ -1,7 +1,7 @@
-import {ts, DiagnosticCategory} from "../../../typescript";
-import {SourceFile} from "../../../compiler";
-import {GlobalContainer} from "../../../GlobalContainer";
-import {DiagnosticMessageChain} from "./DiagnosticMessageChain";
+import { ts, DiagnosticCategory } from "../../../typescript";
+import { SourceFile } from "../../../compiler";
+import { GlobalContainer } from "../../../GlobalContainer";
+import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
 /**
  * Diagnostic.

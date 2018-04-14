@@ -1,7 +1,7 @@
-﻿import {ts} from "../../typescript";
-import {expect} from "chai";
-import {VirtualFileSystemHost, FileSystemWrapper} from "../../fileSystem";
-import {createHashSet, HashSet, ArrayUtils} from "../../utils";
+﻿import { ts } from "../../typescript";
+import { expect } from "chai";
+import { VirtualFileSystemHost, FileSystemWrapper } from "../../fileSystem";
+import { createHashSet, HashSet, ArrayUtils } from "../../utils";
 import * as errors from "../../errors";
 
 describe(nameof(FileSystemWrapper), () => {

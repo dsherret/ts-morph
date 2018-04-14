@@ -1,6 +1,6 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {DecoratorStructure} from "../../structures";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { DecoratorStructure } from "../../structures";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class DecoratorStructurePrinter extends FactoryStructurePrinter<DecoratorStructure> {
     printTexts(writer: CodeBlockWriter, structures: DecoratorStructure[] | undefined) {

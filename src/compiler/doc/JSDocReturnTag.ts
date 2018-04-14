@@ -1,5 +1,5 @@
-import {ts} from "../../typescript";
-import {JSDocTag} from "./JSDocTag";
+import { ts } from "../../typescript";
+import { JSDocTag } from "./JSDocTag";
 
 /**
  * JS doc return tag node.

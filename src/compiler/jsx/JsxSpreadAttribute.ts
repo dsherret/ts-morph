@@ -1,6 +1,6 @@
-import {removeChildren} from "../../manipulation";
-import {ts} from "../../typescript";
-import {Node} from "../common";
+import { removeChildren } from "../../manipulation";
+import { ts } from "../../typescript";
+import { Node } from "../common";
 
 export class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {
     /**

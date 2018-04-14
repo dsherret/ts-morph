@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {ParameterDeclaration, FunctionDeclaration} from "../../../compiler";
-import {ParameterDeclarationStructure, ParameterDeclarationSpecificStructure} from "../../../structures";
-import {ArrayUtils} from "../../../utils";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ParameterDeclaration, FunctionDeclaration } from "../../../compiler";
+import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure } from "../../../structures";
+import { ArrayUtils } from "../../../utils";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.isRestParameter), () => {

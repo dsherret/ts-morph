@@ -1,4 +1,4 @@
-﻿import {BaseError} from "./BaseError";
+﻿import { BaseError } from "./BaseError";
 
 export class InvalidOperationError extends BaseError {
     constructor(public message: string) {

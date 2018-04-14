@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration} from "../../../compiler";
-import {TypedNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration } from "../../../compiler";
+import { TypedNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypedNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("var myImplicitVar = 1; var myExplicitVar: string; type TypeAlias1 = string;");

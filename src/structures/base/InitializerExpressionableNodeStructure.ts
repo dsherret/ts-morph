@@ -1,4 +1,4 @@
-﻿import {InitializerSetExpressionableNodeStructure} from "./InitializerSetExpressionableNodeStructure";
+﻿import { InitializerSetExpressionableNodeStructure } from "./InitializerSetExpressionableNodeStructure";
 
 export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {
 }

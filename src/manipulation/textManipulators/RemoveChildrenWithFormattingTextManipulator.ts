@@ -1,10 +1,10 @@
-﻿import {TextManipulator} from "./TextManipulator";
-import {Node} from "../../compiler";
-import {FormattingKind, getFormattingKindText} from "../formatting";
-import {getPosAtNextNonBlankLine, getNextMatchingPos, getPosAtEndOfPreviousLine} from "../textSeek";
-import {isNewLineAtPos} from "../textChecks";
-import {getSpacingBetweenNodes} from "./getSpacingBetweenNodes";
-import {getTextForError} from "./getTextForError";
+﻿import { TextManipulator } from "./TextManipulator";
+import { Node } from "../../compiler";
+import { FormattingKind, getFormattingKindText } from "../formatting";
+import { getPosAtNextNonBlankLine, getNextMatchingPos, getPosAtEndOfPreviousLine } from "../textSeek";
+import { isNewLineAtPos } from "../textChecks";
+import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
+import { getTextForError } from "./getTextForError";
 
 export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extends Node> {
     children: Node[];

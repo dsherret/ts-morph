@@ -1,4 +1,4 @@
-﻿import {ImportSpecifierStructure} from "./ImportSpecifierStructure";
+﻿import { ImportSpecifierStructure } from "./ImportSpecifierStructure";
 
 export interface ImportDeclarationStructure {
     defaultImport?: string;

@@ -1,15 +1,15 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import * as errors from "../../../errors";
 import { Chars } from "../../../constants";
-import {ts, LanguageVariant, ScriptTarget, NewLineKind, CompilerOptions, ModuleResolutionKind} from "../../../typescript";
-import {SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteKind,
-    FileSystemRefreshResult} from "../../../compiler";
-import {IndentationText, ManipulationSettings} from "../../../options";
-import {ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
-import {getFileSystemHostWithFiles} from "../../testHelpers";
-import {Project} from "../../../Project";
-import {FileUtils} from "../../../utils";
+import { ts, LanguageVariant, ScriptTarget, NewLineKind, CompilerOptions, ModuleResolutionKind } from "../../../typescript";
+import { SourceFile, ImportDeclaration, ExportDeclaration, ExportAssignment, EmitResult, FormatCodeSettings, QuoteKind,
+    FileSystemRefreshResult } from "../../../compiler";
+import { IndentationText, ManipulationSettings } from "../../../options";
+import { ImportDeclarationStructure, ExportDeclarationStructure, SourceFileSpecificStructure, ExportAssignmentStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
+import { getFileSystemHostWithFiles } from "../../testHelpers";
+import { Project } from "../../../Project";
+import { FileUtils } from "../../../utils";
 
 describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {

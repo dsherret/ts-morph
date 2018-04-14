@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {SourceFile} from "../../compiler";
-import {Directory} from "../../fileSystem";
+﻿import { expect } from "chai";
+import { SourceFile } from "../../compiler";
+import { Directory } from "../../fileSystem";
 
 export interface TreeNode {
     directory: Directory;

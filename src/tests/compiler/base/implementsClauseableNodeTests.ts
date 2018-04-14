@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import * as errors from "../../../errors";
-import {ImplementsClauseableNode, ClassDeclaration} from "../../../compiler";
-import {ImplementsClauseableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+import { ImplementsClauseableNode, ClassDeclaration } from "../../../compiler";
+import { ImplementsClauseableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ImplementsClauseableNode), () => {
     describe(nameof<ImplementsClauseableNode>(n => n.getImplements), () => {

@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration} from "../../compiler";
-import {getInfoFromText} from "../compiler/testHelpers";
+﻿import { expect } from "chai";
+import { ClassDeclaration } from "../../compiler";
+import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #89", () => {
     it("should be able to set modifiers when a decorator exists", () => {

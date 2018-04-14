@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
-import {Expression} from "../expression";
-import {IterationStatement} from "./IterationStatement";
-import {VariableDeclarationList} from "./VariableDeclarationList";
-import {AwaitableNode} from "../base";
+import { ts } from "../../typescript";
+import { Expression } from "../expression";
+import { IterationStatement } from "./IterationStatement";
+import { VariableDeclarationList } from "./VariableDeclarationList";
+import { AwaitableNode } from "../base";
 
 export const ForOfStatementBase = AwaitableNode(IterationStatement);
 export class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {

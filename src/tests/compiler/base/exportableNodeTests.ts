@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {ExportableNode, ClassDeclaration, NamespaceDeclaration, FunctionDeclaration} from "../../../compiler";
-import {ExportableNodeStructure} from "../../../structures";
+﻿import { expect } from "chai";
+import { ExportableNode, ClassDeclaration, NamespaceDeclaration, FunctionDeclaration } from "../../../compiler";
+import { ExportableNodeStructure } from "../../../structures";
 import * as errors from "../../../errors";
-import {getInfoFromText} from "../testHelpers";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("export var exportedVar = 1;\nvar myExplicitVar: string;\nexport default class Identifier {}\n");

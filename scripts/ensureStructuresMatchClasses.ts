@@ -7,9 +7,9 @@
  * This code verification ensures the equivalent class' mixins match the equivalent structure's base structures.
  * ----------------------------------------------------
  */
-import {ArrayUtils} from "../src/utils";
-import {isAllowedMixin, isAllowedMixinForStructure} from "./config";
-import {InspectorFactory} from "./inspectors";
+import { ArrayUtils } from "../src/utils";
+import { isAllowedMixin, isAllowedMixinForStructure } from "./config";
+import { InspectorFactory } from "./inspectors";
 
 // setup
 const factory = new InspectorFactory();

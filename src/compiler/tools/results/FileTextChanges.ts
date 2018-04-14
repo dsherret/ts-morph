@@ -1,6 +1,6 @@
-﻿import {ts} from "../../../typescript";
-import {Memoize} from "../../../utils";
-import {TextChange} from "./TextChange";
+﻿import { ts } from "../../../typescript";
+import { Memoize } from "../../../utils";
+import { TextChange } from "./TextChange";
 
 export class FileTextChanges {
     /** @internal */

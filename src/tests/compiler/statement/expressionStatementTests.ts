@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {ExpressionStatement} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ExpressionStatement } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExpressionStatement), () => {
     describe(nameof<ExpressionStatement>(d => d.getExpression), () => {

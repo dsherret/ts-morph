@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import * as errors from "../../../errors";
-import {TextInsertableNode, SourceFile, ClassDeclaration, Node} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+import { TextInsertableNode, SourceFile, ClassDeclaration, Node } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TextInsertableNode), () => {
     describe(nameof<TextInsertableNode>(n => n.replaceText), () => {

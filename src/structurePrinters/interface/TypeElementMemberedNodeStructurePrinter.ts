@@ -1,7 +1,7 @@
 import CodeBlockWriter from "code-block-writer";
-import {TypeElementMemberedNodeStructure} from "../../structures";
-import {ArrayUtils} from "../../utils";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { TypeElementMemberedNodeStructure } from "../../structures";
+import { ArrayUtils } from "../../utils";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class TypeElementMemberedNodeStructurePrinter extends FactoryStructurePrinter<TypeElementMemberedNodeStructure> {
     printText(writer: CodeBlockWriter, structure: TypeElementMemberedNodeStructure) {

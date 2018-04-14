@@ -1,9 +1,9 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {SourceFileStructure} from "../../structures";
-import {ArrayUtils} from "../../utils";
-import {SupportedFormatCodeSettings} from "../../options";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { SourceFileStructure } from "../../structures";
+import { ArrayUtils } from "../../utils";
+import { SupportedFormatCodeSettings } from "../../options";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class SourceFileStructurePrinter extends FactoryStructurePrinter<SourceFileStructure> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

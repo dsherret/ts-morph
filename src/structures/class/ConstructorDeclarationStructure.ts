@@ -1,5 +1,5 @@
-﻿import {ScopedNodeStructure, JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure} from "../base";
-import {FunctionLikeDeclarationStructure} from "../function";
+﻿import { ScopedNodeStructure, JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
+import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface ConstructorDeclarationStructure
     extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure

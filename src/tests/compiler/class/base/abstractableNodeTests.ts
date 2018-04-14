@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {AbstractableNode, ClassDeclaration} from "../../../../compiler";
-import {AbstractableNodeStructure} from "../../../../structures";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { AbstractableNode, ClassDeclaration } from "../../../../compiler";
+import { AbstractableNodeStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(AbstractableNode), () => {
     describe(nameof<AbstractableNode>(d => d.getAbstractKeyword), () => {

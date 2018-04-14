@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {Decorator, ClassDeclaration} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { Decorator, ClassDeclaration } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Decorator), () => {
     function getFirstClassDecorator(code: string) {

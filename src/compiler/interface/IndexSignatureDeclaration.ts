@@ -1,11 +1,11 @@
-import {ts} from "../../typescript";
-import {IndexSignatureDeclarationStructure} from "../../structures";
-import {removeInterfaceMember} from "../../manipulation";
-import {callBaseFill} from "../callBaseFill";
-import {Node, Identifier} from "../common";
-import {TypeNode, Type} from "../type";
-import {JSDocableNode, ChildOrderableNode, ModifierableNode, ReadonlyableNode} from "../base";
-import {TypeElement} from "./TypeElement";
+import { ts } from "../../typescript";
+import { IndexSignatureDeclarationStructure } from "../../structures";
+import { removeInterfaceMember } from "../../manipulation";
+import { callBaseFill } from "../callBaseFill";
+import { Node, Identifier } from "../common";
+import { TypeNode, Type } from "../type";
+import { JSDocableNode, ChildOrderableNode, ModifierableNode, ReadonlyableNode } from "../base";
+import { TypeElement } from "./TypeElement";
 
 export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {

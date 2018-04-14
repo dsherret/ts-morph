@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {StatementedNode, TypeAliasDeclaration} from "../../../../compiler";
-import {TypeAliasDeclarationStructure} from "../../../../structures";
-import {getInfoFromText} from "../../testHelpers";
+﻿import { expect } from "chai";
+import { StatementedNode, TypeAliasDeclaration } from "../../../../compiler";
+import { TypeAliasDeclarationStructure } from "../../../../structures";
+import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(StatementedNode), () => {
     describe(nameof<StatementedNode>(n => n.insertTypeAliases), () => {

@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ts, SyntaxKind, NewLineKind} from "../../../typescript";
-import {CommentRange} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
+import { CommentRange } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(CommentRange), () => {
     const comments = getInfoFromText("// first\n/* second */var t = 0;").firstChild.getLeadingCommentRanges();

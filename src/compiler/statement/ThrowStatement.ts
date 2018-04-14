@@ -1,6 +1,6 @@
-import {ts} from "../../typescript";
-import {Expression} from "../expression";
-import {Statement} from "./Statement";
+import { ts } from "../../typescript";
+import { Expression } from "../expression";
+import { Statement } from "./Statement";
 
 export const ThrowStatementBase = Statement;
 export class ThrowStatement extends ThrowStatementBase<ts.ThrowStatement> {

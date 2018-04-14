@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {MethodDeclaration, ClassDeclaration} from "../../../compiler";
-import {MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { MethodDeclaration, ClassDeclaration } from "../../../compiler";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {

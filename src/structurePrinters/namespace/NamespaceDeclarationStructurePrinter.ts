@@ -1,8 +1,8 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {NamespaceDeclarationStructure} from "../../structures";
-import {StructurePrinterFactory} from "../../factories";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {BlankLineFormattingStructuresPrinter} from "../formatting";
+import { NamespaceDeclarationStructure } from "../../structures";
+import { StructurePrinterFactory } from "../../factories";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
 export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinter<NamespaceDeclarationStructure> {
     private readonly blankLineFormattingWriter = new BlankLineFormattingStructuresPrinter(this);

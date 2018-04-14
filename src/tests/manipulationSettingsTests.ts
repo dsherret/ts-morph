@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {ManipulationSettings, ManipulationSettingsContainer, IndentationText} from "../options";
-import {ts, NewLineKind, EditorSettings, IndentStyle} from "../typescript";
-import {QuoteKind} from "../compiler";
-import {StringUtils} from "../utils";
+﻿import { expect } from "chai";
+import { ManipulationSettings, ManipulationSettingsContainer, IndentationText } from "../options";
+import { ts, NewLineKind, EditorSettings, IndentStyle } from "../typescript";
+import { QuoteKind } from "../compiler";
+import { StringUtils } from "../utils";
 
 describe(nameof(IndentationText), () => {
     // ensure this enum is correct. It's hard to read all the spaces since string enums can't use computed values

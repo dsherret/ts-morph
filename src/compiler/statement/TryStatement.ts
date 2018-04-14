@@ -1,8 +1,8 @@
-import {ts} from "../../typescript";
+import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import {Block} from "./Block";
-import {CatchClause} from "./CatchClause";
-import {Statement} from "./Statement";
+import { Block } from "./Block";
+import { CatchClause } from "./CatchClause";
+import { Statement } from "./Statement";
 
 export const TryStatementBase = Statement;
 export class TryStatement extends TryStatementBase<ts.TryStatement> {

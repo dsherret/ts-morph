@@ -1,10 +1,10 @@
-﻿import {expect} from "chai";
+﻿import { expect } from "chai";
 import CodeBlockWriter from "code-block-writer";
-import {ExportDeclarationStructurePrinter} from "../../../structurePrinters";
-import {StructurePrinterFactory} from "../../../factories";
-import {ExportDeclarationStructure} from "../../../structures";
-import {FormatCodeSettings} from "../../../compiler";
-import {getDefaultFormatCodeSettings} from "../../testHelpers";
+import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
+import { StructurePrinterFactory } from "../../../factories";
+import { ExportDeclarationStructure } from "../../../structures";
+import { FormatCodeSettings } from "../../../compiler";
+import { getDefaultFormatCodeSettings } from "../../testHelpers";
 
 describe(nameof(ExportDeclarationStructurePrinter), () => {
     function doTest(structure: ExportDeclarationStructure, expectedOutput: string, formatCodeSettings?: FormatCodeSettings) {

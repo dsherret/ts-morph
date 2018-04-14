@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../manipulation";
+import { ts, SyntaxKind } from "../../typescript";
+import { insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../manipulation";
 import * as errors from "../../errors";
-import {Node} from "../common";
-import {VariableDeclarationListStructure, VariableDeclarationStructure} from "../../structures";
-import {CommaSeparatedStructuresPrinter} from "../../structurePrinters";
-import {ModifierableNode} from "../base";
-import {callBaseFill} from "../callBaseFill";
-import {VariableDeclaration} from "./VariableDeclaration";
-import {VariableDeclarationKind} from "./VariableDeclarationKind";
+import { Node } from "../common";
+import { VariableDeclarationListStructure, VariableDeclarationStructure } from "../../structures";
+import { CommaSeparatedStructuresPrinter } from "../../structurePrinters";
+import { ModifierableNode } from "../base";
+import { callBaseFill } from "../callBaseFill";
+import { VariableDeclaration } from "./VariableDeclaration";
+import { VariableDeclarationKind } from "./VariableDeclarationKind";
 
 export const VariableDeclarationListBase = ModifierableNode(Node);
 export class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {

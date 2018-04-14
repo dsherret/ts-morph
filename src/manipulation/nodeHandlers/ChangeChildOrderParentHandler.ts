@@ -1,10 +1,10 @@
 import * as errors from "../../errors";
-import {ts} from "../../typescript";
-import {Node} from "../../compiler";
-import {CompilerFactory} from "../../factories";
-import {NodeHandler} from "./NodeHandler";
-import {StraightReplacementNodeHandler} from "./StraightReplacementNodeHandler";
-import {NodeHandlerHelper} from "./NodeHandlerHelper";
+import { ts } from "../../typescript";
+import { Node } from "../../compiler";
+import { CompilerFactory } from "../../factories";
+import { NodeHandler } from "./NodeHandler";
+import { StraightReplacementNodeHandler } from "./StraightReplacementNodeHandler";
+import { NodeHandlerHelper } from "./NodeHandlerHelper";
 
 export interface ChangeChildOrderParentHandlerOptions {
     oldIndex: number;

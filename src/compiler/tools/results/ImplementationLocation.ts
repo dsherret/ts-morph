@@ -1,8 +1,8 @@
-import {ts} from "../../../typescript";
-import {GlobalContainer} from "../../../GlobalContainer";
-import {Memoize} from "../../../utils";
-import {DocumentSpan} from "./DocumentSpan";
-import {SymbolDisplayPart} from "./SymbolDisplayPart";
+import { ts } from "../../../typescript";
+import { GlobalContainer } from "../../../GlobalContainer";
+import { Memoize } from "../../../utils";
+import { DocumentSpan } from "./DocumentSpan";
+import { SymbolDisplayPart } from "./SymbolDisplayPart";
 
 export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocation> {
     /**

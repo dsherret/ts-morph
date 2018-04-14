@@ -1,9 +1,9 @@
 import * as errors from "../../errors";
-import {ts, CompilerOptions} from "../../typescript";
+import { ts, CompilerOptions } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
-import {Diagnostic} from "../../compiler";
-import {FileSystemWrapper} from "../../fileSystem";
-import {ArrayUtils, FileUtils, createHashSet} from "../../utils";
+import { Diagnostic } from "../../compiler";
+import { FileSystemWrapper } from "../../fileSystem";
+import { ArrayUtils, FileUtils, createHashSet } from "../../utils";
 
 export interface TsConfigParseResult {
     config?: any;

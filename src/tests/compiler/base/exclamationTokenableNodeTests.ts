@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration, PropertyDeclaration, ExclamationTokenableNode, VariableStatement} from "../../../compiler";
+﻿import { expect } from "chai";
+import { ClassDeclaration, PropertyDeclaration, ExclamationTokenableNode, VariableStatement } from "../../../compiler";
 import * as errors from "../../../errors";
-import {ExclamationTokenableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+import { ExclamationTokenableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExclamationTokenableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {

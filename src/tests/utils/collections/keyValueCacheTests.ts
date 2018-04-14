@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {KeyValueCache} from "../../../utils";
+﻿import { expect } from "chai";
+import { KeyValueCache } from "../../../utils";
 
 // todo: more tests
 

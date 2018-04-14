@@ -1,14 +1,14 @@
-import {ts, SyntaxKind} from "../typescript";
-import {Node} from "../compiler";
-import {FileSystemWrapper} from "../fileSystem";
-import {getSyntaxKindName} from "../utils/compiler/getSyntaxKindName";
-import {ArgumentError} from "./ArgumentError";
-import {ArgumentTypeError} from "./ArgumentTypeError";
-import {ArgumentNullOrWhitespaceError} from "./ArgumentNullOrWhitespaceError";
-import {ArgumentOutOfRangeError} from "./ArgumentOutOfRangeError";
-import {InvalidOperationError} from "./InvalidOperationError";
-import {NotImplementedError} from "./NotImplementedError";
-import {FileNotFoundError} from "./FileNotFoundError";
+import { ts, SyntaxKind } from "../typescript";
+import { Node } from "../compiler";
+import { FileSystemWrapper } from "../fileSystem";
+import { getSyntaxKindName } from "../utils/compiler/getSyntaxKindName";
+import { ArgumentError } from "./ArgumentError";
+import { ArgumentTypeError } from "./ArgumentTypeError";
+import { ArgumentNullOrWhitespaceError } from "./ArgumentNullOrWhitespaceError";
+import { ArgumentOutOfRangeError } from "./ArgumentOutOfRangeError";
+import { InvalidOperationError } from "./InvalidOperationError";
+import { NotImplementedError } from "./NotImplementedError";
+import { FileNotFoundError } from "./FileNotFoundError";
 
 /**
  * Thows if not a type.

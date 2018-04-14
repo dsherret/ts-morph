@@ -1,8 +1,8 @@
 ﻿import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../errors";
-import {ImportDeclarationStructure, ImportSpecifierStructure} from "../../structures";
-import {NewLineFormattingStructuresPrinter} from "../formatting";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
+import { ImportDeclarationStructure, ImportSpecifierStructure } from "../../structures";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class ImportDeclarationStructurePrinter extends FactoryStructurePrinter<ImportDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

@@ -1,6 +1,6 @@
-import {ts} from "../../../typescript";
-import {GlobalContainer} from "../../../GlobalContainer";
-import {DocumentSpan} from "./DocumentSpan";
+import { ts } from "../../../typescript";
+import { GlobalContainer } from "../../../GlobalContainer";
+import { DocumentSpan } from "./DocumentSpan";
 
 export class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
     /**

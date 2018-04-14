@@ -1,8 +1,8 @@
 import * as os from "os";
-import {expect} from "chai";
-import {ts, SyntaxKind} from "../../../typescript";
-import {RegularExpressionLiteral} from "../../../compiler";
-import {getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { ts, SyntaxKind } from "../../../typescript";
+import { RegularExpressionLiteral } from "../../../compiler";
+import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(RegularExpressionLiteral), () => {
     const isWindows = os.platform() === "win32";

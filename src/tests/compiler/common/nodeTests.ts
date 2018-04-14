@@ -1,11 +1,11 @@
 import CodeBlockWriter from "code-block-writer";
-import {expect} from "chai";
-import {ts, SyntaxKind, NewLineKind} from "../../../typescript";
-import {Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
-    SourceFile, FormatCodeSettings, CallExpression} from "../../../compiler";
+import { expect } from "chai";
+import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
+import { Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
+    SourceFile, FormatCodeSettings, CallExpression } from "../../../compiler";
 import * as errors from "../../../errors";
-import {TypeGuards} from "../../../utils";
-import {getInfoFromText} from "../testHelpers";
+import { TypeGuards } from "../../../utils";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Node), () => {
     describe("constructor", () => {

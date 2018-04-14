@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {EnumDeclaration, EnumMember} from "../../../compiler";
-import {EnumMemberStructure, EnumDeclarationSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { EnumDeclaration, EnumMember } from "../../../compiler";
+import { EnumMemberStructure, EnumDeclarationSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {

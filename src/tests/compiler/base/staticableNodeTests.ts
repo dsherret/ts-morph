@@ -1,8 +1,8 @@
-﻿import {expect} from "chai";
-import {MethodDeclaration, StaticableNode, ClassDeclaration, PropertyDeclaration} from "../../../compiler";
-import {TypeGuards} from "../../../utils";
-import {StaticableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { MethodDeclaration, StaticableNode, ClassDeclaration, PropertyDeclaration } from "../../../compiler";
+import { TypeGuards } from "../../../utils";
+import { StaticableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(StaticableNode), () => {
     const {sourceFile: mainSourceFile} = getInfoFromText("class MyClass { static prop: string; prop2: string; }");

@@ -1,8 +1,8 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Node} from "../../compiler";
-import {Chars} from "../../constants";
-import {TypeGuards} from "../../utils";
-import {getPosAtStartOfLineOrNonWhitespace} from "../textSeek";
+import { ts, SyntaxKind } from "../../typescript";
+import { Node } from "../../compiler";
+import { Chars } from "../../constants";
+import { TypeGuards } from "../../utils";
+import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 
 /**
  * Gets the insert pos from an index.

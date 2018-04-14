@@ -1,8 +1,8 @@
-import {expect} from "chai";
-import {TypeParameterDeclarationStructure, TypeParameteredNodeStructure} from "../../../structures";
-import {ts, SyntaxKind} from "../../../typescript";
-import {TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration, CallSignatureDeclaration} from "../../../compiler";
-import {getInfoFromText, getInfoFromTextWithDescendant} from "../testHelpers";
+import { expect } from "chai";
+import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../structures";
+import { ts, SyntaxKind } from "../../../typescript";
+import { TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration, CallSignatureDeclaration } from "../../../compiler";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {
     describe(nameof<TypeParameteredNode>(d => d.getTypeParameter), () => {

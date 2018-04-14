@@ -1,13 +1,13 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
-import {TypedNodeStructure} from "../../structures";
-import {callBaseFill} from "../callBaseFill";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
+import { TypedNodeStructure } from "../../structures";
+import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";
-import {insertIntoParentTextRange, removeChildren} from "../../manipulation";
-import {StringUtils} from "../../utils";
-import {Node} from "../common";
-import {Type} from "../type/Type";
-import {TypeNode} from "../type/TypeNode";
+import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
+import { StringUtils } from "../../utils";
+import { Node } from "../common";
+import { Type } from "../type/Type";
+import { TypeNode } from "../type/TypeNode";
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 

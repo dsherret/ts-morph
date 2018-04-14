@@ -1,6 +1,6 @@
-﻿import {ManipulationSettingsContainer, IndentationText} from "../options";
-import {ts, IndentStyle, EditorSettings} from "../typescript";
-import {setValueIfUndefined} from "./setValueIfUndefined";
+﻿import { ManipulationSettingsContainer, IndentationText } from "../options";
+import { ts, IndentStyle, EditorSettings } from "../typescript";
+import { setValueIfUndefined } from "./setValueIfUndefined";
 
 export function fillDefaultEditorSettings(settings: EditorSettings, manipulationSettings: ManipulationSettingsContainer) {
     setValueIfUndefined(settings, "convertTabsToSpaces", manipulationSettings.getIndentationText() !== IndentationText.Tab);

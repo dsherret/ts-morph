@@ -1,5 +1,5 @@
 ﻿import CodeBlockWriter from "code-block-writer";
-import {StructurePrinter} from "../StructurePrinter";
+import { StructurePrinter } from "../StructurePrinter";
 
 export class CommaNewLineSeparatedStructuresPrinter<T> extends StructurePrinter<T[]> {
     constructor(private readonly structurePrinter: StructurePrinter<T>) {

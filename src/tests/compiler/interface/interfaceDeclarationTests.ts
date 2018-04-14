@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {InterfaceDeclaration, ClassDeclaration} from "../../../compiler";
-import {InterfaceDeclarationSpecificStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { InterfaceDeclaration, ClassDeclaration } from "../../../compiler";
+import { InterfaceDeclarationSpecificStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(d => d.getType), () => {

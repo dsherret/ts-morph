@@ -1,5 +1,5 @@
-﻿import {expect} from "chai";
-import {ArrayUtils} from "../../utils";
+﻿import { expect } from "chai";
+import { ArrayUtils } from "../../utils";
 
 describe(nameof(ArrayUtils), () => {
     describe(`#${nameof(ArrayUtils.isNullOrEmpty)}()`, () => {

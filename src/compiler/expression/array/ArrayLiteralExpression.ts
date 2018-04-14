@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "../../../typescript";
+import { ts, SyntaxKind } from "../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../../errors";
-import {insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn} from "../../../manipulation";
-import {CommaNewLineSeparatedStructuresPrinter, CommaSeparatedStructuresPrinter, StringStructurePrinter} from "../../../structurePrinters";
-import {Expression} from "../Expression";
-import {PrimaryExpression} from "../PrimaryExpression";
+import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn } from "../../../manipulation";
+import { CommaNewLineSeparatedStructuresPrinter, CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
+import { Expression } from "../Expression";
+import { PrimaryExpression } from "../PrimaryExpression";
 
 export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExpression> {
     /**

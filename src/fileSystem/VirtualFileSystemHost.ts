@@ -1,6 +1,6 @@
 ﻿import * as errors from "../errors";
-import {KeyValueCache, FileUtils, StringUtils, ArrayUtils, matchGlobs} from "../utils";
-import {FileSystemHost} from "./FileSystemHost";
+import { KeyValueCache, FileUtils, StringUtils, ArrayUtils, matchGlobs } from "../utils";
+import { FileSystemHost } from "./FileSystemHost";
 
 interface VirtualDirectory {
     path: string;

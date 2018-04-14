@@ -1,19 +1,19 @@
-import {ts, SyntaxKind} from "../../../typescript";
+import { ts, SyntaxKind } from "../../../typescript";
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "../../../errors";
-import {ArrayUtils} from "../../../utils";
-import {verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn} from "../../../manipulation";
-import {StructurePrinter, CommaNewLineSeparatedStructuresPrinter} from "../../../structurePrinters";
-import {PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
-    MethodDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure} from "../../../structures";
-import {ObjectLiteralElementLike} from "../../aliases";
-import {MethodDeclaration, GetAccessorDeclaration, SetAccessorDeclaration} from "../../class";
-import {Expression} from "../Expression";
-import {Node} from "../../common";
-import {PropertyAssignment} from "./PropertyAssignment";
-import {ShorthandPropertyAssignment} from "./ShorthandPropertyAssignment";
-import {SpreadAssignment} from "./SpreadAssignment";
-import {PrimaryExpression} from "../PrimaryExpression";
+import { ArrayUtils } from "../../../utils";
+import { verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../../manipulation";
+import { StructurePrinter, CommaNewLineSeparatedStructuresPrinter } from "../../../structurePrinters";
+import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
+    MethodDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure } from "../../../structures";
+import { ObjectLiteralElementLike } from "../../aliases";
+import { MethodDeclaration, GetAccessorDeclaration, SetAccessorDeclaration } from "../../class";
+import { Expression } from "../Expression";
+import { Node } from "../../common";
+import { PropertyAssignment } from "./PropertyAssignment";
+import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
+import { SpreadAssignment } from "./SpreadAssignment";
+import { PrimaryExpression } from "../PrimaryExpression";
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {

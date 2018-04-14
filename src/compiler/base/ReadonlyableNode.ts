@@ -1,10 +1,10 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {Constructor} from "../../Constructor";
+import { ts, SyntaxKind } from "../../typescript";
+import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
-import {ReadonlyableNodeStructure} from "../../structures";
-import {callBaseFill} from "../callBaseFill";
-import {Node} from "../common";
-import {ModifierableNode} from "./ModifierableNode";
+import { ReadonlyableNodeStructure } from "../../structures";
+import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
+import { ModifierableNode } from "./ModifierableNode";
 
 export type ReadonlyableNodeExtensionType = Node & ModifierableNode;
 

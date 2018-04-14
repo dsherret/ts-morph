@@ -1,10 +1,10 @@
-import {ts} from "../../typescript";
+import { ts } from "../../typescript";
 import CodeBlockWriter from "code-block-writer";
-import {removeChildren, replaceTextPossiblyCreatingChildNodes} from "../../manipulation";
-import {getPreviousMatchingPos} from "../../manipulation/textSeek";
-import {getTextFromStringOrWriter} from "../../utils";
-import {Node} from "../common";
-import {JSDocTag} from "./JSDocTag";
+import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../manipulation";
+import { getPreviousMatchingPos } from "../../manipulation/textSeek";
+import { getTextFromStringOrWriter } from "../../utils";
+import { Node } from "../common";
+import { JSDocTag } from "./JSDocTag";
 
 /**
  * JS doc node.

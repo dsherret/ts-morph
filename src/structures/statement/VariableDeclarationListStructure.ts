@@ -1,5 +1,5 @@
-import {VariableDeclarationKind} from "../../compiler";
-import {VariableDeclarationStructure} from "./VariableDeclarationStructure";
+import { VariableDeclarationKind } from "../../compiler";
+import { VariableDeclarationStructure } from "./VariableDeclarationStructure";
 
 export interface VariableDeclarationListStructure extends VariableDeclarationListSpecificStructure {
 }

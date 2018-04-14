@@ -1,8 +1,8 @@
-﻿import {InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind} from "../../../src/main";
-import {Memoize, ArrayUtils} from "../../../src/utils";
-import {WrapperFactory} from "../WrapperFactory";
-import {WrappedNode} from "../tsSimpleAst";
-import {TsNodeProperty} from "./TsNodeProperty";
+﻿import { InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind } from "../../../src/main";
+import { Memoize, ArrayUtils } from "../../../src/utils";
+import { WrapperFactory } from "../WrapperFactory";
+import { WrappedNode } from "../tsSimpleAst";
+import { TsNodeProperty } from "./TsNodeProperty";
 
 export class TsNode {
     constructor(private readonly wrapperFactory: WrapperFactory, private readonly node: InterfaceDeclaration) {

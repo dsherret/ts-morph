@@ -1,12 +1,12 @@
-import {ts} from "../../../typescript";
-import {Constructor} from "../../../Constructor";
+import { ts } from "../../../typescript";
+import { Constructor } from "../../../Constructor";
 import * as errors from "../../../errors";
-import {PropertyNamedNodeStructure} from "../../../structures";
-import {TypeGuards} from "../../../utils";
-import {Node} from "../../common";
-import {PropertyName} from "../../aliases";
-import {callBaseFill} from "../../callBaseFill";
-import {ReferenceFindableNode} from "./ReferenceFindableNode";
+import { PropertyNamedNodeStructure } from "../../../structures";
+import { TypeGuards } from "../../../utils";
+import { Node } from "../../common";
+import { PropertyName } from "../../aliases";
+import { callBaseFill } from "../../callBaseFill";
+import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 

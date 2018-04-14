@@ -1,4 +1,4 @@
-﻿import {JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure} from "../base";
+﻿import { JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 
 export interface ConstructSignatureDeclarationStructure extends JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }

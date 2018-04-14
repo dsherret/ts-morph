@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {PropertySignature, InterfaceDeclaration} from "../../../compiler";
-import {PropertySignatureStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { PropertySignature, InterfaceDeclaration } from "../../../compiler";
+import { PropertySignatureStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(PropertySignature), () => {
     function getFirstPropertyWithInfo(code: string) {

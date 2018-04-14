@@ -1,14 +1,14 @@
 import CodeBlockWriter from "code-block-writer";
 import * as errors from "./errors";
-import {ts, CompilerOptions, ScriptTarget} from "./typescript";
-import {SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult} from "./compiler";
+import { ts, CompilerOptions, ScriptTarget } from "./typescript";
+import { SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult } from "./compiler";
 import * as factories from "./factories";
-import {SourceFileStructure} from "./structures";
-import {getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getPathsFromTsConfigParseResult, TsConfigParseResult,
-    FileUtils, ArrayUtils, matchGlobs} from "./utils";
-import {DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, AddDirectoryOptions} from "./fileSystem";
-import {ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer} from "./options";
-import {GlobalContainer} from "./GlobalContainer";
+import { SourceFileStructure } from "./structures";
+import { getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getPathsFromTsConfigParseResult, TsConfigParseResult,
+    FileUtils, ArrayUtils, matchGlobs } from "./utils";
+import { DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, AddDirectoryOptions } from "./fileSystem";
+import { ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer } from "./options";
+import { GlobalContainer } from "./GlobalContainer";
 
 export interface Options {
     /** Compiler options */

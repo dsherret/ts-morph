@@ -10,8 +10,8 @@
 import CodeBlockWriter from "code-block-writer";
 import * as fs from "fs";
 import * as path from "path";
-import {rootFolder} from "./config";
-import {Structure} from "./inspectors";
+import { rootFolder } from "./config";
+import { Structure } from "./inspectors";
 
 // todo: a lot of this code was written before this library supported manipulation
 

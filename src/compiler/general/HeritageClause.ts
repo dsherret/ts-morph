@@ -1,7 +1,7 @@
-import {ts, SyntaxKind} from "../../typescript";
-import {verifyAndGetIndex, removeCommaSeparatedChild, removeChildren} from "../../manipulation";
-import {Node} from "../common";
-import {ExpressionWithTypeArguments} from "../type";
+import { ts, SyntaxKind } from "../../typescript";
+import { verifyAndGetIndex, removeCommaSeparatedChild, removeChildren } from "../../manipulation";
+import { Node } from "../common";
+import { ExpressionWithTypeArguments } from "../type";
 
 export class HeritageClause extends Node<ts.HeritageClause> {
     /**

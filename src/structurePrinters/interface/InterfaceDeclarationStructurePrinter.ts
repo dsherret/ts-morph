@@ -1,8 +1,8 @@
 import CodeBlockWriter from "code-block-writer";
-import {InterfaceDeclarationStructure} from "../../structures";
-import {ArrayUtils} from "../../utils";
-import {FactoryStructurePrinter} from "../FactoryStructurePrinter";
-import {BlankLineFormattingStructuresPrinter} from "../formatting";
+import { InterfaceDeclarationStructure } from "../../structures";
+import { ArrayUtils } from "../../utils";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { BlankLineFormattingStructuresPrinter } from "../formatting";
 
 export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<InterfaceDeclarationStructure> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);

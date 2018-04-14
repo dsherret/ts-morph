@@ -1,13 +1,13 @@
 import CodeBlockWriter from "code-block-writer";
 import { ts, SyntaxKind } from "../../typescript";
 import { Chars } from "../../constants";
-import {Node, SourceFile} from "../../compiler";
-import {StringUtils, TypeGuards} from "../../utils";
-import {InsertionTextManipulator} from "../textManipulators";
-import {isBlankLineAtPos} from "../textChecks";
-import {NodeHandlerFactory} from "../nodeHandlers";
-import {doManipulation} from "./doManipulation";
-import {verifyAndGetIndex, getRangeFromArray, getInsertPosFromIndex, getEndPosFromIndex} from "../helpers";
+import { Node, SourceFile } from "../../compiler";
+import { StringUtils, TypeGuards } from "../../utils";
+import { InsertionTextManipulator } from "../textManipulators";
+import { isBlankLineAtPos } from "../textChecks";
+import { NodeHandlerFactory } from "../nodeHandlers";
+import { doManipulation } from "./doManipulation";
+import { verifyAndGetIndex, getRangeFromArray, getInsertPosFromIndex, getEndPosFromIndex } from "../helpers";
 
 export interface InsertIntoParentTextRangeOptions {
     insertPos: number;

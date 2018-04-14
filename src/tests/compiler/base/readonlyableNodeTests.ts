@@ -1,7 +1,7 @@
-﻿import {expect} from "chai";
-import {ClassDeclaration, ReadonlyableNode, PropertyDeclaration} from "../../../compiler";
-import {ReadonlyableNodeStructure} from "../../../structures";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ClassDeclaration, ReadonlyableNode, PropertyDeclaration } from "../../../compiler";
+import { ReadonlyableNodeStructure } from "../../../structures";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ReadonlyableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {

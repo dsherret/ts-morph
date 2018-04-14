@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {ReturnStatement} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { ReturnStatement } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ReturnStatement), () => {
     describe(nameof<ReturnStatement>(d => d.getExpressionOrThrow), () => {

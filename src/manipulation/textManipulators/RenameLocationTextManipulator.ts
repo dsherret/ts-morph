@@ -1,5 +1,5 @@
-﻿import {RenameLocation} from "../../compiler";
-import {TextManipulator} from "./TextManipulator";
+﻿import { RenameLocation } from "../../compiler";
+import { TextManipulator } from "./TextManipulator";
 
 export class RenameLocationTextManipulator implements TextManipulator {
     constructor(private readonly renameLocations: RenameLocation[], private readonly newName: string) {

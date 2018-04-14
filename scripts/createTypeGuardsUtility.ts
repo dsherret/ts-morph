@@ -12,8 +12,8 @@
  * ------------------------------------------
  */
 import CodeBlockWriter from "code-block-writer";
-import {ArrayUtils, KeyValueCache, StringUtils} from "../src/utils";
-import {TsSimpleAstInspector, WrappedNode, Mixin} from "./inspectors";
+import { ArrayUtils, KeyValueCache, StringUtils } from "../src/utils";
+import { TsSimpleAstInspector, WrappedNode, Mixin } from "./inspectors";
 
 interface MethodInfo {
     name: string;

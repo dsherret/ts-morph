@@ -1,4 +1,4 @@
-﻿import {BaseError} from "./BaseError";
+﻿import { BaseError } from "./BaseError";
 
 export class NotImplementedError extends BaseError {
     constructor(public message: string) {

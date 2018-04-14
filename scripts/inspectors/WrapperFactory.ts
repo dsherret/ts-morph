@@ -1,7 +1,7 @@
-﻿import {Node, ClassDeclaration, InterfaceDeclaration, PropertySignature} from "../../src/main";
-import {KeyValueCache} from "../../src/utils";
-import {WrappedNode, Structure, Mixin} from "./tsSimpleAst";
-import {TsNode, TsNodeProperty} from "./ts";
+﻿import { Node, ClassDeclaration, InterfaceDeclaration, PropertySignature } from "../../src/main";
+import { KeyValueCache } from "../../src/utils";
+import { WrappedNode, Structure, Mixin } from "./tsSimpleAst";
+import { TsNode, TsNodeProperty } from "./ts";
 
 export class WrapperFactory {
     private readonly wrapperNodeCache = new KeyValueCache<ClassDeclaration, WrappedNode>();

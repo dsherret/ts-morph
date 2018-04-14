@@ -1,6 +1,6 @@
-import {ts} from "../../typescript";
-import {Node} from "../common";
-import {Expression} from "./Expression";
+import { ts } from "../../typescript";
+import { Node } from "../common";
+import { Expression } from "./Expression";
 
 export const BinaryExpressionBase = Expression;
 export class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpression> extends BinaryExpressionBase<T> {

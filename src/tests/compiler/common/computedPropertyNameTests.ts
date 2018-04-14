@@ -1,6 +1,6 @@
-﻿import {expect} from "chai";
-import {InterfaceDeclaration, ComputedPropertyName} from "../../../compiler";
-import {getInfoFromText} from "../testHelpers";
+﻿import { expect } from "chai";
+import { InterfaceDeclaration, ComputedPropertyName } from "../../../compiler";
+import { getInfoFromText } from "../testHelpers";
 
 function getInfoFromTextWithFirstInterfaceProperty(text: string) {
     const obj = getInfoFromText<InterfaceDeclaration>(text);

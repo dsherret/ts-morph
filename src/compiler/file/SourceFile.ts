@@ -1,25 +1,25 @@
-import {ts, SyntaxKind, LanguageVariant, ScriptTarget, ModuleResolutionKind} from "../../typescript";
+import { ts, SyntaxKind, LanguageVariant, ScriptTarget, ModuleResolutionKind } from "../../typescript";
 import * as errors from "../../errors";
-import {GlobalContainer} from "../../GlobalContainer";
-import {Directory} from "../../fileSystem";
-import {removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting, getTextFromFormattingEdits, replaceNodeText,
-    replaceSourceFileForFilePathMove} from "../../manipulation";
-import {getPreviousMatchingPos, getNextMatchingPos} from "../../manipulation/textSeek";
-import {Constructor} from "../../Constructor";
-import {ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure} from "../../structures";
-import {ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet, EventContainer, SourceFileReferenceContainer,
-    SourceFileReferencingNodes, ModuleUtils} from "../../utils";
-import {callBaseFill} from "../callBaseFill";
-import {TextInsertableNode} from "../base";
-import {Node, Symbol, Identifier} from "../common";
-import {StatementedNode} from "../statement";
-import {StringLiteral} from "../literal";
-import {Diagnostic, EmitResult, EmitOutput, FormatCodeSettings, TextChange} from "../tools";
-import {ImportDeclaration} from "./ImportDeclaration";
-import {ExportDeclaration} from "./ExportDeclaration";
-import {ExportAssignment} from "./ExportAssignment";
-import {ExportSpecifier} from "./ExportSpecifier";
-import {FileSystemRefreshResult} from "./FileSystemRefreshResult";
+import { GlobalContainer } from "../../GlobalContainer";
+import { Directory } from "../../fileSystem";
+import { removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting, getTextFromFormattingEdits, replaceNodeText,
+    replaceSourceFileForFilePathMove } from "../../manipulation";
+import { getPreviousMatchingPos, getNextMatchingPos } from "../../manipulation/textSeek";
+import { Constructor } from "../../Constructor";
+import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure } from "../../structures";
+import { ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet, EventContainer, SourceFileReferenceContainer,
+    SourceFileReferencingNodes, ModuleUtils } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
+import { TextInsertableNode } from "../base";
+import { Node, Symbol, Identifier } from "../common";
+import { StatementedNode } from "../statement";
+import { StringLiteral } from "../literal";
+import { Diagnostic, EmitResult, EmitOutput, FormatCodeSettings, TextChange } from "../tools";
+import { ImportDeclaration } from "./ImportDeclaration";
+import { ExportDeclaration } from "./ExportDeclaration";
+import { ExportAssignment } from "./ExportAssignment";
+import { ExportSpecifier } from "./ExportSpecifier";
+import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
