@@ -22,16 +22,14 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
     return codeBlocks;
 
     function parseCodeBlock() {
-        let template: string;
-        let codeBlockText: string;
-        let position = i;
+        const position = i;
         const firstLineResult = getFirstLine();
         const isInline = firstLineResult == null;
         const blockText = getBlockText();
 
         codeBlocks.push(new CodeBlock(markDownFile, {
             codeType: firstLineResult == null || firstLineResult.codeType.length === 0 ? undefined : firstLineResult.codeType,
-            firstLineOptions: firstLineResult == null || firstLineResult.template.length === 0 ? undefined : firstLineResult.template,
+            firstLineOptions: firstLineResult == null || firstLineResult.options.length === 0 ? undefined : firstLineResult.options,
             inline: isInline,
             text: blockText,
             position
@@ -40,13 +38,13 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
         function getFirstLine() {
             const originalPos = i + 1; // always move past first back tick
             let codeType: string | undefined;
-            let template: string | undefined;
+            let options: string | undefined;
 
             if (isNewLine(-1) && isTripleBackTick()) {
                 moveOffset(3); // move past triple back ticks
                 codeType = getCodeType();
                 moveWhile(isSpace);
-                template = getTemplate();
+                options = getOptionsText();
             }
             else {
                 i = originalPos;
@@ -61,7 +59,7 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
                 throw new Error(`Unhandled char on first line of code block: ${text[i]}`);
             i = posAfterNextNewLine();
 
-            return { codeType, template };
+            return { codeType, options };
 
             function getCodeType() {
                 let result = "";
@@ -72,7 +70,7 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
                 return result;
             }
 
-            function getTemplate() {
+            function getOptionsText() {
                 let result = "";
                 while (!isBackTick() && !isNewLine()) {
                     result += text[i];
@@ -83,23 +81,23 @@ export function parseMarkDown(markDownFile: MarkDownFile) {
         }
 
         function getBlockText() {
-            let blockText = "";
+            let result = "";
 
             while (i < text.length) {
                 if (isInline && isBackTick()) {
                     moveOffset(1);
-                    return blockText;
+                    return result;
                 }
                 else if (!isInline && isNewLine() && isTripleBackTickAtPos(posAfterNextNewLine())) {
                     i = posAfterNextNewLine() + 3; // move past triple back ticks
-                    return blockText;
+                    return result;
                 }
 
-                blockText += text[i];
+                result += text[i];
                 i++;
             }
 
-            return blockText;
+            return result;
         }
     }
 
