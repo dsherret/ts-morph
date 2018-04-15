@@ -122,7 +122,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Adds a named export.
      * @param name - Name of the named export.
      */
-    addNamedExport(structure: ExportSpecifierStructure): ExportSpecifier;
+    addNamedExport(name: string): ExportSpecifier;
     /** @internal */
     addNamedExport(structureOrName: ExportSpecifierStructure | string): ExportSpecifier;
     addNamedExport(structureOrName: ExportSpecifierStructure | string) {
