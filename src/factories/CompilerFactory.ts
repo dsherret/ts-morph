@@ -35,6 +35,7 @@ export class CompilerFactory {
     private readonly nodeCache = new ForgetfulNodeCache();
     private readonly directoryCache: DirectoryCache;
     private readonly sourceFileAddedEventContainer = new EventContainer<SourceFile>();
+    private readonly sourceFileMovedEventContainer = new EventContainer<SourceFile>();
     private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
     /**

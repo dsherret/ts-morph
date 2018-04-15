@@ -201,21 +201,31 @@ describe(nameof(SourceFile), () => {
             expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
         });
 
-        it("should change the module specifiers in a moved file", () => {
-            // First move a file and see the import/export specifiers change
+        it("should handle moving two source files to a new directory (issue #314)", () => {
+            // there was a bug previously where the moved source file was removed from the list of dirty source files, but it is dirty because
+            // the action of moving (removing and adding) to the cache causes the source file to lose its references
             const fileText = `import {OtherInterface} from "./OtherInterface";\nexport interface MyInterface {}\nexport * from "./OtherInterface";`;
             const otherFileText = `import {MyInterface} from "./MyInterface";\nexport interface OtherInterface {}`;
             const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/MyInterface.ts" });
             const otherFile = project.createSourceFile("/OtherInterface.ts", otherFileText);
-            sourceFile.move("/dir/NewFile.ts");
-            expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "../OtherInterface";\nexport interface MyInterface {}\nexport * from "../OtherInterface";`);
-            expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "./dir/NewFile";\nexport interface OtherInterface {}`);
 
-            // Moving the other file into the same directory means that the
-            // relative imports should stay the same.
+            sourceFile.move("/dir/NewFile.ts");
+            checkSpecifiers("./dir/NewFile", "../OtherInterface");
+
             otherFile.move("/dir/OtherInterface.ts");
-            expect(sourceFile.getFullText()).to.equal(fileText);
-            expect(otherFile.getFullText()).to.equal(otherFileText);
+            checkSpecifiers("./NewFile", "./OtherInterface");
+
+            sourceFile.move("/dir/subDir/NewFile.ts");
+            checkSpecifiers("./subDir/NewFile", "../OtherInterface");
+
+            otherFile.move("/dir2/OtherInterface.ts");
+            checkSpecifiers("../dir/subDir/NewFile", "../../dir2/OtherInterface");
+
+            function checkSpecifiers(sourceFileSpecifier: string, otherFileSpecifier: string) {
+                expect(sourceFile.getFullText()).to.equal(`import {OtherInterface} from "${otherFileSpecifier}";\n` +
+                    `export interface MyInterface {}\nexport * from "${otherFileSpecifier}";`);
+                expect(otherFile.getFullText()).to.equal(`import {MyInterface} from "${sourceFileSpecifier}";\nexport interface OtherInterface {}`);
+            }
         });
 
         it("should not change the module specifiers in the current file when moving to the same directory", () => {

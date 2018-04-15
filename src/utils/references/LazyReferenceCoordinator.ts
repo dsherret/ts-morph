@@ -9,16 +9,19 @@ export class LazyReferenceCoordinator {
     private dirtySourceFiles = createHashSet<SourceFile>();
 
     constructor(factory: CompilerFactory) {
+        const onSourceFileModified = (sourceFile: SourceFile) => {
+            if (!sourceFile.wasForgotten())
+                this.dirtySourceFiles.add(sourceFile);
+        };
+
         factory.onSourceFileAdded(sourceFile => {
             this.dirtySourceFiles.add(sourceFile);
-            sourceFile.onModified(() => {
-                if (!sourceFile.wasForgotten())
-                    this.dirtySourceFiles.add(sourceFile);
-            });
+            sourceFile.onModified(onSourceFileModified);
         });
         factory.onSourceFileRemoved(sourceFile => {
             sourceFile._referenceContainer.clear();
             this.dirtySourceFiles.delete(sourceFile);
+            sourceFile.onModified(onSourceFileModified, false);
         });
     }
 
@@ -33,6 +36,10 @@ export class LazyReferenceCoordinator {
             return;
         sourceFile._referenceContainer.refresh();
         this.clearDityForSourceFile(sourceFile);
+    }
+
+    addDirtySourceFile(sourceFile: SourceFile) {
+        this.dirtySourceFiles.add(sourceFile);
     }
 
     clearDirtySourceFiles() {

@@ -35,7 +35,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     private _isSaved = false;
     /** @internal */
-    private readonly _modifiedEventContainer = new EventContainer();
+    private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
 
@@ -79,7 +79,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         super.replaceCompilerNodeFromFactory(compilerNode);
         this.global.resetProgram(); // make sure the program has the latest source file
         this._isSaved = false;
-        this._modifiedEventContainer.fire(undefined);
+        this._modifiedEventContainer.fire(this);
     }
 
     /**
@@ -254,8 +254,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             // update the string literals in other files
             updateStringLiteralReferences(referencingLiterals.map(node => ([node, currentSourceFile]) as [StringLiteral, SourceFile]));
 
-            // everything should be up to date, so ignore any modifications above
+            // ignore any modifications in other source files
             currentSourceFile.global.lazyReferenceCoordinator.clearDirtySourceFiles();
+            // need to add the current source file as being dirty because it was removed and added to the cache in the move
+            currentSourceFile.global.lazyReferenceCoordinator.addDirtySourceFile(currentSourceFile);
         }
     }
 
@@ -912,7 +914,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param subscription - Subscription.
      * @param subscribe - Optional and defaults to true. Use an explicit false to unsubscribe.
      */
-    onModified(subscription: () => void, subscribe = true) {
+    onModified(subscription: (sender: SourceFile) => void, subscribe = true) {
         if (subscribe)
             this._modifiedEventContainer.subscribe(subscription);
         else
