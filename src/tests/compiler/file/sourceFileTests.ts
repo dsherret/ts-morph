@@ -228,6 +228,32 @@ describe(nameof(SourceFile), () => {
             }
         });
 
+        it("should update a module specifier to a source file that was added after the cache was filled", () => {
+            const fileText = `import {Identifier} from "./Identifier";`;
+            const {sourceFile, project} = getInfoFromText(fileText);
+
+            // do some command that will fill the internal cache
+            sourceFile.getReferencingSourceFiles();
+
+            // now add the source file
+            const otherFile = project.createSourceFile("/Identifier.ts", "export class Identifier {}");
+            sourceFile.move("/dir/File.ts");
+
+            expect(sourceFile.getFullText()).to.equal(`import {Identifier} from "../Identifier";`);
+        });
+
+        it("should update a module specifier to a source file that was moved to the location of the module specifier", () => {
+            const fileText = `import {Identifier} from "./Identifier";`;
+            const {sourceFile, project} = getInfoFromText(fileText);
+            const otherFile = project.createSourceFile("/SomeFile.ts", "export class Identifier {}");
+
+            sourceFile.getReferencingSourceFiles(); // fill internal cache
+            otherFile.move("/Identifier.ts");
+            sourceFile.move("/dir/File.ts");
+
+            expect(sourceFile.getFullText()).to.equal(`import {Identifier} from "../Identifier";`);
+        });
+
         it("should not change the module specifiers in the current file when moving to the same directory", () => {
             // using a weird module specifier to make sure it doesn't update automatically
             const fileText = `import {OtherInterface} from "../dir/OtherInterface";\nexport interface MyInterface {}\nexport * from "../dir/OtherInterface";`;

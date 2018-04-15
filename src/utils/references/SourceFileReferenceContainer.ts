@@ -10,6 +10,7 @@ export type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration |
 export class SourceFileReferenceContainer {
     private readonly nodesInThis = new KeyValueCache<StringLiteral, SourceFile>();
     private readonly nodesInOther = new KeyValueCache<StringLiteral, SourceFile>();
+    private readonly unresolvedLiterals: StringLiteral[] = [];
 
     constructor(private readonly sourceFile: SourceFile) {
     }
@@ -44,42 +45,72 @@ export class SourceFileReferenceContainer {
     }
 
     refresh() {
+        if (this.unresolvedLiterals.length > 0)
+            this.sourceFile.global.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+
         this.clear();
         this.populateReferences();
+
+        if (this.unresolvedLiterals.length > 0)
+            this.sourceFile.global.compilerFactory.onSourceFileAdded(this.resolveUnresolved);
     }
 
     clear() {
+        this.unresolvedLiterals.length = 0;
         for (const [node, sourceFile] of this.nodesInThis.getEntries()) {
             this.nodesInThis.removeByKey(node);
             sourceFile._referenceContainer.nodesInOther.removeByKey(node);
         }
     }
 
+    private resolveUnresolved = () => {
+        for (let i = this.unresolvedLiterals.length - 1; i >= 0; i--) {
+            const literal = this.unresolvedLiterals[i];
+            const sourceFile = this.getSourceFileForLiteral(literal);
+            if (sourceFile != null) {
+                this.unresolvedLiterals.splice(i, 1);
+                this.addNodeInThis(literal, sourceFile);
+            }
+        }
+
+        if (this.unresolvedLiterals.length === 0)
+            this.sourceFile.global.compilerFactory.onSourceFileAdded(this.resolveUnresolved, false);
+    }
+
     private populateReferences() {
         this.sourceFile.global.compilerFactory.forgetNodesCreatedInBlock(remember => {
             const addNode = (literal: StringLiteral, sourceFile: SourceFile | undefined) => {
-                if (sourceFile == null)
-                    return;
-                this.addNodeInThis(literal, sourceFile);
                 remember(literal);
+                if (sourceFile == null)
+                    this.unresolvedLiterals.push(literal);
+                else
+                    this.addNodeInThis(literal, sourceFile);
             };
 
             for (const literal of this.sourceFile.getImportStringLiterals()) {
-                const parent = literal.getParentOrThrow();
-                const grandParent = parent.getParent();
-                if (TypeGuards.isImportDeclaration(parent) || TypeGuards.isExportDeclaration(parent))
-                    addNode(literal, parent.getModuleSpecifierSourceFile());
-                else if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
-                    addNode(literal, grandParent.getExternalModuleReferenceSourceFile());
-                else if (TypeGuards.isCallExpression(parent)) {
-                    const literalSymbol = literal.getSymbol();
-                    if (literalSymbol != null)
-                        addNode(literal, ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol));
-                }
-                else
-                    this.sourceFile.global.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
+                // todo: inline addNode here
+                addNode(literal, this.getSourceFileForLiteral(literal));
             }
         });
+    }
+
+    private getSourceFileForLiteral(literal: StringLiteral) {
+        const parent = literal.getParentOrThrow();
+        const grandParent = parent.getParent();
+
+        if (TypeGuards.isImportDeclaration(parent) || TypeGuards.isExportDeclaration(parent))
+            return parent.getModuleSpecifierSourceFile();
+        else if (grandParent != null && TypeGuards.isImportEqualsDeclaration(grandParent))
+            return grandParent.getExternalModuleReferenceSourceFile();
+        else if (TypeGuards.isCallExpression(parent)) {
+            const literalSymbol = literal.getSymbol();
+            if (literalSymbol != null)
+                return ModuleUtils.getReferencedSourceFileFromSymbol(literalSymbol);
+        }
+        else
+            this.sourceFile.global.logger.warn(`Unknown import string literal parent: ${parent.getKindName()}`);
+
+        return undefined;
     }
 
     private addNodeInThis(literal: StringLiteral, sourceFile: SourceFile) {

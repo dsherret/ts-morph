@@ -64,9 +64,13 @@ export class CompilerFactory {
     /**
      * Occurs when a source file is added to the cache.
      * @param subscription - Subscripton.
+     * @param subscribe - Whether to subscribe or unsubscribe (default to true).
      */
-    onSourceFileAdded(subscription: (sourceFile: SourceFile) => void) {
-        this.sourceFileAddedEventContainer.subscribe(subscription);
+    onSourceFileAdded(subscription: (sourceFile: SourceFile) => void, subscribe = true) {
+        if (subscribe)
+            this.sourceFileAddedEventContainer.subscribe(subscription);
+        else
+            this.sourceFileAddedEventContainer.unsubscribe(subscription);
     }
 
     /**
@@ -262,11 +266,18 @@ export class CompilerFactory {
      * @param sourceFile - Compiler source file.
      */
     getSourceFile(compilerSourceFile: ts.SourceFile): SourceFile {
-        return this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
-            const sourceFile = new SourceFile(this.global, compilerSourceFile);
-            this.addSourceFileToCache(sourceFile);
-            return sourceFile;
+        let wasAdded = false;
+        const sourceFile = this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
+            const createdSourceFile = new SourceFile(this.global, compilerSourceFile);
+            this.addSourceFileToCache(createdSourceFile);
+            wasAdded = true;
+            return createdSourceFile;
         });
+
+        if (wasAdded)
+            this.sourceFileAddedEventContainer.fire(sourceFile);
+
+        return sourceFile;
     }
 
     private addSourceFileToCache(sourceFile: SourceFile) {
@@ -277,9 +288,6 @@ export class CompilerFactory {
         const dirPath = sourceFile.getDirectoryPath();
         this.directoryCache.createOrAddIfNotExists(dirPath);
         this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
-
-        // fire the event
-        this.sourceFileAddedEventContainer.fire(sourceFile);
     }
 
     /**
@@ -459,6 +467,7 @@ export class CompilerFactory {
             sourceFile.replaceCompilerNodeFromFactory(newNode as ts.SourceFile);
             this.nodeCache.set(newNode, sourceFile);
             this.addSourceFileToCache(sourceFile);
+            this.sourceFileAddedEventContainer.fire(sourceFile);
         }
         else {
             this.nodeCache.replaceKey(nodeToReplace, newNode);
