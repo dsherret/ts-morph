@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.2"></a>
+## [10.3.2](https://github.com/dsherret/ts-simple-ast/compare/10.3.1...10.3.2) (2018-04-15)
+
+
+### Bug Fixes
+
+* [#104](https://github.com/dsherret/ts-simple-ast/issues/104) - Fix documentation with compile errors. ([9d16ab4](https://github.com/dsherret/ts-simple-ast/commit/9d16ab4))
+* ExportAssignmentStructure.isEqualsExport should be isExportEquals. Deprecated until next major. ([1189352](https://github.com/dsherret/ts-simple-ast/commit/1189352))
+* ExportDeclaration.addNamedExport method overload was a duplicate of the other one. ([3715875](https://github.com/dsherret/ts-simple-ast/commit/3715875))
+
+
+
 <a name="10.3.1"></a>
 # [10.3.1](https://github.com/dsherret/ts-simple-ast/compare/10.3.0...10.3.1) (2018-04-15)
 
