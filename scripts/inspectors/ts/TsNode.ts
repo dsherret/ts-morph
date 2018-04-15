@@ -1,4 +1,4 @@
-﻿import { InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind } from "../../../src/main";
+﻿import { InterfaceDeclaration, ClassDeclaration, ts, SyntaxKind } from "ts-simple-ast";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { WrappedNode } from "../tsSimpleAst";

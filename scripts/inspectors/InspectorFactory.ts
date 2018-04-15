@@ -1,4 +1,4 @@
-﻿import { Project } from "../../src/Project";
+﻿import { Project } from "ts-simple-ast";
 import { getProject } from "../common";
 import { WrapperFactory } from "./WrapperFactory";
 import { TsSimpleAstInspector } from "./TsSimpleAstInspector";

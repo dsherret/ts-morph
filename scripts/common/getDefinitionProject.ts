@@ -1,6 +1,6 @@
 ﻿import * as path from "path";
 import * as fs from "fs";
-import Project, { NewLineKind } from "../../src/main";
+import Project, { NewLineKind } from "ts-simple-ast";
 import { rootFolder } from "../config";
 
 export function getDefinitionProject() {

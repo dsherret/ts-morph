@@ -1,4 +1,4 @@
-﻿import { ClassDeclaration } from "../../src/compiler";
+﻿import { ClassDeclaration } from "ts-simple-ast";
 import { hasDescendantNodeType } from "./typeHelpers";
 
 export function isNodeClass(classDec: ClassDeclaration) {

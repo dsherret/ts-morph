@@ -1,4 +1,4 @@
-﻿import { Node, PropertySignature, Identifier, InterfaceDeclaration, ts, SyntaxKind } from "../../../src/main";
+﻿import { Node, PropertySignature, Identifier, InterfaceDeclaration, ts, SyntaxKind } from "ts-simple-ast";
 import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { TsNode } from "./TsNode";

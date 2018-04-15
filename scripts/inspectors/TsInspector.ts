@@ -1,4 +1,4 @@
-﻿import Project, { InterfaceDeclaration, SourceFile, SyntaxKind } from "../../src/main";
+﻿import Project, { InterfaceDeclaration, SourceFile, SyntaxKind } from "ts-simple-ast";
 import { Memoize, ArrayUtils } from "../../src/utils";
 import { hasDescendantBaseType } from "../common";
 import { TsNode } from "./ts";

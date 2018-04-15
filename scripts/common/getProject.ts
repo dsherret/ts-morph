@@ -1,5 +1,5 @@
 ﻿import * as path from "path";
-import Project, { NewLineKind } from "../../src/main";
+import Project, { NewLineKind } from "ts-simple-ast";
 import { rootFolder } from "../config";
 
 export function getProject() {

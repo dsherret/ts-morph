@@ -6,7 +6,7 @@
  * ----------------------------------------------
  */
 import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
-    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "../src/main";
+    ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "ts-simple-ast";
 import { hasDescendantBaseType } from "./common";
 import { TsSimpleAstInspector, TsInspector } from "./inspectors";
 

@@ -9,7 +9,7 @@
  * ---------------------------------------------------
  */
 import * as path from "path";
-import Project, { ts } from "../src/main";
+import Project, { ts } from "ts-simple-ast";
 import { getDefinitionProject } from "./common";
 
 const project = getDefinitionProject();

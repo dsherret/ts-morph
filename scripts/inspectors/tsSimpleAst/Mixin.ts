@@ -1,5 +1,5 @@
-﻿import { InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind } from "../../../src/main";
-import { Memoize, TypeGuards, ArrayUtils } from "../../../src/utils";
+﻿import { InterfaceDeclaration, PropertyAccessExpression, ts, SyntaxKind, TypeGuards } from "ts-simple-ast";
+import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 
 export class Mixin {

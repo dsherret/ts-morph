@@ -1,5 +1,5 @@
 ﻿import { StatementedNode, EnumDeclaration, EnumMemberStructure, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration,
-    PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards } from "../../src/main";
+    PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards } from "ts-simple-ast";
 
 // todo: in the future this should be done in the library (ex. node.addInterface(cloningInterface.getStructure()))
 // What's done here is not so great...

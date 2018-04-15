@@ -1,5 +1,5 @@
-﻿import { InterfaceDeclaration } from "../../../src/main";
-import { Memoize, TypeGuards, ArrayUtils } from "../../../src/utils";
+﻿import { InterfaceDeclaration, TypeGuards } from "ts-simple-ast";
+import { Memoize, ArrayUtils } from "../../../src/utils";
 import { WrapperFactory } from "../WrapperFactory";
 import { isOverloadStructure } from "../../config";
 

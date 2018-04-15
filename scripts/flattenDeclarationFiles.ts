@@ -5,7 +5,7 @@
  * ----------------------------------------------
  */
 import * as path from "path";
-import Project, { SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind } from "../src/main";
+import Project, { SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind } from "ts-simple-ast";
 
 export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) {
     const definitionFiles = project.getSourceFiles(["dist/**/*.d.ts", "!dist/typescript/typescript.d.ts"]);

@@ -1,5 +1,5 @@
-﻿import { ClassDeclaration, InterfaceDeclaration, Type } from "../../../src/main";
-import { Memoize, ArrayUtils, TypeGuards } from "../../../src/utils";
+﻿import { ClassDeclaration, InterfaceDeclaration, Type, TypeGuards } from "ts-simple-ast";
+import { Memoize, ArrayUtils } from "../../../src/utils";
 import { hasDescendantNodeType } from "../../common";
 import { WrapperFactory } from "../WrapperFactory";
 import { TsNode } from "../ts";
@@ -50,7 +50,6 @@ export class WrappedNode {
     @Memoize
     getAssociatedTsNodes(): TsNode[] {
         const node = this.node;
-        const typeChecker = node.global.typeChecker;
 
         return getFromExtends().map(n => {
             if (!TypeGuards.isInterfaceDeclaration(n))

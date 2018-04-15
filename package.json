@@ -54,6 +54,7 @@
     "mocha": "^3.3.0",
     "run-sequence": "^2.2.1",
     "ts-nameof": "^0.10.3",
+    "ts-simple-ast": "10.3.1",
     "tslint": "^5.8.0"
   },
   "dependencies": {

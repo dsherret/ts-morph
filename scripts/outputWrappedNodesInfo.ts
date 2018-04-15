@@ -11,7 +11,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { rootFolder } from "./config";
 import { InspectorFactory, TsNode, TsNodeProperty } from "./inspectors";
-import { MethodDeclaration } from "../src/compiler";
+import { MethodDeclaration } from "ts-simple-ast";
 import { ArrayUtils } from "../src/utils";
 
 // setup

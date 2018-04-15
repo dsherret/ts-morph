@@ -1,6 +1,6 @@
 ﻿import Project, { Node, ClassDeclaration, InterfaceDeclaration, PropertyAccessExpression, PropertyAssignment, ComputedPropertyName,
-    Directory } from "../../src/main";
-import { Memoize, ArrayUtils, TypeGuards, createHashSet } from "../../src/utils";
+    Directory, TypeGuards } from "ts-simple-ast";
+import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
 import { isNodeClass } from "../common";
 import { WrappedNode, Mixin, Structure, NodeToWrapperMapping } from "./tsSimpleAst";
 import { WrapperFactory } from "./WrapperFactory";

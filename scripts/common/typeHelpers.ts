@@ -1,4 +1,4 @@
-﻿import { Type } from "../../src/compiler";
+﻿import { Type } from "ts-simple-ast";
 import { ArrayUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {

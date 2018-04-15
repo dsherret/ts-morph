@@ -8,7 +8,7 @@
  * unexpected happens. They also work nicely with strict null checking.
  * --------------------------------------------
  */
-import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory } from "../src/main";
+import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory } from "ts-simple-ast";
 import { InspectorFactory } from "./inspectors";
 
 const inspector = new InspectorFactory().getTsSimpleAstInspector();

@@ -7,7 +7,7 @@
 import * as path from "path";
 import { rootFolder } from "./config";
 import { InspectorFactory } from "./inspectors";
-import { UnionTypeNode } from "../src/main";
+import { UnionTypeNode } from "ts-simple-ast";
 import { ArrayUtils } from "../src/utils";
 import { cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces } from "./common/cloning";
 
