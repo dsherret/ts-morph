@@ -5,17 +5,17 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "dopublish": "npm run type-check-docs && gulp typescript && gulp scripts && node dist-scripts/scripts/createDeclarationFile && npm run code-verification && npm publish",
+    "dopublish": "npm run type-check-docs && gulp typescript && ts-node scripts/createDeclarationFile && npm run code-verification && npm publish",
     "test": "npm run build && npm run test-run",
     "lint": "gulp tslint",
     "build": "gulp typescript",
     "test-run": "gulp test-run",
-    "code-generate": "gulp scripts && node dist-scripts/scripts/code-generate",
-    "refactor": "gulp scripts && node dist-scripts/scripts/refactor",
-    "output-wrapped-nodes": "gulp scripts && node dist-scripts/scripts/outputWrappedNodesInfo",
-    "code-verification": "node dist-scripts/scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-scripts/scripts/ensureOverloadStructuresMatch",
-    "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors",
-    "type-check-docs":  "ts-node scripts/typeCheckDocumentation.ts"
+    "code-generate": "ts-node scripts/code-generate",
+    "refactor": "ts-node scripts/refactor",
+    "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
+    "code-verification": "ts-node scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && ts-node scripts/ensureOverloadStructuresMatch",
+    "ensure-no-definition-file-errors": "ts-node scripts/ensureNoDefinitionFileErrors",
+    "type-check-docs": "ts-node scripts/typeCheckDocumentation.ts"
   },
   "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
   "keywords": [

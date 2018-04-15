@@ -66,23 +66,4 @@ gulp.task("clean-dist", function(cb) {
     return del(["./dist/**/*"], cb);
 });
 
-gulp.task("clean-scripts", function(cb) {
-    return del(["./dist-scripts/**/*"], cb);
-});
-
-gulp.task("scripts", ["clean-scripts"], function (cb) {
-    var tsProject = ts.createProject("tsconfig.json", {
-        typescript: require("typescript")
-    });
-
-    var tsResult = gulp.src(["./{src,scripts}/**/*.ts"])
-        .pipe(tsNameOf())
-        .pipe(ts(tsProject));
-
-    return merge([
-        tsResult.dts.pipe(unusedDefinitionsFilter).pipe(gulp.dest('./dist-scripts')),
-        tsResult.js.pipe(gulp.dest("./dist-scripts"))
-    ]);
-});
-
 gulp.task("default", ["tslint", "typescript"]);

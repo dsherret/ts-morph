@@ -44,16 +44,10 @@ function doesReturnTypeRequireOrThrow(returnType: Type) {
 
 function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {
     switch (parent.getName()) {
-        case nameof(Project):
-            return matches(method.getName(), [
-                    nameof<Project>(a => a.addExistingDirectoryIfExists),
-                    nameof<Project>(a => a.addExistingSourceFileIfExists)
-                ]);
-        case nameof(Directory):
-            return matches(method.getName(), [
-                    nameof<Directory>(a => a.addExistingDirectoryIfExists),
-                    nameof<Directory>(a => a.addExistingSourceFileIfExists)
-                ]);
+        case "Project":
+            return matches(method.getName(), ["addExistingDirectoryIfExists", "addExistingSourceFileIfExists"]);
+        case "Directory":
+            return matches(method.getName(), ["addExistingDirectoryIfExists", "addExistingSourceFileIfExists"]);
         default:
             return false;
     }
