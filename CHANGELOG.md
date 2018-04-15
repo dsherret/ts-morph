@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.1"></a>
+# [10.3.1](https://github.com/dsherret/ts-simple-ast/compare/10.3.0...10.3.1) (2018-04-15)
+
+
+### Bug Fixes
+
+* [#308](https://github.com/dsherret/ts-simple-ast/issues/308) - Should not insert before the BOM. ([07a2a51](https://github.com/dsherret/ts-simple-ast/commit/07a2a51))
+* [#314](https://github.com/dsherret/ts-simple-ast/issues/314) - Fix moved source file not being marked as dirty in reference cache after move. ([91b1fbd](https://github.com/dsherret/ts-simple-ast/commit/91b1fbd))
+* Should update a module specifier to a source file that was added after the internal reference cache was filled. ([d6c02b1](https://github.com/dsherret/ts-simple-ast/commit/d6c02b1))
+
+
+
 <a name="10.3.0"></a>
 # [10.3.0](https://github.com/dsherret/ts-simple-ast/compare/10.1.0...10.3.0) (2018-04-11)
 
