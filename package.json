@@ -14,7 +14,8 @@
     "refactor": "gulp scripts && node dist-scripts/scripts/refactor",
     "output-wrapped-nodes": "gulp scripts && node dist-scripts/scripts/outputWrappedNodesInfo",
     "code-verification": "node dist-scripts/scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && node dist-scripts/scripts/ensureOverloadStructuresMatch",
-    "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors"
+    "ensure-no-definition-file-errors": "node dist-scripts/scripts/ensureNoDefinitionFileErrors",
+    "type-check-docs":  "ts-node scripts/typeCheckDocumentation.ts"
   },
   "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
   "keywords": [
