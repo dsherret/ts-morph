@@ -60,7 +60,7 @@ node.forEachDescendant((node, stop) => console.log(node.getText()));
 
 This is especially useful when writing code that implements a visitor pattern:
 
-```ts
+```ts ignore-error: 1109, setup: let sourceFiles: SourceFile[];
 interface Visitor {
     visit(node: Node): void;
 }

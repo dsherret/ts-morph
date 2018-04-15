@@ -56,16 +56,16 @@ functionDeclaration.setIsExported(false); // don't be one
 
 Export declarations look like this:
 
-```ts
+```ts setup: class OtherClass {}
 export * from "./some-file";
 export {MyClass} from "./other-file";
-export {MyClass};
+export {OtherClass};
 ```
 
 Get the export declarations by calling:
 
 ```ts
-const exports = sourceFile.getExportDeclarations();
+const exportDeclarations = sourceFile.getExportDeclarations();
 // or to get the first one that matches a condition
 const exportDeclaration = sourceFile.getExportDeclaration(d => d.hasNamedExports());
 
@@ -77,7 +77,7 @@ exportDeclaration.isNamespaceExport();
 exportDeclaration.getModuleSpecifier(); // returns: StringLiteral | undefined
 exportDeclaration.getModuleSpecifierValue(); // returns: string | undefined
 exportDeclaration.setModuleSpecifier("./new-file");
-exportDeclaration.setModuleSpecifier(someSourceFile);
+exportDeclaration.setModuleSpecifier(sourceFile);
 exportDeclaration.hasModuleSpecifier(); // returns: boolean
 exportDeclaration.isModuleSpecifierRelative(); // if the module specifier starts with ./ or ../
 exportDeclaration.getModuleSpecifierSourceFile(); // returns: SourceFile | undefined
@@ -89,7 +89,7 @@ Add or insert use `insertExportDeclaration`, `insertExportDeclarations`, `addExp
 
 ```ts
 const exportDeclaration = sourceFile.addExportDeclaration({
-    defaultImport: "MyClass",
+    namedExports: ["MyClass"],
     moduleSpecifier: "./file"
 });
 ```
@@ -180,7 +180,7 @@ namedExport.getExportDeclaration(); // returns: ExportDeclaration
 
 Export assignments look like the following:
 
-```ts
+```ts setup: let name: string;
 export = 5;
 export default name;
 ```

@@ -8,7 +8,7 @@ Emitting is easy. Here's an example:
 
 ```ts
 const project = new Project({ compilerOptions: { outDir: "dist", declaration: true } });
-project.addSourceFile("MyFile.ts", "const num = 1;");
+project.createSourceFile("MyFile.ts", "const num = 1;");
 project.emit();
 ```
 

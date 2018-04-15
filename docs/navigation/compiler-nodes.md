@@ -6,10 +6,10 @@ title: Underlying Compiler Nodes
 
 Sometimes it might be useful to get the node from the TypeScript compiler.
 
-They're accessible via the `.compilerNode` property that's found on most objects:
+They're accessible via the `.compilerNode` property that's found on all node objects:
 
 ```ts
-const compilerNode = personInterface.compilerNode;
+const compilerNode = interfaceDeclaration.compilerNode;
 ```
 
 **Warning:** When manipulating the AST via this library, the underlying TypeScript AST tree is regenerated each time. For this reason, it's important not
@@ -33,11 +33,11 @@ Sometimes you might want to easily navigate an existing compiler node.
 
 Do that by using the `createWrappedNode` function:
 
-```ts
+```ts ignore-error: 1109
 import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
 
 // some code that creates a class declaration using the ts object
-const classNode: ts.ClassDeclaration = ...; 
+const classNode: ts.ClassDeclaration = ...;
 
 // create and use a wrapped node
 const classDec = createWrappedNode(classNode) as ClassDeclaration;
@@ -53,12 +53,12 @@ language service, type checker, or program. For example, finding references will
 
 If you would like to easily get the type information of the types in the provided source file, then provide a type checker:
 
-```ts
+```ts ignore-error: 1109
 // given an existing node and type checker
 const classNode: ts.ClassDeclaration = ...;
-const typeChecker: ts.TypeChecker = ...;
+const compilerTypeChecker: ts.TypeChecker = ...;
 
 // create and use a wrapped node
-const classDec = createWrappedNode(classNode, { typeChecker }) as ClassDeclaration;
+const classDec = createWrappedNode(classNode, { typeChecker: compilerTypeChecker }) as ClassDeclaration;
 console.log(classDec.getPropertyOrThrow("propName").getType().getText()); // ok, because a type checker was provided
 ```

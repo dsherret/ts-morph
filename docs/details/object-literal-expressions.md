@@ -77,12 +77,12 @@ Add get and set accessors via the `insertGetAccessor`, `insertGetAccessors`, `ad
 const getAccessor = objectLiteralExpression.addGetAccessor({
     name: "someNumber",
     returnType: "number",
-    body: "return someNumber;"
+    bodyText: "return someNumber;"
 });
 const setAccessor = objectLiteralExpression.addSetAccessor({
     name: "someNumber",
     parameters: [{ name: "value", type: "number" }],
-    body: "someNumber = value;"
+    bodyText: "someNumber = value;"
 });
 ```
 
@@ -93,6 +93,6 @@ Add a method via the `insertMethod`, `insertMethods`, `addMethod`, or `addMethod
 ```ts
 const method = objectLiteralExpression.addMethod({
     name: "method",
-    body: `return "some string";`
+    bodyText: `return "some string";`
 });
 ```

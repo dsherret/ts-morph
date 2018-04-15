@@ -53,7 +53,7 @@ Set it:
 ```ts
 importDeclaration.setModuleSpecifier("./new-file");
 // or set by source file
-importDeclaration.setModuleSpecifier(someSourceFile);
+importDeclaration.setModuleSpecifier(sourceFile);
 ```
 
 Get the referenced source file:
@@ -139,7 +139,7 @@ const namedImport = importDeclaration.addNamedImport({
     alias: "MyAliasName" // alias is optional
 });
 // or
-importDeclaration.addNamedImports("MyClass");
+importDeclaration.addNamedImports(["MyClass", "SomeInterface"]);
 ```
 
 Removing one named import:

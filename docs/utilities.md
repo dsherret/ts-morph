@@ -49,12 +49,12 @@ import {printNode, ts} from "ts-simple-ast";
 // Source: https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API
 const tsFunctionDeclaration = ts.createFunctionDeclaration(
     /*decorators*/ undefined,
-    /*modifiers*/[ts.createToken(ts.SyntaxKind.ExportKeyword)],
+    /*modifiers*/[ts.createToken(SyntaxKind.ExportKeyword)],
     /*asteriskToken*/ undefined,
     "myFunction",
     /*typeParameters*/ undefined,
     /*parameters*/ [],
-    /*returnType*/ ts.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+    /*returnType*/ ts.createKeywordTypeNode(SyntaxKind.NumberKeyword),
     ts.createBlock([ts.createReturn(ts.createLiteral(5))], /*multiline*/ true),
 );
 // optionally provide a source file and there is some printing options on this

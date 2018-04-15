@@ -45,7 +45,7 @@ This can be achieved with the `.replaceWithText(...)` method that exists on any 
 
 Given the following code:
 
-```ts
+```ts setup: let Some: any;
 let myVariable = Some.Property.Access.Expression;
 ```
 
@@ -58,7 +58,7 @@ const newInitializer = originalInitializer.replaceWithText("MyReference");
 
 That will make the source file hold the following text:
 
-```ts
+```ts setup: let MyReference: any;
 let myVariable = MyReference;
 ```
 
@@ -101,7 +101,7 @@ sourceFile.insertText(0, "// some comment\n");
 // replace text
 sourceFile.replaceText([3, 7], "a"); // "// a comment\n"
 // remove text
-sourceFile.removeText([sourceFile.getPos(), sourceFile.getEnd()]);
+sourceFile.removeText(sourceFile.getPos(), sourceFile.getEnd());
 ```
 
 These methods are also available on any node that has a body (functions, classes, enums, etc.)

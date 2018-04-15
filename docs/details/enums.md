@@ -93,19 +93,19 @@ const member = enumDeclaration.getMember("member");
 The value can be retrieved whether it is implicitly or explicitly defined:
 
 ```ts
-member.getValue(); // returns: string | number
+enumMember.getValue(); // returns: string | number
 ```
 
 It can also be set to a number:
 
 ```ts
-member.setValue(5);
+enumMember.setValue(5);
 ```
 
 Or a string:
 
 ```ts
-member.setValue("string value");
+enumMember.setValue("string value");
 ```
 
 ### Removing
@@ -113,5 +113,5 @@ member.setValue("string value");
 Call `remove()` on it:
 
 ```ts
-member.remove();
+enumMember.remove();
 ```

@@ -28,7 +28,7 @@ Add or insert variable statements to a source file, namespace, or function like 
 import Project, {VariableDeclarationKind} from "ts-simple-ast";
 
 const variableStatement = sourceFile.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const // defaults to "let"
+    declarationKind: VariableDeclarationKind.Const, // defaults to "let"
     declarations: [{
         name: "myNumber",
         initializer: "5"

@@ -9,7 +9,7 @@ Sometimes you might encounter code that looks terrible. For example:
 ```ts
 // BadlyFormattedFile.ts
 var myVariable     :      string |    number;
-function myFunction(param    : MyClass){
+function myFunction(param    : string){
 return "";
 }
 ```
@@ -29,7 +29,7 @@ This will run the source file's text through the TypeScript compiler's formattin
 ```ts
 // BadlyFormattedFile.ts (not anymore!)
 var myVariable: string | number;
-function myFunction(param: MyClass) {
+function myFunction(param: string) {
     return "";
 }
 ```
@@ -41,7 +41,7 @@ Individual nodes can also be formatted. For example, say you have a file that lo
 ```ts
 // file.ts
 export class MyClass {
-    prop  : string   ;
+    prop  !  : string   ;
 
     myMethod(    example: string    ) {
   console.log(    example    );
@@ -64,7 +64,7 @@ Which would selectively only format the first statement in the method:
 ```ts
 // file.ts
 export class MyClass {
-    prop  : string   ;
+    prop  !  : string   ;
 
     myMethod(    example: string    ) {
         console.log(example);

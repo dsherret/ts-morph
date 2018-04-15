@@ -52,7 +52,7 @@ functionDeclaration.isImplementation();
 From the overloads, get the implementation by calling:
 
 ```ts
-const implementation = overload.getImplementation();
+const implementation = functionOverload.getImplementation();
 ```
 
 #### Add/Insert
@@ -64,7 +64,7 @@ Add or insert overloads by using either the `.addOverload()`, `.addOverloads()`,
 Call `.remove()` on the overload:
 
 ```ts
-overload.remove();
+functionOverload.remove();
 ```
 
 ### Set body text

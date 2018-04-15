@@ -46,7 +46,7 @@ When thinking about performance, the key point here is that if you have a lot of
 
 The main way to improve performance when manipulating, is to "forget" a node when you're done with it.
 
-```ts
+```ts setup: let personInterface: InterfaceDeclaration;
 personInterface.forget();
 ```
 
@@ -71,7 +71,7 @@ let classDeclaration: ClassDeclaration;
 project.forgetNodesCreatedInBlock(remember => {
     namespaceDeclaration = sourceFile.getNamespaceOrThrow("Namespace");
     interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
-    classDeclaration = namespaceDeclaration.getClassDeclarationOrThrow("Class");
+    classDeclaration = namespaceDeclaration.getClassOrThrow("Class");
 
     // you can mark nodes to remember outside the scope of this block...
     // this will remember the specified node and all its ancestors
@@ -91,7 +91,7 @@ project.forgetNodesCreatedInBlock(() => {
     interfaceDeclaration = namespaceDeclaration.getInterfaceOrThrow("Interface");
 
     project.forgetNodesCreatedInBlock(remember => {
-        classDeclaration = namespaceDeclaration.getClassDeclarationOrThrow("Class");
+        classDeclaration = namespaceDeclaration.getClassOrThrow("Class");
         remember(namespaceDeclaration);
     });
 

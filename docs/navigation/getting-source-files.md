@@ -23,7 +23,7 @@ const testSourceFiles = project.getSourceFiles("src/test/**/*.ts");
 const nonTestSourceFiles = project.getSourceFiles([
     "src/**/*.ts",
     "!src/test/**/*.ts"
-);
+]);
 ```
 
 ### By file path

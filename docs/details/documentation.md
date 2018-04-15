@@ -6,7 +6,7 @@ title: JS Docs
 
 Certain nodes can have JS docs. For example:
 
-```ts
+```ts setup: interface Person {}
 /**
  * Gets the name.
  * @param person - Person to get the name from.
@@ -51,12 +51,12 @@ jsDoc.getComment(); // returns string: "Gets the name."
 Get the tags:
 
 ```ts
-const tags = jsDocNode.getTags();
+const tags = jsDoc.getTags();
 tags[0].getText(); // "@param person - Person to get the name from."
 ```
 
 Get the inner text (the text without the surrounding comment):
 
 ```ts
-jsDocNode.getInnerText(); // "Gets the name.\n@param person - Person to get the name from."
+jsDoc.getInnerText(); // "Gets the name.\n@param person - Person to get the name from."
 ```

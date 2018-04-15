@@ -44,7 +44,7 @@ you won't be able to resolve the types they define.
 
 If you need this information, you will have to write them to the virtual file system manually using a method that works well in your environment:
 
-```ts
+```ts ignore-error: 1109
 import Project, {FileSystemHost} from "ts-simple-ast";
 
 function loadDtsFiles(fs: FileSystemHost) {
@@ -77,8 +77,8 @@ When using a non-default file system, the library will search for these files in
 
 It's possible to use your own custom file system by implementing the `FileSystemHost` interface then passing in an instance of this when creating a new `Ast` object:
 
-```ts
-const Project, {FileSystemHost} from "ts-simple-ast";
+```ts ignore-error: 2420, 2345
+import Project, {FileSystemHost} from "ts-simple-ast";
 
 class MyCustomFileSystem implements FileSystemHost {
     // implement it

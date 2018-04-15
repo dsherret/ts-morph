@@ -22,7 +22,7 @@ const typeArgs = expressionWithTypeArgs.getTypeArguments(); // returns: TypeNode
 
 Call expressions are statements that call a function:
 
-```ts
+```ts setup: const doSomething: () => void;
 doSomething();
 ```
 
