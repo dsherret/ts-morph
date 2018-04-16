@@ -2,3 +2,4 @@ repository: dsherret/ts-simple-ast
 port: 4001
 title: ts-simple-ast
 description: Simple way to navigate and manipulate the TypeScript AST.
+markdown: GFM
