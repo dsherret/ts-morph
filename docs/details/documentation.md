@@ -6,7 +6,7 @@ title: JS Docs
 
 Certain nodes can have JS docs. For example:
 
-```ts
+```ts setup: interface Person {}
 /**
  * Gets the name.
  * @param person - Person to get the name from.

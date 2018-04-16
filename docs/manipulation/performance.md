@@ -46,7 +46,7 @@ When thinking about performance, the key point here is that if you have a lot of
 
 The main way to improve performance when manipulating, is to "forget" a node when you're done with it.
 
-```ts
+```ts setup: let personInterface: InterfaceDeclaration;
 personInterface.forget();
 ```
 

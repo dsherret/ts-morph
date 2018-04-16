@@ -33,7 +33,7 @@ Sometimes you might want to easily navigate an existing compiler node.
 
 Do that by using the `createWrappedNode` function:
 
-```ts
+```ts ignore-error: 1109
 import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
 
 // some code that creates a class declaration using the ts object
@@ -53,7 +53,7 @@ language service, type checker, or program. For example, finding references will
 
 If you would like to easily get the type information of the types in the provided source file, then provide a type checker:
 
-```ts
+```ts ignore-error: 1109
 // given an existing node and type checker
 const classNode: ts.ClassDeclaration = ...;
 const compilerTypeChecker: ts.TypeChecker = ...;

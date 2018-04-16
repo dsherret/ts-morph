@@ -45,7 +45,7 @@ This can be achieved with the `.replaceWithText(...)` method that exists on any 
 
 Given the following code:
 
-```ts
+```ts setup: let Some: any;
 let myVariable = Some.Property.Access.Expression;
 ```
 
@@ -58,7 +58,7 @@ const newInitializer = originalInitializer.replaceWithText("MyReference");
 
 That will make the source file hold the following text:
 
-```ts
+```ts setup: let MyReference: any;
 let myVariable = MyReference;
 ```
 
