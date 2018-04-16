@@ -1,4 +1,5 @@
 ﻿import Project, { Diagnostic, SourceFile, ScriptTarget } from "ts-simple-ast";
+import { getProject } from "./common";
 import { MarkDownFile, CodeBlock } from "./markdown";
 
 const errorCodes = {
@@ -13,16 +14,12 @@ const errorCodes = {
 const errorCodesToIgnore = [errorCodes.CannotRedeclareVariable, errorCodes.CannotFindModule, errorCodes.DuplicateIdentifier,
     errorCodes.AwaitOnlyAllowedInAsyncFunc, errorCodes.NoMultipleExportAssignments, errorCodes.ImportDeclarationConflictsWithLocalDeclaration,
     errorCodes.ExportAssignmentCannotBeUsedTargetingESModules];
-const project = new Project({
-    tsConfigFilePath: "tsconfig.json",
-    addFilesFromTsConfig: false
-});
+const project = getProject();
 const docsDir = project.addExistingDirectory("./docs");
 const fileSystem = project.getFileSystem();
 const templatesDir = docsDir.addExistingDirectory("_script-templates");
 project.addExistingSourceFiles("./docs/_script-templates/**/*.ts");
 const mainTemplate = templatesDir.getSourceFileOrThrow("main.ts");
-const tempSourceFile = docsDir.createSourceFile("tempFile.ts");
 addAnyInitializers(mainTemplate);
 
 const markDownFiles = fileSystem.glob(["./docs/**/*.md", "./README.md"]).map(filePath => new MarkDownFile(filePath, fileSystem.readFileSync(filePath)));
@@ -30,16 +27,22 @@ const markDownFiles = fileSystem.glob(["./docs/**/*.md", "./README.md"]).map(fil
 console.log("Checking documentation for compile errors...");
 const errors: { diagnostic: Diagnostic, codeBlock: CodeBlock; }[] = [];
 
+// much faster to get all the temporary source files first so the type checker doesn't need to be created after each manipulation
+const markDownFilesWithCodeBlocks = markDownFiles
+    .map((markDownFile, i) => ({
+        markDownFile,
+        codeBlocksWithSourceFiles: markDownFile.getCodeBlocks()
+            .filter(codeBlock => !codeBlock.inline && (codeBlock.codeType === "ts" || codeBlock.codeType === "typescript"))
+            .map((codeBlock, j) => ({
+                tempSourceFile: templatesDir.createSourceFile(`tempFile${i}_${j}.ts`,
+                    "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText()) + codeBlock.text),
+                codeBlock
+            }))
+    }));
+
 // collect diagnostics
-for (const markDownFile of markDownFiles) {
-    const codeBlocks = markDownFile.getCodeBlocks();
-
-    for (const codeBlock of codeBlocks) {
-        if (codeBlock.inline || codeBlock.codeType !== "ts" && codeBlock.codeType !== "typescript")
-            continue;
-
-        tempSourceFile.removeText();
-        tempSourceFile.insertText(0, "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText()) + codeBlock.text);
+for (const {markDownFile, codeBlocksWithSourceFiles} of markDownFilesWithCodeBlocks) {
+    for (const {codeBlock, tempSourceFile} of codeBlocksWithSourceFiles) {
         const ignoredErrorCodes = codeBlock.getIgnoredErrorCodes();
         const codeBlockDiagnostics = tempSourceFile.getDiagnostics()
             .filter(d => [...errorCodesToIgnore, ...ignoredErrorCodes].indexOf(d.getCode()) === -1);

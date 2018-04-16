@@ -6,7 +6,7 @@
     ExpressionWithTypeArguments, CallExpression, SyntaxKind, Identifier, VariableDeclaration, ConstructSignatureDeclaration,
     CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, TypeAliasDeclaration,
     NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
-    PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost } from "ts-simple-ast";
+    PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost } from "../../src/main";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration,
     sourceFile: SourceFile, method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration,
