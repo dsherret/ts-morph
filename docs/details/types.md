@@ -108,7 +108,7 @@ const baseTypes = type.getBaseTypes();
 
 ### Base type of a literal type
 
-```ts setup: let numberLiteralType: Type;
+```ts
 const numberType = numberLiteralType.getBaseTypeOfLiteralType();
 ```
 

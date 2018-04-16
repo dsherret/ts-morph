@@ -271,13 +271,13 @@ Name: Interface1
 
 It might be useful to get the relative path from one source file to another.
 
-```ts setup: let sourceFileFrom: SourceFile, sourceFileTo: SourceFile;
+```ts
 const relativePath = sourceFileFrom.getRelativePathToSourceFile(sourceFileTo);
 ```
 
 Or to get the module specifier text from one source file to another.
 
-```ts setup: let sourceFileFrom: SourceFile, sourceFileTo: SourceFile;
+```ts
 const moduleSpecifier = sourceFileFrom.getRelativePathToSourceFileAsModuleSpecifier(sourceFileTo);
 ```
 

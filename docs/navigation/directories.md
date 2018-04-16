@@ -93,14 +93,14 @@ const childDirs = directory.getDirectories();
 
 Check if a directory is an ancestor or descendant of another directory:
 
-```ts setup: let grandParentDir: Directory, childDir: Directory;
+```ts
 grandParentDir.isAncestorOf(childDir);   // true
 childDir.isDescendantOf(grandParentDir); // true
 ```
 
 Or if a directory is an ancestor of a source file:
 
-```ts setup: let grandParentDir: Directory, parentDir: Directory, childSourceFile: SourceFile;
+```ts
 grandParentDir.isAncestorOf(childSourceFile); // true
 parentDir.isAncestorOf(childSourceFile);      // true
 ```

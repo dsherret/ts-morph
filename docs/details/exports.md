@@ -56,7 +56,7 @@ functionDeclaration.setIsExported(false); // don't be one
 
 Export declarations look like this:
 
-```ts setup: class OtherClass {}
+```ts
 export * from "./some-file";
 export {MyClass} from "./other-file";
 export {OtherClass};
@@ -180,7 +180,7 @@ namedExport.getExportDeclaration(); // returns: ExportDeclaration
 
 Export assignments look like the following:
 
-```ts setup: let name: string;
+```ts
 export = 5;
 export default name;
 ```

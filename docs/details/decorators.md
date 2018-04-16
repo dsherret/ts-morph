@@ -16,7 +16,7 @@ Get the name or fully qualified name of a decorator by using the `getName()` or 
 
 For example, given the following code:
 
-```ts setup: const obj: { decorator: any; };
+```ts
 @obj.decorator
 class Identifier {
 }
@@ -82,7 +82,7 @@ const typeArgs = decorator.insertTypeArguments(1, ["string", "number"]);
 
 And remove them by calling `.removeTypeArgument()`:
 
-```ts setup: let typeArgs: TypeNode[];
+```ts
 // specify the index
 decorator.removeTypeArgument(0);
 // or specify the type argument node
