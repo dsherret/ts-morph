@@ -6,7 +6,8 @@ import { ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDecl
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "../../structures";
 import { verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren, getRangeFromArray, removeStatementedNodeChildren,
     hasBody, InsertIntoBracesOrSourceFileOptionsWriteInfo } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName } from "../../utils";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName,
+    isNodeAmbientOrInAmbientContext } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { SourceFile } from "../file";
@@ -510,7 +511,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forClassDeclaration({ isAmbient: this.sourceFile.isDeclarationFile() }).printTexts(writer, structures);
+                        this.global.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });
@@ -696,7 +697,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: this.sourceFile.isDeclarationFile() }).printTexts(writer, structures);
+                        this.global.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });

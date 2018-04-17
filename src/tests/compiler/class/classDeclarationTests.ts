@@ -3,8 +3,9 @@ import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, GetAccessorDe
     ConstructorDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
 import { PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, ClassDeclarationSpecificStructure,
     GetAccessorDeclarationStructure, SetAccessorDeclarationStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
+import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(c => c.fill), () => {
@@ -698,9 +699,9 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertMethods), () => {
         function doTest(startCode: string, insertIndex: number, structures: MethodDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
-            const result = firstChild.insertMethods(insertIndex, structures);
-            expect(firstChild.getText()).to.equal(expectedCode);
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
+            const result = descendant.insertMethods(insertIndex, structures);
+            expect(sourceFile.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
         }
 
@@ -742,6 +743,10 @@ describe(nameof(ClassDeclaration), () => {
                 "        function F() {\n        }\n\n        class C {\n        }\n\n        namespace N {\n        }\n\n" +
                 "        console.log('here');\n" +
                 "    }\n}");
+        });
+
+        it("should write as ambient when inserting into a insert when none exists", () => {
+            doTest("declare module Ambient { class c {\n} }", 0, [{ name: "method" }], "declare module Ambient { class c {\n    method();\n} }");
         });
     });
 

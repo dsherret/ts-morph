@@ -71,6 +71,21 @@ describe(nameof(StatementedNode), () => {
                 "    console.log('here');\n" +
                 "}\n");
         });
+
+        it("should insert an ambient method on a class class when inserting a namespace with a class into an ambient module", () => {
+            const { sourceFile } = getInfoFromText("declare module Namespace {\n}\n");
+            const namespaceDec = sourceFile.getNamespaces()[0];
+            namespaceDec.insertNamespaces(0, [{
+                name: "Namespace",
+                classes: [{
+                    name: "Identifier",
+                    methods: [{ name: "myMethod" }]
+                }]
+            }]);
+
+            expect(sourceFile.getFullText()).to.equal("declare module Namespace {\n    namespace Namespace {\n        class Identifier {\n" +
+                "            myMethod();\n        }\n    }\n}\n");
+        });
     });
 
     describe(nameof<StatementedNode>(n => n.insertNamespace), () => {

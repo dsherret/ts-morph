@@ -12,7 +12,7 @@ Comment ranges are not part of the AST and are generated on request.
 WARNING: Since comments are generated on demand and not part of the AST, using one after a
 subsequent manipulation to the source file will throw an error.
 
-### Retreiving
+### Retrieving
 
 Leading and trailing comment ranges can be retrieved from any node by calling:
 
