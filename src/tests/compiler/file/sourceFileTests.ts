@@ -1415,4 +1415,23 @@ function myFunction(param: MyClass) {
                 { path: "/UnusedInterface.ts", text: "export default interface MyUnusedInterface {}" }], expectedText);
         });
     });
+
+    describe(nameof<SourceFile>(s => s.getImportStringLiterals), () => {
+        function doTest(fileText: string, expectedLiterals: string[], importHelpers = false) {
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "/main.ts", compilerOptions: { importHelpers } });
+            expect(sourceFile.getImportStringLiterals().map(l => l.getText())).to.deep.equal(expectedLiterals);
+        }
+
+        it("should get the string literals used in imports and exports", () => {
+            const startText = `import './MyInterface';\nimport MyClass from "./MyClass";\n` +
+                `import * as UnusedInterface from "absolute-path";\nexport * from "./export";`;
+            doTest(startText, [`'./MyInterface'`, `"./MyClass"`, `"absolute-path"`, `"./export"`]);
+        });
+
+        it("should not include the import helpers", () => {
+            // need to include code that will generate something like __extends so the import gets added
+            const startText = `import './MyInterface';\nclass Base {} class Child extends Base {}`;
+            doTest(startText, [`'./MyInterface'`], true);
+        });
+    });
 });

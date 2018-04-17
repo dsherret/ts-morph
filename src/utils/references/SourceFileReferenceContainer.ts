@@ -79,17 +79,14 @@ export class SourceFileReferenceContainer {
 
     private populateReferences() {
         this.sourceFile.global.compilerFactory.forgetNodesCreatedInBlock(remember => {
-            const addNode = (literal: StringLiteral, sourceFile: SourceFile | undefined) => {
+            for (const literal of this.sourceFile.getImportStringLiterals()) {
+                const sourceFile = this.getSourceFileForLiteral(literal);
                 remember(literal);
+
                 if (sourceFile == null)
                     this.unresolvedLiterals.push(literal);
                 else
                     this.addNodeInThis(literal, sourceFile);
-            };
-
-            for (const literal of this.sourceFile.getImportStringLiterals()) {
-                // todo: inline addNode here
-                addNode(literal, this.getSourceFileForLiteral(literal));
             }
         });
     }
