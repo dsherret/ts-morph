@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.3.3"></a>
+## [10.3.3](https://github.com/dsherret/ts-simple-ast/compare/10.3.2...10.3.3) (2018-04-17)
+
+
+### Bug Fixes
+
+* [#125](https://github.com/dsherret/ts-simple-ast/issues/125) - Inserting a namespace or class into an ambient module/namespace should not write as non-ambient. ([a3c6291](https://github.com/dsherret/ts-simple-ast/commit/a3c6291))
+* [#316](https://github.com/dsherret/ts-simple-ast/issues/316) - Getting references between source files was broken when the importHelpers compiler option was true. ([701e936](https://github.com/dsherret/ts-simple-ast/commit/701e936))
+
+
+
 <a name="10.3.2"></a>
 ## [10.3.2](https://github.com/dsherret/ts-simple-ast/compare/10.3.1...10.3.2) (2018-04-15)
 
