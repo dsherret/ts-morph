@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
-    "dopublish": "npm run type-check-docs && gulp typescript && ts-node scripts/createDeclarationFile && npm run code-verification && npm publish",
+    "dopublish": "npm run type-check-docs && npm run build && ts-node scripts/createDeclarationFile && npm run code-verification && npm publish",
     "test": "npm run build && npm run test-run",
     "lint": "gulp tslint",
     "build": "gulp typescript",
@@ -13,9 +13,11 @@
     "code-generate": "ts-node scripts/code-generate",
     "refactor": "ts-node scripts/refactor",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
-    "code-verification": "ts-node scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && ts-node scripts/ensureOverloadStructuresMatch",
+    "code-verification": "ts-node scripts/ensureStructuresMatchClasses && npm run ensure-no-definition-file-errors && ts-node scripts/ensureOverloadStructuresMatch && npm run ensure-declaration-file-not-changed",
     "ensure-no-definition-file-errors": "ts-node scripts/ensureNoDefinitionFileErrors",
-    "type-check-docs": "ts-node scripts/typeCheckDocumentation.ts"
+    "type-check-docs": "ts-node scripts/typeCheckDocumentation.ts",
+    "ensure-declaration-file-not-changed": "ts-node scripts/ensureDeclarationFileNotChanged",
+    "overwrite-declaration-file": "npm run build && ts-node scripts/createDeclarationFile && rimraf lib/ts-simple-ast.d.ts && copy dist\\main.d.ts lib\\ts-simple-ast.d.ts"
   },
   "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
   "keywords": [
@@ -34,6 +36,8 @@
   },
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/chalk": "^2.2.0",
+    "@types/diff": "^3.5.1",
     "@types/glob-parent": "^3.1.0",
     "@types/is-negated-glob": "^1.0.0",
     "@types/mocha": "^2.2.33",
@@ -41,9 +45,11 @@
     "@types/node": "^6.0.48",
     "@types/object-assign": "^4.0.30",
     "chai": "^3.5.0",
+    "chalk": "^2.4.0",
     "conditional-type-checks": "^0.5.0",
     "coveralls": "^2.13.1",
     "del": "^2.0.2",
+    "diff": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-filter": "^5.0.0",
     "gulp-istanbul": "^1.1.1",
