@@ -72,6 +72,7 @@
     "is-negated-glob": "^1.0.0",
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
+    "tslib": "^1.9.0",
     "typescript": "2.8.1"
   },
   "standard-version": {
