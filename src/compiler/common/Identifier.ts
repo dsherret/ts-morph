@@ -1,10 +1,11 @@
 import { ts } from "../../typescript";
 import { Type } from "../type";
+import { ReferenceFindableNode } from "../base";
 import { ReferencedSymbol, DefinitionInfo, ImplementationLocation } from "../tools";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
 import { Node } from "./Node";
 
-export class Identifier extends PrimaryExpression<ts.Identifier> {
+export class Identifier extends ReferenceFindableNode(PrimaryExpression)<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
@@ -21,17 +22,11 @@ export class Identifier extends PrimaryExpression<ts.Identifier> {
     }
 
     /**
-     * Finds all the references of the identifier.
-     */
-    findReferences(): ReferencedSymbol[] {
-        return this.global.languageService.findReferences(this);
-    }
-
-    /**
      * Find the nodes that reference the definition(s) of the identifier.
+     * @deprecated Use getReferencingNodes().
      */
     getDefinitionReferencingNodes(): Node[] {
-        return this.global.languageService.getDefinitionReferencingNodes(this);
+        return this.getReferencingNodes();
     }
 
     /**

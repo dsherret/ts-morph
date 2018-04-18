@@ -1765,6 +1765,7 @@ export class TypeGuards {
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.Identifier:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.MetaProperty:
