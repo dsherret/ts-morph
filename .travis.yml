@@ -3,5 +3,7 @@ node_js:
     - "4.8"
 before_script:
     - gulp tslint
+script:
+    - npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 after_script:
-    - gulp scripts && npm run code-verification
+    - npm run code-verification

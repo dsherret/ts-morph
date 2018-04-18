@@ -27,5 +27,6 @@ const problems = project.getDiagnostics().map(d => {
 
 if (problems.length > 0) {
     console.log(problems);
-    throw new Error("There were definition file issues!");
+    console.error("There were definition file issues!");
+    process.exit(1);
 }

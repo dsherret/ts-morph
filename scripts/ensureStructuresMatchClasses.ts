@@ -47,7 +47,8 @@ for (const node of nodes) {
 // output
 if (problems.length > 0) {
     console.log(problems);
-    throw new Error("Classes and structures did not match!");
+    console.error("Classes and structures did not match!");
+    process.exit(1);
 }
 
 function getStructureName(name: string) {

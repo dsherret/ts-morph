@@ -48,7 +48,8 @@ for (const overloadStructure of overloadStructures) {
 // output
 if (problems.length > 0) {
     console.log(problems);
-    throw new Error("Overload structure did not match main structure!");
+    console.error("Overload structure did not match main structure!");
+    process.exit(1);
 }
 
 function isAllowedStructure(structure: Structure) {
