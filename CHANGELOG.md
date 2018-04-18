@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.4.0"></a>
+# [10.4.0](https://github.com/dsherret/ts-simple-ast/compare/10.3.3...10.4.0) (2018-04-18)
+
+
+### Features
+
+* [#317](https://github.com/dsherret/ts-simple-ast/issues/317) - Make Identifier a ReferenceFindableNode. ([652d00d](https://github.com/dsherret/ts-simple-ast/commit/652d00d))
+
+
+
 <a name="10.3.3"></a>
 ## [10.3.3](https://github.com/dsherret/ts-simple-ast/compare/10.3.2...10.3.3) (2018-04-17)
 
