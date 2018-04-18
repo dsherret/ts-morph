@@ -3676,7 +3676,9 @@ export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> 
     getExpression(): Expression;
 }
 
-export declare class Identifier extends PrimaryExpression<ts.Identifier> {
+declare const Identifier_base: (new (...args: any[]) => ReferenceFindableNode) & typeof PrimaryExpression;
+
+export declare class Identifier extends Identifier_base<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
@@ -3687,11 +3689,8 @@ export declare class Identifier extends PrimaryExpression<ts.Identifier> {
      */
     rename(newName: string): void;
     /**
-     * Finds all the references of the identifier.
-     */
-    findReferences(): ReferencedSymbol[];
-    /**
      * Find the nodes that reference the definition(s) of the identifier.
+     * @deprecated Use getReferencingNodes().
      */
     getDefinitionReferencingNodes(): Node[];
     /**
