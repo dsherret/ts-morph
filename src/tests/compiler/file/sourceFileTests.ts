@@ -1289,7 +1289,11 @@ function myFunction(param: MyClass) {
         });
 
         it("should use an implicit index when specifying the index file in the same directory", () => {
-            doSourceFileTest("/dir/file.ts", "/dir/index.ts", "../dir");
+            doSourceFileTest("/dir/file.ts", "/dir/index.ts", "./index");
+        });
+
+        it("should use an implicit index when specifying the index file in the root directory", () => {
+            doSourceFileTest("/file.ts", "/index.ts", "./index");
         });
 
         function doDirectoryTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
@@ -1301,6 +1305,10 @@ function myFunction(param: MyClass) {
 
         it("should get the path to a directory as a module specifier", () => {
             doDirectoryTest("/dir/file.ts", "/dir/dir2", "./dir2");
+        });
+
+        it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {
+            doDirectoryTest("/dir/file.ts", "/dir2", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
         });
     });
 

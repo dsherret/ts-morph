@@ -928,20 +928,36 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getRelativePathAsModuleSpecifierTo(directory: Directory): string;
     getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
         const moduleResolution = this.global.program.getEmitModuleResolutionKind();
+        const thisDirectory = this.getDirectory();
         const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
         return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
 
         function getPath() {
-            if (!(sourceFileOrDir instanceof SourceFile))
-                return sourceFileOrDir.getPath();
+            return sourceFileOrDir instanceof SourceFile ? getPathForSourceFile(sourceFileOrDir) : getPathForDirectory(sourceFileOrDir);
 
-            switch (moduleResolution) {
-                case ModuleResolutionKind.NodeJs:
-                    return sourceFileOrDir.getFilePath().replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
-                case ModuleResolutionKind.Classic:
-                    return sourceFileOrDir.getFilePath();
-                default:
-                    throw errors.getNotImplementedForNeverValueError(moduleResolution);
+            function getPathForSourceFile(sourceFile: SourceFile) {
+                switch (moduleResolution) {
+                    case ModuleResolutionKind.NodeJs:
+                        const filePath = sourceFile.getFilePath();
+                        if (sourceFile.getDirectory() === thisDirectory)
+                            return filePath;
+                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
+                    case ModuleResolutionKind.Classic:
+                        return sourceFile.getFilePath();
+                    default:
+                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                }
+            }
+
+            function getPathForDirectory(dir: Directory) {
+                switch (moduleResolution) {
+                    case ModuleResolutionKind.NodeJs:
+                        return dir.getPath();
+                    case ModuleResolutionKind.Classic:
+                        return FileUtils.pathJoin(dir.getPath(), "index.ts");
+                    default:
+                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                }
             }
         }
     }
