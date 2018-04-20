@@ -489,6 +489,26 @@ export declare class Directory {
      * Synchronously saves the directory and all the unsaved source files to the disk.
      */
     saveSync(): void;
+    /**
+     * Gets the relative path to another source file.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another directory.
+     * @param directory - Directory.
+     */
+    getRelativePathTo(directory: Directory): string;
+    /**
+     * Gets the relative path to the specified source file as a module specifier.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to the specified directory as a module specifier.
+     * @param directory - Directory.
+     */
+    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
     private throwIfDeletedOrRemoved();
 }
 export declare class DirectoryEmitResult {
@@ -6171,13 +6191,35 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
+     * @deprecated Use `getRelativePathTo`.
      */
     getRelativePathToSourceFile(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another source file.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another directory.
+     * @param directory - Directory.
+     */
+    getRelativePathTo(directory: Directory): string;
+    /**
+     * Gets the relative path to the specified source file as a module specifier.
+     * @param sourceFile - Source file.
+     * @deprecated Use `getRelativePathAsModuleSpecifierTo`.
+     */
+    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
      */
-    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile): string;
+    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to the specified directory as a module specifier.
+     * @param directory - Directory.
+     */
+    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
     /**
      * Subscribe to when the source file is modified.
      * @param subscription - Subscription.
