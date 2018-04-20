@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="10.5.0"></a>
+# [10.5.0](https://github.com/dsherret/ts-simple-ast/compare/10.3.3...10.5.0) (2018-04-20)
+
+
+### Bug Fixes
+
+* Fix getting the relative path as a module specifier to the index file in the root directory. ([80ba49c](https://github.com/dsherret/ts-simple-ast/commit/80ba49c))
+
+
+### Features
+
+* [#317](https://github.com/dsherret/ts-simple-ast/issues/317) - Make Identifier a ReferenceFindableNode. ([652d00d](https://github.com/dsherret/ts-simple-ast/commit/652d00d))
+* Add `Directory.getRelativePathAsModuleSpecifierTo` and `getRelativePathTo` ([5d5fa08](https://github.com/dsherret/ts-simple-ast/commit/5d5fa08))
+* Add SourceFile.getRelativePathTo and getRelativePathAsModuleSpecifierTo. ([04f91eb](https://github.com/dsherret/ts-simple-ast/commit/04f91eb))
+
+
+
 <a name="10.4.0"></a>
 # [10.4.0](https://github.com/dsherret/ts-simple-ast/compare/10.3.3...10.4.0) (2018-04-18)
 
