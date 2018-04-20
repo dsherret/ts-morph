@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ts, CompilerOptions, ScriptTarget } from "../../typescript";
+import { ts, CompilerOptions, ScriptTarget, ModuleResolutionKind } from "../../typescript";
 import { SourceFile } from "../../compiler";
 import * as errors from "../../errors";
 import { Project } from "../../Project";
@@ -953,6 +953,108 @@ describe(nameof(Directory), () => {
             expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
             expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
             expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Directory>(s => s.getRelativePathTo), () => {
+        function doSourceFileTest(from: string, to: string, expected: string) {
+            const project = new Project({ useVirtualFileSystem: true });
+            const fromDir = project.createDirectory(from);
+            const toFile = project.createSourceFile(to);
+            expect(fromDir.getRelativePathTo(toFile)).to.equal(expected);
+        }
+
+        // most of these tests are in fileUtilsTests
+
+        it("should get the relative path to a source file in a different directory", () => {
+            doSourceFileTest("/dir", "/dir2/to.ts", "../dir2/to.ts");
+        });
+
+        function doDirTest(from: string, to: string, expected: string) {
+            const project = new Project({ useVirtualFileSystem: true });
+            const fromDir = project.createDirectory(from);
+            const toDir = project.createDirectory(to);
+            expect(fromDir.getRelativePathTo(toDir)).to.equal(expected);
+        }
+
+        it("should get the relative path to a directory", () => {
+            doSourceFileTest("/dir", "/dir2/dir3", "../dir2/dir3");
+        });
+    });
+
+    describe(nameof<Directory>(s => s.getRelativePathAsModuleSpecifierTo), () => {
+        function doSourceFileTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
+            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const fromFile = from === "/" ? project.addExistingDirectory(from) : project.createDirectory(from);
+            const toFile = project.createSourceFile(to);
+            expect(fromFile.getRelativePathAsModuleSpecifierTo(toFile)).to.equal(expected);
+        }
+
+        it("should get the module specifier to a source file in a different directory", () => {
+            doSourceFileTest("/dir", "/dir2/to.ts", "../dir2/to");
+        });
+
+        it("should get the module specifier to a source file in the directory", () => {
+            doSourceFileTest("/dir", "/dir/to.ts", "./to");
+        });
+
+        it("should get the module specifier to a definition file", () => {
+            doSourceFileTest("/dir", "/dir2/to.d.ts", "../dir2/to");
+        });
+
+        it("should get the module specifier to a definition file that doing use a lower case extension", () => {
+            doSourceFileTest("/dir", "/dir2/to.D.TS", "../dir2/to");
+        });
+
+        it("should use an implicit index when specifying the index file in a different directory", () => {
+            doSourceFileTest("/dir", "/dir2/index.ts", "../dir2");
+        });
+
+        it("should use an implicit index when specifying the index file in a parent directory", () => {
+            doSourceFileTest("/dir/parent", "/dir/index.ts", "../../dir");
+        });
+
+        it("should use an implicit index when specifying the index file in a different directory that has different casing", () => {
+            doSourceFileTest("/dir", "/dir2/INDEX.ts", "../dir2");
+        });
+
+        it("should use an implicit index when specifying the index file of a definition file in a different directory", () => {
+            doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2");
+        });
+
+        it("should use an explicit index when the module resolution strategy is classic", () => {
+            doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
+        });
+
+        it("should use an explicit index when something else in the compiler options means the module resolution will be classic", () => {
+            doSourceFileTest("/dir", "/dir2/index.d.ts", "../dir2/index", { target: ScriptTarget.ES2015 });
+        });
+
+        it("should use an implicit index when specifying the index file in the same directory", () => {
+            doSourceFileTest("/dir", "/dir/index.ts", "./index");
+        });
+
+        it("should use an implicit index when specifying the index file in the root directory", () => {
+            doSourceFileTest("/", "/index.ts", "./index");
+        });
+
+        function doDirectoryTest(from: string, to: string, expected: string, compilerOptions?: CompilerOptions) {
+            const project = new Project({ useVirtualFileSystem: true, compilerOptions });
+            const fromDir = project.createDirectory(from);
+            const toDirectory = from === to ? fromDir : project.createDirectory(to);
+            expect(fromDir.getRelativePathAsModuleSpecifierTo(toDirectory)).to.equal(expected);
+        }
+
+        it("should get the path to a directory as a module specifier", () => {
+            doDirectoryTest("/dir", "/dir/dir2", "./dir2");
+        });
+
+        it("should use an explicit index when getting the module specifier to a directory and the module resolution strategy is classic", () => {
+            doDirectoryTest("/dir", "/dir2", "../dir2/index", { moduleResolution: ModuleResolutionKind.Classic });
+        });
+
+        it("should get the module specifier to the same directory", () => {
+            doDirectoryTest("/dir", "/dir", "./index");
         });
     });
 });

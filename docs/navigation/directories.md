@@ -195,3 +195,17 @@ directory.remove();
 
 Note that after doing this, the directory object and all its descendant source files and directories will not be available. If you want to use them again,
 then you will need to re-add them.
+
+### Relative File Paths
+
+It might be useful to get the relative path from one directory to another source file or directory.
+
+```ts setup: let directoryFrom: Directory, sourceFileTo: SourceFile;
+const relativePath = directoryFrom.getRelativePathTo(sourceFileTo);
+```
+
+Or to get the module specifier text from one directory to another source file or directory.
+
+```ts setup: let directoryFrom: Directory, sourceFileTo: SourceFile;
+const moduleSpecifier = directoryFrom.getRelativePathAsModuleSpecifierTo(sourceFileTo);
+```

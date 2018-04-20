@@ -1,6 +1,7 @@
 ﻿import { SourceFile, OutputFile } from "../compiler";
 import * as errors from "../errors";
-import { ArrayUtils, FileUtils } from "../utils";
+import { ModuleResolutionKind } from "../typescript";
+import { ArrayUtils, FileUtils, StringUtils } from "../utils";
 import { SourceFileStructure } from "../structures";
 import { GlobalContainer } from "../GlobalContainer";
 import { CreateSourceFileOptions, AddSourceFileOptions } from "../Project";
@@ -28,7 +29,7 @@ export class Directory {
     }
 
     /** @internal */
-    private get global() {
+    get global() {
         this.throwIfDeletedOrRemoved();
         return this._global!;
     }
@@ -487,6 +488,76 @@ export class Directory {
         const unsavedSourceFiles = this.getSourceFiles().filter(s => !s.isSaved());
         unsavedSourceFiles.forEach(s => s.saveSync());
         this.getDirectories().map(d => d.saveSync());
+    }
+
+    /**
+     * Gets the relative path to another source file.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another directory.
+     * @param directory - Directory.
+     */
+    getRelativePathTo(directory: Directory): string;
+    /** @internal */
+    getRelativePathTo(sourceFileOrDir: SourceFile | Directory): string;
+    getRelativePathTo(sourceFileOrDir: SourceFile | Directory) {
+        return FileUtils.getRelativePathTo(this.getPath(), getPath());
+
+        function getPath() {
+            return sourceFileOrDir instanceof SourceFile ? sourceFileOrDir.getFilePath() : sourceFileOrDir.getPath();
+        }
+    }
+
+    /**
+     * Gets the relative path to the specified source file as a module specifier.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to the specified directory as a module specifier.
+     * @param directory - Directory.
+     */
+    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
+    /** @internal */
+    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory): string;
+    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
+        const moduleResolution = this.global.program.getEmitModuleResolutionKind();
+        const thisDirectory = this;
+        const moduleSpecifier = FileUtils.getRelativePathTo(this.getPath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+        return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
+
+        function getPath() {
+            return sourceFileOrDir instanceof SourceFile ? getPathForSourceFile(sourceFileOrDir) : getPathForDirectory(sourceFileOrDir);
+
+            function getPathForSourceFile(sourceFile: SourceFile) {
+                switch (moduleResolution) {
+                    case ModuleResolutionKind.NodeJs:
+                        const filePath = sourceFile.getFilePath();
+                        if (sourceFile.getDirectory() === thisDirectory)
+                            return filePath;
+                        return filePath.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
+                    case ModuleResolutionKind.Classic:
+                        return sourceFile.getFilePath();
+                    default:
+                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                }
+            }
+
+            function getPathForDirectory(dir: Directory) {
+                switch (moduleResolution) {
+                    case ModuleResolutionKind.NodeJs:
+                        if (dir === thisDirectory)
+                            return FileUtils.pathJoin(dir.getPath(), "index.ts");
+                        return dir.getPath();
+                    case ModuleResolutionKind.Classic:
+                        return FileUtils.pathJoin(dir.getPath(), "index.ts");
+                    default:
+                        throw errors.getNotImplementedForNeverValueError(moduleResolution);
+                }
+            }
+        }
     }
 
     /** @internal */
