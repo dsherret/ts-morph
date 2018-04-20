@@ -1,4 +1,7 @@
 ﻿# Deprecations in the next major
 
-* Remove `isEqualsExport` on `ExportAssignmentStructure`.
-* Remove `Identifier.getDefinitionReferencingNodes`
+Remove:
+
+* `isEqualsExport` on `ExportAssignmentStructure`.
+* `Identifier.getDefinitionReferencingNodes`
+* `getRelativePathToSourceFile` and `getRelativePathToSourceFileAsModuleSpecifier`

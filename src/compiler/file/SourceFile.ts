@@ -883,26 +883,63 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
+     * @deprecated Use `getRelativePathTo`.
      */
     getRelativePathToSourceFile(sourceFile: SourceFile) {
-        return FileUtils.getRelativePathTo(this.getFilePath(), sourceFile.getFilePath());
+        return this.getRelativePathTo(sourceFile);
+    }
+
+    /**
+     * Gets the relative path to another source file.
+     * @param sourceFile - Source file.
+     */
+    getRelativePathTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to another directory.
+     * @param directory - Directory.
+     */
+    getRelativePathTo(directory: Directory): string;
+    getRelativePathTo(sourceFileOrDir: SourceFile | Directory) {
+        return FileUtils.getRelativePathTo(this.getFilePath(), getPath());
+
+        function getPath() {
+            return sourceFileOrDir instanceof SourceFile ? sourceFileOrDir.getFilePath() : sourceFileOrDir.getPath();
+        }
+    }
+
+    /**
+     * Gets the relative path to the specified source file as a module specifier.
+     * @param sourceFile - Source file.
+     * @deprecated Use `getRelativePathAsModuleSpecifierTo`.
+     */
+    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile) {
+        return this.getRelativePathAsModuleSpecifierTo(sourceFile);
     }
 
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
      */
-    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile) {
+    getRelativePathAsModuleSpecifierTo(sourceFile: SourceFile): string;
+    /**
+     * Gets the relative path to the specified directory as a module specifier.
+     * @param directory - Directory.
+     */
+    getRelativePathAsModuleSpecifierTo(directory: Directory): string;
+    getRelativePathAsModuleSpecifierTo(sourceFileOrDir: SourceFile | Directory) {
         const moduleResolution = this.global.program.getEmitModuleResolutionKind();
-        const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), getSourceFilePath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+        const moduleSpecifier = FileUtils.getRelativePathTo(this.getFilePath(), getPath()).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
         return StringUtils.startsWith(moduleSpecifier, "../") ? moduleSpecifier : "./" + moduleSpecifier;
 
-        function getSourceFilePath() {
+        function getPath() {
+            if (!(sourceFileOrDir instanceof SourceFile))
+                return sourceFileOrDir.getPath();
+
             switch (moduleResolution) {
                 case ModuleResolutionKind.NodeJs:
-                    return sourceFile.getFilePath().replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
+                    return sourceFileOrDir.getFilePath().replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "");
                 case ModuleResolutionKind.Classic:
-                    return sourceFile.getFilePath();
+                    return sourceFileOrDir.getFilePath();
                 default:
                     throw errors.getNotImplementedForNeverValueError(moduleResolution);
             }
@@ -969,6 +1006,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 function updateStringLiteralReferences(nodeReferences: [StringLiteral, SourceFile][]) {
     for (const [stringLiteral, sourceFile] of nodeReferences) {
         if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
-            stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(sourceFile));
+            stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));
     }
 }

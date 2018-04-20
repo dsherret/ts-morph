@@ -38,7 +38,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      */
     setExternalModuleReference(sourceFile: SourceFile): this;
     setExternalModuleReference(textOrSourceFile: string | SourceFile) {
-        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
         const moduleReference = this.getModuleReference();
         if (TypeGuards.isExternalModuleReference(moduleReference) && moduleReference.getExpression() != null)
             moduleReference.getExpressionOrThrow().replaceWithText(writer => writer.quote(text));

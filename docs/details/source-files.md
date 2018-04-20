@@ -269,16 +269,16 @@ Name: Interface1
 
 ### Relative File Paths
 
-It might be useful to get the relative path from one source file to another.
+It might be useful to get the relative path from one source file to another source file or directory.
 
 ```ts setup: let sourceFileFrom: SourceFile, sourceFileTo: SourceFile;
-const relativePath = sourceFileFrom.getRelativePathToSourceFile(sourceFileTo);
+const relativePath = sourceFileFrom.getRelativePathTo(sourceFileTo);
 ```
 
-Or to get the module specifier text from one source file to another.
+Or to get the module specifier text from one source file to another source file or directory.
 
 ```ts setup: let sourceFileFrom: SourceFile, sourceFileTo: SourceFile;
-const moduleSpecifier = sourceFileFrom.getRelativePathToSourceFileAsModuleSpecifier(sourceFileTo);
+const moduleSpecifier = sourceFileFrom.getRelativePathAsModuleSpecifierTo(sourceFileTo);
 ```
 
 ### Organizing Imports

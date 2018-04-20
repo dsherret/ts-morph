@@ -21,7 +21,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      */
     setModuleSpecifier(sourceFile: SourceFile): this;
     setModuleSpecifier(textOrSourceFile: string | SourceFile) {
-        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathToSourceFileAsModuleSpecifier(textOrSourceFile);
+        const text = typeof textOrSourceFile === "string" ? textOrSourceFile : this.sourceFile.getRelativePathAsModuleSpecifierTo(textOrSourceFile);
         const stringLiteral = this.getModuleSpecifier();
 
         if (stringLiteral == null) {

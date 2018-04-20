@@ -1,4 +1,5 @@
-﻿import { CodeBlock } from "./CodeBlock";
+﻿/* barrel:ignore */
+import { CodeBlock } from "./CodeBlock";
 import { MarkDownFile } from "./MarkDownFile";
 
 export function parseMarkDown(markDownFile: MarkDownFile) {
