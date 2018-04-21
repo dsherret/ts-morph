@@ -1,6 +1,7 @@
 ﻿/* barrel:ignore */
 import { GlobalContainer } from "../GlobalContainer";
 import { KeyValueCache, ArrayUtils, FileUtils } from "../utils";
+import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 
 /**
@@ -9,6 +10,8 @@ import { Directory } from "../fileSystem/Directory";
  */
 export class DirectoryCache {
     private readonly directoriesByPath = new KeyValueCache<string, Directory>();
+    private readonly sourceFilesByDirPath = new KeyValueCache<string, SourceFile[]>();
+    private readonly directoriesByDirPath = new KeyValueCache<string, Directory[]>();
     private readonly orphanDirs = new KeyValueCache<string, Directory>();
 
     constructor(private readonly global: GlobalContainer) {
@@ -65,7 +68,46 @@ export class DirectoryCache {
     }
 
     remove(dirPath: string) {
+        this.removeFromDirectoriesByDirPath(dirPath);
         return this.directoriesByPath.removeByKey(dirPath) || this.orphanDirs.removeByKey(dirPath);
+    }
+
+    getChildDirectoriesOfDirectory(dirPath: string) {
+        const directories = this.directoriesByDirPath.get(dirPath);
+        if (directories == null)
+            return [];
+        return [...directories];
+    }
+
+    getChildSourceFilesOfDirectory(dirPath: string) {
+        const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
+        if (sourceFiles == null)
+            return [];
+        return [...sourceFiles];
+    }
+
+    addSourceFile(sourceFile: SourceFile) {
+        const dirPath = sourceFile.getDirectoryPath();
+        this.createOrAddIfNotExists(dirPath);
+        const sourceFiles = this.sourceFilesByDirPath.getOrCreate(dirPath, () => []);
+        const baseName = sourceFile.getBaseName().toUpperCase();
+        ArrayUtils.binaryInsert(sourceFiles, sourceFile, item => item.getBaseName().toUpperCase() > baseName);
+    }
+
+    removeSourceFile(filePath: string) {
+        const dirPath = FileUtils.getDirPath(filePath);
+        const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
+        if (sourceFiles == null)
+            return;
+        const baseName = FileUtils.getBaseName(filePath).toUpperCase();
+        const index = ArrayUtils.binarySearch(sourceFiles, item => item.getFilePath() === filePath, item => item.getBaseName().toUpperCase() > baseName);
+
+        if (index >= 0)
+            sourceFiles.splice(index, 1);
+
+        // clean up
+        if (sourceFiles.length === 0)
+            this.sourceFilesByDirPath.removeByKey(dirPath);
     }
 
     createOrAddIfNotExists(dirPath: string): Directory {
@@ -81,21 +123,17 @@ export class DirectoryCache {
         const parentDirPath = FileUtils.getDirPath(path);
         const isRootDir = parentDirPath === path;
 
-        for (const childDir of this.directoriesByPath.getValues()) {
-            const childDirPath = childDir.getPath();
-            const childDirParentPath = FileUtils.getDirPath(childDirPath);
-            const isChildRootDir = childDirParentPath === childDirPath;
-            if (!isChildRootDir && childDirParentPath === path) {
-                newDirectory._addDirectory(childDir);
-                this.orphanDirs.removeByKey(childDirPath);
-            }
+        // remove any orphans that have a loaded parent
+        for (const orphanDir of this.orphanDirs.getValues()) {
+            const orphanDirPath = orphanDir.getPath();
+            const orphanDirParentPath = FileUtils.getDirPath(orphanDirPath);
+            const isOrphanRootDir = orphanDirParentPath === orphanDirPath;
+            if (!isOrphanRootDir && orphanDirParentPath === path)
+                this.orphanDirs.removeByKey(orphanDirPath);
         }
 
-        if (!isRootDir) {
-            const parentDir = this.directoriesByPath.get(parentDirPath);
-            if (parentDir != null)
-                parentDir._addDirectory(newDirectory);
-        }
+        if (!isRootDir)
+            this.addToDirectoriesByDirPath(newDirectory);
 
         if (!newDirectory._hasLoadedParent())
             this.orphanDirs.set(path, newDirectory);
@@ -109,6 +147,32 @@ export class DirectoryCache {
         }
 
         return newDirectory;
+    }
+
+    private addToDirectoriesByDirPath(directory: Directory) {
+        if (FileUtils.isRootDirPath(directory.getPath()))
+            return;
+        const parentDirPath = FileUtils.getDirPath(directory.getPath());
+        const directories = this.directoriesByDirPath.getOrCreate(parentDirPath, () => []);
+        const baseName = directory.getBaseName().toUpperCase();
+        ArrayUtils.binaryInsert(directories, directory, item => item.getBaseName().toUpperCase() > baseName);
+    }
+
+    private removeFromDirectoriesByDirPath(dirPath: string) {
+        if (FileUtils.isRootDirPath(dirPath))
+            return;
+        const parentDirPath = FileUtils.getDirPath(dirPath);
+        const directories = this.directoriesByDirPath.get(parentDirPath);
+        if (directories == null)
+            return;
+        const baseName = FileUtils.getBaseName(dirPath).toUpperCase();
+        const index = ArrayUtils.binarySearch(directories, item => item.getPath() === dirPath, item => item.getBaseName().toUpperCase() > baseName);
+        if (index >= 0)
+            directories.splice(index, 1);
+
+        // clean up
+        if (directories.length === 0)
+            this.directoriesByDirPath.removeByKey(parentDirPath);
     }
 
     private fillParentsOfDirPath(dirPath: string) {

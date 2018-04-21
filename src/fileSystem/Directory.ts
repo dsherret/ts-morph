@@ -17,15 +17,19 @@ export interface AddDirectoryOptions {
 
 export class Directory {
     private _global: GlobalContainer | undefined;
-    private readonly _pathParts: string[];
-    private _parent: Directory | undefined;
-    private _directories: Directory[] = [];
-    private _sourceFiles: SourceFile[] = [];
+    private _path!: string;
+    private _pathParts!: string[];
 
     /** @internal */
-    constructor(global: GlobalContainer, private readonly _path: string) {
+    constructor(global: GlobalContainer, path: string) {
         this._global = global;
-        this._pathParts = this._path.split("/").filter(p => p.length > 0);
+        this._setPathInternal(path);
+    }
+
+    /** @internal */
+    _setPathInternal(path: string) {
+        this._path = path;
+        this._pathParts = path.split("/").filter(p => p.length > 0);
     }
 
     /** @internal */
@@ -84,9 +88,9 @@ export class Directory {
      * Gets the parent directory if it exists and was added to the AST.
      */
     getParent() {
-        this.throwIfDeletedOrRemoved();
-        this._fillParentIfNotRoot();
-        return this._parent;
+        if (FileUtils.isRootDirPath(this.getPath()))
+            return undefined;
+        return this.addExistingDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
     }
 
     /**
@@ -173,16 +177,14 @@ export class Directory {
      * Gets the child directories.
      */
     getDirectories() {
-        this.throwIfDeletedOrRemoved();
-        return [...this._directories];
+        return this.global.compilerFactory.getChildDirectoriesOfDirectory(this.getPath());
     }
 
     /**
      * Gets the source files within this directory.
      */
     getSourceFiles() {
-        this.throwIfDeletedOrRemoved();
-        return [...this._sourceFiles];
+        return this.global.compilerFactory.getChildSourceFilesOfDirectory(this.getPath());
     }
 
     /**
@@ -197,10 +199,9 @@ export class Directory {
      * @internal
      */
     *getDescendantSourceFilesIterator(): IterableIterator<SourceFile> {
-        this.throwIfDeletedOrRemoved();
-        for (const sourceFile of this._sourceFiles)
+        for (const sourceFile of this.getSourceFiles())
             yield sourceFile;
-        for (const directory of this._directories)
+        for (const directory of this.getDirectories())
             yield* directory.getDescendantSourceFilesIterator();
     }
 
@@ -216,8 +217,7 @@ export class Directory {
      * @internal
      */
     *getDescendantDirectoriesIterator(): IterableIterator<Directory> {
-        this.throwIfDeletedOrRemoved();
-        for (const directory of this._directories) {
+        for (const directory of this.getDirectories()) {
             yield directory;
             yield* directory.getDescendantDirectoriesIterator();
         }
@@ -458,15 +458,16 @@ export class Directory {
      * Note: Does not delete the directory from the file system.
      */
     remove() {
-        for (const sourceFile of this._sourceFiles)
+        if (this._wasRemoved())
+            return;
+
+        for (const sourceFile of this.getSourceFiles())
             sourceFile.forget();
 
-        for (const dir of this._directories)
+        for (const dir of this.getDirectories())
             dir.remove();
 
         this.global.compilerFactory.removeDirectoryFromCache(this);
-        if (this._parent != null)
-            this._parent._removeDirectory(this);
         this._global = undefined;
     }
 
@@ -561,51 +562,13 @@ export class Directory {
     }
 
     /** @internal */
-    _addSourceFile(sourceFile: SourceFile) {
-        const baseName = sourceFile.getBaseName().toUpperCase();
-        ArrayUtils.binaryInsert(this._sourceFiles, sourceFile, item => item.getBaseName().toUpperCase() > baseName);
-    }
-
-    /** @internal */
-    _removeSourceFile(filePath: string) {
-        for (let i = 0; i < this._sourceFiles.length; i++) {
-            if (this._sourceFiles[i].getFilePath() === filePath) {
-                this._sourceFiles.splice(i, 1);
-                break;
-            }
-        }
-    }
-
-    /** @internal */
-    _addDirectory(dir: Directory) {
-        const baseName = dir.getBaseName().toUpperCase();
-        ArrayUtils.binaryInsert(this._directories, dir, item => item.getBaseName().toUpperCase() > baseName);
-        dir._parent = this;
-    }
-
-    /** @internal */
     _wasRemoved() {
         return this._global == null;
     }
 
     /** @internal */
     _hasLoadedParent() {
-        return this._parent != null;
-    }
-
-    /** @internal */
-    private _fillParentIfNotRoot() {
-        if (this._parent != null || FileUtils.isRootDirPath(this.getPath()))
-            return;
-
-        this.addExistingDirectoryIfExists(FileUtils.getDirPath(this.getPath()));
-    }
-
-    /** @internal */
-    private _removeDirectory(dir: Directory) {
-        const index = this._directories.indexOf(dir);
-        if (index >= 0)
-            this._directories.splice(index, 1);
+        return this.global.compilerFactory.containsDirectoryAtPath(FileUtils.getDirPath(this.getPath()));
     }
 
     private throwIfDeletedOrRemoved() {

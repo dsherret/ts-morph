@@ -762,6 +762,7 @@ describe(nameof(Directory), () => {
             expect(childDir._wasRemoved()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
+            expect(() => directory.remove()).to.not.throw();
         });
     });
 

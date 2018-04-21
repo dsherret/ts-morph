@@ -62,6 +62,22 @@ export class CompilerFactory {
     }
 
     /**
+     * Gets the child directories of a directory.
+     * @param dirPath - Directory path.
+     */
+    getChildDirectoriesOfDirectory(dirPath: string) {
+        return this.directoryCache.getChildDirectoriesOfDirectory(dirPath);
+    }
+
+    /**
+     * Gets the child source files of a directory.
+     * @param dirPath - Directory path.
+     */
+    getChildSourceFilesOfDirectory(dirPath: string) {
+        return this.directoryCache.getChildSourceFilesOfDirectory(dirPath);
+    }
+
+    /**
      * Occurs when a source file is added to the cache.
      * @param subscription - Subscripton.
      * @param subscribe - Whether to subscribe or unsubscribe (default to true).
@@ -283,11 +299,7 @@ export class CompilerFactory {
     private addSourceFileToCache(sourceFile: SourceFile) {
         this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
         this.global.fileSystemWrapper.dequeueDelete(sourceFile.getFilePath());
-
-        // add to list of directories
-        const dirPath = sourceFile.getDirectoryPath();
-        this.directoryCache.createOrAddIfNotExists(dirPath);
-        this.directoryCache.get(dirPath)!._addSourceFile(sourceFile);
+        this.directoryCache.addSourceFile(sourceFile);
     }
 
     /**
@@ -493,7 +505,7 @@ export class CompilerFactory {
 
         if (compilerNode.kind === SyntaxKind.SourceFile) {
             const sourceFile = compilerNode as ts.SourceFile;
-            this.directoryCache.get(FileUtils.getDirPath(sourceFile.fileName))!._removeSourceFile(sourceFile.fileName);
+            this.directoryCache.removeSourceFile(sourceFile.fileName);
             const tsSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
             if (tsSourceFile != null)
