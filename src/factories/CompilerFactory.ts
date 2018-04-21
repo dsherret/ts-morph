@@ -338,7 +338,7 @@ export class CompilerFactory {
      * Gets a directory.
      * @param dirPath - Directory path.
      */
-    getDirectory(dirPath: string) {
+    getDirectoryFromCache(dirPath: string) {
         return this.directoryCache.get(dirPath);
     }
 
@@ -514,11 +514,19 @@ export class CompilerFactory {
     }
 
     /**
-     * Removes the directory from the cache.
-     * @param directory - Directory.
+     * Adds the specified directory to the cache.
+     * @param directory - Directory
      */
-    removeDirectoryFromCache(directory: Directory) {
-        this.directoryCache.remove(directory.getPath());
+    addDirectoryToCache(directory: Directory) {
+        this.directoryCache.addDirectory(directory);
+    }
+
+    /**
+     * Removes the directory from the cache.
+     * @param dirPath - Directory path.
+     */
+    removeDirectoryFromCache(dirPath: string) {
+        this.directoryCache.remove(dirPath);
     }
 
     /**

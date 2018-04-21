@@ -29,6 +29,12 @@ export interface SourceFileMoveOptions {
     overwrite?: boolean;
 }
 
+/** @internal */
+export interface SourceFileReferences {
+    literalReferences: [StringLiteral, SourceFile][];
+    referencingLiterals: StringLiteral[];
+}
+
 // todo: not sure why I need to explicitly type this in order to get VS to not complain... (TS 2.4.1)
 export const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node = TextInsertableNode(StatementedNode(Node));
 export class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -116,7 +122,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the directory that the source file is contained in.
      */
     getDirectory(): Directory {
-        return this.global.compilerFactory.getDirectory(this.getDirectoryPath())!;
+        return this.global.compilerFactory.getDirectoryFromCache(this.getDirectoryPath())!;
     }
 
     /**
@@ -217,16 +223,31 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param options - Options for moving.
      */
     move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
+        const oldDirPath = this.getDirectoryPath();
+        const sourceFileReferences = this._getReferencesInternal();
+
+        if (!this._moveInternal(filePath, options))
+            return this;
+
+        this._updateReferencesInternal(sourceFileReferences, oldDirPath);
+
+        // ignore any modifications in other source files
+        this.global.lazyReferenceCoordinator.clearDirtySourceFiles();
+        // need to add the current source file as being dirty because it was removed and added to the cache in the move
+        this.global.lazyReferenceCoordinator.addDirtySourceFile(this);
+
+        return this;
+    }
+
+    /** @internal */
+    _moveInternal(filePath: string, options: SourceFileMoveOptions = {}) {
         const {overwrite = false} = options;
         const oldFilePath = this.getFilePath();
         const oldDirPath = this.getDirectoryPath();
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, oldDirPath);
 
         if (filePath === oldFilePath)
-            return this;
-
-        const literalReferences = ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
-        const referencingLiterals = ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles());
+            return false;
 
         if (overwrite) {
             // remove the past file if it exists
@@ -243,22 +264,26 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
         this.global.fileSystemWrapper.queueDelete(oldFilePath);
 
-        updateReferences(this);
+        return true;
+    }
 
-        return this;
+    /** @internal */
+    _getReferencesInternal(): SourceFileReferences {
+        return {
+            literalReferences: ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries()),
+            referencingLiterals: ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles())
+        };
+    }
 
-        function updateReferences(currentSourceFile: SourceFile) {
-            // update the literals in this file if the directory hasn't changed
-            if (oldDirPath !== currentSourceFile.getDirectoryPath())
-                updateStringLiteralReferences(literalReferences);
-            // update the string literals in other files
-            updateStringLiteralReferences(referencingLiterals.map(node => ([node, currentSourceFile]) as [StringLiteral, SourceFile]));
+    /** @internal */
+    _updateReferencesInternal(sourceFileReferences: SourceFileReferences, oldDirPath: string) {
+        const { literalReferences, referencingLiterals } = sourceFileReferences;
 
-            // ignore any modifications in other source files
-            currentSourceFile.global.lazyReferenceCoordinator.clearDirtySourceFiles();
-            // need to add the current source file as being dirty because it was removed and added to the cache in the move
-            currentSourceFile.global.lazyReferenceCoordinator.addDirtySourceFile(currentSourceFile);
-        }
+        // update the literals in this file if the directory has changed
+        if (oldDirPath !== this.getDirectoryPath())
+            updateStringLiteralReferences(literalReferences);
+        // update the string literals in other files
+        updateStringLiteralReferences(referencingLiterals.map(node => ([node, this]) as [StringLiteral, SourceFile]));
     }
 
     /**

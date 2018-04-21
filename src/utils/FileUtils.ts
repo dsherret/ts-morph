@@ -84,13 +84,16 @@ export class FileUtils {
      * @param relativeBase - Base path to be relative from.
      */
     static getStandardizedAbsolutePath(fileSystem: FileSystemHost, fileOrDirPath: string, relativeBase?: string) {
-        const isAbsolutePath = path.isAbsolute(fileOrDirPath);
-        if (relativeBase != null && !isAbsolutePath)
-            fileOrDirPath = path.join(relativeBase, fileOrDirPath);
-        else if (!isAbsolutePath)
-            fileOrDirPath = path.join(fileSystem.getCurrentDirectory(), fileOrDirPath);
+        return FileUtils.standardizeSlashes(path.normalize(getAbsolutePath()));
 
-        return FileUtils.standardizeSlashes(path.normalize(fileOrDirPath));
+        function getAbsolutePath() {
+            const isAbsolutePath = path.isAbsolute(fileOrDirPath);
+            if (isAbsolutePath)
+                return fileOrDirPath;
+            if (!StringUtils.startsWith(fileOrDirPath, "./") && relativeBase != null)
+                return path.join(relativeBase, fileOrDirPath);
+            return path.join(fileSystem.getCurrentDirectory(), fileOrDirPath);
+        }
     }
 
     /**

@@ -148,14 +148,27 @@ And of course, specify to only emit declaration files:
 directory.emit({ emitOnlyDtsFiles: true });
 ```
 
+### Moving
+
+Move the directory to a new directory:
+
+```ts
+// ex. moves C:\MyProject\dir to C:\MyProject\newDir if working directory is C:\MyProject
+directory.move("./newDir");
+// ex. moves C:\MyProject\newDir to C:\MyProject\otherDir using a relative path
+directory.copy("../otherDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
+// or specify an absolute path
+directory.copy("C:\\finalDir");
+```
+
 ### Copying
 
 Copy the directory to a new directory:
 
-```
+```ts
 // ex. copies C:\MyProject\dir to C:\MyProject\newDir
 directory.copy("../newDir");
-directory.copy("../newDir", { overwrite: true }); // don't throw if it will overwrite a file
+directory.copy("../nextDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
 directory.copy("C:\\test"); // or absolute
 ```
 

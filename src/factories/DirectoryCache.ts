@@ -120,6 +120,12 @@ export class DirectoryCache {
 
     private createDirectory(path: string) {
         const newDirectory = new Directory(this.global, path);
+        this.addDirectory(newDirectory);
+        return newDirectory;
+    }
+
+    addDirectory(directory: Directory) {
+        const path = directory.getPath();
         const parentDirPath = FileUtils.getDirPath(path);
         const isRootDir = parentDirPath === path;
 
@@ -133,20 +139,18 @@ export class DirectoryCache {
         }
 
         if (!isRootDir)
-            this.addToDirectoriesByDirPath(newDirectory);
+            this.addToDirectoriesByDirPath(directory);
 
         if (!this.has(parentDirPath))
-            this.orphanDirs.set(path, newDirectory);
+            this.orphanDirs.set(path, directory);
 
-        this.directoriesByPath.set(path, newDirectory);
+        this.directoriesByPath.set(path, directory);
         this.global.fileSystemWrapper.dequeueDelete(path);
 
         for (const orphanDir of this.orphanDirs.getValues()) {
-            if (newDirectory.isAncestorOf(orphanDir))
+            if (directory.isAncestorOf(orphanDir))
                 this.fillParentsOfDirPath(orphanDir.getPath());
         }
-
-        return newDirectory;
     }
 
     private addToDirectoriesByDirPath(directory: Directory) {

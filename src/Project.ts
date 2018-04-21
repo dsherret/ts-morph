@@ -151,7 +151,7 @@ export class Project {
      */
     getDirectory(dirPath: string): Directory | undefined {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.compilerFactory.getDirectory(dirPath);
+        return this.global.compilerFactory.getDirectoryFromCache(dirPath);
     }
 
     /**
