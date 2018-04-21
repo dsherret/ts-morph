@@ -672,8 +672,8 @@ describe(nameof(Directory), () => {
 
             directory.delete();
             expect(fileSystem.getDeleteLog()).to.deep.equal([]);
-            expect(directory._wasRemoved()).to.be.true;
-            expect(childDir._wasRemoved()).to.be.true;
+            expect(directory._wasForgotten()).to.be.true;
+            expect(childDir._wasForgotten()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
             project.saveSync();
@@ -722,8 +722,8 @@ describe(nameof(Directory), () => {
             const otherSourceFile = project.createSourceFile("otherFile.ts");
 
             await directory.deleteImmediately();
-            expect(directory._wasRemoved()).to.be.true;
-            expect(childDir._wasRemoved()).to.be.true;
+            expect(directory._wasForgotten()).to.be.true;
+            expect(childDir._wasForgotten()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
             expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
@@ -740,29 +740,29 @@ describe(nameof(Directory), () => {
             const otherSourceFile = project.createSourceFile("otherFile.ts");
 
             directory.deleteImmediatelySync();
-            expect(directory._wasRemoved()).to.be.true;
-            expect(childDir._wasRemoved()).to.be.true;
+            expect(directory._wasForgotten()).to.be.true;
+            expect(childDir._wasForgotten()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
             expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
         });
     });
 
-    describe(nameof<Directory>(d => d.remove), () => {
-        it("should remove the file and all its descendants", () => {
+    describe(nameof<Directory>(d => d.forget), () => {
+        it("should forget the directory and all its descendants", () => {
             const project = getProject();
             const directory = project.createDirectory("dir");
             const childDir = directory.createDirectory("childDir");
             const sourceFile = directory.createSourceFile("file.ts");
             const otherSourceFile = project.createSourceFile("otherFile.ts");
 
-            directory.remove();
-            expect(directory._wasRemoved()).to.be.true;
+            directory.forget();
+            expect(directory._wasForgotten()).to.be.true;
             expect(() => directory.getPath()).to.throw();
-            expect(childDir._wasRemoved()).to.be.true;
+            expect(childDir._wasForgotten()).to.be.true;
             expect(sourceFile.wasForgotten()).to.be.true;
             expect(otherSourceFile.wasForgotten()).to.be.false;
-            expect(() => directory.remove()).to.not.throw();
+            expect(() => directory.forget()).to.not.throw();
         });
     });
 

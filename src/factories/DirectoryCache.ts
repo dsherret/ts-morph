@@ -135,7 +135,7 @@ export class DirectoryCache {
         if (!isRootDir)
             this.addToDirectoriesByDirPath(newDirectory);
 
-        if (!newDirectory._hasLoadedParent())
+        if (!this.has(parentDirPath))
             this.orphanDirs.set(path, newDirectory);
 
         this.directoriesByPath.set(path, newDirectory);

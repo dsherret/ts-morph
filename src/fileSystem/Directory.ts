@@ -429,7 +429,7 @@ export class Directory {
         for (const dir of this.getDirectories())
             dir.delete();
         fileSystemWrapper.queueDelete(path);
-        this.remove();
+        this.forget();
     }
 
     /**
@@ -438,7 +438,7 @@ export class Directory {
     async deleteImmediately() {
         const {fileSystemWrapper} = this.global;
         const path = this.getPath();
-        this.remove();
+        this.forget();
         await fileSystemWrapper.deleteImmediately(path);
     }
 
@@ -453,22 +453,32 @@ export class Directory {
     }
 
     /**
-     * Removes the directory and all its descendants from the AST.
+     * Forgets the directory and all its descendants from the Project.
      *
      * Note: Does not delete the directory from the file system.
      */
-    remove() {
-        if (this._wasRemoved())
+    forget() {
+        if (this._wasForgotten())
             return;
 
         for (const sourceFile of this.getSourceFiles())
             sourceFile.forget();
 
         for (const dir of this.getDirectories())
-            dir.remove();
+            dir.forget();
 
         this.global.compilerFactory.removeDirectoryFromCache(this);
         this._global = undefined;
+    }
+
+    /**
+     * Removes the directory and all its descendants from the AST.
+     *
+     * Note: Does not delete the directory from the file system.
+     * @deprecated - Use `.forget()`.
+     */
+    remove() {
+        this.forget();
     }
 
     /**
@@ -562,7 +572,7 @@ export class Directory {
     }
 
     /** @internal */
-    _wasRemoved() {
+    _wasForgotten() {
         return this._global == null;
     }
 
@@ -572,7 +582,7 @@ export class Directory {
     }
 
     private throwIfDeletedOrRemoved() {
-        if (this._wasRemoved())
+        if (this._wasForgotten())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted or removed.");
     }
 

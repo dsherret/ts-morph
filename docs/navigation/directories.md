@@ -185,12 +185,12 @@ directory.deleteImmediatelySync();
 
 This isn't recommended though because it could possibly leave the file system in a halfway state if your code errors before it's done.
 
-### Removing
+### Forgetting
 
-Removes from main project object without deleting it:
+Forgets the directory from main project object without deleting it:
 
 ```ts
-directory.remove();
+directory.forget();
 ```
 
 Note that after doing this, the directory object and all its descendant source files and directories will not be available. If you want to use them again,
