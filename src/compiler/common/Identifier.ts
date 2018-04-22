@@ -22,14 +22,6 @@ export class Identifier extends ReferenceFindableNode(PrimaryExpression)<ts.Iden
     }
 
     /**
-     * Find the nodes that reference the definition(s) of the identifier.
-     * @deprecated Use getReferencingNodes().
-     */
-    getDefinitionReferencingNodes(): Node[] {
-        return this.getReferencingNodes();
-    }
-
-    /**
      * Gets the definition nodes of the identifier.
      * @remarks This is similar to "go to definition" and `.getDefinitions()`, but only returns the nodes.
      */
