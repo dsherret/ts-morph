@@ -148,18 +148,27 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param options - Options for copying.
      */
     copy(filePath: string, options: SourceFileCopyOptions = {}): SourceFile {
-        const {overwrite = false} = options;
+        const result = this._copyInternal(filePath, options);
+        if (result === false)
+            return this;
+
+        const copiedSourceFile = result;
+
+        if (copiedSourceFile.getDirectoryPath() !== this.getDirectoryPath())
+            copiedSourceFile._updateReferencesForCopyInternal(this._getReferencesForCopyInternal());
+
+        return copiedSourceFile;
+    }
+
+    /** @internal */
+    _copyInternal(filePath: string, options: SourceFileCopyOptions = {}) {
+        const { overwrite = false } = options;
         filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
         if (filePath === this.getFilePath())
-            return this;
+            return false;
 
-        const copiedSourceFile = getCopiedSourceFile(this);
-
-        if (copiedSourceFile.getDirectoryPath() !== this.getDirectoryPath())
-            updateReferences(this);
-
-        return copiedSourceFile;
+        return getCopiedSourceFile(this);
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
@@ -174,19 +183,20 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
                     throw err;
             }
         }
+    }
 
-        function updateReferences(currentFile: SourceFile) {
-            const literalReferences = ArrayUtils.from(currentFile._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
+    /** @internal */
+    _getReferencesForCopyInternal(): [StringLiteral, SourceFile][] {
+        return ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries());
+    }
 
-            // update the nodes in this list to point to the nodes in the copied source file
-            for (const reference of literalReferences)
-                reference[0] = copiedSourceFile.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth())! as StringLiteral;
-            // update the string literals in the copied file
-            updateStringLiteralReferences(literalReferences);
-
-            // the current files references won't have changed after the modifications
-            currentFile.global.lazyReferenceCoordinator.clearDityForSourceFile(currentFile);
-        }
+    /** @internal */
+    _updateReferencesForCopyInternal(literalReferences: [StringLiteral, SourceFile][]) {
+        // update the nodes in this list to point to the nodes in this copied source file
+        for (const reference of literalReferences)
+            reference[0] = this.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth())! as StringLiteral;
+        // update the string literals in the copied file
+        updateStringLiteralReferences(literalReferences);
     }
 
     /**
@@ -224,12 +234,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
         const oldDirPath = this.getDirectoryPath();
-        const sourceFileReferences = this._getReferencesInternal();
+        const sourceFileReferences = this._getReferencesForMoveInternal();
 
         if (!this._moveInternal(filePath, options))
             return this;
 
-        this._updateReferencesInternal(sourceFileReferences, oldDirPath);
+        this._updateReferencesForMoveInternal(sourceFileReferences, oldDirPath);
 
         // ignore any modifications in other source files
         this.global.lazyReferenceCoordinator.clearDirtySourceFiles();
@@ -268,7 +278,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _getReferencesInternal(): SourceFileReferences {
+    _getReferencesForMoveInternal(): SourceFileReferences {
         return {
             literalReferences: ArrayUtils.from(this._referenceContainer.getLiteralsReferencingOtherSourceFilesEntries()),
             referencingLiterals: ArrayUtils.from(this._referenceContainer.getReferencingLiteralsInOtherSourceFiles())
@@ -276,7 +286,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _updateReferencesInternal(sourceFileReferences: SourceFileReferences, oldDirPath: string) {
+    _updateReferencesForMoveInternal(sourceFileReferences: SourceFileReferences, oldDirPath: string) {
         const { literalReferences, referencingLiterals } = sourceFileReferences;
 
         // update the literals in this file if the directory has changed

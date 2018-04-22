@@ -34,7 +34,7 @@ export class Directory {
 
     /** @internal */
     get global() {
-        this.throwIfDeletedOrRemoved();
+        this._throwIfDeletedOrRemoved();
         return this._global!;
     }
 
@@ -66,7 +66,7 @@ export class Directory {
      * Gets the path to the directory.
      */
     getPath() {
-        this.throwIfDeletedOrRemoved();
+        this._throwIfDeletedOrRemoved();
         return this._path;
     }
 
@@ -405,28 +405,50 @@ export class Directory {
      * @returns The directory the copy was made to.
      */
     copy(relativeOrAbsolutePath: string, options?: SourceFileCopyOptions) {
+        const originalPath = this.getPath();
+        const fileSystem = this.global.fileSystemWrapper;
         const newPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
-        const directory = this.global.compilerFactory.createOrAddDirectoryIfNotExists(newPath);
 
-        for (const sourceFile of this.getSourceFiles())
-            sourceFile.copy(FileUtils.pathJoin(newPath, sourceFile.getBaseName()), options);
-        for (const childDir of this.getDirectories())
-            childDir.copy(FileUtils.pathJoin(newPath, childDir.getBaseName()), options);
+        if (originalPath === newPath)
+            return this;
 
-        return directory;
+        const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
+            directory,
+            oldPath: directory.getPath(),
+            newDirPath: directory === this ? newPath : fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(directory), newPath)
+        }));
+        const copyingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
+            sourceFile,
+            newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
+            references: this._getReferencesForCopy(sourceFile)
+        }));
+
+        // copy directories
+        for (const { directory, oldPath, newDirPath } of copyingDirectories) {
+            this.global.compilerFactory.createOrAddDirectoryIfNotExists(newDirPath);
+        }
+
+        // copy source files
+        for (const { sourceFile, newFilePath } of copyingSourceFiles)
+            sourceFile._copyInternal(newFilePath, options);
+
+        // update the references
+        for (const { references, newFilePath } of copyingSourceFiles)
+            this.getSourceFileOrThrow(newFilePath)._updateReferencesForCopyInternal(references);
+
+        return this.global.compilerFactory.getDirectoryFromCache(newPath)!;
     }
 
     /**
      * Moves the directory to a new path.
-     * @param newPath - Directory path as an absolute or relative path.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
      * @param options - Options for moving the directory.
      */
-    move(newPath: string, options?: SourceFileMoveOptions) {
+    move(relativeOrAbsolutePath: string, options?: SourceFileMoveOptions) {
         const fileSystem = this.global.fileSystemWrapper;
         const compilerFactory = this.global.compilerFactory;
         const originalPath = this.getPath();
-
-        newPath = fileSystem.getStandardizedAbsolutePath(newPath, originalPath);
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
         if (originalPath === newPath)
             return this;
@@ -439,7 +461,7 @@ export class Directory {
         const movingSourceFiles = this.getDescendantSourceFiles().map(sourceFile => ({
             sourceFile,
             newFilePath: fileSystem.getStandardizedAbsolutePath(this.getRelativePathTo(sourceFile), newPath),
-            references: this._getReferencesForMoveOrCopy(sourceFile)
+            references: this._getReferencesForMove(sourceFile)
         }));
 
         // update directories
@@ -460,7 +482,7 @@ export class Directory {
 
         // update the references
         for (const { sourceFile, references } of movingSourceFiles)
-            sourceFile._updateReferencesInternal(references, originalPath);
+            sourceFile._updateReferencesForMoveInternal(references, originalPath);
 
         return this;
     }
@@ -640,13 +662,21 @@ export class Directory {
         return this.global.compilerFactory.containsDirectoryAtPath(FileUtils.getDirPath(this.getPath()));
     }
 
-    private throwIfDeletedOrRemoved() {
+    /** @internal */
+    private _throwIfDeletedOrRemoved() {
         if (this.wasForgotten())
             throw new errors.InvalidOperationError("Cannot use a directory that was deleted, removed, or overwritten.");
     }
 
-    private _getReferencesForMoveOrCopy(sourceFile: SourceFile) {
-        const { literalReferences, referencingLiterals } = sourceFile._getReferencesInternal();
+    /** @internal */
+    private _getReferencesForCopy(sourceFile: SourceFile) {
+        const literalReferences = sourceFile._getReferencesForCopyInternal();
+        return literalReferences.filter(r => !this.isAncestorOf(r[1]));
+    }
+
+    /** @internal */
+    private _getReferencesForMove(sourceFile: SourceFile) {
+        const { literalReferences, referencingLiterals } = sourceFile._getReferencesForMoveInternal();
         return {
             literalReferences: literalReferences.filter(r => !this.isAncestorOf(r[1])),
             referencingLiterals: referencingLiterals.filter(l => !this.isAncestorOf(l.sourceFile))

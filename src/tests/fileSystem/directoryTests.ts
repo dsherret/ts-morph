@@ -10,7 +10,12 @@ import { getFileSystemHostWithFiles, CustomFileSystemProps, testDirectoryTree } 
 
 describe(nameof(Directory), () => {
     function getProject(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {
-        return new Project(undefined, getFileSystemHostWithFiles(initialFiles, initialDirectories));
+        const project = new Project({ useVirtualFileSystem: true });
+        for (const dir of initialDirectories)
+            project.createDirectory(dir);
+        for (const file of initialFiles)
+            project.createSourceFile(file.filePath, file.text);
+        return project;
     }
 
     describe(nameof<Directory>(d => d.getPath), () => {
@@ -32,7 +37,7 @@ describe(nameof(Directory), () => {
 
     describe("ancestor/descendant tests", () => {
         const project = getProject();
-        const root = project.createDirectory("");
+        const root = project.addExistingDirectory("");
         const child = project.createDirectory("child");
         const childChild = project.createDirectory("child/child");
         const otherChild = project.createDirectory("otherChild");
@@ -99,7 +104,7 @@ describe(nameof(Directory), () => {
 
         it("should get the files in the alphabetical order", () => {
             const project = getProject();
-            const directory = project.createDirectory("");
+            const directory = project.addExistingDirectory("");
             directory.createSourceFile("D.ts");
             directory.createSourceFile("b.ts");
             directory.createSourceFile("a.ts");
@@ -109,7 +114,7 @@ describe(nameof(Directory), () => {
 
         it("should get the directories in alphabetical order", () => {
             const project = getProject();
-            const directory = project.createDirectory("");
+            const directory = project.addExistingDirectory("");
             directory.createDirectory("D");
             directory.createDirectory("b");
             directory.createDirectory("a");
@@ -238,7 +243,7 @@ describe(nameof(Directory), () => {
     describe(nameof<Directory>(d => d.getDescendantDirectories), () => {
         it("should get all the descendant directories", () => {
             const project = getProject();
-            const rootDir = project.createDirectory("");
+            const rootDir = project.addExistingDirectory("");
             const directories = [
                 rootDir.createDirectory("someDir"),
                 rootDir.createDirectory("someDir/inSomeFile"),
@@ -284,13 +289,13 @@ describe(nameof(Directory), () => {
         });
 
         it("should throw an exception if creating a source file at an existing path on the disk", () => {
-            const project = getProject([{ filePath: "/file.ts", text: "" }], ["/"]);
+            const project = getProject([{ filePath: "/file.ts", text: "" }]);
             const directory = project.addExistingDirectory("/");
             expect(() => directory.createSourceFile("file.ts", "")).to.throw(errors.InvalidOperationError);
         });
 
-        it("should note throw an exception if creating a source file at an existing path on the disk and providing the overwrite option", () => {
-            const project = getProject([{ filePath: "/file.ts", text: "" }], ["/"]);
+        it("should not throw an exception if creating a source file at an existing path on the disk and providing the overwrite option", () => {
+            const project = getProject([{ filePath: "/file.ts", text: "" }]);
             const directory = project.addExistingDirectory("/");
             const fileText = "class Identifier {}";
             const file = directory.createSourceFile("file.ts", fileText, { overwrite: true });
@@ -298,7 +303,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should create a source file with the specified script target", () => {
-            const project = getProject([], ["/"]);
+            const project = getProject();
             const directory = project.addExistingDirectory("/");
             expect(directory.createSourceFile("file.ts", "", { languageVersion: ScriptTarget.ES5 }).getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
@@ -361,7 +366,7 @@ describe(nameof(Directory), () => {
     });
 
     describe(nameof<Directory>(d => d.createDirectory), () => {
-        const project = getProject([], ["", "childDir"]);
+        const project = getProject([], ["childDir"]);
         const directory = project.createDirectory("some/path");
         directory.createDirectory("child");
         directory.createDirectory("../../dir/other/deep/path");
@@ -393,7 +398,7 @@ describe(nameof(Directory), () => {
         });
 
         it("should throw when a directory already exists on the file system at the specified path", () => {
-            expect(() => project.addExistingDirectory("").createDirectory("childDir")).to.throw(errors.InvalidOperationError);
+            expect(() => project.addExistingDirectory("/").createDirectory("childDir")).to.throw(errors.InvalidOperationError);
         });
     });
 
@@ -658,6 +663,115 @@ describe(nameof(Directory), () => {
             dir.createSourceFile("file.ts");
             dir.copy("../newDir");
             expect(() => dir.copy("../newDir", { overwrite: true })).to.not.throw();
+        });
+
+        it("should correctly update the references when copying", () => {
+            const project = getProject();
+            const dirFileText = "export default class Identifier {}\nexport * from './subDir/file2';";
+            const dirFile = project.createSourceFile("dir/file.ts", dirFileText);
+            const dirSubDirFileText = "import Identifier from '../file';\nimport { File2 } from './file2';";
+            const dirSubDirFile = project.createSourceFile("dir/subDir/file.ts", dirSubDirFileText);
+            const dirSubDirFile2 = project.createSourceFile("dir/subDir/file2.ts", "export class File2 {}");
+            const subDir = project.getDirectoryOrThrow("dir/subDir");
+
+            const newDir = subDir.copy("../child/grand");
+
+            // should not have changed the existing files
+            expect(dirFile.getFullText()).to.equal(dirFileText);
+            expect(dirSubDirFile.getFullText()).to.equal(dirSubDirFileText);
+
+            // should have updated the reference inside
+            expect(newDir.getSourceFileOrThrow("file.ts").getFullText()).to.equal("import Identifier from '../../file';\nimport { File2 } from './file2';");
+        });
+    });
+
+    describe(nameof<Directory>(dir => dir.move), () => {
+        it("should move all the files and sub directories to a new directory", () => {
+            const project = getProject();
+            const fileSystem = project.getFileSystem();
+            const dirFile = project.createSourceFile("dir/file.ts", "export default class Identifier {}\nexport * from './subDir/file2';");
+            const dirSubDirFile = project.createSourceFile("dir/subDir/file.ts", "import Identifier from '../file';\nimport { File2 } from './file2';");
+            const dirSubDirFile2 = project.createSourceFile("dir/subDir/file2.ts", "export class File2 {}");
+            const subDir = project.getDirectoryOrThrow("dir/subDir");
+
+            project.saveSync();
+            subDir.move("../child/grand");
+
+            expect(dirFile.getFilePath()).to.equal("/dir/file.ts");
+            expect(dirSubDirFile.getFilePath()).to.equal("/dir/child/grand/file.ts");
+            expect(dirSubDirFile2.getFilePath()).to.equal("/dir/child/grand/file2.ts");
+
+            testDirectoryTree(project.getDirectoryOrThrow("dir"), {
+                directory: project.getDirectoryOrThrow("dir"),
+                sourceFiles: [dirFile],
+                children: [{
+                    directory: project.getDirectoryOrThrow("dir/child"),
+                    children: [{
+                        directory: subDir,
+                        sourceFiles: [dirSubDirFile, dirSubDirFile2]
+                    }]
+                }]
+            });
+
+            expect(dirFile.getFullText()).to.equal("export default class Identifier {}\nexport * from './child/grand/file2';");
+            expect(dirSubDirFile.getFullText()).to.equal("import Identifier from '../../file';\nimport { File2 } from './file2';");
+            testStructure(true);
+            project.saveSync();
+            testStructure(false);
+
+            function testStructure(isBeforeSave: boolean) {
+                expect(fileSystem.directoryExistsSync("/dir/subDir")).to.equal(isBeforeSave, "/dir/subDir");
+                expect(fileSystem.fileExistsSync("/dir/subDir/file.ts")).to.equal(isBeforeSave, "/dir/subDir/file.ts");
+                expect(fileSystem.fileExistsSync("/dir/subDir/file2.ts")).to.equal(isBeforeSave, "/dir/subDir/file2.ts");
+                expect(fileSystem.directoryExistsSync("/dir/child")).to.equal(!isBeforeSave, "/dir/child");
+                expect(fileSystem.directoryExistsSync("/dir/child/grand")).to.equal(!isBeforeSave, "/dir/child/grand");
+                expect(fileSystem.fileExistsSync("/dir/child/grand/file.ts")).to.equal(!isBeforeSave, "/dir/child/grand/file.ts");
+                expect(fileSystem.fileExistsSync("/dir/child/grand/file2.ts")).to.equal(!isBeforeSave, "/dir/child/grand/file2.ts");
+            }
+        });
+
+        it("should merge two directories", () => {
+            const project = getProject();
+            const file1 = project.createSourceFile("dir/file1.ts", "");
+            const file2 = project.createSourceFile("dir2/file2.ts", "");
+            const originalDir = file1.getDirectory();
+            const dir = file2.getDirectory().move("./dir");
+
+            testDirectoryTree(dir, {
+                directory: dir,
+                sourceFiles: [file1, file2]
+            });
+
+            expect(originalDir.wasForgotten()).to.be.true;
+            expect(file1.getDirectory()).to.equal(file2.getDirectory());
+        });
+
+        it("should throw when merging a directory and the same file exists inside", () => {
+            const project = getProject();
+            project.createSourceFile("dir/file.ts", "");
+            project.createSourceFile("dir2/file.ts", "");
+            expect(() => project.getDirectoryOrThrow("dir2").move("./dir")).to.throw(errors.InvalidOperationError);
+        });
+
+        it("should not throw when merging a directory and the same file exists inside and the overwrite option is provided", () => {
+            const project = getProject();
+            const originalFile = project.createSourceFile("dir/file.ts", "");
+            const originalDir = originalFile.getDirectory();
+            const newFile = project.createSourceFile("dir2/file.ts", "");
+            const newDir = newFile.getDirectory();
+            expect(() => newDir.move("./dir", { overwrite: true })).to.not.throw();
+            // unfortunate, but there's no way to update the originalFile and dir reference to the new one in JS
+            expect(originalFile.wasForgotten()).to.be.true;
+            expect(originalDir.wasForgotten()).to.be.true;
+            expect(newFile.wasForgotten()).to.be.false;
+            expect(newDir.wasForgotten()).to.be.false;
+        });
+
+        it("should update the root dirs", () => {
+            const project = getProject();
+            const dirFile = project.createSourceFile("dir/file.ts", "");
+            dirFile.getDirectory().move("./dir2");
+            expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal(["/dir2"]);
         });
     });
 
@@ -1056,96 +1170,6 @@ describe(nameof(Directory), () => {
 
         it("should get the module specifier to the same directory", () => {
             doDirectoryTest("/dir", "/dir", "./index");
-        });
-    });
-
-    describe(nameof<Directory>(dir => dir.move), () => {
-        function setup() {
-            const project = new Project({ useVirtualFileSystem: true });
-            return { project, fileSystem: project.getFileSystem() };
-        }
-
-        it("should move all the files and sub directories to a new directory", () => {
-            const { project, fileSystem } = setup();
-            const dirFile = project.createSourceFile("dir/file.ts", "export default class Identifier {}\nexport * from './subDir/file2';");
-            const dirSubDirFile = project.createSourceFile("dir/subDir/file.ts", "import Identifier from '../file';");
-            const dirSubDirFile2 = project.createSourceFile("dir/subDir/file2.ts", "export class File2 {}");
-            const subDir = project.getDirectoryOrThrow("dir/subDir");
-
-            project.saveSync();
-            subDir.move("../child/grand");
-
-            expect(dirFile.getFilePath()).to.equal("/dir/file.ts");
-            expect(dirSubDirFile.getFilePath()).to.equal("/dir/child/grand/file.ts");
-            expect(dirSubDirFile2.getFilePath()).to.equal("/dir/child/grand/file2.ts");
-
-            testDirectoryTree(project.getDirectoryOrThrow("dir"), {
-                directory: project.getDirectoryOrThrow("dir"),
-                sourceFiles: [dirFile],
-                children: [{
-                    directory: project.getDirectoryOrThrow("dir/child"),
-                    children: [{
-                        directory: subDir,
-                        sourceFiles: [dirSubDirFile, dirSubDirFile2]
-                    }]
-                }]
-            });
-
-            expect(dirFile.getFullText()).to.equal("export default class Identifier {}\nexport * from './child/grand/file2';");
-            expect(dirSubDirFile.getFullText()).to.equal("import Identifier from '../../file';");
-            testStructure(true);
-            project.saveSync();
-            testStructure(false);
-
-            function testStructure(isBeforeSave: boolean) {
-                expect(fileSystem.directoryExistsSync("/dir/subDir")).to.equal(isBeforeSave, "/dir/subDir");
-                expect(fileSystem.fileExistsSync("/dir/subDir/file.ts")).to.equal(isBeforeSave, "/dir/subDir/file.ts");
-                expect(fileSystem.fileExistsSync("/dir/subDir/file2.ts")).to.equal(isBeforeSave, "/dir/subDir/file2.ts");
-                expect(fileSystem.directoryExistsSync("/dir/child")).to.equal(!isBeforeSave, "/dir/child");
-                expect(fileSystem.directoryExistsSync("/dir/child/grand")).to.equal(!isBeforeSave, "/dir/child/grand");
-                expect(fileSystem.fileExistsSync("/dir/child/grand/file.ts")).to.equal(!isBeforeSave, "/dir/child/grand/file.ts");
-                expect(fileSystem.fileExistsSync("/dir/child/grand/file2.ts")).to.equal(!isBeforeSave, "/dir/child/grand/file2.ts");
-            }
-        });
-
-        it("should merge two directories", () => {
-            const { project } = setup();
-            const file1 = project.createSourceFile("dir/file1.ts", "");
-            const file2 = project.createSourceFile("dir2/file2.ts", "");
-            const dir = file2.getDirectory().move("./dir");
-
-            testDirectoryTree(dir, {
-                directory: dir,
-                sourceFiles: [file1, file2]
-            });
-        });
-
-        it("should throw when merging a directory and the same file exists inside", () => {
-            const { project } = setup();
-            project.createSourceFile("dir/file.ts", "");
-            project.createSourceFile("dir2/file.ts", "");
-            expect(() => project.getDirectoryOrThrow("dir2").move("./dir")).to.throw(errors.InvalidOperationError);
-        });
-
-        it("should not throw when merging a directory and the same file exists inside and the overwrite option is provided", () => {
-            const { project } = setup();
-            const originalFile = project.createSourceFile("dir/file.ts", "");
-            const originalDir = originalFile.getDirectory();
-            const newFile = project.createSourceFile("dir2/file.ts", "");
-            const newDir = newFile.getDirectory();
-            expect(() => newDir.move("./dir", { overwrite: true })).to.not.throw();
-            // unfortunate, but there's no way to update the originalFile and dir reference to the new one in JS
-            expect(originalFile.wasForgotten()).to.be.true;
-            expect(originalDir.wasForgotten()).to.be.true;
-            expect(newFile.wasForgotten()).to.be.false;
-            expect(newDir.wasForgotten()).to.be.false;
-        });
-
-        it("should update the root dirs", () => {
-            const { project } = setup();
-            const dirFile = project.createSourceFile("dir/file.ts", "");
-            dirFile.getDirectory().move("./dir2");
-            expect(project.getRootDirectories().map(d => d.getPath())).to.deep.equal(["/dir2"]);
         });
     });
 });
