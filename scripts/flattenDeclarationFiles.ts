@@ -26,10 +26,10 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
     mainFile.addImportDeclaration({
         namedImports: ["ts", "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
             "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings", "ModuleResolutionKind"],
-        moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile)
+        moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(compilerApiFile)
     });
 
-    mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathToSourceFileAsModuleSpecifier(compilerApiFile) });
+    mainFile.addExportDeclaration({ moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(compilerApiFile) });
 
     // update the main.d.ts file
     mainFile.getClassOrThrow("Project").setIsDefaultExport(true);

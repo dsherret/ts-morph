@@ -2709,9 +2709,9 @@ ts-node@^6.0.0:
     source-map-support "^0.5.3"
     yn "^2.0.0"
 
-ts-simple-ast@10.3.1:
-  version "10.3.1"
-  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-10.3.1.tgz#6cfb84a607086a3bd6c1f4d486fdf17d311ab953"
+ts-simple-ast@10.5.0:
+  version "10.5.0"
+  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-10.5.0.tgz#4729db16b911adb6536394d6e63c8a7f978fadee"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
     code-block-writer "6.13.0"
@@ -2720,6 +2720,7 @@ ts-simple-ast@10.3.1:
     is-negated-glob "^1.0.0"
     multimatch "^2.1.0"
     object-assign "^4.1.1"
+    tslib "^1.9.0"
     typescript "2.8.1"
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:

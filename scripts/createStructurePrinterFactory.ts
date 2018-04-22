@@ -15,15 +15,15 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
     // add imports
     sourceFile.addImportDeclaration({
         namespaceImport: "structurePrinters",
-        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/structurePrinters/index.ts"))
+        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/structurePrinters/index.ts"))
     });
     sourceFile.addImportDeclaration({
         namedImports: ["SupportedFormatCodeSettings"],
-        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/options/index.ts"))
+        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/options/index.ts"))
     });
     sourceFile.addImportDeclaration({
         namedImports: ["Memoize"],
-        moduleSpecifier: sourceFile.getRelativePathToSourceFileAsModuleSpecifier(project.getSourceFileOrThrow("src/utils/index.ts"))
+        moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/utils/index.ts"))
     });
 
     sourceFile.addClass({

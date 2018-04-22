@@ -918,15 +918,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
-     * @deprecated Use `getRelativePathTo`.
-     */
-    getRelativePathToSourceFile(sourceFile: SourceFile) {
-        return this.getRelativePathTo(sourceFile);
-    }
-
-    /**
-     * Gets the relative path to another source file.
-     * @param sourceFile - Source file.
      */
     getRelativePathTo(sourceFile: SourceFile): string;
     /**
@@ -936,15 +927,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     getRelativePathTo(directory: Directory): string;
     getRelativePathTo(sourceFileOrDir: SourceFile | Directory) {
         return this.getDirectory().getRelativePathTo(sourceFileOrDir);
-    }
-
-    /**
-     * Gets the relative path to the specified source file as a module specifier.
-     * @param sourceFile - Source file.
-     * @deprecated Use `getRelativePathAsModuleSpecifierTo`.
-     */
-    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile) {
-        return this.getRelativePathAsModuleSpecifierTo(sourceFile);
     }
 
     /**

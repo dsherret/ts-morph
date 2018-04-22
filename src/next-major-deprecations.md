@@ -2,5 +2,4 @@
 
 Remove:
 
-* `getRelativePathToSourceFile` and `getRelativePathToSourceFileAsModuleSpecifier`
 * `Directory.remove`
