@@ -253,7 +253,7 @@ export class Directory {
      */
     createDirectory(dirPath: string) {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
-        return this.global.directoryCoordinator.createDirectory(dirPath);
+        return this.global.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
     }
 
     /**
@@ -425,7 +425,7 @@ export class Directory {
 
         // copy directories
         for (const { directory, oldPath, newDirPath } of copyingDirectories) {
-            this.global.compilerFactory.createOrAddDirectoryIfNotExists(newDirPath);
+            this.global.compilerFactory.createDirectoryOrAddIfExists(newDirPath);
         }
 
         // copy source files

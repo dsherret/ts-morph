@@ -181,17 +181,18 @@ describe(nameof(Project), () => {
             expect(project.getDirectoryOrThrow("someDir")).to.equal(createdDir);
         });
 
-        it("should throw when a directory already exists at the specified path", () => {
+        it("should not throw when a directory already exists at the specified path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
             const project = new Project(undefined, fileSystem);
             const createdDir = project.createDirectory("someDir");
-            expect(() => project.createDirectory("someDir")).to.throw(errors.InvalidOperationError);
+            expect(() => project.createDirectory("someDir")).to.not.throw();
+            expect(project.createDirectory("someDir")).to.equal(createdDir);
         });
 
-        it("should throw when a directory already exists on the file system at the specified path", () => {
+        it("should not throw when a directory already exists on the file system at the specified path", () => {
             const fileSystem = testHelpers.getFileSystemHostWithFiles([], ["childDir"]);
             const project = new Project(undefined, fileSystem);
-            expect(() => project.createDirectory("childDir")).to.throw(errors.InvalidOperationError);
+            expect(() => project.createDirectory("childDir")).to.not.throw();
         });
     });
 

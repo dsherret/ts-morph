@@ -20,7 +20,7 @@ export class DirectoryCoordinator {
 
         if (options.recursive) {
             for (const descendantDirPath of FileUtils.getDescendantDirectories(this.fileSystemWrapper, dirPath))
-                this.compilerFactory.createOrAddDirectoryIfNotExists(descendantDirPath);
+                this.compilerFactory.createDirectoryOrAddIfExists(descendantDirPath);
         }
 
         return directory;
@@ -33,7 +33,7 @@ export class DirectoryCoordinator {
         return directory;
     }
 
-    createDirectory(dirPath: string) {
-        return this.compilerFactory.createDirectory(dirPath);
+    createDirectoryOrAddIfExists(dirPath: string) {
+        return this.compilerFactory.createDirectoryOrAddIfExists(dirPath);
     }
 }

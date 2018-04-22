@@ -311,7 +311,7 @@ export class CompilerFactory {
         let directory = this.directoryCache.get(dirPath);
 
         if (directory == null && this.global.fileSystemWrapper.directoryExistsSync(dirPath))
-            directory = this.directoryCache.createOrAddIfNotExists(dirPath);
+            directory = this.directoryCache.createOrAddIfExists(dirPath);
 
         return directory;
     }
@@ -320,18 +320,8 @@ export class CompilerFactory {
      * Creates or adds a directory if it doesn't exist.
      * @param dirPath - Directory path.
      */
-    createOrAddDirectoryIfNotExists(dirPath: string) {
-        return this.directoryCache.createOrAddIfNotExists(dirPath);
-    }
-
-    /**
-     * Creates a directory.
-     * @param dirPath - Directory path.
-     */
-    createDirectory(dirPath: string) {
-        if (this.containsDirectoryAtPath(dirPath) || this.global.fileSystemWrapper.directoryExistsSync(dirPath))
-            throw new errors.InvalidOperationError(`A directory already exists at the provided path: ${dirPath}`);
-        return this.directoryCache.createOrAddIfNotExists(dirPath);
+    createDirectoryOrAddIfExists(dirPath: string) {
+        return this.directoryCache.createOrAddIfExists(dirPath);
     }
 
     /**

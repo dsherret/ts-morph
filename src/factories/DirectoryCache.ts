@@ -25,7 +25,7 @@ export class DirectoryCache {
         if (!this.directoriesByPath.has(dirPath)) {
             for (const orphanDir of this.orphanDirs.getValues()) {
                 if (FileUtils.pathStartsWith(orphanDir.getPath(), dirPath))
-                    return this.createOrAddIfNotExists(dirPath);
+                    return this.createOrAddIfExists(dirPath);
             }
             return undefined;
         }
@@ -88,7 +88,7 @@ export class DirectoryCache {
 
     addSourceFile(sourceFile: SourceFile) {
         const dirPath = sourceFile.getDirectoryPath();
-        this.createOrAddIfNotExists(dirPath);
+        this.createOrAddIfExists(dirPath);
         const sourceFiles = this.sourceFilesByDirPath.getOrCreate(dirPath, () => []);
         const baseName = sourceFile.getBaseName().toUpperCase();
         ArrayUtils.binaryInsert(sourceFiles, sourceFile, item => item.getBaseName().toUpperCase() > baseName);
@@ -110,7 +110,7 @@ export class DirectoryCache {
             this.sourceFilesByDirPath.removeByKey(dirPath);
     }
 
-    createOrAddIfNotExists(dirPath: string): Directory {
+    createOrAddIfExists(dirPath: string): Directory {
         if (this.has(dirPath))
             return this.get(dirPath)!;
 

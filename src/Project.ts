@@ -127,13 +127,11 @@ export class Project {
 
     /**
      * Creates a directory at the specified path.
-     * Note: Will not save the directory to disk until one of its source files is saved.
      * @param dirPath - Path to create the directory at.
-     * @throws - InvalidOperationError if a directory already exists at the provided file path.
      */
     createDirectory(dirPath: string): Directory {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.directoryCoordinator.createDirectory(dirPath);
+        return this.global.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
     }
 
     /**

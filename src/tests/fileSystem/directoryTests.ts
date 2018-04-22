@@ -393,12 +393,12 @@ describe(nameof(Directory), () => {
             });
         });
 
-        it("should throw when a directory already exists at the specified path", () => {
-            expect(() => directory.createDirectory("child")).to.throw(errors.InvalidOperationError);
+        it("should not throw when a directory already exists at the specified path", () => {
+            expect(() => directory.createDirectory("child")).to.not.throw();
         });
 
-        it("should throw when a directory already exists on the file system at the specified path", () => {
-            expect(() => project.addExistingDirectory("/").createDirectory("childDir")).to.throw(errors.InvalidOperationError);
+        it("should not throw when a directory already exists on the file system at the specified path", () => {
+            expect(() => project.addExistingDirectory("/").createDirectory("childDir")).to.not.throw();
         });
     });
 
