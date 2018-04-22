@@ -519,7 +519,7 @@ export class Directory {
     deleteImmediatelySync() {
         const {fileSystemWrapper} = this.global;
         const path = this.getPath();
-        this.remove();
+        this.forget();
         fileSystemWrapper.deleteImmediatelySync(path);
     }
 
@@ -548,16 +548,6 @@ export class Directory {
 
         this.global.compilerFactory.removeDirectoryFromCache(this.getPath());
         this._global = undefined;
-    }
-
-    /**
-     * Removes the directory and all its descendants from the AST.
-     *
-     * Note: Does not delete the directory from the file system.
-     * @deprecated - Use `.forget()`.
-     */
-    remove() {
-        this.forget();
     }
 
     /**
