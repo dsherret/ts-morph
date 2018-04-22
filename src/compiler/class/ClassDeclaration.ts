@@ -900,7 +900,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (nameNode == null)
             return classes;
 
-        for (const node of nameNode.getDefinitionReferencingNodes()) {
+        for (const node of nameNode.getReferencingNodes()) {
             const nodeParent = node.getParentIfKind(SyntaxKind.ExpressionWithTypeArguments);
             if (nodeParent == null)
                 continue;

@@ -13,7 +13,7 @@ export class ExportAssignmentStructurePrinter extends FactoryStructurePrinter<Ex
 
     printText(writer: CodeBlockWriter, structure: ExportAssignmentStructure) {
         writer.write("export");
-        if (structure.isExportEquals == null || structure.isEqualsExport === true || structure.isExportEquals === true)
+        if (structure.isExportEquals !== false)
             writer.write(" = ");
         else
             writer.write(" default ");

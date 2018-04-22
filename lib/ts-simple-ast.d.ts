@@ -277,12 +277,9 @@ export interface FileSystemHost {
 }
 
 export declare class Directory {
-    private readonly _path;
     private _global;
-    private readonly _pathParts;
-    private _parent;
-    private _directories;
-    private _sourceFiles;
+    private _path;
+    private _pathParts;
     /**
      * Checks if this directory is an ancestor of the provided directory.
      * @param possibleDescendant - Directory or source file that's a possible descendant.
@@ -458,9 +455,13 @@ export declare class Directory {
      * @param options - Options.
      * @returns The directory the copy was made to.
      */
-    copy(relativeOrAbsolutePath: string, options?: {
-        overwrite?: boolean;
-    }): Directory;
+    copy(relativeOrAbsolutePath: string, options?: SourceFileCopyOptions): Directory;
+    /**
+     * Moves the directory to a new path.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     */
+    move(relativeOrAbsolutePath: string, options?: SourceFileMoveOptions): this;
     /**
      * Queues a deletion of the directory to the file system.
      *
@@ -476,11 +477,11 @@ export declare class Directory {
      */
     deleteImmediatelySync(): void;
     /**
-     * Removes the directory and all its descendants from the AST.
+     * Forgets the directory and all its descendants from the Project.
      *
      * Note: Does not delete the directory from the file system.
      */
-    remove(): void;
+    forget(): void;
     /**
      * Asynchronously saves the directory and all the unsaved source files to the disk.
      */
@@ -509,7 +510,10 @@ export declare class Directory {
      * @param directory - Directory.
      */
     getRelativePathAsModuleSpecifierTo(directory: Directory): string;
-    private throwIfDeletedOrRemoved();
+    /**
+     * Gets if the directory was forgotten.
+     */
+    wasForgotten(): boolean;
 }
 export declare class DirectoryEmitResult {
     private readonly _emitSkipped;
@@ -3709,11 +3713,6 @@ export declare class Identifier extends Identifier_base<ts.Identifier> {
      */
     rename(newName: string): void;
     /**
-     * Find the nodes that reference the definition(s) of the identifier.
-     * @deprecated Use getReferencingNodes().
-     */
-    getDefinitionReferencingNodes(): Node[];
-    /**
      * Gets the definition nodes of the identifier.
      * @remarks This is similar to "go to definition" and `.getDefinitions()`, but only returns the nodes.
      */
@@ -6191,12 +6190,6 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the relative path to another source file.
      * @param sourceFile - Source file.
-     * @deprecated Use `getRelativePathTo`.
-     */
-    getRelativePathToSourceFile(sourceFile: SourceFile): string;
-    /**
-     * Gets the relative path to another source file.
-     * @param sourceFile - Source file.
      */
     getRelativePathTo(sourceFile: SourceFile): string;
     /**
@@ -6204,12 +6197,6 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param directory - Directory.
      */
     getRelativePathTo(directory: Directory): string;
-    /**
-     * Gets the relative path to the specified source file as a module specifier.
-     * @param sourceFile - Source file.
-     * @deprecated Use `getRelativePathAsModuleSpecifierTo`.
-     */
-    getRelativePathToSourceFileAsModuleSpecifier(sourceFile: SourceFile): string;
     /**
      * Gets the relative path to the specified source file as a module specifier.
      * @param sourceFile - Source file.
@@ -8903,8 +8890,6 @@ export interface EnumMemberSpecificStructure {
 }
 
 export interface ExportAssignmentStructure {
-    /** @deprecated - Use isExportEquals. This was incorrectly named. */
-    isEqualsExport?: boolean;
     isExportEquals?: boolean;
     expression: string | ((writer: CodeBlockWriter) => void);
 }
