@@ -718,15 +718,11 @@ describe(nameof(SourceFile), () => {
         it("should insert the different kinds of exports", () => {
             doTest("", 0, [
                 { expression: "5" },
-                { isEqualsExport: true, expression: writer => writer.write("6") },
                 { isExportEquals: true, expression: writer => writer.write("6") },
-                { isEqualsExport: false, expression: "name" },
                 { isExportEquals: false, expression: "name" }
             ], [
                 `export = 5;`,
                 `export = 6;`,
-                `export = 6;`,
-                `export default name;`,
                 `export default name;`
             ].join("\n") + "\n");
         });
