@@ -8,289 +8,410 @@ describe(nameof(FileSystemWrapper), () => {
     interface SetupObjects {
         fileSystem: VirtualFileSystemHost;
         wrapper: FileSystemWrapper;
-        hashSet: HashSet<string>;
     }
 
     function setup(): SetupObjects {
         const fileSystem = new VirtualFileSystemHost();
-        const hashSet = createHashSet<string>();
-        return { fileSystem, hashSet, wrapper: new FileSystemWrapper(fileSystem, hashSet) };
+        return { fileSystem, wrapper: new FileSystemWrapper(fileSystem) };
     }
 
-    function checkState(objs: SetupObjects, filePath: string, state: [boolean, boolean, boolean]) {
+    function checkState(objs: SetupObjects, filePath: string, state: [boolean, boolean]) {
         expect(objs.wrapper.fileExistsSync(filePath)).to.equal(state[0], "wrapper");
-        expect(objs.hashSet.has(filePath)).to.equal(state[1], "hash set");
-        expect(objs.fileSystem.fileExistsSync(filePath)).to.equal(state[2], "file system");
+        expect(objs.fileSystem.fileExistsSync(filePath)).to.equal(state[1], "file system");
     }
 
-    function checkStateForDir(objs: SetupObjects, filePath: string, state: [boolean, boolean, boolean]) {
-        expect(objs.wrapper.directoryExistsSync(filePath)).to.equal(state[0], "wrapper");
-        expect(objs.hashSet.has(filePath)).to.equal(state[1], "hash set");
-        expect(objs.fileSystem.directoryExistsSync(filePath)).to.equal(state[2], "file system");
+    function checkStateForDir(objs: SetupObjects, dirPath: string, state: [boolean, boolean]) {
+        expect(objs.wrapper.directoryExistsSync(dirPath)).to.equal(state[0], "wrapper");
+        expect(objs.fileSystem.directoryExistsSync(dirPath)).to.equal(state[1], "file system");
     }
 
-    describe(nameof<FileSystemWrapper>(w => w.queueDelete), () => {
-        it("should queue a file for delete", async () => {
+    describe(nameof<FileSystemWrapper>(w => w.queueFileDelete), () => {
+        it("should queue a file for delete", () => {
             const objs = setup();
             const {wrapper} = objs;
             const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
+            wrapper.queueFileDelete(filePaths[0]);
+            wrapper.queueFileDelete(filePaths[1]);
 
-            checkState(objs, filePaths[0], [false, true, true]);
-            checkState(objs, filePaths[1], [false, true, true]);
-            checkState(objs, filePaths[2], [true, false, true]);
+            checkState(objs, filePaths[0], [false, true]);
+            checkState(objs, filePaths[1], [false, true]);
+            checkState(objs, filePaths[2], [true, true]);
         });
     });
 
-    describe(nameof<FileSystemWrapper>(w => w.flushSync), () => {
-        it("should queue files for delete then flush them", () => {
+    describe(nameof<FileSystemWrapper>(w => w.removeFileDelete), () => {
+        it("should remove a file from being deleted", async () => {
             const objs = setup();
             const {wrapper} = objs;
-            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
-            for (const filePath of filePaths)
-                wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            wrapper.flushSync();
-
-            checkState(objs, filePaths[0], [false, false, false]);
-            checkState(objs, filePaths[1], [false, false, false]);
-            checkState(objs, filePaths[2], [true, false, true]);
+            const filePath = "/file.ts";
+            wrapper.writeFileSync(filePath, "");
+            wrapper.queueFileDelete(filePath);
+            checkState(objs, filePath, [false, true]);
+            wrapper.removeFileDelete(filePath);
+            checkState(objs, filePath, [true, true]);
+            await wrapper.flush();
+            checkState(objs, filePath, [true, true]);
         });
 
-        it("should maintain the files to delete when there's errors deleting them", () => {
-            const objs = setup();
-            const {wrapper, fileSystem} = objs;
-            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
-            for (const filePath of filePaths)
-                wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            fileSystem.deleteSync = (path: string) => { throw new Error(); };
-            try {
-                wrapper.flushSync();
-            } catch {
-                // do nothing
-            }
-
-            checkState(objs, filePaths[0], [false, true, true]);
-            checkState(objs, filePaths[1], [false, true, true]);
-            checkState(objs, filePaths[2], [true, false, true]);
-        });
-
-        it("should not error for queued files that don't exist", () => {
+        it("should not dequeue the parent folder from deletion when the file is dequeued", () => {
             const objs = setup();
             const {wrapper} = objs;
-            const filePaths = ["/file.ts", "/file2.ts"];
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            wrapper.flushSync();
+            const dirPath = "/dir";
+            const filePath = "/dir/file.ts";
+            const filePath2 = "/dir/file2.ts";
 
-            checkState(objs, filePaths[0], [false, false, false]);
-            checkState(objs, filePaths[1], [false, false, false]);
+            wrapper.writeFileSync(filePath, "");
+            wrapper.writeFileSync(filePath2, "");
+            wrapper.queueFileDelete(filePath);
+            wrapper.queueDirectoryDelete(dirPath);
+
+            checkState(objs, filePath, [false, true]);
+            checkState(objs, filePath2, [false, true]);
+            checkStateForDir(objs, dirPath, [false, true]);
+
+            wrapper.removeFileDelete(filePath);
+
+            checkState(objs, filePath, [false, true]);
+            checkStateForDir(objs, dirPath, [false, true]);
+            checkState(objs, filePath2, [false, true]);
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.queueDirectoryDelete), () => {
+        it("should queue a directory for delete", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            wrapper.queueMkdir("/dir");
+            wrapper.flushSync();
+            wrapper.queueDirectoryDelete("/dir");
+
+            checkStateForDir(objs, "/dir", [false, true]);
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.queueMoveDirectory), () => {
+        it("should queue a directory for moving", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            wrapper.queueMkdir("/dir");
+            wrapper.flushSync();
+            wrapper.queueMoveDirectory("/dir", "/dir2");
+
+            checkStateForDir(objs, "/dir", [false, true]);
+            checkStateForDir(objs, "/dir2", [true, false]);
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.queueMkdir), () => {
+        it("should queue a directory for being made", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            wrapper.queueMkdir("/dir");
+
+            checkStateForDir(objs, "/dir", [true, false]);
         });
     });
 
     describe(nameof<FileSystemWrapper>(w => w.flush), () => {
-        it("should queue files for delete then flush them", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
-            for (const filePath of filePaths)
-                wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            await wrapper.flush();
+        function doTests(flush: (wrapper: FileSystemWrapper, runChecks: () => void) => void) {
+            it("should queue files for delete then flush them", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
+                for (const filePath of filePaths)
+                    wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePaths[0]);
+                wrapper.queueFileDelete(filePaths[1]);
 
-            checkState(objs, filePaths[0], [false, false, false]);
-            checkState(objs, filePaths[1], [false, false, false]);
-            checkState(objs, filePaths[2], [true, false, true]);
-        });
+                flush(wrapper, () => {
+                    checkState(objs, filePaths[0], [false, false]);
+                    checkState(objs, filePaths[1], [false, false]);
+                    checkState(objs, filePaths[2], [true, true]);
+                });
+            });
 
-        it("should maintain the files to delete when there's errors deleting them", async () => {
-            const objs = setup();
-            const {wrapper, fileSystem} = objs;
-            const filePaths = ["/file.ts", "/file2.ts", "/file3.ts"];
-            for (const filePath of filePaths)
-                wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            fileSystem.delete = (path: string) => Promise.reject(new Error());
-            try {
+            it("should not error for queued files that don't exist", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePaths = ["/file.ts", "/file2.ts"];
+                wrapper.queueFileDelete(filePaths[0]);
+                wrapper.queueFileDelete(filePaths[1]);
+
+                flush(wrapper, () => {
+                    checkState(objs, filePaths[0], [false, false]);
+                    checkState(objs, filePaths[1], [false, false]);
+                });
+            });
+
+            it("should move directories that were moved", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePaths = ["/dir/file.ts", "/dir/file2.ts", "/dir/file3.ts", "/dir2/file4.ts", "/dir2/file5.ts"];
+                for (const filePath of filePaths)
+                    wrapper.writeFileSync(filePath, "");
+                wrapper.queueMoveDirectory("/dir", "/newDir");
+                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                wrapper.queueFileDelete("/dir3/file4.ts");
+                wrapper.queueMkdir("/dir3/dir4");
+                wrapper.queueMoveDirectory("/dir3", "/newDir");
+
+                flush(wrapper, () => {
+                    checkStateForDir(objs, "/dir", [false, false]);
+                    checkStateForDir(objs, "/dir2", [false, false]);
+                    checkStateForDir(objs, "/dir3", [false, false]);
+                    checkStateForDir(objs, "/newDir", [true, true]);
+                    checkStateForDir(objs, "/newDir/dir4", [true, true]);
+                    checkState(objs, "/newDir/file.ts", [true, true]);
+                    checkState(objs, "/newDir/file2.ts", [true, true]);
+                    checkState(objs, "/newDir/file3.ts", [true, true]);
+                    checkState(objs, "/newDir/file4.ts", [false, false]);
+                    checkState(objs, "/newDir/file5.ts", [true, true]);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, runChecks) => {
                 await wrapper.flush();
-            } catch {
-                // do nothing
-            }
-
-            checkState(objs, filePaths[0], [false, true, true]);
-            checkState(objs, filePaths[1], [false, true, true]);
-            checkState(objs, filePaths[2], [true, false, true]);
+                runChecks();
+            });
         });
 
-        it("should not error for queued files that don't exist", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePaths = ["/file.ts", "/file2.ts"];
-            wrapper.queueDelete(filePaths[0]);
-            wrapper.queueDelete(filePaths[1]);
-            await wrapper.flush();
-
-            checkState(objs, filePaths[0], [false, false, false]);
-            checkState(objs, filePaths[1], [false, false, false]);
+        describe("sync", () => {
+            doTests((wrapper, runChecks) => {
+                wrapper.flushSync();
+                runChecks();
+            });
         });
     });
 
-    describe(nameof<FileSystemWrapper>(w => w.dequeueDelete), () => {
-        it("should dequeue a file for delete", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePath = "/file.ts";
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            checkState(objs, filePath, [false, true, true]);
-            wrapper.dequeueDelete(filePath);
-            checkState(objs, filePath, [true, false, true]);
-            await wrapper.flush();
-            checkState(objs, filePath, [true, false, true]);
+    describe(nameof<FileSystemWrapper>(w => w.moveFileImmediately), () => {
+        function doTests(moveFile: (wrapper: FileSystemWrapper, fileFrom: string, fileTo: string, text: string, runChecks: (error?: any) => void) => void) {
+            it("should move a file immediately to a new directory", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/file.ts", "text");
+                moveFile(wrapper, "/file.ts", "/newDir/newFile.ts", "newText", err => {
+                    expect(err).to.be.undefined;
+                    checkState(objs, "/file.ts", [false, false]);
+                    checkStateForDir(objs, "/newDir", [true, true]);
+                    checkState(objs, "/newDir/newFile.ts", [true, true]);
+                    expect(wrapper.readFileSync("/newDir/newFile.ts", "utf-8")).to.equal("newText");
+                });
+            });
+
+            it("should throw when moving a file in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir", "/dir2");
+                moveFile(wrapper, "/dir2/file.ts", "/dir2/newFile.ts", "newText", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when moving a file to a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.writeFileSync("/dir2/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                moveFile(wrapper, "/dir/file.ts", "/dir3/newFile.ts", "newText", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, fileFrom, fileTo, text, runChecks) => {
+                try {
+                    await wrapper.moveFileImmediately(fileFrom, fileTo, text);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
 
-        it("should dequeue the parent folder from deletion when the file is dequeued", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            wrapper.queueDelete(dirPath);
-            checkState(objs, filePath, [false, true, true]);
-            checkStateForDir(objs, dirPath, [false, true, true]);
-            wrapper.dequeueDelete(filePath);
-            checkState(objs, filePath, [true, false, true]);
-            checkStateForDir(objs, dirPath, [true, false, true]);
-        });
-    });
-
-    describe(nameof<FileSystemWrapper>(w => w.deleteImmediately), () => {
-        it("should delete a file immediately", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePath = "/file.ts";
-            wrapper.writeFileSync(filePath, "");
-            await wrapper.deleteImmediately(filePath);
-            checkState(objs, filePath, [false, false, false]);
-        });
-
-        it("should not error deleting a file that doesn't exist", async () => {
-            const {wrapper, hashSet} = setup();
-            let caughtErr: any;
-            try {
-                await wrapper.deleteImmediately("path.ts");
-            } catch (err) {
-                caughtErr = err;
-            }
-            expect(caughtErr).to.be.undefined;
-            expect(ArrayUtils.from(hashSet.values())).to.deep.equal([], "should not have the path in the hashset");
-        });
-
-        it("should delete a file immediately after it was queued for delete", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePath = "/file.ts";
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            await wrapper.deleteImmediately(filePath);
-            checkState(objs, filePath, [false, false, false]);
-        });
-
-        it("should delete a child file that was queued for delete when immediately deleting a parent dir", async () => {
-            const objs = setup();
-            const {wrapper, hashSet} = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            await wrapper.deleteImmediately(dirPath);
-            checkState(objs, filePath, [false, false, false]);
-        });
-
-        it("should maintain the list of files to delete when there's an error deleting a directory", async () => {
-            const objs = setup();
-            const {wrapper, hashSet, fileSystem} = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            fileSystem.delete = (path: string) => Promise.reject(new Error());
-            try {
-                await wrapper.deleteImmediately(dirPath);
-            } catch {
-                // do nothing
-            }
-            checkState(objs, filePath, [false, true, true]);
-            checkStateForDir(objs, dirPath, [false, true, true]);
+        describe("sync", () => {
+            doTests((wrapper, fileFrom, fileTo, text, runChecks) => {
+                try {
+                    wrapper.moveFileImmediatelySync(fileFrom, fileTo, text);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
     });
 
-    describe(nameof<FileSystemWrapper>(w => w.deleteImmediatelySync), () => {
-        it("should delete a file immediately", () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePath = "/file.ts";
-            wrapper.writeFileSync(filePath, "");
-            wrapper.deleteImmediatelySync(filePath);
-            checkState(objs, filePath, [false, false, false]);
+    describe(nameof<FileSystemWrapper>(w => w.deleteFileImmediately), () => {
+        function doTests(deleteFile: (wrapper: FileSystemWrapper, filePath: string, runChecks: (error?: any) => void) => void) {
+            it("should delete a file immediately", async () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePath = "/file.ts";
+                wrapper.writeFileSync(filePath, "");
+                deleteFile(wrapper, filePath, err => {
+                    expect(err).to.be.undefined;
+                    checkState(objs, filePath, [false, false]);
+                });
+            });
+
+            it("should not error deleting a file that doesn't exist", async () => {
+                const { wrapper } = setup();
+                deleteFile(wrapper, "path.ts", err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+
+            it("should be able to delete a file immediately after it was queued for delete", async () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePath = "/file.ts";
+                wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePath);
+                deleteFile(wrapper, filePath, err => {
+                    expect(err).to.be.undefined;
+                    checkState(objs, filePath, [false, false]);
+                });
+            });
+
+            it("should throw when deleting a file in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir", "/dir2");
+                deleteFile(wrapper, "/dir2/file.ts", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, filePath, runChecks) => {
+                try {
+                    await wrapper.deleteFileImmediately(filePath);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
 
-        it("should not error deleting a file that doesn't exist", () => {
-            const {wrapper, hashSet} = setup();
-            expect(() => wrapper.deleteImmediatelySync("path.ts")).to.not.throw();
-            expect(ArrayUtils.from(hashSet.values())).to.deep.equal([], "should not have the path in the hashset");
+        describe("sync", () => {
+            doTests((wrapper, filePath, runChecks) => {
+                try {
+                    wrapper.deleteFileImmediatelySync(filePath);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.deleteDirectoryImmediately), () => {
+        function doTests(deleteDir: (wrapper: FileSystemWrapper, dirPath: string, runChecks: (error?: any) => void) => void) {
+            it("should delete a child file that was queued for delete when immediately deleting a parent dir", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const dirPath = "/dir";
+                const filePath = "/dir/file.ts";
+                wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePath);
+                deleteDir(wrapper, dirPath, err => {
+                    expect(err).to.be.undefined;
+                    checkStateForDir(objs, dirPath, [false, false]);
+                    checkState(objs, filePath, [false, false]);
+                });
+            });
+
+            it("should maintain the list of files to delete when there's an error deleting a directory", () => {
+                const objs = setup();
+                const { wrapper, fileSystem } = objs;
+                const dirPath = "/dir";
+                const filePath = "/dir/file.ts";
+                wrapper.writeFileSync(filePath, "");
+                wrapper.queueFileDelete(filePath);
+                fileSystem.deleteSync = (path: string) => {
+                    throw new Error();
+                };
+                deleteDir(wrapper, dirPath, err => {
+                    expect(err).to.be.instanceof(Error);
+                    checkStateForDir(objs, dirPath, [false, true]);
+                    checkState(objs, filePath, [false, true]);
+                });
+            });
+
+            it("should throw when deleting a directory in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/subDir/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir", "/dir2");
+                deleteDir(wrapper, "/dir2/subDir", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when deleting a directory in a directory whose parent was once marked for deletion", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/subDir/file.ts", "text");
+                wrapper.queueDirectoryDelete("/dir");
+                wrapper.removeFileDelete("/dir/subDir/file.ts");
+                deleteDir(wrapper, "/dir/subDir", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should not throw when deleting a directory that contains queued moves that are internal", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/subDir/file.ts", "");
+                wrapper.writeFileSync("/dir/subDir2/file.ts", "");
+                wrapper.queueMoveDirectory("/dir/subDir", "/dir/newDir");
+                wrapper.queueMoveDirectory("/dir/subDir2", "/dir/newDir/subSub");
+                deleteDir(wrapper, "/dir", err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+
+            it("should not throw when deleting a directory that contains queued deletes that are internal", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/subDir/file.ts", "");
+                wrapper.writeFileSync("/dir/subDir2/file.ts", "");
+                wrapper.queueDirectoryDelete("/dir/subDir");
+                wrapper.queueFileDelete("/dir/subDir2/file.ts");
+                deleteDir(wrapper, "/dir", err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, filePath, runChecks) => {
+                try {
+                    await wrapper.deleteDirectoryImmediately(filePath);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
 
-        it("should delete a file immediately after it was queued for delete", () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const filePath = "/file.ts";
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            wrapper.deleteImmediatelySync(filePath);
-            checkState(objs, filePath, [false, false, false]);
-        });
-
-        it("should delete a child file that was queued for delete when immediately deleting a parent dir", () => {
-            const objs = setup();
-            const {wrapper, hashSet} = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            wrapper.deleteImmediatelySync(dirPath);
-            checkState(objs, filePath, [false, false, false]);
-        });
-
-        it("should maintain the list of files to delete when there's an error deleting a directory", () => {
-            const objs = setup();
-            const {wrapper, hashSet, fileSystem} = objs;
-            const dirPath = "/dir";
-            const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
-            wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            fileSystem.deleteSync = (path: string) => { throw new Error(); };
-            try {
-                wrapper.deleteImmediatelySync(dirPath);
-            } catch {
-                // do nothing
-            }
-            checkState(objs, filePath, [false, true, true]);
-            checkStateForDir(objs, dirPath, [false, true, true]);
+        describe("sync", () => {
+            doTests((wrapper, filePath, runChecks) => {
+                try {
+                    wrapper.deleteDirectoryImmediatelySync(filePath);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
     });
 
@@ -301,7 +422,7 @@ describe(nameof(FileSystemWrapper), () => {
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
             wrapper.writeFileSync(filePath, "");
             expect(wrapper.fileExistsSync(filePath)).to.equal(true);
-            wrapper.queueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
             wrapper.flushSync();
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
@@ -311,16 +432,16 @@ describe(nameof(FileSystemWrapper), () => {
             const {wrapper} = setup();
             const filePath = "/file.ts";
             wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(filePath);
-            wrapper.dequeueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
+            wrapper.removeFileDelete(filePath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(true);
         });
 
         it("should not exist after a dequeued for delete when not originally existed", () => {
             const {wrapper} = setup();
             const filePath = "/file.ts";
-            wrapper.queueDelete(filePath);
-            wrapper.dequeueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
+            wrapper.removeFileDelete(filePath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
         });
 
@@ -328,10 +449,46 @@ describe(nameof(FileSystemWrapper), () => {
             const {wrapper} = setup();
             const dirPath = "/dir";
             const filePath = "/dir/file.ts";
-            wrapper.mkdirSync(dirPath);
             wrapper.writeFileSync(filePath, "");
-            wrapper.queueDelete(dirPath);
+            wrapper.queueDirectoryDelete(dirPath);
             expect(wrapper.fileExistsSync(filePath)).to.equal(false);
+        });
+
+        it("should not exist after its parent directory moved", () => {
+            const objs = setup();
+            const {wrapper} = objs;
+            const filePath = "/dir/file.ts";
+            wrapper.writeFileSync(filePath, "");
+            wrapper.queueMoveDirectory("/dir", "/dir2");
+            checkState(objs, filePath, [false, true]);
+        });
+
+        it("should not exist after its parent directory was once moved", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            const filePath = "/dir/file.ts";
+            const filePath2 = "/dir/sub/file.ts";
+            wrapper.writeFileSync(filePath, "");
+            wrapper.writeFileSync(filePath2, "");
+            wrapper.queueMoveDirectory("/dir", "/dir2");
+            wrapper.queueMkdir("/dir");
+            wrapper.queueMkdir("/dir/sub");
+            checkState(objs, filePath, [false, true]);
+            checkState(objs, filePath2, [false, true]);
+        });
+
+        it("should not exist after its parent directory was once removed", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            const filePath = "/dir/file.ts";
+            const filePath2 = "/dir/sub/file.ts";
+            wrapper.writeFileSync(filePath, "");
+            wrapper.writeFileSync(filePath2, "");
+            wrapper.queueDirectoryDelete("/dir");
+            wrapper.queueMkdir("/dir");
+            wrapper.queueMkdir("/dir/sub");
+            checkState(objs, filePath, [false, true]);
+            checkState(objs, filePath2, [false, true]);
         });
     });
 
@@ -340,70 +497,30 @@ describe(nameof(FileSystemWrapper), () => {
             const {wrapper} = setup();
             const dirPath = "/dir";
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
-            wrapper.mkdirSync(dirPath);
+            wrapper.queueMkdir(dirPath);
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(true);
-            wrapper.queueDelete(dirPath);
+            wrapper.queueDirectoryDelete(dirPath);
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
             wrapper.flushSync();
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
         });
 
-        it("should not exist after a dequeued for delete when originally existed", () => {
+        it("should exist after a queued for mkdir", () => {
             const {wrapper} = setup();
             const dirPath = "/dir";
-            wrapper.mkdirSync(dirPath);
-            wrapper.queueDelete(dirPath);
-            wrapper.dequeueDelete(dirPath);
+            wrapper.writeFileSync(dirPath + "/file.ts", "");
+            wrapper.queueDirectoryDelete(dirPath);
+            wrapper.queueMkdir(dirPath);
             expect(wrapper.directoryExistsSync(dirPath)).to.equal(true);
-        });
-
-        it("should not exist after a dequeued for delete when not originally existed", () => {
-            const {wrapper} = setup();
-            const dirPath = "/dir";
-            wrapper.queueDelete(dirPath);
-            wrapper.dequeueDelete(dirPath);
-            expect(wrapper.directoryExistsSync(dirPath)).to.equal(false);
         });
 
         it("should not exist if the parent directory was queued for delete", () => {
             const {wrapper} = setup();
             const dirPath = "/dir";
             const subDirPath = "/dir/sub";
-            wrapper.mkdirSync(dirPath);
-            wrapper.mkdirSync(subDirPath);
-            wrapper.queueDelete(dirPath);
+            wrapper.writeFileSync(subDirPath + "/file.ts", "");
+            wrapper.queueDirectoryDelete(dirPath);
             expect(wrapper.directoryExistsSync(subDirPath)).to.equal(false);
-        });
-    });
-
-    describe(nameof<FileSystemWrapper>(w => w.directoryExists), () => {
-        it("should not exist after queued for delete", async () => {
-            const {wrapper} = setup();
-            const dirPath = "/dir";
-            expect(await wrapper.directoryExists(dirPath)).to.equal(false);
-            wrapper.mkdirSync(dirPath);
-            expect(await wrapper.directoryExists(dirPath)).to.equal(true);
-            wrapper.queueDelete(dirPath);
-            expect(await wrapper.directoryExists(dirPath)).to.equal(false);
-            wrapper.flushSync();
-            expect(await wrapper.directoryExists(dirPath)).to.equal(false);
-        });
-
-        it("should not exist after a dequeued for delete when originally existed", async () => {
-            const {wrapper} = setup();
-            const dirPath = "/dir";
-            wrapper.mkdirSync(dirPath);
-            wrapper.queueDelete(dirPath);
-            wrapper.dequeueDelete(dirPath);
-            expect(await wrapper.directoryExists(dirPath)).to.equal(true);
-        });
-
-        it("should not exist after a dequeued for delete when not originally existed", async () => {
-            const {wrapper} = setup();
-            const dirPath = "/dir";
-            wrapper.queueDelete(dirPath);
-            wrapper.dequeueDelete(dirPath);
-            expect(await wrapper.directoryExists(dirPath)).to.equal(false);
         });
     });
 
@@ -414,7 +531,19 @@ describe(nameof(FileSystemWrapper), () => {
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
             expect(wrapper.readFileSync(filePath, "utf-8")).to.equal(fileText);
-            wrapper.queueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
+            expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.InvalidOperationError);
+            wrapper.flushSync();
+            expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.FileNotFoundError);
+        });
+
+        it("should not read the file after its parent was once deleted", () => {
+            const {wrapper} = setup();
+            const filePath = "/dir/sub/file.ts";
+            const fileText = "test";
+            wrapper.writeFileSync(filePath, fileText);
+            wrapper.queueDirectoryDelete("/dir");
+            wrapper.queueMkdir("/dir/sub");
             expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.InvalidOperationError);
             wrapper.flushSync();
             expect(() => wrapper.readFileSync(filePath, "utf-8")).to.throw(errors.FileNotFoundError);
@@ -429,14 +558,26 @@ describe(nameof(FileSystemWrapper), () => {
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
             expect(wrapper.readDirSync(dirPath)).to.deep.equal(filePaths);
-            wrapper.queueDelete(filePaths[0]);
+            wrapper.queueFileDelete(filePaths[0]);
             expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePaths[1]]);
             wrapper.flushSync();
             expect(wrapper.readDirSync(dirPath)).to.deep.equal([filePaths[1]]);
-            wrapper.queueDelete(dirPath);
+            wrapper.queueDirectoryDelete(dirPath);
             expect(() => wrapper.readDirSync(dirPath)).to.throw(errors.InvalidOperationError);
             wrapper.flushSync();
             expect(() => wrapper.readDirSync(dirPath)).to.throw(errors.DirectoryNotFoundError);
+        });
+
+        it("should not read a directory after its parent was once deleted", () => {
+            const { wrapper } = setup();
+            const dirPath = "/dir/sub";
+            const filePath = `${dirPath}/file.ts`;
+            wrapper.writeFileSync(filePath, "");
+            wrapper.queueDirectoryDelete("/dir");
+            wrapper.queueMkdir(dirPath);
+            expect(() => wrapper.readDirSync(dirPath)).to.throw(errors.InvalidOperationError);
+            wrapper.flushSync();
+            expect(() => wrapper.readDirSync(dirPath)).to.not.throw();
         });
     });
 
@@ -449,7 +590,7 @@ describe(nameof(FileSystemWrapper), () => {
             for (const filePath of filePaths)
                 wrapper.writeFileSync(filePath, "");
             expect(wrapper.glob([dirGlob])).to.deep.equal(filePaths);
-            wrapper.queueDelete(filePaths[0]);
+            wrapper.queueFileDelete(filePaths[0]);
             expect(wrapper.glob([dirGlob])).to.deep.equal([filePaths[1]]);
             wrapper.flushSync();
             expect(wrapper.glob([dirGlob])).to.deep.equal([filePaths[1]]);
@@ -463,7 +604,7 @@ describe(nameof(FileSystemWrapper), () => {
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
             expect(wrapper.readFileOrNotExistsSync(filePath, "utf-8")).to.equal(fileText);
-            wrapper.queueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
             expect(wrapper.readFileOrNotExistsSync(filePath, "utf-8")).to.equal(false);
             wrapper.flushSync();
             expect(wrapper.readFileOrNotExistsSync(filePath, "utf-8")).to.equal(false);
@@ -477,76 +618,50 @@ describe(nameof(FileSystemWrapper), () => {
             const fileText = "test";
             wrapper.writeFileSync(filePath, fileText);
             expect(await wrapper.readFileOrNotExists(filePath, "utf-8")).to.equal(fileText);
-            wrapper.queueDelete(filePath);
+            wrapper.queueFileDelete(filePath);
             expect(await wrapper.readFileOrNotExists(filePath, "utf-8")).to.equal(false);
             wrapper.flushSync();
             expect(await wrapper.readFileOrNotExists(filePath, "utf-8")).to.equal(false);
         });
     });
 
-    describe(nameof<FileSystemWrapper>(w => w.writeFileSync), () => {
-        it("should undo the queued deletion when writing", () => {
-            const {wrapper, hashSet} = setup();
-            const filePath = "/file.ts";
-            const fileText = "test";
-            wrapper.writeFileSync(filePath, fileText);
-            wrapper.queueDelete(filePath);
-            wrapper.writeFileSync(filePath, fileText);
-            expect(hashSet.has(filePath)).to.be.false;
-            expect(wrapper.fileExistsSync(filePath)).to.be.true;
-        });
-    });
-
     describe(nameof<FileSystemWrapper>(w => w.writeFile), () => {
-        it("should undo the queued deletion when writing", async () => {
-            const {wrapper, hashSet} = setup();
-            const filePath = "/file.ts";
-            const fileText = "test";
-            await wrapper.writeFile(filePath, fileText);
-            wrapper.queueDelete(filePath);
-            await wrapper.writeFile(filePath, fileText);
-            expect(hashSet.has(filePath)).to.be.false;
-            expect(wrapper.fileExistsSync(filePath)).to.be.true;
-        });
-    });
+        function doTests(writeFile: (wrapper: FileSystemWrapper, filePath: string, text: string, runChecks: (error?: any) => void) => void) {
+            it("should undo the queued deletion when writing", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                const filePath = "/file.ts";
+                const fileText = "test";
+                writeFile(wrapper, filePath, fileText, () => {
+                    wrapper.queueFileDelete(filePath);
+                    writeFile(wrapper, filePath, fileText, err => {
+                        expect(err).to.be.undefined;
+                        checkState(objs, filePath, [true, true]);
+                    });
+                });
+            });
+        }
 
-    describe(nameof<FileSystemWrapper>(w => w.mkdirSync), () => {
-        it("should undo the queued deletion when making a directory", () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const dirPath = "/dir";
-            const subDirPath = "/dir/sub";
-            wrapper.mkdirSync(dirPath);
-            wrapper.mkdirSync(subDirPath);
-            checkStateForDir(objs, dirPath, [true, false, true]);
-            checkStateForDir(objs, subDirPath, [true, false, true]);
-            wrapper.queueDelete(dirPath);
-            wrapper.queueDelete(subDirPath);
-            checkStateForDir(objs, dirPath, [false, true, true]);
-            checkStateForDir(objs, subDirPath, [false, true, true]);
-            wrapper.mkdirSync(subDirPath);
-            checkStateForDir(objs, dirPath, [true, false, true]);
-            checkStateForDir(objs, subDirPath, [true, false, true]);
+        describe("async", () => {
+            doTests(async (wrapper, filePath, text, runChecks) => {
+                try {
+                    await wrapper.writeFile(filePath, text);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
-    });
 
-    describe(nameof<FileSystemWrapper>(w => w.mkdir), () => {
-        it("should undo the queued deletion when making a directory", async () => {
-            const objs = setup();
-            const {wrapper} = objs;
-            const dirPath = "/dir";
-            const subDirPath = "/dir/sub";
-            await wrapper.mkdir(dirPath);
-            await wrapper.mkdir(subDirPath);
-            checkStateForDir(objs, dirPath, [true, false, true]);
-            checkStateForDir(objs, subDirPath, [true, false, true]);
-            wrapper.queueDelete(dirPath);
-            wrapper.queueDelete(subDirPath);
-            checkStateForDir(objs, dirPath, [false, true, true]);
-            checkStateForDir(objs, subDirPath, [false, true, true]);
-            await wrapper.mkdir(subDirPath);
-            checkStateForDir(objs, dirPath, [true, false, true]);
-            checkStateForDir(objs, subDirPath, [true, false, true]);
+        describe("sync", () => {
+            doTests((wrapper, filePath, text, runChecks) => {
+                try {
+                    wrapper.writeFileSync(filePath, text);
+                    runChecks();
+                } catch (err) {
+                    runChecks(err);
+                }
+            });
         });
     });
 });

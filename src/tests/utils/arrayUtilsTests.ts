@@ -42,6 +42,15 @@ describe(nameof(ArrayUtils), () => {
         });
     });
 
+    describe(`#${nameof(ArrayUtils.removeAll)}()`, () => {
+        it("should remove every item that matches", () => {
+            const a = [3, 1, 2, 3, 3];
+            const result = ArrayUtils.removeAll(a, i => i === 3);
+            expect(a).to.eql([1, 2]);
+            expect(result).to.deep.equal([3, 3, 3]);
+        });
+    });
+
     describe(`#${nameof(ArrayUtils.binarySearch)}()`, () => {
         function doTest(items: number[], value: number, expectedValue: number) {
             const result = ArrayUtils.binarySearch(items, item => item === value, item => item > value);

@@ -20,6 +20,17 @@ export class ArrayUtils {
         return true;
     }
 
+    static removeAll<T>(a: T[], isMatch: (item: T) => boolean) {
+        const removedItems: T[] = [];
+        for (let i = a.length - 1; i >= 0; i--) {
+            if (isMatch(a[i])) {
+                removedItems.push(a[i]);
+                a.splice(i, 1);
+            }
+        }
+        return removedItems;
+    }
+
     static flatten<T>(items: T[][]) {
         return items.reduce((a, b) => a.concat(b), []);
     }

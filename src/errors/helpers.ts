@@ -104,7 +104,7 @@ export function throwIfNullOrUndefined<T>(value: T | undefined, errorMessage: st
  * @param value - Value to check.
  */
 export function getNotImplementedForNeverValueError(value: never) {
-    return new NotImplementedError(`Not implemented value: ${value}`);
+    return new NotImplementedError(`Not implemented value: ${JSON.stringify(value)}`);
 }
 
 /**

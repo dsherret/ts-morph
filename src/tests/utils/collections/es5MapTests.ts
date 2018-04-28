@@ -23,4 +23,11 @@ describe(nameof(Es5Map), () => {
     it("should work", () => {
         doTest(new Es5Map<{}, string>(), {});
     });
+
+    describe(nameof<Es5Map<any, any>>(m => m.clear), () => {
+        const map = new Es5Map<{}, string>();
+        map.set({}, "testing");
+        map.clear();
+        expect(ArrayUtils.from(map.values())).to.deep.equal([]);
+    });
 });

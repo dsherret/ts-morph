@@ -453,6 +453,8 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
+        fileSystem.queueMoveDirectory(originalPath, newPath);
+
         const movingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),
@@ -467,7 +469,6 @@ export class Directory {
         // update directories
         for (const { directory, oldPath, newDirPath } of movingDirectories) {
             compilerFactory.removeDirectoryFromCache(oldPath);
-            fileSystem.queueDelete(oldPath);
             const dirToOverwrite = compilerFactory.getDirectoryFromCache(newDirPath);
             if (dirToOverwrite != null)
                 dirToOverwrite._forgetOnlyThis();
@@ -499,7 +500,7 @@ export class Directory {
             sourceFile.delete();
         for (const dir of this.getDirectories())
             dir.delete();
-        fileSystemWrapper.queueDelete(path);
+        fileSystemWrapper.queueDirectoryDelete(path);
         this.forget();
     }
 
@@ -510,7 +511,7 @@ export class Directory {
         const {fileSystemWrapper} = this.global;
         const path = this.getPath();
         this.forget();
-        await fileSystemWrapper.deleteImmediately(path);
+        await fileSystemWrapper.deleteDirectoryImmediately(path);
     }
 
     /**
@@ -520,7 +521,7 @@ export class Directory {
         const {fileSystemWrapper} = this.global;
         const path = this.getPath();
         this.forget();
-        fileSystemWrapper.deleteImmediatelySync(path);
+        fileSystemWrapper.deleteDirectoryImmediatelySync(path);
     }
 
     /**
@@ -554,20 +555,18 @@ export class Directory {
      * Asynchronously saves the directory and all the unsaved source files to the disk.
      */
     async save() {
-        await FileUtils.ensureDirectoryExists(this.global.fileSystemWrapper, this.getPath());
-        const unsavedSourceFiles = this.getSourceFiles().filter(s => !s.isSaved());
+        await this.global.fileSystemWrapper.saveForDirectory(this.getPath());
+        const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
         await Promise.all(unsavedSourceFiles.map(s => s.save()));
-        await Promise.all(this.getDirectories().map(d => d.save()));
     }
 
     /**
      * Synchronously saves the directory and all the unsaved source files to the disk.
      */
     saveSync() {
-        FileUtils.ensureDirectoryExistsSync(this.global.fileSystemWrapper, this.getPath());
-        const unsavedSourceFiles = this.getSourceFiles().filter(s => !s.isSaved());
+        this.global.fileSystemWrapper.saveForDirectorySync(this.getPath());
+        const unsavedSourceFiles = this.getDescendantSourceFiles().filter(s => !s.isSaved());
         unsavedSourceFiles.forEach(s => s.saveSync());
-        this.getDirectories().map(d => d.saveSync());
     }
 
     /**

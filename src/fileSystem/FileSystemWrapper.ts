@@ -1,65 +1,432 @@
 ﻿import * as errors from "../errors";
-import { createHashSet, HashSet, ArrayUtils, FileUtils } from "../utils";
+import { createHashSet, HashSet, ArrayUtils, FileUtils, KeyValueCache } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
+
+type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation;
+
+interface OperationBase<T> {
+    kind: T;
+    index: number;
+}
+
+interface DeleteFileOperation extends OperationBase<"deleteFile"> {
+    filePath: string;
+}
+
+interface MakeDirectoryOperation extends OperationBase<"mkdir"> {
+    dir: Directory;
+}
+
+interface DeleteDirectoryOperation extends OperationBase<"deleteDir"> {
+    dir: Directory;
+}
+
+interface MoveDirectoryOperation extends OperationBase<"move"> {
+    oldDir: Directory;
+    newDir: Directory;
+}
+
+class Directory {
+    readonly operations: Operation[] = [];
+    readonly inboundOperations: MoveDirectoryOperation[] = [];
+
+    private isDeleted = false;
+    private wasEverDeleted = false;
+    private parent: Directory | undefined;
+    private childDirs: Directory[] = [];
+
+    constructor(public readonly path: string) {
+    }
+
+    getExternalOperations() {
+        return [
+            ...ArrayUtils.flatten(this.getAncestors().map(a => getMoveOrDeleteOperations(a))).filter(o => isAncestorAffectedOperation(this, o)),
+            ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOperations(d))).filter(o => !isInternalOperation(this, o))
+        ];
+
+        function isInternalOperation(thisDir: Directory, operation: MoveDirectoryOperation) {
+            return operation.oldDir.isDescendantOrEqual(thisDir) && operation.newDir.isDescendantOrEqual(thisDir);
+        }
+
+        function isAncestorAffectedOperation(thisDir: Directory, operation: MoveDirectoryOperation | DeleteDirectoryOperation) {
+            switch (operation.kind) {
+                case "move":
+                    return thisDir.isDescendantOrEqual(operation.oldDir) || thisDir.isDescendantOrEqual(operation.newDir);
+                case "deleteDir":
+                    return thisDir.isDescendantOrEqual(operation.dir);
+                default:
+                    throw errors.getNotImplementedForNeverValueError(operation);
+            }
+        }
+
+        function getMoveOperations(dir: Directory) {
+            return dir.operations.filter(o => o.kind === "move") as MoveDirectoryOperation[];
+        }
+
+        function getMoveOrDeleteOperations(dir: Directory) {
+            return dir.operations.filter(o => o.kind === "move" || o.kind === "deleteDir") as (MoveDirectoryOperation | DeleteDirectoryOperation)[];
+        }
+    }
+
+    isDescendantOrEqual(directory: Directory) {
+        return this.isDescendant(directory) || this === directory;
+    }
+
+    isDescendant(directory: Directory) {
+        return FileUtils.pathStartsWith(this.path, directory.path);
+    }
+
+    getIsDeleted() {
+        return this.isDeleted;
+    }
+
+    getWasEverDeleted() {
+        if (this.wasEverDeleted)
+            return true;
+        for (const ancestor of this.getAncestorsIterator()) {
+            if (ancestor.wasEverDeleted)
+                return true;
+        }
+        return false;
+    }
+
+    setIsDeleted(isDeleted: boolean) {
+        if (this.isDeleted === isDeleted)
+            return;
+
+        if (isDeleted) {
+            this.wasEverDeleted = true;
+            for (const child of this.childDirs)
+                child.setIsDeleted(true);
+        }
+        else {
+            if (this.parent != null)
+                this.parent.setIsDeleted(false);
+        }
+
+        this.isDeleted = isDeleted;
+    }
+
+    getParent() {
+        return this.parent;
+    }
+
+    setParent(parent: Directory) {
+        if (this.parent != null)
+            throw new errors.InvalidOperationError("For some reason, a parent was being set when the directory already had a parent. Please open an issue.");
+
+        this.parent = parent;
+        ArrayUtils.binaryInsert(parent.childDirs, this, item => item.path > this.path);
+        if (parent.isDeleted && !this.isDeleted)
+            parent.setIsDeleted(false);
+    }
+
+    removeParent() {
+        const parent = this.parent;
+        if (parent == null)
+            return;
+
+        const index = ArrayUtils.binarySearch(parent.childDirs, item => item === this, item => item.path > this.path);
+        if (index >= 0)
+            parent.childDirs.splice(index, 1);
+        this.parent = undefined;
+    }
+
+    getAncestors() {
+        return ArrayUtils.from(this.getAncestorsIterator());
+    }
+
+    *getAncestorsIterator() {
+        let parent = this.parent;
+        while (parent != null) {
+            yield parent;
+            parent = parent.parent;
+        }
+    }
+
+    getDescendants() {
+        const descendants: Directory[] = [];
+        for (const child of this.childDirs) {
+            descendants.push(child);
+            descendants.push(...child.getDescendants());
+        }
+        return descendants;
+    }
+
+    isFileQueuedForDelete(filePath: string) {
+        return this.hasOperation(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
+    }
+
+    private hasOperation(operationMatches: (operation: Operation) => boolean) {
+        for (const operation of this.operations) {
+            if (operationMatches(operation))
+                return true;
+        }
+        return false;
+    }
+
+    dequeueFileDelete(filePath: string) {
+        this.removeMatchingOperations(operation => operation.kind === "deleteFile" && operation.filePath === filePath);
+    }
+
+    dequeueDirDelete(dirPath: string) {
+        this.removeMatchingOperations(operation => operation.kind === "deleteDir" && operation.dir.path === dirPath);
+    }
+
+    isRootDir() {
+        return FileUtils.isRootDirPath(this.path);
+    }
+
+    private removeMatchingOperations(operationMatches: (operation: Operation) => boolean) {
+        ArrayUtils.removeAll(this.operations, operationMatches);
+    }
+}
 
 /**
  * File system host wrapper that allows queuing deletions to the file system.
  */
 export class FileSystemWrapper {
-    constructor(private readonly fileSystem: FileSystemHost, private readonly pathsToDelete: HashSet<string> = createHashSet()) {
+    private readonly directories = new KeyValueCache<string, Directory>();
+
+    constructor(private readonly fileSystem: FileSystemHost) {
     }
 
-    queueDelete(path: string) {
-        path = this.getStandardizedAbsolutePath(path);
-        this.pathsToDelete.add(path);
+    queueFileDelete(filePath: string) {
+        filePath = this.getStandardizedAbsolutePath(filePath);
+        const parentDir = this.getParentDirectory(filePath);
+        parentDir.operations.push({
+            kind: "deleteFile",
+            index: this.getNextOperationIndex(),
+            filePath
+        });
     }
 
-    dequeueDelete(path: string) {
-        path = this.getStandardizedAbsolutePath(path);
-        this.removeFromPathsToDelete(path);
+    removeFileDelete(filePath: string) {
+        filePath = this.getStandardizedAbsolutePath(filePath);
+        this.getParentDirectory(filePath).dequeueFileDelete(filePath);
+    }
+
+    queueMkdir(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+        dir.setIsDeleted(false);
+        const parentDir = this.getParentDirectory(dirPath);
+        parentDir.operations.push({
+            kind: "mkdir",
+            index: this.getNextOperationIndex(),
+            dir
+        });
+    }
+
+    queueDirectoryDelete(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+        dir.setIsDeleted(true);
+        const parentDir = this.getParentDirectory(dirPath);
+        parentDir.operations.push({
+            kind: "deleteDir",
+            index: this.getNextOperationIndex(),
+            dir
+        });
+    }
+
+    queueMoveDirectory(srcPath: string, destPath: string) {
+        // todo: tests for the root directory
+        srcPath = this.getStandardizedAbsolutePath(srcPath);
+        destPath = this.getStandardizedAbsolutePath(destPath);
+
+        const parentDir = this.getParentDirectory(srcPath);
+        const moveDir = this.getDirectory(srcPath);
+        const destinationDir = this.getDirectory(destPath);
+
+        const moveOperation: MoveDirectoryOperation = {
+            kind: "move",
+            index: this.getNextOperationIndex(),
+            oldDir: moveDir,
+            newDir: destinationDir
+        };
+        parentDir.operations.push(moveOperation);
+        (destinationDir.getParent() || destinationDir).inboundOperations.push(moveOperation);
+        moveDir.setIsDeleted(true);
     }
 
     async flush() {
-        const pathsToDeleteForFlush = this.getPathsToDeleteForFlush();
-        this.pathsToDelete.clear();
-        const deletions = pathsToDeleteForFlush.map(path => this.deleteSuppressNotFound(path));
-        await Promise.all(deletions);
+        const operations = this.getAndClearOperations();
+        for (const operation of operations)
+            await this.executeOperation(operation);
     }
 
     flushSync() {
-        for (const path of this.getPathsToDeleteForFlush())
-            this.deleteImmediatelySync(path);
+        for (const operation of this.getAndClearOperations())
+            this.executeOperationSync(operation);
     }
 
-    private getPathsToDeleteForFlush() {
-        // todo: optimize so that if a path's ancestor directory is being deleted, it won't bother deleting the sub paths
-        // Need to be mindful of restoring the state in case it fails though.
-        return ArrayUtils.sortByProperty(ArrayUtils.from(this.pathsToDelete.values()), a => -1 * a.length);
+    async saveForDirectory(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+        this.throwIfHasExternalOperations(dir, "save directory");
+
+        await this.ensureDirectoryExists(dirPath);
+
+        for (const operation of this.getAndClearOperationsForDir(dir))
+            await this.executeOperation(operation);
     }
 
-    async deleteImmediately(path: string) {
-        path = this.getStandardizedAbsolutePath(path);
-        const pathsToRemove = this.getChildDirsAndFilesFromPathsToDelete(path);
-        pathsToRemove.forEach(p => this.pathsToDelete.delete(p));
-        this.pathsToDelete.delete(path);
+    saveForDirectorySync(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+        this.throwIfHasExternalOperations(dir, "save directory");
+
+        this.ensureDirectoryExistsSync(dirPath);
+
+        for (const operation of this.getAndClearOperationsForDir(dir))
+            this.executeOperationSync(operation);
+    }
+
+    private getAndClearOperationsForDir(dir: Directory) {
+        const operations: Operation[] = getAndClearParentMkDirOperations(dir.getParent(), dir);
+        for (const currentDir of [dir, ...dir.getDescendants()])
+            operations.push(...currentDir.operations);
+        ArrayUtils.sortByProperty(operations, item => item.index);
+        this.removeDirAndSubDirs(dir);
+        return operations;
+
+        function getAndClearParentMkDirOperations(parentDir: Directory | undefined, childDir: Directory): Operation[] {
+            if (parentDir == null)
+                return [];
+
+            const parentOperations = ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === childDir);
+            return [...parentOperations, ...getAndClearParentMkDirOperations(parentDir.getParent(), parentDir)];
+        }
+    }
+
+    private async executeOperation(operation: Operation) {
+        switch (operation.kind) {
+            case "deleteDir":
+                await this.deleteSuppressNotFound(operation.dir.path);
+                break;
+            case "deleteFile":
+                await this.deleteSuppressNotFound(operation.filePath);
+                break;
+            case "move":
+                await this.fileSystem.move(operation.oldDir.path, operation.newDir.path);
+                break;
+            case "mkdir":
+                await this.fileSystem.mkdir(operation.dir.path);
+                break;
+            default:
+                throw errors.getNotImplementedForNeverValueError(operation);
+        }
+    }
+
+    private executeOperationSync(operation: Operation) {
+        switch (operation.kind) {
+            case "deleteDir":
+                this.deleteSuppressNotFoundSync(operation.dir.path);
+                break;
+            case "deleteFile":
+                this.deleteSuppressNotFoundSync(operation.filePath);
+                break;
+            case "move":
+                this.fileSystem.moveSync(operation.oldDir.path, operation.newDir.path);
+                break;
+            case "mkdir":
+                this.fileSystem.mkdirSync(operation.dir.path);
+                break;
+            default:
+                throw errors.getNotImplementedForNeverValueError(operation);
+        }
+    }
+
+    private getAndClearOperations() {
+        const operations: Operation[] = [];
+        for (const dir of this.directories.getValues())
+            operations.push(...dir.operations);
+        ArrayUtils.sortByProperty(operations, item => item.index);
+        this.directories.clear();
+        return operations;
+    }
+
+    async moveFileImmediately(oldFilePath: string, newFilePath: string, fileText: string) {
+        oldFilePath = this.getStandardizedAbsolutePath(oldFilePath);
+        newFilePath = this.getStandardizedAbsolutePath(newFilePath);
+
+        this.throwIfHasExternalOperations(this.getParentDirectory(oldFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getParentDirectory(newFilePath), "move file");
+
+        await this.deleteFileImmediately(oldFilePath);
+        await this.writeFile(newFilePath, fileText);
+    }
+
+    moveFileImmediatelySync(oldFilePath: string, newFilePath: string, fileText: string) {
+        oldFilePath = this.getStandardizedAbsolutePath(oldFilePath);
+        newFilePath = this.getStandardizedAbsolutePath(newFilePath);
+
+        this.throwIfHasExternalOperations(this.getParentDirectory(oldFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getParentDirectory(newFilePath), "move file");
+
+        this.deleteFileImmediatelySync(oldFilePath);
+        this.writeFileSync(newFilePath, fileText);
+    }
+
+    async deleteFileImmediately(filePath: string) {
+        filePath = this.getStandardizedAbsolutePath(filePath);
+        const dir = this.getParentDirectory(filePath);
+
+        this.throwIfHasExternalOperations(dir, "delete file");
+        dir.dequeueFileDelete(filePath);
+
         try {
-            await this.deleteSuppressNotFound(path);
+            await this.deleteSuppressNotFound(filePath);
         } catch (err) {
-            pathsToRemove.forEach(p => this.pathsToDelete.add(p));
+            this.queueFileDelete(filePath);
             throw err;
         }
     }
 
-    deleteImmediatelySync(path: string) {
-        path = this.getStandardizedAbsolutePath(path);
-        const pathsToRemove = this.getChildDirsAndFilesFromPathsToDelete(path);
-        pathsToRemove.forEach(p => this.pathsToDelete.delete(p));
-        this.pathsToDelete.delete(path);
+    deleteFileImmediatelySync(filePath: string) {
+        filePath = this.getStandardizedAbsolutePath(filePath);
+        const dir = this.getParentDirectory(filePath);
+
+        this.throwIfHasExternalOperations(dir, "delete file");
+        dir.dequeueFileDelete(filePath);
+
         try {
-            this.deleteSuppressNotFoundSync(path);
+            this.deleteSuppressNotFoundSync(filePath);
         } catch (err) {
-            pathsToRemove.forEach(p => this.pathsToDelete.add(p));
+            this.queueFileDelete(filePath);
             throw err;
+        }
+    }
+
+    async deleteDirectoryImmediately(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+
+        this.throwIfHasExternalOperations(dir, "delete");
+        this.removeDirAndSubDirs(dir);
+
+        try {
+            await this.deleteSuppressNotFound(dirPath);
+        } catch (err) {
+            this.addBackDirAndSubDirs(dir);
+            this.queueDirectoryDelete(dirPath);
+        }
+
+    }
+
+    deleteDirectoryImmediatelySync(dirPath: string) {
+        dirPath = this.getStandardizedAbsolutePath(dirPath);
+        const dir = this.getDirectory(dirPath);
+
+        this.throwIfHasExternalOperations(dir, "delete");
+        this.removeDirAndSubDirs(dir);
+
+        try {
+            this.deleteSuppressNotFoundSync(dirPath);
+        } catch (err) {
+            this.addBackDirAndSubDirs(dir);
+            this.queueDirectoryDelete(dirPath);
         }
     }
 
@@ -67,10 +434,8 @@ export class FileSystemWrapper {
         try {
             await this.fileSystem.delete(path);
         } catch (err) {
-            if (!FileUtils.isNotExistsError(err)) {
-                this.pathsToDelete.add(path);
+            if (!FileUtils.isNotExistsError(err))
                 throw err;
-            }
         }
     }
 
@@ -78,50 +443,52 @@ export class FileSystemWrapper {
         try {
             this.fileSystem.deleteSync(path);
         } catch (err) {
-            if (!FileUtils.isNotExistsError(err)) {
-                this.pathsToDelete.add(path);
+            if (!FileUtils.isNotExistsError(err))
                 throw err;
-            }
         }
     }
 
     fileExistsSync(filePath: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        if (this.pathsToDeleteHas(filePath))
+        if (this.isPathQueuedForDeletion(filePath))
+            return false;
+        if (this.getParentDirectory(filePath).getWasEverDeleted())
             return false;
         return this.fileSystem.fileExistsSync(filePath);
     }
 
-    directoryExists(dirPath: string) {
-        dirPath = this.getStandardizedAbsolutePath(dirPath);
-        if (this.pathsToDeleteHas(dirPath))
-            return Promise.resolve(false);
-        return this.fileSystem.directoryExists(dirPath);
-    }
-
     directoryExistsSync(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        if (this.pathsToDeleteHas(dirPath))
+        if (this.isPathQueuedForDeletion(dirPath))
+            return false;
+        if (this.isPathDirectoryInQueueThatExists(dirPath))
+            return true;
+        if (this.getDirectory(dirPath).getWasEverDeleted())
             return false;
         return this.fileSystem.directoryExistsSync(dirPath);
     }
 
     readFileSync(filePath: string, encoding: string | undefined) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        if (this.pathsToDeleteHas(filePath))
+        if (this.isPathQueuedForDeletion(filePath))
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
+        if (this.getParentDirectory(filePath).getWasEverDeleted())
+            throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
         return this.fileSystem.readFileSync(filePath, encoding);
     }
 
     readDirSync(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        if (this.pathsToDeleteHas(dirPath))
+        const dir = this.getDirectory(dirPath);
+        if (dir.getIsDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
-        return this.fileSystem.readDirSync(dirPath).filter(path => !this.pathsToDelete.has(path));
+        if (dir.getWasEverDeleted())
+            throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} because one of its ancestor directories was once deleted or moved.`);
+        return this.fileSystem.readDirSync(dirPath).filter(path => !this.isPathQueuedForDeletion(path) && !this.isPathQueuedForDeletion(path));
     }
 
     glob(patterns: string[]) {
-        return this.fileSystem.glob(patterns).filter(path => !this.pathsToDelete.has(path));
+        return this.fileSystem.glob(patterns).filter(path => !this.isPathQueuedForDeletion(path));
     }
 
     getFileSystem() {
@@ -138,62 +505,161 @@ export class FileSystemWrapper {
 
     readFileOrNotExists(filePath: string, encoding: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        if (this.pathsToDeleteHas(filePath))
+        if (this.isPathQueuedForDeletion(filePath))
             return false;
         return FileUtils.readFileOrNotExists(this.fileSystem, filePath, encoding);
     }
 
     readFileOrNotExistsSync(filePath: string, encoding: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        if (this.pathsToDeleteHas(filePath))
+        if (this.isPathQueuedForDeletion(filePath))
             return false;
         return FileUtils.readFileOrNotExistsSync(this.fileSystem, filePath, encoding);
     }
 
     async writeFile(filePath: string, fileText: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        this.pathsToDelete.delete(filePath);
-        await FileUtils.ensureDirectoryExists(this, FileUtils.getDirPath(filePath));
+        const parentDir = this.getParentDirectory(filePath);
+        this.throwIfHasExternalOperations(parentDir, "write file");
+        parentDir.dequeueFileDelete(filePath);
+        await this.ensureDirectoryExists(parentDir.path);
         await this.fileSystem.writeFile(filePath, fileText);
     }
 
     writeFileSync(filePath: string, fileText: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        this.pathsToDelete.delete(filePath);
-        FileUtils.ensureDirectoryExistsSync(this, FileUtils.getDirPath(filePath));
+        const parentDir = this.getParentDirectory(filePath);
+        this.throwIfHasExternalOperations(parentDir, "write file");
+        parentDir.dequeueFileDelete(filePath);
+        this.ensureDirectoryExistsSync(parentDir.path);
         this.fileSystem.writeFileSync(filePath, fileText);
     }
 
-    mkdirSync(dirPath: string) {
-        dirPath = this.getStandardizedAbsolutePath(dirPath);
-        this.removeFromPathsToDelete(dirPath);
+    private isPathDirectoryInQueueThatExists(path: string) {
+        const pathDir = this.getDirectoryIfExists(path);
+        return pathDir == null ? false : !pathDir.getIsDeleted();
+    }
+
+    private isPathQueuedForDeletion(path: string) {
+        // check if the provided path is a dir and if it's deleted
+        const pathDir = this.getDirectoryIfExists(path);
+        if (pathDir != null)
+            return pathDir.getIsDeleted();
+
+        // check if the provided path is a file or if it or its parent is deleted
+        const parentDir = this.getParentDirectory(path);
+        return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
+    }
+
+    private removeDirAndSubDirs(dir: Directory) {
+        const originalParent = dir.getParent();
+        dir.removeParent();
+        for (const dirToRemove of [dir, ...dir.getDescendants()])
+            this.directories.removeByKey(dirToRemove.path);
+        if (originalParent != null)
+            originalParent.dequeueDirDelete(dir.path);
+    }
+
+    private addBackDirAndSubDirs(dir: Directory) {
+        for (const dirToAdd of [dir, ...dir.getDescendants()])
+            this.directories.set(dirToAdd.path, dirToAdd);
+        if (!dir.isRootDir())
+            dir.setParent(this.getParentDirectory(dir.path));
+    }
+
+    private operationIndex = 0;
+
+    private getNextOperationIndex() {
+        return this.operationIndex++;
+    }
+
+    private getParentDirectory(filePath: string) {
+        return this.getDirectory(FileUtils.getDirPath(filePath));
+    }
+
+    private getDirectoryIfExists(dirPath: string) {
+        return this.directories.get(dirPath);
+    }
+
+    private getDirectory(dirPath: string) {
+        let dir = this.directories.get(dirPath);
+        if (dir != null)
+            return dir;
+
+        const getOrCreateDir = (creatingDirPath: string) => this.directories.getOrCreate(creatingDirPath, () => new Directory(creatingDirPath));
+        dir = getOrCreateDir(dirPath);
+        let currentDirPath = dirPath;
+        let currentDir = dir;
+
+        while (!FileUtils.isRootDirPath(currentDirPath)) {
+            const nextDirPath = FileUtils.getDirPath(currentDirPath);
+            const hadNextDir = this.directories.has(nextDirPath);
+            const nextDir = getOrCreateDir(nextDirPath);
+
+            currentDir.setParent(nextDir);
+
+            if (hadNextDir)
+                return dir;
+
+            currentDir = nextDir;
+            currentDirPath = nextDirPath;
+        }
+
+        return dir;
+    }
+
+    private throwIfHasExternalOperations(dir: Directory, commandName: string) {
+        const operations = dir.getExternalOperations();
+        if (operations.length === 0)
+            return;
+
+        throw new errors.InvalidOperationError(getErrorText());
+
+        function getErrorText() {
+            let errorText = `Cannot execute immediate operation '${commandName}' because of the following external operations:\n`;
+            for (const operation of operations) {
+                if (operation.kind === "move")
+                    errorText += `\nMove: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                else if (operation.kind === "deleteDir")
+                    errorText += `\nDelete: ${operation.dir.path}`;
+                else
+                    throw errors.getNotImplementedForNeverValueError(operation);
+            }
+            return errorText;
+        }
+    }
+
+    private async ensureDirectoryExists(dirPath: string) {
+        if (await this.fileSystem.directoryExists(dirPath))
+            return;
+
+        // ensure the parent exists and is not the root
+        const parentDirPath = FileUtils.getDirPath(dirPath);
+        if (parentDirPath !== dirPath && !FileUtils.isRootDirPath(parentDirPath))
+            await this.ensureDirectoryExists(parentDirPath);
+
+        // make this directory
+        this.removeMkDirOperationsForDir(dirPath);
+        await this.fileSystem.mkdir(dirPath);
+    }
+
+    private ensureDirectoryExistsSync(dirPath: string) {
+        if (this.fileSystem.directoryExistsSync(dirPath))
+            return;
+
+        // ensure the parent exists and is not the root
+        const parentDirPath = FileUtils.getDirPath(dirPath);
+        if (parentDirPath !== dirPath && !FileUtils.isRootDirPath(parentDirPath))
+            this.ensureDirectoryExistsSync(parentDirPath);
+
+        // make this directory
+        this.removeMkDirOperationsForDir(dirPath);
         this.fileSystem.mkdirSync(dirPath);
     }
 
-    mkdir(dirPath: string) {
-        dirPath = this.getStandardizedAbsolutePath(dirPath);
-        this.removeFromPathsToDelete(dirPath);
-        return this.fileSystem.mkdir(dirPath);
-    }
-
-    private pathsToDeleteHas(path: string) {
-        if (this.pathsToDelete.has(path))
-            return true;
-        const parentDirPath = FileUtils.getDirPath(path);
-        if (parentDirPath !== path && this.pathsToDeleteHas(parentDirPath))
-            return true;
-        return false;
-    }
-
-    private removeFromPathsToDelete(path: string) {
-        this.pathsToDelete.delete(path);
-        const parentDirPath = FileUtils.getDirPath(path);
-        if (parentDirPath !== path)
-            this.removeFromPathsToDelete(parentDirPath);
-    }
-
-    private getChildDirsAndFilesFromPathsToDelete(dirPath: string) {
-        return ArrayUtils.from(this.pathsToDelete.values())
-            .filter(path => FileUtils.pathStartsWith(path, dirPath));
+    private removeMkDirOperationsForDir(dirPath: string) {
+        const dir = this.getDirectory(dirPath);
+        const parentDir = this.getParentDirectory(dirPath);
+        ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
     }
 }

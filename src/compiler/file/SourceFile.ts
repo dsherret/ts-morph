@@ -235,10 +235,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     move(filePath: string, options: SourceFileMoveOptions = {}): SourceFile {
         const oldDirPath = this.getDirectoryPath();
         const sourceFileReferences = this._getReferencesForMoveInternal();
+        const oldFilePath = this.getFilePath();
 
         if (!this._moveInternal(filePath, options))
             return this;
 
+        this.global.fileSystemWrapper.queueFileDelete(oldFilePath);
         this._updateReferencesForMoveInternal(sourceFileReferences, oldDirPath);
 
         // ignore any modifications in other source files
@@ -252,11 +254,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /** @internal */
     _moveInternal(filePath: string, options: SourceFileMoveOptions = {}) {
         const {overwrite = false} = options;
-        const oldFilePath = this.getFilePath();
-        const oldDirPath = this.getDirectoryPath();
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, oldDirPath);
+        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
 
-        if (filePath === oldFilePath)
+        if (filePath === this.getFilePath())
             return false;
 
         if (overwrite) {
@@ -272,7 +272,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             newFilePath: filePath,
             sourceFile: this
         });
-        this.global.fileSystemWrapper.queueDelete(oldFilePath);
 
         return true;
     }
@@ -307,10 +306,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const oldFilePath = this.getFilePath();
         const newFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
         this.move(filePath, options);
-        if (oldFilePath === newFilePath)
-            await this.save();
+        if (oldFilePath !== newFilePath) {
+            await this.global.fileSystemWrapper.moveFileImmediately(oldFilePath, newFilePath, this.getFullText());
+            this._isSaved = true;
+        }
         else
-            await Promise.all([this.global.fileSystemWrapper.deleteImmediately(oldFilePath), this.save()]);
+            await this.save();
         return this;
     }
 
@@ -325,9 +326,12 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const oldFilePath = this.getFilePath();
         const newFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath, this.getDirectoryPath());
         this.move(filePath, options);
-        if (oldFilePath !== newFilePath)
-            this.global.fileSystemWrapper.deleteImmediatelySync(oldFilePath);
-        this.saveSync();
+        if (oldFilePath !== newFilePath) {
+            this.global.fileSystemWrapper.moveFileImmediatelySync(oldFilePath, newFilePath, this.getFullText());
+            this._isSaved = true;
+        }
+        else
+            this.saveSync();
         return this;
     }
 
@@ -339,7 +343,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     delete() {
         const filePath = this.getFilePath();
         this.forget();
-        this.global.fileSystemWrapper.queueDelete(filePath);
+        this.global.fileSystemWrapper.queueFileDelete(filePath);
     }
 
     /**
@@ -348,7 +352,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     async deleteImmediately() {
         const filePath = this.getFilePath();
         this.forget();
-        await this.global.fileSystemWrapper.deleteImmediately(filePath);
+        await this.global.fileSystemWrapper.deleteFileImmediately(filePath);
     }
 
     /**
@@ -357,7 +361,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     deleteImmediatelySync() {
         const filePath = this.getFilePath();
         this.forget();
-        this.global.fileSystemWrapper.deleteImmediatelySync(filePath);
+        this.global.fileSystemWrapper.deleteFileImmediatelySync(filePath);
     }
 
     /**

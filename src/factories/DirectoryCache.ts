@@ -69,7 +69,8 @@ export class DirectoryCache {
 
     remove(dirPath: string) {
         this.removeFromDirectoriesByDirPath(dirPath);
-        return this.directoriesByPath.removeByKey(dirPath) || this.orphanDirs.removeByKey(dirPath);
+        this.directoriesByPath.removeByKey(dirPath);
+        this.orphanDirs.removeByKey(dirPath);
     }
 
     getChildDirectoriesOfDirectory(dirPath: string) {
@@ -145,7 +146,8 @@ export class DirectoryCache {
             this.orphanDirs.set(path, directory);
 
         this.directoriesByPath.set(path, directory);
-        this.global.fileSystemWrapper.dequeueDelete(path);
+        if (!this.global.fileSystemWrapper.directoryExistsSync(path))
+            this.global.fileSystemWrapper.queueMkdir(path);
 
         for (const orphanDir of this.orphanDirs.getValues()) {
             if (directory.isAncestorOf(orphanDir))

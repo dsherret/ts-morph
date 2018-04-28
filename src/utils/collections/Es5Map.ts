@@ -9,11 +9,12 @@ export interface Dictionary<K, V> {
     entries(): IterableIterator<[K, V]>;
     keys(): IterableIterator<K>;
     values(): IterableIterator<V>;
+    clear(): void;
 }
 
 export class Es5Map<K, V> implements Dictionary<K, V> {
-    private readonly propSaver = new Es5PropSaver<K, string>();
-    private readonly items: { [identifier: string]: [K, V]; } = {};
+    private propSaver = new Es5PropSaver<K, string>();
+    private items: { [identifier: string]: [K, V]; } = {};
     private itemCount = 0;
 
     get size() {
@@ -46,6 +47,11 @@ export class Es5Map<K, V> implements Dictionary<K, V> {
         const identifier = this.getIdentifier(key);
         if (identifier != null)
             delete this.items[identifier];
+    }
+
+    clear() {
+        this.propSaver = new Es5PropSaver();
+        this.items = {};
     }
 
     *entries() {

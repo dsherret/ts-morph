@@ -562,8 +562,7 @@ describe(nameof(Project), () => {
             project.createSourceFile("file3.ts", "");
             await project.save();
             expect(project.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
-            expect(fileSystem.getWriteLog().length).to.equal(2); // 2 writes
-            expect(fileSystem.getSyncWriteLog().length).to.equal(1); // 1 write
+            expect(fileSystem.getWriteLog().length).to.equal(3);
         });
 
         it("should delete any deleted source files & directories and save unsaved source files", async () => {
@@ -583,7 +582,7 @@ describe(nameof(Project), () => {
 
             await project.save();
             expect(fileSystem.getFiles().map(f => f[0])).to.deep.equal(["/file.ts"]);
-            expect(fileSystem.getCreatedDirectories().sort()).to.deep.equal(["/dir", "/"].sort());
+            expect(fileSystem.getCreatedDirectories().sort()).to.deep.equal(["/dir"].sort());
         });
     });
 
@@ -597,8 +596,7 @@ describe(nameof(Project), () => {
             project.saveSync();
 
             expect(project.getSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
-            expect(fileSystem.getWriteLog().length).to.equal(0);
-            expect(fileSystem.getSyncWriteLog().length).to.equal(3); // 3 writes
+            expect(fileSystem.getWriteLog().length).to.equal(3);
         });
     });
 
@@ -616,7 +614,7 @@ describe(nameof(Project), () => {
             const result = project.emit();
             expect(result).to.be.instanceof(EmitResult);
 
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog[1].filePath).to.equal("/dist/file2.js");
@@ -628,7 +626,7 @@ describe(nameof(Project), () => {
             const {project, fileSystem} = setup({ noLib: true, outDir: "dist" });
             project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
 
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);
@@ -638,7 +636,7 @@ describe(nameof(Project), () => {
             const {project, fileSystem} = setup({ noLib: true, outDir: "dist", declaration: true });
             project.emit({ emitOnlyDtsFiles: true });
 
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.d.ts");
             expect(writeLog[0].fileText).to.equal("declare const num1 = 1;\n");
             expect(writeLog[1].filePath).to.equal("/dist/file2.d.ts");

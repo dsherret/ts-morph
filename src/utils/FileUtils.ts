@@ -26,42 +26,6 @@ export class FileUtils {
     }
 
     /**
-     * Ensure the directory exists synchronously.
-     * @param fileSystemWrapper - File system wrapper.
-     * @param dirPath - Directory path.
-     */
-    static ensureDirectoryExistsSync(fileSystemWrapper: FileSystemWrapper, dirPath: string) {
-        if (fileSystemWrapper.directoryExistsSync(dirPath))
-            return;
-
-        // ensure the parent exists and is not the root
-        const parentDirPath = path.dirname(dirPath);
-        if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
-            FileUtils.ensureDirectoryExistsSync(fileSystemWrapper, parentDirPath);
-
-        // make this directory
-        fileSystemWrapper.mkdirSync(dirPath);
-    }
-
-    /**
-     * Ensure the directory exists asynchronously.
-     * @param host - File system host.
-     * @param dirPath - Directory path.
-     */
-    static async ensureDirectoryExists(host: FileSystemWrapper, dirPath: string) {
-        if (await host.directoryExists(dirPath))
-            return;
-
-        // ensure the parent exists and is not the root
-        const parentDirPath = path.dirname(dirPath);
-        if (parentDirPath !== dirPath && path.dirname(parentDirPath) !== parentDirPath)
-            await FileUtils.ensureDirectoryExists(host, parentDirPath);
-
-        // make this directory
-        await host.mkdir(dirPath);
-    }
-
-    /**
      * Joins the paths.
      * @param paths - Paths to join.
      */

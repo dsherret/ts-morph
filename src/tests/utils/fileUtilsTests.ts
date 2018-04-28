@@ -4,28 +4,6 @@ import { FileUtils } from "../../utils";
 import { getFileSystemHostWithFiles } from "../testHelpers";
 
 describe(nameof(FileUtils), () => {
-    describe(nameof(FileUtils.ensureDirectoryExistsSync), () => {
-        it("should ensure the specified directory exists and the parent directories", () => {
-            const host = getFileSystemHostWithFiles([], ["/some"]);
-            FileUtils.ensureDirectoryExistsSync(new FileSystemWrapper(host), "/some/dir/path");
-            expect(host.getCreatedDirectories()).to.deep.equal([
-                "/some/dir",
-                "/some/dir/path"
-            ]);
-        });
-    });
-
-    describe(nameof(FileUtils.ensureDirectoryExists), () => {
-        it("should ensure the specified directory exists and the parent directories", async () => {
-            const host = getFileSystemHostWithFiles([], ["/some"]);
-            await FileUtils.ensureDirectoryExists(new FileSystemWrapper(host), "/some/dir/path");
-            expect(host.getCreatedDirectories()).to.deep.equal([
-                "/some/dir",
-                "/some/dir/path"
-            ]);
-        });
-    });
-
     describe(nameof(FileUtils.getStandardizedAbsolutePath), () => {
         const fileSystem = new VirtualFileSystemHost();
 

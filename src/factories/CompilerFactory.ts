@@ -298,7 +298,7 @@ export class CompilerFactory {
 
     private addSourceFileToCache(sourceFile: SourceFile) {
         this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-        this.global.fileSystemWrapper.dequeueDelete(sourceFile.getFilePath());
+        this.global.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
         this.directoryCache.addSourceFile(sourceFile);
     }
 

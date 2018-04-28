@@ -417,7 +417,7 @@ describe(nameof(SourceFile), () => {
 
             sourceFile.saveSync();
             expect(sourceFile.isSaved()).to.be.true;
-            const writeLog = host.getSyncWriteLog();
+            const writeLog = host.getWriteLog();
             const entry = writeLog[0];
             expect(entry.filePath).to.equal(filePath);
             expect(entry.fileText).to.equal(fileText);
@@ -882,7 +882,7 @@ describe(nameof(SourceFile), () => {
             const result = sourceFile.emit();
 
             expect(result).to.be.instanceof(EmitResult);
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(writeLog[0].filePath).to.equal("/dist/file1.js");
             expect(writeLog[0].fileText).to.equal("var num1 = 1;\n");
             expect(writeLog.length).to.equal(1);

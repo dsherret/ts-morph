@@ -65,4 +65,8 @@ export class KeyValueCache<T, U> {
     removeByKey(key: T) {
         this.cacheItems.delete(key);
     }
+
+    clear() {
+        this.cacheItems.clear();
+    }
 }

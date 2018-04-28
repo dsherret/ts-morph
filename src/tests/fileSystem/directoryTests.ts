@@ -822,7 +822,7 @@ describe(nameof(Directory), () => {
             directory.delete();
             project.createDirectory("dir");
             project.saveSync();
-            expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal([...filePaths, "/dir/subDir"].sort());
+            expect(fileSystem.getDeleteLog().map(d => d.path).sort()).to.deep.equal([...filePaths, "/dir", "/dir/subDir"].sort());
         });
     });
 
@@ -893,9 +893,8 @@ describe(nameof(Directory), () => {
 
             expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(otherFile.isSaved()).to.be.false;
-            expect(fileSystem.getWriteLog().length).to.equal(2);
+            expect(fileSystem.getWriteLog().length).to.equal(3);
             expect(fileSystem.getCreatedDirectories().length).to.equal(2);
-            expect(fileSystem.getSyncWriteLog().length).to.equal(1);
         });
     });
 
@@ -912,9 +911,8 @@ describe(nameof(Directory), () => {
 
             expect(dir.getDescendantSourceFiles().map(f => f.isSaved())).to.deep.equal([true, true, true]);
             expect(otherFile.isSaved()).to.be.false;
-            expect(fileSystem.getWriteLog().length).to.equal(0);
+            expect(fileSystem.getWriteLog().length).to.equal(3);
             expect(fileSystem.getCreatedDirectories().length).to.equal(2);
-            expect(fileSystem.getSyncWriteLog().length).to.equal(3);
         });
     });
 
@@ -1017,7 +1015,7 @@ describe(nameof(Directory), () => {
         }
 
         function runChecks(fileSystem: FileSystemHost & CustomFileSystemProps, result: DirectoryEmitResult, outDir: string, declarationDir: string) {
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
 
             expect(result.getEmitSkipped()).to.be.false;
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
@@ -1047,7 +1045,7 @@ describe(nameof(Directory), () => {
             const result = subDir.emitSync({ outDir: "../sub2" });
             expect(result.getEmitSkipped()).to.be.false;
 
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
             expect(writeLog[0].filePath).to.equal("/dir/sub2/file1.js");
             expect(writeLog.length).to.equal(1);
@@ -1063,7 +1061,7 @@ describe(nameof(Directory), () => {
             const result = directory.emitSync();
             expect(result.getEmitSkipped()).to.be.true;
 
-            const writeLog = fileSystem.getSyncWriteLog();
+            const writeLog = fileSystem.getWriteLog();
             expect(result.getOutputFilePaths()).to.deep.equal(writeLog.map(l => l.filePath));
             expect(writeLog[0].filePath).to.equal("/dir/sub/file1.js");
             expect(writeLog[1].filePath).to.equal("/dir/sub/file1.d.ts");
