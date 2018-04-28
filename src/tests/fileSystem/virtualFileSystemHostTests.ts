@@ -191,6 +191,144 @@ describe(nameof(VirtualFileSystemHost), () => {
         });
     });
 
+    describe(nameof<VirtualFileSystemHost>(h => h.copy), () => {
+        // this will test copySync because this calls copySync
+
+        it("should copy a directory and all its sub directories", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/dir/subdir/file.ts", "text");
+            fs.writeFileSync("/dir/subdir/nextSubDir/test.ts", "text2");
+            await fs.copy("/dir/subdir", "/newDir/newSubDir");
+
+            expect(fs.directoryExistsSync("/dir")).to.be.true;
+            expect(fs.directoryExistsSync("/dir/subdir")).to.be.true;
+            expect(fs.readFileSync("/dir/subdir/file.ts")).to.equal("text");
+            expect(fs.readFileSync("/dir/subdir/nextSubDir/test.ts")).to.equal("text2");
+            expect(fs.directoryExistsSync("/newDir")).to.be.true;
+            expect(fs.directoryExistsSync("/newDir/newSubDir")).to.be.true;
+            expect(fs.directoryExistsSync("/newDir/newSubDir/nextSubDir")).to.be.true;
+            expect(fs.readFileSync("/newDir/newSubDir/file.ts")).to.equal("text");
+            expect(fs.readFileSync("/newDir/newSubDir/nextSubDir/test.ts")).to.equal("text2");
+        });
+
+        it("should merge when copying into another directory", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from/file.ts", "text");
+            fs.writeFileSync("/from/sub/subFile.ts", "text");
+            fs.writeFileSync("/to/file.ts", "original");
+            fs.writeFileSync("/to/test.ts", "text2");
+            fs.writeFileSync("/to/sub/subFile2.ts", "text3");
+            await fs.copy("/from", "/to");
+
+            expect(fs.directoryExistsSync("/from")).to.be.true;
+            expect(fs.directoryExistsSync("/from/sub")).to.be.true;
+            expect(fs.directoryExistsSync("/to/sub")).to.be.true;
+            expect(fs.readFileSync("/to/file.ts")).to.equal("text");
+            expect(fs.readFileSync("/to/test.ts")).to.equal("text2");
+            expect(fs.readFileSync("/to/sub/subFile2.ts")).to.equal("text3");
+        });
+
+        it("should copy a file and create the directory it's being copied to", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from/file.ts", "text");
+            await fs.copy("/from/file.ts", "/to/to.ts");
+
+            expect(fs.directoryExistsSync("/from")).to.be.true;
+            expect(fs.directoryExistsSync("/to")).to.be.true;
+            expect(fs.readFileSync("/to/to.ts")).to.equal("text");
+        });
+
+        it("should copy a file and overwrite the file it's being copied to", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from.ts", "text");
+            fs.writeFileSync("/to.ts", "text2");
+            await fs.copy("/from.ts", "/to.ts");
+
+            expect(fs.readFileSync("/from.ts")).to.equal("text");
+            expect(fs.readFileSync("/to.ts")).to.equal("text");
+        });
+
+        it("should throw when copying a path that doesn't exist", async () => {
+            const fs = new VirtualFileSystemHost();
+            let thrownErr: any;
+            try {
+                await fs.copy("/from.ts", "/to.ts");
+            } catch (err) {
+                thrownErr = err;
+            }
+
+            expect(thrownErr).to.be.instanceof(errors.PathNotFoundError);
+        });
+    });
+
+    describe(nameof<VirtualFileSystemHost>(h => h.move), () => {
+        // this will test moveSync because this calls moveSync
+
+        it("should move a directory and all its sub directories", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/dir/subdir/file.ts", "text");
+            fs.writeFileSync("/dir/subdir/nextSubDir/test.ts", "text2");
+            await fs.move("/dir/subdir", "/newDir/newSubDir");
+
+            expect(fs.directoryExistsSync("/dir")).to.be.true;
+            expect(fs.directoryExistsSync("/dir/subdir")).to.be.false;
+            expect(fs.directoryExistsSync("/newDir")).to.be.true;
+            expect(fs.directoryExistsSync("/newDir/newSubDir")).to.be.true;
+            expect(fs.readFileSync("/newDir/newSubDir/file.ts")).to.equal("text");
+            expect(fs.directoryExistsSync("/newDir/newSubDir/nextSubDir")).to.be.true;
+            expect(fs.readFileSync("/newDir/newSubDir/nextSubDir/test.ts")).to.equal("text2");
+        });
+
+        it("should merge two directories", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from/file.ts", "text");
+            fs.writeFileSync("/from/sub/subFile.ts", "text");
+            fs.writeFileSync("/to/file.ts", "original");
+            fs.writeFileSync("/to/test.ts", "text2");
+            fs.writeFileSync("/to/sub/subFile2.ts", "text3");
+            await fs.move("/from", "/to");
+
+            expect(fs.directoryExistsSync("/from")).to.be.false;
+            expect(fs.directoryExistsSync("/from/sub")).to.be.false;
+            expect(fs.directoryExistsSync("/to/sub")).to.be.true;
+            expect(fs.readFileSync("/to/file.ts")).to.equal("text");
+            expect(fs.readFileSync("/to/test.ts")).to.equal("text2");
+            expect(fs.readFileSync("/to/sub/subFile2.ts")).to.equal("text3");
+        });
+
+        it("should move a file and create the directory it's being moved to", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from/file.ts", "text");
+            await fs.move("/from/file.ts", "/to/to.ts");
+
+            expect(fs.directoryExistsSync("/from")).to.be.true;
+            expect(fs.directoryExistsSync("/to")).to.be.true;
+            expect(fs.readFileSync("/to/to.ts")).to.equal("text");
+        });
+
+        it("should move a file and overwrite the file it's being moved to", async () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("/from.ts", "text");
+            fs.writeFileSync("/to.ts", "text2");
+            await fs.move("/from.ts", "/to.ts");
+
+            expect(fs.fileExistsSync("/from.ts")).to.be.false;
+            expect(fs.readFileSync("/to.ts")).to.equal("text");
+        });
+
+        it("should throw when moving a path that doesn't exist", async () => {
+            const fs = new VirtualFileSystemHost();
+            let thrownErr: any;
+            try {
+                await fs.move("/from.ts", "/to.ts");
+            } catch (err) {
+                thrownErr = err;
+            }
+
+            expect(thrownErr).to.be.instanceof(errors.PathNotFoundError);
+        });
+    });
+
     describe(nameof<VirtualFileSystemHost>(h => h.fileExists), () => {
         const fs = new VirtualFileSystemHost();
         fs.writeFileSync("/file.ts", "");

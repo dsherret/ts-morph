@@ -1,4 +1,4 @@
-﻿import * as fs from "fs";
+﻿import * as fs from "fs-extra";
 import * as nodePath from "path";
 import * as globby from "globby";
 import * as errors from "../errors";
@@ -80,6 +80,22 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     mkdirSync(dirPath: string) {
         fs.mkdirSync(dirPath);
+    }
+
+    move(srcPath: string, destPath: string) {
+        return fs.move(srcPath, destPath, { overwrite: true });
+    }
+
+    moveSync(srcPath: string, destPath: string) {
+        fs.moveSync(srcPath, destPath, { overwrite: true });
+    }
+
+    copy(srcPath: string, destPath: string) {
+        return fs.copy(srcPath, destPath, { overwrite: true });
+    }
+
+    copySync(srcPath: string, destPath: string) {
+        fs.copySync(srcPath, destPath, { overwrite: true });
     }
 
     fileExists(filePath: string) {

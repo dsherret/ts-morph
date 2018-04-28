@@ -9,3 +9,4 @@ export * from "./helpers";
 export * from "./InvalidOperationError";
 export * from "./NotImplementedError";
 export * from "./NotSupportedError";
+export * from "./PathNotFoundError";

@@ -1,5 +1,5 @@
 ﻿import * as errors from "../errors";
-import { KeyValueCache, FileUtils, StringUtils, ArrayUtils, matchGlobs } from "../utils";
+import { KeyValueCache, FileUtils, ArrayUtils, matchGlobs } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 interface VirtualDirectory {
@@ -27,10 +27,8 @@ export class VirtualFileSystemHost implements FileSystemHost {
         path = FileUtils.getStandardizedAbsolutePath(this, path);
         if (this.directories.has(path)) {
             // remove descendant dirs
-            for (const directoryPath of ArrayUtils.from(this.directories.getKeys())) {
-                if (StringUtils.startsWith(directoryPath, path))
-                    this.directories.removeByKey(directoryPath);
-            }
+            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), path))
+                this.directories.removeByKey(descendantDirPath);
             // remove this dir
             this.directories.removeByKey(path);
             return;
@@ -100,6 +98,69 @@ export class VirtualFileSystemHost implements FileSystemHost {
         this.getOrCreateDir(dirPath);
     }
 
+    move(srcPath: string, destPath: string) {
+        this.moveSync(srcPath, destPath);
+        return Promise.resolve();
+    }
+
+    moveSync(srcPath: string, destPath: string) {
+        srcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
+        destPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
+
+        if (this.fileExistsSync(srcPath)) {
+            const fileText = this.readFileSync(srcPath);
+            this.deleteSync(srcPath);
+            this.writeFileSync(destPath, fileText);
+        }
+        else if (this.directories.has(srcPath)) {
+            const moveDirectory = (from: string, to: string) => {
+                this._copyDirInternal(from, to);
+                this.directories.removeByKey(from);
+            };
+            moveDirectory(srcPath, destPath);
+
+            // move descendant dirs
+            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), srcPath)) {
+                const relativePath = FileUtils.getRelativePathTo(srcPath, descendantDirPath);
+                moveDirectory(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
+            }
+        }
+        else
+            throw new errors.PathNotFoundError(srcPath);
+    }
+
+    copy(srcPath: string, destPath: string) {
+        this.copySync(srcPath, destPath);
+        return Promise.resolve();
+    }
+
+    copySync(srcPath: string, destPath: string) {
+        srcPath = FileUtils.getStandardizedAbsolutePath(this, srcPath);
+        destPath = FileUtils.getStandardizedAbsolutePath(this, destPath);
+
+        if (this.fileExistsSync(srcPath))
+            this.writeFileSync(destPath, this.readFileSync(srcPath));
+        else if (this.directories.has(srcPath)) {
+            this._copyDirInternal(srcPath, destPath);
+
+            // copy descendant dirs
+            for (const descendantDirPath of getDescendantDirectories(this.directories.getKeys(), srcPath)) {
+                const relativePath = FileUtils.getRelativePathTo(srcPath, descendantDirPath);
+                this._copyDirInternal(descendantDirPath, FileUtils.pathJoin(destPath, relativePath));
+            }
+        }
+        else
+            throw new errors.PathNotFoundError(srcPath);
+    }
+
+    private _copyDirInternal(from: string, to: string) {
+        const dir = this.directories.get(from)!;
+        const newDir = this.getOrCreateDir(to);
+
+        for (const fileEntry of dir.files.getEntries())
+            newDir.files.set(FileUtils.pathJoin(to, FileUtils.getBaseName(fileEntry[0])), fileEntry[1]);
+    }
+
     fileExists(filePath: string) {
         return Promise.resolve<boolean>(this.fileExistsSync(filePath));
     }
@@ -152,5 +213,12 @@ export class VirtualFileSystemHost implements FileSystemHost {
         }
 
         return dir;
+    }
+}
+
+function* getDescendantDirectories(directoryPaths: IterableIterator<string>, dirPath: string) {
+    for (const path of directoryPaths) {
+        if (FileUtils.pathStartsWith(path, dirPath))
+            yield path;
     }
 }

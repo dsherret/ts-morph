@@ -8,6 +8,10 @@
     writeFileSync(filePath: string, fileText: string): void;
     mkdir(dirPath: string): Promise<void>;
     mkdirSync(dirPath: string): void;
+    move(srcPath: string, destPath: string): Promise<void>;
+    moveSync(srcPath: string, destPath: string): void;
+    copy(srcPath: string, destPath: string): Promise<void>;
+    copySync(srcPath: string, destPath: string): void;
     fileExists(filePath: string): Promise<boolean>;
     fileExistsSync(filePath: string): boolean;
     directoryExists(dirPath: string): Promise<boolean>;
