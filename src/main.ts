@@ -2,7 +2,7 @@ export * from "./typescript";
 export * from "./compiler";
 export * from "./structures";
 export { Project as default } from "./Project";
-export { Options, CreateSourceFileOptions, AddSourceFileOptions } from "./Project";
+export { Options, SourceFileCreateOptions, SourceFileAddOptions } from "./Project";
 export { FileSystemHost, Directory, DirectoryEmitResult, AddDirectoryOptions } from "./fileSystem";
 export * from "./options";
 export { Constructor } from "./Constructor";

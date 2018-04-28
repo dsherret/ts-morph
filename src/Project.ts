@@ -23,11 +23,11 @@ export interface Options {
     useVirtualFileSystem?: boolean;
 }
 
-export interface CreateSourceFileOptions extends AddSourceFileOptions {
+export interface SourceFileCreateOptions extends SourceFileAddOptions {
     overwrite?: boolean;
 }
 
-export interface AddSourceFileOptions {
+export interface SourceFileAddOptions {
     languageVersion?: ScriptTarget;
 }
 
@@ -172,15 +172,15 @@ export class Project {
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlob: string, options?: AddSourceFileOptions): SourceFile[];
+    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[], options?: AddSourceFileOptions): SourceFile[];
-    addExistingSourceFiles(fileGlobs: string | string[], options?: AddSourceFileOptions): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
@@ -206,7 +206,7 @@ export class Project {
      * @param filePath - File path to get the file from.
      * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(filePath: string, options?: AddSourceFileOptions): SourceFile | undefined {
+    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
         return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
     }
 
@@ -218,7 +218,7 @@ export class Project {
      * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string, options?: AddSourceFileOptions): SourceFile {
+    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
         const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
         if (sourceFile == null) {
             const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
@@ -235,7 +235,7 @@ export class Project {
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options: AddSourceFileOptions = {}): SourceFile[] {
+    addSourceFilesFromTsConfig(tsConfigFilePath: string, options: SourceFileAddOptions = {}): SourceFile[] {
         tsConfigFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
         const tsConfigParseResult = getTsConfigParseResult({
             tsConfigFilePath,
@@ -255,7 +255,7 @@ export class Project {
         tsConfigFilePath: string,
         tsConfigParseResult: TsConfigParseResult,
         compilerOptions: CompilerOptions,
-        addOptions: AddSourceFileOptions)
+        addOptions: SourceFileAddOptions)
     {
         const paths = getPathsFromTsConfigParseResult({
             tsConfigFilePath,
@@ -291,7 +291,7 @@ export class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(filePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Creates a source file at the specified file path with the specified text.
      *
@@ -301,8 +301,8 @@ export class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
-    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string, options?: CreateSourceFileOptions): SourceFile {
+    createSourceFile(filePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
+    createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string, options?: SourceFileCreateOptions): SourceFile {
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
 

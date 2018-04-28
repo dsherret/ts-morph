@@ -4,7 +4,7 @@ import { ModuleResolutionKind } from "../typescript";
 import { ArrayUtils, FileUtils, StringUtils } from "../utils";
 import { SourceFileStructure } from "../structures";
 import { GlobalContainer } from "../GlobalContainer";
-import { CreateSourceFileOptions, AddSourceFileOptions } from "../Project";
+import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
 export interface AddDirectoryOptions {
@@ -273,7 +273,7 @@ export class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Creates a source file in the AST, relative to this directory.
      *
@@ -283,8 +283,8 @@ export class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
-    createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure, options?: CreateSourceFileOptions) {
+    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, structureOrText?: string | SourceFileStructure, options?: SourceFileCreateOptions) {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this.global.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
@@ -296,7 +296,7 @@ export class Directory {
      * @param relativeFilePath - Relative file path to add.
      * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile | undefined {
+    addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
         return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
     }
@@ -309,7 +309,7 @@ export class Directory {
      * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile {
+    addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile {
         const sourceFile = this.addExistingSourceFileIfExists(relativeFilePath, options);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath()));
