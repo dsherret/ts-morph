@@ -424,9 +424,8 @@ export class Directory {
         }));
 
         // copy directories
-        for (const { directory, oldPath, newDirPath } of copyingDirectories) {
+        for (const { directory, oldPath, newDirPath } of copyingDirectories)
             this.global.compilerFactory.createDirectoryOrAddIfExists(newDirPath);
-        }
 
         // copy source files
         for (const { sourceFile, newFilePath } of copyingSourceFiles)

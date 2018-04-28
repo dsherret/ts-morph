@@ -2,7 +2,9 @@
 import { createHashSet, HashSet, ArrayUtils, FileUtils, KeyValueCache } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
-type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation;
+type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation | CopyDirectoryOperation;
+type MoveOrCopyOperation = MoveDirectoryOperation | CopyDirectoryOperation;
+type MoveCopyOrDeleteOperation = MoveOrCopyOperation | DeleteDirectoryOperation;
 
 interface OperationBase<T> {
     kind: T;
@@ -26,9 +28,14 @@ interface MoveDirectoryOperation extends OperationBase<"move"> {
     newDir: Directory;
 }
 
+interface CopyDirectoryOperation extends OperationBase<"copy"> {
+    oldDir: Directory;
+    newDir: Directory;
+}
+
 class Directory {
     readonly operations: Operation[] = [];
-    readonly inboundOperations: MoveDirectoryOperation[] = [];
+    readonly inboundOperations: (MoveDirectoryOperation | CopyDirectoryOperation)[] = [];
 
     private isDeleted = false;
     private wasEverDeleted = false;
@@ -40,17 +47,18 @@ class Directory {
 
     getExternalOperations() {
         return [
-            ...ArrayUtils.flatten(this.getAncestors().map(a => getMoveOrDeleteOperations(a))).filter(o => isAncestorAffectedOperation(this, o)),
-            ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOperations(d))).filter(o => !isInternalOperation(this, o))
+            ...ArrayUtils.flatten(this.getAncestors().map(a => getMoveCopyOrDeleteOperations(a))).filter(o => isAncestorAffectedOperation(this, o)),
+            ...ArrayUtils.flatten([this, ...this.getDescendants()].map(d => getMoveOrCopyOperations(d))).filter(o => !isInternalOperation(this, o))
         ];
 
-        function isInternalOperation(thisDir: Directory, operation: MoveDirectoryOperation) {
+        function isInternalOperation(thisDir: Directory, operation: MoveDirectoryOperation | CopyDirectoryOperation) {
             return operation.oldDir.isDescendantOrEqual(thisDir) && operation.newDir.isDescendantOrEqual(thisDir);
         }
 
-        function isAncestorAffectedOperation(thisDir: Directory, operation: MoveDirectoryOperation | DeleteDirectoryOperation) {
+        function isAncestorAffectedOperation(thisDir: Directory, operation: MoveCopyOrDeleteOperation) {
             switch (operation.kind) {
                 case "move":
+                case "copy":
                     return thisDir.isDescendantOrEqual(operation.oldDir) || thisDir.isDescendantOrEqual(operation.newDir);
                 case "deleteDir":
                     return thisDir.isDescendantOrEqual(operation.dir);
@@ -59,12 +67,12 @@ class Directory {
             }
         }
 
-        function getMoveOperations(dir: Directory) {
-            return dir.operations.filter(o => o.kind === "move") as MoveDirectoryOperation[];
+        function getMoveOrCopyOperations(dir: Directory) {
+            return dir.operations.filter(o => o.kind === "move" || o.kind === "copy") as MoveOrCopyOperation[];
         }
 
-        function getMoveOrDeleteOperations(dir: Directory) {
-            return dir.operations.filter(o => o.kind === "move" || o.kind === "deleteDir") as (MoveDirectoryOperation | DeleteDirectoryOperation)[];
+        function getMoveCopyOrDeleteOperations(dir: Directory) {
+            return dir.operations.filter(o => o.kind === "move" || o.kind === "deleteDir" || o.kind === "copy") as MoveCopyOrDeleteOperation[];
         }
     }
 
@@ -250,6 +258,24 @@ export class FileSystemWrapper {
         moveDir.setIsDeleted(true);
     }
 
+    queueCopyDirectory(srcPath: string, destPath: string) {
+        srcPath = this.getStandardizedAbsolutePath(srcPath);
+        destPath = this.getStandardizedAbsolutePath(destPath);
+
+        const parentDir = this.getParentDirectory(srcPath);
+        const copyDir = this.getDirectory(srcPath);
+        const destinationDir = this.getDirectory(destPath);
+
+        const copyOperation: CopyDirectoryOperation = {
+            kind: "copy",
+            index: this.getNextOperationIndex(),
+            oldDir: copyDir,
+            newDir: destinationDir
+        };
+        parentDir.operations.push(copyOperation);
+        (destinationDir.getParent() || destinationDir).inboundOperations.push(copyOperation);
+    }
+
     async flush() {
         const operations = this.getAndClearOperations();
         for (const operation of operations)
@@ -311,6 +337,9 @@ export class FileSystemWrapper {
             case "move":
                 await this.fileSystem.move(operation.oldDir.path, operation.newDir.path);
                 break;
+            case "copy":
+                await this.fileSystem.copy(operation.oldDir.path, operation.newDir.path);
+                break;
             case "mkdir":
                 await this.fileSystem.mkdir(operation.dir.path);
                 break;
@@ -329,6 +358,9 @@ export class FileSystemWrapper {
                 break;
             case "move":
                 this.fileSystem.moveSync(operation.oldDir.path, operation.newDir.path);
+                break;
+            case "copy":
+                this.fileSystem.copySync(operation.oldDir.path, operation.newDir.path);
                 break;
             case "mkdir":
                 this.fileSystem.mkdirSync(operation.dir.path);
@@ -620,6 +652,8 @@ export class FileSystemWrapper {
             for (const operation of operations) {
                 if (operation.kind === "move")
                     errorText += `\nMove: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                else if (operation.kind === "copy")
+                    errorText += `\nCopy: ${operation.oldDir.path} --> ${operation.newDir.path}`;
                 else if (operation.kind === "deleteDir")
                     errorText += `\nDelete: ${operation.dir.path}`;
                 else

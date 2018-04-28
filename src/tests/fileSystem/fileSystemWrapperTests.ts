@@ -104,6 +104,19 @@ describe(nameof(FileSystemWrapper), () => {
         });
     });
 
+    describe(nameof<FileSystemWrapper>(w => w.queueCopyDirectory), () => {
+        it("should queue a directory for copying", () => {
+            const objs = setup();
+            const { wrapper } = objs;
+            wrapper.writeFileSync("/dir/file.ts", "");
+            wrapper.flushSync();
+            wrapper.queueCopyDirectory("/dir", "/dir2");
+
+            checkStateForDir(objs, "/dir", [true, true]);
+            checkStateForDir(objs, "/dir2", [true, false]);
+        });
+    });
+
     describe(nameof<FileSystemWrapper>(w => w.queueMkdir), () => {
         it("should queue a directory for being made", () => {
             const objs = setup();
@@ -207,6 +220,16 @@ describe(nameof(FileSystemWrapper), () => {
                 const { wrapper } = objs;
                 wrapper.writeFileSync("/dir/file.ts", "text");
                 wrapper.queueMoveDirectory("/dir", "/dir2");
+                moveFile(wrapper, "/dir2/file.ts", "/dir2/newFile.ts", "newText", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when moving a file in a directory with external copy operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.queueCopyDirectory("/dir", "/dir2");
                 moveFile(wrapper, "/dir2/file.ts", "/dir2/newFile.ts", "newText", err => {
                     expect(err).to.be.instanceof(errors.InvalidOperationError);
                 });
