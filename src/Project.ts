@@ -6,7 +6,7 @@ import * as factories from "./factories";
 import { SourceFileStructure } from "./structures";
 import { getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getPathsFromTsConfigParseResult, TsConfigParseResult,
     FileUtils, ArrayUtils, matchGlobs } from "./utils";
-import { DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, AddDirectoryOptions } from "./fileSystem";
+import { DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, DirectoryAddOptions } from "./fileSystem";
 import { ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer } from "./options";
 import { GlobalContainer } from "./GlobalContainer";
 
@@ -107,7 +107,7 @@ export class Project {
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}): Directory | undefined {
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         return this.global.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
@@ -120,7 +120,7 @@ export class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options: AddDirectoryOptions = {}): Directory {
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         return this.global.directoryCoordinator.addExistingDirectory(dirPath, options);
     }

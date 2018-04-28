@@ -7,7 +7,7 @@ import { GlobalContainer } from "../GlobalContainer";
 import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
-export interface AddDirectoryOptions {
+export interface DirectoryAddOptions {
     /**
      * Whether to also recursively add all the directory's descendant directories.
      * @remarks Defaults to false.
@@ -230,7 +230,7 @@ export class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions = {}) {
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
         return this.global.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
@@ -242,7 +242,7 @@ export class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options: AddDirectoryOptions = {}) {
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}) {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath, this.getPath());
         return this.global.directoryCoordinator.addExistingDirectory(dirPath, options);
     }

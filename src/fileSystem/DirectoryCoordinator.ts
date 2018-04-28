@@ -2,7 +2,7 @@
 import * as errors from "../errors";
 import { FileUtils } from "../utils";
 import { FileSystemWrapper } from "./FileSystemWrapper";
-import { Directory, AddDirectoryOptions } from "./Directory";
+import { Directory, DirectoryAddOptions } from "./Directory";
 
 /**
  * Contains common methods between Project and Directory.
@@ -13,7 +13,7 @@ export class DirectoryCoordinator {
     constructor(private readonly compilerFactory: CompilerFactory, private readonly fileSystemWrapper: FileSystemWrapper) {
     }
 
-    addExistingDirectoryIfExists(dirPath: string, options: AddDirectoryOptions) {
+    addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions) {
         const directory = this.compilerFactory.getDirectoryFromPath(dirPath);
         if (directory == null)
             return undefined;
@@ -26,7 +26,7 @@ export class DirectoryCoordinator {
         return directory;
     }
 
-    addExistingDirectory(dirPath: string, options: AddDirectoryOptions) {
+    addExistingDirectory(dirPath: string, options: DirectoryAddOptions) {
         const directory = this.addExistingDirectoryIfExists(dirPath, options);
         if (directory == null)
             throw new errors.DirectoryNotFoundError(dirPath);
