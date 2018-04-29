@@ -201,6 +201,24 @@ describe(nameof(ImportDeclaration), () => {
         });
     });
 
+    describe(nameof<ImportDeclaration>(n => n.getDefaultImport), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            if (expectedName == null)
+                expect(() => firstChild.getDefaultImportOrThrow()).to.throw();
+            else
+                expect(firstChild.getDefaultImportOrThrow().getText()).to.equal(expectedName);
+        }
+
+        it("should get the default import when it exists", () => {
+            doTest(`import defaultImport from "./test";`, "defaultImport");
+        });
+
+        it("should throw when default import does not exists", () => {
+            doTest(`import { named } from "./test";`, undefined);
+        });
+    });
+
     describe(nameof<ImportDeclaration>(n => n.setNamespaceImport), () => {
         function doTest(text: string, newNamespaceImport: string, expected: string) {
             const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);

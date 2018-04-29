@@ -101,7 +101,14 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     }
 
     /**
-     * Gets the default import, if it exists.
+     * Gets the default import or throws if it doesn't exit.
+     */
+    getDefaultImportOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getDefaultImport(), "Expected to find a default import.");
+    }
+
+    /**
+     * Gets the default import or returns undefined if it doesn't exist.
      */
     getDefaultImport() {
         const importClause = this.getImportClause();
