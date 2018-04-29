@@ -291,10 +291,11 @@ export class FileSystemWrapper {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
         const dir = this.getDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "save directory");
+        const operations = this.getAndClearOperationsForDir(dir);
 
+        // await after the state is set
         await this.ensureDirectoryExists(dirPath);
-
-        for (const operation of this.getAndClearOperationsForDir(dir))
+        for (const operation of operations)
             await this.executeOperation(operation);
     }
 
@@ -429,6 +430,39 @@ export class FileSystemWrapper {
             this.queueFileDelete(filePath);
             throw err;
         }
+    }
+
+    async moveDirectoryImmediately(srcDirPath: string, destDirPath: string) {
+        srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
+        destDirPath = this.getStandardizedAbsolutePath(destDirPath);
+        const srcDir = this.getDirectory(srcDirPath);
+        const destDir = this.getDirectory(destDirPath);
+
+        this.throwIfHasExternalOperations(srcDir, "move directory");
+        this.throwIfHasExternalOperations(destDir, "move directory");
+
+        const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
+        this.removeDirAndSubDirs(srcDir);
+
+        // await after the state is set
+        await saveTask;
+        await this.fileSystem.move(srcDirPath, destDirPath);
+    }
+
+    moveDirectoryImmediatelySync(srcDirPath: string, destDirPath: string) {
+        srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
+        destDirPath = this.getStandardizedAbsolutePath(destDirPath);
+        const srcDir = this.getDirectory(srcDirPath);
+        const destDir = this.getDirectory(destDirPath);
+
+        this.throwIfHasExternalOperations(srcDir, "move directory");
+        this.throwIfHasExternalOperations(destDir, "move directory");
+
+        this.saveForDirectorySync(srcDirPath);
+        this.saveForDirectorySync(destDirPath);
+        this.removeDirAndSubDirs(srcDir);
+
+        this.fileSystem.moveSync(srcDirPath, destDirPath);
     }
 
     async deleteDirectoryImmediately(dirPath: string) {

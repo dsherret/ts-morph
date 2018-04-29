@@ -15,6 +15,17 @@ export interface DirectoryAddOptions {
     recursive?: boolean;
 }
 
+export interface DirectoryMoveOptions extends SourceFileMoveOptions {
+}
+
+export interface DirectoryCopyOptions extends SourceFileCopyOptions {
+    /**
+     * Includes all the files in the directory and sub-directory when copying.
+     * @remarks - Defaults to false.
+     */
+    includeUntrackedFiles?: boolean;
+}
+
 export class Directory {
     private _global: GlobalContainer | undefined;
     private _path!: string;
@@ -404,13 +415,16 @@ export class Directory {
      * @param options - Options.
      * @returns The directory the copy was made to.
      */
-    copy(relativeOrAbsolutePath: string, options?: SourceFileCopyOptions) {
+    copy(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
         const originalPath = this.getPath();
         const fileSystem = this.global.fileSystemWrapper;
         const newPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeOrAbsolutePath, this.getPath());
 
         if (originalPath === newPath)
             return this;
+
+        if (options != null && options.includeUntrackedFiles)
+            fileSystem.queueCopyDirectory(originalPath, newPath);
 
         const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
@@ -443,9 +457,8 @@ export class Directory {
      * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
      * @param options - Options for moving the directory.
      */
-    move(relativeOrAbsolutePath: string, options?: SourceFileMoveOptions) {
+    move(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
         const fileSystem = this.global.fileSystemWrapper;
-        const compilerFactory = this.global.compilerFactory;
         const originalPath = this.getPath();
         const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
 
@@ -453,7 +466,62 @@ export class Directory {
             return this;
 
         fileSystem.queueMoveDirectory(originalPath, newPath);
+        return this._moveInternal(newPath, options);
+    }
 
+    /**
+     * Immediately moves the directory to a new path asynchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     */
+    async moveImmediately(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
+        const fileSystem = this.global.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+
+        if (originalPath === newPath) {
+            await this.save();
+            return this;
+        }
+
+        this._moveInternal(newPath, options);
+        const task = fileSystem.moveDirectoryImmediately(originalPath, newPath);
+
+        // await after the state is set
+        await task;
+        await this.save();
+        return this;
+    }
+
+    /**
+     * Immediately moves the directory to a new path synchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     */
+    moveImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions) {
+        const fileSystem = this.global.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+
+        if (originalPath === newPath) {
+            this.saveSync();
+            return this;
+        }
+
+        this._moveInternal(newPath, options);
+        fileSystem.moveDirectoryImmediatelySync(originalPath, newPath);
+        this.saveSync();
+        return this;
+    }
+
+    private _moveInternal(newPath: string, options?: DirectoryMoveOptions) {
+        const originalPath = this.getPath();
+
+        if (originalPath === newPath)
+            return this;
+
+        const fileSystem = this.global.fileSystemWrapper;
+        const compilerFactory = this.global.compilerFactory;
         const movingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),

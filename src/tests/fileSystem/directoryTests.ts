@@ -4,7 +4,7 @@ import { SourceFile } from "../../compiler";
 import * as errors from "../../errors";
 import { Project } from "../../Project";
 import { SourceFileStructure } from "../../structures";
-import { Directory, DirectoryEmitResult, FileSystemHost } from "../../fileSystem";
+import { Directory, DirectoryEmitResult, FileSystemHost, DirectoryMoveOptions } from "../../fileSystem";
 import { FileUtils } from "../../utils";
 import { getFileSystemHostWithFiles, CustomFileSystemProps, testDirectoryTree } from "../testHelpers";
 
@@ -640,6 +640,22 @@ describe(nameof(Directory), () => {
             }, mainDir);
         });
 
+        it("should include the other files in the directory when specifying to", () => {
+            const project = getProject([{ filePath: "/dir/file.ts", text: "" }]);
+            const fileSystem = project.getFileSystem();
+            const dir = project.getDirectoryOrThrow("dir");
+            fileSystem.writeFileSync("/dir/otherFile.txt", "test");
+            dir.copy("/dir1", { includeUntrackedFiles: false });
+            dir.copy("/dir2", { });
+            dir.copy("/dir3", { includeUntrackedFiles: true });
+            project.saveSync();
+
+            expect(fileSystem.fileExistsSync("/dir1/otherFile.txt")).to.be.false;
+            expect(fileSystem.fileExistsSync("/dir2/otherFile.txt")).to.be.false;
+            expect(fileSystem.fileExistsSync("/dir3/otherFile.txt")).to.be.true;
+            expect(fileSystem.readFileSync("/dir3/otherFile.txt")).to.equal("test");
+        });
+
         it("should not throw when copying a directory to an existing directory on the file system", () => {
             const project = getProject([], ["mainDir/newDir"]);
             const mainDir = project.createDirectory("mainDir");
@@ -682,6 +698,21 @@ describe(nameof(Directory), () => {
 
             // should have updated the reference inside
             expect(newDir.getSourceFileOrThrow("file.ts").getFullText()).to.equal("import Identifier from '../../file';\nimport { File2 } from './file2';");
+        });
+
+        it("should not throw if saving the directory after copying while not including tracked files", () => {
+            const project = getProject([{ filePath: "/dir/file.txt", text: "" }]);
+            const dir = project.getDirectoryOrThrow("dir");
+            const dir2 = dir.copy("./dir2");
+            expect(() => dir2.saveSync()).to.not.throw();
+        });
+
+        it("should throw if saving the directory after copying while including tracked files", () => {
+            const project = getProject([{ filePath: "/dir/file.txt", text: "" }]);
+            const dir = project.getDirectoryOrThrow("dir");
+            const dir2 = dir.copy("./dir2", { includeUntrackedFiles: true });
+            // not supported for the time being... it's complicated
+            expect(() => dir2.saveSync()).to.throw(errors.InvalidOperationError);
         });
     });
 
@@ -826,39 +857,138 @@ describe(nameof(Directory), () => {
         });
     });
 
-    describe(nameof<Directory>(d => d.deleteImmediately), () => {
-        it("should delete the file and remove all its descendants", async () => {
-            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
-            const project = new Project(undefined, fileSystem);
-            const directory = project.addExistingDirectory("dir");
-            const childDir = directory.createDirectory("childDir");
-            const sourceFile = directory.addExistingSourceFile("file.ts");
-            const otherSourceFile = project.createSourceFile("otherFile.ts");
+    describe(nameof<Directory>(d => d.moveImmediately), () => {
+        function doTests(moveImmediately: (directory: Directory, toPath: string, options: DirectoryMoveOptions | undefined, doChecks: (err: any) => void) => void) {
+            it("should move the directory to the new directory", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
+                project.saveSync();
+                const fileSystem = project.getFileSystem();
+                const directory = project.getDirectoryOrThrow("dir");
+                directory.createSourceFile("file.ts");
 
-            await directory.deleteImmediately();
-            expect(directory.wasForgotten()).to.be.true;
-            expect(childDir.wasForgotten()).to.be.true;
-            expect(sourceFile.wasForgotten()).to.be.true;
-            expect(otherSourceFile.wasForgotten()).to.be.false;
-            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+                moveImmediately(directory, "/newDir", undefined, () => {
+                    expect(directory.getPath()).to.equal("/newDir");
+                    expect(fileSystem.directoryExistsSync("/dir")).to.be.false;
+                    expect(fileSystem.fileExistsSync("/newDir/test.ts")).to.be.true;
+                    expect(fileSystem.fileExistsSync("/newDir/file.ts")).to.be.true;
+                    expect(project.getDirectory("/dir")).to.be.undefined;
+                });
+            });
+
+            it("should save the directory if moving to the same directory", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
+                const fileSystem = project.getFileSystem();
+                const directory = project.getDirectoryOrThrow("dir");
+
+                moveImmediately(directory, "/dir", undefined, () => {
+                    expect(fileSystem.directoryExistsSync("/dir")).to.be.true;
+                    expect(fileSystem.fileExistsSync("/dir/test.ts")).to.be.true;
+                });
+            });
+
+            it("should throw when the other directory contains the same file", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }, { filePath: "/newDir/test.ts", text: "" }]);
+                project.saveSync();
+                const directory = project.getDirectoryOrThrow("dir");
+
+                moveImmediately(directory, "/newDir", undefined, err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should not throw when the other directory contains the same file and the overwrite option is provided", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }, { filePath: "/newDir/test.ts", text: "" }]);
+                project.saveSync();
+                const directory = project.getDirectoryOrThrow("dir");
+
+                moveImmediately(directory, "/newDir", { overwrite: true }, err => {
+                    expect(err).to.be.undefined;
+                });
+            });
+
+            it("should throw if the directory has inbound external operations", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }]);
+                project.saveSync();
+                const dir = project.getDirectoryOrThrow("/dir");
+                const newDir = project.createDirectory("/newDir");
+
+                newDir.move("/dir");
+
+                moveImmediately(dir, "/otherDir", undefined, err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw if the directory has external operations", () => {
+                const project = getProject([{ filePath: "/dir/test.ts", text: "" }, { filePath: "/newDir/test.ts", text: "" }]);
+                project.saveSync();
+                const dir = project.getDirectoryOrThrow("dir");
+
+                dir.move("/someDir");
+
+                moveImmediately(dir, "/otherDir", undefined, err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (directory, toPath, options, doChecks) => {
+                let thrownErr: any;
+                try {
+                    await directory.moveImmediately(toPath, options);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                doChecks(thrownErr);
+            });
+        });
+
+        describe("sync", () => {
+            doTests((directory, toPath, options, doChecks) => {
+                let thrownErr: any;
+                try {
+                    directory.moveImmediatelySync(toPath, options);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                doChecks(thrownErr);
+            });
         });
     });
 
-    describe(nameof<Directory>(d => d.deleteImmediatelySync), () => {
-        it("should delete the file and remove all its descendants synchronously", () => {
-            const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
-            const project = new Project(undefined, fileSystem);
-            const directory = project.addExistingDirectory("dir");
-            const childDir = directory.createDirectory("childDir");
-            const sourceFile = directory.addExistingSourceFile("file.ts");
-            const otherSourceFile = project.createSourceFile("otherFile.ts");
+    describe(nameof<Directory>(d => d.deleteImmediately), () => {
+        function doTests(deleteImmediately: (directory: Directory, doChecks: () => void) => void) {
+            it("should delete the file and remove all its descendants", async () => {
+                const fileSystem = getFileSystemHostWithFiles([{ filePath: "dir/file.ts", text: "" }], ["dir"]);
+                const project = new Project(undefined, fileSystem);
+                const directory = project.addExistingDirectory("dir");
+                const childDir = directory.createDirectory("childDir");
+                const sourceFile = directory.addExistingSourceFile("file.ts");
+                const otherSourceFile = project.createSourceFile("otherFile.ts");
 
-            directory.deleteImmediatelySync();
-            expect(directory.wasForgotten()).to.be.true;
-            expect(childDir.wasForgotten()).to.be.true;
-            expect(sourceFile.wasForgotten()).to.be.true;
-            expect(otherSourceFile.wasForgotten()).to.be.false;
-            expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+                deleteImmediately(directory, () => {
+                    expect(directory.wasForgotten()).to.be.true;
+                    expect(childDir.wasForgotten()).to.be.true;
+                    expect(sourceFile.wasForgotten()).to.be.true;
+                    expect(otherSourceFile.wasForgotten()).to.be.false;
+                    expect(fileSystem.getDeleteLog()).to.deep.equal([{ path: "/dir" }]);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (directory, doChecks) => {
+                await directory.deleteImmediately();
+                doChecks();
+            });
+        });
+
+        describe("sync", () => {
+            doTests((directory, doChecks) => {
+                directory.deleteImmediatelySync();
+                doChecks();
+            });
         });
     });
 
