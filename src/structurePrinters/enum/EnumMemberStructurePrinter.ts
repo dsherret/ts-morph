@@ -18,7 +18,7 @@ export class EnumMemberStructurePrinter extends FactoryStructurePrinter<EnumMemb
             writer.write(` = `).quote(structure.value);
         else if (typeof structure.value === "number")
             writer.write(` = ${structure.value}`);
-        else if (structure.initializer != null)
-            writer.write(` = ${structure.initializer}`);
+        else
+            this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
 }

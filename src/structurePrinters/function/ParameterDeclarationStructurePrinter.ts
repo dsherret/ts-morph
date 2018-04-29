@@ -21,7 +21,6 @@ export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinte
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         if (!StringUtils.isNullOrWhitespace(structure.type) || structure.hasQuestionToken)
             writer.write(`: ${structure.type || "any"}`);
-        if (!StringUtils.isNullOrWhitespace(structure.initializer))
-            writer.write(` = ${structure.initializer}`);
+        this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
 }

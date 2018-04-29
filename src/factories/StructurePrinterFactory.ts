@@ -15,6 +15,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forInitializerExpressionableNode(): structurePrinters.InitializerExpressionableNodeStructurePrinter {
+        return new structurePrinters.InitializerExpressionableNodeStructurePrinter(this);
+    }
+
+    @Memoize
     forModifierableNode(): structurePrinters.ModifierableNodeStructurePrinter {
         return new structurePrinters.ModifierableNodeStructurePrinter(this);
     }

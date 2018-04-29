@@ -123,6 +123,10 @@ describe(nameof(InitializerSetExpressionableNode), () => {
             doTest("class Identifier { prop }", { initializer: "4" }, "class Identifier { prop = 4 }");
         });
 
+        it("should modify when setting via a writer", () => {
+            doTest("class Identifier { prop }", { initializer: writer => writer.write("4") }, "class Identifier { prop = 4 }");
+        });
+
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("class Identifier { prop = 4 }", { }, "class Identifier { prop = 4 }");
         });

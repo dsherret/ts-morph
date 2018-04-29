@@ -19,7 +19,7 @@ export class PropertyDeclarationStructurePrinter extends FactoryStructurePrinter
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
         writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.type), `: ${structure.type}`);
-        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.initializer), ` = ${structure.initializer}`);
+        this.factory.forInitializerExpressionableNode().printText(writer, structure);
         writer.write(";");
     }
 }

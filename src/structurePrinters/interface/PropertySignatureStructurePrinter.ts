@@ -18,8 +18,8 @@ export class PropertySignatureStructurePrinter extends FactoryStructurePrinter<P
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         if (!StringUtils.isNullOrWhitespace(structure.type))
             writer.write(`: ${structure.type}`);
-        if (!StringUtils.isNullOrWhitespace(structure.initializer))
-            writer.write(` = ${structure.initializer}`); // why would someone write an initializer?
+        // why would someone write an initializer? I guess let them do it...
+        this.factory.forInitializerExpressionableNode().printText(writer, structure);
         writer.write(";");
     }
 }

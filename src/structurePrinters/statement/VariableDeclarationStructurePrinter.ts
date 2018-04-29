@@ -15,7 +15,6 @@ export class VariableDeclarationStructurePrinter extends FactoryStructurePrinter
         writer.conditionalWrite(structure.hasExclamationToken, "!");
         if (structure.type != null)
             writer.write(": " + structure.type);
-        if (structure.initializer != null)
-            writer.write(" = " + structure.initializer);
+        this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
 }
