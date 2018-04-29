@@ -65,9 +65,15 @@ declare class CodeBlockWriter {
     /**
      * Conditionally writes a line of text.
      * @param condition - Condition to evaluate.
-     * @param str - String to write if the condition is true.
+     * @param textFunc - A function that returns a string to write if the condition is true.
      */
-    conditionalWriteLine(condition: boolean | undefined, str: string): this;
+    conditionalWriteLine(condition: boolean | undefined, textFunc: () => string): this;
+    /**
+     * Conditionally writes a line of text.
+     * @param condition - Condition to evaluate.
+     * @param text - Text to write if the condition is true.
+     */
+    conditionalWriteLine(condition: boolean | undefined, text: string): this;
     /**
      * Writes a line of text.
      * @param str - String to write.
@@ -75,18 +81,8 @@ declare class CodeBlockWriter {
     writeLine(str: string): this;
     /**
      * Writes a newline if the last line was not a newline.
-     * @deprecated Use `newLineIfLastNot()`.
-     */
-    newLineIfLastNotNewLine(): this;
-    /**
-     * Writes a newline if the last line was not a newline.
      */
     newLineIfLastNot(): this;
-    /**
-     * Writes a blank line if the last written text was not a blank line.
-     * @deprecated Use `blankLineIfLastNot()`
-     */
-    blankLineIfLastNotBlankLine(): this;
     /**
      * Writes a blank line if the last written text was not a blank line.
      */
@@ -124,11 +120,6 @@ declare class CodeBlockWriter {
     quote(text: string): this;
     /**
      * Writes a space if the last character was not a space.
-     * @deprecated Use `spaceIfLastNot()`.
-     */
-    spaceIfLastNotSpace(): this;
-    /**
-     * Writes a space if the last character was not a space.
      */
     spaceIfLastNot(): this;
     /**
@@ -137,9 +128,15 @@ declare class CodeBlockWriter {
      */
     space(times?: number): this;
     /**
-     * Writes the provided text if the condition is true.
+     * Conditionally writes text.
      * @param condition - Condition to evaluate.
-     * @param text - Text to write.
+     * @param textFunc - A function that returns a string to write if the condition is true.
+     */
+    conditionalWrite(condition: boolean | undefined, textFunc: () => string): this;
+    /**
+     * Conditionally writes text.
+     * @param condition - Condition to evaluate.
+     * @param text - Text to write if the condition is true.
      */
     conditionalWrite(condition: boolean | undefined, text: string): this;
     /**

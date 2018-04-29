@@ -5070,6 +5070,7 @@ export namespace ts {
     export declare function isClassLike(node: Node): node is ClassLikeDeclaration;
     export declare function isAccessor(node: Node): node is AccessorDeclaration;
     export declare function isTypeElement(node: Node): node is TypeElement;
+    export declare function isClassOrTypeElement(node: Node): node is ClassElement | TypeElement;
     export declare function isObjectLiteralElementLike(node: Node): node is ObjectLiteralElementLike;
     /**
      * Node test that determines whether a node is a valid type node.
