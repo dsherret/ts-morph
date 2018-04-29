@@ -45,7 +45,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
         }
 
         setInitializer(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-            const text = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
+            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             errors.throwIfNotStringOrWhitespace(text, nameof(textOrWriterFunction));
 
             if (this.hasInitializer())
