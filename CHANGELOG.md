@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.0.0"></a>
+# [11.0.0](https://github.com/dsherret/ts-simple-ast/compare/10.5.0...11.0.0) (2018-04-29)
+
+
+### Bug Fixes
+
+* [#312](https://github.com/dsherret/ts-simple-ast/issues/312) - StatementedNode uses inconsistent source for child count. ([67a22b9](https://github.com/dsherret/ts-simple-ast/commit/67a22b9))
+* Directory.copy should not update module specifiers pointing to other files in the directory being copied. ([09244f9](https://github.com/dsherret/ts-simple-ast/commit/09244f9))
+
+
+### Chores
+
+* Update FileSystemHost to have move and copy methods. ([4401755](https://github.com/dsherret/ts-simple-ast/commit/4401755))
+* Update to code-block-writer 7.0.0. ([7121e0d](https://github.com/dsherret/ts-simple-ast/commit/7121e0d))
+
+
+### Code Refactoring
+
+* code-block-writer is now a named export. ([412482c](https://github.com/dsherret/ts-simple-ast/commit/412482c))
+* createDirectory will not throw if the directory exists. ([7be9dba](https://github.com/dsherret/ts-simple-ast/commit/7be9dba))
+* Remove Directory.remove() ([0ba8ba0](https://github.com/dsherret/ts-simple-ast/commit/0ba8ba0))
+* Remove getRelativePathToSourceFile and getRelativePathToSourceFileAsModuleSpecifier. ([734b7a0](https://github.com/dsherret/ts-simple-ast/commit/734b7a0))
+* Remove Identifier.getDefinitionReferencingNodes() ([2b1446a](https://github.com/dsherret/ts-simple-ast/commit/2b1446a))
+* Removed ExportAssignmentStructure.isEqualsExport ([0b098a5](https://github.com/dsherret/ts-simple-ast/commit/0b098a5))
+* Rename AddDirectoryOptions to DirectoryAddOptions ([ccd1627](https://github.com/dsherret/ts-simple-ast/commit/ccd1627))
+* Rename CreateSourceFileOptions to SourceFileCreateOptions and AddSourceFileOptions to SourceFileAddOptions. ([0a39f15](https://github.com/dsherret/ts-simple-ast/commit/0a39f15))
+
+
+### Features
+
+* [#256](https://github.com/dsherret/ts-simple-ast/issues/256) - Add Directory.copyImmediately. ([f2b01dc](https://github.com/dsherret/ts-simple-ast/commit/f2b01dc))
+* [#256](https://github.com/dsherret/ts-simple-ast/issues/256) - Add Directory.move(...) ([29b776a](https://github.com/dsherret/ts-simple-ast/commit/29b776a))
+* [#256](https://github.com/dsherret/ts-simple-ast/issues/256) - Add Directory.moveImmediately. ([255d01c](https://github.com/dsherret/ts-simple-ast/commit/255d01c))
+* [#311](https://github.com/dsherret/ts-simple-ast/issues/311) - Allow providing a string instead of a JSDoc structure. ([a0b16e6](https://github.com/dsherret/ts-simple-ast/commit/a0b16e6))
+* [#320](https://github.com/dsherret/ts-simple-ast/issues/320) - Add ability to set initializer in a structure with a writer function. ([20e51ed](https://github.com/dsherret/ts-simple-ast/commit/20e51ed))
+* [#324](https://github.com/dsherret/ts-simple-ast/issues/324) - Added ClassDeclaration.insertConstructors() and addConstructors(). ([2aefd93](https://github.com/dsherret/ts-simple-ast/commit/2aefd93))
+* Ability to set an initializer's text using a writer. ([2c1a9e5](https://github.com/dsherret/ts-simple-ast/commit/2c1a9e5))
+* Add Directory.forget(). Will deprecate Directory.remove() in next major. ([f584d20](https://github.com/dsherret/ts-simple-ast/commit/f584d20))
+* ImportDeclaration.getDefaultImportOrThrow() ([499c741](https://github.com/dsherret/ts-simple-ast/commit/499c741))
+* Upgrade from TypeScript 2.8.1 to 2.8.3. ([106e17e](https://github.com/dsherret/ts-simple-ast/commit/106e17e))
+
+
+### BREAKING CHANGES
+
+* ClassDeclarationStructure.ctor is renamed ctors. It accepts multiple constructors now. Additionally, insertConstructor and addConstructor on ClassDeclaration does not remove the existing constructor if it exists.
+* Directory.copy correctly does not update module specifiers pointing to other files in the directory being copied.
+* Updated to code-block-writer 7.0.0. The writer methods `newLineIfLastNotNewLine`, `blankLineIfLastNotBlankLine`, and `spaceIfLastNotSpace`, are removed. Use the shorter method names like `spaceIfLastNot`.
+* AddDirectoryOptions -> DirectoryAddOptions
+* CreateSourceFileOptions -> SourceFileCreateOptions, AddSourceFileOptions -> SourceFileAddOptions
+* The FileSystemHost interface now has move and copy methods.
+* code-block-writer is now exported as a named export from the library (`CodeBlockWriter`).
+* Directory.remove() is now Directory.forget() for consistency with SourceFile.
+* SourceFile.getRelativePathToSourceFile and getRelativePathToSourceFileAsModuleSpecifier is now getRelativePathTo and getRelativePathAsModuleSpecifierTo respectively.
+* ExportAssignmentStructure.isEqualsExport is now isExportEquals. This was incorrectly named.
+* Identifier.getDefinitionReferencingNodes() is now getReferencingNodes().
+* createDirectory will not throw if the directory exists.
+
+
+
 <a name="10.5.0"></a>
 # [10.5.0](https://github.com/dsherret/ts-simple-ast/compare/10.3.3...10.5.0) (2018-04-20)
 
