@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";

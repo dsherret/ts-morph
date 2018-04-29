@@ -1,6 +1,7 @@
 ﻿import { createGetStructureFunctions } from "./createGetStructureFunctions";
 import { createTypeGuardsUtility } from "./createTypeGuardsUtility";
 import { createCompilerApiLayer } from "./createCompilerApiLayer";
+import { createCodeBlockWriterFile } from "./createCodeBlockWriterFile";
 import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
 import { InspectorFactory } from "./inspectors";
@@ -17,6 +18,8 @@ console.log("Creating type guards utility class...");
 createTypeGuardsUtility(inspector);
 console.log("Creating structure printer factory...");
 createStructurePrinterFactory(inspector);
+console.log("Creating code block writer file...");
+createCodeBlockWriterFile(inspector);
 console.log("Creating compiler api layer...");
 createCompilerApiLayer(factory);
 console.log("Creating kind to node mappings...");

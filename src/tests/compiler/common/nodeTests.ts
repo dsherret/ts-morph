@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { expect } from "chai";
 import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
 import { Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,

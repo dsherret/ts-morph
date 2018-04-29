@@ -1,5 +1,6 @@
 ﻿import { StatementedNode, EnumDeclaration, EnumMemberStructure, InterfaceDeclaration, TypeAliasDeclaration, ClassDeclaration,
-    PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards } from "ts-simple-ast";
+    PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards, ParameterDeclaration,
+    ParameterDeclarationStructure } from "ts-simple-ast";
 
 // todo: in the future this should be done in the library (ex. node.addInterface(cloningInterface.getStructure()))
 // What's done here is not so great...
@@ -101,28 +102,40 @@ export function cloneClasses(node: StatementedNode, classes: ClassDeclaration[])
             constraint: p.getConstraintNode() == null ? undefined : p.getConstraintNode()!.getText()
         })),
         docs: c.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+        ctor: c.getConstructors().length === 0 ? undefined : ({
+            docs: c.getConstructors()[0].getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+            scope: c.getConstructors()[0].hasScopeKeyword() ? c.getConstructors()[0].getScope() : undefined,
+            parameters: c.getConstructors()[0].getParameters().map(p => mapParameter(p))
+        }),
         properties: (c.getInstanceProperties() as PropertyDeclaration[]).map(nodeProp => ({
             name: nodeProp.getName(),
             type: nodeProp.getType().getText(),
             hasQuestionToken: nodeProp.hasQuestionToken(),
+            scope: nodeProp.hasScopeKeyword() ? nodeProp.getScope() : undefined,
             docs: nodeProp.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") }))
         })),
         methods: c.getInstanceMethods().map(method => ({
             name: method.getName(),
-            returnType: method.getReturnTypeNodeOrThrow().getText(),
+            returnType: method.getReturnTypeNode() == null ? undefined : method.getReturnTypeNodeOrThrow().getText(),
             docs: method.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+            scope: method.hasScopeKeyword() ? method.getScope() : undefined,
             typeParameters: method.getTypeParameters().map(p => ({
                 name: p.getName(),
                 constraint: p.getConstraintNode() == null ? undefined : p.getConstraintNode()!.getText()
             })),
-            parameters: method.getParameters().map(p => ({
-                name: p.getNameOrThrow(),
-                hasQuestionToken: p.hasQuestionToken(),
-                type: p.getTypeNodeOrThrow().getText(),
-                isRestParameter: p.isRestParameter()
-            }))
+            parameters: method.getParameters().map(p => mapParameter(p))
         }))
     })));
+
+    function mapParameter(p: ParameterDeclaration): ParameterDeclarationStructure {
+        return {
+            name: p.getNameOrThrow(),
+            hasQuestionToken: p.hasQuestionToken(),
+            type: p.getTypeNode() == null ? undefined : p.getTypeNodeOrThrow().getText(),
+            isRestParameter: p.isRestParameter(),
+            scope: p.hasScopeKeyword() ? p.getScope() : undefined
+        };
+    }
 }
 
 export function cloneFunctions(node: StatementedNode, functions: FunctionDeclaration[]) {

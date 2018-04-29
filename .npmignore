@@ -11,6 +11,7 @@
 /obj
 /temp
 /bin
+/lib
 *.suo
 *.csproj
 *.csproj.user

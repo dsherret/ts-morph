@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeElementMemberedNodeStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";

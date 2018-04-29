@@ -1,5 +1,5 @@
-import CodeBlockWriter from "code-block-writer";
 import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "./typescript/typescript";
+import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 /**
  * Project that holds source files.
@@ -22,7 +22,7 @@ export declare class Project {
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: AddDirectoryOptions): Directory | undefined;
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
     /**
      * Adds an existing directory from the path or throws if it doesn't exist.
      *
@@ -31,12 +31,10 @@ export declare class Project {
      * @param options - Options.
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: AddDirectoryOptions): Directory;
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory at the specified path.
-     * Note: Will not save the directory to disk until one of its source files is saved.
      * @param dirPath - Path to create the directory at.
-     * @throws - InvalidOperationError if a directory already exists at the provided file path.
      */
     createDirectory(dirPath: string): Directory;
     /**
@@ -63,14 +61,14 @@ export declare class Project {
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlob: string, options?: AddSourceFileOptions): SourceFile[];
+    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File globs to add files based on.
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[], options?: AddSourceFileOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
@@ -78,7 +76,7 @@ export declare class Project {
      * @param filePath - File path to get the file from.
      * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(filePath: string, options?: AddSourceFileOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
     /**
      * Adds an existing source file from a file path or throws if it doesn't exist.
      *
@@ -87,7 +85,7 @@ export declare class Project {
      * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string, options?: AddSourceFileOptions): SourceFile;
+    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile;
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
@@ -96,7 +94,7 @@ export declare class Project {
      * @param tsConfigFilePath - File path to the tsconfig.json file.
      * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: AddSourceFileOptions): SourceFile[];
+    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
     private _addSourceFilesForTsConfigParseResult(tsConfigFilePath, tsConfigParseResult, compilerOptions, addOptions);
     /**
      * Creates a source file at the specified file path.
@@ -115,7 +113,7 @@ export declare class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(filePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Creates a source file at the specified file path with the specified text.
      *
@@ -125,7 +123,7 @@ export declare class Project {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file path.
      */
-    createSourceFile(filePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(filePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Removes a source file from the AST.
      * @param sourceFile - Source file to remove.
@@ -251,11 +249,11 @@ export interface Options {
     useVirtualFileSystem?: boolean;
 }
 
-export interface CreateSourceFileOptions extends AddSourceFileOptions {
+export interface SourceFileCreateOptions extends SourceFileAddOptions {
     overwrite?: boolean;
 }
 
-export interface AddSourceFileOptions {
+export interface SourceFileAddOptions {
     languageVersion?: ScriptTarget;
 }
 export interface FileSystemHost {
@@ -268,6 +266,10 @@ export interface FileSystemHost {
     writeFileSync(filePath: string, fileText: string): void;
     mkdir(dirPath: string): Promise<void>;
     mkdirSync(dirPath: string): void;
+    move(srcPath: string, destPath: string): Promise<void>;
+    moveSync(srcPath: string, destPath: string): void;
+    copy(srcPath: string, destPath: string): Promise<void>;
+    copySync(srcPath: string, destPath: string): void;
     fileExists(filePath: string): Promise<boolean>;
     fileExistsSync(filePath: string): boolean;
     directoryExists(dirPath: string): Promise<boolean>;
@@ -369,7 +371,7 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @param options - Options.
      */
-    addExistingDirectoryIfExists(dirPath: string, options?: AddDirectoryOptions): Directory | undefined;
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
     /**
      * Adds an existing directory to the AST from the relative path or directory name, or throws if it doesn't exist.
      *
@@ -377,7 +379,7 @@ export declare class Directory {
      * @param dirPath - Directory name or path to the directory that should be added.
      * @throws DirectoryNotFoundError if the directory does not exist.
      */
-    addExistingDirectory(dirPath: string, options?: AddDirectoryOptions): Directory;
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
     /**
      * Creates a directory if it doesn't exist.
      * @param dirPath - Relative or absolute path to the directory that should be created.
@@ -400,7 +402,7 @@ export declare class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Creates a source file in the AST, relative to this directory.
      *
@@ -410,7 +412,7 @@ export declare class Directory {
      * @param options - Options.
      * @throws - InvalidOperationError if a source file already exists at the provided file name.
      */
-    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: CreateSourceFileOptions): SourceFile;
+    createSourceFile(relativeFilePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
     /**
      * Adds an existing source file to the AST, relative to this directory, or returns undefined.
      *
@@ -418,7 +420,7 @@ export declare class Directory {
      * @param relativeFilePath - Relative file path to add.
      * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
     /**
      * Adds an existing source file to the AST, relative to this directory, or throws if it doesn't exist.
      *
@@ -427,7 +429,7 @@ export declare class Directory {
      * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string, options?: AddSourceFileOptions): SourceFile;
+    addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile;
     /**
      * Emits the files in the directory.
      * @param options - Options for emitting.
@@ -455,13 +457,39 @@ export declare class Directory {
      * @param options - Options.
      * @returns The directory the copy was made to.
      */
-    copy(relativeOrAbsolutePath: string, options?: SourceFileCopyOptions): Directory;
+    copy(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions): Directory;
+    /**
+     * Immediately copies the directory to the specified path asynchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
+     */
+    copyImmediately(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions): Promise<Directory>;
+    /**
+     * Immediately copies the directory to the specified path synchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
+     */
+    copyImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions): Directory;
     /**
      * Moves the directory to a new path.
      * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
      * @param options - Options for moving the directory.
      */
-    move(relativeOrAbsolutePath: string, options?: SourceFileMoveOptions): this;
+    move(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions): this;
+    /**
+     * Immediately moves the directory to a new path asynchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     */
+    moveImmediately(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions): Promise<this>;
+    /**
+     * Immediately moves the directory to a new path synchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     */
+    moveImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryMoveOptions): this;
     /**
      * Queues a deletion of the directory to the file system.
      *
@@ -528,7 +556,7 @@ export declare class DirectoryEmitResult {
     getOutputFilePaths(): string[];
 }
 
-export interface AddDirectoryOptions {
+export interface DirectoryAddOptions {
     /**
      * Whether to also recursively add all the directory's descendant directories.
      * @remarks Defaults to false.
@@ -2920,6 +2948,11 @@ export interface InitializerSetExpressionableNode {
      * @param text - New text to set for the initializer.
      */
     setInitializer(text: string): this;
+    /**
+     * Sets the initializer using a writer function.
+     * @param writerFunction - Function to write the initializer with.
+     */
+    setInitializer(writerFunction: (writer: CodeBlockWriter) => void): this;
 }
 
 export declare function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T;
@@ -5714,7 +5747,11 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     setDefaultImport(text: string): this;
     /**
-     * Gets the default import, if it exists.
+     * Gets the default import or throws if it doesn't exit.
+     */
+    getDefaultImportOrThrow(): Identifier;
+    /**
+     * Gets the default import or returns undefined if it doesn't exist.
      */
     getDefaultImport(): Identifier | undefined;
     /**
@@ -8731,8 +8768,9 @@ export interface ImplementsClauseableNodeStructure {
 
 export interface InitializerExpressionableNodeStructure extends InitializerSetExpressionableNodeStructure {
 }
+
 export interface InitializerSetExpressionableNodeStructure {
-    initializer?: string;
+    initializer?: string | ((writer: CodeBlockWriter) => void);
 }
 
 export interface JSDocableNodeStructure {
@@ -9131,3 +9169,4 @@ export declare abstract class SettingsContainer<T extends object> {
 }
 
 export * from "./typescript/typescript";
+export * from "./codeBlockWriter/code-block-writer";

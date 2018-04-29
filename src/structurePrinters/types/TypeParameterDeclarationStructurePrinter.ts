@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { TypeParameterDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";

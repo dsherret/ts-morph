@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ConstructSignatureDeclarationStructure } from "../../structures";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";

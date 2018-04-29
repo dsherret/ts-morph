@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StringUtils } from "../../utils";
 import { PropertySignatureStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";

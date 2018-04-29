@@ -1,4 +1,5 @@
 export * from "./typescript";
+export * from "./codeBlockWriter";
 export * from "./compiler";
 export * from "./structures";
 export { Project as default } from "./Project";

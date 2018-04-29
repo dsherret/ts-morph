@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../../typescript";
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
 import { ArrayUtils } from "../../../utils";
 import { verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../../manipulation";

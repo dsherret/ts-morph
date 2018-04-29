@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { NamespaceDeclarationStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";

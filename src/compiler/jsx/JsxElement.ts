@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ts } from "../../typescript";
 import { insertIntoParentTextRange } from "../../manipulation";
 import { getTextFromStringOrWriter, printTextFromStringOrWriter } from "../../utils";

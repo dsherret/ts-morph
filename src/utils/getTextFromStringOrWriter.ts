@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../codeBlockWriter";
 
 export function getTextFromStringOrWriter(writer: CodeBlockWriter, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
     // note: this should always use a writer to ensure the proper indentation is used

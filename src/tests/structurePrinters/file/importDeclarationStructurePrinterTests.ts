@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { ExportDeclarationStructurePrinter } from "../../../structurePrinters";
 import { StructurePrinterFactory } from "../../../factories";
 import { ExportDeclarationStructure } from "../../../structures";

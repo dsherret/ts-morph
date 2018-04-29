@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../../common";
 

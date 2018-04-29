@@ -478,6 +478,7 @@ export class Directory {
         return newDir;
     }
 
+    /** @internal */
     private _copyInternal(newPath: string, options?: DirectoryCopyOptions) {
         const originalPath = this.getPath();
 
@@ -570,6 +571,7 @@ export class Directory {
         return this;
     }
 
+    /** @internal */
     private _moveInternal(newPath: string, options?: DirectoryMoveOptions) {
         const originalPath = this.getPath();
 

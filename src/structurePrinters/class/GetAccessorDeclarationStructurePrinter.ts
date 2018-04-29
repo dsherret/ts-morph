@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { GetAccessorDeclarationStructure } from "../../structures";
 import { StringUtils } from "../../utils";
 import { StructurePrinterFactory } from "../../factories";

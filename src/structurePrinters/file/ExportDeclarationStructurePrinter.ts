@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { ExportDeclarationStructure, ExportSpecifierStructure } from "../../structures";
 import { NewLineFormattingStructuresPrinter } from "../formatting";

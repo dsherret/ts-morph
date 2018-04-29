@@ -1,5 +1,5 @@
 // DO NOT EDIT - Automatically maintained by createKindToNodeMappings.ts until conditional types have been released for a while.
-import * as compiler from "../compiler";
+import * as compiler from "./index";
 import { SyntaxKind } from "../typescript";
 
 export interface KindToNodeMappings {

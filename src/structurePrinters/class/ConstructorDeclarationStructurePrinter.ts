@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure } from "../../structures";
 import { ObjectUtils, setValueIfUndefined } from "../../utils";
 import { StructurePrinterFactory } from "../../factories";

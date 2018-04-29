@@ -36,7 +36,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             moduleSpecifier: "typescript"
         }, {
             namedImports: ["ObjectUtils"],
-            moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifier(project.getSourceFileOrThrow("src/utils/ObjectUtils.ts"))
+            moduleSpecifier: sourceFile.getRelativePathAsModuleSpecifierTo(project.getSourceFileOrThrow("src/utils/ObjectUtils.ts"))
         }]);
 
         addSeparatedDeclarations();

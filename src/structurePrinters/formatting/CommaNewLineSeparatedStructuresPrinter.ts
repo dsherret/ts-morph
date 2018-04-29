@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { StructurePrinter } from "../StructurePrinter";
 
 export class CommaNewLineSeparatedStructuresPrinter<T> extends StructurePrinter<T[]> {

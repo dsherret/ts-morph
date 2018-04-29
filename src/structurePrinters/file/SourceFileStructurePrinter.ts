@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { SourceFileStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
 import { SupportedFormatCodeSettings } from "../../options";

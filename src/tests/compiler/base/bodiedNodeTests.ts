@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { BodiedNode, NamespaceDeclaration } from "../../../compiler";
 import { BodiedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";

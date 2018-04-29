@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn } from "../../manipulation";
 import { TypeGuards, StringUtils, getTextFromStringOrWriter } from "../../utils";
 import * as errors from "../../errors";

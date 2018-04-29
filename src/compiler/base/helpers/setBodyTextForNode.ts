@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { SyntaxKind } from "../../../typescript";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { Node } from "../../common";

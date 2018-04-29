@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 
 export interface InitializerSetExpressionableNodeStructure {
     initializer?: string | ((writer: CodeBlockWriter) => void);

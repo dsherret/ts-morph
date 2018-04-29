@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../../../../codeBlockWriter";
 import { expect } from "chai";
 import { EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
 import { InitializerSetExpressionableNodeStructure } from "../../../../structures";

@@ -1,4 +1,4 @@
-﻿import CodeBlockWriter from "code-block-writer";
+﻿import { CodeBlockWriter } from "../codeBlockWriter";
 
 export abstract class StructurePrinter<TStructure> {
     abstract printText(writer: CodeBlockWriter, structure: TStructure): void;

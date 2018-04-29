@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "./codeBlockWriter";
 import * as errors from "./errors";
 import { ts, CompilerOptions, ScriptTarget } from "./typescript";
 import { SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult } from "./compiler";

@@ -9,22 +9,31 @@ import * as jsdiff from "diff";
 import chalk from "chalk";
 
 (async function doCheck() {
-    const baselineFilePromise = readFile("./lib/ts-simple-ast.d.ts");
-    const outputtedFilePromise = readFile("./dist/main.d.ts");
+    await Promise.all([
+        compareFiles("./lib/ts-simple-ast.d.ts", "./dist/main.d.ts"),
+        compareFiles("./lib/typescript/typescript.d.ts", "./dist/typescript/typescript.d.ts"),
+        compareFiles("./lib/codeBlockWriter/code-block-writer.d.ts", "./dist/codeBlockWriter/code-block-writer.d.ts")
+    ]);
+})();
+
+async function compareFiles(baseLineFilePath: string, outputtedFilePath: string) {
+    const baselineFilePromise = readFile(baseLineFilePath);
+    const outputtedFilePromise = readFile(outputtedFilePath);
 
     const baseLineResult = await baselineFilePromise;
     const outputtedFileResult = await outputtedFilePromise;
 
     const results = jsdiff.diffLines(baseLineResult, outputtedFileResult).filter(result => result.added || result.removed);
     if (results.length > 0) {
-        console.log("There were differences in the declaration file. Please review these changes and then confirm them by running `npm run overwrite-declaration-file`.");
+        console.log(`There were differences in the declaration file (${outputtedFilePath}). ` +
+            "Please review these changes and then confirm them by running `npm run overwrite-declaration-file`.");
         for (const result of results) {
             const text = result.added ? chalk.green(result.value) : chalk.red(result.value);
             console.log(text);
         }
         process.exit(1);
     }
-})();
+}
 
 async function readFile(filePath: string) {
     return new Promise<string>((resolve, reject) => {

@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../manipulation";
 import { getPreviousMatchingPos } from "../../manipulation/textSeek";
 import { getTextFromStringOrWriter } from "../../utils";

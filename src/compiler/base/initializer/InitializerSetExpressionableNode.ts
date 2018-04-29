@@ -1,4 +1,4 @@
-import CodeBlockWriter from "code-block-writer";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { ts, SyntaxKind } from "../../../typescript";
 import { Constructor } from "../../../Constructor";
 import * as errors from "../../../errors";
