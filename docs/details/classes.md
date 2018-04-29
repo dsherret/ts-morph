@@ -123,7 +123,7 @@ implementation constructor otherwise.
 const constructors = classDeclaration.getConstructors();
 ```
 
-Add or insert a constructor by calling `addConstructor()` or `insertConstructor()` respectively.
+Add or insert a constructor or constructors by calling `addConstructor()`, `addConstructors()`, `insertConstructor()`, or `insertConstructors()`.
 
 ```ts
 const ctor = classDeclaration.addConstructor({ /* options like parameters may go here */ });

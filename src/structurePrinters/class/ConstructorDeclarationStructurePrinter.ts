@@ -9,6 +9,22 @@ export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrin
         super(factory);
     }
 
+    printTexts(writer: CodeBlockWriter, structures: ConstructorDeclarationStructure[] | undefined) {
+        // todo: move this code to a common printer similar to blank line formatting structure printer
+        if (structures == null)
+            return;
+
+        for (let i = 0; i < structures.length; i++) {
+            if (i > 0) {
+                if (this.options.isAmbient)
+                    writer.newLine();
+                else
+                    writer.blankLine();
+            }
+            this.printText(writer, structures[i]);
+        }
+    }
+
     printText(writer: CodeBlockWriter, structure: ConstructorDeclarationStructure) {
         this.printOverloads(writer, getOverloadStructures());
         this.printBase(writer, structure);

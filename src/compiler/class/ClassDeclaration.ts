@@ -41,8 +41,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         if (structure.extends != null)
             this.setExtends(structure.extends);
-        if (structure.ctor != null)
-            this.addConstructor(structure.ctor);
+        if (structure.ctors != null)
+            this.addConstructors(structure.ctors);
         if (structure.properties != null)
             this.addProperties(structure.properties);
         if (structure.getAccessors != null)
@@ -131,7 +131,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Adds a constructor. Will remove the previous constructor if it exists.
+     * Adds a constructor.
      * @param structure - Structure of the constructor.
      */
     addConstructor(structure: ConstructorDeclarationStructure = {}) {
@@ -139,34 +139,48 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Inserts a constructor. Will remove the previous constructor if it exists.
+     * Adds constructors.
+     * @param structures - Structures of the constructor.
+     */
+    addConstructors(structures: ConstructorDeclarationStructure[]) {
+        return this.insertConstructors(getEndIndexFromArray(this.getMembers()), structures);
+    }
+
+    /**
+     * Inserts a constructor.
      * @param index - Index to insert at.
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
-        for (const c of this.getConstructors())
-            c.remove();
+        return this.insertConstructors(index, [structure])[0];
+    }
 
+    /**
+     * Inserts constructors.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the constructor.
+     */
+    insertConstructors(index: number, structures: ConstructorDeclarationStructure[]) {
         const isAmbient = this.isAmbient();
 
         return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
             index,
-            structures: [structure],
+            structures,
             expectedKind: SyntaxKind.Constructor,
             write: (writer, info) => {
                 if (!isAmbient && info.previousMember != null)
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printText(writer, structure);
+                this.global.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printTexts(writer, structures);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
             }
-        })[0];
+        });
     }
 
     /**

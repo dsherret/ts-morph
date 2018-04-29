@@ -19,7 +19,7 @@ export interface ClassDeclarationStructure
 
 export interface ClassDeclarationSpecificStructure {
     extends?: string;
-    ctor?: ConstructorDeclarationStructure;
+    ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
     getAccessors?: GetAccessorDeclarationStructure[];
     setAccessors?: SetAccessorDeclarationStructure[];

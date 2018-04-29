@@ -51,7 +51,7 @@ describe(nameof(StatementedNode), () => {
         it("should insert everything in a structure", () => {
             const structure: MakeRequired<ClassDeclarationStructure> = {
                 name: "C",
-                ctor: {},
+                ctors: [{}, {}],
                 decorators: [{ name: "D" }],
                 docs: [{ description: "Test" }],
                 extends: "Base",
@@ -68,6 +68,7 @@ describe(nameof(StatementedNode), () => {
             };
             const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n" +
                 "    p;\n\n" +
+                "    constructor() {\n    }\n\n" +
                 "    constructor() {\n    }\n\n" +
                 "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n" +
                 "    get g2() {\n    }\n\n    get g3() {\n    }\n\n    set s2() {\n    }\n\n" +

@@ -22,7 +22,7 @@ describe(nameof(ClassDeclaration), () => {
         it("should modify when changed", () => {
             const structure: MakeRequired<ClassDeclarationSpecificStructure> = {
                 extends: "Other",
-                ctor: {},
+                ctors: [{}],
                 properties: [{ name: "p" }],
                 getAccessors: [{ name: "g" }],
                 setAccessors: [{ name: "s", parameters: [{ name: "value", type: "string" }] }],
@@ -121,9 +121,9 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n}", 0, {}, "class c {\n    constructor() {\n    }\n}");
         });
 
-        it("should remove the previous when one exists", () => {
-            doTest("class c {\n    constructor() {\n    }\n}", 0, { scope: Scope.Private},
-                "class c {\n    private constructor() {\n    }\n}");
+        it("should not remove the previous constructor when one exists", () => {
+            doTest("class c {\n    constructor() {\n    }\n}", 1, { scope: Scope.Private},
+                "class c {\n    constructor() {\n    }\n\n    private constructor() {\n    }\n}");
         });
 
         it("should insert multiple into other members", () => {
@@ -167,6 +167,39 @@ describe(nameof(ClassDeclaration), () => {
         it("should add at the end", () => {
             doTest("class c {\n    prop1;\n}", {},
                 "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.addConstructors), () => {
+        function doTest(startCode: string, structure: ConstructorDeclarationStructure[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.addConstructors(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structure.length);
+        }
+
+        it("should add at the end", () => {
+            doTest("class c {\n    prop1;\n}", [{}, {}],
+                "class c {\n    prop1;\n\n    constructor() {\n    }\n\n    constructor() {\n    }\n}");
+        });
+
+        it("should print multiple correctly when ambient", () => {
+            doTest("declare class c {\n}", [{}, { parameters: [{ name: "p", type: "any" }]}],
+                "declare class c {\n    constructor();\n    constructor(p: any);\n}");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(d => d.insertConstructors), () => {
+        function doTest(startCode: string, index: number, structure: ConstructorDeclarationStructure[], expectedCode: string) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
+            const result = firstChild.insertConstructors(index, structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+            expect(result.length).to.equal(structure.length);
+        }
+
+        it("should insert multiple constructors", () => {
+            doTest("class c {\n    prop1;\n}", 0, [{}, {}],
+                "class c {\n    constructor() {\n    }\n\n    constructor() {\n    }\n\n    prop1;\n}");
         });
     });
 
@@ -1126,9 +1159,12 @@ class c {
     }
 }
 `);
-            firstChild.insertConstructor(1, { }); // todo: should this be 2? A little iffy because it removes the previous constructor before inserting
+            firstChild.insertConstructor(2, { });
             expect(sourceFile.getFullText()).to.equal(`
 class c {
+    constructor();
+    constructor(public param: string) {}
+
     myMethod(): void;
     myMethod(): void {
     }

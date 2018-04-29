@@ -34,11 +34,7 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
             writer.write(`implements ${structure.implements.join(", ")} `);
         writer.inlineBlock(() => {
             this.factory.forPropertyDeclaration().printTexts(writer, structure.properties);
-            if (structure.ctor != null) {
-                this.conditionalSeparator(writer, isAmbient);
-                this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, structure.ctor);
-            }
-
+            this.printCtors(writer, structure, isAmbient);
             this.printGetAndSet(writer, structure, isAmbient);
 
             if (!ArrayUtils.isNullOrEmpty(structure.methods)) {
@@ -46,6 +42,16 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
                 this.factory.forMethodDeclaration({ isAmbient }).printTexts(writer, structure.methods);
             }
         });
+    }
+
+    private printCtors(writer: CodeBlockWriter, structure: ClassDeclarationStructure, isAmbient: boolean) {
+        if (ArrayUtils.isNullOrEmpty(structure.ctors))
+            return;
+
+        for (const ctor of structure.ctors) {
+            this.conditionalSeparator(writer, isAmbient);
+            this.factory.forConstructorDeclaration({ isAmbient }).printText(writer, ctor);
+        }
     }
 
     private printGetAndSet(writer: CodeBlockWriter, structure: ClassDeclarationStructure, isAmbient: boolean) {
