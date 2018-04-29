@@ -1,4 +1,5 @@
-﻿import { expect } from "chai";
+﻿import CodeBlockWriter from "code-block-writer";
+import { expect } from "chai";
 import { EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
 import { InitializerSetExpressionableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
@@ -93,6 +94,19 @@ describe(nameof(InitializerSetExpressionableNode), () => {
 
             it("should set initializer when there's a comment after and no semi-colon", () => {
                 doClassPropTest("class Identifier { prop/*comment*/ }", "2", "class Identifier { prop = 2/*comment*/ }");
+            });
+        });
+
+        describe("writer", () => {
+            function doClassPropTest(text: string, newInitializer: (writer: CodeBlockWriter) => void, expected: string) {
+                const { firstChild } = getInfoFromText<ClassDeclaration>(text);
+                const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+                prop.setInitializer(newInitializer);
+                expect(firstChild.getFullText()).to.equal(expected);
+            }
+
+            it("should set a new initializer using a writer", () => {
+                doClassPropTest("class Identifier { prop; }", writer => writer.write("2"), "class Identifier { prop = 2; }");
             });
         });
     });

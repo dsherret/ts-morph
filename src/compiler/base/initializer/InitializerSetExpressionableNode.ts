@@ -1,9 +1,11 @@
+import CodeBlockWriter from "code-block-writer";
 import { ts, SyntaxKind } from "../../../typescript";
 import { Constructor } from "../../../Constructor";
 import * as errors from "../../../errors";
 import { InitializerSetExpressionableNodeStructure } from "../../../structures";
 import { callBaseFill } from "../../callBaseFill";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { getTextFromStringOrWriter } from "../../../utils";
 import { Expression } from "../../expression";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
@@ -20,6 +22,11 @@ export interface InitializerSetExpressionableNode {
      * @param text - New text to set for the initializer.
      */
     setInitializer(text: string): this;
+    /**
+     * Sets the initializer using a writer function.
+     * @param writerFunction - Function to write the initializer with.
+     */
+    setInitializer(writerFunction: (writer: CodeBlockWriter) => void): this;
 }
 
 export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {
@@ -37,8 +44,9 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             return this;
         }
 
-        setInitializer(text: string) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
+        setInitializer(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            const text = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
+            errors.throwIfNotStringOrWhitespace(text, nameof(textOrWriterFunction));
 
             if (this.hasInitializer())
                 this.removeInitializer();
