@@ -465,8 +465,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         addStatements(text: string): Statement[];
         addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
         addStatements(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
-            const childSyntaxList = this.getChildSyntaxListOrThrow();
-            return this.insertStatements(childSyntaxList.getChildCount(), textOrWriterFunction);
+            return this.insertStatements(this.getCompilerStatements().length, textOrWriterFunction);
         }
 
         insertStatements(index: number, text: string): Statement[];
@@ -477,7 +476,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         removeStatement(index: number) {
-            index = verifyAndGetIndex(index, this.getStatements().length - 1);
+            index = verifyAndGetIndex(index, this.getCompilerStatements().length - 1);
             return this.removeStatements([index, index]);
         }
 
@@ -497,7 +496,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addClasses(structures: ClassDeclarationStructure[]) {
-            return this.insertClasses(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertClasses(this.getCompilerStatements().length, structures);
         }
 
         insertClass(index: number, structure: ClassDeclarationStructure) {
@@ -542,7 +541,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addEnums(structures: EnumDeclarationStructure[]) {
-            return this.insertEnums(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertEnums(this.getCompilerStatements().length, structures);
         }
 
         insertEnum(index: number, structure: EnumDeclarationStructure) {
@@ -587,7 +586,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addFunctions(structures: FunctionDeclarationStructure[]) {
-            return this.insertFunctions(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertFunctions(this.getCompilerStatements().length, structures);
         }
 
         insertFunction(index: number, structure: FunctionDeclarationStructure) {
@@ -638,7 +637,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addInterfaces(structures: InterfaceDeclarationStructure[]) {
-            return this.insertInterfaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertInterfaces(this.getCompilerStatements().length, structures);
         }
 
         insertInterface(index: number, structure: InterfaceDeclarationStructure) {
@@ -683,7 +682,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addNamespaces(structures: NamespaceDeclarationStructure[]) {
-            return this.insertNamespaces(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertNamespaces(this.getCompilerStatements().length, structures);
         }
 
         insertNamespace(index: number, structure: NamespaceDeclarationStructure) {
@@ -727,7 +726,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addTypeAliases(structures: TypeAliasDeclarationStructure[]) {
-            return this.insertTypeAliases(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertTypeAliases(this.getCompilerStatements().length, structures);
         }
 
         insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure) {
@@ -787,7 +786,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addVariableStatements(structures: VariableStatementStructure[]) {
-            return this.insertVariableStatements(this.getChildSyntaxListOrThrow().getChildCount(), structures);
+            return this.insertVariableStatements(this.getCompilerStatements().length, structures);
         }
 
         insertVariableStatement(index: number, structure: VariableStatementStructure) {
