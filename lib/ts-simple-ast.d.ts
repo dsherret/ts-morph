@@ -563,6 +563,17 @@ export interface DirectoryAddOptions {
      */
     recursive?: boolean;
 }
+
+export interface DirectoryCopyOptions extends SourceFileCopyOptions {
+    /**
+     * Includes all the files in the directory and sub-directory when copying.
+     * @remarks - Defaults to true.
+     */
+    includeUntrackedFiles?: boolean;
+}
+
+export interface DirectoryMoveOptions extends SourceFileMoveOptions {
+}
 export declare type Constructor<T> = new (...args: any[]) => T;
 
 /**
@@ -2211,24 +2222,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure): JSDoc;
+    addJsDoc(structure: JSDocStructure | string): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: JSDocStructure[]): JSDoc[];
+    addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: JSDocStructure[]): JSDoc[];
+    insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
 }
 
 export declare function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T;
@@ -3167,16 +3178,27 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      */
     getExtends(): ExpressionWithTypeArguments | undefined;
     /**
-     * Adds a constructor. Will remove the previous constructor if it exists.
+     * Adds a constructor.
      * @param structure - Structure of the constructor.
      */
     addConstructor(structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
     /**
-     * Inserts a constructor. Will remove the previous constructor if it exists.
+     * Adds constructors.
+     * @param structures - Structures of the constructor.
+     */
+    addConstructors(structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
+    /**
+     * Inserts a constructor.
      * @param index - Index to insert at.
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
+    /**
+     * Inserts constructors.
+     * @param index - Index to insert at.
+     * @param structures - Structures of the constructor.
+     */
+    insertConstructors(index: number, structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
     /**
      * Gets the constructor declarations.
      */
@@ -8774,7 +8796,7 @@ export interface InitializerSetExpressionableNodeStructure {
 }
 
 export interface JSDocableNodeStructure {
-    docs?: JSDocStructure[];
+    docs?: (JSDocStructure | string)[];
 }
 
 export interface ParameteredNodeStructure {
@@ -8847,7 +8869,7 @@ export interface ClassDeclarationStructure extends NameableNodeStructure, ClassD
 
 export interface ClassDeclarationSpecificStructure {
     extends?: string;
-    ctor?: ConstructorDeclarationStructure;
+    ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
     getAccessors?: GetAccessorDeclarationStructure[];
     setAccessors?: SetAccessorDeclarationStructure[];

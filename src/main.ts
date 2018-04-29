@@ -4,7 +4,7 @@ export * from "./compiler";
 export * from "./structures";
 export { Project as default } from "./Project";
 export { Options, SourceFileCreateOptions, SourceFileAddOptions } from "./Project";
-export { FileSystemHost, Directory, DirectoryEmitResult, DirectoryAddOptions } from "./fileSystem";
+export { FileSystemHost, Directory, DirectoryEmitResult, DirectoryAddOptions, DirectoryCopyOptions, DirectoryMoveOptions } from "./fileSystem";
 export * from "./options";
 export { Constructor } from "./Constructor";
 export { createWrappedNode, CreateWrappedNodeOptions } from "./utils/compiler/createWrappedNode";
