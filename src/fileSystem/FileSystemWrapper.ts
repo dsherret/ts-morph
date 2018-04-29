@@ -432,6 +432,39 @@ export class FileSystemWrapper {
         }
     }
 
+    async copyDirectoryImmediately(srcDirPath: string, destDirPath: string) {
+        srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
+        destDirPath = this.getStandardizedAbsolutePath(destDirPath);
+        const srcDir = this.getDirectory(srcDirPath);
+        const destDir = this.getDirectory(destDirPath);
+
+        this.throwIfHasExternalOperations(srcDir, "copy directory");
+        this.throwIfHasExternalOperations(destDir, "copy directory");
+
+        const saveTask = Promise.all([this.saveForDirectory(srcDirPath), this.saveForDirectory(destDirPath)]);
+        this.removeDirAndSubDirs(srcDir);
+
+        // await after the state is set
+        await saveTask;
+        await this.fileSystem.copy(srcDirPath, destDirPath);
+    }
+
+    copyDirectoryImmediatelySync(srcDirPath: string, destDirPath: string) {
+        srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
+        destDirPath = this.getStandardizedAbsolutePath(destDirPath);
+        const srcDir = this.getDirectory(srcDirPath);
+        const destDir = this.getDirectory(destDirPath);
+
+        this.throwIfHasExternalOperations(srcDir, "copy directory");
+        this.throwIfHasExternalOperations(destDir, "copy directory");
+
+        this.saveForDirectorySync(srcDirPath);
+        this.saveForDirectorySync(destDirPath);
+        this.removeDirAndSubDirs(srcDir);
+
+        this.fileSystem.copySync(srcDirPath, destDirPath);
+    }
+
     async moveDirectoryImmediately(srcDirPath: string, destDirPath: string) {
         srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
         destDirPath = this.getStandardizedAbsolutePath(destDirPath);
@@ -682,17 +715,26 @@ export class FileSystemWrapper {
         throw new errors.InvalidOperationError(getErrorText());
 
         function getErrorText() {
+            let hasCopy = false;
             let errorText = `Cannot execute immediate operation '${commandName}' because of the following external operations:\n`;
             for (const operation of operations) {
                 if (operation.kind === "move")
-                    errorText += `\nMove: ${operation.oldDir.path} --> ${operation.newDir.path}`;
-                else if (operation.kind === "copy")
-                    errorText += `\nCopy: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                    errorText += `\n* Move: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                else if (operation.kind === "copy") {
+                    errorText += `\n* Copy: ${operation.oldDir.path} --> ${operation.newDir.path}`;
+                    hasCopy = true;
+                }
                 else if (operation.kind === "deleteDir")
-                    errorText += `\nDelete: ${operation.dir.path}`;
-                else
-                    throw errors.getNotImplementedForNeverValueError(operation);
+                    errorText += `\n* Delete: ${operation.dir.path}`;
+                else {
+                    const expectNever: never = operation;
+                    errorText += `\n* Unknown operation: Please report this as a bug.`;
+                }
             }
+
+            if (hasCopy)
+                errorText += "\n\nNote: Copy operations can be removed from external operations by setting `includeUntrackedFiles` to `false` when copying.";
+
             return errorText;
         }
     }

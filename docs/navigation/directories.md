@@ -119,7 +119,7 @@ const descendantSourceFiles = directory.getDescendantSourceFiles();
 Save the directory to the disk and all the unsaved source files:
 
 ```ts
-directory.save();
+await directory.save();
 directory.saveSync(); // slow
 ```
 
@@ -156,9 +156,19 @@ Move the directory to a new directory:
 // ex. moves C:\MyProject\dir to C:\MyProject\newDir if working directory is C:\MyProject
 directory.move("./newDir");
 // ex. moves C:\MyProject\newDir to C:\MyProject\otherDir using a relative path
-directory.copy("../otherDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
+directory.move("../otherDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
 // or specify an absolute path
-directory.copy("C:\\finalDir");
+directory.move("C:\\finalDir");
+```
+
+### Moving Immediately
+
+Moving a directory immediately can be done by using one of the following methods:
+
+```ts
+await directory.moveImmediately("../newDir");
+// or
+directory.moveImmediatelySync("../newDir2");
 ```
 
 ### Copying
@@ -168,11 +178,31 @@ Copy the directory to a new directory:
 ```ts
 // ex. copies C:\MyProject\dir to C:\MyProject\newDir
 directory.copy("../newDir");
-directory.copy("../nextDir", { overwrite: true }); // allows overwriting (otherwise it will throw)
-directory.copy("C:\\test"); // or absolute
+// allows overwriting (otherwise it will throw)
+directory.copy("../nextDir", { overwrite: true });
+// or specify an absolute path
+directory.copy("C:\\test");
 ```
 
-Note that the directory and source files, in all these cases, won't be created until calling save on them.
+Note that the directory and source files, in all these cases, won't be created until calling save on the project.
+
+#### Not including untracked files
+
+When moving a directory, it will queue up a file system copy for the directory from to the directory to. If you only wish to copy the source files that are found in memory within the directory, then set the `includeUntrackedFiles` option to false:
+
+```
+directory.copy("../finalDir", { includeUntrackedFiles: false });
+```
+
+### Copying Immediately
+
+Copying a directory immediately can be done by using one of the following methods:
+
+```ts
+await directory.copyImmediately("../otherDir");
+// or
+directory.copyImmediatelySync("../otherDir2");
+```
 
 ### Deleting
 
@@ -191,7 +221,7 @@ When you're all done your other manipulations, call `project.save()` and at that
 If you want to delete a directory immediately from the file system, then use the following:
 
 ```ts
-directory.deleteImmediately();
+await directory.deleteImmediately();
 // or
 directory.deleteImmediatelySync();
 ```

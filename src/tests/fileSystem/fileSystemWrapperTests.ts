@@ -315,8 +315,131 @@ describe(nameof(FileSystemWrapper), () => {
 
         describe("async", () => {
             doTests(async (wrapper, filePath, runChecks) => {
+                let thrownErr: any;
                 try {
                     await wrapper.deleteFileImmediately(filePath);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                runChecks(thrownErr);
+            });
+        });
+
+        describe("sync", () => {
+            doTests((wrapper, filePath, runChecks) => {
+                let thrownErr: any;
+                try {
+                    wrapper.deleteFileImmediatelySync(filePath);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                runChecks(thrownErr);
+            });
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.copyDirectoryImmediately), () => {
+        function doTests(copyDirectory: (wrapper: FileSystemWrapper, fileFrom: string, fileTo: string, runChecks: (error?: any) => void) => void) {
+            it("should copy a directory immediately to a new directory", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                copyDirectory(wrapper, "/dir", "/newDir", err => {
+                    expect(err).to.be.undefined;
+                    checkStateForDir(objs, "/dir", [true, true]);
+                    checkState(objs, "/dir/file.ts", [true, true]);
+                    checkStateForDir(objs, "/newDir", [true, true]);
+                    checkState(objs, "/newDir/file.ts", [true, true]);
+                });
+            });
+
+            it("should throw when copying a directory in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir", "/dir2");
+                copyDirectory(wrapper, "/dir2", "/dir3", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when copyin a directory to a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.writeFileSync("/dir2/file2.ts", "text");
+                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                copyDirectory(wrapper, "/dir", "/dir3", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, dirFrom, dirTo, runChecks) => {
+                let thrownErr: any;
+                try {
+                    await wrapper.copyDirectoryImmediately(dirFrom, dirTo);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                runChecks(thrownErr);
+            });
+        });
+
+        describe("sync", () => {
+            doTests((wrapper, dirFrom, dirTo, runChecks) => {
+                let thrownErr: any;
+                try {
+                    wrapper.copyDirectoryImmediatelySync(dirFrom, dirTo);
+                } catch (err) {
+                    thrownErr = err;
+                }
+                runChecks(thrownErr);
+            });
+        });
+    });
+
+    describe(nameof<FileSystemWrapper>(w => w.moveDirectoryImmediately), () => {
+        function doTests(moveDirectory: (wrapper: FileSystemWrapper, fileFrom: string, fileTo: string, runChecks: (error?: any) => void) => void) {
+            it("should move a directory immediately to a new directory", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                moveDirectory(wrapper, "/dir", "/newDir", err => {
+                    expect(err).to.be.undefined;
+                    checkStateForDir(objs, "/dir", [false, false]);
+                    checkStateForDir(objs, "/newDir", [true, true]);
+                    checkState(objs, "/newDir/file.ts", [true, true]);
+                });
+            });
+
+            it("should throw when moving a directory in a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.queueMoveDirectory("/dir", "/dir2");
+                moveDirectory(wrapper, "/dir2", "/dir3", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+
+            it("should throw when moving a directory to a directory with external operations", () => {
+                const objs = setup();
+                const { wrapper } = objs;
+                wrapper.writeFileSync("/dir/file.ts", "text");
+                wrapper.writeFileSync("/dir2/file2.ts", "text");
+                wrapper.queueMoveDirectory("/dir2", "/dir3");
+                moveDirectory(wrapper, "/dir", "/dir3", err => {
+                    expect(err).to.be.instanceof(errors.InvalidOperationError);
+                });
+            });
+        }
+
+        describe("async", () => {
+            doTests(async (wrapper, dirFrom, dirTo, runChecks) => {
+                try {
+                    await wrapper.moveDirectoryImmediately(dirFrom, dirTo);
                     runChecks();
                 } catch (err) {
                     runChecks(err);
@@ -325,9 +448,9 @@ describe(nameof(FileSystemWrapper), () => {
         });
 
         describe("sync", () => {
-            doTests((wrapper, filePath, runChecks) => {
+            doTests((wrapper, dirFrom, dirTo, runChecks) => {
                 try {
-                    wrapper.deleteFileImmediatelySync(filePath);
+                    wrapper.moveDirectoryImmediatelySync(dirFrom, dirTo);
                     runChecks();
                 } catch (err) {
                     runChecks(err);

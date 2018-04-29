@@ -1,7 +1,7 @@
 ﻿import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions, OutputFile } from "../compiler";
 import * as errors from "../errors";
 import { ModuleResolutionKind } from "../typescript";
-import { ArrayUtils, FileUtils, StringUtils } from "../utils";
+import { ArrayUtils, FileUtils, StringUtils, setValueIfUndefined, ObjectUtils } from "../utils";
 import { SourceFileStructure } from "../structures";
 import { GlobalContainer } from "../GlobalContainer";
 import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
@@ -21,7 +21,7 @@ export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 export interface DirectoryCopyOptions extends SourceFileCopyOptions {
     /**
      * Includes all the files in the directory and sub-directory when copying.
-     * @remarks - Defaults to false.
+     * @remarks - Defaults to true.
      */
     includeUntrackedFiles?: boolean;
 }
@@ -423,9 +423,68 @@ export class Directory {
         if (originalPath === newPath)
             return this;
 
-        if (options != null && options.includeUntrackedFiles)
+        options = getDirectoryCopyOptions(options);
+        if (options.includeUntrackedFiles)
             fileSystem.queueCopyDirectory(originalPath, newPath);
 
+        return this._copyInternal(newPath, options);
+    }
+
+    /**
+     * Immediately copies the directory to the specified path asynchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
+     */
+    async copyImmediately(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
+        const fileSystem = this.global.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+
+        if (originalPath === newPath) {
+            await this.save();
+            return this;
+        }
+
+        options = getDirectoryCopyOptions(options);
+        const newDir = this._copyInternal(newPath, options);
+        if (options.includeUntrackedFiles)
+            await fileSystem.copyDirectoryImmediately(originalPath, newPath);
+        await newDir.save();
+        return newDir;
+    }
+
+    /**
+     * Immediately copies the directory to the specified path synchronously.
+     * @param relativeOrAbsolutePath - Directory path as an absolute or relative path.
+     * @param options - Options for moving the directory.
+     * @remarks If includeTrackedFiles is true, then it will execute the pending operations in the current directory.
+     */
+    copyImmediatelySync(relativeOrAbsolutePath: string, options?: DirectoryCopyOptions) {
+        const fileSystem = this.global.fileSystemWrapper;
+        const originalPath = this.getPath();
+        const newPath = fileSystem.getStandardizedAbsolutePath(relativeOrAbsolutePath, originalPath);
+
+        if (originalPath === newPath) {
+            this.saveSync();
+            return this;
+        }
+
+        options = getDirectoryCopyOptions(options);
+        const newDir = this._copyInternal(newPath, options);
+        if (options.includeUntrackedFiles)
+            fileSystem.copyDirectoryImmediatelySync(originalPath, newPath);
+        newDir.saveSync();
+        return newDir;
+    }
+
+    private _copyInternal(newPath: string, options?: DirectoryCopyOptions) {
+        const originalPath = this.getPath();
+
+        if (originalPath === newPath)
+            return this;
+
+        const fileSystem = this.global.fileSystemWrapper;
         const copyingDirectories = [this, ...this.getDescendantDirectories()].map(directory => ({
             directory,
             oldPath: directory.getPath(),
@@ -485,10 +544,7 @@ export class Directory {
         }
 
         this._moveInternal(newPath, options);
-        const task = fileSystem.moveDirectoryImmediately(originalPath, newPath);
-
-        // await after the state is set
-        await task;
+        await fileSystem.moveDirectoryImmediately(originalPath, newPath);
         await this.save();
         return this;
     }
@@ -758,4 +814,10 @@ export class Directory {
 
         return true;
     }
+}
+
+function getDirectoryCopyOptions(options: DirectoryCopyOptions | undefined) {
+    options = ObjectUtils.clone(options || {});
+    setValueIfUndefined(options, "includeUntrackedFiles", true);
+    return options;
 }
