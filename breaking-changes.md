@@ -2,6 +2,44 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 11
+
+### CodeBlockWriter is now a named export
+
+Instead of access code-block-writer by doing:
+
+```ts
+import CodeBlockWriter from "code-block-writer";
+```
+
+It's now a named export from this library:
+
+```ts
+import { CodeBlockWriter } from "ts-simple-ast";
+```
+
+### New `FileSystemHost` Methods
+
+The `FileSystemHost` interface now has `move`, `moveSync`, `copy`, and `copySync` methods.
+
+### Changed methods/properties
+
+`Directory`
+* `.remove()` is now `.forget()` - This was done for consistency with `SourceFile`.
+
+`SourceFile`
+* `getRelativePathToSourceFileAsModuleSpecifier` is now `getRelativePathAsModuleSpecifierTo`.
+* `getRelativePathToSourceFile` is now `getRelativePathTo`.
+
+`Identifier`
+* `getDefinitionReferencingNodes()` is now `getReferencingNodes()` for consistency.
+
+`ClassDeclarationStructure`
+* `ctor` is now `ctors` - There can be multiple constructors on ambient classes.
+
+`ExportAssignmentStructure`
+* `isEqualsExport` is now `isExportEquals` - I originally named this incorrectly by accident.
+
 ## Version 10
 
 ### ClassDeclaration's name is now nullable
