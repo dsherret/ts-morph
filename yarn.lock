@@ -424,10 +424,6 @@ clone@^1.0.0, clone@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
 
-code-block-writer@6.13.0:
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-6.13.0.tgz#9473a3a0c26c9a860c388b6b218e4031bbc61fe0"
-
 code-block-writer@7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.0.0.tgz#8d5ab347ce5c130b8fa50df59684096792a6661f"
@@ -2737,19 +2733,21 @@ ts-node@^6.0.0:
     source-map-support "^0.5.3"
     yn "^2.0.0"
 
-ts-simple-ast@10.5.0:
-  version "10.5.0"
-  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-10.5.0.tgz#4729db16b911adb6536394d6e63c8a7f978fadee"
+ts-simple-ast@11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-11.0.0.tgz#d4915f73eb8811230913342b659c150df0148b40"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
-    code-block-writer "6.13.0"
+    "@types/fs-extra" "^5.0.2"
+    code-block-writer "7.0.0"
+    fs-extra "^5.0.0"
     glob-parent "^3.1.0"
     globby "^6.1.0"
     is-negated-glob "^1.0.0"
     multimatch "^2.1.0"
     object-assign "^4.1.1"
     tslib "^1.9.0"
-    typescript "2.8.1"
+    typescript "2.8.3"
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.9.0"
@@ -2803,10 +2801,6 @@ type-detect@^1.0.0:
 typescript@1.8.10:
   version "1.8.10"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-1.8.10.tgz#b475d6e0dff0bf50f296e5ca6ef9fbb5c7320f1e"
-
-typescript@2.8.1:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.1.tgz#6160e4f8f195d5ba81d4876f9c0cc1fbc0820624"
 
 typescript@2.8.3:
   version "2.8.3"

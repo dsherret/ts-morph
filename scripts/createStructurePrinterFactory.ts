@@ -30,9 +30,9 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
         docs: [{ description: "Cached lazy factory for StructurePrinters." }],
         isExported: true,
         name: "StructurePrinterFactory",
-        ctor: {
+        ctors: [{
             parameters: [{ isReadonly: true, scope: Scope.Private, name: "_getFormatCodeSettings", type: "() => SupportedFormatCodeSettings" }]
-        },
+        }],
         methods: [{
             name: "getFormatCodeSettings",
             returnType: "SupportedFormatCodeSettings",

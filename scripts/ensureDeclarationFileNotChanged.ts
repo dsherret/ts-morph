@@ -23,7 +23,7 @@ async function compareFiles(baseLineFilePath: string, outputtedFilePath: string)
     const baseLineResult = await baselineFilePromise;
     const outputtedFileResult = await outputtedFilePromise;
 
-    const results = jsdiff.diffLines(baseLineResult, outputtedFileResult).filter(result => result.added || result.removed);
+    const results = jsdiff.diffTrimmedLines(baseLineResult, outputtedFileResult).filter(result => result.added || result.removed);
     if (results.length > 0) {
         console.log(`There were differences in the declaration file (${outputtedFilePath}). ` +
             "Please review these changes and then confirm them by running `npm run overwrite-declaration-file`.");

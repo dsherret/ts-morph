@@ -102,11 +102,11 @@ export function cloneClasses(node: StatementedNode, classes: ClassDeclaration[])
             constraint: p.getConstraintNode() == null ? undefined : p.getConstraintNode()!.getText()
         })),
         docs: c.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
-        ctor: c.getConstructors().length === 0 ? undefined : ({
-            docs: c.getConstructors()[0].getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
-            scope: c.getConstructors()[0].hasScopeKeyword() ? c.getConstructors()[0].getScope() : undefined,
-            parameters: c.getConstructors()[0].getParameters().map(p => mapParameter(p))
-        }),
+        ctors: c.getConstructors().map(ctor => ({
+            docs: ctor.getJsDocs().map(d => ({ description: d.getInnerText().replace(/\r?\n/g, "\r\n") })),
+            scope: ctor.hasScopeKeyword() ? ctor.getScope() : undefined,
+            parameters: ctor.getParameters().map(p => mapParameter(p))
+        })),
         properties: (c.getInstanceProperties() as PropertyDeclaration[]).map(nodeProp => ({
             name: nodeProp.getName(),
             type: nodeProp.getType().getText(),

@@ -10,7 +10,7 @@
     "lint": "gulp tslint",
     "build": "gulp typescript",
     "test-run": "gulp test-run",
-    "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
+    "code-generate": "ts-node scripts/code-generate",
     "refactor": "ts-node scripts/refactor",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
     "publish-code-verification": "npm run code-verification && npm run ensure-no-definition-file-errors && npm run ensure-declaration-file-not-changed",
@@ -65,7 +65,7 @@
     "run-sequence": "^2.2.1",
     "ts-nameof": "^0.10.3",
     "ts-node": "^6.0.0",
-    "ts-simple-ast": "10.5.0",
+    "ts-simple-ast": "11.0.0",
     "tslint": "^5.8.0"
   },
   "dependencies": {
