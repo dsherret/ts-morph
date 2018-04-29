@@ -18,24 +18,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure): JSDoc;
+    addJsDoc(structure: JSDocStructure | string): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: JSDocStructure[]): JSDoc[];
+    addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: JSDocStructure[]): JSDoc[];
+    insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
 }
 
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
@@ -47,19 +47,19 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return nodes.map(n => this.getNodeFromCompilerNode<JSDoc>(n));
         }
 
-        addJsDoc(structure: JSDocStructure) {
+        addJsDoc(structure: JSDocStructure | string) {
             return this.addJsDocs([structure])[0];
         }
 
-        addJsDocs(structures: JSDocStructure[]) {
+        addJsDocs(structures: (JSDocStructure | string)[]) {
             return this.insertJsDocs(getEndIndexFromArray(this.compilerNode.jsDoc), structures);
         }
 
-        insertJsDoc(index: number, structure: JSDocStructure) {
+        insertJsDoc(index: number, structure: JSDocStructure | string) {
             return this.insertJsDocs(index, [structure])[0];
         }
 
-        insertJsDocs(index: number, structures: JSDocStructure[]) {
+        insertJsDocs(index: number, structures: (JSDocStructure | string)[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

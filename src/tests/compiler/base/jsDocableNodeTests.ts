@@ -52,7 +52,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
-        function doTest(startCode: string, insertIndex: number, structures: JSDocStructure[], expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration) {
+        function doTest(startCode: string, insertIndex: number, structures: (JSDocStructure | string)[], expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration) {
             const {descendant, sourceFile} = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
@@ -69,7 +69,7 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert multiple at end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }, { description: "Desc3" }],
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }, "Desc3"],
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
 
@@ -105,7 +105,7 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.addJsDocs), () => {
-        function doTest(startCode: string, structures: JSDocStructure[], expectedCode: string) {
+        function doTest(startCode: string, structures: (JSDocStructure | string)[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
             const result = firstChild.addJsDocs(structures);
             expect(result.length).to.equal(structures.length);
@@ -113,7 +113,7 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should add multiple at end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", [{ description: "Desc2" }, { description: "Desc3" }],
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", [{ description: "Desc2" }, "Desc3"],
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
     });
@@ -140,7 +140,7 @@ describe(nameof(JSDocableNode), () => {
         }
 
         it("should modify when setting", () => {
-            doTest("class Identifier {}", { docs: [{ description: "Desc1" }, { description: "Desc2" }] }, "/**\n * Desc1\n */\n/**\n * Desc2\n */\nclass Identifier {}");
+            doTest("class Identifier {}", { docs: [{ description: "Desc1" }, "Desc2"] }, "/**\n * Desc1\n */\n/**\n * Desc2\n */\nclass Identifier {}");
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {

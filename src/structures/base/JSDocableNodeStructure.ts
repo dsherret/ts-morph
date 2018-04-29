@@ -1,5 +1,5 @@
 ﻿import { JSDocStructure } from "../doc";
 
 export interface JSDocableNodeStructure {
-    docs?: JSDocStructure[];
+    docs?: (JSDocStructure | string)[];
 }
