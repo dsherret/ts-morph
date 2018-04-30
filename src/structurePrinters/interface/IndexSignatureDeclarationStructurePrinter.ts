@@ -1,4 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { printTextFromStringOrWriter } from "../../utils";
 import { IndexSignatureDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
@@ -13,6 +14,8 @@ export class IndexSignatureDeclarationStructurePrinter extends FactoryStructureP
     printText(writer: CodeBlockWriter, structure: IndexSignatureDeclarationStructure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
-        writer.write(`[${structure.keyName || "key"}: ${structure.keyType || "string"}]: ${structure.returnType};`);
+        writer.write(`[${structure.keyName || "key"}: ${structure.keyType || "string"}]: `);
+        printTextFromStringOrWriter(writer, structure.returnType);
+        writer.write(";");
     }
 }

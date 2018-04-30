@@ -1,5 +1,7 @@
 import { ts } from "../../typescript";
 import { IndexSignatureDeclarationStructure } from "../../structures";
+import { CodeBlockWriter } from "../../codeBlockWriter";
+import { getTextFromStringOrWriter } from "../../utils";
 import { removeInterfaceMember } from "../../manipulation";
 import { callBaseFill } from "../callBaseFill";
 import { Node, Identifier } from "../common";
@@ -93,10 +95,19 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
 
     /**
      * Sets the return type.
-     * @param text
+     * @param text - Text of the return type.
      */
-    setReturnType(text: string) {
+    setReturnType(text: string): this;
+    /**
+     * Sets the return type.
+     * @param writerFunction - Writer function to write the return type with.
+     */
+    setReturnType(writerFunction: (writer: CodeBlockWriter) => void): this;
+    /** @internal */
+    setReturnType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this;
+    setReturnType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
         const returnTypeNode = this.getReturnTypeNode();
+        const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
         if (returnTypeNode.getText() === text)
             return this;
 

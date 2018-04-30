@@ -1,4 +1,5 @@
 ﻿import { expect } from "chai";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
 import { IndexSignatureDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -30,6 +31,11 @@ describe(nameof(IndexSignatureDeclaration), () => {
             };
             doTest("interface Identifier {\n    [key: string]: SomeReference;\n}", allProps,
                 "interface Identifier {\n    /**\n     * Desc\n     */\n    readonly [newKeyName: number]: Date;\n}");
+        });
+
+        it("should change the return type when using a writer", () => {
+            doTest("interface Identifier { [key: string]: number; }", { returnType: writer => writer.write("string") },
+                "interface Identifier { [key: string]: string; }");
         });
     });
 
@@ -124,14 +130,18 @@ describe(nameof(IndexSignatureDeclaration), () => {
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setReturnType), () => {
-        function doTest(code: string, name: string, expectedCode: string) {
+        function doTest(code: string, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void), expectedCode: string) {
             const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
-            firstIndexSignature.setReturnType(name);
+            firstIndexSignature.setReturnType(textOrWriterFunction);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
         it("should set the return type", () => {
             doTest("interface Identifier { [keyName: string]: number; }", "Date", "interface Identifier { [keyName: string]: Date; }");
+        });
+
+        it("should set the return type with a writer function", () => {
+            doTest("interface Identifier { [keyName: string]: number; }", writer => writer.write("Date"), "interface Identifier { [keyName: string]: Date; }");
         });
     });
 

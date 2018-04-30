@@ -132,7 +132,7 @@ describe(nameof(TypeElementMemberedNode), () => {
 
         it("should insert multiple into other", () => {
             doTest("interface i {\n    method1();\n    method2();\n}", 1,
-                [{ returnType: "number" }, { keyName: "key2", keyType: "number", returnType: "Date" }],
+                [{ returnType: "number" }, { keyName: "key2", keyType: "number", returnType: writer => writer.write("Date") }],
                 "interface i {\n    method1();\n    [key: string]: number;\n    [key2: number]: Date;\n    method2();\n}");
         });
 
