@@ -213,7 +213,7 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert the spread assignments in the middle", () => {
-            doTest("const t = {\n    prop: 5,\n    prop4\n};", 1, [{ expression: "prop2" }, { expression: "prop3" }],
+            doTest("const t = {\n    prop: 5,\n    prop4\n};", 1, [{ expression: "prop2" }, { expression: writer => writer.write("prop3") }],
                 "const t = {\n    prop: 5,\n    ...prop2,\n    ...prop3,\n    prop4\n};");
         });
     });
