@@ -24,7 +24,7 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
         writer.write("(");
         for (let i = 0; i < structure.arguments.length; i++) {
             writer.conditionalWrite(i > 0, ", ");
-            printTextFromStringOrWriter(writer, structure.arguments[0]);
+            printTextFromStringOrWriter(writer, structure.arguments[i]);
         }
         writer.write(")");
     }

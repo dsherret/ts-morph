@@ -478,9 +478,10 @@ describe(nameof(Project), () => {
                     name: "MyEnum"
                 }],
                 imports: [{ moduleSpecifier: "./test" }],
-                exports: [{ moduleSpecifier: "./test" }]
+                exports: [{ moduleSpecifier: "./test" }],
+                bodyText: writer => writer.write("print('test');")
             });
-            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nexport * from "./test";\n`);
+            expect(sourceFile.getFullText()).to.equal(`import "./test";\n\nenum MyEnum {\n}\n\nprint('test');\n\nexport * from "./test";\n`);
         });
 
         it("should add for everything in the structure", () => {

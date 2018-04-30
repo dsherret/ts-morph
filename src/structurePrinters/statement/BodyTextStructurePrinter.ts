@@ -4,7 +4,7 @@ import { ArrayUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { StructurePrinterFactory } from "../../factories";
 
-export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string; };
+export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string | ((writer: CodeBlockWriter) => void); };
 
 export class BodyTextStructurePrinter extends FactoryStructurePrinter<BodyTextStructures> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {
