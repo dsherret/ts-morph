@@ -91,18 +91,3 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
         }
     };
 }
-
-function getDocumentationCode(structures: JSDocStructure[], indentationText: string, newLineText: string) {
-    let code = "";
-    for (const structure of structures) {
-        if (code.length > 0)
-            code += `${newLineText}${indentationText}`;
-        code += getDocumentationCodeForStructure(structure, indentationText, newLineText);
-    }
-    return code;
-}
-
-function getDocumentationCodeForStructure(structure: JSDocStructure, indentationText: string, newLineText: string) {
-    const lines = structure.description.split(/\r?\n/);
-    return `/**${newLineText}` + lines.map(l => `${indentationText} * ${l}`).join(newLineText) + `${newLineText}${indentationText} */`;
-}

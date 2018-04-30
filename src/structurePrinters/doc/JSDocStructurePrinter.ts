@@ -1,4 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { getTextFromStringOrWriter } from "../../utils";
 import { JSDocStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
@@ -13,7 +14,7 @@ export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructur
         function getText() {
             if (typeof structure === "string")
                 return structure;
-            return structure.description;
+            return getTextFromStringOrWriter(new CodeBlockWriter(writer.getOptions()), structure.description);
         }
     }
 

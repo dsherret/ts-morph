@@ -69,7 +69,7 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert multiple at end", () => {
-            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }, "Desc3"],
+            doTest("/**\n * Desc1\n */\nfunction identifier() {}", 1, [{ description: writer => writer.write("Desc2") }, "Desc3"],
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
 
