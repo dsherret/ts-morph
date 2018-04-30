@@ -1,6 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { WriterFunction } from "../../types";
-import { Constructor } from "../../Constructor";
+import { Constructor, WriterFunction } from "../../types";
 import { ReturnTypedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";

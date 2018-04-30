@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoParentTextRange } from "../../manipulation";
 import { ImplementsClauseableNodeStructure } from "../../structures";
 import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../structurePrinters";

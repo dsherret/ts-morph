@@ -1,7 +1,6 @@
 import { ts, SyntaxKind } from "../../typescript";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
-import { Constructor } from "../../Constructor";
+import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
     EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "../../structures";

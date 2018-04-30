@@ -5,7 +5,7 @@ import { Directory } from "../../fileSystem";
 import { removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting, getTextFromFormattingEdits, replaceNodeText,
     replaceSourceFileForFilePathMove } from "../../manipulation";
 import { getPreviousMatchingPos, getNextMatchingPos } from "../../manipulation/textSeek";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure } from "../../structures";
 import { ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet, EventContainer, SourceFileReferenceContainer,
     SourceFileReferencingNodes, ModuleUtils } from "../../utils";

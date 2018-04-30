@@ -1,5 +1,5 @@
 import { ts } from "../../../typescript";
-import { Constructor } from "../../../Constructor";
+import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
 import { NamedNodeStructure } from "../../../structures";
 import { Node, Identifier } from "../../common";

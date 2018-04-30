@@ -1,4 +1,4 @@
-﻿import { Constructor } from "../../Constructor";
+﻿import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { AsyncableNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";

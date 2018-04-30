@@ -1,6 +1,6 @@
 ﻿import * as errors from "../../errors";
 import { changeChildOrder, getGeneralFormatting } from "../../manipulation";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { Node } from "../common";
 
 export interface ChildOrderableNode {

@@ -1,5 +1,5 @@
 ﻿import * as errors from "../../errors";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../manipulation";
 import { ArrayUtils } from "../../utils";
 import { ts, SyntaxKind } from "../../typescript";

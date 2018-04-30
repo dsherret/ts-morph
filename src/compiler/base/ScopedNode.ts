@@ -1,4 +1,4 @@
-﻿import { Constructor } from "../../Constructor";
+﻿import { Constructor } from "../../types";
 import { ScopedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";

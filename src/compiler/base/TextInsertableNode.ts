@@ -1,6 +1,5 @@
-import { WriterFunction } from "../../types";
+import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
-import { Constructor } from "../../Constructor";
 import { insertIntoParentTextRange } from "../../manipulation";
 import { ts, SyntaxKind } from "../../typescript";
 import { TypeGuards, getTextFromStringOrWriter } from "../../utils";

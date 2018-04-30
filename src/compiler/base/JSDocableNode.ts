@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn } from "../../manipulation";
 import { JSDocStructure, JSDocableNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";

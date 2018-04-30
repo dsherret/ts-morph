@@ -1,6 +1,6 @@
 import { ts, SyntaxKind } from "../../typescript";
 import * as objectAssign from "object-assign";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { verifyAndGetIndex, insertIntoParentTextRange, getRangeFromArray } from "../../manipulation";
 import { ArrayUtils } from "../../utils";

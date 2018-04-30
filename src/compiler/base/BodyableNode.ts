@@ -1,5 +1,4 @@
-import { WriterFunction } from "../../types";
-import { Constructor } from "../../Constructor";
+import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { BodyableNodeStructure } from "../../structures";
 import { Node } from "../common";

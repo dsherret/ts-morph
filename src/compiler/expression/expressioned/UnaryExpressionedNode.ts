@@ -1,5 +1,5 @@
 import { ts } from "../../../typescript";
-import { Constructor } from "../../../Constructor";
+import { Constructor } from "../../../types";
 import { UnaryExpression } from "../UnaryExpression";
 import { Node } from "../../common";
 

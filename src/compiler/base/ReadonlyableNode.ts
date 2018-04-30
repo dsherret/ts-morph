@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { ReadonlyableNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";

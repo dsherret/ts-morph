@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { QuestionTokenableNodeStructure } from "../../structures";

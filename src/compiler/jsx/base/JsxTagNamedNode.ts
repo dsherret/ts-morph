@@ -1,4 +1,4 @@
-﻿import { Constructor } from "../../../Constructor";
+﻿import { Constructor } from "../../../types";
 import { Node } from "../../common";
 import { ts } from "../../../typescript";
 import { JsxTagNameExpression } from "../../aliases";

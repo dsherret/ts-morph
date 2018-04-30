@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { Node } from "../common";
 import { JSDocableNode, ModifierableNode, TypeParameteredNode, SignaturedDeclaration } from "../base";
 import { StatementedNode } from "../statement";

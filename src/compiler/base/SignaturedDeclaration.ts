@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { ReturnTypedNode } from "./ReturnTypedNode";
 import { ParameteredNode } from "./ParameteredNode";
 import { Node } from "../common";

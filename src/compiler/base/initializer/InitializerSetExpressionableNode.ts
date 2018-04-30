@@ -1,6 +1,5 @@
-import { WriterFunction } from "../../../types";
+import { Constructor, WriterFunction } from "../../../types";
 import { ts, SyntaxKind } from "../../../typescript";
-import { Constructor } from "../../../Constructor";
 import * as errors from "../../../errors";
 import { InitializerSetExpressionableNodeStructure } from "../../../structures";
 import { callBaseFill } from "../../callBaseFill";

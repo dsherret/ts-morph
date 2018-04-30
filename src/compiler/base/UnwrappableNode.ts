@@ -1,6 +1,6 @@
 import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { Constructor } from "../../Constructor";
+import { Constructor } from "../../types";
 import { unwrapNode } from "../../manipulation";
 import { Node } from "../common";
 
