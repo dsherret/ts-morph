@@ -1,4 +1,4 @@
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { Constructor } from "../../Constructor";
 import { insertIntoParentTextRange } from "../../manipulation";
@@ -24,7 +24,7 @@ export interface TextInsertableNode {
      * @param pos - Position to insert at.
      * @param writerFunction - Write the text using the provided writer.
      */
-    insertText(pos: number, writerFunction: (writer: CodeBlockWriter) => void): this;
+    insertText(pos: number, writerFunction: WriterFunction): this;
     /**
      * Replaces text within the body of the node.
      *
@@ -40,7 +40,7 @@ export interface TextInsertableNode {
      * @param range - Start and end position of the text to replace.
      * @param writerFunction - Write the text using the provided writer.
      */
-    replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
+    replaceText(range: [number, number], writerFunction: WriterFunction): this;
     /**
      * Removes all the text within the node
      */
@@ -57,7 +57,7 @@ export interface TextInsertableNode {
 
 export function TextInsertableNode<T extends Constructor<TextInsertableNodeExtensionType>>(Base: T): Constructor<TextInsertableNode> & T {
     return class extends Base implements TextInsertableNode {
-        insertText(pos: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        insertText(pos: number, textOrWriterFunction: string | WriterFunction) {
             this.replaceText([pos, pos], textOrWriterFunction);
             return this;
         }
@@ -70,7 +70,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             return this;
         }
 
-        replaceText(range: [number, number], textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        replaceText(range: [number, number], textOrWriterFunction: string | WriterFunction) {
             const thisNode = this;
             const childSyntaxList = this.getChildSyntaxListOrThrow();
             const validRange = getValidRange(this);

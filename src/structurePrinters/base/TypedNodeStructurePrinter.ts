@@ -1,4 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { TypedNodeStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
 import { StringUtils } from "../../utils";
@@ -21,7 +22,7 @@ export class TypedNodeStructurePrinter extends FactoryStructurePrinter<TypedNode
         if (!StringUtils.isNullOrWhitespace(initializerText))
             writer.write(`${this.separator} ${initializerText}`);
 
-        function getTextForWriterFunc(writerFunc: (writer: CodeBlockWriter) => void) {
+        function getTextForWriterFunc(writerFunc: WriterFunction) {
             const newWriter = new CodeBlockWriter(writer.getOptions());
             writerFunc(newWriter);
             return newWriter.toString();

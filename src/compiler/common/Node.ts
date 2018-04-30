@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
 import { IndentationText } from "../../options";
@@ -951,7 +951,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The new node.
      */
-    replaceWithText(writerFunction: (writer: CodeBlockWriter) => void): Node;
+    replaceWithText(writerFunction: WriterFunction): Node;
     /**
      * Replaces the text of the current node with new text.
      *
@@ -960,7 +960,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @returns The new node.
      */
     replaceWithText(text: string): Node;
-    replaceWithText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    replaceWithText(textOrWriterFunction: string | WriterFunction) {
         const newText = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);

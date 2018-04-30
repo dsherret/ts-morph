@@ -1,4 +1,5 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { expect } from "chai";
 import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
 import { Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
@@ -665,7 +666,7 @@ class MyClass {
     });
 
     describe(nameof<Node>(n => n.replaceWithText), () => {
-        function doTest(startText: string, replaceText: string | ((writer: CodeBlockWriter) => void), expectedText: string) {
+        function doTest(startText: string, replaceText: string | WriterFunction, expectedText: string) {
             const {sourceFile} = getInfoFromText(startText);
             const varDeclaration = sourceFile.getVariableDeclarations()[0];
             const propAccess = (varDeclaration.getInitializerOrThrow() as PropertyAccessExpression);

@@ -1,10 +1,11 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { StatementedNodeStructure, BodiedNodeStructure, BodyableNodeStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { StructurePrinterFactory } from "../../factories";
 
-export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string | ((writer: CodeBlockWriter) => void); };
+export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string | WriterFunction; };
 
 export class BodyTextStructurePrinter extends FactoryStructurePrinter<BodyTextStructures> {
     constructor(factory: StructurePrinterFactory, private readonly options: { isAmbient: boolean; }) {

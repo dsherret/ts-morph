@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { Constructor } from "../../Constructor";
 import { ReturnTypedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
@@ -29,7 +29,7 @@ export interface ReturnTypedNode {
      * Sets the return type of the node.
      * @param writerFunction - Writer function to set the return type with.
      */
-    setReturnType(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setReturnType(writerFunction: WriterFunction): this;
     /**
      * Sets the return type of the node.
      * @param text - Text to set as the type.
@@ -57,7 +57,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), "Expected to find a return type node.");
         }
 
-        setReturnType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        setReturnType(textOrWriterFunction: string | WriterFunction) {
             const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeReturnType();

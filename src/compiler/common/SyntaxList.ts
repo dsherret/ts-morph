@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn } from "../../manipulation";
 import { TypeGuards, StringUtils, getTextFromStringOrWriter } from "../../utils";
 import * as errors from "../../errors";
@@ -17,12 +17,12 @@ export class SyntaxList extends Node<ts.SyntaxList> {
      * @param writer - Write the text using the provided writer.
      * @returns The children that were added.
      */
-    addChildText(writer: (writer: CodeBlockWriter) => void): Node[];
+    addChildText(writer: WriterFunction): Node[];
     /**
      * @internal
      */
-    addChildText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Node[];
-    addChildText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    addChildText(textOrWriterFunction: string | WriterFunction): Node[];
+    addChildText(textOrWriterFunction: string | WriterFunction) {
         return this.insertChildText(this.getChildCount(), textOrWriterFunction);
     }
 
@@ -39,12 +39,12 @@ export class SyntaxList extends Node<ts.SyntaxList> {
      * @param writer - Write the text using the provided writer.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, writer: (writer: CodeBlockWriter) => void): Node[];
+    insertChildText(index: number, writer: WriterFunction): Node[];
     /**
      * @internal
      */
-    insertChildText(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Node[];
-    insertChildText(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node[];
+    insertChildText(index: number, textOrWriterFunction: string | WriterFunction) {
         // get index
         const initialChildCount = this.getChildCount();
         const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();

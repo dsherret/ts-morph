@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../compiler";
 import { BodyableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -7,7 +7,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(BodyableNode), () => {
     describe(nameof<BodyableNode>(n => n.setBodyText), () => {
         describe("using a writer", () => {
-            function doTest(startCode: string, writerFunc: ((writer: CodeBlockWriter) => void), expectedCode: string) {
+            function doTest(startCode: string, writerFunc: WriterFunction, expectedCode: string) {
                 const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
                 firstChild.setBodyText(writerFunc);
                 expect(sourceFile.getFullText()).to.equal(expectedCode);

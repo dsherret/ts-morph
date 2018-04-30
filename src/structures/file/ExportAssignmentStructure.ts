@@ -1,6 +1,6 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 
 export interface ExportAssignmentStructure {
     isExportEquals?: boolean;
-    expression: string | ((writer: CodeBlockWriter) => void);
+    expression: string | WriterFunction;
 }

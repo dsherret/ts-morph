@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { ReturnTypedNode, FunctionDeclaration } from "../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -66,7 +66,7 @@ describe(nameof(ReturnTypedNode), () => {
             doTest("function identifier(): string {}", "", "function identifier() {}");
         });
 
-        function doWriterTest(startText: string, returnType: (writer: CodeBlockWriter) => void, expectedText: string) {
+        function doWriterTest(startText: string, returnType: WriterFunction, expectedText: string) {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
             firstChild.setReturnType(returnType);
             expect(firstChild.getText()).to.equal(expectedText);

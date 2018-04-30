@@ -1,4 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { InitializerSetExpressionableNodeStructure } from "../../structures";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
@@ -14,7 +15,7 @@ export class InitializerExpressionableNodeStructurePrinter extends FactoryStruct
         if (!StringUtils.isNullOrWhitespace(initializerText))
             writer.write(` = ${initializerText}`);
 
-        function getTextForWriterFunc(writerFunc: (writer: CodeBlockWriter) => void) {
+        function getTextForWriterFunc(writerFunc: WriterFunction) {
             const newWriter = new CodeBlockWriter(writer.getOptions());
             writerFunc(newWriter);
             return newWriter.toString();

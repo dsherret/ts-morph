@@ -1,6 +1,6 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 
 export interface DecoratorStructure {
     name: string;
-    arguments?: (string | ((writer: CodeBlockWriter) => void))[];
+    arguments?: (string | WriterFunction)[];
 }

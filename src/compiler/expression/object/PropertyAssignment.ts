@@ -1,6 +1,6 @@
 import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { insertIntoParentTextRange } from "../../../manipulation";
 import { getTextFromStringOrWriter } from "../../../utils";
 import { PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode } from "../../base";
@@ -47,8 +47,8 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      * Sets the initializer.
      * @param writerFunction - Writer function to set the initializer with.
      */
-    setInitializer(writerFunction: (writer: CodeBlockWriter) => void): this;
-    setInitializer(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): this {
+    setInitializer(writerFunction: WriterFunction): this;
+    setInitializer(textOrWriterFunction: string | WriterFunction): this {
         const initializer = this.getInitializerOrThrow();
 
         insertIntoParentTextRange({

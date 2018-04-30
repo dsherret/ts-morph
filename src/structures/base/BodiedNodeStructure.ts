@@ -1,5 +1,5 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 
 export interface BodiedNodeStructure {
-    bodyText?: string | ((writer: CodeBlockWriter) => void);
+    bodyText?: string | WriterFunction;
 }

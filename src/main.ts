@@ -2,6 +2,7 @@ export * from "./typescript";
 export * from "./codeBlockWriter";
 export * from "./compiler";
 export * from "./structures";
+export { WriterFunction } from "./types";
 export { Project as default } from "./Project";
 export { Options, SourceFileCreateOptions, SourceFileAddOptions } from "./Project";
 export { FileSystemHost, Directory, DirectoryEmitResult, DirectoryAddOptions, DirectoryCopyOptions, DirectoryMoveOptions } from "./fileSystem";

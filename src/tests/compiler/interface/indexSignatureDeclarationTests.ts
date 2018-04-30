@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
 import { IndexSignatureDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -130,7 +130,7 @@ describe(nameof(IndexSignatureDeclaration), () => {
     });
 
     describe(nameof<IndexSignatureDeclaration>(n => n.setReturnType), () => {
-        function doTest(code: string, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void), expectedCode: string) {
+        function doTest(code: string, textOrWriterFunction: string | WriterFunction, expectedCode: string) {
             const {firstIndexSignature, sourceFile} = getFirstIndexSignatureWithInfo(code);
             firstIndexSignature.setReturnType(textOrWriterFunction);
             expect(sourceFile.getFullText()).to.equal(expectedCode);

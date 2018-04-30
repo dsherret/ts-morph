@@ -1,5 +1,5 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 
 export interface JSDocStructure {
-    description: string | ((writer: CodeBlockWriter) => void);
+    description: string | WriterFunction;
 }

@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../../typescript";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import * as errors from "../../../errors";
 import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn } from "../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
@@ -55,8 +55,8 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param writerFunction - Write the text using the provided writer.
      * @param options - Options.
      */
-    insertElements(index: number, writerFunction: (writer: CodeBlockWriter) => void, options?: { useNewLines?: boolean; }): Expression[];
-    insertElements(index: number, textsOrWriterFunction: string[] | ((writer: CodeBlockWriter) => void), options: { useNewLines?: boolean; } = {}) {
+    insertElements(index: number, writerFunction: WriterFunction, options?: { useNewLines?: boolean; }): Expression[];
+    insertElements(index: number, textsOrWriterFunction: string[] | WriterFunction, options: { useNewLines?: boolean; } = {}) {
         const elements = this.getElements();
         index = verifyAndGetIndex(index, elements.length);
         const useNewLines = getUseNewLines(this);

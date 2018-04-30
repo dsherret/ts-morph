@@ -1,5 +1,5 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 
 export interface InitializerSetExpressionableNodeStructure {
-    initializer?: string | ((writer: CodeBlockWriter) => void);
+    initializer?: string | WriterFunction;
 }

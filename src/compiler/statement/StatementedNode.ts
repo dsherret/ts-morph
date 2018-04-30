@@ -1,5 +1,6 @@
 import { ts, SyntaxKind } from "../../typescript";
 import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
 import { ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
@@ -59,7 +60,7 @@ export interface StatementedNode {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were added.
      */
-    addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
+    addStatements(writerFunction: WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Index to insert at.
@@ -73,7 +74,7 @@ export interface StatementedNode {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Statement[];
+    insertStatements(index: number, writerFunction: WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Index to remove the statement at.
@@ -463,15 +464,15 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         addStatements(text: string): Statement[];
-        addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
-        addStatements(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        addStatements(writerFunction: WriterFunction): Statement[];
+        addStatements(textOrWriterFunction: string | WriterFunction) {
             return this.insertStatements(this.getCompilerStatements().length, textOrWriterFunction);
         }
 
         insertStatements(index: number, text: string): Statement[];
-        insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Statement[];
-        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)): Statement[];
-        insertStatements(index: number, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        insertStatements(index: number, writerFunction: WriterFunction): Statement[];
+        insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
+        insertStatements(index: number, textOrWriterFunction: string | WriterFunction) {
             return this.getChildSyntaxListOrThrow().insertChildText(index, textOrWriterFunction);
         }
 

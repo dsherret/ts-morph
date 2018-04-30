@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../../../codeBlockWriter";
+import { WriterFunction } from "../../../../types";
 import { expect } from "chai";
 import { EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
 import { InitializerSetExpressionableNodeStructure } from "../../../../structures";
@@ -98,7 +98,7 @@ describe(nameof(InitializerSetExpressionableNode), () => {
         });
 
         describe("writer", () => {
-            function doClassPropTest(text: string, newInitializer: (writer: CodeBlockWriter) => void, expected: string) {
+            function doClassPropTest(text: string, newInitializer: WriterFunction, expected: string) {
                 const { firstChild } = getInfoFromText<ClassDeclaration>(text);
                 const prop = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
                 prop.setInitializer(newInitializer);

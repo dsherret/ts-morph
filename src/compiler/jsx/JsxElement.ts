@@ -1,4 +1,4 @@
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
 import { insertIntoParentTextRange } from "../../manipulation";
 import { getTextFromStringOrWriter, printTextFromStringOrWriter } from "../../utils";
@@ -34,13 +34,13 @@ export class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * Sets the body text.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyText(writerFunction: WriterFunction): this;
     /**
      * Sets the body text.
      * @param text - Text to set as the body.
      */
     setBodyText(text: string): this;
-    setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    setBodyText(textOrWriterFunction: string | WriterFunction) {
         const newText = getBodyText(this.getWriterWithIndentation(), textOrWriterFunction);
         setText(this, newText);
         return this;
@@ -50,13 +50,13 @@ export class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * Sets the body text without surrounding new lines.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyTextInline(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyTextInline(writerFunction: WriterFunction): this;
     /**
      * Sets the body text without surrounding new lines.
      * @param text - Text to set as the body.
      */
     setBodyTextInline(text: string): this;
-    setBodyTextInline(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    setBodyTextInline(textOrWriterFunction: string | WriterFunction) {
         const writer = this.getWriterWithQueuedChildIndentation();
         printTextFromStringOrWriter(writer, textOrWriterFunction);
         if (writer.isLastNewLine()) {

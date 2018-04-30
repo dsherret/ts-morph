@@ -1,11 +1,12 @@
 ﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 import { printTextFromStringOrWriter } from "../../../utils";
 import { Node } from "../../common";
 
 /**
  * @internal
  */
-export function getBodyText(writer: CodeBlockWriter, textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+export function getBodyText(writer: CodeBlockWriter, textOrWriterFunction: string | WriterFunction) {
     writer.newLineIfLastNot();
     if (typeof textOrWriterFunction !== "string" || textOrWriterFunction.length > 0)
         writer.indentBlock(() => {

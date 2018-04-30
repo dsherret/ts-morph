@@ -12,7 +12,7 @@ export interface ReferenceFindableNode {
      */
     findReferences(): ReferencedSymbol[];
     /**
-     * Gets the nodes that reference the node.
+     * Gets the nodes that reference the definition of the node.
      */
     getReferencingNodes(): Node[];
 }

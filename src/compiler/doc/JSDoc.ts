@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../manipulation";
 import { getPreviousMatchingPos } from "../../manipulation/textSeek";
 import { getTextFromStringOrWriter } from "../../utils";
@@ -46,13 +46,13 @@ export class JSDoc extends Node<ts.JSDoc> {
      * Sets the comment.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setComment(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setComment(writerFunction: WriterFunction): this;
     /**
      * Sets the comment.
      * @param text - Text of the comment.
      */
     setComment(text: string): this;
-    setComment(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+    setComment(textOrWriterFunction: string | WriterFunction) {
         const tags = this.getTags();
         const startEditPos = this.getStart() + 3;
         const endEditPos = tags.length > 0 ? getPreviousMatchingPos(this.sourceFile.getFullText(), tags[0].getStart(), c => c === "*") - 1 : this.getEnd() - 2;

@@ -1,4 +1,4 @@
-import { CodeBlockWriter } from "../../../../codeBlockWriter";
+import { WriterFunction } from "../../../../types";
 import { expect } from "chai";
 import { ts, SyntaxKind } from "../../../../typescript";
 import { ArrayLiteralExpression, VariableStatement } from "../../../../compiler";
@@ -73,7 +73,7 @@ describe(nameof(ArrayLiteralExpression), () => {
             doTest("var t = [2, 3, 4]", 0, ["1"], `var t = [\n    1,\n    2, 3, 4]`, { useNewLines: true });
         });
 
-        function doWriterTest(text: string, index: number, writerFunction: (writer: CodeBlockWriter) => void, expectedText: string, options?: { useNewLines?: boolean; }) {
+        function doWriterTest(text: string, index: number, writerFunction: WriterFunction, expectedText: string, options?: { useNewLines?: boolean; }) {
             const {arrayLiteralExpression, sourceFile} = getArrayLiteralExpression(text);
             const result = arrayLiteralExpression.insertElements(index, writerFunction, options);
             expect(sourceFile.getFullText()).to.equal(expectedText);

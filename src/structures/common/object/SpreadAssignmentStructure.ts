@@ -1,5 +1,5 @@
-﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { WriterFunction } from "../../../types";
 
 export interface SpreadAssignmentStructure {
-    expression: string | ((writer: CodeBlockWriter) => void);
+    expression: string | WriterFunction;
 }

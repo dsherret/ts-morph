@@ -1,4 +1,4 @@
-﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { Constructor } from "../../Constructor";
 import * as errors from "../../errors";
 import { BodiedNodeStructure } from "../../structures";
@@ -18,7 +18,7 @@ export interface BodiedNode {
      * Sets the body text.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyText(writerFunction: WriterFunction): this;
     /**
      * Sets the body text.
      * @param text - Text to set as the body.
@@ -36,7 +36,7 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             return this.getNodeFromCompilerNode(body);
         }
 
-        setBodyText(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        setBodyText(textOrWriterFunction: string | WriterFunction) {
             const body = this.getBody();
             setBodyTextForNode(body, textOrWriterFunction);
             return this;

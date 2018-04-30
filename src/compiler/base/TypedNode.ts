@@ -1,5 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { CodeBlockWriter } from "../../codeBlockWriter";
+import { WriterFunction } from "../../types";
 import { Constructor } from "../../Constructor";
 import { TypedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
@@ -25,7 +25,7 @@ export interface TypedNode {
      * Sets the type.
      * @param writerFunction - Writer function to set the type with.
      */
-    setType(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setType(writerFunction: WriterFunction): this;
     /**
      * Sets the type.
      * @param text - Text to set the type to.
@@ -47,7 +47,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
         }
 
-        setType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+        setType(textOrWriterFunction: string | WriterFunction) {
             const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeType();
