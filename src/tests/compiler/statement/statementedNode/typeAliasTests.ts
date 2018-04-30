@@ -25,7 +25,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert at the start with one new lines for a type alias after", () => {
-            doTest("type Identifier2 = string;\n", 0, [{ name: "Identifier1", type: "string" }],
+            doTest("type Identifier2 = string;\n", 0, [{ name: "Identifier1", type: writer => writer.write("string") }],
                 "type Identifier1 = string;\ntype Identifier2 = string;\n");
         });
 

@@ -15,6 +15,7 @@ export class TypeAliasDeclarationStructurePrinter extends FactoryStructurePrinte
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`type ${structure.name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
-        writer.write(` = ${ structure.type };`);
+        this.factory.forTypedNode(" =").printText(writer, structure);
+        writer.write(";");
     }
 }

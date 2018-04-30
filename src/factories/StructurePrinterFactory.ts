@@ -25,6 +25,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forTypedNode(separator: string, alwaysWrite?: boolean): structurePrinters.TypedNodeStructurePrinter {
+        return new structurePrinters.TypedNodeStructurePrinter(this, separator, alwaysWrite);
+    }
+
+    @Memoize
     forJSDoc(): structurePrinters.JSDocStructurePrinter {
         return new structurePrinters.JSDocStructurePrinter(this);
     }

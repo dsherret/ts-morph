@@ -19,8 +19,7 @@ export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinte
         writer.conditionalWrite(structure.isRestParameter, "...");
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
-        if (!StringUtils.isNullOrWhitespace(structure.type) || structure.hasQuestionToken)
-            writer.write(`: ${structure.type || "any"}`);
+        this.factory.forTypedNode(":", structure.hasQuestionToken).printText(writer, structure);
         this.factory.forInitializerExpressionableNode().printText(writer, structure);
     }
 }

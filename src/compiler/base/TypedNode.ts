@@ -1,10 +1,11 @@
 import { ts, SyntaxKind } from "../../typescript";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Constructor } from "../../Constructor";
 import { TypedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";
 import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
-import { StringUtils } from "../../utils";
+import { StringUtils, getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
@@ -20,6 +21,11 @@ export interface TypedNode {
      * Gets the type node or throws if none exists.
      */
     getTypeNodeOrThrow(): TypeNode;
+    /**
+     * Sets the type.
+     * @param writerFunction - Writer function to set the type with.
+     */
+    setType(writerFunction: (writer: CodeBlockWriter) => void): this;
     /**
      * Sets the type.
      * @param text - Text to set the type to.
@@ -41,7 +47,8 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             return errors.throwIfNullOrUndefined(this.getTypeNode(), "Expected to find a type node.");
         }
 
-        setType(text: string) {
+        setType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeType();
 

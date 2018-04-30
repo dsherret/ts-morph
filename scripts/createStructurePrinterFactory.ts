@@ -62,7 +62,8 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
                 bodyText: `return new structurePrinters.${name}(${ctorParams.map(ctorParamToArgument).join(", ")});`,
                 parameters: exposedCtorParams.map(p => ({
                     name: p.getNameOrThrow(),
-                    type: p.getTypeNodeOrThrow().getText()
+                    type: getTypeText(p),
+                    hasQuestionToken: p.isOptional()
                 }))
             });
         }
@@ -70,17 +71,22 @@ export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
         return methods;
 
         function exposeCtorParam(ctorParam: ParameterDeclaration) {
-            const typeName = ctorParam.getTypeNodeOrThrow().getText();
+            const typeName = getTypeText(ctorParam);
             if (typeName === "StructurePrinterFactory")
                 return false;
             return true;
         }
 
         function ctorParamToArgument(ctorParam: ParameterDeclaration) {
-            const typeName = ctorParam.getTypeNodeOrThrow().getText();
+            const typeName = getTypeText(ctorParam);
             if (typeName === "StructurePrinterFactory")
                 return "this";
             return ctorParam.getNameOrThrow();
+        }
+
+        function getTypeText(param: ParameterDeclaration) {
+            const typeNode = param.getTypeNode();
+            return typeNode == null ? param.getType().getText() : typeNode.getText();
         }
     }
 

@@ -61,13 +61,13 @@ describe(nameof(StatementedNode), () => {
                 isDefaultExport: true,
                 isExported: true,
                 typeParameters: [{ name: "T" }],
-                properties: [{ name: "p" }],
+                properties: [{ name: "p", type: writer => writer.write("number") }],
                 methods: [{ name: "m" }],
                 getAccessors: [{ name: "g" }, { name: "s" }, { name: "g2" }, { name: "g3" }],
                 setAccessors: [{ name: "s" }, { name: "g" }, { name: "s2" }]
             };
             const expectedText = "/**\n * Test\n */\n@D\nexport default abstract class C<T> extends Base implements IBase, IBase2 {\n" +
-                "    p;\n\n" +
+                "    p: number;\n\n" +
                 "    constructor() {\n    }\n\n" +
                 "    constructor() {\n    }\n\n" +
                 "    get g() {\n    }\n\n    set g() {\n    }\n\n    get s() {\n    }\n\n    set s() {\n    }\n\n" +

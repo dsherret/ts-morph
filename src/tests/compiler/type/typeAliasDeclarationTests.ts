@@ -18,6 +18,10 @@ describe(nameof(TypeAliasDeclaration), () => {
         it("should change the property when setting", () => {
             doTest("type Identifier = string;", { type: "number" }, "type Identifier = number;");
         });
+
+        it("should change the property when setting as a writer function", () => {
+            doTest("type Identifier = string;", { type: writer => writer.write("number") }, "type Identifier = number;");
+        });
     });
 
     describe(nameof<TypeAliasDeclaration>(d => d.remove), () => {

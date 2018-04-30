@@ -16,8 +16,7 @@ export class PropertySignatureStructurePrinter extends FactoryStructurePrinter<P
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
-        if (!StringUtils.isNullOrWhitespace(structure.type))
-            writer.write(`: ${structure.type}`);
+        this.factory.forTypedNode(":").printText(writer, structure);
         // why would someone write an initializer? I guess let them do it...
         this.factory.forInitializerExpressionableNode().printText(writer, structure);
         writer.write(";");

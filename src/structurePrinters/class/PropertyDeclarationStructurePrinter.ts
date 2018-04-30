@@ -1,6 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { PropertyDeclarationStructure } from "../../structures";
-import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 
@@ -18,7 +17,7 @@ export class PropertyDeclarationStructurePrinter extends FactoryStructurePrinter
         writer.write(structure.name);
         writer.conditionalWrite(structure.hasQuestionToken, "?");
         writer.conditionalWrite(structure.hasExclamationToken && !structure.hasQuestionToken, "!");
-        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.type), `: ${structure.type}`);
+        this.factory.forTypedNode(":").printText(writer, structure);
         this.factory.forInitializerExpressionableNode().printText(writer, structure);
         writer.write(";");
     }

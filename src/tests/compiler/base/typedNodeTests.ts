@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration } from "../../../compiler";
+import { Node, TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration } from "../../../compiler";
 import { TypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
@@ -9,7 +9,7 @@ describe(nameof(TypedNode), () => {
     const explicitVarDeclaration = mainSourceFile.getVariableStatements()[1].getDeclarations()[0];
     const typeAliasDeclaration = mainSourceFile.getTypeAliases()[0];
 
-    describe(nameof<TypedNode>(n => n.getType), () => {
+    describe(nameof<Node>(n => n.getType), () => {
         it("should get the expected implicit type", () => {
             expect(implicitVarDeclaration.getType().getText()).to.equal("number");
         });
@@ -170,6 +170,10 @@ describe(nameof(TypedNode), () => {
 
         it("should modify when setting", () => {
             doTest("type myAlias = string;", { type: "number" }, "type myAlias = number;");
+        });
+
+        it("should modify when setting as a writer function", () => {
+            doTest("type myAlias = string;", { type: writer => writer.write("number") }, "type myAlias = number;");
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
