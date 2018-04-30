@@ -77,7 +77,7 @@ describe(nameof(ObjectLiteralExpression), () => {
         }
 
         it("should insert the property assignments when none exist", () => {
-            doTest("const t = {};", 0, [{ name: "prop1", initializer: "4" }, { name: "prop2", initializer: "5" }],
+            doTest("const t = {};", 0, [{ name: "prop1", initializer: "4" }, { name: "prop2", initializer: writer => writer.write("5") }],
                 "const t = {\n    prop1: 4,\n    prop2: 5\n};");
         });
 

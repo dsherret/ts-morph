@@ -22,5 +22,12 @@ describe(nameof(PropertyAssignment), () => {
             propAssignment.setInitializer("{ t } as string");
             expect(sourceFile.getFullText()).to.equal("const t = { prop: { t } as string, prop2: 6 };");
         });
+
+        it("should set the initializer using a writer function", () => {
+            const {sourceFile} = getInfoFromText("const t = { prop: 5, prop2: 6 };");
+            const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
+            propAssignment.setInitializer(writer => writer.write("{ t } as string"));
+            expect(sourceFile.getFullText()).to.equal("const t = { prop: { t } as string, prop2: 6 };");
+        });
     });
 });
