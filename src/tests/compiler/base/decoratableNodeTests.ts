@@ -66,7 +66,10 @@ describe(nameof(DecoratableNode), () => {
             });
 
             it("should insert with arguments", () => {
-                doTest("class MyClass {}", 0, [{ name: "dec", arguments: [] }, { name: "dec2", arguments: ["1"] }, { name: "dec3", arguments: ["1", "2"] }],
+                doTest("class MyClass {}", 0, [
+                        { name: "dec", arguments: [] }, { name: "dec2", arguments: ["1"] },
+                        { name: "dec3", arguments: ["1", writer => writer.write("2")] }
+                    ],
                     "@dec()\n@dec2(1)\n@dec3(1, 2)\nclass MyClass {}");
             });
 

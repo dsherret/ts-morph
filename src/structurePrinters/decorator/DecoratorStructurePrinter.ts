@@ -1,4 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { printTextFromStringOrWriter } from "../../utils";
 import { DecoratorStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
@@ -13,8 +14,19 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
 
     printText(writer: CodeBlockWriter, structure: DecoratorStructure) {
         writer.write(`@${structure.name}`);
-        if (structure.arguments != null)
-            writer.write(`(${structure.arguments.join(", ")})`);
+        this.printArguments(writer, structure);
+    }
+
+    printArguments(writer: CodeBlockWriter, structure: DecoratorStructure) {
+        if (structure.arguments == null)
+            return;
+
+        writer.write("(");
+        for (let i = 0; i < structure.arguments.length; i++) {
+            writer.conditionalWrite(i > 0, ", ");
+            printTextFromStringOrWriter(writer, structure.arguments[0]);
+        }
+        writer.write(")");
     }
 
     private printMultiple(writer: CodeBlockWriter, structures: DecoratorStructure[] | undefined, separator: () => void) {
