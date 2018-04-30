@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure } from "../../structures";
-import { StringUtils, setValueIfUndefined, ObjectUtils } from "../../utils";
+import { setValueIfUndefined, ObjectUtils } from "../../utils";
 import { StructurePrinterFactory } from "../../factories";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
@@ -75,7 +75,6 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
         if (structure.parameters != null)
             this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(`)`);
-        if (!StringUtils.isNullOrWhitespace(structure.returnType))
-            writer.write(`: ${structure.returnType}`);
+        this.factory.forReturnTypedNode().printText(writer, structure);
     }
 }

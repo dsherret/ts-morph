@@ -1,10 +1,11 @@
 import { ts, SyntaxKind } from "../../typescript";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { Constructor } from "../../Constructor";
 import { ReturnTypedNodeStructure } from "../../structures";
 import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";
 import { removeChildren, insertIntoParentTextRange } from "../../manipulation";
-import { StringUtils } from "../../utils";
+import { StringUtils, getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
@@ -24,6 +25,11 @@ export interface ReturnTypedNode {
      * Gets the return type node or throws if none exists.
      */
     getReturnTypeNodeOrThrow(): TypeNode;
+    /**
+     * Sets the return type of the node.
+     * @param writerFunction - Writer function to set the return type with.
+     */
+    setReturnType(writerFunction: (writer: CodeBlockWriter) => void): this;
     /**
      * Sets the return type of the node.
      * @param text - Text to set as the type.
@@ -51,7 +57,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             return errors.throwIfNullOrUndefined(this.getReturnTypeNode(), "Expected to find a return type node.");
         }
 
-        setReturnType(text: string) {
+        setReturnType(textOrWriterFunction: string | ((writer: CodeBlockWriter) => void)) {
+            const text = getTextFromStringOrWriter(this.getWriterWithQueuedChildIndentation(), textOrWriterFunction);
             if (StringUtils.isNullOrWhitespace(text))
                 return this.removeReturnType();
 

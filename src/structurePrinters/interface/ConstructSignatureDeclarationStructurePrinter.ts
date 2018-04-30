@@ -17,8 +17,7 @@ export class ConstructSignatureDeclarationStructurePrinter extends FactoryStruct
         writer.write("(");
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(")");
-        if (structure.returnType != null && structure.returnType.length > 0)
-            writer.write(`: ${structure.returnType}`);
+        this.factory.forReturnTypedNode().printText(writer, structure);
         writer.write(";");
     }
 }

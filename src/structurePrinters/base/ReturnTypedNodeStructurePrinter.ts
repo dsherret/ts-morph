@@ -1,25 +1,25 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { TypedNodeStructure } from "../../structures";
+import { ReturnTypedNodeStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
-export class TypedNodeStructurePrinter extends FactoryStructurePrinter<TypedNodeStructure> {
-    constructor(factory: StructurePrinterFactory, private readonly separator: string, private readonly alwaysWrite = false) {
+export class ReturnTypedNodeStructurePrinter extends FactoryStructurePrinter<ReturnTypedNodeStructure> {
+    constructor(factory: StructurePrinterFactory, private readonly alwaysWrite = false) {
         super(factory);
     }
 
-    printText(writer: CodeBlockWriter, structure: TypedNodeStructure) {
-        let { type } = structure;
-        if (type == null && this.alwaysWrite === false)
+    printText(writer: CodeBlockWriter, structure: ReturnTypedNodeStructure) {
+        let { returnType } = structure;
+        if (returnType == null && this.alwaysWrite === false)
             return;
 
-        type = type || "any";
+        returnType = returnType || "void";
 
         // todo: hacky, will need to change this in the future...
-        const initializerText = typeof type === "string" ? type : getTextForWriterFunc(type);
+        const initializerText = typeof returnType === "string" ? returnType : getTextForWriterFunc(returnType);
         if (!StringUtils.isNullOrWhitespace(initializerText))
-            writer.write(`${this.separator} ${initializerText}`);
+            writer.write(`: ${initializerText}`);
 
         function getTextForWriterFunc(writerFunc: (writer: CodeBlockWriter) => void) {
             const newWriter = new CodeBlockWriter(writer.getOptions());

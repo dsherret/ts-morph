@@ -1,6 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import { GetAccessorDeclarationStructure } from "../../structures";
-import { StringUtils } from "../../utils";
 import { StructurePrinterFactory } from "../../factories";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
@@ -25,7 +24,7 @@ export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrin
         writer.write("(");
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(")");
-        writer.conditionalWrite(!StringUtils.isNullOrWhitespace(structure.returnType), `: ${structure.returnType}`);
+        this.factory.forReturnTypedNode().printText(writer, structure);
         writer.spaceIfLastNot().inlineBlock(() => {
             this.factory.forBodyText(this.options).printText(writer, structure);
         });

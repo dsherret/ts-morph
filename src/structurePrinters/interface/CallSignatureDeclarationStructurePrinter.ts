@@ -16,7 +16,7 @@ export class CallSignatureDeclarationStructurePrinter extends FactoryStructurePr
         writer.write("(");
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(")");
-        writer.write(`: ${structure.returnType || "void"}`);
+        this.factory.forReturnTypedNode(true).printText(writer, structure);
         writer.write(";");
     }
 }

@@ -75,6 +75,6 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         writer.write("(");
         this.factory.forParameterDeclaration().printTexts(writer, structure.parameters);
         writer.write(`)`);
-        writer.conditionalWrite(structure.returnType != null && structure.returnType.length > 0, `: ${structure.returnType}`);
+        this.factory.forReturnTypedNode().printText(writer, structure);
     }
 }

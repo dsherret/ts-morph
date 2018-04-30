@@ -1,4 +1,5 @@
 ﻿import { expect } from "chai";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { ReturnTypedNode, FunctionDeclaration } from "../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
@@ -64,6 +65,16 @@ describe(nameof(ReturnTypedNode), () => {
         it("should remove the type when it's empty", () => {
             doTest("function identifier(): string {}", "", "function identifier() {}");
         });
+
+        function doWriterTest(startText: string, returnType: (writer: CodeBlockWriter) => void, expectedText: string) {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(startText);
+            firstChild.setReturnType(returnType);
+            expect(firstChild.getText()).to.equal(expectedText);
+        }
+
+        it("should set the return type with a writer", () => {
+            doWriterTest("declare function identifier(): number;", writer => writer.write("string"), "declare function identifier(): string;");
+        });
     });
 
     describe(nameof<ReturnTypedNode>(n => n.removeReturnType), () => {
@@ -91,6 +102,10 @@ describe(nameof(ReturnTypedNode), () => {
 
         it("should modify when setting", () => {
             doTest("function Identifier() {}", { returnType: "number" }, "function Identifier(): number {}");
+        });
+
+        it("should modify when setting with a writer", () => {
+            doTest("function Identifier() {}", { returnType: writer => writer.write("number") }, "function Identifier(): number {}");
         });
 
         it("should not modify anything if the structure doesn't change anything", () => {
