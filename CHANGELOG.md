@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.1.0"></a>
+# [11.1.0](https://github.com/dsherret/ts-simple-ast/compare/11.0.0...11.1.0) (2018-05-01)
+
+
+### Features
+
+* Ability to add/insert an argument with a writer. ([e1bcb6a](https://github.com/dsherret/ts-simple-ast/commit/e1bcb6a))
+* Ability to set a DecoratorStructure's arguments using a writer function. ([585793c](https://github.com/dsherret/ts-simple-ast/commit/585793c))
+* Ability to set a IndexSignatureDeclaration's return type using a writer function. ([0d6526d](https://github.com/dsherret/ts-simple-ast/commit/0d6526d))
+* Ability to set a JSDoc's description in a structure by using a writer. ([0250ae1](https://github.com/dsherret/ts-simple-ast/commit/0250ae1))
+* Ability to set a PropertyAssignment's initializer using a writer function. ([b633937](https://github.com/dsherret/ts-simple-ast/commit/b633937))
+* Ability to set a return type with a writer. ([3db81f8](https://github.com/dsherret/ts-simple-ast/commit/3db81f8))
+* Ability to set a SourceFileStructure's bodyText using a writer function. ([792c530](https://github.com/dsherret/ts-simple-ast/commit/792c530))
+* Ability to set a SpreadAssignmentStructure's expression using a writer function. ([e7e0158](https://github.com/dsherret/ts-simple-ast/commit/e7e0158))
+* Ability to set a type with a writer. ([5dc3565](https://github.com/dsherret/ts-simple-ast/commit/5dc3565))
+
+
+
 <a name="11.0.0"></a>
 # [11.0.0](https://github.com/dsherret/ts-simple-ast/compare/10.5.0...11.0.0) (2018-04-29)
 
