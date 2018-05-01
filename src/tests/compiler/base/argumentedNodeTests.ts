@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ArgumentedNode, ClassDeclaration } from "../../../compiler";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ArgumentedNode), () => {
@@ -46,6 +47,13 @@ describe(nameof(ArgumentedNode), () => {
 
         it("should insert args when a type argument exists", () => {
             doTest("@dec<3>(1)\nclass T {}", 1, ["2", "3"], "@dec<3>(1, 2, 3)\nclass T {}");
+        });
+
+        it("should insert with a writer", () => {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>("@dec()\nclass T {}");
+            const callExpr = firstChild.getDecorators()[0].getCallExpressionOrThrow();
+            callExpr.insertArguments(0, [writer => writer.write("5"), writer => writer.write("6")]);
+            expect(sourceFile.getFullText()).to.equal("@dec(5, 6)\nclass T {}");
         });
     });
 

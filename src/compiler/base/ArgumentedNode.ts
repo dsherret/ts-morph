@@ -1,7 +1,7 @@
 ﻿import * as errors from "../../errors";
-import { Constructor } from "../../types";
+import { Constructor, WriterFunction } from "../../types";
 import { removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../manipulation";
-import { ArrayUtils } from "../../utils";
+import { ArrayUtils, printTextFromStringOrWriter } from "../../utils";
 import { ts, SyntaxKind } from "../../typescript";
 import { Node } from "../common";
 
@@ -16,24 +16,24 @@ export interface ArgumentedNode {
      * Adds an argument.
      * @param argumentText - Argument text to add.
      */
-    addArgument(argumentText: string): Node;
+    addArgument(argumentText: string | WriterFunction): Node;
     /**
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: string[]): Node[];
+    addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Inserts an argument.
      * @param index - Index to insert at.
      * @param argumentText - Argument text to insert.
      */
-    insertArgument(index: number, argumentText: string): Node;
+    insertArgument(index: number, argumentText: string | WriterFunction): Node;
     /**
      * Inserts arguments.
      * @param index - Index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: string[]): Node[];
+    insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -56,30 +56,36 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             return this.compilerNode.arguments.map(a => this.getNodeFromCompilerNode(a));
         }
 
-        addArgument(argumentText: string) {
+        addArgument(argumentText: string | WriterFunction) {
             return this.addArguments([argumentText])[0];
         }
 
-        addArguments(argumentTexts: string[]) {
+        addArguments(argumentTexts: (string | WriterFunction)[]) {
             return this.insertArguments(this.getArguments().length, argumentTexts);
         }
 
-        insertArgument(index: number, argumentText: string) {
+        insertArgument(index: number, argumentText: string | WriterFunction) {
             return this.insertArguments(index, [argumentText])[0];
         }
 
-        insertArguments(index: number, argumentTexts: string[]) {
+        insertArguments(index: number, argumentTexts: (string | WriterFunction)[]) {
             if (ArrayUtils.isNullOrEmpty(argumentTexts))
                 return [];
 
             const args = this.getArguments();
             index = verifyAndGetIndex(index, args.length);
 
+            const writer = this.getWriterWithQueuedChildIndentation();
+            for (let i = 0; i < argumentTexts.length; i++) {
+                writer.conditionalWrite(i > 0, ", ");
+                printTextFromStringOrWriter(writer, argumentTexts[i]);
+            }
+
             insertIntoCommaSeparatedNodes({
                 parent: this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken).getNextSiblingIfKindOrThrow(SyntaxKind.SyntaxList),
                 currentNodes: args,
                 insertIndex: index,
-                newText: argumentTexts.join(", ")
+                newText: writer.toString()
             });
 
             return getNodesToReturn(this.getArguments(), index, argumentTexts.length);
