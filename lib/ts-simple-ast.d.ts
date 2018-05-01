@@ -1,6 +1,10 @@
 import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "./typescript/typescript";
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
+export declare type Constructor<T> = new (...args: any[]) => T;
+
+export declare type WriterFunction = (writer: CodeBlockWriter) => void;
+
 /**
  * Project that holds source files.
  */
@@ -574,7 +578,6 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
-export declare type Constructor<T> = new (...args: any[]) => T;
 
 /**
  * Creates a wrapped node from a compiler node.
@@ -1789,24 +1792,24 @@ export interface ArgumentedNode {
      * Adds an argument.
      * @param argumentText - Argument text to add.
      */
-    addArgument(argumentText: string): Node;
+    addArgument(argumentText: string | WriterFunction): Node;
     /**
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: string[]): Node[];
+    addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Inserts an argument.
      * @param index - Index to insert at.
      * @param argumentText - Argument text to insert.
      */
-    insertArgument(index: number, argumentText: string): Node;
+    insertArgument(index: number, argumentText: string | WriterFunction): Node;
     /**
      * Inserts arguments.
      * @param index - Index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: string[]): Node[];
+    insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -1884,7 +1887,7 @@ export interface BodiedNode {
      * Sets the body text.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyText(writerFunction: WriterFunction): this;
     /**
      * Sets the body text.
      * @param text - Text to set as the body.
@@ -1915,7 +1918,7 @@ export interface BodyableNode {
      * Sets the body text. A body is required to do this operation.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyText(writerFunction: WriterFunction): this;
     /**
      * Sets the body text. A body is required to do this operation.
      * @param text - Text to set as the body.
@@ -2424,6 +2427,11 @@ export interface ReturnTypedNode {
     getReturnTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the return type of the node.
+     * @param writerFunction - Writer function to set the return type with.
+     */
+    setReturnType(writerFunction: WriterFunction): this;
+    /**
+     * Sets the return type of the node.
      * @param text - Text to set as the type.
      */
     setReturnType(text: string): this;
@@ -2524,7 +2532,7 @@ export interface TextInsertableNode {
      * @param pos - Position to insert at.
      * @param writerFunction - Write the text using the provided writer.
      */
-    insertText(pos: number, writerFunction: (writer: CodeBlockWriter) => void): this;
+    insertText(pos: number, writerFunction: WriterFunction): this;
     /**
      * Replaces text within the body of the node.
      *
@@ -2540,7 +2548,7 @@ export interface TextInsertableNode {
      * @param range - Start and end position of the text to replace.
      * @param writerFunction - Write the text using the provided writer.
      */
-    replaceText(range: [number, number], writerFunction: (writer: CodeBlockWriter) => void): this;
+    replaceText(range: [number, number], writerFunction: WriterFunction): this;
     /**
      * Removes all the text within the node
      */
@@ -2615,6 +2623,11 @@ export interface TypedNode {
      * Gets the type node or throws if none exists.
      */
     getTypeNodeOrThrow(): TypeNode;
+    /**
+     * Sets the type.
+     * @param writerFunction - Writer function to set the type with.
+     */
+    setType(writerFunction: WriterFunction): this;
     /**
      * Sets the type.
      * @param text - Text to set the type to.
@@ -2963,7 +2976,7 @@ export interface InitializerSetExpressionableNode {
      * Sets the initializer using a writer function.
      * @param writerFunction - Function to write the initializer with.
      */
-    setInitializer(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setInitializer(writerFunction: WriterFunction): this;
 }
 
 export declare function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T;
@@ -3109,7 +3122,7 @@ export interface ReferenceFindableNode {
      */
     findReferences(): ReferencedSymbol[];
     /**
-     * Gets the nodes that reference the node.
+     * Gets the nodes that reference the definition of the node.
      */
     getReferencingNodes(): Node[];
 }
@@ -4128,7 +4141,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The new node.
      */
-    replaceWithText(writerFunction: (writer: CodeBlockWriter) => void): Node;
+    replaceWithText(writerFunction: WriterFunction): Node;
     /**
      * Replaces the text of the current node with new text.
      *
@@ -4379,7 +4392,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
      * @param writer - Write the text using the provided writer.
      * @returns The children that were added.
      */
-    addChildText(writer: (writer: CodeBlockWriter) => void): Node[];
+    addChildText(writer: WriterFunction): Node[];
     /**
      * Inserts text at the specified child index.
      * @param index - Child index to insert at.
@@ -4393,7 +4406,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
      * @param writer - Write the text using the provided writer.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, writer: (writer: CodeBlockWriter) => void): Node[];
+    insertChildText(index: number, writer: WriterFunction): Node[];
 }
 
 declare const DecoratorBase: typeof Node;
@@ -4530,7 +4543,7 @@ export declare class JSDoc extends Node<ts.JSDoc> {
      * Sets the comment.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setComment(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setComment(writerFunction: WriterFunction): this;
     /**
      * Sets the comment.
      * @param text - Text of the comment.
@@ -5027,7 +5040,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
      * @param writerFunction - Write the text using the provided writer.
      * @param options - Options.
      */
-    insertElements(index: number, writerFunction: (writer: CodeBlockWriter) => void, options?: {
+    insertElements(index: number, writerFunction: WriterFunction, options?: {
         useNewLines?: boolean;
     }): Expression[];
     /**
@@ -5291,6 +5304,11 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
      * @param text - New text to set for the initializer.
      */
     setInitializer(text: string): this;
+    /**
+     * Sets the initializer.
+     * @param writerFunction - Writer function to set the initializer with.
+     */
+    setInitializer(writerFunction: WriterFunction): this;
 }
 
 declare const ShorthandPropertyAssignmentBase: (new (...args: any[]) => InitializerGetExpressionableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => NamedNode) & typeof Node;
@@ -6504,9 +6522,14 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     getReturnTypeNode(): TypeNode<ts.TypeNode>;
     /**
      * Sets the return type.
-     * @param text
+     * @param text - Text of the return type.
      */
     setReturnType(text: string): this;
+    /**
+     * Sets the return type.
+     * @param writerFunction - Writer function to write the return type with.
+     */
+    setReturnType(writerFunction: WriterFunction): this;
     /**
      * Removes this index signature.
      */
@@ -6672,7 +6695,7 @@ export declare class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * Sets the body text.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyText(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyText(writerFunction: WriterFunction): this;
     /**
      * Sets the body text.
      * @param text - Text to set as the body.
@@ -6682,7 +6705,7 @@ export declare class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * Sets the body text without surrounding new lines.
      * @param writerFunction - Write the text using the provided writer.
      */
-    setBodyTextInline(writerFunction: (writer: CodeBlockWriter) => void): this;
+    setBodyTextInline(writerFunction: WriterFunction): this;
     /**
      * Sets the body text without surrounding new lines.
      * @param text - Text to set as the body.
@@ -7252,7 +7275,7 @@ export interface StatementedNode {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were added.
      */
-    addStatements(writerFunction: (writer: CodeBlockWriter) => void): Statement[];
+    addStatements(writerFunction: WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
      * @param index - Index to insert at.
@@ -7266,7 +7289,7 @@ export interface StatementedNode {
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were inserted.
      */
-    insertStatements(index: number, writerFunction: (writer: CodeBlockWriter) => void): Statement[];
+    insertStatements(index: number, writerFunction: WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
      * @param index - Index to remove the statement at.
@@ -8761,11 +8784,11 @@ export interface AwaitableNodeStructure {
 }
 
 export interface BodiedNodeStructure {
-    bodyText?: string | ((writer: CodeBlockWriter) => void);
+    bodyText?: string | WriterFunction;
 }
 
 export interface BodyableNodeStructure {
-    bodyText?: string | ((writer: CodeBlockWriter) => void);
+    bodyText?: string | WriterFunction;
 }
 
 export interface DecoratableNodeStructure {
@@ -8792,7 +8815,7 @@ export interface InitializerExpressionableNodeStructure extends InitializerSetEx
 }
 
 export interface InitializerSetExpressionableNodeStructure {
-    initializer?: string | ((writer: CodeBlockWriter) => void);
+    initializer?: string | WriterFunction;
 }
 
 export interface JSDocableNodeStructure {
@@ -8808,8 +8831,9 @@ export interface QuestionTokenableNodeStructure {
 export interface ReadonlyableNodeStructure {
     isReadonly?: boolean;
 }
+
 export interface ReturnTypedNodeStructure {
-    returnType?: string;
+    returnType?: string | WriterFunction;
 }
 
 export interface ScopeableNodeStructure {
@@ -8825,8 +8849,9 @@ export interface SignaturedDeclarationStructure extends ParameteredNodeStructure
 export interface StaticableNodeStructure {
     isStatic?: boolean;
 }
+
 export interface TypedNodeStructure {
-    type?: string;
+    type?: string | WriterFunction;
 }
 
 export interface TypeElementMemberedNodeStructure {
@@ -8918,20 +8943,23 @@ export interface ObjectLiteralExpressionStructure {
 }
 
 export interface PropertyAssignmentStructure extends PropertyNamedNodeStructure {
-    initializer: string;
+    initializer: string | WriterFunction;
 }
 
 export interface ShorthandPropertyAssignmentStructure extends NamedNodeStructure {
 }
+
 export interface SpreadAssignmentStructure {
-    expression: string;
+    expression: string | WriterFunction;
 }
+
 export interface DecoratorStructure {
     name: string;
-    arguments?: string[];
+    arguments?: (string | WriterFunction)[];
 }
+
 export interface JSDocStructure {
-    description: string;
+    description: string | WriterFunction;
 }
 
 export interface EnumDeclarationStructure extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -8951,7 +8979,7 @@ export interface EnumMemberSpecificStructure {
 
 export interface ExportAssignmentStructure {
     isExportEquals?: boolean;
-    expression: string | ((writer: CodeBlockWriter) => void);
+    expression: string | WriterFunction;
 }
 
 export interface ExportDeclarationStructure {
@@ -8975,7 +9003,7 @@ export interface ImportSpecifierStructure {
 }
 
 export interface SourceFileStructure extends SourceFileSpecificStructure, StatementedNodeStructure {
-    bodyText?: string;
+    bodyText?: string | WriterFunction;
 }
 
 export interface SourceFileSpecificStructure {
@@ -9012,7 +9040,7 @@ export interface ConstructSignatureDeclarationStructure extends JSDocableNodeStr
 export interface IndexSignatureDeclarationStructure extends JSDocableNodeStructure, ReadonlyableNodeStructure {
     keyName?: string;
     keyType?: string;
-    returnType: string;
+    returnType: string | WriterFunction;
 }
 
 export interface InterfaceDeclarationStructure extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure {
@@ -9078,7 +9106,7 @@ export interface VariableStatementSpecificStructure {
 }
 
 export interface TypeAliasDeclarationStructure extends NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
-    type: string;
+    type: string | WriterFunction;
 }
 
 export interface TypeParameterDeclarationStructure extends NamedNodeStructure {
