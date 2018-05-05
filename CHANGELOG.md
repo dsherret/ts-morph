@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.1.1"></a>
+## [11.1.1](https://github.com/dsherret/ts-simple-ast/compare/11.1.0...11.1.1) (2018-05-05)
+
+
+### Bug Fixes
+
+* [#269](https://github.com/dsherret/ts-simple-ast/issues/269) - Support "extends" in tsconfig.json. ([4964bb7](https://github.com/dsherret/ts-simple-ast/commit/4964bb7))
+
+
+
 <a name="11.1.0"></a>
 # [11.1.0](https://github.com/dsherret/ts-simple-ast/compare/11.0.0...11.1.0) (2018-05-01)
 
