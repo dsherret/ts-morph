@@ -1,7 +1,11 @@
 ﻿import { expect } from "chai";
+import { FileSystemHost } from "../../../fileSystem";
+import { CompilerOptions } from "../../../typescript";
 import { getCompilerOptionsFromTsConfig, FileUtils } from "../../../utils";
 import * as errors from "../../../errors";
 import * as testHelpers from "../../testHelpers";
+
+// Remember, need this function because it's public
 
 describe(nameof(getCompilerOptionsFromTsConfig), () => {
     it("should throw an error when the path doesn't exist", () => {
@@ -15,17 +19,38 @@ describe(nameof(getCompilerOptionsFromTsConfig), () => {
         expect(() => getCompilerOptionsFromTsConfig("tsconfig.json", { fileSystem: host })).to.throw(Error);
     });
 
-    it("should get the compiler options plus the defaults when providing some", () => {
-        const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }` }]);
+    function doTest(host: FileSystemHost, expected: { errorCount: number, options: CompilerOptions }) {
         const compilerOptionsResult = getCompilerOptionsFromTsConfig("tsconfig.json", { fileSystem: host });
-        expect(compilerOptionsResult.options).to.deep.equal({ rootDir: "/test", target: 1 });
-        expect(compilerOptionsResult.errors).to.deep.equal([]);
+        expect(compilerOptionsResult.options).to.deep.equal(expected.options);
+        expect(compilerOptionsResult.errors.length).to.equal(expected.errorCount);
+    }
+
+    it("should get the compiler options plus the defaults when providing some", () => {
+        const host = testHelpers.getFileSystemHostWithFiles([{
+            filePath: "tsconfig.json", text: `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`
+        }, {
+            filePath: "main.ts", text: ""
+        }]);
+        doTest(host, { options: { rootDir: "/test", target: 1 }, errorCount: 0 });
     });
 
     it("should get the error when specifying an invalid compiler option", () => {
-        const host = testHelpers.getFileSystemHostWithFiles([{ filePath: "tsconfig.json", text: `{ "compilerOptions": { "target": "FUN" } }` }]);
-        const compilerOptionsResult = getCompilerOptionsFromTsConfig("tsconfig.json", { fileSystem: host });
-        expect(compilerOptionsResult.options).to.deep.equal({ target: undefined });
-        expect(compilerOptionsResult.errors.length).to.equal(1);
+        const host = testHelpers.getFileSystemHostWithFiles([{
+            filePath: "tsconfig.json", text: `{ "compilerOptions": { "target": "FUN" } }`
+        }, {
+            filePath: "main.ts", text: ""
+        }]);
+        doTest(host, { options: { target: undefined }, errorCount: 1 });
+    });
+
+    it("should get compiler options when using extends", () => {
+        const host = testHelpers.getFileSystemHostWithFiles([{
+            filePath: "tsconfig.json", text: `{ "compilerOptions": { "target": "es5" }, "extends": "./base" }`
+        }, {
+            filePath: "base.json", text: `{ "compilerOptions": { "rootDir": "/test" } }`
+        }, {
+            filePath: "main.ts", text: ""
+        }]);
+        doTest(host, { options: { target: 1, rootDir: "/test" }, errorCount: 0 });
     });
 });

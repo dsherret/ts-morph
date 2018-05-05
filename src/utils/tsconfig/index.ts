@@ -1,2 +1,2 @@
 export * from "./getCompilerOptionsFromTsConfig";
-export * from "./getInfoFromTsConfig";
+export * from "./TsConfigResolver";

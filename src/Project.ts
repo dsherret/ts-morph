@@ -4,8 +4,7 @@ import { ts, CompilerOptions, ScriptTarget } from "./typescript";
 import { SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult } from "./compiler";
 import * as factories from "./factories";
 import { SourceFileStructure } from "./structures";
-import { getTsConfigParseResult, getCompilerOptionsFromTsConfigParseResult, getPathsFromTsConfigParseResult, TsConfigParseResult,
-    FileUtils, ArrayUtils, matchGlobs } from "./utils";
+import { TsConfigResolver, FileUtils, ArrayUtils, matchGlobs } from "./utils";
 import { DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, DirectoryAddOptions } from "./fileSystem";
 import { ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer } from "./options";
 import { GlobalContainer } from "./GlobalContainer";
@@ -54,11 +53,7 @@ export class Project {
         const fileSystemWrapper = new FileSystemWrapper(fileSystem);
 
         // get tsconfig info
-        const tsConfigParseResult = options.tsConfigFilePath == null ? undefined : getTsConfigParseResult({
-            tsConfigFilePath: options.tsConfigFilePath,
-            encoding: "utf-8",
-            fileSystemWrapper
-        });
+        const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
         // setup global container
@@ -69,8 +64,8 @@ export class Project {
             this.global.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
-        if (tsConfigParseResult != null && options.addFilesFromTsConfig !== false)
-            this._addSourceFilesForTsConfigParseResult(options.tsConfigFilePath!, tsConfigParseResult, compilerOptions, {});
+        if (tsConfigResolver != null && options.addFilesFromTsConfig !== false)
+            this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions, {});
 
         function getCompilerOptions(): CompilerOptions {
             return {
@@ -80,13 +75,16 @@ export class Project {
         }
 
         function getTsConfigCompilerOptions() {
-            if (tsConfigParseResult == null)
+            if (tsConfigResolver == null)
                 return {};
-            return getCompilerOptionsFromTsConfigParseResult({
-                tsConfigFilePath: options.tsConfigFilePath!,
-                fileSystemWrapper,
-                tsConfigParseResult
-            }).options;
+            return tsConfigResolver.getCompilerOptions();
+        }
+
+        function getEncoding() {
+            const defaultEncoding = "utf-8";
+            if (options.compilerOptions != null)
+                return options.compilerOptions.charset || defaultEncoding;
+            return defaultEncoding;
         }
     }
 
@@ -237,33 +235,12 @@ export class Project {
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string, options: SourceFileAddOptions = {}): SourceFile[] {
         tsConfigFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        const tsConfigParseResult = getTsConfigParseResult({
-            tsConfigFilePath,
-            encoding: this.global.getEncoding(),
-            fileSystemWrapper: this.global.fileSystemWrapper
-        });
-        const compilerOptions = getCompilerOptionsFromTsConfigParseResult({
-            tsConfigFilePath,
-            fileSystemWrapper: this.global.fileSystemWrapper,
-            tsConfigParseResult
-        }).options;
-
-        return this._addSourceFilesForTsConfigParseResult(tsConfigFilePath, tsConfigParseResult, compilerOptions, options);
+        const resolver = new TsConfigResolver(this.global.fileSystemWrapper, tsConfigFilePath, this.global.getEncoding());
+        return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions(), options);
     }
 
-    private _addSourceFilesForTsConfigParseResult(
-        tsConfigFilePath: string,
-        tsConfigParseResult: TsConfigParseResult,
-        compilerOptions: CompilerOptions,
-        addOptions: SourceFileAddOptions)
-    {
-        const paths = getPathsFromTsConfigParseResult({
-            tsConfigFilePath,
-            encoding: this.global.getEncoding(),
-            fileSystemWrapper: this.global.fileSystemWrapper,
-            tsConfigParseResult,
-            compilerOptions
-        });
+    private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions, addOptions: SourceFileAddOptions) {
+        const paths = tsConfigResolver.getPaths(compilerOptions);
 
         if (addOptions.languageVersion == null && compilerOptions.target != null)
             addOptions.languageVersion = compilerOptions.target;
