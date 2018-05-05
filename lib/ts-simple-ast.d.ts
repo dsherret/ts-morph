@@ -99,7 +99,6 @@ export declare class Project {
      * @param options - Options for adding the source file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
-    private _addSourceFilesForTsConfigParseResult(tsConfigFilePath, tsConfigParseResult, compilerOptions, addOptions);
     /**
      * Creates a source file at the specified file path.
      *

@@ -239,6 +239,7 @@ export class Project {
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions(), options);
     }
 
+    /** @internal */
     private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions, addOptions: SourceFileAddOptions) {
         const paths = tsConfigResolver.getPaths(compilerOptions);
 
