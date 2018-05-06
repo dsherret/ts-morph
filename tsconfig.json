@@ -4,6 +4,8 @@
         "module": "commonjs",
         "declaration": true,
         "strict": true,
+        "rootDir": "./src",
+        "outDir": "./dist",
         "sourceMap": false,
         "removeComments": false,
         "experimentalDecorators": true,
@@ -15,7 +17,17 @@
         "types": [ "node", "mocha" ],
         "downlevelIteration": true,
         "importHelpers": true,
-        "lib": [ "es2015" ]
+        "lib": [ "es2015" ],
+        "plugins": [{
+            "customTransformers": {
+                "before": ["ts-nameof"]
+            }
+        }]
     },
-    "compileOnSave": false
+    "compileOnSave": false,
+    "exclude": [
+        "./scripts",
+        "./docs",
+        "node_modules"
+    ]
 }

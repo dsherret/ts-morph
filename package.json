@@ -6,10 +6,9 @@
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "npm run type-check-docs && npm run build && ts-node scripts/createDeclarationFile && npm run publish-code-verification && npm publish",
-    "test": "npm run build && npm run test-run",
-    "lint": "gulp tslint",
-    "build": "gulp typescript",
-    "test-run": "gulp test-run",
+    "lint": "tslint src/**/*.ts scripts/**/*.ts",
+    "build": "rimraf dist && npx ttsc",
+    "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
     "refactor": "ts-node scripts/refactor",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
@@ -33,6 +32,20 @@
     "url": "https://github.com/dsherret/ts-simple-ast/issues"
   },
   "homepage": "https://github.com/dsherret/ts-simple-ast#readme",
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "src/**/*.ts",
+      "!src/tests/**/*.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
+  },
   "typescript": {
     "definition": "dist/main.d.ts"
   },
@@ -50,23 +63,17 @@
     "chalk": "^2.4.0",
     "conditional-type-checks": "^0.5.0",
     "coveralls": "^2.13.1",
-    "del": "^2.0.2",
+    "cross-env": "^5.1.4",
     "diff": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-filter": "^5.0.0",
-    "gulp-istanbul": "^1.1.1",
-    "gulp-mocha": "^3.0.1",
-    "gulp-replace": "^0.5.4",
-    "gulp-tslint": "^8.1.1",
-    "gulp-typescript": "^2.13.3",
-    "merge2": "^1.0.3",
     "mocha": "^3.3.0",
+    "nyc": "^11.7.1",
     "rimraf": "^2.6.2",
-    "run-sequence": "^2.2.1",
-    "ts-nameof": "^0.10.3",
-    "ts-node": "^6.0.0",
+    "source-map-support": "^0.5.5",
+    "ts-nameof": "^1.0.0",
+    "ts-node": "^6.0.2",
     "ts-simple-ast": "11.0.0",
-    "tslint": "^5.8.0"
+    "tslint": "^5.8.0",
+    "ttypescript": "^1.0.9"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",

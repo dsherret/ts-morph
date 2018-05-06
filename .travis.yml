@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-    - "4.8"
+    - "6"
 before_script:
-    - gulp tslint
+    - npm run lint
 script:
     - npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 after_script:
