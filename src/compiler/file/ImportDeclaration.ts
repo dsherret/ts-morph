@@ -3,7 +3,7 @@ import * as errors from "../../errors";
 import { ImportSpecifierStructure } from "../../structures";
 import { insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn } from "../../manipulation";
 import { ArrayUtils, TypeGuards, StringUtils, ModuleUtils } from "../../utils";
-import { Identifier } from "../common";
+import { Node, Identifier } from "../common";
 import { Statement } from "../statement";
 import { StringLiteral } from "../literal";
 import { ImportSpecifier } from "./ImportSpecifier";
@@ -333,13 +333,17 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         return this;
     }
 
-    private getImportClauseOrThrow() {
-        // todo: make public?
+    /**
+     * Gets the import clause or throws if it doesn't exist.
+     */
+    getImportClauseOrThrow(): Node {
         return errors.throwIfNullOrUndefined(this.getImportClause(), "Expected to find an import clause.");
     }
 
-    private getImportClause() {
-        // todo: make public?
+    /**
+     * Gets the import clause or returns undefined if it doesn't exist.
+     */
+    getImportClause(): Node | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
 }

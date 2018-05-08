@@ -475,4 +475,40 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import defaultExport, {Name1, Name2} from "module-name";`, `import defaultExport from "module-name";`);
         });
     });
+
+    describe(nameof<ImportDeclaration>(n => n.getImportClauseOrThrow), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            if (expectedName == null)
+                expect(() => firstChild.getImportClauseOrThrow()).to.throw();
+            else
+                expect(firstChild.getImportClauseOrThrow().getText()).to.equal(expectedName);
+        }
+
+        it("should get the import clause when it exists", () => {
+            doTest(`import * as name from "./test";`, "* as name");
+        });
+
+        it("should throw when the import clause doesn't exist", () => {
+            doTest(`import "./test";`, undefined);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getImportClause), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            if (expectedName == null)
+                expect(firstChild.getImportClause()).to.be.undefined;
+            else
+                expect(firstChild.getImportClause()!.getText()).to.equal(expectedName);
+        }
+
+        it("should get the import clause when it exists", () => {
+            doTest(`import * as name from "./test";`, "* as name");
+        });
+
+        it("should return undefined when the import clause doesn't exist", () => {
+            doTest(`import "./test";`, undefined);
+        });
+    });
 });
