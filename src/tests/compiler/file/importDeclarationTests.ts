@@ -234,6 +234,14 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import './file';`, "identifier", `import * as identifier from './file';`);
         });
 
+        it("should remove it when providing an empty string", () => {
+            doTest(`import * as identifier from './file';`, "", `import './file';`);
+        });
+
+        it("should do nothing when it doesn't exist and providing an empty string", () => {
+            doTest(`import './file';`, "", `import './file';`);
+        });
+
         it("should throw an error when a named import exists", () => {
             expect(() => {
                 const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(`import {named} from './file';`);
@@ -243,6 +251,26 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should set the namespace import when a default import exists", () => {
             doTest(`import name from './file';`, "identifier", `import name, * as identifier from './file';`);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getNamespaceImportOrThrow), () => {
+        function doTest(text: string, expected: string) {
+            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            firstChild.removeNamespaceImport();
+            expect(sourceFile.getText()).to.equal(expected);
+        }
+
+        it("should remove it when a namespace import exists", () => {
+            doTest(`import * as identifier from './file';`, `import './file';`);
+        });
+
+        it("should do nothing when a namespace import doesn't exists", () => {
+            doTest(`import './file';`, `import './file';`);
+        });
+
+        it("should remove it when a default import exists", () => {
+            doTest(`import name, * as identifier from './file';`, `import name from './file';`);
         });
     });
 
@@ -268,15 +296,33 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import defaultImport, {name as any} from "./test";`, undefined);
         });
 
-        it("should not get the default import when a named import exists", () => {
+        it("should not get the namespace import when a named import exists", () => {
             doTest(`import {name as any} from "./test";`, undefined);
         });
 
-        it("should not get the default import when a default import exists", () => {
+        it("should not get the namespace import when a default import exists", () => {
             doTest(`import defaultImport from "./test";`, undefined);
         });
 
-        it("should not get the default import when importing for the side effects", () => {
+        it("should not get the namespace import when importing for the side effects", () => {
+            doTest(`import "./test";`, undefined);
+        });
+    });
+
+    describe(nameof<ImportDeclaration>(n => n.getNamespaceImportOrThrow), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            if (expectedName == null)
+                expect(() => firstChild.getNamespaceImportOrThrow()).to.throw();
+            else
+                expect(firstChild.getNamespaceImportOrThrow().getText()).to.equal(expectedName);
+        }
+
+        it("should get the namespace import when it exists", () => {
+            doTest(`import * as name from "./test";`, "name");
+        });
+
+        it("should throw when the namespace import doesn't exist", () => {
             doTest(`import "./test";`, undefined);
         });
     });

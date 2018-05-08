@@ -126,6 +126,9 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @throws - InvalidOperationError if a named import exists.
      */
     setNamespaceImport(text: string) {
+        if (StringUtils.isNullOrWhitespace(text))
+            return this.removeNamespaceImport();
+
         const namespaceImport = this.getNamespaceImport();
         if (namespaceImport != null) {
             namespaceImport.rename(text);
@@ -150,7 +153,41 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
             parent: this,
             newText: ` * as ${text} from`
         });
+
         return this;
+    }
+
+    /**
+     * Removes the namespace import.
+     */
+    removeNamespaceImport() {
+        const namespaceImport = this.getNamespaceImport();
+        if (namespaceImport == null)
+            return this;
+
+        removeChildren({
+            children: getChildrenToRemove.call(this),
+            removePrecedingSpaces: true,
+            removePrecedingNewLines: true
+        });
+
+        return this;
+
+        function getChildrenToRemove(this: ImportDeclaration) {
+            const defaultImport = this.getDefaultImport();
+
+            if (defaultImport == null)
+                return [this.getImportClauseOrThrow(), this.getLastChildByKindOrThrow(SyntaxKind.FromKeyword)];
+            else
+                return [defaultImport.getNextSiblingIfKindOrThrow(SyntaxKind.CommaToken), namespaceImport];
+        }
+    }
+
+    /**
+     * Gets the namespace import if it exists or throws.
+     */
+    getNamespaceImportOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getNamespaceImport(), "Expected to find a namespace import.");
     }
 
     /**
@@ -296,7 +333,13 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
         return this;
     }
 
+    private getImportClauseOrThrow() {
+        // todo: make public?
+        return errors.throwIfNullOrUndefined(this.getImportClause(), "Expected to find an import clause.");
+    }
+
     private getImportClause() {
+        // todo: make public?
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
     }
 }
