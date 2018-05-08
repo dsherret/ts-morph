@@ -123,6 +123,12 @@ importDeclaration.setNamespaceImport("newName");
 
 _Note:_ Setting the namespace import for an existing namespace import will rename any uses of the namespace import in the current file.
 
+Remove it:
+
+```ts
+importDeclaration.removeNamespaceImport();
+```
+
 ### Named imports
 
 Getting a named import:
