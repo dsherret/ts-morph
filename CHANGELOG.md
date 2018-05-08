@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.2.0"></a>
+# [11.2.0](https://github.com/dsherret/ts-simple-ast/compare/11.1.1...11.2.0) (2018-05-08)
+
+
+### Features
+
+* [#251](https://github.com/dsherret/ts-simple-ast/issues/251) - Add importDeclaration.removeNamespaceImport() and .getNamespaceImportOrThrow() ([0250138](https://github.com/dsherret/ts-simple-ast/commit/0250138))
+* Add ImportDeclaration.getImportClause() and .getImportClauseOrThrow() ([8d99c27](https://github.com/dsherret/ts-simple-ast/commit/8d99c27))
+* Node.preprendWhitespace(textOrWriterFunction) and .appendWhitespace(textOrWriterFunction) ([a43cb65](https://github.com/dsherret/ts-simple-ast/commit/a43cb65))
+* Update code-block-writer version. Adds .tab(), .tabIfLastNot(), and .isLastTab(). ([903b8ac](https://github.com/dsherret/ts-simple-ast/commit/903b8ac))
+
+
+
 <a name="11.1.1"></a>
 ## [11.1.1](https://github.com/dsherret/ts-simple-ast/compare/11.1.0...11.1.1) (2018-05-05)
 
