@@ -948,19 +948,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Replaces the text of the current node with new text.
      *
      * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
      */
-    replaceWithText(writerFunction: WriterFunction): Node;
-    /**
-     * Replaces the text of the current node with new text.
-     *
-     * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
-     * @param text - Text to replace with.
-     * @returns The new node.
-     */
-    replaceWithText(text: string): Node;
-    replaceWithText(textOrWriterFunction: string | WriterFunction) {
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node {
         const newText = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
@@ -981,6 +972,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         });
 
         return parent.getChildren()[childIndex];
+    }
+
+    /**
+     * Prepends the specified whitespace to current node.
+     * @param textOrWriterFunction - Text or writer function.
+     */
+    prependWhitespace(textOrWriterFunction: string | WriterFunction) {
+        insertWhiteSpaceTextAtPos(this, this.getStart(true), textOrWriterFunction, nameof(this.prependWhitespace));
+    }
+
+    /**
+     * Appends the specified whitespace to current node.
+     * @param textOrWriterFunction - Text or writer function.
+     */
+    appendWhitespace(textOrWriterFunction: string | WriterFunction) {
+        insertWhiteSpaceTextAtPos(this, this.getEnd(), textOrWriterFunction, nameof(this.appendWhitespace));
     }
 
     /**
@@ -1432,4 +1439,18 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
 function getWrappedCondition(thisNode: Node, condition: ((c: Node) => boolean) | undefined): ((c: ts.Node) => boolean) | undefined {
     return condition == null ? undefined : ((c: ts.Node) => condition(thisNode.getNodeFromCompilerNode(c)));
+}
+
+function insertWhiteSpaceTextAtPos(node: Node, insertPos: number, textOrWriterFunction: string | WriterFunction, methodName: string) {
+    const parent = TypeGuards.isSourceFile(node) ? node.getChildSyntaxListOrThrow() : node.getParentSyntaxList() || node.getParentOrThrow();
+    const newText = getTextFromStringOrWriter(node.getWriterWithQueuedIndentation(), textOrWriterFunction);
+
+    if (!/^[\s\r\n]*$/.test(newText))
+        throw new errors.InvalidOperationError(`Cannot insert non-whitespace into ${methodName}.`);
+
+    insertIntoParentTextRange({
+        parent,
+        insertPos,
+        newText
+    });
 }

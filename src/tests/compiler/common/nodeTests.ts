@@ -767,6 +767,64 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.prependWhitespace), () => {
+        function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, newText: string | WriterFunction, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            const node = getNode(sourceFile);
+            node.prependWhitespace(newText);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(node.wasForgotten()).to.be.false;
+        }
+
+        it("should prepend whitespace", () => {
+            doTest("class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                "  \t\n ",
+                "class Test{\n    \t\n     prop:string;\n}");
+        });
+
+        it("should prepend whitespace when using a writer", () => {
+            doTest("class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                writer => writer.space(),
+                "class Test{\n   prop:string;\n}");
+        });
+
+        it("should throw if providing non-whitespace text", () => {
+            const { sourceFile } = getInfoFromText("");
+            expect(() => sourceFile.prependWhitespace("testing")).to.throw(errors.InvalidOperationError);
+        });
+    });
+
+    describe(nameof<Node>(n => n.appendWhitespace), () => {
+        function doTest(text: string, getNode: (sourceFile: SourceFile) => Node, newText: string | WriterFunction, expectedText: string) {
+            const {sourceFile} = getInfoFromText(text);
+            const node = getNode(sourceFile);
+            node.appendWhitespace(newText);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+            expect(node.wasForgotten()).to.be.false;
+        }
+
+        it("should append whitespace", () => {
+            doTest("class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                "  \t\n ",
+                "class Test{\n  prop:string;  \t\n     \n}");
+        });
+
+        it("should append whitespace when using a writer", () => {
+            doTest("class Test{\n  prop:string;\n}",
+                f => f.getClassOrThrow("Test").getProperties()[0],
+                writer => writer.space(),
+                "class Test{\n  prop:string; \n}");
+        });
+
+        it("should throw if providing non-whitespace text", () => {
+            const { sourceFile } = getInfoFromText("");
+            expect(() => sourceFile.appendWhitespace("testing")).to.throw(errors.InvalidOperationError);
+        });
+    });
+
     describe(nameof<Node>(n => n.getLeadingCommentRanges), () => {
         it("should return nothing for a source file", () => {
             const {sourceFile} = getInfoFromText("// before1\nvar t = 5;");
