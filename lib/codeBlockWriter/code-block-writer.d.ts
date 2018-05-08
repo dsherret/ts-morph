@@ -128,6 +128,15 @@ declare class CodeBlockWriter {
      */
     space(times?: number): this;
     /**
+     * Writes a tab if the last character was not a tab.
+     */
+    tabIfLastNot(): this;
+    /**
+     * Writes a tab.
+     * @param times - Number of times to write a tab.
+     */
+    tab(times?: number): this;
+    /**
      * Conditionally writes text.
      * @param condition - Condition to evaluate.
      * @param textFunc - A function that returns a string to write if the condition is true.
@@ -176,6 +185,10 @@ declare class CodeBlockWriter {
      * Gets if the last char written was a space.
      */
     isLastSpace(): boolean;
+    /**
+     * Gets if the last char written was a tab.
+     */
+    isLastTab(): boolean;
     /**
      * Gets the last char written.
      */

@@ -4137,18 +4137,20 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Replaces the text of the current node with new text.
      *
      * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
-     * @param writerFunction - Write the text using the provided writer.
+     * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
      */
-    replaceWithText(writerFunction: WriterFunction): Node;
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
     /**
-     * Replaces the text of the current node with new text.
-     *
-     * This will forget the current node and return a new node that can be asserted or type guarded to the correct type.
-     * @param text - Text to replace with.
-     * @returns The new node.
+     * Prepends the specified whitespace to current node.
+     * @param textOrWriterFunction - Text or writer function.
      */
-    replaceWithText(text: string): Node;
+    prependWhitespace(textOrWriterFunction: string | WriterFunction): void;
+    /**
+     * Appends the specified whitespace to current node.
+     * @param textOrWriterFunction - Text or writer function.
+     */
+    appendWhitespace(textOrWriterFunction: string | WriterFunction): void;
     /**
      * Formats the node's text using the internal TypeScript formatting API.
      * @param settings - Format code settings.
@@ -5800,6 +5802,14 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     setNamespaceImport(text: string): this;
     /**
+     * Removes the namespace import.
+     */
+    removeNamespaceImport(): this;
+    /**
+     * Gets the namespace import if it exists or throws.
+     */
+    getNamespaceImportOrThrow(): Identifier;
+    /**
      * Gets the namespace import, if it exists.
      */
     getNamespaceImport(): Identifier | undefined;
@@ -5844,7 +5854,14 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Removes all the named imports.
      */
     removeNamedImports(): this;
-    private getImportClause();
+    /**
+     * Gets the import clause or throws if it doesn't exist.
+     */
+    getImportClauseOrThrow(): Node;
+    /**
+     * Gets the import clause or returns undefined if it doesn't exist.
+     */
+    getImportClause(): Node | undefined;
 }
 
 declare const ImportEqualsDeclarationBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
