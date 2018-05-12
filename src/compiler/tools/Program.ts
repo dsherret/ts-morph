@@ -8,14 +8,14 @@ import { EmitResult, Diagnostic } from "./results";
 /**
  * Options for emitting.
  */
-export interface EmitOptions {
-    // warning: When updating these emit options, also update the options in SourceFile
-    // todo: better way of doing this
-
+export interface EmitOptions extends EmitOptionsBase {
     /**
      * Optional source file to only emit.
      */
     targetSourceFile?: SourceFile;
+}
+
+export interface EmitOptionsBase {
     /**
      * Whether only .d.ts files should be emitted.
      */

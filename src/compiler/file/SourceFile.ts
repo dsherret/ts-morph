@@ -14,7 +14,7 @@ import { TextInsertableNode } from "../base";
 import { Node, Symbol, Identifier } from "../common";
 import { StatementedNode } from "../statement";
 import { StringLiteral } from "../literal";
-import { Diagnostic, EmitResult, EmitOutput, FormatCodeSettings, TextChange } from "../tools";
+import { Diagnostic, EmitOptionsBase, EmitResult, EmitOutput, FormatCodeSettings, TextChange } from "../tools";
 import { ImportDeclaration } from "./ImportDeclaration";
 import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportAssignment } from "./ExportAssignment";
@@ -27,6 +27,12 @@ export interface SourceFileCopyOptions {
 
 export interface SourceFileMoveOptions {
     overwrite?: boolean;
+}
+
+/**
+ * Options for emitting a source file.
+ */
+export interface SourceFileEmitOptions extends EmitOptionsBase {
 }
 
 /** @internal */
@@ -874,7 +880,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Emits the source file.
      */
-    emit(options?: { emitOnlyDtsFiles?: boolean; }): EmitResult {
+    emit(options?: SourceFileEmitOptions): EmitResult {
         return this.global.program.emit({ targetSourceFile: this, ...options });
     }
 
