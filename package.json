@@ -74,7 +74,7 @@
     "ts-node": "^6.0.2",
     "ts-simple-ast": "11.0.0",
     "tslint": "^5.8.0",
-    "ttypescript": "^1.0.9"
+    "ttypescript": "^1.2.0"
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
