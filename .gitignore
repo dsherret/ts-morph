@@ -16,3 +16,4 @@
 /docs/_site
 /dist-scripts
 /.nyc_output
+/npm-debug.log
