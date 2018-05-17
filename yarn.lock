@@ -2404,9 +2404,9 @@ tsutils@^2.12.1:
   dependencies:
     tslib "^1.8.1"
 
-ttypescript@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/ttypescript/-/ttypescript-1.2.0.tgz#cacf507749b89cf783f992ae582233db6907a2ae"
+ttypescript@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/ttypescript/-/ttypescript-1.4.1.tgz#eeaba8db297a97a6ce21e9a2cbe9ac5553e7982d"
   dependencies:
     resolve "^1.7.1"
     ts-node "^6.0.2"

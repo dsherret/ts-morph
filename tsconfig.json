@@ -18,7 +18,7 @@
         "downlevelIteration": true,
         "importHelpers": true,
         "lib": [ "es2015" ],
-        "plugins": [{ "transform": "ts-nameof", "type": "raw", "before": true }]
+        "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
     },
     "compileOnSave": false,
     "exclude": [
