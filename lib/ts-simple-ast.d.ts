@@ -5941,6 +5941,12 @@ export interface SourceFileMoveOptions {
     overwrite?: boolean;
 }
 
+/**
+ * Options for emitting a source file.
+ */
+export interface SourceFileEmitOptions extends EmitOptionsBase {
+}
+
 declare const SourceFileBase: Constructor<StatementedNode> & Constructor<TextInsertableNode> & typeof Node;
 
 export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
@@ -6251,9 +6257,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Emits the source file.
      */
-    emit(options?: {
-        emitOnlyDtsFiles?: boolean;
-    }): EmitResult;
+    emit(options?: SourceFileEmitOptions): EmitResult;
     /**
      * Gets the emit output of this source file.
      * @param options - Emit options.
@@ -7991,11 +7995,14 @@ export declare class LanguageService {
 /**
  * Options for emitting.
  */
-export interface EmitOptions {
+export interface EmitOptions extends EmitOptionsBase {
     /**
      * Optional source file to only emit.
      */
     targetSourceFile?: SourceFile;
+}
+
+export interface EmitOptionsBase {
     /**
      * Whether only .d.ts files should be emitted.
      */
