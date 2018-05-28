@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.2.1"></a>
+## [11.2.1](https://github.com/dsherret/ts-simple-ast/compare/11.2.0...11.2.1) (2018-05-28)
+
+
+### Bug Fixes
+
+* [#335](https://github.com/dsherret/ts-simple-ast/issues/335) - addStatements would throw if the containing block was only indented a portion of an indentation level. ([c93104c](https://github.com/dsherret/ts-simple-ast/commit/c93104c))
+
+
+
 <a name="11.2.0"></a>
 # [11.2.0](https://github.com/dsherret/ts-simple-ast/compare/11.1.1...11.2.0) (2018-05-08)
 
