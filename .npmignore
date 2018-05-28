@@ -12,6 +12,8 @@
 /temp
 /bin
 /lib
+/.nyc_output
+mocha.opts
 *.suo
 *.csproj
 *.csproj.user
