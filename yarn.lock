@@ -437,6 +437,10 @@ code-block-writer@7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.1.0.tgz#00cac1625d8493a7752651909333c81e596a214a"
 
+code-block-writer@7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.2.0.tgz#17a57b080e64898a82e3045df7a472baec9f220e"
+
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"

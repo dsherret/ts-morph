@@ -80,7 +80,7 @@
     "@types/fs-extra": "^5.0.2"
   },
   "dependencies": {
-    "code-block-writer": "7.1.0",
+    "code-block-writer": "^7.2.0",
     "fs-extra": "^6.0.1",
     "glob-parent": "^3.1.0",
     "globby": "^8.0.1",
