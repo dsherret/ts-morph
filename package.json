@@ -76,10 +76,10 @@
     "ts-simple-ast": "11.2.0",
     "tslint": "^5.8.0",
     "ttypescript": "1.4.2",
-    "@dsherret/to-absolute-glob": "^2.0.2",
     "@types/fs-extra": "^5.0.2"
   },
   "dependencies": {
+    "@dsherret/to-absolute-glob": "^2.0.2",
     "code-block-writer": "^7.2.0",
     "fs-extra": "^6.0.1",
     "glob-parent": "^3.1.0",
