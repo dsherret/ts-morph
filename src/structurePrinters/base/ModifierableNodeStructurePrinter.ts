@@ -2,10 +2,11 @@ import { CodeBlockWriter } from "../../codeBlockWriter";
 import { AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure,
     ReadonlyableNodeStructure, ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { ConstableNodeStructure } from '../../structures/base/ConstableNodeStructure';
 
 export type ModifierableNodeStructures = AbstractableNodeStructure | AmbientableNodeStructure | AsyncableNodeStructure |
     ExportableNodeStructure | ReadonlyableNodeStructure | ScopeableNodeStructure | ScopedNodeStructure |
-    StaticableNodeStructure;
+    StaticableNodeStructure | ConstableNodeStructure;
 
 export class ModifierableNodeStructurePrinter extends FactoryStructurePrinter<ModifierableNodeStructures> {
     printText(writer: CodeBlockWriter, structure: ModifierableNodeStructures) {
@@ -26,5 +27,7 @@ export class ModifierableNodeStructurePrinter extends FactoryStructurePrinter<Mo
             writer.write("async ");
         if ((structure as ReadonlyableNodeStructure).isReadonly)
             writer.write("readonly ");
+        if ((structure as ConstableNodeStructure).isConst)
+            writer.write("const ");
     }
 }

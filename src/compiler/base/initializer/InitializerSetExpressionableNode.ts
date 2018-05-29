@@ -8,6 +8,7 @@ import { getTextFromStringOrWriter } from "../../../utils";
 import { Expression } from "../../expression";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
+import { callBaseGetStructure } from '../../callBaseGetStructure';
 
 export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
 
@@ -26,6 +27,8 @@ export interface InitializerSetExpressionableNode {
      * @param writerFunction - Function to write the initializer with.
      */
     setInitializer(writerFunction: WriterFunction): this;
+
+    getStructure(): InitializerSetExpressionableNodeStructure;
 }
 
 export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {
@@ -67,6 +70,12 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
                 this.setInitializer(structure.initializer);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<InitializerSetExpressionableNodeStructure>(Base.prototype, this, {
+                initializer: this.getInitializerOrThrow().getText()
+            });
         }
     };
 }

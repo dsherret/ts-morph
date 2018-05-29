@@ -8,6 +8,7 @@ import { StringUtils, getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
@@ -34,6 +35,8 @@ export interface TypedNode {
      * Removes the type.
      */
     removeType(): this;
+
+    getStructure(): TypedNodeStructure;
 }
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
@@ -105,6 +108,12 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             const separatorToken = typeNode.getPreviousSiblingIfKindOrThrow(getSeparatorSyntaxKindForNode(this));
             removeChildren({ children: [separatorToken, typeNode], removePrecedingSpaces: true });
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<TypedNodeStructure>(Base.prototype, this, {
+                type: this.getType().getText()
+            });
         }
     };
 }

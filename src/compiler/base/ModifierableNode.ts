@@ -3,8 +3,10 @@ import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { insertIntoParentTextRange, removeChildren, FormattingKind } from "../../manipulation";
 import { ArrayUtils, getSyntaxKindName } from "../../utils";
-import { Node } from "../common";
+import { Node, Scope } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";
+import { ModifierableNodeStructurePrinter, ModifierableNodeStructures } from '../../structurePrinters';
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
@@ -54,6 +56,8 @@ export interface ModifierableNode {
      * @internal
      */
     removeModifier(text: ModifierTexts): boolean;
+
+    getStructure(): ModifierableNodeStructures;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
@@ -170,6 +174,21 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             });
 
             return true;
+        }
+
+        getStructure(): ModifierableNodeStructures {
+            const modifierableStructure: ModifierableNodeStructures = {
+                isDefaultExport: this.hasModifier("default") && this.hasModifier("export"),
+                hasDeclareKeyword: this.hasModifier("declare"),
+                isExported: this.hasModifier("export"),
+                isAbstract: this.hasModifier('abstract'),
+                scope: this.hasModifier('public') ? Scope.Public : this.hasModifier("private") ? Scope.Private : this.hasModifier("protected") ? Scope.Protected : undefined,
+                isReadonly: this.hasModifier('readonly'),
+                isStatic: this.hasModifier('static'),
+                isAsync: this.hasModifier('async'),
+                isConst: this.hasModifier('const')
+            }
+            return callBaseGetStructure<ModifierableNodeStructures>(Base.prototype, this, modifierableStructure);
         }
 
         private getCompilerModifiers() {

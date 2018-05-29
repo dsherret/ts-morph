@@ -5,6 +5,8 @@ import { TypeGuards } from "../../utils";
 import { CallExpression, Expression } from "../expression";
 import { Node, Identifier } from "../common";
 import { TypeNode } from "../type";
+import { DecoratorStructure } from '../../main';
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export const DecoratorBase = Node;
 export class Decorator extends DecoratorBase<ts.Decorator> {
@@ -273,5 +275,13 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 children: [this],
                 getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline
             });
+    }
+
+
+    getStructure(): DecoratorStructure {
+        return {
+            name: this.getName(),
+            arguments: this.getArguments().map(arg=>arg.getText()) // TODO: not sure about this
+        };
     }
 }

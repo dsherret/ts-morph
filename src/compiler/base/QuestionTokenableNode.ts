@@ -6,6 +6,7 @@ import { QuestionTokenableNodeStructure } from "../../structures";
 import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken; }>;
 
@@ -27,6 +28,8 @@ export interface QuestionTokenableNode {
      * @param value - If it should have a question token or not.
      */
     setHasQuestionToken(value: boolean): this;
+
+    getStructure(): QuestionTokenableNodeStructure;
 }
 
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
@@ -75,5 +78,12 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
 
             return this;
         }
+        
+        getStructure() {
+            return callBaseGetStructure<QuestionTokenableNodeStructure>(Base.prototype, this, {
+               hasQuestionToken: this.hasQuestionToken()
+            });
+        }
+
     };
 }

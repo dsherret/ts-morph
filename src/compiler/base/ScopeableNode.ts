@@ -5,6 +5,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type ScopeableNodeExtensionType = Node & ModifierableNode;
 
@@ -22,6 +23,8 @@ export interface ScopeableNode {
      * Gets if the node has a scope keyword.
      */
     hasScopeKeyword(): boolean;
+
+    getStructure(): ScopeableNodeStructure;
 }
 
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
@@ -46,6 +49,12 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
                 this.setScope(structure.scope);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ScopeableNodeStructure>(Base.prototype, this, {
+                scope: this.getScope()
+            });
         }
     };
 }

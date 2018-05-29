@@ -3,6 +3,8 @@ import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
 import { Node, Identifier } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { DeclarationNamedNodeStructure } from '../../../main';
 
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
@@ -34,6 +36,8 @@ export interface DeclarationNamedNodeSpecific {
      * @param text - Text to set as the name.
      */
     rename(text: string): this;
+    
+    getStructure(): DeclarationNamedNodeStructure;
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
@@ -82,6 +86,12 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
 
             nameNode.rename(text);
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<DeclarationNamedNodeStructure>(Base.prototype, this, {
+                name: this.getNameOrThrow()
+            });
         }
     };
 }

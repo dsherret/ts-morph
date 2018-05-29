@@ -8,6 +8,7 @@ import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
 
@@ -123,6 +124,12 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
                 this.addDecorators(structure.decorators);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<DecoratableNodeStructure>(Base.prototype, this, {
+                decorators: this.getDecorators().map(d=>d.getStructure())
+            });
         }
     };
 }
