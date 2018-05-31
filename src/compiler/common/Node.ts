@@ -668,12 +668,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getTrailingTriviaEnd() {
         const parent = this.getParent();
-        if (parent == null)
-            return 0;
         const end = this.getEnd();
+        if (parent == null)
+            return end;
         const parentEnd = parent.getEnd();
         if (parentEnd === end)
-            return 0;
+            return end;
         const trailingComments = this.getTrailingCommentRanges();
         const searchStart = getSearchStart();
 

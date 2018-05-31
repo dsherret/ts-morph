@@ -912,6 +912,11 @@ class MyClass {
             const startText = "var t = 5; \t  \t";
             doTest(startText, startText.length);
         });
+
+        it("should return the end of the file for a source file", () => {
+            const {sourceFile} = getInfoFromText("var t = 5; \t\n\n\n");
+            expect(sourceFile.getTrailingTriviaEnd()).to.equal(sourceFile.getEnd());
+        });
     });
 
     describe(nameof<Node>(n => n.getTrailingTriviaWidth), () => {
