@@ -914,7 +914,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (nameNode == null)
             return classes;
 
-        for (const node of nameNode.getReferencingNodes()) {
+        for (const node of nameNode.findReferencesAsNodes()) {
             const nodeParent = node.getParentIfKind(SyntaxKind.ExpressionWithTypeArguments);
             if (nodeParent == null)
                 continue;

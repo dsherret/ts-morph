@@ -105,11 +105,11 @@ describe(nameof(NameableNode), () => {
         });
     });
 
-    describe(nameof<NameableNode>(n => n.getReferencingNodes), () => {
+    describe(nameof<NameableNode>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition when there is a name", () => {
             const {firstChild, project} = getInfoFromText<ClassDeclaration>("class MyClass {}\nconst reference = MyClass;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = MyClass;");
-            const referencingNodes = firstChild.getReferencingNodes();
+            const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = MyClass");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = MyClass");
@@ -118,7 +118,7 @@ describe(nameof(NameableNode), () => {
         it("should find all the references and exclude the definition when there isn't a name", () => {
             const {firstChild, project} = getInfoFromText<ClassDeclaration>("export default class {}", { filePath: "/MyClass.ts" });
             const secondSourceFile = project.createSourceFile("/second.ts", "import MyClass from './MyClass';\nconst reference2 = MyClass;");
-            const referencingNodes = firstChild.getReferencingNodes();
+            const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getParentOrThrow().getText()).to.equal("import MyClass from './MyClass';");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = MyClass");

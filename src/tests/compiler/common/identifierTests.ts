@@ -113,11 +113,11 @@ const t = MyNamespace.MyClass;
         });
     });
 
-    describe(nameof<Identifier>(n => n.getReferencingNodes), () => {
+    describe(nameof<Identifier>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencingNodes = firstChild.getNameNode().getReferencingNodes();
+            const referencingNodes = firstChild.getNameNode().findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");

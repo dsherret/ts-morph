@@ -8,11 +8,16 @@ export type ReferenceFindableNodeExtensionType = Node<ts.Node & { name?: ts.Prop
 
 export interface ReferenceFindableNode {
     /**
-     * Finds the references of the node.
+     * Finds the references of the definition of the node.
      */
     findReferences(): ReferencedSymbol[];
     /**
+     * Finds the nodes that reference the definition of the node.
+     */
+    findReferencesAsNodes(): Node[];
+    /**
      * Gets the nodes that reference the definition of the node.
+     * @deprecated Use `findReferencesAsNodes()`
      */
     getReferencingNodes(): Node[];
 }
@@ -23,8 +28,12 @@ export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNod
             return this.global.languageService.findReferences(getNodeForReferences(this));
         }
 
+        findReferencesAsNodes() {
+            return this.global.languageService.findReferencesAsNodes(getNodeForReferences(this));
+        }
+
         getReferencingNodes() {
-            return this.global.languageService.getDefinitionReferencingNodes(getNodeForReferences(this));
+            return this.findReferencesAsNodes();
         }
     };
 }

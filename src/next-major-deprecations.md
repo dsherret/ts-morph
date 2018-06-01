@@ -1,3 +1,4 @@
 ﻿# Deprecations in the next major
 
-None.
+* getDefinitionReferencingNodes(node)
+* getReferencingNodes()

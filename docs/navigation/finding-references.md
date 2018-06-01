@@ -35,5 +35,5 @@ If you just went the nodes that reference the named/nameable declaration, then u
 following method:
 
 ```ts
-const nodes = classDeclaration.getReferencingNodes();
+const nodes = classDeclaration.findReferencesAsNodes();
 ```

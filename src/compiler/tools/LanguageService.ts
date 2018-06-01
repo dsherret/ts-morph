@@ -190,7 +190,7 @@ export class LanguageService {
      * Finds the nodes that reference the definition(s) of the specified node.
      * @param node - Node.
      */
-    getDefinitionReferencingNodes(node: Node) {
+    findReferencesAsNodes(node: Node) {
         const references = this.findReferences(node);
         return ArrayUtils.from(getReferencingNodes());
 
@@ -203,6 +203,15 @@ export class LanguageService {
                 }
             }
         }
+    }
+
+    /**
+     * Finds the nodes that reference the definition(s) of the specified node.
+     * @param node - Node.
+     * @deprecated Use `findReferencesAsNodes()`.
+     */
+    getDefinitionReferencingNodes(node: Node) {
+        return this.findReferencesAsNodes(node);
     }
 
     /**
