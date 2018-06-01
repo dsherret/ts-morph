@@ -139,6 +139,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the full text with leading trivia.
+     */
+    getFullText() {
+        // return the string instead of letting Node.getFullText() do a substring to prevent an extra allocation
+        return this.compilerNode.text;
+    }
+
+    /**
      * Gets the line number of the provided position.
      * @param pos - Position
      */
