@@ -25,7 +25,7 @@ In these situations, you can access any underlying compiler node property by usi
 const nameNode = propertyAccessExpression.getNodeProperty("name"); // returns: Node<ts.PropertyName>
 ```
 
-**Note:** This currently only works on properties that are a single node.
+**Note:** This currently only works on properties that are a single node. Follow issue [#304](https://github.com/dsherret/ts-simple-ast/issues/304) for progress.
 
 ## Navigating Existing Compiler Nodes
 
@@ -34,7 +34,7 @@ Sometimes you might want to easily navigate an existing compiler node.
 Do that by using the `createWrappedNode` function:
 
 ```ts ignore-error: 1109
-import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
+import { createWrappedNode, ClassDeclaration, ts } from "ts-simple-ast";
 
 // some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...;
@@ -62,3 +62,19 @@ const compilerTypeChecker: ts.TypeChecker = ...;
 const classDec = createWrappedNode(classNode, { typeChecker: compilerTypeChecker }) as ClassDeclaration;
 console.log(classDec.getPropertyOrThrow("propName").getType().getText()); // ok, because a type checker was provided
 ```
+
+### Important: Using both the TypeScript API and ts-simple-ast
+
+It is highly recommended to always use the `ts` named export from ts-simple-ast when
+needing to use the TypeScript Compiler API and ts-simple-ast at the same time:
+
+```ts
+// do this
+import { ts } from "ts-simple-ast";
+// not this
+import * as ts from "typescript";
+```
+
+They're almost identical and the `ts` named export from ts-simple-ast should serve your needs.
+
+There's lots of reasons why this is done and it's outlined in [#333](https://github.com/dsherret/ts-simple-ast/issues/333#issuecomment-391182952).
