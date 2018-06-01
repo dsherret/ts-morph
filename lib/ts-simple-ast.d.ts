@@ -3117,11 +3117,16 @@ export declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
 
 export interface ReferenceFindableNode {
     /**
-     * Finds the references of the node.
+     * Finds the references of the definition of the node.
      */
     findReferences(): ReferencedSymbol[];
     /**
+     * Finds the nodes that reference the definition of the node.
+     */
+    findReferencesAsNodes(): Node[];
+    /**
      * Gets the nodes that reference the definition of the node.
+     * @deprecated Use `findReferencesAsNodes()`
      */
     getReferencingNodes(): Node[];
 }
@@ -7920,6 +7925,12 @@ export declare class LanguageService {
     /**
      * Finds the nodes that reference the definition(s) of the specified node.
      * @param node - Node.
+     */
+    findReferencesAsNodes(node: Node): Node<ts.Node>[];
+    /**
+     * Finds the nodes that reference the definition(s) of the specified node.
+     * @param node - Node.
+     * @deprecated Use `findReferencesAsNodes()`.
      */
     getDefinitionReferencingNodes(node: Node): Node<ts.Node>[];
     /**
