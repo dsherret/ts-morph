@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.3.0"></a>
+# [11.3.0](https://github.com/dsherret/ts-simple-ast/compare/11.2.2...11.3.0) (2018-06-01)
+
+
+### Features
+
+* Add .findReferencesAsNodes() to deprecate .getReferencingNodes() in next major. ([a8a731a](https://github.com/dsherret/ts-simple-ast/commit/a8a731a))
+
+
+
 <a name="11.2.2"></a>
 ## [11.2.2](https://github.com/dsherret/ts-simple-ast/compare/11.2.1...11.2.2) (2018-06-01)
 
