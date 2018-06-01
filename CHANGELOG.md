@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="11.2.2"></a>
+## [11.2.2](https://github.com/dsherret/ts-simple-ast/compare/11.2.1...11.2.2) (2018-06-01)
+
+
+### Bug Fixes
+
+* [#336](https://github.com/dsherret/ts-simple-ast/issues/336) - Calling .remove() incorrectly removes next sibling's leading comments. ([aab1c1b](https://github.com/dsherret/ts-simple-ast/commit/aab1c1b))
+* sourceFile.getTrailingTriviaEnd() should return the end position of the source file. ([ff6b3b3](https://github.com/dsherret/ts-simple-ast/commit/ff6b3b3))
+
+
+
 <a name="11.2.1"></a>
 ## [11.2.1](https://github.com/dsherret/ts-simple-ast/compare/11.2.0...11.2.1) (2018-05-28)
 
