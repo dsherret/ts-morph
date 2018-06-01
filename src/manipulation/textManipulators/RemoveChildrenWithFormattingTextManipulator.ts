@@ -1,7 +1,7 @@
 ﻿import { TextManipulator } from "./TextManipulator";
 import { Node } from "../../compiler";
 import { FormattingKind, getFormattingKindText } from "../formatting";
-import { getPosAtNextNonBlankLine, getNextMatchingPos, getPosAtEndOfPreviousLine } from "../textSeek";
+import { getPosAtNextNonBlankLine, getNextMatchingPos, getPosAtEndOfPreviousLine, getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 import { isNewLineAtPos } from "../textChecks";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
 import { getTextForError } from "./getTextForError";
@@ -66,13 +66,10 @@ export class RemoveChildrenWithFormattingTextManipulator<TNode extends Node> imp
         function getRemovalEnd() {
             if (previousSibling != null && nextSibling != null) {
                 const nextSiblingFormatting = getSiblingFormatting(parent as TNode, nextSibling);
-                if (nextSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Newline) {
-                    const nextSiblingStartLinePos = nextSibling.getStartLinePos(true);
-                    if (nextSiblingStartLinePos !== children[children.length - 1].getStartLinePos(true))
-                        return nextSiblingStartLinePos;
-                }
+                if (nextSiblingFormatting === FormattingKind.Blankline || nextSiblingFormatting === FormattingKind.Newline)
+                    return getPosAtStartOfLineOrNonWhitespace(fullText, nextSibling.getNonWhitespaceStart());
 
-                return nextSibling.getStart(true);
+                return nextSibling.getNonWhitespaceStart();
             }
 
             if (parent.getEnd() === children[children.length - 1].getEnd())
