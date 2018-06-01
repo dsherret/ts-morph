@@ -5980,6 +5980,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDirectoryPath(): string;
     /**
+     * Gets the full text with leading trivia.
+     */
+    getFullText(): string;
+    /**
      * Gets the line number of the provided position.
      * @param pos - Position
      */
