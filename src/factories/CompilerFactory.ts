@@ -1,6 +1,7 @@
 import { ts, SyntaxKind, TypeFlags } from "../typescript";
-import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
-    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry } from "../compiler";
+import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticWithLocation,
+    DiagnosticMessageChain, JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan,
+    ReferenceEntry } from "../compiler";
 import * as errors from "../errors";
 import { SourceFileStructure } from "../structures";
 import { SourceFileStructurePrinter } from "../structurePrinters";
@@ -434,7 +435,19 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic.
      */
     getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
-        return this.diagnosticCache.getOrCreate(diagnostic, () => new Diagnostic(this.global, diagnostic));
+        return this.diagnosticCache.getOrCreate(diagnostic, () => {
+            if (diagnostic.start != null)
+                return new DiagnosticWithLocation(this.global, diagnostic as ts.DiagnosticWithLocation);
+            return new Diagnostic(this.global, diagnostic);
+        });
+    }
+
+    /**
+     * Gets a wrapped diagnostic with location from a compiler diagnostic.
+     * @param diagnostic - Compiler diagnostic.
+     */
+    getDiagnosticWithLocation(diagnostic: ts.DiagnosticWithLocation): DiagnosticWithLocation {
+        return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.global, diagnostic));
     }
 
     /**

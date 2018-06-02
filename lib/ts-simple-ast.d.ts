@@ -8030,7 +8030,7 @@ export declare class Program {
      * Gets the syntactic diagnostics.
      * @param sourceFile - Optional source file.
      */
-    getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[];
+    getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
      * Gets the semantic diagnostics.
      * @param sourceFile - Optional source file.
@@ -8040,7 +8040,7 @@ export declare class Program {
      * Gets the declaration diagnostics.
      * @param sourceFile - Optional source file.
      */
-    getDeclarationDiagnostics(sourceFile?: SourceFile): Diagnostic[];
+    getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
      * Gets the pre-emit diagnostics.
      * @param sourceFile - Source file.
@@ -8193,11 +8193,11 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
 /**
  * Diagnostic.
  */
-export declare class Diagnostic {
+export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /**
      * Gets the underlying compiler diagnostic.
      */
-    readonly compilerObject: ts.Diagnostic;
+    readonly compilerObject: TCompilerObject;
     /**
      * Gets the source file.
      */
@@ -8226,6 +8226,21 @@ export declare class Diagnostic {
      * Gets the source.
      */
     getSource(): string | undefined;
+}
+
+export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
+    /**
+     * Gets the start.
+     */
+    getStart(): number;
+    /**
+     * Gets the length
+     */
+    getLength(): number;
+    /**
+     * Gets the source file.
+     */
+    getSourceFile(): SourceFile;
 }
 
 /**
@@ -8310,7 +8325,7 @@ export declare class EmitResult {
     /**
      * Contains declaration emit diagnostics.
      */
-    getDiagnostics(): Diagnostic[];
+    getDiagnostics(): Diagnostic<ts.Diagnostic>[];
 }
 
 export declare class FileTextChanges {

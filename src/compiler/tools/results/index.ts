@@ -1,5 +1,6 @@
 export * from "./DefinitionInfo";
 export * from "./Diagnostic";
+export * from "./DiagnosticWithLocation";
 export * from "./DiagnosticMessageChain";
 export * from "./DocumentSpan";
 export * from "./EmitOutput";

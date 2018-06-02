@@ -6,14 +6,14 @@ import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 /**
  * Diagnostic.
  */
-export class Diagnostic {
+export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /** @internal */
     readonly global: GlobalContainer | undefined;
     /** @internal */
-    readonly _compilerObject: ts.Diagnostic;
+    readonly _compilerObject: TCompilerObject;
 
     /** @internal */
-    constructor(global: GlobalContainer | undefined, compilerObject: ts.Diagnostic) {
+    constructor(global: GlobalContainer | undefined, compilerObject: TCompilerObject) {
         this.global = global;
         this._compilerObject = compilerObject;
     }
@@ -21,7 +21,7 @@ export class Diagnostic {
     /**
      * Gets the underlying compiler diagnostic.
      */
-    get compilerObject(): ts.Diagnostic {
+    get compilerObject(): TCompilerObject {
         return this._compilerObject;
     }
 
