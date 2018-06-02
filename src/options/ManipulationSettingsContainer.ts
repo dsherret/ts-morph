@@ -1,6 +1,6 @@
 import * as objectAssign from "object-assign";
 import { ts, NewLineKind, EditorSettings } from "../typescript";
-import { QuoteKind } from "../compiler";
+import { QuoteKind, UserPreferences } from "../compiler";
 import { newLineKindToString, fillDefaultEditorSettings } from "../utils";
 import { SettingsContainer } from "./SettingsContainer";
 
@@ -52,6 +52,7 @@ export interface SupportedFormatCodeSettingsOnly {
 export class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
     private editorSettings: EditorSettings | undefined;
     private formatCodeSettings: SupportedFormatCodeSettings | undefined;
+    private userPreferences: UserPreferences | undefined;
 
     constructor() {
         super({
@@ -86,6 +87,18 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         }
 
         return {...this.formatCodeSettings};
+    }
+
+    /**
+     * Gets the user preferences.
+     */
+    getUserPreferences(): Readonly<UserPreferences> {
+        if (this.userPreferences == null) {
+            this.userPreferences = {
+                quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single"
+            };
+        }
+        return { ...this.userPreferences };
     }
 
     /**
@@ -124,5 +137,6 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         super.set(settings);
         this.editorSettings = undefined;
         this.formatCodeSettings = undefined;
+        this.userPreferences = undefined;
     }
 }

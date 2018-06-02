@@ -7980,17 +7980,20 @@ export declare class LanguageService {
      *
      * @param sourceFile - Source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings): FileTextChanges[];
+    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param filePath - File path of the source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(filePath: string, settings?: FormatCodeSettings): FileTextChanges[];
+    organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     private _getFilePathFromFilePathOrSourceFile;
     private _getFilledSettings;
+    private _getFilledUserPreferences;
 }
 
 /**
@@ -8150,6 +8153,12 @@ export declare class TypeChecker {
 
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
     ensureNewLineAtEndOfFile?: boolean;
+}
+
+/**
+ * User preferences for refactoring.
+ */
+export interface UserPreferences extends ts.UserPreferences {
 }
 
 /**
@@ -9216,6 +9225,7 @@ export interface SupportedFormatCodeSettingsOnly {
 export declare class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
     private editorSettings;
     private formatCodeSettings;
+    private userPreferences;
     constructor();
     /**
      * Gets the editor settings based on the current manipulation settings.
@@ -9225,6 +9235,10 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
      * Gets the format code settings.
      */
     getFormatCodeSettings(): Readonly<SupportedFormatCodeSettings>;
+    /**
+     * Gets the user preferences.
+     */
+    getUserPreferences(): Readonly<UserPreferences>;
     /**
      * Gets the quote kind used for string literals.
      */

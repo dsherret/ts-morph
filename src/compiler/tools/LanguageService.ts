@@ -7,7 +7,7 @@ import { KeyValueCache, ArrayUtils, FileUtils, StringUtils, ObjectUtils, fillDef
 import { SourceFile } from "../file";
 import { Node } from "../common";
 import { Program } from "./Program";
-import { FormatCodeSettings } from "./inputs";
+import { FormatCodeSettings, UserPreferences } from "./inputs";
 import { ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput,
     FileTextChanges } from "./results";
 
@@ -312,21 +312,23 @@ export class LanguageService {
      *
      * @param sourceFile - Source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings): FileTextChanges[];
+    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param filePath - File path of the source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(filePath: string, settings?: FormatCodeSettings): FileTextChanges[];
-    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}): FileTextChanges[] {
+    organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
         };
-        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), undefined)
+        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), this._getFilledUserPreferences(userPreferences))
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 
@@ -346,5 +348,9 @@ export class LanguageService {
         fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
         (settings as any)["_filled"] = true;
         return settings;
+    }
+
+    private _getFilledUserPreferences(userPreferences: UserPreferences) {
+        return ObjectUtils.assign(this.global.getUserPreferences(), userPreferences);
     }
 }

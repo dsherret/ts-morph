@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ManipulationSettings, ManipulationSettingsContainer, IndentationText } from "../options";
 import { ts, NewLineKind, EditorSettings, IndentStyle } from "../typescript";
-import { QuoteKind } from "../compiler";
+import { QuoteKind, UserPreferences } from "../compiler";
 import { StringUtils } from "../utils";
 
 describe(nameof(IndentationText), () => {
@@ -99,6 +99,26 @@ describe(nameof(ManipulationSettingsContainer), () => {
                 indentStyle: IndentStyle.Smart,
                 indentSize: 1,
                 tabSize: 1
+            });
+        });
+    });
+
+    describe(nameof<ManipulationSettingsContainer>(c => c.getUserPreferences), () => {
+        function doTest(actual: UserPreferences, expected: UserPreferences) {
+            expect(actual).is.deep.equal(expected);
+        }
+
+        it("should get the default preferences", () => {
+            doTest(new ManipulationSettingsContainer().getUserPreferences(), {
+                quotePreference: "double"
+            });
+        });
+
+        it("should have a single preferences after changing it", () => {
+            const container = new ManipulationSettingsContainer();
+            container.set({ quoteKind: QuoteKind.Single });
+            doTest(container.getUserPreferences(), {
+                quotePreference: "single"
             });
         });
     });
