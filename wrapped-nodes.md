@@ -99,7 +99,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: expression
 * [ExpressionWithTypeArguments](src/compiler/type/ExpressionWithTypeArguments.ts)
     * :heavy_check_mark: expression
-    * :heavy_check_mark: typeArguments
 * [ExternalModuleReference](src/compiler/file/ExternalModuleReference.ts)
     * :heavy_check_mark: expression
 * [ForInStatement](src/compiler/statement/ForInStatement.ts)
@@ -128,11 +127,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: token
     * :heavy_check_mark: types
 * [Identifier](src/compiler/common/Identifier.ts)
+    * :heavy_check_mark: text
+* [Identifier](src/compiler/common/Identifier.ts)
     * :x: escapedText
     * :x: originalKeywordKind
     * :x: isInJSDocNamespace
-* [Identifier](src/compiler/common/Identifier.ts)
-    * :heavy_check_mark: text
 * [IfStatement](src/compiler/statement/IfStatement.ts)
     * :heavy_check_mark: expression
     * :heavy_check_mark: thenStatement
@@ -197,10 +196,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: closingFragment
 * [JsxOpeningElement](src/compiler/jsx/JsxOpeningElement.ts)
     * :heavy_check_mark: tagName
+    * :x: typeArguments
     * :heavy_check_mark: attributes
 * [JsxOpeningFragment](src/compiler/jsx/JsxOpeningFragment.ts)
 * [JsxSelfClosingElement](src/compiler/jsx/JsxSelfClosingElement.ts)
     * :heavy_check_mark: tagName
+    * :x: typeArguments
     * :heavy_check_mark: attributes
 * [JsxSpreadAttribute](src/compiler/jsx/JsxSpreadAttribute.ts)
     * :heavy_check_mark: expression
@@ -291,11 +292,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: objectAssignmentInitializer
 * SignatureDeclarationBase - Implemented via mixin.
 * [SourceFile](src/compiler/file/SourceFile.ts)
-* [SourceFile](src/compiler/file/SourceFile.ts)
     * :heavy_check_mark: statements
     * :x: endOfFileToken
     * :heavy_check_mark: fileName
-    * :x: text
+    * :heavy_check_mark: text
     * :x: amdDependencies
     * :x: moduleName
     * :heavy_check_mark: referencedFiles
@@ -304,6 +304,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
     * :heavy_check_mark: languageVersion
+* [SourceFile](src/compiler/file/SourceFile.ts)
 * [SpreadAssignment](src/compiler/expression/object/SpreadAssignment.ts)
     * :heavy_check_mark: expression
 * [SpreadElement](src/compiler/expression/SpreadElement.ts)
@@ -322,6 +323,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [SyntaxList](src/compiler/common/SyntaxList.ts)
 * [TaggedTemplateExpression](src/compiler/literal/template/TaggedTemplateExpression.ts)
     * :heavy_check_mark: tag
+    * :x: typeArguments
     * :heavy_check_mark: template
 * [TemplateExpression](src/compiler/literal/template/TemplateExpression.ts)
     * :heavy_check_mark: head
@@ -363,7 +365,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: expression
 * [TypeReferenceNode](src/compiler/type/TypeReferenceNode.ts)
     * :heavy_check_mark: typeName
-    * :heavy_check_mark: typeArguments
 * [UnaryExpression](src/compiler/expression/UnaryExpression.ts)
 * [UnionTypeNode](src/compiler/type/UnionTypeNode.ts)
     * :heavy_check_mark: types
@@ -390,7 +391,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 51
+**Total:** 60
 
 * ArrayBindingPattern
 * BindingElement
@@ -402,21 +403,27 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * DeclarationStatement
 * ImportCall
 * ImportClause
+* ImportTypeNode
 * IndexedAccessTypeNode
 * InferTypeNode
+* InputFiles
 * JSDocAllType
+* JSDocCallbackTag
 * JSDocFunctionType
 * JSDocNamespaceDeclaration
 * JSDocNonNullableType
 * JSDocNullableType
 * JSDocOptionalType
 * JSDocPropertyLikeTag
+* JSDocSignature
 * JSDocTemplateTag
 * JSDocType
 * JSDocTypeExpression
 * JSDocTypeLiteral
 * JSDocUnknownType
 * JSDocVariadicType
+* JsonMinusNumericLiteral
+* JsonObjectExpressionStatement
 * JsonSourceFile
 * JsxAttributes
 * KeywordTypeNode
@@ -429,6 +436,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * NamedImports
 * NamespaceExportDeclaration
 * NamespaceImport
+* NodeWithTypeArguments
 * ObjectBindingPattern
 * ObjectLiteralElement
 * ObjectLiteralExpressionBase
@@ -440,6 +448,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ThisTypeNode
 * Token
 * TransientIdentifier
+* TsConfigSourceFile
 * TypeOperatorNode
 * TypePredicateNode
 * TypeQueryNode
+* UnparsedSource

@@ -335,7 +335,7 @@ export class LanguageService {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
         };
-        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings))
+        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), undefined)
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 

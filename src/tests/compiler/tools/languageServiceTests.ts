@@ -52,8 +52,8 @@ describe(nameof(LanguageService), () => {
             });
         });
 
-        it("should not emit if there is a declaraton file error", () => {
-            const {sourceFile, project} = getInfoFromText("class MyClass {}\n export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
+        it("should not emit if there is a declaration file error", () => {
+            const {sourceFile, project} = getInfoFromText("export class Test extends MyClass {}\n", { compilerOptions: { declaration: true } });
             const output = sourceFile.global.languageService.getEmitOutput(sourceFile.getFilePath(), true);
 
             checkOutput(output, {

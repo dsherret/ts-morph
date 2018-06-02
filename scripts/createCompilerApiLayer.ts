@@ -100,8 +100,9 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
             // todo: need a better way of doing this in the future...
             const returnTypeNode = sourceFile.getInterfaceOrThrow("CompilerOptions").getIndexSignatures()[0].getReturnTypeNode() as UnionTypeNode;
             returnTypeNode.getTypeNodes().map(n => {
-                if (n.getText() === "CompilerOptionsValue" || n.getText() === "JsonSourceFile")
-                    n.replaceWithText(`ts.${n.getText()}`);
+                const nodeText = n.getText();
+                if (nodeText === "CompilerOptionsValue" || nodeText === "JsonSourceFile" || nodeText === "TsConfigSourceFile")
+                    n.replaceWithText(`ts.${nodeText}`);
             });
         }
 

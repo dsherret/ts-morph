@@ -1,8 +1,8 @@
 ﻿import { Type } from "ts-simple-ast";
-import { ArrayUtils } from "../../src/utils";
+import { ArrayUtils, StringUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {
-    return type.getText() === "Node<NodeType>";
+    return StringUtils.endsWith(type.getText(), "Node<NodeType>");
 }
 
 export function hasDescendantNodeType(type: Type) {

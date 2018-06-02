@@ -1275,7 +1275,7 @@ describe(nameof(Directory), () => {
             const directory = project.createDirectory("dir");
             const subDir = directory.createDirectory("sub");
             subDir.createSourceFile("file1.ts", "");
-            subDir.createSourceFile("file2.ts", "class Child {}\nexport class Parent extends Child {}");
+            subDir.createSourceFile("file2.ts", "export class Parent extends Child {}");
             const result = await directory.emit();
             expect(result.getEmitSkipped()).to.be.true;
 
@@ -1342,7 +1342,7 @@ describe(nameof(Directory), () => {
             const directory = project.createDirectory("dir");
             const subDir = directory.createDirectory("sub");
             subDir.createSourceFile("file1.ts", "");
-            subDir.createSourceFile("file2.ts", "class Child {}\nexport class Parent extends Child {}");
+            subDir.createSourceFile("file2.ts", "export class Parent extends Child {}");
             const result = directory.emitSync();
             expect(result.getEmitSkipped()).to.be.true;
 

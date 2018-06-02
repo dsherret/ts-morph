@@ -183,7 +183,7 @@ export declare class Project {
      * @param enabled - Enabled.
      */
     enableLogging(enabled?: boolean): void;
-    private getUnsavedSourceFiles();
+    private getUnsavedSourceFiles;
     /**
      * Gets the compiler diagnostics.
      */
@@ -453,7 +453,7 @@ export declare class Directory {
         outDir?: string;
         declarationDir?: string;
     }): DirectoryEmitResult;
-    private _emitInternal(options?);
+    private _emitInternal;
     /**
      * Copies a directory to a new directory.
      * @param relativeOrAbsolutePath - The relative or absolute path to the new directory.
@@ -3169,7 +3169,7 @@ export declare type ClassStaticMemberTypes = MethodDeclaration | ClassStaticProp
 
 export declare type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
-declare const ClassDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => ImplementsClauseableNode) & (new (...args: any[]) => HeritageClauseableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => AbstractableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NameableNode) & typeof Statement;
+declare const ClassDeclarationBase: import
 
 export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -3594,10 +3594,10 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Gets all the derived classes.
      */
     getDerivedClasses(): ClassDeclaration[];
-    private getImmediateDerivedClasses();
+    private getImmediateDerivedClasses;
 }
 
-declare const ConstructorDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => OverloadableNode) & (new (...args: any[]) => ScopedNode) & (new (...args: any[]) => FunctionLikeDeclaration) & (new (...args: any[]) => BodyableNode) & typeof Node;
+declare const ConstructorDeclarationBase: import
 
 export declare class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
@@ -3633,7 +3633,7 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
     remove(): void;
 }
 
-declare const GetAccessorDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => AbstractableNode) & (new (...args: any[]) => ScopedNode) & (new (...args: any[]) => StaticableNode) & (new (...args: any[]) => BodiedNode) & (new (...args: any[]) => FunctionLikeDeclaration) & (new (...args: any[]) => PropertyNamedNode) & typeof Node;
+declare const GetAccessorDeclarationBase: import
 
 export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
@@ -3655,7 +3655,7 @@ export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<t
     remove(): void;
 }
 
-declare const MethodDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => OverloadableNode) & (new (...args: any[]) => BodyableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => AbstractableNode) & (new (...args: any[]) => ScopedNode) & (new (...args: any[]) => StaticableNode) & (new (...args: any[]) => AsyncableNode) & (new (...args: any[]) => GeneratorableNode) & (new (...args: any[]) => FunctionLikeDeclaration) & (new (...args: any[]) => PropertyNamedNode) & typeof Node;
+declare const MethodDeclarationBase: import
 
 export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
@@ -3691,7 +3691,7 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
     remove(): void;
 }
 
-declare const PropertyDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => AbstractableNode) & (new (...args: any[]) => ScopedNode) & (new (...args: any[]) => StaticableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => ReadonlyableNode) & (new (...args: any[]) => ExclamationTokenableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => InitializerExpressionableNode) & (new (...args: any[]) => TypedNode) & (new (...args: any[]) => PropertyNamedNode) & (new (...args: any[]) => ModifierableNode) & typeof Node;
+declare const PropertyDeclarationBase: import
 
 export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDeclaration> {
     /**
@@ -3705,7 +3705,7 @@ export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.Prop
     remove(): void;
 }
 
-declare const SetAccessorDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => AbstractableNode) & (new (...args: any[]) => ScopedNode) & (new (...args: any[]) => StaticableNode) & (new (...args: any[]) => BodiedNode) & (new (...args: any[]) => FunctionLikeDeclaration) & (new (...args: any[]) => PropertyNamedNode) & typeof Node;
+declare const SetAccessorDeclarationBase: import
 
 export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
@@ -3762,7 +3762,7 @@ export declare class CommentRange {
      * This will be true after any manipulations have occured to the source file this comment range was generated from.
      */
     wasForgotten(): boolean;
-    private _throwIfForgotten();
+    private _throwIfForgotten;
 }
 
 export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> {
@@ -3771,8 +3771,6 @@ export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> 
      */
     getExpression(): Expression;
 }
-
-declare const Identifier_base: (new (...args: any[]) => ReferenceFindableNode) & typeof PrimaryExpression;
 
 export declare class Identifier extends Identifier_base<ts.Identifier> {
     /**
@@ -4294,7 +4292,7 @@ export declare class QualifiedName extends Node<ts.QualifiedName> {
 export declare enum Scope {
     Public = "public",
     Protected = "protected",
-    Private = "private",
+    Private = "private"
 }
 
 export declare class Signature {
@@ -4573,7 +4571,7 @@ export declare class JSDocAugmentsTag extends JSDocTag<ts.JSDocAugmentsTag> {
 export declare class JSDocClassTag extends JSDocTag<ts.JSDocClassTag> {
 }
 
-declare const JSDocParameterTagBase: (new (...args: any[]) => JSDocPropertyLikeTag) & typeof JSDocTag;
+declare const JSDocParameterTagBase: import
 
 /**
  * JS doc parameter tag node.
@@ -4581,7 +4579,7 @@ declare const JSDocParameterTagBase: (new (...args: any[]) => JSDocPropertyLikeT
 export declare class JSDocParameterTag extends JSDocParameterTagBase<ts.JSDocParameterTag> {
 }
 
-declare const JSDocPropertyTagBase: (new (...args: any[]) => JSDocPropertyLikeTag) & typeof JSDocTag;
+declare const JSDocPropertyTagBase: import
 
 /**
  * JS doc property tag node.
@@ -4654,7 +4652,7 @@ export interface JSDocPropertyLikeTag {
 
 export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
 
-declare const EnumDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
+declare const EnumDeclarationBase: import
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
@@ -4722,7 +4720,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
     getConstKeyword(): Node<ts.Node> | undefined;
 }
 
-declare const EnumMemberBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => InitializerExpressionableNode) & (new (...args: any[]) => PropertyNamedNode) & typeof Node;
+declare const EnumMemberBase: import
 
 export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
     /**
@@ -4745,7 +4743,7 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
     remove(): void;
 }
 
-declare const AsExpressionBase: (new (...args: any[]) => TypedNode) & (new (...args: any[]) => ExpressionedNode) & typeof Expression;
+declare const AsExpressionBase: import
 
 export declare class AsExpression extends AsExpressionBase<ts.AsExpression> {
 }
@@ -4759,7 +4757,7 @@ export declare class AssignmentExpression<TOperator extends ts.AssignmentOperato
     getOperatorToken(): Node<TOperator>;
 }
 
-declare const AwaitExpressionBase: (new (...args: any[]) => UnaryExpressionedNode) & typeof UnaryExpression;
+declare const AwaitExpressionBase: import
 
 export declare class AwaitExpression extends AwaitExpressionBase<ts.AwaitExpression> {
 }
@@ -4781,7 +4779,7 @@ export declare class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryE
     getRight(): Expression<ts.Expression>;
 }
 
-declare const CallExpressionBase: (new (...args: any[]) => TypeArgumentedNode) & (new (...args: any[]) => ArgumentedNode) & (new (...args: any[]) => LeftHandSideExpressionedNode) & typeof LeftHandSideExpression;
+declare const CallExpressionBase: import
 
 export declare class CallExpression<T extends ts.CallExpression = ts.CallExpression> extends CallExpressionBase<T> {
     /**
@@ -4824,12 +4822,12 @@ export declare class ConditionalExpression extends ConditionalExpressionBase<ts.
     getWhenFalse(): Expression<ts.Expression>;
 }
 
-declare const DeleteExpressionBase: (new (...args: any[]) => UnaryExpressionedNode) & typeof UnaryExpression;
+declare const DeleteExpressionBase: import
 
 export declare class DeleteExpression extends DeleteExpressionBase<ts.DeleteExpression> {
 }
 
-declare const ElementAccessExpressionBase: (new (...args: any[]) => LeftHandSideExpressionedNode) & typeof MemberExpression;
+declare const ElementAccessExpressionBase: import
 
 export declare class ElementAccessExpression<T extends ts.ElementAccessExpression = ts.ElementAccessExpression> extends ElementAccessExpressionBase<T> {
     /**
@@ -4857,7 +4855,7 @@ export declare class ImportExpression extends ImportExpressionBase<ts.ImportExpr
 export declare class LeftHandSideExpression<T extends ts.LeftHandSideExpression = ts.LeftHandSideExpression> extends UpdateExpression<T> {
 }
 
-declare const LiteralExpressionBase: (new (...args: any[]) => LiteralLikeNode) & typeof PrimaryExpression;
+declare const LiteralExpressionBase: import
 
 export declare class LiteralExpression<T extends ts.LiteralExpression = ts.LiteralExpression> extends LiteralExpressionBase<T> {
 }
@@ -4865,21 +4863,21 @@ export declare class LiteralExpression<T extends ts.LiteralExpression = ts.Liter
 export declare class MemberExpression<T extends ts.MemberExpression = ts.MemberExpression> extends LeftHandSideExpression<T> {
 }
 
-declare const MetaPropertyBase: (new (...args: any[]) => NamedNode) & typeof PrimaryExpression;
+declare const MetaPropertyBase: import
 
 export declare class MetaProperty extends MetaPropertyBase<ts.MetaProperty> {
     /**
      * Gets the keyword token.
      */
-    getKeywordToken(): SyntaxKind;
+    getKeywordToken(): SyntaxKind.ImportKeyword | SyntaxKind.NewKeyword;
 }
 
-declare const NewExpressionBase: (new (...args: any[]) => TypeArgumentedNode) & (new (...args: any[]) => ArgumentedNode) & (new (...args: any[]) => LeftHandSideExpressionedNode) & typeof PrimaryExpression;
+declare const NewExpressionBase: import
 
 export declare class NewExpression extends NewExpressionBase<ts.NewExpression> {
 }
 
-declare const NonNullExpressionBase: (new (...args: any[]) => ExpressionedNode) & typeof LeftHandSideExpression;
+declare const NonNullExpressionBase: import
 
 export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullExpression> {
 }
@@ -4889,12 +4887,12 @@ declare const OmittedExpressionBase: typeof Expression;
 export declare class OmittedExpression extends OmittedExpressionBase<ts.OmittedExpression> {
 }
 
-declare const ParenthesizedExpressionBase: (new (...args: any[]) => ExpressionedNode) & typeof Expression;
+declare const ParenthesizedExpressionBase: import
 
 export declare class ParenthesizedExpression extends ParenthesizedExpressionBase<ts.ParenthesizedExpression> {
 }
 
-declare const PartiallyEmittedExpressionBase: (new (...args: any[]) => ExpressionedNode) & typeof Expression;
+declare const PartiallyEmittedExpressionBase: import
 
 export declare class PartiallyEmittedExpression extends PartiallyEmittedExpressionBase<ts.PartiallyEmittedExpression> {
 }
@@ -4928,17 +4926,17 @@ export declare class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.
 export declare class PrimaryExpression<T extends ts.PrimaryExpression = ts.PrimaryExpression> extends MemberExpression<T> {
 }
 
-declare const PropertyAccessExpressionBase: (new (...args: any[]) => NamedNode) & (new (...args: any[]) => LeftHandSideExpressionedNode) & typeof MemberExpression;
+declare const PropertyAccessExpressionBase: import
 
 export declare class PropertyAccessExpression<T extends ts.PropertyAccessExpression = ts.PropertyAccessExpression> extends PropertyAccessExpressionBase<T> {
 }
 
-declare const SpreadElementBase: (new (...args: any[]) => ExpressionedNode) & typeof Expression;
+declare const SpreadElementBase: import
 
 export declare class SpreadElement extends SpreadElementBase<ts.SpreadElement> {
 }
 
-declare const SuperElementAccessExpressionBase: (new (...args: any[]) => SuperExpressionedNode) & typeof ElementAccessExpression;
+declare const SuperElementAccessExpressionBase: import
 
 export declare class SuperElementAccessExpression extends SuperElementAccessExpressionBase<ts.SuperElementAccessExpression> {
 }
@@ -4948,7 +4946,7 @@ declare const SuperExpressionBase: typeof PrimaryExpression;
 export declare class SuperExpression extends SuperExpressionBase<ts.SuperExpression> {
 }
 
-declare const SuperPropertyAccessExpressionBase: (new (...args: any[]) => SuperExpressionedNode) & typeof PropertyAccessExpression;
+declare const SuperPropertyAccessExpressionBase: import
 
 export declare class SuperPropertyAccessExpression extends SuperPropertyAccessExpressionBase<ts.SuperPropertyAccessExpression> {
 }
@@ -4958,12 +4956,12 @@ declare const ThisExpressionBase: typeof PrimaryExpression;
 export declare class ThisExpression extends ThisExpressionBase<ts.ThisExpression> {
 }
 
-declare const TypeAssertionBase: (new (...args: any[]) => TypedNode) & (new (...args: any[]) => UnaryExpressionedNode) & typeof UnaryExpression;
+declare const TypeAssertionBase: import
 
 export declare class TypeAssertion extends TypeAssertionBase<ts.TypeAssertion> {
 }
 
-declare const TypeOfExpressionBase: (new (...args: any[]) => UnaryExpressionedNode) & typeof UnaryExpression;
+declare const TypeOfExpressionBase: import
 
 export declare class TypeOfExpression extends TypeOfExpressionBase<ts.TypeOfExpression> {
 }
@@ -4974,12 +4972,12 @@ export declare class UnaryExpression<T extends ts.UnaryExpression = ts.UnaryExpr
 export declare class UpdateExpression<T extends ts.UpdateExpression = ts.UpdateExpression> extends UnaryExpression<T> {
 }
 
-declare const VoidExpressionBase: (new (...args: any[]) => UnaryExpressionedNode) & typeof UnaryExpression;
+declare const VoidExpressionBase: import
 
 export declare class VoidExpression extends VoidExpressionBase<ts.VoidExpression> {
 }
 
-declare const YieldExpressionBase: (new (...args: any[]) => GeneratorableNode) & typeof Expression;
+declare const YieldExpressionBase: import
 
 export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
     /**
@@ -5296,7 +5294,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
 }
 
-declare const PropertyAssignmentBase: (new (...args: any[]) => InitializerGetExpressionableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => PropertyNamedNode) & typeof Node;
+declare const PropertyAssignmentBase: import
 
 export declare class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
@@ -5317,7 +5315,7 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
     setInitializer(writerFunction: WriterFunction): this;
 }
 
-declare const ShorthandPropertyAssignmentBase: (new (...args: any[]) => InitializerGetExpressionableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => NamedNode) & typeof Node;
+declare const ShorthandPropertyAssignmentBase: import
 
 export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase<ts.ShorthandPropertyAssignment> {
     /**
@@ -5355,7 +5353,7 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
     setInitializer(text: string): PropertyAssignment;
 }
 
-declare const SpreadAssignmentBase: (new (...args: any[]) => ExpressionedNode) & typeof Node;
+declare const SpreadAssignmentBase: import
 
 export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
 }
@@ -5441,7 +5439,6 @@ export interface KindToNodeMappings {
     [SyntaxKind.JsxText]: JsxText;
     [SyntaxKind.LabeledStatement]: LabeledStatement;
     [SyntaxKind.LiteralType]: LiteralTypeNode;
-    [SyntaxKind.LastTypeNode]: LiteralTypeNode;
     [SyntaxKind.MetaProperty]: MetaProperty;
     [SyntaxKind.MethodDeclaration]: MethodDeclaration;
     [SyntaxKind.MethodSignature]: MethodSignature;
@@ -5753,7 +5750,7 @@ export declare enum FileSystemRefreshResult {
     /** The source file was updated from the file system. */
     Updated = 1,
     /** The source file was deleted. */
-    Deleted = 2,
+    Deleted = 2
 }
 
 export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
@@ -5869,7 +5866,7 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     getImportClause(): Node | undefined;
 }
 
-declare const ImportEqualsDeclarationBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
+declare const ImportEqualsDeclarationBase: import
 
 export declare class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.ImportEqualsDeclaration> {
     /**
@@ -6333,10 +6330,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: TextChange[]): this;
-    private _refreshFromFileSystemInternal(fileReadResult);
+    private _refreshFromFileSystemInternal;
 }
 
-declare const ArrowFunctionBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => BodiedNode) & (new (...args: any[]) => AsyncableNode) & (new (...args: any[]) => StatementedNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => SignaturedDeclaration) & (new (...args: any[]) => ModifierableNode) & typeof Expression;
+declare const ArrowFunctionBase: import
 
 export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**
@@ -6345,7 +6342,7 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     getEqualsGreaterThan(): Node<ts.Token<SyntaxKind.EqualsGreaterThanToken>>;
 }
 
-declare const FunctionDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => UnwrappableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => OverloadableNode) & (new (...args: any[]) => BodyableNode) & (new (...args: any[]) => AsyncableNode) & (new (...args: any[]) => GeneratorableNode) & (new (...args: any[]) => FunctionLikeDeclaration) & (new (...args: any[]) => StatementedNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NamedNode) & typeof Node;
+declare const FunctionDeclarationBase: import
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6381,7 +6378,7 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
     remove(): void;
 }
 
-declare const FunctionExpressionBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => BodiedNode) & (new (...args: any[]) => AsyncableNode) & (new (...args: any[]) => GeneratorableNode) & (new (...args: any[]) => StatementedNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => SignaturedDeclaration) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NameableNode) & typeof PrimaryExpression;
+declare const FunctionExpressionBase: import
 
 export declare class FunctionExpression extends FunctionExpressionBase<ts.FunctionExpression> {
 }
@@ -6423,7 +6420,7 @@ export interface OverloadableNode {
 
 export declare function OverloadableNode<T extends Constructor<OverloadableNodeExtensionType>>(Base: T): Constructor<OverloadableNode> & T;
 
-declare const ParameterDeclarationBase: (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => DecoratableNode) & (new (...args: any[]) => ScopeableNode) & (new (...args: any[]) => ReadonlyableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => TypedNode) & (new (...args: any[]) => InitializerExpressionableNode) & (new (...args: any[]) => DeclarationNamedNode) & typeof Node;
+declare const ParameterDeclarationBase: import
 
 export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterDeclaration> {
     /**
@@ -6479,7 +6476,7 @@ export declare class HeritageClause extends Node<ts.HeritageClause> {
     removeExpression(expressionNode: ExpressionWithTypeArguments): this;
 }
 
-declare const CallSignatureDeclarationBase: (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => SignaturedDeclaration) & typeof TypeElement;
+declare const CallSignatureDeclarationBase: import
 
 export declare class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
     /**
@@ -6493,7 +6490,7 @@ export declare class CallSignatureDeclaration extends CallSignatureDeclarationBa
     remove(): void;
 }
 
-declare const ConstructSignatureDeclarationBase: (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => SignaturedDeclaration) & typeof TypeElement;
+declare const ConstructSignatureDeclarationBase: import
 
 export declare class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
     /**
@@ -6507,7 +6504,7 @@ export declare class ConstructSignatureDeclaration extends ConstructSignatureDec
     remove(): void;
 }
 
-declare const IndexSignatureDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => ReadonlyableNode) & (new (...args: any[]) => ModifierableNode) & typeof TypeElement;
+declare const IndexSignatureDeclarationBase: import
 
 export declare class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
     /**
@@ -6565,7 +6562,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     remove(): void;
 }
 
-declare const InterfaceDeclarationBase: (new (...args: any[]) => TypeElementMemberedNode) & (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => ExtendsClauseableNode) & (new (...args: any[]) => HeritageClauseableNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
+declare const InterfaceDeclarationBase: import
 
 export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceDeclaration> {
     /**
@@ -6589,7 +6586,7 @@ export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.In
     getImplementations(): ImplementationLocation[];
 }
 
-declare const MethodSignatureBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => SignaturedDeclaration) & (new (...args: any[]) => PropertyNamedNode) & typeof TypeElement;
+declare const MethodSignatureBase: import
 
 export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
     /**
@@ -6603,7 +6600,7 @@ export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignat
     remove(): void;
 }
 
-declare const PropertySignatureBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => ReadonlyableNode) & (new (...args: any[]) => QuestionTokenableNode) & (new (...args: any[]) => InitializerExpressionableNode) & (new (...args: any[]) => TypedNode) & (new (...args: any[]) => PropertyNamedNode) & (new (...args: any[]) => ModifierableNode) & typeof TypeElement;
+declare const PropertySignatureBase: import
 
 export declare class PropertySignature extends PropertySignatureBase<ts.PropertySignature> {
     /**
@@ -6682,8 +6679,6 @@ export interface JsxAttributedNode {
 
 export declare function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T;
 
-declare const JsxAttribute_base: (new (...args: any[]) => NamedNode) & typeof Node;
-
 export declare class JsxAttribute extends JsxAttribute_base<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
@@ -6698,8 +6693,6 @@ export declare class JsxAttribute extends JsxAttribute_base<ts.JsxAttribute> {
      */
     remove(): void;
 }
-
-declare const JsxClosingElement_base: (new (...args: any[]) => JsxTagNamedNode) & typeof Node;
 
 export declare class JsxClosingElement extends JsxClosingElement_base<ts.JsxClosingElement> {
 }
@@ -6776,15 +6769,11 @@ export declare class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
     getClosingFragment(): JsxClosingFragment;
 }
 
-declare const JsxOpeningElement_base: (new (...args: any[]) => JsxAttributedNode) & (new (...args: any[]) => JsxTagNamedNode) & typeof Expression;
-
 export declare class JsxOpeningElement extends JsxOpeningElement_base<ts.JsxOpeningElement> {
 }
 
 export declare class JsxOpeningFragment extends Expression<ts.JsxOpeningFragment> {
 }
-
-declare const JsxSelfClosingElement_base: (new (...args: any[]) => JsxAttributedNode) & (new (...args: any[]) => JsxTagNamedNode) & typeof PrimaryExpression;
 
 export declare class JsxSelfClosingElement extends JsxSelfClosingElement_base<ts.JsxSelfClosingElement> {
 }
@@ -6846,7 +6835,7 @@ export declare enum QuoteKind {
     /** Single quote */
     Single = "'",
     /** Double quote */
-    Double = "\"",
+    Double = "\""
 }
 
 declare const RegularExpressionLiteralBase: typeof LiteralExpression;
@@ -6903,10 +6892,9 @@ export declare class NoSubstitutionTemplateLiteral extends NoSubstitutionTemplat
      * @param value - Value to set.
      * @returns The new node if the kind changed; the current node otherwise.
      */
-    setLiteralValue(value: string): NoSubstitutionTemplateLiteral | TemplateExpression;
-}
+    setLiteralValue(value: string): import
 
-declare const TaggedTemplateExpressionBase: typeof MemberExpression;
+export declare const TaggedTemplateExpressionBase: typeof MemberExpression;
 
 export declare class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.TaggedTemplateExpression> {
     /**
@@ -6945,17 +6933,17 @@ export declare class TemplateExpression extends TemplateExpressionBase<ts.Templa
     setLiteralValue(value: string): TemplateLiteral;
 }
 
-declare const TemplateHeadBase: (new (...args: any[]) => LiteralLikeNode) & typeof Node;
+declare const TemplateHeadBase: import
 
 export declare class TemplateHead extends TemplateHeadBase<ts.TemplateHead> {
 }
 
-declare const TemplateMiddleBase: (new (...args: any[]) => LiteralLikeNode) & typeof Node;
+declare const TemplateMiddleBase: import
 
 export declare class TemplateMiddle extends TemplateMiddleBase<ts.TemplateMiddle> {
 }
 
-declare const TemplateSpanBase: (new (...args: any[]) => ExpressionedNode) & typeof Node;
+declare const TemplateSpanBase: import
 
 export declare class TemplateSpan extends TemplateSpanBase<ts.TemplateSpan> {
     /**
@@ -6964,7 +6952,7 @@ export declare class TemplateSpan extends TemplateSpanBase<ts.TemplateSpan> {
     getLiteral(): TemplateMiddle | TemplateTail;
 }
 
-declare const TemplateTailBase: (new (...args: any[]) => LiteralLikeNode) & typeof Node;
+declare const TemplateTailBase: import
 
 export declare class TemplateTail extends TemplateTailBase<ts.TemplateTail> {
 }
@@ -6980,7 +6968,7 @@ export interface NamespaceChildableNode {
 
 export declare function NamespaceChildableNode<T extends Constructor<NamespaceChildableNodeExtensionType>>(Base: T): Constructor<NamespaceChildableNode> & T;
 
-declare const NamespaceDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => UnwrappableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => BodiedNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => StatementedNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
+declare const NamespaceDeclarationBase: import
 
 export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceDeclaration> {
     /**
@@ -7030,12 +7018,12 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
     getDeclarationKindKeyword(): Node<ts.Node> | undefined;
 }
 
-declare const BlockBase: (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => StatementedNode) & typeof Statement;
+declare const BlockBase: import
 
 export declare class Block extends BlockBase<ts.Block> {
 }
 
-declare const BreakStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const BreakStatementBase: import
 
 export declare class BreakStatement extends BreakStatementBase<ts.BreakStatement> {
     /**
@@ -7048,7 +7036,7 @@ export declare class BreakStatement extends BreakStatementBase<ts.BreakStatement
     getLabelOrThrow(): Identifier;
 }
 
-declare const CaseBlockBase: (new (...args: any[]) => TextInsertableNode) & typeof Node;
+declare const CaseBlockBase: import
 
 export declare class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
     /**
@@ -7067,7 +7055,7 @@ export declare class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
     removeClauses(indexRange: [number, number]): this;
 }
 
-declare const CaseClauseBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => StatementedNode) & typeof Node;
+declare const CaseClauseBase: import
 
 export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
     /**
@@ -7080,7 +7068,7 @@ export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
     remove(): void;
 }
 
-declare const ContinueStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const ContinueStatementBase: import
 
 export declare class ContinueStatement extends ContinueStatementBase<ts.ContinueStatement> {
     /**
@@ -7093,7 +7081,7 @@ export declare class ContinueStatement extends ContinueStatementBase<ts.Continue
     getLabelOrThrow(): Identifier;
 }
 
-declare const DefaultClauseBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TextInsertableNode) & (new (...args: any[]) => StatementedNode) & typeof Node;
+declare const DefaultClauseBase: import
 
 export declare class DefaultClause extends DefaultClauseBase<ts.DefaultClause> {
     /**
@@ -7128,7 +7116,7 @@ export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
     getVariableDeclarationOrThrow(): VariableDeclaration;
 }
 
-declare const ExpressionStatementBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const ExpressionStatementBase: import
 
 export declare class ExpressionStatement extends ExpressionStatementBase<ts.ExpressionStatement> {
     /**
@@ -7160,7 +7148,7 @@ export declare class ForInStatement extends ForInStatementBase<ts.ForInStatement
     getExpression(): Expression<ts.Expression>;
 }
 
-declare const ForOfStatementBase: (new (...args: any[]) => AwaitableNode) & typeof IterationStatement;
+declare const ForOfStatementBase: import
 
 export declare class ForOfStatement extends ForOfStatementBase<ts.ForOfStatement> {
     /**
@@ -7202,7 +7190,7 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
     getIncrementorOrThrow(): Expression<ts.Expression>;
 }
 
-declare const IfStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const IfStatementBase: import
 
 export declare class IfStatement extends IfStatementBase<ts.IfStatement> {
     /**
@@ -7219,7 +7207,7 @@ export declare class IfStatement extends IfStatementBase<ts.IfStatement> {
     getElseStatement(): Statement<ts.Statement> | undefined;
 }
 
-declare const IterationStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const IterationStatementBase: import
 
 export declare class IterationStatement<T extends ts.IterationStatement = ts.IterationStatement> extends IterationStatementBase<T> {
     /**
@@ -7228,7 +7216,7 @@ export declare class IterationStatement<T extends ts.IterationStatement = ts.Ite
     getStatement(): Statement<ts.Statement>;
 }
 
-declare const LabeledStatementBase: (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const LabeledStatementBase: import
 
 export declare class LabeledStatement extends LabeledStatementBase<ts.LabeledStatement> {
     /**
@@ -7246,7 +7234,7 @@ declare const NotEmittedStatementBase: typeof Statement;
 export declare class NotEmittedStatement extends NotEmittedStatementBase<ts.NotEmittedStatement> {
 }
 
-declare const ReturnStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const ReturnStatementBase: import
 
 export declare class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
     /**
@@ -7667,7 +7655,7 @@ export interface StatementedNode {
 
 export declare function StatementedNode<T extends Constructor<StatementedNodeExtensionType>>(Base: T): Constructor<StatementedNode> & T;
 
-declare const SwitchStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const SwitchStatementBase: import
 
 export declare class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
     /**
@@ -7728,7 +7716,7 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
     getFinallyBlockOrThrow(): Block;
 }
 
-declare const VariableDeclarationBase: (new (...args: any[]) => ExclamationTokenableNode) & (new (...args: any[]) => TypedNode) & (new (...args: any[]) => InitializerExpressionableNode) & (new (...args: any[]) => BindingNamedNode) & typeof Node;
+declare const VariableDeclarationBase: import
 
 export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
     /**
@@ -7742,7 +7730,7 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
     remove(): void;
 }
 
-declare const VariableDeclarationListBase: (new (...args: any[]) => ModifierableNode) & typeof Node;
+declare const VariableDeclarationListBase: import
 
 export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
     /**
@@ -7793,10 +7781,10 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
 export declare enum VariableDeclarationKind {
     Var = "var",
     Let = "let",
-    Const = "const",
+    Const = "const"
 }
 
-declare const VariableStatementBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => NamespaceChildableNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & typeof Statement;
+declare const VariableStatementBase: import
 
 export declare class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
     /**
@@ -7858,7 +7846,7 @@ export declare class WhileStatement extends WhileStatementBase<ts.WhileStatement
     getExpression(): Expression<ts.Expression>;
 }
 
-declare const WithStatementBase: (new (...args: any[]) => ChildOrderableNode) & typeof Statement;
+declare const WithStatementBase: import
 
 export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
     /**
@@ -8003,8 +7991,8 @@ export declare class LanguageService {
      * @param settings - Format code settings.
      */
     organizeImports(filePath: string, settings?: FormatCodeSettings): FileTextChanges[];
-    private _getFilePathFromFilePathOrSourceFile(filePathOrSourceFile);
-    private _getFilledSettings(settings);
+    private _getFilePathFromFilePathOrSourceFile;
+    private _getFilledSettings;
 }
 
 /**
@@ -8159,7 +8147,7 @@ export declare class TypeChecker {
      * @param type - Literal type to get the base type of.
      */
     getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
-    private getDefaultTypeFormatFlags(enclosingNode?);
+    private getDefaultTypeFormatFlags;
 }
 
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
@@ -8473,12 +8461,10 @@ export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
     getElementTypeNode(): TypeNode<ts.TypeNode>;
 }
 
-declare const ConstructorTypeNode_base: (new (...args: any[]) => SignaturedDeclaration) & typeof TypeNode;
-
 export declare class ConstructorTypeNode extends ConstructorTypeNode_base<ts.ConstructorTypeNode> {
 }
 
-declare const ExpressionWithTypeArgumentsBase: (new (...args: any[]) => LeftHandSideExpressionedNode) & typeof TypeNode;
+declare const ExpressionWithTypeArgumentsBase: import
 
 export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase<ts.ExpressionWithTypeArguments> {
     /**
@@ -8486,8 +8472,6 @@ export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgum
      */
     getTypeArguments(): TypeNode[];
 }
-
-declare const FunctionTypeNode_base: (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => SignaturedDeclaration) & typeof TypeNode;
 
 export declare class FunctionTypeNode extends FunctionTypeNode_base<ts.FunctionTypeNode> {
 }
@@ -8732,12 +8716,12 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets the object flags.
      */
     getObjectFlags(): 0 | ObjectFlags;
-    private _hasTypeFlag(flag);
-    private _hasAnyTypeFlag(flag);
-    private _hasObjectFlag(flag);
+    private _hasTypeFlag;
+    private _hasAnyTypeFlag;
+    private _hasObjectFlag;
 }
 
-declare const TypeAliasDeclarationBase: (new (...args: any[]) => ChildOrderableNode) & (new (...args: any[]) => TypeParameteredNode) & (new (...args: any[]) => TypedNode) & (new (...args: any[]) => JSDocableNode) & (new (...args: any[]) => AmbientableNode) & (new (...args: any[]) => ExportableNode) & (new (...args: any[]) => ModifierableNode) & (new (...args: any[]) => NamedNode) & typeof Statement;
+declare const TypeAliasDeclarationBase: import
 
 export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasDeclaration> {
     /**
@@ -8746,8 +8730,6 @@ export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.Ty
      */
     fill(structure: Partial<TypeAliasDeclarationStructure>): this;
 }
-
-declare const TypeLiteralNode_base: (new (...args: any[]) => TypeElementMemberedNode) & typeof TypeNode;
 
 export declare class TypeLiteralNode extends TypeLiteralNode_base<ts.TypeLiteralNode> {
 }
@@ -8774,7 +8756,7 @@ export declare class TypeParameter extends Type<ts.TypeParameter> {
     getDefault(): Type | undefined;
 }
 
-declare const TypeParameterDeclarationBase: (new (...args: any[]) => NamedNode) & typeof Node;
+declare const TypeParameterDeclarationBase: import
 
 export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
     /**
@@ -9167,7 +9149,7 @@ export declare enum IndentationText {
     /** Eight spaces */
     EightSpaces = "        ",
     /** Tab */
-    Tab = "\t",
+    Tab = "\t"
 }
 
 /**
