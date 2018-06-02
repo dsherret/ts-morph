@@ -6,7 +6,8 @@ import { Node } from "../common";
 import { StringLiteral } from "../literal";
 import { JsxExpression } from "./JsxExpression";
 
-export class JsxAttribute extends NamedNode(Node)<ts.JsxAttribute> {
+export const JsxAttributeBase = NamedNode(Node);
+export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */

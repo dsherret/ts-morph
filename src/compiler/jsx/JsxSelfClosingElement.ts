@@ -2,5 +2,6 @@ import { ts } from "../../typescript";
 import { PrimaryExpression } from "../expression";
 import { JsxAttributedNode, JsxTagNamedNode } from "./base";
 
-export class JsxSelfClosingElement extends JsxAttributedNode(JsxTagNamedNode(PrimaryExpression))<ts.JsxSelfClosingElement> {
+export const JsxSelfClosingElementBase = JsxAttributedNode(JsxTagNamedNode(PrimaryExpression));
+export class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfClosingElement> {
 }

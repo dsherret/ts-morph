@@ -3,5 +3,6 @@ import { TypeElementMemberedNode } from "../base";
 import { TypeNode } from "./TypeNode";
 import { TypeElementTypes } from "../aliases";
 
-export class TypeLiteralNode extends TypeElementMemberedNode(TypeNode)<ts.TypeLiteralNode> {
+export const TypeLiteralNodeBase = TypeElementMemberedNode(TypeNode);
+export class TypeLiteralNode extends TypeLiteralNodeBase<ts.TypeLiteralNode> {
 }

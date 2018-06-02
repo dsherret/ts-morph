@@ -5,7 +5,8 @@ import { ReferencedSymbol, DefinitionInfo, ImplementationLocation } from "../too
 import { PrimaryExpression } from "../expression/PrimaryExpression";
 import { Node } from "./Node";
 
-export class Identifier extends ReferenceFindableNode(PrimaryExpression)<ts.Identifier> {
+export const IdentifierBase = ReferenceFindableNode(PrimaryExpression);
+export class Identifier extends IdentifierBase<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */

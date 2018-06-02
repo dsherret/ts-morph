@@ -5,8 +5,7 @@ import { TemplateLiteral } from "../../aliases";
 import { TemplateExpression } from "./TemplateExpression";
 import { NoSubstitutionTemplateLiteral } from "./NoSubstitutionTemplateLiteral";
 
-export const TaggedTemplateExpressionBase = MemberExpression;
-export class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.TaggedTemplateExpression> {
+export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplateExpression> {
     /**
      * Gets the tag.
      */
