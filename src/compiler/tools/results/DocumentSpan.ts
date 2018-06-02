@@ -57,4 +57,20 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     getNode() {
         return this.node;
     }
+
+    /**
+     * Gets the original text span if the span represents a location that was remapped.
+     */
+    @Memoize
+    getOriginalTextSpan() {
+        const { originalTextSpan } = this.compilerObject;
+        return originalTextSpan == null ? undefined : new TextSpan(originalTextSpan);
+    }
+
+    /**
+     * Gets the original file name if the span represents a location that was remapped.
+     */
+    getOriginalFileName() {
+        return this.compilerObject.originalFileName;
+    }
 }
