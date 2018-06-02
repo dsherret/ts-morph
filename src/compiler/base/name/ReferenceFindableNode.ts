@@ -15,11 +15,6 @@ export interface ReferenceFindableNode {
      * Finds the nodes that reference the definition of the node.
      */
     findReferencesAsNodes(): Node[];
-    /**
-     * Gets the nodes that reference the definition of the node.
-     * @deprecated Use `findReferencesAsNodes()`
-     */
-    getReferencingNodes(): Node[];
 }
 
 export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T {
@@ -30,10 +25,6 @@ export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNod
 
         findReferencesAsNodes() {
             return this.global.languageService.findReferencesAsNodes(getNodeForReferences(this));
-        }
-
-        getReferencingNodes() {
-            return this.findReferencesAsNodes();
         }
     };
 }

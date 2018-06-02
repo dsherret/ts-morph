@@ -206,15 +206,6 @@ export class LanguageService {
     }
 
     /**
-     * Finds the nodes that reference the definition(s) of the specified node.
-     * @param node - Node.
-     * @deprecated Use `findReferencesAsNodes()`.
-     */
-    getDefinitionReferencingNodes(node: Node) {
-        return this.findReferencesAsNodes(node);
-    }
-
-    /**
      * Finds references based on the specified position.
      * @param sourceFile - Source file.
      * @param pos - Position to find the reference at.
