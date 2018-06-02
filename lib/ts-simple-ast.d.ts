@@ -8635,63 +8635,63 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is an anonymous type.
      */
-    isAnonymousType(): boolean;
+    isAnonymous(): boolean;
     /**
      * Gets if this is an array type.
      */
-    isArrayType(): boolean;
+    isArray(): boolean;
     /**
      * Gets if this is a boolean type.
      */
-    isBooleanType(): boolean;
+    isBoolean(): boolean;
     /**
      * Gets if this is a string type.
      */
-    isStringType(): boolean;
+    isString(): boolean;
     /**
      * Gets if this is a number type.
      */
-    isNumberType(): boolean;
+    isNumber(): boolean;
     /**
      * Gets if this is a literal type.
      */
-    isLiteralType(): boolean;
+    isLiteral(): boolean;
     /**
      * Gets if this is a boolean literal type.
      */
-    isBooleanLiteralType(): boolean;
+    isBooleanLiteral(): boolean;
     /**
      * Gets if this is an enum literal type.
      */
-    isEnumLiteralType(): boolean;
+    isEnumLiteral(): boolean;
     /**
-     * Gets if this is a literal string type.
+     * Gets if this is a number literal type.
      */
-    isStringLiteralType(): boolean;
+    isNumberLiteral(): boolean;
     /**
-     * Gets if this is a literal number type.
+     * Gets if this is a string literal type.
      */
-    isNumberLiteralType(): boolean;
+    isStringLiteral(): boolean;
+    /**
+     * Gets if this is a class type.
+     */
+    isClass(): boolean;
+    /**
+     * Gets if this is a class or interface type.
+     */
+    isClassOrInterface(): boolean;
     /**
      * Gets if this is an enum type.
      */
-    isEnumType(): boolean;
+    isEnum(): boolean;
     /**
      * Gets if this is an interface type.
      */
-    isInterfaceType(): boolean;
-    /**
-     * Gets if this is an intersection type.
-     */
-    isIntersectionType(): boolean;
-    /**
-     * Gets if this is the null type.
-     */
-    isNullType(): boolean;
+    isInterface(): boolean;
     /**
      * Gets if this is an object type.
      */
-    isObjectType(): boolean;
+    isObject(): boolean;
     /**
      * Gets if this is a type parameter.
      */
@@ -8699,21 +8699,34 @@ export declare class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is a tuple type.
      */
-    isTupleType(): boolean;
+    isTuple(): boolean;
     /**
      * Gets if this is a union type.
      */
-    isUnionType(): boolean;
+    isUnion(): boolean;
+    /**
+     * Gets if this is an intersection type.
+     */
+    isIntersection(): boolean;
+    /**
+     * Gets if this is a union or intersection type.
+     */
+    isUnionOrIntersection(): boolean;
+    /**
+     * Gets if this is the null type.
+     */
+    isNull(): boolean;
     /**
      * Gets if this is the undefined type.
      */
-    isUndefinedType(): boolean;
+    isUndefined(): boolean;
     /**
      * Gets the type flags.
      */
     getFlags(): TypeFlags;
     /**
      * Gets the object flags.
+     * @remarks Returns 0 for a non-object type.
      */
     getObjectFlags(): 0 | ObjectFlags;
     private _hasTypeFlag;

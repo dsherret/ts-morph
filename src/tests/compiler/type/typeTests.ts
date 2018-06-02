@@ -101,9 +101,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isAnonymousType), () => {
+        describe(nameof<Type>(t => t.isAnonymous), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isAnonymousType()).to.equal(expected);
+                expect(typesByName[typeName].isAnonymous()).to.equal(expected);
             }
 
             it("should get when it is an anonymous type", () => {
@@ -115,9 +115,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isBooleanType), () => {
+        describe(nameof<Type>(t => t.isBoolean), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isBooleanType()).to.equal(expected);
+                expect(typesByName[typeName].isBoolean()).to.equal(expected);
             }
 
             it("should get when it is a boolean type", () => {
@@ -129,9 +129,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isStringType), () => {
+        describe(nameof<Type>(t => t.isString), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isStringType()).to.equal(expected);
+                expect(typesByName[typeName].isString()).to.equal(expected);
             }
 
             it("should get when it is a string type", () => {
@@ -143,9 +143,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isNumberType), () => {
+        describe(nameof<Type>(t => t.isNumber), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isNumberType()).to.equal(expected);
+                expect(typesByName[typeName].isNumber()).to.equal(expected);
             }
 
             it("should get when it is a number type", () => {
@@ -157,9 +157,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isLiteralType), () => {
+        describe(nameof<Type>(t => t.isLiteral), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isLiteralType()).to.equal(expected);
+                expect(typesByName[typeName].isLiteral()).to.equal(expected);
             }
 
             it("should get when it is a boolean literal", () => {
@@ -183,9 +183,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isBooleanLiteralType), () => {
+        describe(nameof<Type>(t => t.isBooleanLiteral), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isBooleanLiteralType()).to.equal(expected);
+                expect(typesByName[typeName].isBooleanLiteral()).to.equal(expected);
             }
 
             it("should get when it is", () => {
@@ -197,9 +197,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isEnumLiteralType), () => {
+        describe(nameof<Type>(t => t.isEnumLiteral), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isEnumLiteralType()).to.equal(expected);
+                expect(typesByName[typeName].isEnumLiteral()).to.equal(expected);
             }
 
             it("should get when it is", () => {
@@ -211,9 +211,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isStringLiteralType), () => {
+        describe(nameof<Type>(t => t.isStringLiteral), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isStringLiteralType()).to.equal(expected);
+                expect(typesByName[typeName].isStringLiteral()).to.equal(expected);
             }
 
             it("should get when it is", () => {
@@ -225,9 +225,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isNumberLiteralType), () => {
+        describe(nameof<Type>(t => t.isNumberLiteral), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isNumberLiteralType()).to.equal(expected);
+                expect(typesByName[typeName].isNumberLiteral()).to.equal(expected);
             }
 
             it("should get when it is", () => {
@@ -239,9 +239,41 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isEnumType), () => {
+        describe(nameof<Type>(t => t.isClass), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isEnumType()).to.equal(expected);
+                expect(typesByName[typeName].isClass()).to.equal(expected);
+            }
+
+            it("should get when it is", () => {
+                doTest("classType", true);
+            });
+
+            it("should get when it's not", () => {
+                doTest("interfaceType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isClassOrInterface), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isClassOrInterface()).to.equal(expected);
+            }
+
+            it("should get when it is a class", () => {
+                doTest("classType", true);
+            });
+
+            it("should get when it is an interface", () => {
+                doTest("interfaceType", true);
+            });
+
+            it("should get when it's not", () => {
+                doTest("enumType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isEnum), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isEnum()).to.equal(expected);
             }
 
             it("should get when it is an enum type", () => {
@@ -253,9 +285,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isInterfaceType), () => {
+        describe(nameof<Type>(t => t.isInterface), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isInterfaceType()).to.equal(expected);
+                expect(typesByName[typeName].isInterface()).to.equal(expected);
             }
 
             it("should get when it is", () => {
@@ -267,9 +299,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isIntersectionType), () => {
+        describe(nameof<Type>(t => t.isIntersection), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isIntersectionType()).to.equal(expected);
+                expect(typesByName[typeName].isIntersection()).to.equal(expected);
             }
 
             it("should get when it is an intersection type", () => {
@@ -281,9 +313,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isUnionType), () => {
+        describe(nameof<Type>(t => t.isUnion), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isUnionType()).to.equal(expected);
+                expect(typesByName[typeName].isUnion()).to.equal(expected);
             }
 
             it("should get when it is a union type", () => {
@@ -295,9 +327,27 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isObjectType), () => {
+        describe(nameof<Type>(t => t.isUnionOrIntersection), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isObjectType()).to.equal(expected);
+                expect(typesByName[typeName].isUnionOrIntersection()).to.equal(expected);
+            }
+
+            it("should get when it is a union type", () => {
+                doTest("unionType", true);
+            });
+
+            it("should get when it is an intersection type", () => {
+                doTest("unionType", true);
+            });
+
+            it("should get when it's not either", () => {
+                doTest("objectType", false);
+            });
+        });
+
+        describe(nameof<Type>(t => t.isObject), () => {
+            function doTest(typeName: string, expected: boolean) {
+                expect(typesByName[typeName].isObject()).to.equal(expected);
             }
 
             it("should get when it is an object type", () => {
@@ -309,9 +359,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isTupleType), () => {
+        describe(nameof<Type>(t => t.isTuple), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isTupleType()).to.equal(expected);
+                expect(typesByName[typeName].isTuple()).to.equal(expected);
             }
 
             it("should be when tuple and one element", () => {
@@ -335,9 +385,9 @@ let stringWithUndefinedAndNullType: string | undefined | null;
             });
         });
 
-        describe(nameof<Type>(t => t.isUndefinedType), () => {
+        describe(nameof<Type>(t => t.isUndefined), () => {
             function doTest(typeName: string, expected: boolean) {
-                expect(typesByName[typeName].isUndefinedType()).to.equal(expected);
+                expect(typesByName[typeName].isUndefined()).to.equal(expected);
             }
 
             it("should be when undefined", () => {

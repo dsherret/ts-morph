@@ -23,6 +23,7 @@
     "compileOnSave": false,
     "exclude": [
         "./scripts",
+        "./lib",
         "./docs",
         "node_modules"
     ]

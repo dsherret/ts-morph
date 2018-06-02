@@ -878,7 +878,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Note: Use getBaseTypes if you need to get the mixins.
      */
     getBaseClass() {
-        const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersectionType() ? t.getIntersectionTypes() : [t]));
+        const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
         const declarations = baseTypes
             .map(t => t.getSymbol())
             .filter(s => s != null)
