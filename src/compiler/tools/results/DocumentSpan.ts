@@ -11,11 +11,9 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     /** @internal */
     protected readonly global: GlobalContainer;
     /** @internal */
-    private readonly _compilerObject: TCompilerObject;
+    protected readonly _compilerObject: TCompilerObject;
     /** @internal */
-    private readonly node: Node;
-    /** @internal */
-    private readonly sourceFile: SourceFile;
+    protected readonly sourceFile: SourceFile;
 
     /**
      * @internal
@@ -26,7 +24,8 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
 
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
         this.sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
-        this.node = this.getSourceFile().getDescendantAtStartWithWidth(this.getTextSpan().getStart(), this.getTextSpan().getLength())!;
+        // fill the memoize
+        this.getNode();
     }
 
     /**
@@ -54,8 +53,9 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     /**
      * Gets the node at the start of the text span.
      */
+    @Memoize
     getNode() {
-        return this.node;
+        return this.getSourceFile().getDescendantAtStartWithWidth(this.getTextSpan().getStart(), this.getTextSpan().getLength())!;
     }
 
     /**

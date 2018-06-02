@@ -2,48 +2,21 @@ import { GlobalContainer } from "../../../GlobalContainer";
 import { ts, SyntaxKind } from "../../../typescript";
 import { SourceFile, Node } from "../../../compiler";
 import { Memoize } from "../../../utils";
+import { DocumentSpan } from "./DocumentSpan";
 import { TextSpan } from "./TextSpan";
 
 /**
  * Definition info.
  */
-export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> {
-    /** @internal */
-    protected readonly global: GlobalContainer;
-    /** @internal */
-    private readonly _compilerObject: TCompilerObject;
-    /** @internal */
-    private readonly sourceFile: SourceFile;
-
+export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
     /**
      * @internal
      */
     constructor(global: GlobalContainer, compilerObject: TCompilerObject) {
-        this.global = global;
-        this._compilerObject = compilerObject;
-        this.sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
-    }
+        super(global, compilerObject);
 
-    /**
-     * Gets the compiler object.
-     */
-    get compilerObject() {
-        return this._compilerObject;
-    }
-
-    /**
-     * Gets the source file this reference is in.
-     */
-    getSourceFile(): SourceFile {
-        return this.sourceFile;
-    }
-
-    /**
-     * Gets the text span.
-     */
-    @Memoize
-    getTextSpan() {
-        return new TextSpan(this.compilerObject.textSpan);
+        // fill memoize
+        this.getDeclarationNode();
     }
 
     /**
@@ -75,9 +48,10 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
     }
 
     /**
-     * Gets the definition node.
+     * Gets the declaration node.
      */
-    getNode(): Node | undefined {
+    @Memoize
+    getDeclarationNode(): Node | undefined {
         const start = this.getTextSpan().getStart();
         const identifier = findIdentifier(this.getSourceFile());
 

@@ -24,14 +24,14 @@ describe(nameof(Identifier), () => {
             expect(definitions[0].getSourceFile().getFullText()).to.equal(sourceFileText);
             expect(definitions[0].getKind()).to.equal(ts.ScriptElementKind.functionElement);
             expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNode().getStart());
-            expect(definitions[0].getNode()).to.equal(firstChild);
+            expect(definitions[0].getDeclarationNode()).to.equal(firstChild);
         });
 
         it("should get the definition when nested inside a namespace", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("namespace N { export function myFunction() {} }\nconst reference = N.myFunction;");
             const definitions = (sourceFile.getVariableDeclarationOrThrow("reference").getInitializerOrThrow() as PropertyAccessExpression).getNameNode().getDefinitions();
             expect(definitions.length).to.equal(1);
-            expect(definitions[0].getNode()).to.equal(firstChild.getFunctions()[0]);
+            expect(definitions[0].getDeclarationNode()).to.equal(firstChild.getFunctions()[0]);
         });
     });
 

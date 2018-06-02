@@ -27,7 +27,7 @@ export class Identifier extends IdentifierBase<ts.Identifier> {
      * @remarks This is similar to "go to definition" and `.getDefinitions()`, but only returns the nodes.
      */
     getDefinitionNodes(): Node[] {
-        return this.getDefinitions().map(d => d.getNode()).filter(d => d != null) as Node[];
+        return this.getDefinitions().map(d => d.getDeclarationNode()).filter(d => d != null) as Node[];
     }
 
     /**

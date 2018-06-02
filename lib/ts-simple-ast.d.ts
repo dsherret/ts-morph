@@ -8155,19 +8155,7 @@ export interface FormatCodeSettings extends ts.FormatCodeSettings {
 /**
  * Definition info.
  */
-export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> {
-    /**
-     * Gets the compiler object.
-     */
-    readonly compilerObject: TCompilerObject;
-    /**
-     * Gets the source file this reference is in.
-     */
-    getSourceFile(): SourceFile;
-    /**
-     * Gets the text span.
-     */
-    getTextSpan(): TextSpan;
+export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
     /**
      * Gets the kind.
      */
@@ -8185,9 +8173,9 @@ export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = 
      */
     getContainerName(): string;
     /**
-     * Gets the definition node.
+     * Gets the declaration node.
      */
-    getNode(): Node | undefined;
+    getDeclarationNode(): Node | undefined;
 }
 
 /**
@@ -8289,6 +8277,14 @@ export declare class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.D
      * Gets the node at the start of the text span.
      */
     getNode(): Node<ts.Node>;
+    /**
+     * Gets the original text span if the span represents a location that was remapped.
+     */
+    getOriginalTextSpan(): TextSpan | undefined;
+    /**
+     * Gets the original file name if the span represents a location that was remapped.
+     */
+    getOriginalFileName(): string | undefined;
 }
 
 /**
