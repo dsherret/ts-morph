@@ -44,6 +44,12 @@ describe(nameof(Diagnostic), () => {
         });
     });
 
+    describe(nameof<Diagnostic>(d => d.getLineNumber), () => {
+        it("should get the line number", () => {
+            expect(constError.getLineNumber()).to.equal(1);
+        });
+    });
+
     describe(nameof<Diagnostic>(d => d.getLength), () => {
         it("should get the length", () => {
             expect(constError.getLength()).to.equal(1);

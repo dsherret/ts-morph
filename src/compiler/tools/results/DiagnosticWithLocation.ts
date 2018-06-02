@@ -9,6 +9,13 @@ export class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation
     }
 
     /**
+     * Gets the line number.
+     */
+    getLineNumber() {
+        return super.getLineNumber()!;
+    }
+
+    /**
      * Gets the start.
      */
     getStart() {

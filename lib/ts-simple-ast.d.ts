@@ -8204,6 +8204,10 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
      */
     getMessageText(): string | DiagnosticMessageChain;
     /**
+     * Gets the line number.
+     */
+    getLineNumber(): number | undefined;
+    /**
      * Gets the start.
      */
     getStart(): number | undefined;
@@ -8226,6 +8230,10 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
 }
 
 export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
+    /**
+     * Gets the line number.
+     */
+    getLineNumber(): number;
     /**
      * Gets the start.
      */
