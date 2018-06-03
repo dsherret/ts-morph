@@ -35,7 +35,7 @@ const markDownFilesWithCodeBlocks = markDownFiles
             .filter(codeBlock => !codeBlock.inline && (codeBlock.codeType === "ts" || codeBlock.codeType === "typescript"))
             .map((codeBlock, j) => ({
                 tempSourceFile: templatesDir.createSourceFile(`tempFile${i}_${j}.ts`,
-                    "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText()) + codeBlock.text),
+                    "let any = undefined as any;\n" + mainTemplate.getText() + getInitializedSetupText(codeBlock.getSetupText()) + getInitializedFileText(codeBlock.text)),
                 codeBlock
             }))
     }));
@@ -62,15 +62,9 @@ if (errors.length > 0) {
 }
 
 function getInitializedSetupText(text: string) {
-    if (text.length === 0)
-        return "";
-
-    const setupTextFile = docsDir.createSourceFile("tempSetupTextFile.ts");
-    setupTextFile.insertText(0, text);
-    addAnyInitializers(setupTextFile);
-    text = setupTextFile.getFullText();
-    setupTextFile.delete();
-    return text;
+    return doActionOnText(text, tempFile => {
+        addAnyInitializers(tempFile);
+    });
 }
 
 function addAnyInitializers(file: SourceFile) {
@@ -79,4 +73,26 @@ function addAnyInitializers(file: SourceFile) {
         if (dec.getInitializer() == null)
             dec.setInitializer("any");
     }
+}
+
+function getInitializedFileText(text: string) {
+    return doActionOnText(text, tempFile => {
+        changeModuleSpecifiers(tempFile);
+    });
+}
+
+function changeModuleSpecifiers(file: SourceFile) {
+    for (const importExport of [...file.getImportDeclarations(), ...file.getExportDeclarations()]) {
+        if (importExport.getModuleSpecifierValue() === "ts-simple-ast")
+            importExport.setModuleSpecifier("../../src/main");
+    }
+}
+
+function doActionOnText(text: string, doAction: (sourceFile: SourceFile) => void) {
+    const tempFile = docsDir.createSourceFile("tempFile.ts");
+    tempFile.insertText(0, text);
+    doAction(tempFile);
+    text = tempFile.getFullText();
+    tempFile.delete();
+    return text;
 }
