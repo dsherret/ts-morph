@@ -13,21 +13,21 @@ export class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * Gets the children of the JSX element.
      */
     getJsxChildren(): JsxChild[] {
-        return this.compilerNode.children.map(c => this.getNodeFromCompilerNode<JsxChild>(c));
+        return this.compilerNode.children.map(c => this.getNodeFromCompilerNode(c));
     }
 
     /**
      * Gets the opening element.
      */
-    getOpeningElement() {
-        return this.getNodeFromCompilerNode<JsxOpeningElement>(this.compilerNode.openingElement);
+    getOpeningElement(): JsxOpeningElement {
+        return this.getNodeFromCompilerNode(this.compilerNode.openingElement);
     }
 
     /**
      * Gets the closing element.
      */
-    getClosingElement() {
-        return this.getNodeFromCompilerNode<JsxClosingElement>(this.compilerNode.closingElement);
+    getClosingElement(): JsxClosingElement {
+        return this.getNodeFromCompilerNode(this.compilerNode.closingElement);
     }
 
     /**

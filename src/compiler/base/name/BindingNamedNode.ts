@@ -38,7 +38,7 @@ function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensio
 
             switch (compilerNameNode.kind) {
                 case SyntaxKind.Identifier:
-                    return this.getNodeFromCompilerNode<Identifier>(compilerNameNode);
+                    return this.getNodeFromCompilerNode(compilerNameNode);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);

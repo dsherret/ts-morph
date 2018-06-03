@@ -12,9 +12,9 @@ export class CaseBlock extends CaseBlockBase<ts.CaseBlock> {
     /**
      * Gets the clauses.
      */
-    getClauses() {
+    getClauses(): CaseOrDefaultClause[] {
         const clauses: ts.NodeArray<ts.CaseOrDefaultClause> = this.compilerNode.clauses || [];
-        return clauses.map(s => this.getNodeFromCompilerNode<CaseOrDefaultClause>(s));
+        return clauses.map(s => this.getNodeFromCompilerNode(s));
     }
 
     /**

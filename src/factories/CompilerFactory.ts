@@ -1,7 +1,7 @@
 import { ts, SyntaxKind, TypeFlags } from "../typescript";
 import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticWithLocation,
     DiagnosticMessageChain, JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan,
-    ReferenceEntry } from "../compiler";
+    ReferenceEntry, CompilerNodeToWrappedType } from "../compiler";
 import * as errors from "../errors";
 import { SourceFileStructure } from "../structures";
 import { SourceFileStructurePrinter } from "../structurePrinters";
@@ -255,9 +255,9 @@ export class CompilerFactory {
      * Gets a wrapped compiler type based on the node's kind.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): Node<NodeType> {
+    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): CompilerNodeToWrappedType<NodeType> {
         if (compilerNode.kind === SyntaxKind.SourceFile)
-            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as Node<NodeType>;
+            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as CompilerNodeToWrappedType<NodeType>;
 
         const createNode = (ctor: any) => {
             // ensure the parent is created
@@ -267,9 +267,9 @@ export class CompilerFactory {
         };
 
         if (kindToWrapperMappings[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(kindToWrapperMappings[compilerNode.kind]));
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(kindToWrapperMappings[compilerNode.kind])) as Node as CompilerNodeToWrappedType<NodeType>;
         else
-            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node));
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node)) as Node as CompilerNodeToWrappedType<NodeType>;
     }
 
     private getSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions): SourceFile {

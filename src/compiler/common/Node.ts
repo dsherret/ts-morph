@@ -512,7 +512,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             else if (node.kind === SyntaxKind.ArrowFunction) {
                 const arrowFunction = (node as ts.ArrowFunction);
                 if (arrowFunction.body.kind !== SyntaxKind.Block)
-                    statements.push(thisNode.getNodeFromCompilerNode<Statement>(arrowFunction.body));
+                    statements.push(thisNode.getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
                 else
                     handleNode(thisNode, arrowFunction.body);
             }
@@ -524,7 +524,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if ((node as NodeWithStatements).statements == null)
                 return false;
             for (const statement of (node as NodeWithStatements).statements) {
-                statements.push(thisNode.getNodeFromCompilerNode<Statement>(statement));
+                statements.push(thisNode.getNodeFromCompilerNode(statement));
                 handleChildren(thisNode, statement);
             }
             return true;
@@ -1431,20 +1431,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets or creates a node from the internal cache.
      * @internal
      */
-    getNodeFromCompilerNode<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType): LocalNodeType
+    getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
+        compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
     {
-        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile) as LocalNodeType;
+        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
     }
 
     /**
      * Gets or creates a node from the internal cache, if it exists.
      * @internal
      */
-    getNodeFromCompilerNodeIfExists<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType | undefined): LocalNodeType | undefined
+    getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
+        compilerNode: LocalCompilerNodeType | undefined): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined
     {
-        return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalNodeType, LocalCompilerNodeType>(compilerNode);
+        return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
     }
 
     /**

@@ -1,7 +1,7 @@
 /* barrel:ignore */
 import * as errors from "../../errors";
 import { ts, SyntaxKind, CompilerOptions } from "../../typescript";
-import { SourceFile, Node } from "../../compiler";
+import { SourceFile, Node, CompilerNodeToWrappedType } from "../../compiler";
 import { GlobalContainer } from "../../GlobalContainer";
 import { DefaultFileSystemHost, FileSystemWrapper } from "../../fileSystem";
 
@@ -25,12 +25,12 @@ export interface CreateWrappedNodeOptions {
  * @param node - Node to create a wrapped node from.
  * @param info - Info for creating the wrapped node.
  */
-export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: CreateWrappedNodeOptions = {}): Node<T> {
+export function createWrappedNode<T extends ts.Node = ts.Node>(node: T, opts: CreateWrappedNodeOptions = {}): CompilerNodeToWrappedType<T> {
     const {compilerOptions = {}, sourceFile, typeChecker} = opts;
     const globalContainer = new GlobalContainer(new FileSystemWrapper(new DefaultFileSystemHost()), compilerOptions, { createLanguageService: false, typeChecker });
-
     const wrappedSourceFile = globalContainer.compilerFactory.getSourceFile(getSourceFileNode());
-    return globalContainer.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile) as Node<T>;
+
+    return globalContainer.compilerFactory.getNodeFromCompilerNode(node, wrappedSourceFile);
 
     function getSourceFileNode() {
         return sourceFile == null ? getSourceFileFromNode(node) : sourceFile;

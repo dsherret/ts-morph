@@ -10,7 +10,7 @@
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
-    "refactor": "ts-node scripts/refactor",
+    "refactor": "ts-node scripts/refactor --ignoreDiagnostics",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
     "package": "npm run build && ts-node scripts/createDeclarationFile",
     "publish-code-verification": "npm run code-verification && npm run ensure-no-declaration-file-errors && npm run ensure-declaration-file-not-changed",

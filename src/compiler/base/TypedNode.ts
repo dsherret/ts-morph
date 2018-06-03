@@ -39,7 +39,7 @@ export interface TypedNode {
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
         getTypeNode() {
-            return this.getNodeFromCompilerNodeIfExists<TypeNode>(this.compilerNode.type);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
 
         getTypeNodeOrThrow() {

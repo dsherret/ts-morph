@@ -119,8 +119,8 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     /**
      * Gets the enum's members.
      */
-    getMembers() {
-        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode<EnumMember>(m));
+    getMembers(): EnumMember[] {
+        return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m));
     }
 
     /**

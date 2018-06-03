@@ -7,8 +7,8 @@ export class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpressio
     /**
      * Gets the left side of the binary expression.
      */
-    getLeft() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.left);
+    getLeft(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.left);
     }
 
     /**
@@ -21,7 +21,7 @@ export class BinaryExpression<T extends ts.BinaryExpression = ts.BinaryExpressio
     /**
      * Gets the right side of the binary expression.
      */
-    getRight() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.right);
+    getRight(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.right);
     }
 }

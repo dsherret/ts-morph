@@ -808,10 +808,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the class' members regardless of whether it's an instance of static member.
      */
     getMembers() {
-        return getAllMembers(this).filter(m => isSupportedClassMember(m));
+        return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
 
         function getAllMembers(classDec: ClassDeclaration) {
-            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode<ClassMemberTypes>(m));
+            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode(m));
 
             // filter out the method declarations or constructor declarations without a body if not ambient
             return classDec.isAmbient() ? members : members.filter(m => {

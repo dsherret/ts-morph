@@ -44,7 +44,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             const nodes = this.compilerNode.jsDoc;
             if (nodes == null)
                 return [];
-            return nodes.map(n => this.getNodeFromCompilerNode<JSDoc>(n));
+            return nodes.map(n => this.getNodeFromCompilerNode(n));
         }
 
         addJsDoc(structure: JSDocStructure | string) {

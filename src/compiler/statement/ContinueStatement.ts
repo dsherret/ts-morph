@@ -10,10 +10,10 @@ export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatemen
     /**
      * Gets this continue statement's label or undefined if it does not exist.
      */
-    getLabel() {
+    getLabel(): Identifier | undefined {
         return this.compilerNode.label == null
             ? undefined
-            : this.getNodeFromCompilerNode<Identifier>(this.compilerNode.label);
+            : this.getNodeFromCompilerNode(this.compilerNode.label);
     }
 
     /**

@@ -57,7 +57,7 @@ export interface JsxAttributedNode {
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {
     return class extends Base implements JsxAttributedNode {
         getAttributes() {
-            return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode<JsxAttributeLike>(p));
+            return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode(p));
         }
 
         getAttributeOrThrow(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {

@@ -7,7 +7,7 @@ export class DoStatement extends DoStatementBase<ts.DoStatement> {
     /**
      * Gets this do statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

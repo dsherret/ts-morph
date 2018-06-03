@@ -5,7 +5,7 @@ export class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {
     /**
      * Gets the intersection type nodes.
      */
-    getTypeNodes() {
-        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode<TypeNode>(t));
+    getTypeNodes(): TypeNode[] {
+        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode(t));
     }
 }

@@ -1,7 +1,7 @@
 ﻿import { ts } from "../../typescript";
 import * as errors from "../../errors";
 import { TypeArgumentedNode } from "../base";
-import { QualifiedName } from "../common";
+import { QualifiedName, Identifier } from "../common";
 import { TypeNode } from "./TypeNode";
 
 export const ImportTypeNodeBase = TypeArgumentedNode(TypeNode);
@@ -9,8 +9,8 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
     /**
      * Gets the argument passed into the import type.
      */
-    getArgument() {
-        return this.getNodeFromCompilerNode<TypeNode>(this.compilerNode.argument)
+    getArgument(): TypeNode {
+        return this.getNodeFromCompilerNode(this.compilerNode.argument);
     }
 
     /**
@@ -23,7 +23,7 @@ export class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
     /**
      * Gets the qualifier of the import type if it exists or returns undefined.
      */
-    getQualifier() {
-        return this.getNodeFromCompilerNodeIfExists<QualifiedName>(this.compilerNode.qualifier)
+    getQualifier(): QualifiedName | Identifier | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.qualifier);
     }
 }

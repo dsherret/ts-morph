@@ -8,8 +8,8 @@ export class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
     /**
      * Gets the expression or undefined of the yield expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
+    getExpression(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 
     /**

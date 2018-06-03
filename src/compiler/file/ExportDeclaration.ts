@@ -203,7 +203,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         const namedExports = this.compilerNode.exportClause;
         if (namedExports == null)
             return [];
-        return namedExports.elements.map(e => this.getNodeFromCompilerNode<ExportSpecifier>(e));
+        return namedExports.elements.map(e => this.getNodeFromCompilerNode(e));
     }
 
     /**

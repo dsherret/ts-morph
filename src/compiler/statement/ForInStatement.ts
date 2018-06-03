@@ -8,14 +8,14 @@ export class ForInStatement extends ForInStatementBase<ts.ForInStatement> {
     /**
      * Gets this for in statement's initializer.
      */
-    getInitializer() {
-        return this.getNodeFromCompilerNode<VariableDeclarationList | Expression>(this.compilerNode.initializer);
+    getInitializer(): VariableDeclarationList | Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.initializer);
     }
 
     /**
      * Gets this for in statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

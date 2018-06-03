@@ -442,7 +442,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode<Statement>(s));
+            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode(s));
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {

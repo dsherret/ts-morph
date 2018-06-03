@@ -75,7 +75,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             const typeParameters = this.compilerNode.typeParameters;
             if (typeParameters == null)
                 return [];
-            return typeParameters.map(t => this.getNodeFromCompilerNode<TypeParameterDeclaration>(t));
+            return typeParameters.map(t => this.getNodeFromCompilerNode(t));
         }
 
         addTypeParameter(structure: TypeParameterDeclarationStructure) {

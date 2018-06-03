@@ -34,6 +34,6 @@ function hideBaseDeclarations() {
 
 function removeImportTypes() {
     for (const type of mainFile.getDescendantsOfKind(SyntaxKind.ImportType)) {
-        type.replaceWithText(type.getNodeProperty("qualifier" as any).getText());
+        type.replaceWithText(type.getText().replace(/import\([^\)]+\)\./, ""));
     }
 }

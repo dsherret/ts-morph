@@ -26,7 +26,7 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
 function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNodeSpecific> & T {
     return class extends Base implements PropertyNamedNodeSpecific {
         getNameNode() {
-            return this.getNodeFromCompilerNode<PropertyName>(this.compilerNode.name);
+            return this.getNodeFromCompilerNode(this.compilerNode.name);
         }
 
         getName() {

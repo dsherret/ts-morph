@@ -18,8 +18,8 @@ export class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
-    getInitializer() {
-        return this.getNodeFromCompilerNodeIfExists<StringLiteral | JsxExpression>(this.compilerNode.initializer);
+    getInitializer(): StringLiteral | JsxExpression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
 
     /**

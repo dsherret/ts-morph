@@ -7,7 +7,7 @@ export class ObjectDestructuringAssignment extends ObjectDestructuringAssignment
     /**
      * Gets the left object literal expression of the object destructuring assignment.
      */
-    getLeft() {
-        return this.getNodeFromCompilerNode<ObjectLiteralExpression>(this.compilerNode.left);
+    getLeft(): ObjectLiteralExpression {
+        return this.getNodeFromCompilerNode(this.compilerNode.left);
     }
 }

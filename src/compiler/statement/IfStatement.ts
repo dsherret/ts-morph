@@ -9,21 +9,21 @@ export class IfStatement extends IfStatementBase<ts.IfStatement> {
     /**
      * Gets this if statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**
      * Gets this if statement's then statement.
      */
-    getThenStatement() {
-        return this.getNodeFromCompilerNode<Statement>(this.compilerNode.thenStatement);
+    getThenStatement(): Statement {
+        return this.getNodeFromCompilerNode(this.compilerNode.thenStatement);
     }
 
     /**
      * Gets this if statement's else statement.
      */
-    getElseStatement() {
-        return this.getNodeFromCompilerNodeIfExists<Statement>(this.compilerNode.elseStatement);
+    getElseStatement(): Statement | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.elseStatement);
     }
 }

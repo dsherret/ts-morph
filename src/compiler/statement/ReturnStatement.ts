@@ -17,7 +17,7 @@ export class ReturnStatement extends ReturnStatementBase<ts.ReturnStatement> {
     /**
      * Gets this return statement's expression if it exists.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
+    getExpression(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 }

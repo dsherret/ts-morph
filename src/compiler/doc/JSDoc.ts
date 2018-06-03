@@ -17,7 +17,7 @@ export class JSDoc extends Node<ts.JSDoc> {
         const tags = this.compilerNode.tags;
         if (tags == null)
             return [];
-        return tags.map(t => this.getNodeFromCompilerNode<JSDocTag>(t));
+        return tags.map(t => this.getNodeFromCompilerNode(t));
     }
 
     /**

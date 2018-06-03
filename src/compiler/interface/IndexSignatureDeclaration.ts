@@ -51,7 +51,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     getKeyNameNode() {
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode<Identifier>(param.name);
+        return this.getNodeFromCompilerNode(param.name);
     }
 
     /**
@@ -74,9 +74,9 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     /**
      * Gets the key type node.
      */
-    getKeyTypeNode() {
+    getKeyTypeNode(): TypeNode {
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode<TypeNode>(param.type!);
+        return this.getNodeFromCompilerNode(param.type!);
     }
 
     /**
@@ -89,8 +89,8 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     /**
      * Gets the return type node.
      */
-    getReturnTypeNode() {
-        return this.getNodeFromCompilerNode<TypeNode>(this.compilerNode.type!);
+    getReturnTypeNode(): TypeNode {
+        return this.getNodeFromCompilerNode(this.compilerNode.type!);
     }
 
     /**

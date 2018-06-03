@@ -7,14 +7,14 @@
 import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
     ParameterDeclarationStructure, SourceFile, InterfaceDeclaration, TypeGuards, SyntaxKind } from "ts-simple-ast";
 import { hasDescendantBaseType } from "./common";
-import { TsSimpleAstInspector } from "./inspectors";
+import { TsSimpleAstInspector, WrappedNode } from "./inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)
 
 export function createCompilerNodeToWrappedType(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("CompilerNodeToWrappedType.ts");
-    const wrappedNodes = inspector.getWrappedNodes();
+    const wrappedNodes = getWrappedNodesInDependencyOrder([...inspector.getWrappedNodes()]);
     kindToNodeMappingsFile.removeText();
 
     // add imports
@@ -36,13 +36,13 @@ export function createCompilerNodeToWrappedType(inspector: TsSimpleAstInspector)
             let isFirst = true;
             for (const wrapper of wrappedNodes) {
                 const nodes = wrapper.getAssociatedTsNodes();
-                if (nodes.length === 0 || wrapper.hasParent())
+                if (nodes.length === 0)
                     continue;
                 if (isFirst)
                     isFirst = false;
                 else
                     writer.newLine().indent();
-                writer.write(`[T] extends [ts.${nodes[0].getName()}] ? compiler.${wrapper.getName()} :`);
+                writer.write(`T extends ts.${nodes[0].getNameForType()} ? compiler.${wrapper.getName()} :`);
             }
             writer.write(" compiler.Node<T>");
         }
@@ -50,4 +50,20 @@ export function createCompilerNodeToWrappedType(inspector: TsSimpleAstInspector)
 
     kindToNodeMappingsFile.insertText(0, writer =>
         writer.writeLine("// DO NOT EDIT - Automatically maintained by createCompilerNodeToWrappedType.ts"));
+}
+
+function getWrappedNodesInDependencyOrder(wrappedNodes: WrappedNode[]) {
+    // get the wrapped nodes with the base types at the end of the array
+    for (let i = 0; i < wrappedNodes.length; i++) {
+        const baseNodes = wrappedNodes[i].getBases();
+        for (const baseNode of baseNodes) {
+            const baseIndex = wrappedNodes.indexOf(baseNode);
+            if (baseIndex < i) {
+                wrappedNodes.splice(baseIndex, 1);
+                i--;
+                wrappedNodes.splice(i + 1, 0, baseNode);
+            }
+        }
+    }
+    return wrappedNodes;
 }

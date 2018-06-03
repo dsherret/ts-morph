@@ -5,7 +5,7 @@ export class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
     /**
      * Gets the tuple element type nodes.
      */
-    getElementTypeNodes() {
-        return this.compilerNode.elementTypes.map(t => this.getNodeFromCompilerNode<TypeNode>(t));
+    getElementTypeNodes(): TypeNode[] {
+        return this.compilerNode.elementTypes.map(t => this.getNodeFromCompilerNode(t));
     }
 }

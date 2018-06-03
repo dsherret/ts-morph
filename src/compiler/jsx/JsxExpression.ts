@@ -28,7 +28,7 @@ export class JsxExpression extends Expression<ts.JsxExpression> {
     /**
      * Gets the expression or returns undefined if it doesn't exist
      */
-    getExpression() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
+    getExpression(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 }

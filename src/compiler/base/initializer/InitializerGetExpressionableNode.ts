@@ -53,7 +53,7 @@ export function InitializerGetExpressionableNode<T extends Constructor<Initializ
         }
 
         getInitializer() {
-            return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.initializer);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
         }
     };
 }

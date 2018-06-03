@@ -13,6 +13,6 @@ export class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase
         if (typeArguments == null)
             return [];
 
-        return typeArguments.map(a => this.getNodeFromCompilerNode<TypeNode>(a));
+        return typeArguments.map(a => this.getNodeFromCompilerNode(a));
     }
 }

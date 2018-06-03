@@ -37,7 +37,7 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
 export function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T {
     return class extends Base implements NamedNodeSpecific {
         getNameNode() {
-            return this.getNodeFromCompilerNode<Identifier>(this.compilerNode.name);
+            return this.getNodeFromCompilerNode(this.compilerNode.name);
         }
 
         getName() {

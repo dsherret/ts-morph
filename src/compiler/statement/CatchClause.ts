@@ -10,15 +10,15 @@ export class CatchClause extends CatchClauseBase<ts.CatchClause> {
     /**
      * Gets this catch clause's block.
      */
-    getBlock() {
-        return this.getNodeFromCompilerNode<Block>(this.compilerNode.block);
+    getBlock(): Block {
+        return this.getNodeFromCompilerNode(this.compilerNode.block);
     }
 
     /**
      * Gets this catch clause's variable declaration or undefined if none exists.
      */
-    getVariableDeclaration() {
-        return this.getNodeFromCompilerNodeIfExists<VariableDeclaration>(this.compilerNode.variableDeclaration);
+    getVariableDeclaration(): VariableDeclaration | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.variableDeclaration);
     }
 
     /**

@@ -59,7 +59,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
         getTypeArguments() {
             if (this.compilerNode.typeArguments == null)
                 return [];
-            return this.compilerNode.typeArguments.map(a => this.getNodeFromCompilerNode<TypeNode>(a));
+            return this.compilerNode.typeArguments.map(a => this.getNodeFromCompilerNode(a));
         }
 
         addTypeArgument(argumentText: string) {
