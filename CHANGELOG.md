@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.0.0"></a>
+# [12.0.0](https://github.com/dsherret/ts-simple-ast/compare/11.3.0...12.0.0) (2018-06-03)
+
+
+### Code Refactoring
+
+* Remove .getReferencingNodes() found on some nodes and languageService.getDefinitionReferencingNodes() ([a20cd4e](https://github.com/dsherret/ts-simple-ast/commit/a20cd4e))
+
+
+### Features
+
+* [#302](https://github.com/dsherret/ts-simple-ast/issues/302) - Add CompilerNodeToWrappedType. ([0ce5af5](https://github.com/dsherret/ts-simple-ast/commit/0ce5af5))
+* [#304](https://github.com/dsherret/ts-simple-ast/issues/304) - Improve getNodeProperty by using condition types. Add CompilerNodeToWrapperMappings. ([5bd2926](https://github.com/dsherret/ts-simple-ast/commit/5bd2926))
+* [#337](https://github.com/dsherret/ts-simple-ast/issues/337) - Add DiagnosticWithLocation. ([f1f700e](https://github.com/dsherret/ts-simple-ast/commit/f1f700e))
+* [#337](https://github.com/dsherret/ts-simple-ast/issues/337) - Add DocumentSpan - getOriginalTextSpan and getOriginalFileName ([254bea8](https://github.com/dsherret/ts-simple-ast/commit/254bea8))
+* [#337](https://github.com/dsherret/ts-simple-ast/issues/337) - DefinitionInfo now extends DocumentSpan as done in ts 2.9. ([c1ff983](https://github.com/dsherret/ts-simple-ast/commit/c1ff983))
+* [#338](https://github.com/dsherret/ts-simple-ast/issues/338) - Add Diagnostic.getLineNumber() ([4cba457](https://github.com/dsherret/ts-simple-ast/commit/4cba457))
+* Add Type: isUnionOrIntersection, isClass, and isClassOrInterface. ([12c4710](https://github.com/dsherret/ts-simple-ast/commit/12c4710))
+* Add UserPreferences and new organizeImports parameter ([a7864f1](https://github.com/dsherret/ts-simple-ast/commit/a7864f1))
+* Update to TypeScript 2.9. ([da45aae](https://github.com/dsherret/ts-simple-ast/commit/da45aae))
+
+
+### BREAKING CHANGES
+
+* `getNodeProperty` functionality requires TS 2.8 or greater due to mapped types.
+* DefinitionInfo.getNode() is now DefinitionInfo.getDeclarationNode() for compatibility with DocumentSpan.
+* getReferencingNodes and getDefinitionReferencingNodes are both renamed to .findReferencesAsNodes(). This is so the method is more discoverable in auto complete when looking at .findReferences().
+* Renamed all Type.isXType() methods to Type.isX() to match what's done in the compiler api and to remove needless repetition in name.
+* Updating to TypeScript 2.9 introduces some changes in behaviour and breaking changes in the compiler API declaration file.
+
+
+
 <a name="11.3.0"></a>
 # [11.3.0](https://github.com/dsherret/ts-simple-ast/compare/11.2.2...11.3.0) (2018-06-01)
 
