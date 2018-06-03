@@ -57,6 +57,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.ImportDeclaration]: compiler.ImportDeclaration,
     [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration,
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier,
+    [SyntaxKind.ImportType]: compiler.ImportTypeNode,
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration,
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration,
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode,

@@ -11,14 +11,10 @@ import { getDefinitionProject } from "./common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 
 const project = getDefinitionProject();
-// temporary until I can upgrade this project to 2.9
-for (const sourceFile of project.getSourceFiles()) {
-    // remove all import type expressions
-    sourceFile.replaceText([0, sourceFile.getEnd()], sourceFile.getFullText().replace(/import\([^\)]+\).([A-Za-z]+)/g, "$1"));
-}
 const mainFile = project.getSourceFileOrThrow("main.d.ts");
 
 flattenDeclarationFiles(project, mainFile);
+removeImportTypes();
 hideBaseDeclarations();
 
 project.save();
@@ -33,5 +29,11 @@ function hideBaseDeclarations() {
 
         // the trick is to mark these as not exported in the declaration file
         variableStatement.setIsExported(false);
+    }
+}
+
+function removeImportTypes() {
+    for (const type of mainFile.getDescendantsOfKind(SyntaxKind.ImportType)) {
+        type.replaceWithText(type.getNodeProperty("qualifier" as any).getText());
     }
 }

@@ -56,6 +56,8 @@ export interface KindToNodeMappings {
     [SyntaxKind.ImportDeclaration]: compiler.ImportDeclaration;
     [SyntaxKind.ImportEqualsDeclaration]: compiler.ImportEqualsDeclaration;
     [SyntaxKind.ImportSpecifier]: compiler.ImportSpecifier;
+    [SyntaxKind.ImportType]: compiler.ImportTypeNode;
+    [SyntaxKind.LastTypeNode]: compiler.ImportTypeNode;
     [SyntaxKind.IndexSignature]: compiler.IndexSignatureDeclaration;
     [SyntaxKind.InterfaceDeclaration]: compiler.InterfaceDeclaration;
     [SyntaxKind.IntersectionType]: compiler.IntersectionTypeNode;
@@ -83,7 +85,6 @@ export interface KindToNodeMappings {
     [SyntaxKind.JsxText]: compiler.JsxText;
     [SyntaxKind.LabeledStatement]: compiler.LabeledStatement;
     [SyntaxKind.LiteralType]: compiler.LiteralTypeNode;
-    [SyntaxKind.LastTypeNode]: compiler.LiteralTypeNode;
     [SyntaxKind.MetaProperty]: compiler.MetaProperty;
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration;
     [SyntaxKind.MethodSignature]: compiler.MethodSignature;

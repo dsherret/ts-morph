@@ -14,7 +14,7 @@ export function hasDescendantBaseType(type: Type, isMatch: (type: Type) => boole
 }
 
 export function getDescendantBaseType(type: Type, isMatch: (type: Type) => boolean): Type | undefined {
-    if (type.isIntersectionType()) {
+    if (type.isIntersection()) {
         for (const intersectionType of type.getIntersectionTypes()) {
             const descendantType = getDescendantBaseType(intersectionType, isMatch);
             if (descendantType != null)

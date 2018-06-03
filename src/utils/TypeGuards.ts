@@ -852,6 +852,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ImportTypeNode.
+     * @param node - Node to check.
+     */
+    static isImportTypeNode(node: compiler.Node): node is compiler.ImportTypeNode {
+        return node.getKind() === SyntaxKind.ImportType;
+    }
+
+    /**
      * Gets if the node is a IndexSignatureDeclaration.
      * @param node - Node to check.
      */
@@ -2189,6 +2197,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
+            case SyntaxKind.ImportType:
                 return true;
             default:
                 return false;
@@ -2253,6 +2262,7 @@ export class TypeGuards {
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.ImportType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.TupleType:

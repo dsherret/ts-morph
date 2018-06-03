@@ -18,6 +18,8 @@ export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspecto
 
     if (existingTypeAlias != null)
         existingTypeAlias.remove();
+    if (brandNames.length === 0)
+        throw new Error("Unexpected! For some reason there were no brand names.");
 
     sourceFile.addTypeAlias({
         isExported: true,

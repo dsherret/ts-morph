@@ -72,7 +72,7 @@ export class WrappedNode {
             if (extendsExpr == null)
                 return undefined;
             const extendsType = extendsExpr.getType();
-            const possibleTypes = extendsType.isIntersectionType() ? extendsType.getIntersectionTypes() : [extendsType];
+            const possibleTypes = extendsType.isIntersection() ? extendsType.getIntersectionTypes() : [extendsType];
             const nodeType = ArrayUtils.find(possibleTypes, t => hasDescendantNodeType(t));
             if (nodeType == null)
                 return undefined;

@@ -114,6 +114,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = [T] extends [ts.Class
     [T] extends [ts.ConstructorTypeNode] ? compiler.ConstructorTypeNode :
     [T] extends [ts.ExpressionWithTypeArguments] ? compiler.ExpressionWithTypeArguments :
     [T] extends [ts.FunctionTypeNode] ? compiler.FunctionTypeNode :
+    [T] extends [ts.ImportTypeNode] ? compiler.ImportTypeNode :
     [T] extends [ts.IntersectionTypeNode] ? compiler.IntersectionTypeNode :
     [T] extends [ts.LiteralTypeNode] ? compiler.LiteralTypeNode :
     [T] extends [ts.TupleTypeNode] ? compiler.TupleTypeNode :
