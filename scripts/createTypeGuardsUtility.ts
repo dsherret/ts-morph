@@ -25,7 +25,7 @@ interface MethodInfo {
 export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
     const file = inspector.getProject().getSourceFileOrThrow("./src/utils/TypeGuards.ts");
     const typeGuardsClass = file.getClassOrThrow("TypeGuards");
-    const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
+    const kindToWrapperMappings = inspector.getKindToWrapperMappings();
 
     // remove all the static methods that start with "is"
     typeGuardsClass.getStaticMethods()
@@ -69,11 +69,11 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         }
 
         const allowedBaseNames = ["Node", "Expression", "BooleanLiteral"];
-        for (const nodeToWrapperMapping of nodeToWrapperMappings.filter(v => allowedBaseNames.indexOf(v.wrapperName) >= 0)) {
-            for (const syntaxKindName of nodeToWrapperMapping.syntaxKindNames) {
+        for (const kindToWrapperMapping of kindToWrapperMappings.filter(v => allowedBaseNames.indexOf(v.wrapperName) >= 0)) {
+            for (const syntaxKindName of kindToWrapperMapping.syntaxKindNames) {
                 methodInfos.set(syntaxKindName, {
                     name: syntaxKindName,
-                    wrapperName: nodeToWrapperMapping.wrapperName,
+                    wrapperName: kindToWrapperMapping.wrapperName,
                     syntaxKinds: [syntaxKindName],
                     isMixin: false
                 });
@@ -131,10 +131,10 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         }
 
         function getSyntaxKindsForName(name: string) {
-            const nodeToWrapperVM = ArrayUtils.find(nodeToWrapperMappings, n => n.wrapperName === name);
-            if (nodeToWrapperVM == null)
+            const kindToWrapperVM = ArrayUtils.find(kindToWrapperMappings, n => n.wrapperName === name);
+            if (kindToWrapperVM == null)
                 return [] as string[];
-            return nodeToWrapperVM.syntaxKindNames;
+            return kindToWrapperVM.syntaxKindNames;
         }
     }
 }

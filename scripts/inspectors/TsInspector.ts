@@ -12,6 +12,10 @@ export class TsInspector {
         return this.project.getSourceFileOrThrow("node_modules/typescript/lib/typescript.d.ts");
     }
 
+    getApiLayerFile(): SourceFile {
+        return this.project.getSourceFileOrThrow("src/typescript/typescript.ts");
+    }
+
     @Memoize
     getTsNodes() {
         const compilerApiFile = this.project.getSourceFileOrThrow("src/typescript/typescript.ts");

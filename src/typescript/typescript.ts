@@ -6082,3 +6082,5 @@ export {
     EmitHint,
     IndentStyle
 };
+
+export type CompilerApiNodeBrandPropertyNamesType = "_classElementBrand" | "_declarationBrand" | "_expressionBrand" | "_functionLikeDeclarationBrand" | "_jsDocTypeBrand" | "_leftHandSideExpressionBrand" | "_literalExpressionBrand" | "_memberExpressionBrand" | "_objectLiteralBrandBrand" | "_primaryExpressionBrand" | "_propertyAccessExpressionLikeQualifiedNameBrand" | "_statementBrand" | "_typeElementBrand" | "_typeNodeBrand" | "_unaryExpressionBrand" | "_updateExpressionBrand";

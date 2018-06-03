@@ -5,7 +5,7 @@ import * as compiler from "../compiler";
 // that will automatically update all other parts of the application that need to be updated when this changes.
 
 // using an "any" type here because I couldn't figure out a way of getting the typescript compiler to understand this
-export const nodeToWrapperMappings: { [key: number]: any } = {
+export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.SourceFile]: compiler.SourceFile,
     [SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression,
     [SyntaxKind.ArrayType]: compiler.ArrayTypeNode,

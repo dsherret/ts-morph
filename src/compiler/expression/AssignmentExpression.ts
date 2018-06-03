@@ -5,8 +5,8 @@ import { Node } from "../common";
 
 export const AssignmentExpressionBase = BinaryExpression;
 export class AssignmentExpression<
-    TOperator extends ts.AssignmentOperatorToken = ts.AssignmentOperatorToken,
-    T extends ts.AssignmentExpression<TOperator> = ts.AssignmentExpression<TOperator>
+    T extends ts.AssignmentExpression<TOperator> = ts.AssignmentExpression<TOperator>,
+    TOperator extends ts.AssignmentOperatorToken = ts.AssignmentOperatorToken
 > extends AssignmentExpressionBase<T> {
     /**
      * Gets the operator token of the assignment expression.

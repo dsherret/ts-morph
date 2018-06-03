@@ -22,10 +22,12 @@ Sometimes there isn't a helper function in this library for accessing certain pr
 In these situations, you can access any underlying compiler node property by using the `.getNodeProperty(propName)` method:
 
 ```ts
-const nameNode = propertyAccessExpression.getNodeProperty("name"); // returns: Node<ts.PropertyName>
+const nameNode = propertyAccessExpression.getNodeProperty("name"); // returns: PropertyName
+// also works with arrays and possibly undefined properties
+const typeParameters = classDeclaration.getNodeProperty("typeParameters"); // returns: TypeParameterDeclaration[] | undefined
 ```
 
-**Note:** This currently only works on properties that are a single node. Follow issue [#304](https://github.com/dsherret/ts-simple-ast/issues/304) for progress.
+...and then please open an issue so that I can implement something I forgot to implement.
 
 ## Navigating Existing Compiler Nodes
 

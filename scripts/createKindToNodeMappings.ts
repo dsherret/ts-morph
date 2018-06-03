@@ -15,7 +15,7 @@ import { TsSimpleAstInspector, TsInspector } from "./inspectors";
 export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInspector: TsInspector) {
     const project = inspector.getProject();
     const kindToNodeMappingsFile = project.getSourceFileOrThrow("kindToNodeMappings.ts");
-    const nodeToWrapperMappings = inspector.getNodeToWrapperMappings();
+    const kindToWrapperMappings = inspector.getKindToWrapperMappings();
     kindToNodeMappingsFile.removeText();
 
     // add imports
@@ -47,7 +47,7 @@ export function createKindToNodeMappings(inspector: TsSimpleAstInspector, tsInsp
             returnType: "compiler.Node"
         });
 
-        for (const mapping of nodeToWrapperMappings) {
+        for (const mapping of kindToWrapperMappings) {
             if (!hasDescendantBaseType(mapping.wrappedNode.getType(), t => t.getText() === classType.getText()))
                 continue;
             for (const kindName of mapping.syntaxKindNames) {

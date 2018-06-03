@@ -10,7 +10,7 @@ import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
 import { GlobalContainer } from "../GlobalContainer";
 import { Directory } from "../fileSystem";
 import { createTempSourceFile } from "./createTempSourceFile";
-import { nodeToWrapperMappings } from "./nodeToWrapperMappings";
+import { kindToWrapperMappings } from "./kindToWrapperMappings";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { DirectoryCache } from "./DirectoryCache";
 
@@ -266,8 +266,8 @@ export class CompilerFactory {
             return new ctor(this.global, compilerNode, sourceFile);
         };
 
-        if (nodeToWrapperMappings[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
+        if (kindToWrapperMappings[compilerNode.kind] != null)
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(kindToWrapperMappings[compilerNode.kind]));
         else
             return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node));
     }

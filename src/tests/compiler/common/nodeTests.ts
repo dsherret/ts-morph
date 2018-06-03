@@ -1,9 +1,10 @@
 import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { assert, IsNullableType, IsExactType } from "conditional-type-checks";
 import { WriterFunction } from "../../../types";
 import { expect } from "chai";
 import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
 import { Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
-    SourceFile, FormatCodeSettings, CallExpression } from "../../../compiler";
+    SourceFile, FormatCodeSettings, CallExpression, TypeParameterDeclaration, Identifier } from "../../../compiler";
 import * as errors from "../../../errors";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
@@ -1088,6 +1089,48 @@ class MyClass {
                 if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
                     stop();
             });
+        });
+    });
+
+    describe(nameof<Node>(n => n.getNodeProperty), () => {
+        const fileText = "class MyClass<T, U> { prop: string; otherProp: number; } interface MyInterface {} export default class { prop: Date; }";
+        const { firstChild: classDec, sourceFile } = getInfoFromText<ClassDeclaration>(fileText);
+        const interfaceDec = sourceFile.getInterfaceOrThrow("MyInterface");
+        const noNameClassDec = sourceFile.getClassOrThrow(c => c.getName() == null);
+
+        it("should possibly return undefined for a nullable node property", () => {
+            const result = classDec.getNodeProperty("name");
+            assert<IsNullableType<typeof result>>(true);
+        });
+
+        it("should not possibly return undefined for a non-nullable node property", () => {
+            const result = interfaceDec.getNodeProperty("name");
+            assert<IsExactType<typeof result, Identifier>>(true);
+            assert<IsNullableType<typeof result>>(false);
+        });
+
+        it("should return a wrapped nullable node property of a node", () => {
+            const name = classDec.getNodeProperty("name");
+            assert<IsExactType<typeof name, Identifier | undefined>>(true);
+            expect(name!.getText()).to.equal("MyClass");
+        });
+
+        it("should return undefined when it's undefined", () => {
+            const name = noNameClassDec.getNodeProperty("name");
+            expect(name).to.be.undefined;
+        });
+
+        it("should return the property value when not a node", () => {
+            const kind = classDec.getNodeProperty("kind");
+            assert<IsExactType<typeof kind, SyntaxKind.ClassDeclaration>>(true);
+            expect(kind).to.equal(SyntaxKind.ClassDeclaration);
+        });
+
+        it("should return the node array wrapped", () => {
+            const typeParameters = classDec.getNodeProperty("typeParameters");
+            assert<IsNullableType<typeof typeParameters>>(true);
+            assert<IsExactType<typeof typeParameters, TypeParameterDeclaration[] | undefined>>(true);
+            expect(typeParameters![0].getDescendants().length).to.equal(1); // try a wrapped node property
         });
     });
 });

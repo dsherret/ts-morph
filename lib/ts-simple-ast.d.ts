@@ -1,4 +1,4 @@
-import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "./typescript/typescript";
+import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind, CompilerApiNodeBrandPropertyNamesType } from "./typescript/typescript";
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 export declare type Constructor<T> = new (...args: any[]) => T;
@@ -3542,7 +3542,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     /**
      * Gets the static members.
      */
-    getStaticMembers(): (PropertyDeclaration | MethodDeclaration | GetAccessorDeclaration | SetAccessorDeclaration)[];
+    getStaticMembers(): (GetAccessorDeclaration | MethodDeclaration | PropertyDeclaration | SetAccessorDeclaration)[];
     /**
      * Gets the class' members regardless of whether it's an instance of static member.
      */
@@ -3797,6 +3797,8 @@ export declare class Identifier extends IdentifierBase<ts.Identifier> {
     getImplementations(): ImplementationLocation[];
 }
 
+export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrapperMappings<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrapperMappings<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrapperMappings<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrapperMappings<NonNullableNodeType> | undefined : NodeType[KeyName];
+
 export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the underlying compiler node.
@@ -4040,7 +4042,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.
      */
-    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node;
+    getNodeProperty<KeyType extends keyof LocalNodeType, LocalNodeType extends ts.Node = NodeType>(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>;
     /**
      * Goes up the tree getting all the parents in ascending order.
      */
@@ -4747,7 +4749,7 @@ export declare class AsExpression extends AsExpressionBase<ts.AsExpression> {
 
 declare const AssignmentExpressionBase: typeof BinaryExpression;
 
-export declare class AssignmentExpression<TOperator extends ts.AssignmentOperatorToken = ts.AssignmentOperatorToken, T extends ts.AssignmentExpression<TOperator> = ts.AssignmentExpression<TOperator>> extends AssignmentExpressionBase<T> {
+export declare class AssignmentExpression<T extends ts.AssignmentExpression<TOperator> = ts.AssignmentExpression<TOperator>, TOperator extends ts.AssignmentOperatorToken = ts.AssignmentOperatorToken> extends AssignmentExpressionBase<T> {
     /**
      * Gets the operator token of the assignment expression.
      */
@@ -4989,7 +4991,7 @@ export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpress
 
 declare const ArrayDestructuringAssignmentBase: typeof AssignmentExpression;
 
-export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.EqualsToken, ts.ArrayDestructuringAssignment> {
+export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.ArrayDestructuringAssignment, ts.EqualsToken> {
     /**
      * Gets the left array literal expression of the array destructuring assignment.
      */
@@ -5123,7 +5125,7 @@ export declare function UnaryExpressionedNode<T extends Constructor<UnaryExpress
 
 declare const ObjectDestructuringAssignmentBase: typeof AssignmentExpression;
 
-export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.EqualsToken, ts.ObjectDestructuringAssignment> {
+export declare class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment, ts.EqualsToken> {
     /**
      * Gets the left object literal expression of the object destructuring assignment.
      */
@@ -5572,6 +5574,8 @@ export interface KindToExpressionMappings {
     [SyntaxKind.ThisKeyword]: ThisExpression;
     [SyntaxKind.VoidKeyword]: VoidExpression;
 }
+
+export declare type CompilerNodeToWrapperMappings<T extends ts.Node> = [T] extends [ts.ClassDeclaration] ? ClassDeclaration : [T] extends [ts.ConstructorDeclaration] ? ConstructorDeclaration : [T] extends [ts.TypeParameterDeclaration] ? TypeParameterDeclaration : [T] extends [ts.GetAccessorDeclaration] ? GetAccessorDeclaration : [T] extends [ts.MethodDeclaration] ? MethodDeclaration : [T] extends [ts.PropertyDeclaration] ? PropertyDeclaration : [T] extends [ts.SetAccessorDeclaration] ? SetAccessorDeclaration : [T] extends [ts.ComputedPropertyName] ? ComputedPropertyName : [T] extends [ts.Identifier] ? Identifier : [T] extends [ts.QualifiedName] ? QualifiedName : [T] extends [ts.SyntaxList] ? SyntaxList : [T] extends [ts.Decorator] ? Decorator : [T] extends [ts.JSDoc] ? JSDoc : [T] extends [ts.JSDocAugmentsTag] ? JSDocAugmentsTag : [T] extends [ts.JSDocClassTag] ? JSDocClassTag : [T] extends [ts.JSDocParameterTag] ? JSDocParameterTag : [T] extends [ts.JSDocPropertyTag] ? JSDocPropertyTag : [T] extends [ts.JSDocReturnTag] ? JSDocReturnTag : [T] extends [ts.JSDocTypedefTag] ? JSDocTypedefTag : [T] extends [ts.JSDocTypeTag] ? JSDocTypeTag : [T] extends [ts.JSDocUnknownTag] ? JSDocUnknownTag : [T] extends [ts.EnumDeclaration] ? EnumDeclaration : [T] extends [ts.EnumMember] ? EnumMember : [T] extends [ts.AsExpression] ? AsExpression : [T] extends [ts.AwaitExpression] ? AwaitExpression : [T] extends [ts.CallExpression] ? CallExpression : [T] extends [ts.CommaListExpression] ? CommaListExpression : [T] extends [ts.ConditionalExpression] ? ConditionalExpression : [T] extends [ts.DeleteExpression] ? DeleteExpression : [T] extends [ts.ImportExpression] ? ImportExpression : [T] extends [ts.MetaProperty] ? MetaProperty : [T] extends [ts.NewExpression] ? NewExpression : [T] extends [ts.NonNullExpression] ? NonNullExpression : [T] extends [ts.OmittedExpression] ? OmittedExpression : [T] extends [ts.ParenthesizedExpression] ? ParenthesizedExpression : [T] extends [ts.PartiallyEmittedExpression] ? PartiallyEmittedExpression : [T] extends [ts.PostfixUnaryExpression] ? PostfixUnaryExpression : [T] extends [ts.PrefixUnaryExpression] ? PrefixUnaryExpression : [T] extends [ts.SpreadElement] ? SpreadElement : [T] extends [ts.SuperElementAccessExpression] ? SuperElementAccessExpression : [T] extends [ts.SuperExpression] ? SuperExpression : [T] extends [ts.SuperPropertyAccessExpression] ? SuperPropertyAccessExpression : [T] extends [ts.ThisExpression] ? ThisExpression : [T] extends [ts.TypeAssertion] ? TypeAssertion : [T] extends [ts.TypeOfExpression] ? TypeOfExpression : [T] extends [ts.VoidExpression] ? VoidExpression : [T] extends [ts.YieldExpression] ? YieldExpression : [T] extends [ts.ExportAssignment] ? ExportAssignment : [T] extends [ts.ExportDeclaration] ? ExportDeclaration : [T] extends [ts.ExportSpecifier] ? ExportSpecifier : [T] extends [ts.ExternalModuleReference] ? ExternalModuleReference : [T] extends [ts.ImportDeclaration] ? ImportDeclaration : [T] extends [ts.ImportEqualsDeclaration] ? ImportEqualsDeclaration : [T] extends [ts.ImportSpecifier] ? ImportSpecifier : [T] extends [ts.SourceFile] ? SourceFile : [T] extends [ts.ArrowFunction] ? ArrowFunction : [T] extends [ts.FunctionDeclaration] ? FunctionDeclaration : [T] extends [ts.FunctionExpression] ? FunctionExpression : [T] extends [ts.ParameterDeclaration] ? ParameterDeclaration : [T] extends [ts.HeritageClause] ? HeritageClause : [T] extends [ts.CallSignatureDeclaration] ? CallSignatureDeclaration : [T] extends [ts.ConstructSignatureDeclaration] ? ConstructSignatureDeclaration : [T] extends [ts.IndexSignatureDeclaration] ? IndexSignatureDeclaration : [T] extends [ts.InterfaceDeclaration] ? InterfaceDeclaration : [T] extends [ts.MethodSignature] ? MethodSignature : [T] extends [ts.PropertySignature] ? PropertySignature : [T] extends [ts.JsxAttribute] ? JsxAttribute : [T] extends [ts.JsxClosingElement] ? JsxClosingElement : [T] extends [ts.JsxClosingFragment] ? JsxClosingFragment : [T] extends [ts.JsxElement] ? JsxElement : [T] extends [ts.JsxExpression] ? JsxExpression : [T] extends [ts.JsxFragment] ? JsxFragment : [T] extends [ts.JsxOpeningElement] ? JsxOpeningElement : [T] extends [ts.JsxOpeningFragment] ? JsxOpeningFragment : [T] extends [ts.JsxSelfClosingElement] ? JsxSelfClosingElement : [T] extends [ts.JsxSpreadAttribute] ? JsxSpreadAttribute : [T] extends [ts.JsxText] ? JsxText : [T] extends [ts.BooleanLiteral] ? BooleanLiteral : [T] extends [ts.NullLiteral] ? NullLiteral : [T] extends [ts.NumericLiteral] ? NumericLiteral : [T] extends [ts.RegularExpressionLiteral] ? RegularExpressionLiteral : [T] extends [ts.StringLiteral] ? StringLiteral : [T] extends [ts.NamespaceDeclaration] ? NamespaceDeclaration : [T] extends [ts.Block] ? Block : [T] extends [ts.BreakStatement] ? BreakStatement : [T] extends [ts.CaseBlock] ? CaseBlock : [T] extends [ts.CaseClause] ? CaseClause : [T] extends [ts.CatchClause] ? CatchClause : [T] extends [ts.ContinueStatement] ? ContinueStatement : [T] extends [ts.DebuggerStatement] ? DebuggerStatement : [T] extends [ts.DefaultClause] ? DefaultClause : [T] extends [ts.DoStatement] ? DoStatement : [T] extends [ts.EmptyStatement] ? EmptyStatement : [T] extends [ts.ExpressionStatement] ? ExpressionStatement : [T] extends [ts.ForInStatement] ? ForInStatement : [T] extends [ts.ForOfStatement] ? ForOfStatement : [T] extends [ts.ForStatement] ? ForStatement : [T] extends [ts.IfStatement] ? IfStatement : [T] extends [ts.LabeledStatement] ? LabeledStatement : [T] extends [ts.NotEmittedStatement] ? NotEmittedStatement : [T] extends [ts.ReturnStatement] ? ReturnStatement : [T] extends [ts.SwitchStatement] ? SwitchStatement : [T] extends [ts.ThrowStatement] ? ThrowStatement : [T] extends [ts.TryStatement] ? TryStatement : [T] extends [ts.VariableDeclaration] ? VariableDeclaration : [T] extends [ts.VariableDeclarationList] ? VariableDeclarationList : [T] extends [ts.VariableStatement] ? VariableStatement : [T] extends [ts.WhileStatement] ? WhileStatement : [T] extends [ts.WithStatement] ? WithStatement : [T] extends [ts.ArrayTypeNode] ? ArrayTypeNode : [T] extends [ts.ConstructorTypeNode] ? ConstructorTypeNode : [T] extends [ts.ExpressionWithTypeArguments] ? ExpressionWithTypeArguments : [T] extends [ts.FunctionTypeNode] ? FunctionTypeNode : [T] extends [ts.IntersectionTypeNode] ? IntersectionTypeNode : [T] extends [ts.LiteralTypeNode] ? LiteralTypeNode : [T] extends [ts.TupleTypeNode] ? TupleTypeNode : [T] extends [ts.TypeAliasDeclaration] ? TypeAliasDeclaration : [T] extends [ts.TypeLiteralNode] ? TypeLiteralNode : [T] extends [ts.TypeReferenceNode] ? TypeReferenceNode : [T] extends [ts.UnionTypeNode] ? UnionTypeNode : [T] extends [ts.ArrayDestructuringAssignment] ? ArrayDestructuringAssignment : [T] extends [ts.ArrayLiteralExpression] ? ArrayLiteralExpression : [T] extends [ts.ObjectDestructuringAssignment] ? ObjectDestructuringAssignment : [T] extends [ts.ObjectLiteralExpression] ? ObjectLiteralExpression : [T] extends [ts.PropertyAssignment] ? PropertyAssignment : [T] extends [ts.ShorthandPropertyAssignment] ? ShorthandPropertyAssignment : [T] extends [ts.SpreadAssignment] ? SpreadAssignment : [T] extends [ts.NoSubstitutionTemplateLiteral] ? NoSubstitutionTemplateLiteral : [T] extends [ts.TaggedTemplateExpression] ? TaggedTemplateExpression : [T] extends [ts.TemplateExpression] ? TemplateExpression : [T] extends [ts.TemplateHead] ? TemplateHead : [T] extends [ts.TemplateMiddle] ? TemplateMiddle : [T] extends [ts.TemplateSpan] ? TemplateSpan : [T] extends [ts.TemplateTail] ? TemplateTail : Node<T>;
 
 export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**
@@ -6682,11 +6686,11 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */
-    getInitializerOrThrow(): StringLiteral | JsxExpression;
+    getInitializerOrThrow(): JsxExpression | StringLiteral;
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
-    getInitializer(): StringLiteral | JsxExpression | undefined;
+    getInitializer(): JsxExpression | StringLiteral | undefined;
     /**
      * Removes the JSX attribute.
      */
@@ -8517,7 +8521,7 @@ export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
     /**
      * Gets the literal type node's literal.
      */
-    getLiteral(): BooleanLiteral | PrefixUnaryExpression | LiteralExpression<ts.LiteralExpression>;
+    getLiteral(): PrefixUnaryExpression | BooleanLiteral | LiteralExpression<ts.LiteralExpression>;
 }
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {

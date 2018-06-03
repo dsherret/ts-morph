@@ -32,8 +32,9 @@ export function ReferenceFindableNode<T extends Constructor<ReferenceFindableNod
 function getNodeForReferences(node: ReferenceFindableNodeExtensionType) {
     if (TypeGuards.isIdentifier(node))
         return node;
-    if (node.compilerNode.name != null)
-        return node.getNodeProperty("name");
+    const nameNode = node.getNodeProperty("name");
+    if (nameNode != null)
+        return nameNode;
     if (TypeGuards.isExportableNode(node))
         return node.getDefaultKeyword() || node;
     return node;

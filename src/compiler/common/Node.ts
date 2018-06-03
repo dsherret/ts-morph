@@ -18,9 +18,17 @@ import { QuoteKind } from "../literal/QuoteKind";
 import { NamespaceDeclaration } from "../namespace";
 import { Statement, StatementedNode } from "../statement";
 import { KindToNodeMappings } from "../kindToNodeMappings";
+import { CompilerNodeToWrapperMappings } from "../compilerNodeToWrapperMappings";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
 import { CommentRange } from "./CommentRange";
+
+export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrapperMappings<ArrayNodeTypeForNullable>[] | undefined :
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrapperMappings<ArrayNodeType>[] :
+    NodeType[KeyName] extends ts.Node ? CompilerNodeToWrapperMappings<NodeType[KeyName]> :
+    NonNullableNodeType extends ts.Node ? CompilerNodeToWrapperMappings<NonNullableNodeType> | undefined :
+    NodeType[KeyName];
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
@@ -716,12 +724,25 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.
      */
-    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node {
-        // todo: this method should use conditional types in TS 2.8 so that it maps the KeyType to the correct node property
-        if ((this.compilerNode[propertyName] as any).kind == null)
-            throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} ` +
-                `only works with properties that return a node.`);
-        return this.getNodeFromCompilerNode(this.compilerNode[propertyName] as any as ts.Node) as Node;
+    getNodeProperty<
+            KeyType extends keyof LocalNodeType,
+            LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
+        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>
+    {
+        const property = (this.compilerNode as any)[propertyName] as any | any[];
+
+        if (property == null)
+            return undefined as any;
+        else if (property instanceof Array)
+            return property.map(p => isNode(p) ? this.getNodeFromCompilerNode(p) : p) as any;
+        else if (isNode(property))
+            return this.getNodeFromCompilerNode(property) as any;
+        else
+            return property;
+
+        function isNode(value: any): value is ts.Node {
+            return typeof value.kind === "number" && typeof value.pos === "number" && typeof value.end === "number";
+        }
     }
 
     /**

@@ -27,7 +27,8 @@ export function flattenDeclarationFiles(project: Project, mainFile: SourceFile) 
     // add imports the typescript compiler api and code block writer files
     mainFile.addImportDeclaration({
         namedImports: ["ts", "SyntaxKind", "CompilerOptions", "EmitHint", "ScriptKind", "NewLineKind", "LanguageVariant", "ScriptTarget",
-            "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings", "ModuleResolutionKind"],
+            "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "EditorSettings", "ModuleResolutionKind",
+            "CompilerApiNodeBrandPropertyNamesType"],
         moduleSpecifier: mainFile.getRelativePathAsModuleSpecifierTo(compilerApiFile)
     });
     mainFile.addImportDeclaration({
