@@ -2,6 +2,33 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 12
+
+### Conditional Types
+
+The declaration file now uses some conditional types and that requires TypeScript 2.8+.
+
+### Type Methods
+
+Methods in the form of `Type.isXType()` are now `Type.isX()`. For example:
+
+```ts
+type.isArrayType();
+```
+
+Is now:
+
+```ts
+type.isArray();
+```
+
+This was done so it aligns with the TypeScript compiler API methods and to remove the needless repetition in the naming.
+
+### Renamed Methods
+
+* `getReferencingNodes()` on `ReferenceFindableNode`s is now `findReferencesAsNodes()` and `languageService.getDefinitionReferencingNodes()` is also now `findReferencesAsNodes()`. This was done to improve its discoverability.
+
+
 ## Version 11
 
 ### CodeBlockWriter is now a named export
