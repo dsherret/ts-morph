@@ -1,7 +1,7 @@
 ﻿/**
- * Code Manipulation - Create compiler node to wrapper mappings
+ * Code Manipulation - Create compiler node to wrapped type
  * ------------------------------------------------------------
- * This creates the compilerNodeToWrapperMappings.ts file.
+ * This creates the CompilerNodeToWrappedType.ts file.
  * ------------------------------------------------------------
  */
 import { ClassDeclaration, MethodDeclaration, MethodDeclarationStructure, MethodSignature, MethodSignatureStructure, JSDocStructure,
@@ -11,9 +11,9 @@ import { TsSimpleAstInspector } from "./inspectors";
 
 // this can go away once conditional types are well supported (maybe a few versions after)
 
-export function createCompilerNodeToWrapperMappings(inspector: TsSimpleAstInspector) {
+export function createCompilerNodeToWrappedType(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();
-    const kindToNodeMappingsFile = project.getSourceFileOrThrow("compilerNodeToWrapperMappings.ts");
+    const kindToNodeMappingsFile = project.getSourceFileOrThrow("CompilerNodeToWrappedType.ts");
     const wrappedNodes = inspector.getWrappedNodes();
     kindToNodeMappingsFile.removeText();
 
@@ -30,7 +30,7 @@ export function createCompilerNodeToWrapperMappings(inspector: TsSimpleAstInspec
     // create the type
     kindToNodeMappingsFile.addTypeAlias({
         isExported: true,
-        name: "CompilerNodeToWrapperMappings",
+        name: "CompilerNodeToWrappedType",
         typeParameters: [{ name: "T", constraint: "ts.Node" }],
         type: writer => {
             let isFirst = true;
@@ -49,5 +49,5 @@ export function createCompilerNodeToWrapperMappings(inspector: TsSimpleAstInspec
     });
 
     kindToNodeMappingsFile.insertText(0, writer =>
-        writer.writeLine("// DO NOT EDIT - Automatically maintained by createCompilerNodeToWrapperMappings.ts"));
+        writer.writeLine("// DO NOT EDIT - Automatically maintained by createCompilerNodeToWrappedType.ts"));
 }

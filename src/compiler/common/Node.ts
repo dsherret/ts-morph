@@ -18,16 +18,16 @@ import { QuoteKind } from "../literal/QuoteKind";
 import { NamespaceDeclaration } from "../namespace";
 import { Statement, StatementedNode } from "../statement";
 import { KindToNodeMappings } from "../kindToNodeMappings";
-import { CompilerNodeToWrapperMappings } from "../compilerNodeToWrapperMappings";
+import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
 import { CommentRange } from "./CommentRange";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
-    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrapperMappings<ArrayNodeTypeForNullable>[] | undefined :
-    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrapperMappings<ArrayNodeType>[] :
-    NodeType[KeyName] extends ts.Node ? CompilerNodeToWrapperMappings<NodeType[KeyName]> :
-    NonNullableNodeType extends ts.Node ? CompilerNodeToWrapperMappings<NonNullableNodeType> | undefined :
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
+    NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> :
+    NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined :
     NodeType[KeyName];
 
 export class Node<NodeType extends ts.Node = ts.Node> {

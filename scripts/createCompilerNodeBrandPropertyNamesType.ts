@@ -22,6 +22,6 @@ export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspecto
     sourceFile.addTypeAlias({
         isExported: true,
         name: typeAliasName,
-        type: brandNames.map(n "\"" + n + "\"").join(" | ")
+        type: brandNames.map(n => `"${n}"`).join(" | ")
     });
 }

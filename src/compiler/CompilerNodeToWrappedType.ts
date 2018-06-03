@@ -1,10 +1,9 @@
-// DO NOT EDIT - Automatically maintained by createCompilerNodeToWrapperMappings.ts
+// DO NOT EDIT - Automatically maintained by createCompilerNodeToWrappedType.ts
 import * as compiler from "./index";
 import { ts } from "../typescript";
 
-export type CompilerNodeToWrapperMappings<T extends ts.Node> = [T] extends [ts.ClassDeclaration] ? compiler.ClassDeclaration :
+export type CompilerNodeToWrappedType<T extends ts.Node> = [T] extends [ts.ClassDeclaration] ? compiler.ClassDeclaration :
     [T] extends [ts.ConstructorDeclaration] ? compiler.ConstructorDeclaration :
-    [T] extends [ts.TypeParameterDeclaration] ? compiler.TypeParameterDeclaration :
     [T] extends [ts.GetAccessorDeclaration] ? compiler.GetAccessorDeclaration :
     [T] extends [ts.MethodDeclaration] ? compiler.MethodDeclaration :
     [T] extends [ts.PropertyDeclaration] ? compiler.PropertyDeclaration :
@@ -120,6 +119,7 @@ export type CompilerNodeToWrapperMappings<T extends ts.Node> = [T] extends [ts.C
     [T] extends [ts.TupleTypeNode] ? compiler.TupleTypeNode :
     [T] extends [ts.TypeAliasDeclaration] ? compiler.TypeAliasDeclaration :
     [T] extends [ts.TypeLiteralNode] ? compiler.TypeLiteralNode :
+    [T] extends [ts.TypeParameterDeclaration] ? compiler.TypeParameterDeclaration :
     [T] extends [ts.TypeReferenceNode] ? compiler.TypeReferenceNode :
     [T] extends [ts.UnionTypeNode] ? compiler.UnionTypeNode :
     [T] extends [ts.ArrayDestructuringAssignment] ? compiler.ArrayDestructuringAssignment :

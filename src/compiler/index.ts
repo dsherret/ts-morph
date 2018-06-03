@@ -7,7 +7,7 @@ export * from "./doc";
 export * from "./enum";
 export * from "./expression";
 export * from "./kindToNodeMappings";
-export * from "./compilerNodeToWrapperMappings";
+export * from "./CompilerNodeToWrappedType";
 export * from "./file";
 export * from "./function";
 export * from "./general";

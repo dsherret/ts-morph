@@ -83,6 +83,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.JsxText]: compiler.JsxText;
     [SyntaxKind.LabeledStatement]: compiler.LabeledStatement;
     [SyntaxKind.LiteralType]: compiler.LiteralTypeNode;
+    [SyntaxKind.LastTypeNode]: compiler.LiteralTypeNode;
     [SyntaxKind.MetaProperty]: compiler.MetaProperty;
     [SyntaxKind.MethodDeclaration]: compiler.MethodDeclaration;
     [SyntaxKind.MethodSignature]: compiler.MethodSignature;
