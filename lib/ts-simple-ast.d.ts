@@ -4137,6 +4137,15 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getEndLineNumber(): number;
     /**
+     * Gets the length from the start of the line to the start of the node.
+     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     */
+    getStartColumn(includeJsDocComment?: boolean): number;
+    /**
+     * Gets the length from the start of the line to the end of the node.
+     */
+    getEndColumn(): number;
+    /**
      * Gets if this is the first node on the current line.
      */
     isFirstNodeOnLine(): boolean;
@@ -5774,10 +5783,19 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getFullText(): string;
     /**
-     * Gets the line number of the provided position.
+     * Gets the line number at the provided position.
      * @param pos - Position
      */
+    getLineNumberAtPos(pos: number): number;
+    /**
+     * @deprecated Use getLineNumberAtPos.
+     */
     getLineNumberFromPos(pos: number): number;
+    /**
+     * Gets the length from the start of the line to the provided position.
+     * @param pos - Position.
+     */
+    getColumnAtPos(pos: number): number;
     /**
      * Copy this source file to a new file.
      *
@@ -6109,8 +6127,9 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(settings?: FormatCodeSettings): this;
+    organizeImports(settings?: FormatCodeSettings, userPreferences?: UserPreferences): this;
     /**
      * Applies the text changes to the source file.
      *

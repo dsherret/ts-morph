@@ -28,7 +28,7 @@ export class StringUtils {
         return Es5StringUtils.endsWith(str, endsWithString);
     }
 
-    static getLineNumberFromPos(str: string, pos: number) {
+    static getLineNumberAtPos(str: string, pos: number) {
         errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
         // do not allocate a string in this method
         let count = 0;

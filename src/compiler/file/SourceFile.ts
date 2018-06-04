@@ -146,11 +146,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the line number of the provided position.
+     * Gets the line number at the provided position.
      * @param pos - Position
      */
+    getLineNumberAtPos(pos: number) {
+        return StringUtils.getLineNumberAtPos(this.getFullText(), pos);
+    }
+
+    /**
+     * @deprecated Use getLineNumberAtPos.
+     */
     getLineNumberFromPos(pos: number) {
-        return StringUtils.getLineNumberFromPos(this.getFullText(), pos);
+        return StringUtils.getLineNumberAtPos(this.getFullText(), pos);
     }
 
     /**

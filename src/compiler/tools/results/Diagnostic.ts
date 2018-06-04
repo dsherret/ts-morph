@@ -57,7 +57,7 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
         const start = this.getStart();
         if (sourceFile == null || start == null)
             return undefined;
-        return sourceFile.getLineNumberFromPos(start);
+        return sourceFile.getLineNumberAtPos(start);
     }
 
     /**
