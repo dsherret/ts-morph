@@ -8521,9 +8521,19 @@ declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeN
 
 export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode> {
     /**
+     * Sets the argument text.
+     * @param text - Text of the argument.
+     */
+    setArgument(text: string): this;
+    /**
      * Gets the argument passed into the import type.
      */
     getArgument(): TypeNode;
+    /**
+     * Sets the qualifier text.
+     * @param text - Text.
+     */
+    setQualifier(text: string): this;
     /**
      * Gets the qualifier of the import type if it exists or throws
      */
@@ -8531,7 +8541,7 @@ export declare class ImportTypeNode extends ImportTypeNodeBase<ts.ImportTypeNode
     /**
      * Gets the qualifier of the import type if it exists or returns undefined.
      */
-    getQualifier(): QualifiedName | Identifier | undefined;
+    getQualifier(): EntityName | undefined;
 }
 
 export declare class IntersectionTypeNode extends TypeNode<ts.IntersectionTypeNode> {

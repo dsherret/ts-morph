@@ -43,7 +43,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         if (this.getKeyName() === name)
             return;
 
-        this.getKeyNameNode().replaceWithText(name);
+        this.getKeyNameNode().replaceWithText(name, this.getWriterWithQueuedChildIndentation());
     }
 
     /**
@@ -68,7 +68,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     setKeyType(type: string) {
         if (this.getKeyTypeNode().getText() === type)
             return;
-        this.getKeyTypeNode().replaceWithText(type);
+        this.getKeyTypeNode().replaceWithText(type, this.getWriterWithQueuedChildIndentation());
     }
 
     /**

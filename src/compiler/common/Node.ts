@@ -1,4 +1,5 @@
 import { ts, SyntaxKind } from "../../typescript";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import { WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
@@ -972,8 +973,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
      */
-    replaceWithText(textOrWriterFunction: string | WriterFunction): Node {
-        const newText = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
+    /** @internal */
+    replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
+    replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
+        const newText = getTextFromStringOrWriter(writer || this.getWriter(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
             return this;

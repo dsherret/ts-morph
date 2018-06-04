@@ -19,6 +19,22 @@ describe(nameof(ImportTypeNode), () => {
         });
     });
 
+    describe(nameof<ImportTypeNode>(d => d.setArgument), () => {
+        function doTest(text: string, newValue: string, expected: string) {
+            const {descendant} = getNode(text);
+            descendant.setArgument(newValue);
+            expect(descendant.getText()).to.equal(expected);
+        }
+
+        it("should set the argument using the quotes currently existing", () => {
+            doTest("var t: import('testing');", "newVal", "import('newVal')");
+        });
+
+        it("should set the argument when no arg exists", () => {
+            doTest("var t: import();", "newVal", `import("newVal")`);
+        });
+    });
+
     describe(nameof<ImportTypeNode>(d => d.getQualifier), () => {
         function doTest(text: string, expected: string | undefined) {
             const {descendant} = getNode(text);
@@ -52,6 +68,46 @@ describe(nameof(ImportTypeNode), () => {
 
         it("should be undefined when it doesn't exist", () => {
             doTest("var t: import('testing');", undefined);
+        });
+    });
+
+    describe(nameof<ImportTypeNode>(d => d.setQualifier), () => {
+        function doTest(text: string, newValue: string, expected: string) {
+            const { descendant } = getNode(text);
+            descendant.setQualifier(newValue);
+            expect(descendant.getText()).to.equal(expected);
+        }
+
+        it("should set to an identifier when there is none", () => {
+            doTest("var t: import('testing');", "newVal", "import('testing').newVal");
+        });
+
+        it("should set to a qualified name when there is none", () => {
+            doTest("var t: import('testing');", "newVal.OtherProp", "import('testing').newVal.OtherProp");
+        });
+
+        it("should set to an identifier when it's an identifier", () => {
+            doTest("var t: import('testing').otherVal;", "newVal", "import('testing').newVal");
+        });
+
+        it("should set to an identifier when it's a qualified name", () => {
+            doTest("var t: import('testing').otherVal.Other;", "newVal", "import('testing').newVal");
+        });
+
+        it("should set to a qualified name when it's an identifier", () => {
+            doTest("var t: import('testing').identifier;", "newVal.OtherProp", "import('testing').newVal.OtherProp");
+        });
+
+        it("should set to a qualified name when it's a qualified name", () => {
+            doTest("var t: import('testing').qualified.name;", "newVal.OtherProp", "import('testing').newVal.OtherProp");
+        });
+
+        it("should set when there's a type arg on an identifier", () => {
+            doTest("var t: import('testing').some<string>;", "newVal", `import('testing').newVal<string>`);
+        });
+
+        it("should set when there's a type arg on a qualified name", () => {
+            doTest("var t: import('testing').some.qualified.name<string>;", "newVal", `import('testing').newVal<string>`);
         });
     });
 });
