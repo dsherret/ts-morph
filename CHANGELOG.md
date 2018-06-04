@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.1.0"></a>
+# [12.1.0](https://github.com/dsherret/ts-simple-ast/compare/12.0.0...12.1.0) (2018-06-04)
+
+
+### Features
+
+* Add ImportTypeNode. ([3d0203c](https://github.com/dsherret/ts-simple-ast/commit/3d0203c))
+* ImportTypeNode - setArgument and setQualifier ([e94bbd4](https://github.com/dsherret/ts-simple-ast/commit/e94bbd4))
+* Improvements to CompilerNodeToWrappedType. ([384613a](https://github.com/dsherret/ts-simple-ast/commit/384613a))
+
+
+
 <a name="12.0.0"></a>
 # [12.0.0](https://github.com/dsherret/ts-simple-ast/compare/11.3.0...12.0.0) (2018-06-03)
 
