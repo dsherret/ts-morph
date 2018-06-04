@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.2.0"></a>
+# [12.2.0](https://github.com/dsherret/ts-simple-ast/compare/12.1.0...12.2.0) (2018-06-04)
+
+
+### Features
+
+* Add Node.getStartColumn(), Node.getEndColumn(), SourceFile.getColumnAtPos(pos). ([5119e83](https://github.com/dsherret/ts-simple-ast/commit/5119e83))
+* Add UserPreferences on sourceFile.organizeImports() ([6b0a089](https://github.com/dsherret/ts-simple-ast/commit/6b0a089))
+
+
+
 <a name="12.1.0"></a>
 # [12.1.0](https://github.com/dsherret/ts-simple-ast/compare/12.0.0...12.1.0) (2018-06-04)
 
