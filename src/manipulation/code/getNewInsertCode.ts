@@ -1,6 +1,4 @@
-import { ts } from "../../typescript";
 import { Node } from "../../compiler";
-import * as errors from "../../errors";
 import { FormattingKind, getFormattingKindText } from "../formatting";
 
 export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {

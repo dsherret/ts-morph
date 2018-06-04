@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { Constructor } from "../../../types";
-import { SuperExpression } from "../SuperExpression";
+import { ts } from "../../../typescript";
 import { Node } from "../../common";
+import { SuperExpression } from "../SuperExpression";
 
 export type SuperExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.SuperExpression}>;
 
@@ -15,7 +15,7 @@ export interface SuperExpressionedNode {
 export function SuperExpressionedNode<T extends Constructor<SuperExpressionedNodeExtensionType>>(Base: T): Constructor<SuperExpressionedNode> & T {
     return class extends Base implements SuperExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode<SuperExpression>(this.compilerNode.expression);
+            return this.getNodeFromCompilerNode(this.compilerNode.expression);
         }
     };
 }

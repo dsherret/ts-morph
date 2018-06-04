@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { InterfaceDeclaration, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
 import { InterfaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

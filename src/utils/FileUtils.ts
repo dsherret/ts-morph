@@ -1,11 +1,11 @@
-﻿import * as path from "path";
+﻿import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
+import * as path from "path";
+import { Chars } from "../constants";
+import { FileSystemHost, FileSystemWrapper } from "../fileSystem";
+import { ArrayUtils } from "./ArrayUtils";
+import { StringUtils } from "./StringUtils";
 import globParent = require("glob-parent");
 import isNegatedGlob = require("is-negated-glob");
-import * as toAbsoluteGlob from "@dsherret/to-absolute-glob";
-import { FileSystemHost, FileSystemWrapper } from "../fileSystem";
-import { Chars } from "../constants";
-import { StringUtils } from "./StringUtils";
-import { ArrayUtils } from "./ArrayUtils";
 
 export class FileUtils {
     private static standardizeSlashesRegex = /\\/g;

@@ -1,8 +1,7 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import * as errors from "../../errors";
-import { ExportDeclarationStructure, ExportSpecifierStructure } from "../../structures";
-import { NewLineFormattingStructuresPrinter } from "../formatting";
+import { ExportDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
 
 export class ExportDeclarationStructurePrinter extends FactoryStructurePrinter<ExportDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

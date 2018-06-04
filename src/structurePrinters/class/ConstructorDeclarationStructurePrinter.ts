@@ -1,7 +1,7 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ConstructorDeclarationStructure, ConstructorDeclarationOverloadStructure } from "../../structures";
-import { ObjectUtils, setValueIfUndefined } from "../../utils";
 import { StructurePrinterFactory } from "../../factories";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure } from "../../structures";
+import { ObjectUtils, setValueIfUndefined } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrinter<ConstructorDeclarationStructure> {

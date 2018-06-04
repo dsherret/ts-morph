@@ -1,5 +1,5 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ImportSpecifierStructure, ExportSpecifierStructure } from "../../structures";
+import { ExportSpecifierStructure, ImportSpecifierStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 

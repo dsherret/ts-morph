@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { NamespaceDeclaration, NamespaceChildableNode } from "../../../compiler";
+import { NamespaceChildableNode, NamespaceDeclaration } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(NamespaceChildableNode), () => {

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { GeneratorableNode, FunctionDeclaration, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, GeneratorableNode } from "../../../compiler";
 import { GeneratorableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

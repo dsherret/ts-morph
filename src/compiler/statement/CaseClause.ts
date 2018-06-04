@@ -1,8 +1,8 @@
-import { ts } from "../../typescript";
 import { removeClausedNodeChild } from "../../manipulation";
-import { Expression } from "../expression";
-import { Node } from "../common";
+import { ts } from "../../typescript";
 import { ChildOrderableNode, TextInsertableNode } from "../base";
+import { Node } from "../common";
+import { Expression } from "../expression";
 import { StatementedNode } from "./StatementedNode";
 
 export const CaseClauseBase = ChildOrderableNode(TextInsertableNode(StatementedNode(Node)));
@@ -10,8 +10,8 @@ export class CaseClause extends CaseClauseBase<ts.CaseClause> {
     /**
      * Gets this switch statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**

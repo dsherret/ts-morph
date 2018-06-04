@@ -1,5 +1,5 @@
-﻿import { NamedNodeStructure, ScopeableNodeStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure,
-    AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure } from "../base";
+﻿import { AmbientableNodeStructure, ExportableNodeStructure, ExtendsClauseableNodeStructure, JSDocableNodeStructure, NamedNodeStructure,
+    TypeElementMemberedNodeStructure, TypeParameteredNodeStructure } from "../base";
 
 export interface InterfaceDeclarationStructure extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure,
     JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure

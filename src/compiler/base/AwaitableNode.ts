@@ -1,11 +1,10 @@
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
+import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { AwaitableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
-import { insertIntoParentTextRange, removeChildren, FormattingKind } from "../../manipulation";
 import { Node } from "../common";
-import { NamedNode } from "../base";
-import { ts, SyntaxKind } from "../../typescript";
 
 export type AwaitableNodeExtensionType = Node<ts.Node & { awaitModifier?: ts.AwaitKeywordToken; }>;
 

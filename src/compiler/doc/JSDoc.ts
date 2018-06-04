@@ -1,7 +1,7 @@
-import { ts } from "../../typescript";
-import { WriterFunction } from "../../types";
 import { removeChildren, replaceTextPossiblyCreatingChildNodes } from "../../manipulation";
 import { getPreviousMatchingPos } from "../../manipulation/textSeek";
+import { WriterFunction } from "../../types";
+import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
@@ -17,7 +17,7 @@ export class JSDoc extends Node<ts.JSDoc> {
         const tags = this.compilerNode.tags;
         if (tags == null)
             return [];
-        return tags.map(t => this.getNodeFromCompilerNode<JSDocTag>(t));
+        return tags.map(t => this.getNodeFromCompilerNode(t));
     }
 
     /**

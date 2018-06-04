@@ -1,6 +1,6 @@
 ﻿/* barrel:ignore */
-import * as errors from "../../errors";
 import { SourceFile } from "../../compiler";
+import * as errors from "../../errors";
 import { createCompilerSourceFile } from "../../utils";
 import { NodeHandler } from "../nodeHandlers";
 import { TextManipulator } from "../textManipulators";

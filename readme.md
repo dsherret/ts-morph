@@ -8,11 +8,9 @@
 
 [TypeScript](https://github.com/Microsoft/TypeScript) Compiler API wrapper. Provides a simple way to navigate and manipulate TypeScript and JavaScript code.
 
-## Library Development - Progress Update (08 April 2018)
+## Library Development - Progress Update (03 June 2018)
 
-v10.2.0 will have some massive performance improvements in some scenarios. If you notice any bugs due to this change then please let me know by opening an issue.
-
-View information on breaking changes in [breaking-changes.md](breaking-changes.md).
+TypeScript 2.9 support is added in v12. View information on breaking changes in [breaking-changes.md](breaking-changes.md).
 
 This library is still under early active development. Most common code manipulation/generation use cases are implemented, but there's still a lot of work to do.
 

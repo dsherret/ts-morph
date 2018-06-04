@@ -1,8 +1,7 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { StructurePrinterFactory } from "../../factories";
 import { SourceFileStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
-import { SupportedFormatCodeSettings } from "../../options";
-import { StructurePrinterFactory } from "../../factories";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class SourceFileStructurePrinter extends FactoryStructurePrinter<SourceFileStructure> {

@@ -1,7 +1,7 @@
 ﻿import { Constructor } from "../../../types";
-import { Node } from "../../common";
 import { ts } from "../../../typescript";
 import { JsxTagNameExpression } from "../../aliases";
+import { Node } from "../../common";
 
 export type JsxTagNamedNodeExtensionType = Node<ts.Node & { tagName: ts.JsxTagNameExpression; }>;
 
@@ -18,7 +18,7 @@ export function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionTy
          * Gets the tag name of the JSX element.
          */
         getTagName() {
-            return this.getNodeFromCompilerNode<JsxTagNameExpression>(this.compilerNode.tagName);
+            return this.getNodeFromCompilerNode(this.compilerNode.tagName);
         }
     };
 }

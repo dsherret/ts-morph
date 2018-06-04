@@ -1,6 +1,6 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { NamespaceDeclarationStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
+import { NamespaceDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 

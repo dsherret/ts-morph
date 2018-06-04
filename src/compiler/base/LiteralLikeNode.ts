@@ -1,5 +1,5 @@
-import { ts } from "../../typescript";
 import { Constructor } from "../../types";
+import { ts } from "../../typescript";
 import { Node } from "../common";
 
 export type LiteralLikeNodeExtensionType = Node<ts.LiteralLikeNode>;

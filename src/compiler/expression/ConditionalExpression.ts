@@ -1,5 +1,4 @@
 import { ts, SyntaxKind } from "../../typescript";
-import { Node } from "../common";
 import { Expression } from "./Expression";
 
 export const ConditionalExpressionBase = Expression;
@@ -7,8 +6,8 @@ export class ConditionalExpression extends ConditionalExpressionBase<ts.Conditio
     /**
      * Gets the condition of the conditional expression.
      */
-    getCondition() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.condition);
+    getCondition(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.condition);
     }
 
     /**
@@ -21,8 +20,8 @@ export class ConditionalExpression extends ConditionalExpressionBase<ts.Conditio
     /**
      * Gets the when true expression of the conditional expression.
      */
-    getWhenTrue() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.whenTrue);
+    getWhenTrue(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.whenTrue);
     }
 
     /**
@@ -35,7 +34,7 @@ export class ConditionalExpression extends ConditionalExpressionBase<ts.Conditio
     /**
      * Gets the when false expression of the conditional expression.
      */
-    getWhenFalse() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.whenFalse);
+    getWhenFalse(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.whenFalse);
     }
 }

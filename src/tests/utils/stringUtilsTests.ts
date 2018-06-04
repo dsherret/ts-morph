@@ -1,27 +1,27 @@
 ﻿import { expect } from "chai";
-import * as errors from "../../errors";
 import { QuoteKind } from "../../compiler";
-import { StringUtils, Es5StringUtils } from "../../utils";
+import * as errors from "../../errors";
+import { Es5StringUtils, StringUtils } from "../../utils";
 
 describe(nameof(StringUtils), () => {
-    describe(nameof(StringUtils.getLineNumberFromPos), () => {
+    describe(nameof(StringUtils.getLineNumberAtPos), () => {
         it("should throw if providing a negative pos", () => {
-            expect(() => StringUtils.getLineNumberFromPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLineNumberAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getLineNumberFromPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLineNumberAtPos("", 1)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getLineNumberFromPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLineNumberAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(newLineType: string) {
             let str = `testing${newLineType}this${newLineType}out`;
             const pos = str.length;
             str += `${newLineType}more and more${newLineType}and more`;
-            expect(StringUtils.getLineNumberFromPos(str, pos)).to.equal(3);
+            expect(StringUtils.getLineNumberAtPos(str, pos)).to.equal(3);
         }
 
         it("should get the line position for the specified pos when using \r newlines", () => {
@@ -40,7 +40,50 @@ describe(nameof(StringUtils), () => {
             let str = "testing\r\nthis\nout\rmore\r\nandmore\n";
             const pos = str.length;
             str += "out\r\nmore and more";
-            expect(StringUtils.getLineNumberFromPos(str, pos)).to.equal(6);
+            expect(StringUtils.getLineNumberAtPos(str, pos)).to.equal(6);
+        });
+    });
+
+    describe(nameof(StringUtils.getColumnAtPos), () => {
+        it("should throw if providing a negative pos", () => {
+            expect(() => StringUtils.getColumnAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
+        });
+
+        it("should not throw if providing a pos the length of the string", () => {
+            expect(() => StringUtils.getColumnAtPos("", 1)).to.not.throw();
+        });
+
+        it("should throw if providing a pos greater than the length + 1", () => {
+            expect(() => StringUtils.getColumnAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+        });
+
+        function doTest(text: string, pos: number, expected: number) {
+            expect(StringUtils.getColumnAtPos(text, pos)).to.equal(expected);
+        }
+
+        function doNewlineTest(newLineKind: string) {
+            let text = "testing" + newLineKind;
+            const startLinePos = text.length;
+            text += "more text";
+            const pos = text.length;
+            text += newLineKind + "more text";
+            doTest(text, pos, pos - startLinePos);
+        }
+
+        it("should get for the specified pos when using \r newlines", () => {
+            doNewlineTest("\r");
+        });
+
+        it("should get for the specified pos when using \n newlines", () => {
+            doNewlineTest("\n");
+        });
+
+        it("should get for the specified pos when using \r\n newlines", () => {
+            doNewlineTest("\r\n");
+        });
+
+        it("should get on the first line", () => {
+            doTest("testing this out", 10, 10);
         });
     });
 

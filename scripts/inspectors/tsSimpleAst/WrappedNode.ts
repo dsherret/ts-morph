@@ -18,6 +18,11 @@ export class WrappedNode {
     }
 
     @Memoize
+    hasParent() {
+        return this.wrapperFactory.getWrappedNodes().some(n => n.getBase() === this);
+    }
+
+    @Memoize
     getType(): Type {
         return this.node.getType();
     }
@@ -33,7 +38,7 @@ export class WrappedNode {
     @Memoize
     getBase() {
         const base = this.node.getBaseClass();
-        return base == null ? undefined : this.wrapperFactory.getWrapperNode(base);
+        return base == null ? undefined : this.wrapperFactory.getWrappedNode(base);
     }
 
     @Memoize
@@ -67,7 +72,7 @@ export class WrappedNode {
             if (extendsExpr == null)
                 return undefined;
             const extendsType = extendsExpr.getType();
-            const possibleTypes = extendsType.isIntersectionType() ? extendsType.getIntersectionTypes() : [extendsType];
+            const possibleTypes = extendsType.isIntersection() ? extendsType.getIntersectionTypes() : [extendsType];
             const nodeType = ArrayUtils.find(possibleTypes, t => hasDescendantNodeType(t));
             if (nodeType == null)
                 return undefined;

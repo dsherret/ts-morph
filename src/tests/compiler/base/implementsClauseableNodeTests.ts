@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
-import * as errors from "../../../errors";
-import { ImplementsClauseableNode, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, ImplementsClauseableNode } from "../../../compiler";
 import { ImplementsClauseableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

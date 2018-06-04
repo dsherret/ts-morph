@@ -433,10 +433,6 @@ co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
 
-code-block-writer@7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.1.0.tgz#00cac1625d8493a7752651909333c81e596a214a"
-
 code-block-writer@^7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-7.2.0.tgz#17a57b080e64898a82e3045df7a472baec9f220e"
@@ -792,14 +788,6 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-fs-extra@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-5.0.0.tgz#414d0110cdd06705734d055652c5411260c31abd"
-  dependencies:
-    graceful-fs "^4.1.2"
-    jsonfile "^4.0.0"
-    universalify "^0.1.0"
-
 fs-extra@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-6.0.1.tgz#8abc128f7946e310135ddc93b98bddb410e7a34b"
@@ -845,7 +833,7 @@ glob-to-regexp@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/glob-to-regexp/-/glob-to-regexp-0.3.0.tgz#8c5a1494d2066c570cc3bfe4496175acc4d502ab"
 
-glob@7.1.2, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6, glob@^7.1.1, glob@^7.1.2:
+glob@7.1.2, glob@^7.0.5, glob@^7.0.6, glob@^7.1.1, glob@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
   dependencies:
@@ -859,16 +847,6 @@ glob@7.1.2, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6, glob@^7.1.1, glob@^7.1.2:
 globals@^9.18.0:
   version "9.18.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-9.18.0.tgz#aa3896b3e69b487f17e31ed2143d69a8e30c2d8a"
-
-globby@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/globby/-/globby-6.1.0.tgz#f5a6d70e8395e21c858fb0489d64df02424d506c"
-  dependencies:
-    array-union "^1.0.1"
-    glob "^7.0.3"
-    object-assign "^4.0.1"
-    pify "^2.0.0"
-    pinkie-promise "^2.0.0"
 
 globby@^8.0.1:
   version "8.0.1"
@@ -1566,7 +1544,7 @@ oauth-sign@~0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
+object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -2181,21 +2159,20 @@ ts-node@^6.0.2:
     source-map-support "^0.5.3"
     yn "^2.0.0"
 
-ts-simple-ast@11.2.0:
-  version "11.2.0"
-  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-11.2.0.tgz#58a4469de5391c5e1f9d5f5eb57d675c1e315636"
+ts-simple-ast@12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-12.0.0.tgz#fdbb2843d91c611fd6a931087b57195bd020ba82"
   dependencies:
     "@dsherret/to-absolute-glob" "^2.0.2"
-    "@types/fs-extra" "^5.0.2"
-    code-block-writer "7.1.0"
-    fs-extra "^5.0.0"
+    code-block-writer "^7.2.0"
+    fs-extra "^6.0.1"
     glob-parent "^3.1.0"
-    globby "^6.1.0"
+    globby "^8.0.1"
     is-negated-glob "^1.0.0"
     multimatch "^2.1.0"
     object-assign "^4.1.1"
     tslib "^1.9.0"
-    typescript "2.8.3"
+    typescript "2.9.1"
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.9.1"
@@ -2224,12 +2201,13 @@ tsutils@^2.12.1:
   dependencies:
     tslib "^1.8.1"
 
-ttypescript@1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/ttypescript/-/ttypescript-1.4.2.tgz#773d6275aefeb773ffeddd119e0e1ae912142ec7"
+ttypescript@1.4.6:
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/ttypescript/-/ttypescript-1.4.6.tgz#d719c4272f842b05b4ad66fd0ec57af0b8be6eb0"
   dependencies:
     resolve "^1.7.1"
     ts-node "^6.0.2"
+    typescript ">=2.7.0"
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
@@ -2245,9 +2223,9 @@ type-detect@^4.0.0:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
 
-typescript@2.8.3:
-  version "2.8.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"
+typescript@2.9.1, typescript@>=2.7.0:
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.1.tgz#fdb19d2c67a15d11995fd15640e373e09ab09961"
 
 uglify-js@^2.6:
   version "2.8.29"

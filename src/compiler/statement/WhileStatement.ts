@@ -7,7 +7,7 @@ export class WhileStatement extends WhileStatementBase<ts.WhileStatement> {
     /**
      * Gets this while statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

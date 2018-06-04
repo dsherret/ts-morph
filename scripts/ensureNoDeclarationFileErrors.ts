@@ -20,7 +20,7 @@ if (project.getSourceFiles().length === 0)
 const problems = project.getDiagnostics().map(d => {
     let text = "";
     if (d.getSourceFile() != null)
-        text += d.getSourceFile()!.getFilePath() + ": ";
+        text += `${d.getSourceFile()!.getFilePath()} ${d.getStart()}: `;
     text += d.getMessageText();
     return text;
 });

@@ -1,5 +1,5 @@
+import { removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../manipulation";
 import { ts, SyntaxKind } from "../../typescript";
-import { verifyAndGetIndex, removeCommaSeparatedChild, removeChildren } from "../../manipulation";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type";
 
@@ -11,7 +11,7 @@ export class HeritageClause extends Node<ts.HeritageClause> {
         if (this.compilerNode.types == null)
             return [];
 
-        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode<ExpressionWithTypeArguments>(t));
+        return this.compilerNode.types.map(t => this.getNodeFromCompilerNode(t));
     }
 
     /**

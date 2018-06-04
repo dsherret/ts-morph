@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { StringLiteral, QuoteKind } from "../../../compiler";
+import { QuoteKind, StringLiteral } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getStringLiteral(text: string) {

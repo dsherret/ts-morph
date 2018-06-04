@@ -1,5 +1,4 @@
-﻿import { SyntaxKind } from "../../typescript";
-import { Node } from "../../compiler";
+﻿import { Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 
 export function hasBody(node: Node) {

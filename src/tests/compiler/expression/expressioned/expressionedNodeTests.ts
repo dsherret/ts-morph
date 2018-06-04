@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../../typescript";
-import { ParenthesizedExpression, ExpressionedNode } from "../../../../compiler";
+import { ExpressionedNode, ParenthesizedExpression } from "../../../../compiler";
+import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(ExpressionedNode), () => {

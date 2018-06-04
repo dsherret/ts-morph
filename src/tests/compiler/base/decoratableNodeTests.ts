@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { DecoratorStructure, DecoratableNodeStructure } from "../../../structures";
-import { DecoratableNode, Decorator, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, DecoratableNode, Decorator } from "../../../compiler";
+import { DecoratableNodeStructure, DecoratorStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 

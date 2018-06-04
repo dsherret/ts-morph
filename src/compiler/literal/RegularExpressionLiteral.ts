@@ -1,5 +1,5 @@
-import { ts } from "../../typescript";
 import { replaceNodeText } from "../../manipulation";
+import { ts } from "../../typescript";
 import { LiteralExpression } from "../expression";
 
 export const RegularExpressionLiteralBase = LiteralExpression;

@@ -1,5 +1,5 @@
 ﻿import * as errors from "../errors";
-import { createHashSet, HashSet, ArrayUtils, FileUtils, KeyValueCache } from "../utils";
+import { ArrayUtils, FileUtils, KeyValueCache } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation | CopyDirectoryOperation;

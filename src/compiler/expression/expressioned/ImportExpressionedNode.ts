@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { Constructor } from "../../../types";
-import { ImportExpression } from "../ImportExpression";
+import { ts } from "../../../typescript";
 import { Node } from "../../common";
+import { ImportExpression } from "../ImportExpression";
 
 export type ImportExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.ImportExpression}>;
 
@@ -15,7 +15,7 @@ export interface ImportExpressionedNode {
 export function ImportExpressionedNode<T extends Constructor<ImportExpressionedNodeExtensionType>>(Base: T): Constructor<ImportExpressionedNode> & T {
     return class extends Base implements ImportExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode<ImportExpression>(this.compilerNode.expression);
+            return this.getNodeFromCompilerNode(this.compilerNode.expression);
         }
     };
 }

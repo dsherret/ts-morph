@@ -1,8 +1,8 @@
 ﻿import { Type } from "ts-simple-ast";
-import { ArrayUtils } from "../../src/utils";
+import { ArrayUtils, StringUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {
-    return type.getText() === "Node<NodeType>";
+    return StringUtils.endsWith(type.getText(), "Node<NodeType>");
 }
 
 export function hasDescendantNodeType(type: Type) {
@@ -14,7 +14,7 @@ export function hasDescendantBaseType(type: Type, isMatch: (type: Type) => boole
 }
 
 export function getDescendantBaseType(type: Type, isMatch: (type: Type) => boolean): Type | undefined {
-    if (type.isIntersectionType()) {
+    if (type.isIntersection()) {
         for (const intersectionType of type.getIntersectionTypes()) {
             const descendantType = getDescendantBaseType(intersectionType, isMatch);
             if (descendantType != null)

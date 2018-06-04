@@ -1,6 +1,6 @@
-import { ts } from "../../typescript";
-import { Constructor } from "../../types";
 import { ScopeableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";

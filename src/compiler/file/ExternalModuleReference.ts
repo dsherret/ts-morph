@@ -1,16 +1,15 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { TypeGuards, ModuleUtils } from "../../utils";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
+import { ModuleUtils, TypeGuards } from "../../utils";
 import { Node } from "../common";
 import { Expression } from "../expression";
-import { SourceFile } from "./SourceFile";
 
 export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
     /**
      * Gets the expression or undefined of the yield expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.expression);
+    getExpression(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.expression);
     }
 
     /**

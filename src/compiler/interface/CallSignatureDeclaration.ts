@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
-import { CallSignatureDeclarationStructure } from "../../structures";
 import { removeInterfaceMember } from "../../manipulation";
+import { CallSignatureDeclarationStructure } from "../../structures";
+import { ts } from "../../typescript";
+import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
-import { JSDocableNode, ChildOrderableNode, TypeParameteredNode, SignaturedDeclaration } from "../base";
 import { TypeElement } from "./TypeElement";
 
 export const CallSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(TypeElement))));

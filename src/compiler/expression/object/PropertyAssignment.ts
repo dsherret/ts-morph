@@ -1,9 +1,8 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import * as errors from "../../../errors";
-import { WriterFunction } from "../../../types";
 import { insertIntoParentTextRange } from "../../../manipulation";
+import { WriterFunction } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
-import { PropertyNamedNode, QuestionTokenableNode, InitializerGetExpressionableNode } from "../../base";
+import { InitializerGetExpressionableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
 import { Node } from "../../common";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 

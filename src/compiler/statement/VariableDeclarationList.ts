@@ -1,11 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { insertIntoParentTextRange, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../manipulation";
 import * as errors from "../../errors";
-import { Node } from "../common";
-import { VariableDeclarationListStructure, VariableDeclarationStructure } from "../../structures";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange } from "../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../structurePrinters";
+import { VariableDeclarationListStructure, VariableDeclarationStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
 import { ModifierableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
 
@@ -15,7 +15,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
      * Get the variable declarations.
      */
     getDeclarations(): VariableDeclaration[] {
-        return this.compilerNode.declarations.map(d => this.getNodeFromCompilerNode<VariableDeclaration>(d));
+        return this.compilerNode.declarations.map(d => this.getNodeFromCompilerNode(d));
     }
 
     /**

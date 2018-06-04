@@ -1,4 +1,4 @@
-﻿import { Node, ClassDeclaration } from "../../compiler";
+﻿import { ClassDeclaration, Node } from "../../compiler";
 import { TypeGuards } from "../../utils";
 import { FormattingKind } from "./FormattingKind";
 

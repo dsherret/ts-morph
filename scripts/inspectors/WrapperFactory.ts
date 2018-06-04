@@ -4,14 +4,18 @@ import { WrappedNode, Structure, Mixin } from "./tsSimpleAst";
 import { TsNode, TsNodeProperty } from "./ts";
 
 export class WrapperFactory {
-    private readonly wrapperNodeCache = new KeyValueCache<ClassDeclaration, WrappedNode>();
+    private readonly wrappedNodeCache = new KeyValueCache<ClassDeclaration, WrappedNode>();
     private readonly structureNodeCache = new KeyValueCache<InterfaceDeclaration, Structure>();
     private readonly mixinNodeCache = new KeyValueCache<Node, Mixin>();
     private readonly tsNodeCache = new KeyValueCache<InterfaceDeclaration, TsNode>();
     private readonly tsNodePropertyCache = new KeyValueCache<PropertySignature, TsNodeProperty>();
 
-    getWrapperNode(classDeclaration: ClassDeclaration) {
-        return this.wrapperNodeCache.getOrCreate(classDeclaration, () => new WrappedNode(this, classDeclaration));
+    getWrappedNode(classDeclaration: ClassDeclaration) {
+        return this.wrappedNodeCache.getOrCreate(classDeclaration, () => new WrappedNode(this, classDeclaration));
+    }
+
+    getWrappedNodes() {
+        return this.wrappedNodeCache.getValuesAsArray();
     }
 
     getMixin(interfaceDeclaration: InterfaceDeclaration) {

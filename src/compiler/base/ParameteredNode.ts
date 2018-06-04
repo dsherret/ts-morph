@@ -1,10 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn } from "../../manipulation";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../manipulation";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../structures";
-import { callBaseFill } from "../callBaseFill";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
 
@@ -70,7 +70,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
         }
 
         getParameters() {
-            return this.compilerNode.parameters.map(p => this.getNodeFromCompilerNode<ParameterDeclaration>(p));
+            return this.compilerNode.parameters.map(p => this.getNodeFromCompilerNode(p));
         }
 
         addParameter(structure: ParameterDeclarationStructure) {

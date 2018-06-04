@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration } from "../../../compiler";
-import { NamespaceDeclarationSpecificStructure } from "../../../structures";
 import * as errors from "../../../errors";
+import { NamespaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {

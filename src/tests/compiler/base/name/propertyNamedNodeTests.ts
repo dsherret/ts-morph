@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { InterfaceDeclaration, PropertyNamedNode, Identifier, NumericLiteral, StringLiteral, ComputedPropertyName } from "../../../../compiler";
+import { ComputedPropertyName, Identifier, InterfaceDeclaration, NumericLiteral, PropertyNamedNode, StringLiteral } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 function getInfoFromTextWithFirstInterfaceProperty(text: string) {

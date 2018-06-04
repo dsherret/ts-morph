@@ -1,11 +1,10 @@
-import { ts } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
 import { PropertyNamedNodeStructure } from "../../../structures";
-import { TypeGuards } from "../../../utils";
-import { Node } from "../../common";
+import { Constructor } from "../../../types";
+import { ts } from "../../../typescript";
 import { PropertyName } from "../../aliases";
 import { callBaseFill } from "../../callBaseFill";
+import { Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
@@ -26,7 +25,7 @@ export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensi
 function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNodeSpecific> & T {
     return class extends Base implements PropertyNamedNodeSpecific {
         getNameNode() {
-            return this.getNodeFromCompilerNode<PropertyName>(this.compilerNode.name);
+            return this.getNodeFromCompilerNode(this.compilerNode.name);
         }
 
         getName() {

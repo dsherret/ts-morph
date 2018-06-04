@@ -1,5 +1,5 @@
-﻿import { Constructor } from "../../types";
-import { ScopedNodeStructure } from "../../structures";
+﻿import { ScopedNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";

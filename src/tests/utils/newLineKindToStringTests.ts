@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ts, NewLineKind } from "../../typescript";
+import { NewLineKind } from "../../typescript";
 import { newLineKindToString } from "../../utils";
 
 describe(nameof(newLineKindToString), () => {

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, EnumDeclaration } from "../../../../compiler";
+import { EnumDeclaration, StatementedNode } from "../../../../compiler";
 import { EnumDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

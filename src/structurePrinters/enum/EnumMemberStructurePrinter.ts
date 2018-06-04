@@ -1,7 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { EnumMemberStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
-import { JSDocStructurePrinter } from "../doc";
 import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 
 export class EnumMemberStructurePrinter extends FactoryStructurePrinter<EnumMemberStructure> {

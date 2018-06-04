@@ -1,9 +1,9 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import { removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParentTextRange } from "../../manipulation";
+import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
+import { Node } from "../common";
 import { CallExpression, Expression } from "../expression";
-import { Node, Identifier } from "../common";
 import { TypeNode } from "../type";
 import { DecoratorStructure } from '../../main';
 import { callBaseGetStructure } from '../callBaseGetStructure';
@@ -131,7 +131,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Gets the expression.
      */
     getExpression(): Expression<ts.LeftHandSideExpression> {
-        return this.getNodeFromCompilerNode<Expression<ts.LeftHandSideExpression>>(this.compilerNode.expression);
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**

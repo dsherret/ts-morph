@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
 import { ExportDeclaration } from "../../../compiler";
+import * as errors from "../../../errors";
 import { Project } from "../../../Project";
 import { ExportSpecifierStructure } from "../../../structures";
-import * as errors from "../../../errors";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {

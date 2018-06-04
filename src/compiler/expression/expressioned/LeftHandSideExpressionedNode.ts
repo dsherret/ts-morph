@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { Constructor } from "../../../types";
-import { LeftHandSideExpression } from "../LeftHandSideExpression";
+import { ts } from "../../../typescript";
 import { Node } from "../../common";
+import { LeftHandSideExpression } from "../LeftHandSideExpression";
 
 export type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.LeftHandSideExpression}>;
 
@@ -15,7 +15,7 @@ export interface LeftHandSideExpressionedNode {
 export function LeftHandSideExpressionedNode<T extends Constructor<LeftHandSideExpressionedNodeExtensionType>>(Base: T): Constructor<LeftHandSideExpressionedNode> & T {
     return class extends Base implements LeftHandSideExpressionedNode {
         getExpression() {
-            return this.getNodeFromCompilerNode<LeftHandSideExpression>(this.compilerNode.expression);
+            return this.getNodeFromCompilerNode(this.compilerNode.expression);
         }
     };
 }

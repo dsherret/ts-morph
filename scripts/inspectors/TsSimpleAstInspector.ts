@@ -2,7 +2,7 @@
     Directory, TypeGuards } from "ts-simple-ast";
 import { Memoize, ArrayUtils, createHashSet } from "../../src/utils";
 import { isNodeClass } from "../common";
-import { WrappedNode, Mixin, Structure, NodeToWrapperMapping } from "./tsSimpleAst";
+import { WrappedNode, Mixin, Structure, KindToWrapperMapping } from "./tsSimpleAst";
 import { WrapperFactory } from "./WrapperFactory";
 
 export class TsSimpleAstInspector {
@@ -23,7 +23,7 @@ export class TsSimpleAstInspector {
         const compilerSourceFiles = this.project.getSourceFiles("src/compiler/**/*.ts");
         const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
-        return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrapperNode(c));
+        return classes.filter(c => isNodeClass(c)).map(c => this.wrapperFactory.getWrappedNode(c));
     }
 
     @Memoize
@@ -65,13 +65,13 @@ export class TsSimpleAstInspector {
     }
 
     @Memoize
-    getNodeToWrapperMappings(): NodeToWrapperMapping[] {
+    getKindToWrapperMappings(): KindToWrapperMapping[] {
         const wrappedNodes = this.getWrappedNodes();
-        const sourceFile = this.project.getSourceFileOrThrow("nodeToWrapperMappings.ts");
-        const nodeToWrapperMappings = sourceFile.getVariableDeclaration("nodeToWrapperMappings")!;
-        const initializer = nodeToWrapperMappings.getInitializer()!;
+        const sourceFile = this.project.getSourceFileOrThrow("kindToWrapperMappings.ts");
+        const kindToWrapperMappings = sourceFile.getVariableDeclaration("kindToWrapperMappings")!;
+        const initializer = kindToWrapperMappings.getInitializer()!;
         const propertyAssignments = initializer.getDescendants().filter(d => TypeGuards.isPropertyAssignment(d)) as PropertyAssignment[];
-        const result: { [wrapperName: string]: NodeToWrapperMapping; } = {};
+        const result: { [wrapperName: string]: KindToWrapperMapping; } = {};
 
         for (const assignment of propertyAssignments) {
             const nameNode = (assignment.getInitializerOrThrow() as PropertyAccessExpression).getNameNode();

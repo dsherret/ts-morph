@@ -1,12 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor, WriterFunction } from "../../types";
-import { TypedNodeStructure } from "../../structures";
-import { callBaseFill } from "../callBaseFill";
 import * as errors from "../../errors";
 import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
-import { StringUtils, getTextFromStringOrWriter } from "../../utils";
+import { TypedNodeStructure } from "../../structures";
+import { Constructor, WriterFunction } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { getTextFromStringOrWriter, StringUtils } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
 import { callBaseGetStructure } from '../callBaseGetStructure';
 
@@ -42,7 +41,7 @@ export interface TypedNode {
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
     return class extends Base implements TypedNode {
         getTypeNode() {
-            return this.getNodeFromCompilerNodeIfExists<TypeNode>(this.compilerNode.type);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.type);
         }
 
         getTypeNodeOrThrow() {

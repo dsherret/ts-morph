@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../../typescript";
 import { NoSubstitutionTemplateLiteral } from "../../../../compiler";
+import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getLiteral(text: string) {

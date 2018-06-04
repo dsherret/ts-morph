@@ -14,6 +14,7 @@ const project = getDefinitionProject();
 const mainFile = project.getSourceFileOrThrow("main.d.ts");
 
 flattenDeclarationFiles(project, mainFile);
+removeImportTypes();
 hideBaseDeclarations();
 
 project.save();
@@ -28,5 +29,11 @@ function hideBaseDeclarations() {
 
         // the trick is to mark these as not exported in the declaration file
         variableStatement.setIsExported(false);
+    }
+}
+
+function removeImportTypes() {
+    for (const type of mainFile.getDescendantsOfKind(SyntaxKind.ImportType)) {
+        type.replaceWithText(type.getText().replace(/import\([^\)]+\)\./, ""));
     }
 }

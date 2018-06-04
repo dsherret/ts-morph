@@ -1,9 +1,9 @@
-import { ts, CompilerOptions, ModuleResolutionKind } from "../../typescript";
-import * as tsInternal from "../../typescript/tsInternal";
 import { GlobalContainer } from "../../GlobalContainer";
-import { TypeChecker } from "./TypeChecker";
+import { ModuleResolutionKind, ts } from "../../typescript";
+import * as tsInternal from "../../typescript/tsInternal";
 import { SourceFile } from "../file";
-import { EmitResult, Diagnostic } from "./results";
+import { Diagnostic, DiagnosticWithLocation, EmitResult } from "./results";
+import { TypeChecker } from "./TypeChecker";
 
 /**
  * Options for emitting.
@@ -89,9 +89,9 @@ export class Program {
      * Gets the syntactic diagnostics.
      * @param sourceFile - Optional source file.
      */
-    getSyntacticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+    getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -107,9 +107,9 @@ export class Program {
      * Gets the declaration diagnostics.
      * @param sourceFile - Optional source file.
      */
-    getDeclarationDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+    getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**

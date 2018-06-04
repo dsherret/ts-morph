@@ -1,5 +1,4 @@
 import { ts } from "../../typescript";
-import * as errors from "../../errors";
 import { Expression } from "../expression";
 import { Statement } from "../statement";
 
@@ -17,6 +16,6 @@ export class ExportAssignment extends Statement<ts.ExportAssignment> {
      * Gets the export assignment expression.
      */
     getExpression(): Expression {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 }

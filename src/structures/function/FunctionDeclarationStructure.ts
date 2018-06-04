@@ -1,7 +1,7 @@
-﻿import { NamedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure,
-    JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
-import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
+﻿import { AmbientableNodeStructure, AsyncableNodeStructure, BodyableNodeStructure, ExportableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure,
+    NamedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
+import { FunctionLikeDeclarationStructure } from "./FunctionLikeDeclarationStructure";
 
 export interface FunctionDeclarationStructure
     extends FunctionDeclarationSpecificStructure, NamedNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure,

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { SyntaxKind } from "../../../typescript";
 import { JsxOpeningElement } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 function getInfo(text: string) {

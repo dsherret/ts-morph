@@ -1,8 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange, insertIntoCommaSeparatedNodes,
-    getNodesToReturn } from "../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../manipulation";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { Node } from "../common";
 import { TypeNode } from "../type";
@@ -59,7 +58,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
         getTypeArguments() {
             if (this.compilerNode.typeArguments == null)
                 return [];
-            return this.compilerNode.typeArguments.map(a => this.getNodeFromCompilerNode<TypeNode>(a));
+            return this.compilerNode.typeArguments.map(a => this.getNodeFromCompilerNode(a));
         }
 
         addTypeArgument(argumentText: string) {

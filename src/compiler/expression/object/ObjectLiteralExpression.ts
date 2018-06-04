@@ -1,19 +1,16 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { CodeBlockWriter } from "../../../codeBlockWriter";
 import * as errors from "../../../errors";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
+import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../structurePrinters";
+import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../structures";
+import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
-import { verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../../manipulation";
-import { StructurePrinter, CommaNewLineSeparatedStructuresPrinter } from "../../../structurePrinters";
-import { PropertyAssignmentStructure, ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure,
-    MethodDeclarationStructure, GetAccessorDeclarationStructure, SetAccessorDeclarationStructure } from "../../../structures";
 import { ObjectLiteralElementLike } from "../../aliases";
-import { MethodDeclaration, GetAccessorDeclaration, SetAccessorDeclaration } from "../../class";
-import { Expression } from "../Expression";
-import { Node } from "../../common";
+import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
+import { PrimaryExpression } from "../PrimaryExpression";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
-import { PrimaryExpression } from "../PrimaryExpression";
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -62,7 +59,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     getProperties(): ObjectLiteralElementLike[] {
         const properties: ts.NodeArray<ts.ObjectLiteralElementLike> = this.compilerNode.properties; // explicit type for validation
-        return properties.map(p => this.getNodeFromCompilerNode<ObjectLiteralElementLike>(p));
+        return properties.map(p => this.getNodeFromCompilerNode(p));
     }
 
     /* Property Assignments */

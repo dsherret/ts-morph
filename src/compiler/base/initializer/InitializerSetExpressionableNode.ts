@@ -1,11 +1,10 @@
-import { Constructor, WriterFunction } from "../../../types";
-import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
-import { InitializerSetExpressionableNodeStructure } from "../../../structures";
-import { callBaseFill } from "../../callBaseFill";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { InitializerSetExpressionableNodeStructure } from "../../../structures";
+import { Constructor, WriterFunction } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
-import { Expression } from "../../expression";
+import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
 import { callBaseGetStructure } from '../../callBaseGetStructure';

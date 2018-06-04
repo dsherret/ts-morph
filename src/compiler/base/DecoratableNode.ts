@@ -1,11 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
-import { DecoratorStructure, DecoratableNodeStructure } from "../../structures";
 import * as errors from "../../errors";
-import { callBaseFill } from "../callBaseFill";
-import { getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn } from "../../manipulation";
-import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
+import { FormattingKind, getEndIndexFromArray, getNewInsertCode, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { DecoratableNodeStructure, DecoratorStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
 import { callBaseGetStructure } from '../callBaseGetStructure';
@@ -74,7 +73,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
         getDecorators(): Decorator[] {
             if (this.compilerNode.decorators == null)
                 return [];
-            return this.compilerNode.decorators.map(d => this.getNodeFromCompilerNode<Decorator>(d));
+            return this.compilerNode.decorators.map(d => this.getNodeFromCompilerNode(d));
         }
 
         addDecorator(structure: DecoratorStructure) {

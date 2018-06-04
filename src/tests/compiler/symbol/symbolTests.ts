@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ts, SymbolFlags } from "../../../typescript";
 import { Symbol } from "../../../compiler";
+import { SymbolFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Symbol), () => {

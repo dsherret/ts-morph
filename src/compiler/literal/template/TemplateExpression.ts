@@ -1,24 +1,23 @@
-import { ts } from "../../../typescript";
 import { replaceNodeText } from "../../../manipulation";
-import { PrimaryExpression } from "../../expression";
+import { ts } from "../../../typescript";
 import { TemplateLiteral } from "../../aliases";
+import { PrimaryExpression } from "../../expression";
 import { TemplateHead } from "./TemplateHead";
-import { TemplateSpan } from "./TemplateSpan";
 
 export const TemplateExpressionBase = PrimaryExpression;
 export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpression> {
     /**
      * Gets the template head.
      */
-    getHead() {
-        return this.getNodeFromCompilerNode<TemplateHead>(this.compilerNode.head);
+    getHead(): TemplateHead {
+        return this.getNodeFromCompilerNode(this.compilerNode.head);
     }
 
     /**
      * Gets the template spans.
      */
     getTemplateSpans() {
-        return this.compilerNode.templateSpans.map(s => this.getNodeFromCompilerNode<TemplateSpan>(s));
+        return this.compilerNode.templateSpans.map(s => this.getNodeFromCompilerNode(s));
     }
 
     /**

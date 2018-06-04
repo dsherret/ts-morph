@@ -1,10 +1,9 @@
-import { ts, SyntaxKind } from "../../../typescript";
 import * as errors from "../../../errors";
 import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
-import { StringUtils } from "../../../utils";
-import { NamedNode, QuestionTokenableNode, InitializerGetExpressionableNode } from "../../base";
-import { Expression } from "../Expression";
+import { SyntaxKind, ts } from "../../../typescript";
+import { InitializerGetExpressionableNode, NamedNode, QuestionTokenableNode } from "../../base";
 import { Node } from "../../common";
+import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
 
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
@@ -29,8 +28,8 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
     /**
      * Gets the object assignment initializer if it exists.
      */
-    getObjectAssignmentInitializer() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.objectAssignmentInitializer);
+    getObjectAssignmentInitializer(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.objectAssignmentInitializer);
     }
 
     /**

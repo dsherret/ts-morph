@@ -1,9 +1,9 @@
-﻿import { Constructor } from "../../types";
-import * as errors from "../../errors";
+﻿import * as errors from "../../errors";
 import { AsyncableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { ts, SyntaxKind } from "../../typescript";
 import { ModifierableNode } from "./ModifierableNode";
 
 export type AsyncableNodeExtensionType = Node & ModifierableNode;

@@ -1,9 +1,9 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
+import { Constructor } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
 import { getSyntaxKindName } from "../../../utils";
-import { Expression } from "../../expression";
 import { Node } from "../../common";
+import { Expression } from "../../expression";
 import { KindToExpressionMappings } from "../../kindToNodeMappings";
 
 export type InitializerGetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }>;
@@ -53,7 +53,7 @@ export function InitializerGetExpressionableNode<T extends Constructor<Initializ
         }
 
         getInitializer() {
-            return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.initializer);
+            return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
         }
     };
 }

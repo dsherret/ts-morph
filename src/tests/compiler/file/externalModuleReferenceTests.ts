@@ -1,8 +1,7 @@
 ﻿import { expect } from "chai";
-import { Project } from "../../../Project";
-import { ts, SyntaxKind } from "../../../typescript";
 import { ExternalModuleReference } from "../../../compiler";
-import * as errors from "../../../errors";
+import { Project } from "../../../Project";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ExternalModuleReference), () => {

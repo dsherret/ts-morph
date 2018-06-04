@@ -12,6 +12,13 @@ export class TsNode {
         return this.node.getName();
     }
 
+    getNameForType() {
+        const typeParams = this.node.getTypeParameters().map(p => p.getDefaultNode() == null);
+        if (typeParams.length > 0)
+            return this.node.getName() + "<" + typeParams.map(_ => "any").join(", ") + ">";
+        return this.node.getName();
+    }
+
     getInterface() {
         return this.node;
     }
@@ -29,7 +36,7 @@ export class TsNode {
                 continue;
             const classDec = node.getFirstAncestorByKind(SyntaxKind.ClassDeclaration);
             if (classDec != null)
-                return this.wrapperFactory.getWrapperNode(classDec);
+                return this.wrapperFactory.getWrappedNode(classDec);
         }
         return undefined;
     }

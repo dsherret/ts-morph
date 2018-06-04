@@ -1,6 +1,5 @@
 import { ts } from "../../typescript";
 import { LeftHandSideExpressionedNode } from "../expression";
-import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
 
 export const ExpressionWithTypeArgumentsBase = LeftHandSideExpressionedNode(TypeNode);
@@ -13,6 +12,6 @@ export class ExpressionWithTypeArguments extends ExpressionWithTypeArgumentsBase
         if (typeArguments == null)
             return [];
 
-        return typeArguments.map(a => this.getNodeFromCompilerNode<TypeNode>(a));
+        return typeArguments.map(a => this.getNodeFromCompilerNode(a));
     }
 }

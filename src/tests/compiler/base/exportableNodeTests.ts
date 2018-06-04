@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { ExportableNode, ClassDeclaration, NamespaceDeclaration, FunctionDeclaration } from "../../../compiler";
-import { ExportableNodeStructure } from "../../../structures";
+import { ClassDeclaration, ExportableNode, FunctionDeclaration, NamespaceDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
+import { ExportableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportableNode), () => {

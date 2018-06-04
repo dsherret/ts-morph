@@ -1,7 +1,6 @@
-﻿import { ts } from "../../typescript";
-import { expect } from "chai";
-import { DefaultFileSystemHost } from "../../fileSystem";
+﻿import { expect } from "chai";
 import * as errors from "../../errors";
+import { DefaultFileSystemHost } from "../../fileSystem";
 
 describe(nameof(DefaultFileSystemHost), () => {
     describe(nameof<DefaultFileSystemHost>(h => h.readDirSync), () => {

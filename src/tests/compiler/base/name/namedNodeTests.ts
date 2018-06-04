@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, EnumDeclaration, NamedNode, Identifier } from "../../../../compiler";
+import { EnumDeclaration, FunctionDeclaration, Identifier, NamedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {
@@ -62,11 +62,11 @@ describe(nameof(NamedNode), () => {
         });
     });
 
-    describe(nameof<NamedNode>(n => n.getReferencingNodes), () => {
+    describe(nameof<NamedNode>(n => n.findReferencesAsNodes), () => {
         it("should find all the references and exclude the definition", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencingNodes = firstChild.getReferencingNodes();
+            const referencingNodes = firstChild.findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");

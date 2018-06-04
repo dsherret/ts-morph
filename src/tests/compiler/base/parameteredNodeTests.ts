@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ParameteredNode, FunctionDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
+import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../compiler";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

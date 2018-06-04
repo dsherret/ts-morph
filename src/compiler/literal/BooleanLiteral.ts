@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "../../typescript";
+import { SyntaxKind, ts } from "../../typescript";
 import { PrimaryExpression } from "../expression";
 
 export const BooleanLiteralBase = PrimaryExpression;

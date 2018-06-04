@@ -1,7 +1,6 @@
-﻿import * as errors from "../../errors";
-import { Node } from "../../compiler";
-import { ts } from "../../typescript";
+﻿import { Node } from "../../compiler";
 import { CompilerFactory } from "../../factories";
+import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";

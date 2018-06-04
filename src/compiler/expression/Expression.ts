@@ -1,6 +1,6 @@
 import { ts } from "../../typescript";
-import { Type } from "../type";
 import { Node } from "../common/Node";
+import { Type } from "../type";
 
 export class Expression<T extends ts.Expression = ts.Expression> extends Node<T> {
     /**

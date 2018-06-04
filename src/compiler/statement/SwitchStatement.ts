@@ -1,25 +1,24 @@
 import { ts } from "../../typescript";
-import { Expression } from "../expression";
-import { Node } from "../common";
-import { ChildOrderableNode } from "../base";
-import { Statement } from "./Statement";
-import { CaseBlock } from "./CaseBlock";
 import { CaseOrDefaultClause } from "../aliases";
+import { ChildOrderableNode } from "../base";
+import { Expression } from "../expression";
+import { CaseBlock } from "./CaseBlock";
+import { Statement } from "./Statement";
 
 export const SwitchStatementBase = ChildOrderableNode(Statement);
 export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {
     /**
      * Gets this switch statement's expression.
      */
-    getExpression() {
-        return this.getNodeFromCompilerNode<Expression>(this.compilerNode.expression);
+    getExpression(): Expression {
+        return this.getNodeFromCompilerNode(this.compilerNode.expression);
     }
 
     /**
      * Gets this switch statement's case block.
      */
-    getCaseBlock() {
-        return this.getNodeFromCompilerNode<CaseBlock>(this.compilerNode.caseBlock);
+    getCaseBlock(): CaseBlock {
+        return this.getNodeFromCompilerNode(this.compilerNode.caseBlock);
     }
 
     /**

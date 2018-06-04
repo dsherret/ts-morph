@@ -1,7 +1,7 @@
-import { WriterFunction } from "../../../../types";
 import { expect } from "chai";
-import { EnumDeclaration, InitializerSetExpressionableNode, ClassDeclaration, PropertyDeclaration } from "../../../../compiler";
+import { ClassDeclaration, EnumDeclaration, InitializerSetExpressionableNode, PropertyDeclaration } from "../../../../compiler";
 import { InitializerSetExpressionableNodeStructure } from "../../../../structures";
+import { WriterFunction } from "../../../../types";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(InitializerSetExpressionableNode), () => {

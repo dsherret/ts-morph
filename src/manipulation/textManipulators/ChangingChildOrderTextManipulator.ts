@@ -1,9 +1,9 @@
 ﻿import { Node } from "../../compiler";
-import { TypeGuards, StringUtils } from "../../utils";
-import { getPosAtNextNonBlankLine } from "../textSeek";
+import { StringUtils, TypeGuards } from "../../utils";
 import { FormattingKind } from "../formatting";
-import { TextManipulator } from "./TextManipulator";
+import { getPosAtNextNonBlankLine } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
+import { TextManipulator } from "./TextManipulator";
 
 export interface ChangingChildOrderTextManipulatorOptions<TParentNode extends Node> {
     parent: TParentNode;

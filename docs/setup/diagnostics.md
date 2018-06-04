@@ -33,12 +33,13 @@ Source file the diagnostic occurs in:
 const sourceFile = diagnostic.getSourceFile(); // returns: SourceFile | undefined
 ```
 
-#### Start & length
+#### Start, line number, & length
 
-Position in the file and length of the diagnostic:
+Position in the file, the line number, and length of the diagnostic:
 
 ```ts
 const start = diagnostic.getStart();   // returns: number
+const lineNumber = diagnostic.getLineNumber();   // returns: number
 const length = diagnostic.getLength(); // returns: number
 ```
 

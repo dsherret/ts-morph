@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { MethodSignatureStructure } from "../../structures";
-import { NewLineFormattingStructuresPrinter } from "../formatting";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
+import { NewLineFormattingStructuresPrinter } from "../formatting";
 
 export class MethodSignatureStructurePrinter extends FactoryStructurePrinter<MethodSignatureStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);

@@ -1,19 +1,19 @@
-import { ts, DiagnosticCategory } from "../../../typescript";
 import { SourceFile } from "../../../compiler";
 import { GlobalContainer } from "../../../GlobalContainer";
+import { DiagnosticCategory, ts } from "../../../typescript";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
 /**
  * Diagnostic.
  */
-export class Diagnostic {
+export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /** @internal */
     readonly global: GlobalContainer | undefined;
     /** @internal */
-    readonly _compilerObject: ts.Diagnostic;
+    readonly _compilerObject: TCompilerObject;
 
     /** @internal */
-    constructor(global: GlobalContainer | undefined, compilerObject: ts.Diagnostic) {
+    constructor(global: GlobalContainer | undefined, compilerObject: TCompilerObject) {
         this.global = global;
         this._compilerObject = compilerObject;
     }
@@ -21,7 +21,7 @@ export class Diagnostic {
     /**
      * Gets the underlying compiler diagnostic.
      */
-    get compilerObject(): ts.Diagnostic {
+    get compilerObject(): TCompilerObject {
         return this._compilerObject;
     }
 
@@ -47,6 +47,17 @@ export class Diagnostic {
             return new DiagnosticMessageChain(messageText);
         else
             return this.global.compilerFactory.getDiagnosticMessageChain(messageText);
+    }
+
+    /**
+     * Gets the line number.
+     */
+    getLineNumber() {
+        const sourceFile = this.getSourceFile();
+        const start = this.getStart();
+        if (sourceFile == null || start == null)
+            return undefined;
+        return sourceFile.getLineNumberAtPos(start);
     }
 
     /**

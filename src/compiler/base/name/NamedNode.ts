@@ -1,10 +1,9 @@
-import { ts } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
 import { NamedNodeStructure } from "../../../structures";
-import { Node, Identifier } from "../../common";
-import { ReferencedSymbol } from "../../tools";
+import { Constructor } from "../../../types";
+import { ts } from "../../../typescript";
 import { callBaseFill } from "../../callBaseFill";
+import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
@@ -37,7 +36,7 @@ export function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T
 export function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T {
     return class extends Base implements NamedNodeSpecific {
         getNameNode() {
-            return this.getNodeFromCompilerNode<Identifier>(this.compilerNode.name);
+            return this.getNodeFromCompilerNode(this.compilerNode.name);
         }
 
         getName() {

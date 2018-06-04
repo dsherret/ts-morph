@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { Node, TypedNode, VariableStatement, TypeAliasDeclaration, ClassDeclaration, PropertyDeclaration, FunctionDeclaration } from "../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, Node, PropertyDeclaration, TypeAliasDeclaration, TypedNode, VariableStatement } from "../../../compiler";
 import { TypedNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

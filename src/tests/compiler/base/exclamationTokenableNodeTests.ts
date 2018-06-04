@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, PropertyDeclaration, ExclamationTokenableNode, VariableStatement } from "../../../compiler";
+import { ClassDeclaration, ExclamationTokenableNode, PropertyDeclaration, VariableStatement } from "../../../compiler";
 import * as errors from "../../../errors";
 import { ExclamationTokenableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";

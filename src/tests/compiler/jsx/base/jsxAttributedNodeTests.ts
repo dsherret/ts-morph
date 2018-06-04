@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { SyntaxKind } from "../../../../typescript";
 import { JsxAttributedNode, JsxAttributeLike, Node } from "../../../../compiler";
 import { JsxAttributeStructure } from "../../../../structures";
+import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
 function getInfo(text: string) {

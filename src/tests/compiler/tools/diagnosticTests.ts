@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { DiagnosticCategory } from "../../../typescript";
 import { Diagnostic } from "../../../compiler";
+import { DiagnosticCategory } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Diagnostic), () => {
@@ -41,6 +41,12 @@ describe(nameof(Diagnostic), () => {
     describe(nameof<Diagnostic>(d => d.getStart), () => {
         it("should get the start", () => {
             expect(constError.getStart()).to.equal(6);
+        });
+    });
+
+    describe(nameof<Diagnostic>(d => d.getLineNumber), () => {
+        it("should get the line number", () => {
+            expect(constError.getLineNumber()).to.equal(1);
         });
     });
 

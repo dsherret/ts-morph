@@ -1,5 +1,4 @@
 ﻿import { expect } from "chai";
-import { ts } from "../../typescript";
 import { ClassDeclaration } from "../../compiler";
 import { getInfoFromText } from "../compiler/testHelpers";
 

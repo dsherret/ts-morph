@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
+import { SyntaxKind } from "../../typescript";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("helpers", () => {

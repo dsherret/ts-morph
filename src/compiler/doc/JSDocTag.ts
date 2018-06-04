@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { Node, Identifier } from "../common";
+import { Identifier, Node } from "../common";
 
 /**
  * JS doc tag node.
@@ -8,15 +8,15 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<N
     /**
      * Gets the at token.
      */
-    getAtToken() {
-        return this.getNodeFromCompilerNode<Node>(this.compilerNode.atToken);
+    getAtToken(): Node {
+        return this.getNodeFromCompilerNode(this.compilerNode.atToken);
     }
 
     /**
      * Gets the tag name node.
      */
-    getTagNameNode() {
-        return this.getNodeFromCompilerNode<Identifier>(this.compilerNode.tagName);
+    getTagNameNode(): Identifier {
+        return this.getNodeFromCompilerNode(this.compilerNode.tagName);
     }
 
     /**

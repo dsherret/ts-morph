@@ -1,8 +1,8 @@
-﻿import * as errors from "../../errors";
-import { ts } from "../../typescript";
-import { Node } from "../../compiler";
-import { getSyntaxKindName, ArrayUtils } from "../../utils";
+﻿import { Node } from "../../compiler";
+import * as errors from "../../errors";
 import { CompilerFactory } from "../../factories";
+import { ts } from "../../typescript";
+import { ArrayUtils, getSyntaxKindName } from "../../utils";
 import { NodeHandler } from "./NodeHandler";
 import { NodeHandlerHelper } from "./NodeHandlerHelper";
 

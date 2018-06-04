@@ -61,7 +61,7 @@ declare class CodeBlockWriter {
      * @param block - Block to indent.
      */
     indentBlock(block: () => void): this;
-    private _indentBlockInternal(block?);
+    private _indentBlockInternal;
     /**
      * Conditionally writes a line of text.
      * @param condition - Condition to evaluate.
@@ -197,11 +197,11 @@ declare class CodeBlockWriter {
      * Gets the writer's text.
      */
     toString(): string;
-    private _writeIndentingNewLines(text);
-    private _baseWriteNewline();
-    private _updateInternalState(str);
-    private _writeIndentation();
-    private _newLineIfNewLineOnNextWrite();
-    private _getIndentationLevelFromArg(countOrText);
+    private _writeIndentingNewLines;
+    private _baseWriteNewline;
+    private _updateInternalState;
+    private _writeIndentation;
+    private _newLineIfNewLineOnNextWrite;
+    private _getIndentationLevelFromArg;
 }
 export { CodeBlockWriter, CodeBlockWriterOptions };

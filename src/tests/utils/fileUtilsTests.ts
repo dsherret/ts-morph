@@ -1,7 +1,6 @@
 ﻿import { expect } from "chai";
-import { VirtualFileSystemHost, FileSystemWrapper } from "../../fileSystem";
+import { VirtualFileSystemHost } from "../../fileSystem";
 import { FileUtils } from "../../utils";
-import { getFileSystemHostWithFiles } from "../testHelpers";
 
 describe(nameof(FileUtils), () => {
     describe(nameof(FileUtils.getStandardizedAbsolutePath), () => {

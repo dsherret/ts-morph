@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "11.2.1",
+  "version": "12.2.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -10,12 +10,12 @@
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
-    "refactor": "ts-node scripts/refactor",
+    "refactor": "ts-node scripts/refactor --ignoreDiagnostics",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
     "package": "npm run build && ts-node scripts/createDeclarationFile",
-    "publish-code-verification": "npm run code-verification && npm run ensure-no-definition-file-errors && npm run ensure-declaration-file-not-changed",
+    "publish-code-verification": "npm run code-verification && npm run ensure-no-declaration-file-errors && npm run ensure-declaration-file-not-changed",
     "code-verification": "ts-node scripts/ensureStructuresMatchClasses && ts-node scripts/ensureOverloadStructuresMatch",
-    "ensure-no-definition-file-errors": "ts-node scripts/ensureNoDefinitionFileErrors",
+    "ensure-no-declaration-file-errors": "ts-node scripts/ensureNoDeclarationFileErrors",
     "type-check-docs": "ts-node scripts/typeCheckDocumentation.ts",
     "ensure-declaration-file-not-changed": "ts-node scripts/ensureDeclarationFileNotChanged",
     "overwrite-declaration-file": "npm run package && copy /Y dist\\main.d.ts lib\\ts-simple-ast.d.ts && copy /Y dist\\typescript\\typescript.d.ts lib\\typescript\\typescript.d.ts && copy /Y dist\\codeBlockWriter\\code-block-writer.d.ts lib\\codeBlockWriter\\code-block-writer.d.ts"
@@ -52,9 +52,22 @@
   "typescript": {
     "definition": "dist/main.d.ts"
   },
+  "dependencies": {
+    "@dsherret/to-absolute-glob": "^2.0.2",
+    "code-block-writer": "^7.2.0",
+    "fs-extra": "^6.0.1",
+    "glob-parent": "^3.1.0",
+    "globby": "^8.0.1",
+    "is-negated-glob": "^1.0.0",
+    "multimatch": "^2.1.0",
+    "object-assign": "^4.1.1",
+    "tslib": "^1.9.0",
+    "typescript": "2.9.1"
+  },
   "devDependencies": {
     "@types/chai": "^4.1.2",
     "@types/diff": "^3.5.1",
+    "@types/fs-extra": "^5.0.2",
     "@types/glob-parent": "^3.1.0",
     "@types/is-negated-glob": "^1.0.0",
     "@types/mocha": "^5.2.0",
@@ -73,22 +86,9 @@
     "source-map-support": "^0.5.5",
     "ts-nameof": "^1.0.0",
     "ts-node": "^6.0.2",
-    "ts-simple-ast": "11.2.0",
+    "ts-simple-ast": "12.0.0",
     "tslint": "^5.8.0",
-    "ttypescript": "1.4.2",
-    "@types/fs-extra": "^5.0.2"
-  },
-  "dependencies": {
-    "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "^7.2.0",
-    "fs-extra": "^6.0.1",
-    "glob-parent": "^3.1.0",
-    "globby": "^8.0.1",
-    "is-negated-glob": "^1.0.0",
-    "multimatch": "^2.1.0",
-    "object-assign": "^4.1.1",
-    "tslib": "^1.9.0",
-    "typescript": "2.8.3"
+    "ttypescript": "1.4.6"
   },
   "standard-version": {
     "tagPrefix": ""

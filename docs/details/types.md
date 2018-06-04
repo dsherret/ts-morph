@@ -197,21 +197,27 @@ const aliasTypeArgs = type.getAliasTypeArguments();
 Use any of the following methods:
 
 ```ts
-type.isAnonymousType();
-type.isBooleanType();
-type.isStringType();
-type.isNumberType();
-type.isEnumType();
-type.isLiteralType();
-type.isBooleanLiteralType();
-type.isStringLiteralType();
-type.isNumberLiteralType();
-type.isEnumLiteralType();
-type.isIntersectionType();
-type.isInterfaceType();
-type.isObjectType();
-type.isTupleType();
-type.isUnionType();
+type.isAnonymous();
+type.isArray();
+type.isBoolean();
+type.isString();
+type.isNumber();
+type.isClass();
+type.isClassOrInterface();
+type.isEnum();
+type.isInterface();
+type.isLiteral();
+type.isBooleanLiteral();
+type.isStringLiteral();
+type.isNumberLiteral();
+type.isEnumLiteral();
+type.isObject();
+type.isTuple();
+type.isUnion();
+type.isIntersection();
+type.isUnionOrIntersection();
+type.isNull();
+type.isUndefined();
 ```
 
 If you see something that doesn't exist here and should (there's a lot missing), then please log an issue or submit a pull request.

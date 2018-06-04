@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { WriterFunction } from "../../../types";
-import { ReturnTypedNode, FunctionDeclaration } from "../../../compiler";
+import { FunctionDeclaration, ReturnTypedNode } from "../../../compiler";
 import { ReturnTypedNodeStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ReturnTypedNode), () => {

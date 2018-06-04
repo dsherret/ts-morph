@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { JsxElementStructure, JsxAttributeStructure } from "../../structures";
+import { JsxAttributeStructure, JsxElementStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxElementStructure> {

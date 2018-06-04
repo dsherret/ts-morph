@@ -1,7 +1,7 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
-import { Node, Identifier } from "../../common";
+import { Constructor } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
+import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 // todo: consolidate these named classes somehow
@@ -38,7 +38,7 @@ function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensio
 
             switch (compilerNameNode.kind) {
                 case SyntaxKind.Identifier:
-                    return this.getNodeFromCompilerNode<Identifier>(compilerNameNode);
+                    return this.getNodeFromCompilerNode(compilerNameNode);
                 /* istanbul ignore next */
                 default:
                     throw errors.getNotImplementedForSyntaxKindError(compilerNameNode.kind);

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, InterfaceDeclaration } from "../../../../compiler";
+import { InterfaceDeclaration, StatementedNode } from "../../../../compiler";
 import { InterfaceDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

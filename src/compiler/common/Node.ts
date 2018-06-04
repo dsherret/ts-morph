@@ -1,26 +1,28 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { WriterFunction } from "../../types";
+import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
-import { IndentationText } from "../../options";
-import { StructurePrinter } from "../../structurePrinters";
-import { insertIntoParentTextRange, getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
-    getTextFromFormattingEdits } from "../../manipulation";
-import { TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
-    getParentSyntaxList } from "../../utils";
+import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits, insertIntoParentTextRange,
+    replaceSourceFileTextForFormatting } from "../../manipulation";
+import { WriterFunction } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
+    TypeGuards } from "../../utils";
+import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../file";
-import { ConstructorDeclaration, MethodDeclaration } from "../class";
-import { FunctionDeclaration } from "../function";
-import { FormatCodeSettings } from "../tools";
-import { TypeAliasDeclaration, Type } from "../type";
-import { InterfaceDeclaration } from "../interface";
-import { QuoteKind } from "../literal/QuoteKind";
-import { NamespaceDeclaration } from "../namespace";
-import { Statement, StatementedNode } from "../statement";
 import { KindToNodeMappings } from "../kindToNodeMappings";
+import { Statement } from "../statement";
+import { FormatCodeSettings } from "../tools";
+import { Type } from "../type";
+import { CommentRange } from "./CommentRange";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
-import { CommentRange } from "./CommentRange";
+
+export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
+    NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
+    NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> :
+    NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined :
+    NodeType[KeyName];
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
@@ -504,7 +506,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             else if (node.kind === SyntaxKind.ArrowFunction) {
                 const arrowFunction = (node as ts.ArrowFunction);
                 if (arrowFunction.body.kind !== SyntaxKind.Block)
-                    statements.push(thisNode.getNodeFromCompilerNode<Statement>(arrowFunction.body));
+                    statements.push(thisNode.getNodeFromCompilerNode(arrowFunction.body) as Node as Statement); // todo: bug... it's not a statement
                 else
                     handleNode(thisNode, arrowFunction.body);
             }
@@ -516,7 +518,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if ((node as NodeWithStatements).statements == null)
                 return false;
             for (const statement of (node as NodeWithStatements).statements) {
-                statements.push(thisNode.getNodeFromCompilerNode<Statement>(statement));
+                statements.push(thisNode.getNodeFromCompilerNode(statement));
                 handleChildren(thisNode, statement);
             }
             return true;
@@ -668,12 +670,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getTrailingTriviaEnd() {
         const parent = this.getParent();
-        if (parent == null)
-            return 0;
         const end = this.getEnd();
+        if (parent == null)
+            return end;
         const parentEnd = parent.getEnd();
         if (parentEnd === end)
-            return 0;
+            return end;
         const trailingComments = this.getTrailingCommentRanges();
         const searchStart = getSearchStart();
 
@@ -716,12 +718,25 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets a compiler node property wrapped in a Node.
      * @param propertyName - Property name.
      */
-    getNodeProperty<KeyType extends keyof NodeType>(propertyName: KeyType): Node {
-        // todo: this method should use conditional types in TS 2.8 so that it maps the KeyType to the correct node property
-        if ((this.compilerNode[propertyName] as any).kind == null)
-            throw new errors.InvalidOperationError(`Attempted to get property '${propertyName}', but ${nameof<this>(n => n.getNodeProperty)} ` +
-                `only works with properties that return a node.`);
-        return this.getNodeFromCompilerNode(this.compilerNode[propertyName] as any as ts.Node) as Node;
+    getNodeProperty<
+            KeyType extends keyof LocalNodeType,
+            LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
+        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>
+    {
+        const property = (this.compilerNode as any)[propertyName] as any | any[];
+
+        if (property == null)
+            return undefined as any;
+        else if (property instanceof Array)
+            return property.map(p => isNode(p) ? this.getNodeFromCompilerNode(p) : p) as any;
+        else if (isNode(property))
+            return this.getNodeFromCompilerNode(property) as any;
+        else
+            return property;
+
+        function isNode(value: any): value is ts.Node {
+            return typeof value.kind === "number" && typeof value.pos === "number" && typeof value.end === "number";
+        }
     }
 
     /**
@@ -904,7 +919,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getStartLinePos(includeJsDocComment?: boolean) {
         const sourceFileText = this.sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n" || char === "\r");
     }
 
     /**
@@ -912,7 +927,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
      */
     getStartLineNumber(includeJsDocComment?: boolean) {
-        return this.sourceFile.getLineNumberFromPos(this.getStartLinePos(includeJsDocComment));
+        return this.sourceFile.getLineNumberAtPos(this.getStartLinePos(includeJsDocComment));
     }
 
     /**
@@ -920,8 +935,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getEndLineNumber() {
         const sourceFileText = this.sourceFile.getFullText();
-        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n");
-        return this.sourceFile.getLineNumberFromPos(endLinePos);
+        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
+        return this.sourceFile.getLineNumberAtPos(endLinePos);
+    }
+
+    /**
+     * Gets the length from the start of the line to the start of the node.
+     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     */
+    getStartColumn(includeJsDocComment?: boolean) {
+        return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
+    }
+
+    /**
+     * Gets the length from the start of the line to the end of the node.
+     */
+    getEndColumn() {
+        return this.sourceFile.getColumnAtPos(this.getEnd());
     }
 
     /**
@@ -951,8 +981,11 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param textOrWriterFunction - Text or writer function to replace with.
      * @returns The new node.
      */
-    replaceWithText(textOrWriterFunction: string | WriterFunction): Node {
-        const newText = getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction);
+    replaceWithText(textOrWriterFunction: string | WriterFunction): Node;
+    /** @internal */
+    replaceWithText(textOrWriterFunction: string | WriterFunction, writer: CodeBlockWriter): Node;
+    replaceWithText(textOrWriterFunction: string | WriterFunction, writer?: CodeBlockWriter): Node {
+        const newText = getTextFromStringOrWriter(writer || this.getWriter(), textOrWriterFunction);
         if (TypeGuards.isSourceFile(this)) {
             this.replaceText([this.getPos(), this.getEnd()], newText);
             return this;
@@ -1410,20 +1443,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets or creates a node from the internal cache.
      * @internal
      */
-    getNodeFromCompilerNode<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType): LocalNodeType
+    getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
+        compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
     {
-        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile) as LocalNodeType;
+        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
     }
 
     /**
      * Gets or creates a node from the internal cache, if it exists.
      * @internal
      */
-    getNodeFromCompilerNodeIfExists<LocalNodeType extends Node<LocalCompilerNodeType>, LocalCompilerNodeType extends ts.Node = ts.Node>(
-        compilerNode: LocalCompilerNodeType | undefined): LocalNodeType | undefined
+    getNodeFromCompilerNodeIfExists<LocalCompilerNodeType extends ts.Node = ts.Node>(
+        compilerNode: LocalCompilerNodeType | undefined): CompilerNodeToWrappedType<LocalCompilerNodeType> | undefined
     {
-        return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalNodeType, LocalCompilerNodeType>(compilerNode);
+        return compilerNode == null ? undefined : this.getNodeFromCompilerNode<LocalCompilerNodeType>(compilerNode);
     }
 
     /**

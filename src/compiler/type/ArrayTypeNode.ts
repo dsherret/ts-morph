@@ -5,7 +5,7 @@ export class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
     /**
      * Gets the array type node's element type node.
      */
-    getElementTypeNode() {
-        return this.getNodeFromCompilerNode<TypeNode>(this.compilerNode.elementType);
+    getElementTypeNode(): TypeNode {
+        return this.getNodeFromCompilerNode(this.compilerNode.elementType);
     }
 }

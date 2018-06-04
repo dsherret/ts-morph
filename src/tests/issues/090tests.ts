@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, PropertyDeclaration } from "../../compiler";
-import { Scope } from "../../main";
 import { getInfoFromText } from "../compiler/testHelpers";
 
 describe("tests for issue #90", () => {

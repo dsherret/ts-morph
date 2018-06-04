@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { JSDocableNode, VariableStatement, FunctionDeclaration, Node, ClassDeclaration, PropertyDeclaration } from "../../../compiler";
-import { JSDocStructure, JSDocableNodeStructure } from "../../../structures";
+import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../compiler";
+import { JSDocableNodeStructure, JSDocStructure } from "../../../structures";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(JSDocableNode), () => {

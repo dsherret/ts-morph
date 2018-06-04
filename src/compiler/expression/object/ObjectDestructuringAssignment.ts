@@ -3,11 +3,11 @@ import { AssignmentExpression } from "../AssignmentExpression";
 import { ObjectLiteralExpression } from "./ObjectLiteralExpression";
 
 export const ObjectDestructuringAssignmentBase = AssignmentExpression;
-export class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.EqualsToken, ts.ObjectDestructuringAssignment> {
+export class ObjectDestructuringAssignment extends ObjectDestructuringAssignmentBase<ts.ObjectDestructuringAssignment, ts.EqualsToken> {
     /**
      * Gets the left object literal expression of the object destructuring assignment.
      */
-    getLeft() {
-        return this.getNodeFromCompilerNode<ObjectLiteralExpression>(this.compilerNode.left);
+    getLeft(): ObjectLiteralExpression {
+        return this.getNodeFromCompilerNode(this.compilerNode.left);
     }
 }

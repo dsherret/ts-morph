@@ -1,15 +1,14 @@
-import { ts, CompilerOptions, ScriptTarget, EditorSettings } from "../../typescript";
-import { GlobalContainer } from "../../GlobalContainer";
-import { replaceSourceFileTextForRename, getTextFromFormattingEdits } from "../../manipulation";
 import * as errors from "../../errors";
 import { DefaultFileSystemHost } from "../../fileSystem";
-import { KeyValueCache, ArrayUtils, FileUtils, StringUtils, ObjectUtils, fillDefaultFormatCodeSettings, fillDefaultEditorSettings } from "../../utils";
-import { SourceFile } from "../file";
+import { GlobalContainer } from "../../GlobalContainer";
+import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
+import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
+import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node } from "../common";
+import { SourceFile } from "../file";
+import { FormatCodeSettings, UserPreferences } from "./inputs";
 import { Program } from "./Program";
-import { FormatCodeSettings } from "./inputs";
-import { ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput,
-    FileTextChanges } from "./results";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -190,7 +189,7 @@ export class LanguageService {
      * Finds the nodes that reference the definition(s) of the specified node.
      * @param node - Node.
      */
-    getDefinitionReferencingNodes(node: Node) {
+    findReferencesAsNodes(node: Node) {
         const references = this.findReferences(node);
         return ArrayUtils.from(getReferencingNodes());
 
@@ -312,21 +311,23 @@ export class LanguageService {
      *
      * @param sourceFile - Source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings): FileTextChanges[];
+    organizeImports(sourceFile: SourceFile, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
     /**
      * Gets the file text changes for organizing the imports in a source file.
      *
      * @param filePath - File path of the source file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(filePath: string, settings?: FormatCodeSettings): FileTextChanges[];
-    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}): FileTextChanges[] {
+    organizeImports(filePath: string, settings?: FormatCodeSettings, userPreferences?: UserPreferences): FileTextChanges[];
+    organizeImports(filePathOrSourceFile: string | SourceFile, settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}): FileTextChanges[] {
         const scope: ts.OrganizeImportsScope = {
             type: "file",
             fileName: this._getFilePathFromFilePathOrSourceFile(filePathOrSourceFile)
         };
-        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings))
+        return this.compilerObject.organizeImports(scope, this._getFilledSettings(settings), this._getFilledUserPreferences(userPreferences))
             .map(fileTextChanges => new FileTextChanges(fileTextChanges));
     }
 
@@ -346,5 +347,9 @@ export class LanguageService {
         fillDefaultFormatCodeSettings(settings, this.global.manipulationSettings);
         (settings as any)["_filled"] = true;
         return settings;
+    }
+
+    private _getFilledUserPreferences(userPreferences: UserPreferences) {
+        return ObjectUtils.assign(this.global.getUserPreferences(), userPreferences);
     }
 }

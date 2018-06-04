@@ -1,6 +1,6 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
 import { InitializerSetExpressionableNodeStructure } from "../../structures";
+import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 

@@ -1,5 +1,5 @@
-﻿import { PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure,
-    AsyncableNodeStructure, GeneratorableNodeStructure, JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure,
+﻿import { AbstractableNodeStructure, AsyncableNodeStructure, BodyableNodeStructure, DecoratableNodeStructure, GeneratorableNodeStructure,
+    JSDocableNodeStructure, PropertyNamedNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, StaticableNodeStructure,
     TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
 

@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { ModuleReference } from "../aliases";
 import { JSDocableNode, NamedNode } from "../base";
-import { Node } from "../common";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
 
@@ -13,7 +12,7 @@ export class ImportEqualsDeclaration extends ImportEqualsDeclarationBase<ts.Impo
      * Gets the module reference of the import equals declaration.
      */
     getModuleReference(): ModuleReference {
-        return this.getNodeFromCompilerNode<ModuleReference>(this.compilerNode.moduleReference);
+        return this.getNodeFromCompilerNode(this.compilerNode.moduleReference);
     }
 
     /**

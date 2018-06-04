@@ -1,5 +1,4 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { StringUtils } from "../../utils";
 import { PropertySignatureStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";

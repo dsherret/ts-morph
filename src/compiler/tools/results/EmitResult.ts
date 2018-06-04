@@ -1,6 +1,5 @@
-import { ts } from "../../../typescript";
-import { Diagnostic } from "./Diagnostic";
 import { GlobalContainer } from "../../../GlobalContainer";
+import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 
 /**

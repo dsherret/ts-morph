@@ -1,5 +1,5 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
 import { Expression } from "../expression";
 import { IterationStatement } from "./IterationStatement";
 import { VariableDeclarationList } from "./VariableDeclarationList";
@@ -9,8 +9,8 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
     /**
      * Gets this for statement's initializer or undefined if none exists.
      */
-    getInitializer() {
-        return this.getNodeFromCompilerNodeIfExists<VariableDeclarationList | Expression>(this.compilerNode.initializer);
+    getInitializer(): VariableDeclarationList | Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.initializer);
     }
 
     /**
@@ -23,8 +23,8 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
     /**
      * Gets this for statement's condition or undefined if none exists.
      */
-    getCondition() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.condition);
+    getCondition(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.condition);
     }
 
     /**
@@ -37,8 +37,8 @@ export class ForStatement extends ForStatementBase<ts.ForStatement> {
     /**
      * Gets this for statement's incrementor.
      */
-    getIncrementor() {
-        return this.getNodeFromCompilerNodeIfExists<Expression>(this.compilerNode.incrementor);
+    getIncrementor(): Expression | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.incrementor);
     }
 
     /**

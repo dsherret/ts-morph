@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { printNode, PrintNodeOptions } from "../../../utils";
-import { ts, ScriptTarget, ScriptKind, SyntaxKind, NewLineKind } from "../../../typescript";
+import { NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "../../../typescript";
+import { printNode } from "../../../utils";
 import { getInfoFromText } from "../../compiler/testHelpers";
 
 describe(nameof(printNode), () => {
@@ -46,8 +46,8 @@ describe(nameof(printNode), () => {
     });
 
     it("should print the node when printing a jsx file", () => {
-        const node = ts.createJsxOpeningElement(ts.createIdentifier("Test"), ts.createJsxAttributes([]));
-        expect(printNode(node, { scriptKind: ScriptKind.TSX })).to.equal("<Test>");
+        const node = ts.createJsxSelfClosingElement(ts.createIdentifier("Test"), undefined, ts.createJsxAttributes([]));
+        expect(printNode(node, { scriptKind: ScriptKind.TSX })).to.equal("<Test />");
     });
 
     it("should print the node when printing a non-jsx file", () => {

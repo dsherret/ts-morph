@@ -35,5 +35,19 @@ If you just went the nodes that reference the named/nameable declaration, then u
 following method:
 
 ```ts
-const nodes = classDeclaration.getReferencingNodes();
+const nodes = classDeclaration.findReferencesAsNodes();
+```
+
+## "Go to Definition"
+
+Similar to finding references, you can also go to an identifier's definitions:
+
+```ts
+const definitions = identifier.getDefinitions();
+```
+
+Or just get the nodes:
+
+```ts
+const nodes = identifier.getDefinitionNodes();
 ```

@@ -1,28 +1,28 @@
 import { ts } from "../../typescript";
-import { PrimaryExpression } from "../expression";
 import { JsxChild } from "../aliases";
-import { JsxOpeningFragment } from "./JsxOpeningFragment";
+import { PrimaryExpression } from "../expression";
 import { JsxClosingFragment } from "./JsxClosingFragment";
+import { JsxOpeningFragment } from "./JsxOpeningFragment";
 
 export class JsxFragment extends PrimaryExpression<ts.JsxFragment> {
     /**
      * Gets the children of the JSX fragment.
      */
     getJsxChildren(): JsxChild[] {
-        return this.compilerNode.children.map(c => this.getNodeFromCompilerNode<JsxChild>(c));
+        return this.compilerNode.children.map(c => this.getNodeFromCompilerNode(c));
     }
 
     /**
      * Gets the opening fragment.
      */
-    getOpeningFragment() {
-        return this.getNodeFromCompilerNode<JsxOpeningFragment>(this.compilerNode.openingFragment);
+    getOpeningFragment(): JsxOpeningFragment {
+        return this.getNodeFromCompilerNode(this.compilerNode.openingFragment);
     }
 
     /**
      * Gets the closing fragment.
      */
-    getClosingFragment() {
-        return this.getNodeFromCompilerNode<JsxClosingFragment>(this.compilerNode.closingFragment);
+    getClosingFragment(): JsxClosingFragment {
+        return this.getNodeFromCompilerNode(this.compilerNode.closingFragment);
     }
 }

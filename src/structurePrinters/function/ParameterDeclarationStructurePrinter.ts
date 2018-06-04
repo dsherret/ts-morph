@@ -1,6 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { ParameterDeclarationStructure } from "../../structures";
-import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { CommaSeparatedStructuresPrinter } from "../formatting";
 

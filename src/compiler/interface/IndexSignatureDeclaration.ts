@@ -1,12 +1,11 @@
-import { ts } from "../../typescript";
+import { removeInterfaceMember } from "../../manipulation";
 import { IndexSignatureDeclarationStructure } from "../../structures";
 import { WriterFunction } from "../../types";
+import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
-import { removeInterfaceMember } from "../../manipulation";
+import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node, Identifier } from "../common";
-import { TypeNode, Type } from "../type";
-import { JSDocableNode, ChildOrderableNode, ModifierableNode, ReadonlyableNode } from "../base";
+import { Type, TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
 
 export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));
@@ -43,7 +42,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
         if (this.getKeyName() === name)
             return;
 
-        this.getKeyNameNode().replaceWithText(name);
+        this.getKeyNameNode().replaceWithText(name, this.getWriterWithQueuedChildIndentation());
     }
 
     /**
@@ -51,7 +50,7 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     getKeyNameNode() {
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode<Identifier>(param.name);
+        return this.getNodeFromCompilerNode(param.name);
     }
 
     /**
@@ -68,15 +67,15 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     setKeyType(type: string) {
         if (this.getKeyTypeNode().getText() === type)
             return;
-        this.getKeyTypeNode().replaceWithText(type);
+        this.getKeyTypeNode().replaceWithText(type, this.getWriterWithQueuedChildIndentation());
     }
 
     /**
      * Gets the key type node.
      */
-    getKeyTypeNode() {
+    getKeyTypeNode(): TypeNode {
         const param = this.compilerNode.parameters[0];
-        return this.getNodeFromCompilerNode<TypeNode>(param.type!);
+        return this.getNodeFromCompilerNode(param.type!);
     }
 
     /**
@@ -89,8 +88,8 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
     /**
      * Gets the return type node.
      */
-    getReturnTypeNode() {
-        return this.getNodeFromCompilerNode<TypeNode>(this.compilerNode.type!);
+    getReturnTypeNode(): TypeNode {
+        return this.getNodeFromCompilerNode(this.compilerNode.type!);
     }
 
     /**

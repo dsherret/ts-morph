@@ -1,8 +1,8 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { AmbientableNodeStructure } from "../../structures";
-import { TypeGuards, isNodeAmbientOrInAmbientContext } from "../../utils";
+import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
+import { isNodeAmbientOrInAmbientContext, TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";

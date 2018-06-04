@@ -1,11 +1,9 @@
-﻿import * as path from "path";
-import { expect } from "chai";
-import { Project } from "../../../Project";
-import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
-import { ts, SyntaxKind, ScriptTarget } from "../../../typescript";
+﻿import { expect } from "chai";
 import { SourceFile } from "../../../compiler";
 import * as errors from "../../../errors";
-import * as testHelpers from "../../testHelpers";
+import { Project } from "../../../Project";
+import { ScriptTarget, SyntaxKind, ts } from "../../../typescript";
+import { createWrappedNode } from "../../../utils/compiler/createWrappedNode";
 
 describe(nameof(createWrappedNode), () => {
     it("should throw an exception if passing in a node not created with setParentNodes set to true.", () => {

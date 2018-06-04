@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { InterfaceDeclaration, NumericLiteral } from "../../../compiler";
+import { NumericLiteral } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(NumericLiteral), () => {

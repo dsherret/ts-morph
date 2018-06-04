@@ -1,4 +1,4 @@
-﻿import { ScopedNodeStructure, JSDocableNodeStructure, BodyableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
+﻿import { BodyableNodeStructure, JSDocableNodeStructure, ScopedNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure } from "../base";
 import { FunctionLikeDeclarationStructure } from "../function";
 
 export interface ConstructorDeclarationStructure

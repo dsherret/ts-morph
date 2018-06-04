@@ -1,17 +1,16 @@
-import { ts, SyntaxKind, TypeFlags } from "../typescript";
-import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticMessageChain,
-    JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan, ReferenceEntry } from "../compiler";
+import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
-import { SourceFileStructure } from "../structures";
-import { SourceFileStructurePrinter } from "../structurePrinters";
-import { KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile } from "../utils";
-import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
-import { GlobalContainer } from "../GlobalContainer";
 import { Directory } from "../fileSystem";
+import { GlobalContainer } from "../GlobalContainer";
+import { SourceFileAddOptions, SourceFileCreateOptions } from "../Project";
+import { SourceFileStructure } from "../structures";
+import { SyntaxKind, ts, TypeFlags } from "../typescript";
+import { ArrayUtils, createCompilerSourceFile, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";
 import { createTempSourceFile } from "./createTempSourceFile";
-import { nodeToWrapperMappings } from "./nodeToWrapperMappings";
-import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { DirectoryCache } from "./DirectoryCache";
+import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
+import { kindToWrapperMappings } from "./kindToWrapperMappings";
 
 /**
  * Factory for creating compiler wrappers.
@@ -254,9 +253,9 @@ export class CompilerFactory {
      * Gets a wrapped compiler type based on the node's kind.
      * @param node - Node to get the wrapped object from.
      */
-    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): Node<NodeType> {
+    getNodeFromCompilerNode<NodeType extends ts.Node>(compilerNode: NodeType, sourceFile: SourceFile): CompilerNodeToWrappedType<NodeType> {
         if (compilerNode.kind === SyntaxKind.SourceFile)
-            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as Node<NodeType>;
+            return this.getSourceFile(compilerNode as any as ts.SourceFile) as Node as CompilerNodeToWrappedType<NodeType>;
 
         const createNode = (ctor: any) => {
             // ensure the parent is created
@@ -265,10 +264,10 @@ export class CompilerFactory {
             return new ctor(this.global, compilerNode, sourceFile);
         };
 
-        if (nodeToWrapperMappings[compilerNode.kind] != null)
-            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(nodeToWrapperMappings[compilerNode.kind]));
+        if (kindToWrapperMappings[compilerNode.kind] != null)
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(kindToWrapperMappings[compilerNode.kind])) as Node as CompilerNodeToWrappedType<NodeType>;
         else
-            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node));
+            return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node)) as Node as CompilerNodeToWrappedType<NodeType>;
     }
 
     private getSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions): SourceFile {
@@ -434,7 +433,19 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic.
      */
     getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
-        return this.diagnosticCache.getOrCreate(diagnostic, () => new Diagnostic(this.global, diagnostic));
+        return this.diagnosticCache.getOrCreate(diagnostic, () => {
+            if (diagnostic.start != null)
+                return new DiagnosticWithLocation(this.global, diagnostic as ts.DiagnosticWithLocation);
+            return new Diagnostic(this.global, diagnostic);
+        });
+    }
+
+    /**
+     * Gets a wrapped diagnostic with location from a compiler diagnostic.
+     * @param diagnostic - Compiler diagnostic.
+     */
+    getDiagnosticWithLocation(diagnostic: ts.DiagnosticWithLocation): DiagnosticWithLocation {
+        return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.global, diagnostic));
     }
 
     /**

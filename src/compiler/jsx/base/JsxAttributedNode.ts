@@ -1,12 +1,12 @@
-﻿import { Constructor } from "../../../types";
-import * as errors from "../../../errors";
-import { insertIntoParentTextRange, verifyAndGetIndex, getNodesToReturn } from "../../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
-import { Node } from "../../common";
-import { ts, SyntaxKind } from "../../../typescript";
-import { JsxAttributeStructure } from "../../../structures";
+﻿import * as errors from "../../../errors";
+import { getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { SpaceFormattingStructuresPrinter } from "../../../structurePrinters";
+import { JsxAttributeStructure } from "../../../structures";
+import { Constructor } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { JsxAttributeLike } from "../../aliases";
+import { Node } from "../../common";
 import { JsxTagNamedNode } from "./JsxTagNamedNode";
 
 export type JsxAttributedNodeExtensionType = Node<ts.Node & { attributes: ts.JsxAttributes; }> & JsxTagNamedNode;
@@ -57,7 +57,7 @@ export interface JsxAttributedNode {
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {
     return class extends Base implements JsxAttributedNode {
         getAttributes() {
-            return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode<JsxAttributeLike>(p));
+            return this.compilerNode.attributes.properties.map(p => this.getNodeFromCompilerNode(p));
         }
 
         getAttributeOrThrow(nameOrFindFunction: (string | ((attribute: JsxAttributeLike) => boolean))) {

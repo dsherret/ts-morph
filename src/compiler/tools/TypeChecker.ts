@@ -1,8 +1,8 @@
-import { ts, SyntaxKind, SymbolFlags, TypeFormatFlags } from "../../typescript";
 import { GlobalContainer } from "../../GlobalContainer";
+import { SymbolFlags, SyntaxKind, ts, TypeFormatFlags } from "../../typescript";
+import { Node, Signature, Symbol } from "../common";
 import { EnumMember } from "../enum";
 import { Expression } from "../expression";
-import { Node, Symbol, Signature } from "../common";
 import { ExportSpecifier } from "../file";
 import { Type } from "../type";
 

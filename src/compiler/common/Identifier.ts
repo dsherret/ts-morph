@@ -1,11 +1,11 @@
 import { ts } from "../../typescript";
-import { Type } from "../type";
 import { ReferenceFindableNode } from "../base";
-import { ReferencedSymbol, DefinitionInfo, ImplementationLocation } from "../tools";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
+import { DefinitionInfo, ImplementationLocation } from "../tools";
 import { Node } from "./Node";
 
-export class Identifier extends ReferenceFindableNode(PrimaryExpression)<ts.Identifier> {
+export const IdentifierBase = ReferenceFindableNode(PrimaryExpression);
+export class Identifier extends IdentifierBase<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
@@ -26,7 +26,7 @@ export class Identifier extends ReferenceFindableNode(PrimaryExpression)<ts.Iden
      * @remarks This is similar to "go to definition" and `.getDefinitions()`, but only returns the nodes.
      */
     getDefinitionNodes(): Node[] {
-        return this.getDefinitions().map(d => d.getNode()).filter(d => d != null) as Node[];
+        return this.getDefinitions().map(d => d.getDeclarationNode()).filter(d => d != null) as Node[];
     }
 
     /**

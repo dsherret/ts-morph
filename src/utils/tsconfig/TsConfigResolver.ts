@@ -1,7 +1,7 @@
 ﻿import { Diagnostic } from "../../compiler";
 import { FileSystemWrapper } from "../../fileSystem";
-import { ts, CompilerOptions } from "../../typescript";
-import { Memoize, ArrayUtils, FileUtils, createHashSet } from "../../utils";
+import { CompilerOptions, ts } from "../../typescript";
+import { ArrayUtils, createHashSet, FileUtils, Memoize } from "../../utils";
 import { getTsParseConfigHost, TsParseConfigHostResult } from "./getTsParseConfigHost";
 
 export class TsConfigResolver {

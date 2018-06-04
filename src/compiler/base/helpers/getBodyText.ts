@@ -1,7 +1,6 @@
 ﻿import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { WriterFunction } from "../../../types";
 import { printTextFromStringOrWriter } from "../../../utils";
-import { Node } from "../../common";
 
 /**
  * @internal

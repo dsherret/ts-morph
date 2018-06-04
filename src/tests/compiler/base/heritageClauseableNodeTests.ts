@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { HeritageClauseableNode, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, HeritageClauseableNode } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(HeritageClauseableNode), () => {

@@ -1,5 +1,5 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
 import { Block } from "./Block";
 import { CatchClause } from "./CatchClause";
 import { Statement } from "./Statement";
@@ -10,15 +10,15 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
     /**
      * Gets this try statement's try block.
      */
-    getTryBlock() {
-        return this.getNodeFromCompilerNode<Block>(this.compilerNode.tryBlock);
+    getTryBlock(): Block {
+        return this.getNodeFromCompilerNode(this.compilerNode.tryBlock);
     }
 
     /**
      * Gets this try statement's catch clause or undefined if none exists.
      */
-    getCatchClause() {
-        return this.getNodeFromCompilerNodeIfExists<CatchClause>(this.compilerNode.catchClause);
+    getCatchClause(): CatchClause | undefined {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.catchClause);
     }
 
     /**
@@ -31,11 +31,11 @@ export class TryStatement extends TryStatementBase<ts.TryStatement> {
     /**
      * Gets this try statement's finally block or undefined if none exists.
      */
-    getFinallyBlock() {
+    getFinallyBlock(): Block | undefined {
         if (this.compilerNode.finallyBlock == null || this.compilerNode.finallyBlock.getFullWidth() === 0)
             return undefined;
 
-        return this.getNodeFromCompilerNode<Block>(this.compilerNode.finallyBlock);
+        return this.getNodeFromCompilerNode(this.compilerNode.finallyBlock);
     }
 
     /**

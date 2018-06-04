@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import { ts } from "../../../../typescript";
-import { StatementedNode, ClassDeclaration, FunctionDeclaration, NamespaceDeclaration } from "../../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, NamespaceDeclaration, StatementedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 // todo: make tests in other files reusable for StatementedNode. Then retest everything within namespaces and functions.

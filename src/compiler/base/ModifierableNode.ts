@@ -1,7 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { insertIntoParentTextRange, removeChildren, FormattingKind } from "../../manipulation";
+import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getSyntaxKindName } from "../../utils";
 import { Node, Scope } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";

@@ -1,9 +1,9 @@
-import { ts } from "../../typescript";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { JSDocableNodeStructure, JSDocStructure } from "../../structures";
 import { Constructor } from "../../types";
-import { insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn } from "../../manipulation";
-import { JSDocStructure, JSDocableNodeStructure } from "../../structures";
-import { callBaseFill } from "../callBaseFill";
+import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
 
@@ -44,7 +44,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             const nodes = this.compilerNode.jsDoc;
             if (nodes == null)
                 return [];
-            return nodes.map(n => this.getNodeFromCompilerNode<JSDoc>(n));
+            return nodes.map(n => this.getNodeFromCompilerNode(n));
         }
 
         addJsDoc(structure: JSDocStructure | string) {

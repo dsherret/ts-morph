@@ -1,8 +1,8 @@
 ﻿import * as errors from "../../errors";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, removeCommaSeparatedChild, verifyAndGetIndex } from "../../manipulation";
 import { Constructor, WriterFunction } from "../../types";
-import { removeCommaSeparatedChild, verifyAndGetIndex, insertIntoCommaSeparatedNodes, getNodesToReturn } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, printTextFromStringOrWriter } from "../../utils";
-import { ts, SyntaxKind } from "../../typescript";
 import { Node } from "../common";
 
 export type ArgumentedNodeExtensionType = Node<ts.Node & { arguments: ts.NodeArray<ts.Node>; }>;

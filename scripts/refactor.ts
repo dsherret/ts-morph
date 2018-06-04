@@ -8,6 +8,7 @@
 
 import { InspectorFactory } from "./inspectors";
 import { SyntaxKind, TypeGuards } from "ts-simple-ast";
+import { ArrayUtils } from "../src/utils";
 
 const factory = new InspectorFactory();
 const tsaInspector = factory.getTsSimpleAstInspector();

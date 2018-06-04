@@ -1,24 +1,21 @@
-import { ts, SyntaxKind } from "../../../typescript";
 import { insertIntoParentTextRange } from "../../../manipulation";
-import { LeftHandSideExpression, MemberExpression } from "../../expression";
+import { ts } from "../../../typescript";
 import { TemplateLiteral } from "../../aliases";
-import { TemplateExpression } from "./TemplateExpression";
-import { NoSubstitutionTemplateLiteral } from "./NoSubstitutionTemplateLiteral";
+import { LeftHandSideExpression, MemberExpression } from "../../expression";
 
-export const TaggedTemplateExpressionBase = MemberExpression;
-export class TaggedTemplateExpression extends TaggedTemplateExpressionBase<ts.TaggedTemplateExpression> {
+export class TaggedTemplateExpression extends MemberExpression<ts.TaggedTemplateExpression> {
     /**
      * Gets the tag.
      */
-    getTag() {
-        return this.getNodeFromCompilerNode<LeftHandSideExpression>(this.compilerNode.tag);
+    getTag(): LeftHandSideExpression {
+        return this.getNodeFromCompilerNode(this.compilerNode.tag);
     }
 
     /**
      * Gets the template literal.
      */
-    getTemplate() {
-        return this.getNodeFromCompilerNode<TemplateLiteral>(this.compilerNode.template);
+    getTemplate(): TemplateLiteral {
+        return this.getNodeFromCompilerNode(this.compilerNode.template);
     }
 
     /**

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { HeritageClause, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, HeritageClause } from "../../../compiler";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 

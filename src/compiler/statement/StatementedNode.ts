@@ -1,25 +1,23 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
-import { ClassDeclarationStructure, InterfaceDeclarationStructure, TypeAliasDeclarationStructure, FunctionDeclarationStructure,
-    EnumDeclarationStructure, NamespaceDeclarationStructure, StatementedNodeStructure, VariableStatementStructure } from "../../structures";
-import { verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren, getRangeFromArray, removeStatementedNodeChildren,
-    hasBody, InsertIntoBracesOrSourceFileOptionsWriteInfo } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, ArrayUtils, getSyntaxKindName,
-    isNodeAmbientOrInAmbientContext } from "../../utils";
+import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
+    verifyAndGetIndex } from "../../manipulation";
+import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure } from "../../structures";
+import { Constructor, WriterFunction } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
+    TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
-import { SourceFile } from "../file";
 import { ClassDeclaration } from "../class";
+import { Node } from "../common";
 import { EnumDeclaration } from "../enum";
 import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
-import { NamespaceDeclaration } from "../namespace";
-import { TypeAliasDeclaration } from "../type";
 import { KindToNodeMappings } from "../kindToNodeMappings";
-import { Statement, VariableStatement, VariableDeclaration } from "../statement";
-import { VariableDeclarationKind } from "./VariableDeclarationKind";
+import { NamespaceDeclaration } from "../namespace";
+import { Statement, VariableDeclaration, VariableStatement } from "../statement";
+import { TypeAliasDeclaration } from "../type";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
 
@@ -442,7 +440,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
     return class extends Base implements StatementedNode {
         /* General */
         getStatements() {
-            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode<Statement>(s));
+            return this.getCompilerStatements().map(s => this.getNodeFromCompilerNode(s));
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {

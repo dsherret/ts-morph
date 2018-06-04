@@ -1,24 +1,22 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import { insertIntoParentTextRange, getEndIndexFromArray, verifyAndGetIndex, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards, StringUtils, ArrayUtils } from "../../utils";
-import { PropertyDeclarationStructure, MethodDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure,
-    SetAccessorDeclarationStructure, ClassDeclarationStructure } from "../../structures";
+import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../manipulation";
+import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+    SetAccessorDeclarationStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../utils";
+import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode, JSDocableNode, ModifierableNode,
+    NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { NameableNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TypeParameteredNode, DecoratableNode, HeritageClauseableNode,
-    ImplementsClauseableNode, TextInsertableNode, ChildOrderableNode } from "../base";
-import { HeritageClause } from "../general";
-import { AbstractableNode } from "./base";
-import { SourceFile } from "../file";
 import { ParameterDeclaration } from "../function";
-import { ExpressionWithTypeArguments, Type } from "../type";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
-import { callBaseFill } from "../callBaseFill";
+import { ExpressionWithTypeArguments, Type } from "../type";
+import { AbstractableNode } from "./base";
 import { ConstructorDeclaration } from "./ConstructorDeclaration";
+import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { PropertyDeclaration } from "./PropertyDeclaration";
-import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
@@ -808,10 +806,10 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the class' members regardless of whether it's an instance of static member.
      */
     getMembers() {
-        return getAllMembers(this).filter(m => isSupportedClassMember(m));
+        return getAllMembers(this).filter(m => isSupportedClassMember(m)) as ClassMemberTypes[];
 
         function getAllMembers(classDec: ClassDeclaration) {
-            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode<ClassMemberTypes>(m));
+            const members = classDec.compilerNode.members.map(m => classDec.getNodeFromCompilerNode(m));
 
             // filter out the method declarations or constructor declarations without a body if not ambient
             return classDec.isAmbient() ? members : members.filter(m => {
@@ -878,7 +876,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Note: Use getBaseTypes if you need to get the mixins.
      */
     getBaseClass() {
-        const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersectionType() ? t.getIntersectionTypes() : [t]));
+        const baseTypes = ArrayUtils.flatten(this.getBaseTypes().map(t => t.isIntersection() ? t.getIntersectionTypes() : [t]));
         const declarations = baseTypes
             .map(t => t.getSymbol())
             .filter(s => s != null)
@@ -914,7 +912,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         if (nameNode == null)
             return classes;
 
-        for (const node of nameNode.getReferencingNodes()) {
+        for (const node of nameNode.findReferencesAsNodes()) {
             const nodeParent = node.getParentIfKind(SyntaxKind.ExpressionWithTypeArguments);
             if (nodeParent == null)
                 continue;

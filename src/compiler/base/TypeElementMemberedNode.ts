@@ -1,15 +1,15 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils } from "../../utils";
-import { ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
-    CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure } from "../../structures";
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
+    PropertySignatureStructure, TypeElementMemberedNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { TypeElementTypes } from "../aliases";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { PropertySignature, MethodSignature, IndexSignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration } from "../interface";
-import { TypeElementTypes } from "../aliases";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
 
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
 
@@ -262,7 +262,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getConstructSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.ConstructSignature)
-                .map(m => this.getNodeFromCompilerNode<ConstructSignatureDeclaration>(m as ts.ConstructSignatureDeclaration));
+                .map(m => this.getNodeFromCompilerNode(m as ts.ConstructSignatureDeclaration));
         }
 
         addCallSignature(structure: CallSignatureDeclarationStructure) {
@@ -297,7 +297,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getCallSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.CallSignature)
-                .map(m => this.getNodeFromCompilerNode<CallSignatureDeclaration>(m as ts.CallSignatureDeclaration));
+                .map(m => this.getNodeFromCompilerNode(m as ts.CallSignatureDeclaration));
         }
 
         addIndexSignature(structure: IndexSignatureDeclarationStructure) {
@@ -332,7 +332,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getIndexSignatures() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
-                .map(m => this.getNodeFromCompilerNode<IndexSignatureDeclaration>(m as ts.IndexSignatureDeclaration));
+                .map(m => this.getNodeFromCompilerNode(m as ts.IndexSignatureDeclaration));
         }
 
         addMethod(structure: MethodSignatureStructure) {
@@ -368,7 +368,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getMethods() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.MethodSignature)
-                .map(m => this.getNodeFromCompilerNode<MethodSignature>(m as ts.MethodSignature));
+                .map(m => this.getNodeFromCompilerNode(m as ts.MethodSignature));
         }
 
         addProperty(structure: PropertySignatureStructure) {
@@ -404,11 +404,11 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 
         getProperties() {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.PropertySignature)
-                .map(m => this.getNodeFromCompilerNode<PropertySignature>(m as ts.PropertySignature));
+                .map(m => this.getNodeFromCompilerNode(m as ts.PropertySignature));
         }
 
         getMembers() {
-            return this.compilerNode.members.map(m => this.getNodeFromCompilerNode<TypeElementTypes>(m));
+            return this.compilerNode.members.map(m => this.getNodeFromCompilerNode(m)) as TypeElementTypes[];
         }
 
         fill(structure: Partial<TypeElementMemberedNodeStructure>) {

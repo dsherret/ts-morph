@@ -1,13 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
-import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import * as errors from "../../errors";
 import { removeOverloadableClassMember } from "../../manipulation";
+import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { PropertyNamedNode, StaticableNode, AsyncableNode, GeneratorableNode, ScopedNode, DecoratableNode, BodyableNode, TextInsertableNode,
-    ChildOrderableNode } from "../base";
-import { FunctionLikeDeclaration, OverloadableNode, insertOverloads } from "../function";
+import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(

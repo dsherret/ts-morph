@@ -1,10 +1,10 @@
-import { ts, TypeFlags, ObjectFlags, TypeFormatFlags } from "../../typescript";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
+import { ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "../../typescript";
 import { getSymbolByNameOrFindFunction } from "../../utils";
 import { Node } from "../common/Node";
-import { Symbol } from "../common/Symbol";
 import { Signature } from "../common/Signature";
+import { Symbol } from "../common/Symbol";
 import { TypeParameter } from "./TypeParameter";
 
 export class Type<TType extends ts.Type = ts.Type> {
@@ -73,7 +73,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the array type
      */
     getArrayType() {
-        if (!this.isArrayType())
+        if (!this.isArray())
             return undefined;
         return this.getTypeArguments()[0];
     }
@@ -179,7 +179,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if the type is possibly null or undefined.
      */
     isNullable() {
-        return this.getUnionTypes().some(t => t.isNullType() || t.isUndefinedType());
+        return this.getUnionTypes().some(t => t.isNull() || t.isUndefined());
     }
 
     /**
@@ -232,14 +232,14 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the individual element types of the tuple.
      */
     getTupleElements(): Type[] {
-        return this.isTupleType() ? this.getTypeArguments() : [];
+        return this.isTuple() ? this.getTypeArguments() : [];
     }
 
     /**
      * Gets the union types.
      */
     getUnionTypes(): Type[] {
-        if (!this.isUnionType())
+        if (!this.isUnion())
             return [];
 
         return (this.compilerType as any as ts.UnionType).types.map(t => this.global.compilerFactory.getType(t));
@@ -249,7 +249,7 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets the intersection types.
      */
     getIntersectionTypes(): Type[] {
-        if (!this.isIntersectionType())
+        if (!this.isIntersection())
             return [];
 
         return (this.compilerType as any as ts.IntersectionType).types.map(t => this.global.compilerFactory.getType(t));
@@ -273,14 +273,14 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is an anonymous type.
      */
-    isAnonymousType() {
+    isAnonymous() {
         return this._hasObjectFlag(ObjectFlags.Anonymous);
     }
 
     /**
      * Gets if this is an array type.
      */
-    isArrayType() {
+    isArray() {
         const symbol = this.getSymbol();
         if (symbol == null)
             return false;
@@ -290,91 +290,91 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is a boolean type.
      */
-    isBooleanType() {
+    isBoolean() {
         return this._hasTypeFlag(TypeFlags.Boolean);
     }
 
     /**
      * Gets if this is a string type.
      */
-    isStringType() {
+    isString() {
         return this._hasTypeFlag(TypeFlags.String);
     }
 
     /**
      * Gets if this is a number type.
      */
-    isNumberType() {
+    isNumber() {
         return this._hasTypeFlag(TypeFlags.Number);
     }
 
     /**
      * Gets if this is a literal type.
      */
-    isLiteralType() {
-        return this._hasAnyTypeFlag(TypeFlags.Literal);
+    isLiteral() {
+        return this.compilerType.isLiteral();
     }
 
     /**
      * Gets if this is a boolean literal type.
      */
-    isBooleanLiteralType() {
+    isBooleanLiteral() {
         return this._hasTypeFlag(TypeFlags.BooleanLiteral);
     }
 
     /**
      * Gets if this is an enum literal type.
      */
-    isEnumLiteralType() {
+    isEnumLiteral() {
         return this._hasTypeFlag(TypeFlags.EnumLiteral);
     }
 
     /**
-     * Gets if this is a literal string type.
+     * Gets if this is a number literal type.
      */
-    isStringLiteralType() {
-        return this._hasTypeFlag(TypeFlags.StringLiteral);
+    isNumberLiteral() {
+        return this._hasTypeFlag(TypeFlags.NumberLiteral);
     }
 
     /**
-     * Gets if this is a literal number type.
+     * Gets if this is a string literal type.
      */
-    isNumberLiteralType() {
-        return this._hasTypeFlag(TypeFlags.NumberLiteral);
+    isStringLiteral() {
+        return this.compilerType.isStringLiteral();
+    }
+
+    /**
+     * Gets if this is a class type.
+     */
+    isClass() {
+        return this.compilerType.isClass();
+    }
+
+    /**
+     * Gets if this is a class or interface type.
+     */
+    isClassOrInterface() {
+        return this.compilerType.isClassOrInterface();
     }
 
     /**
      * Gets if this is an enum type.
      */
-    isEnumType() {
+    isEnum() {
         return this._hasTypeFlag(TypeFlags.Enum);
     }
 
     /**
      * Gets if this is an interface type.
      */
-    isInterfaceType() {
+    isInterface() {
         return this._hasObjectFlag(ObjectFlags.Interface);
-    }
-
-    /**
-     * Gets if this is an intersection type.
-     */
-    isIntersectionType() {
-        return this._hasTypeFlag(TypeFlags.Intersection);
-    }
-
-    /**
-     * Gets if this is the null type.
-     */
-    isNullType() {
-        return this._hasTypeFlag(TypeFlags.Null);
     }
 
     /**
      * Gets if this is an object type.
      */
-    isObjectType() {
+    isObject() {
         return this._hasTypeFlag(TypeFlags.Object);
     }
 
@@ -382,13 +382,13 @@ export class Type<TType extends ts.Type = ts.Type> {
      * Gets if this is a type parameter.
      */
     isTypeParameter(): this is TypeParameter {
-        return this._hasTypeFlag(TypeFlags.TypeParameter);
+        return this.compilerType.isTypeParameter();
     }
 
     /**
      * Gets if this is a tuple type.
      */
-    isTupleType() {
+    isTuple() {
         const targetType = this.getTargetType();
         if (targetType == null)
             return false;
@@ -398,14 +398,35 @@ export class Type<TType extends ts.Type = ts.Type> {
     /**
      * Gets if this is a union type.
      */
-    isUnionType() {
-        return this._hasTypeFlag(TypeFlags.Union);
+    isUnion() {
+        return this.compilerType.isUnion();
+    }
+
+    /**
+     * Gets if this is an intersection type.
+     */
+    isIntersection() {
+        return this.compilerType.isIntersection();
+    }
+
+    /**
+     * Gets if this is a union or intersection type.
+     */
+    isUnionOrIntersection() {
+        return this.compilerType.isUnionOrIntersection();
+    }
+
+    /**
+     * Gets if this is the null type.
+     */
+    isNull() {
+        return this._hasTypeFlag(TypeFlags.Null);
     }
 
     /**
      * Gets if this is the undefined type.
      */
-    isUndefinedType() {
+    isUndefined() {
         return this._hasTypeFlag(TypeFlags.Undefined);
     }
 
@@ -418,9 +439,10 @@ export class Type<TType extends ts.Type = ts.Type> {
 
     /**
      * Gets the object flags.
+     * @remarks Returns 0 for a non-object type.
      */
     getObjectFlags() {
-        if (!this.isObjectType())
+        if (!this.isObject())
             return 0;
 
         return (this.compilerType as any as ts.ObjectType).objectFlags || 0;

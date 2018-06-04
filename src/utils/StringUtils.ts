@@ -28,7 +28,7 @@ export class StringUtils {
         return Es5StringUtils.endsWith(str, endsWithString);
     }
 
-    static getLineNumberFromPos(str: string, pos: number) {
+    static getLineNumberAtPos(str: string, pos: number) {
         errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
         // do not allocate a string in this method
         let count = 0;
@@ -39,6 +39,20 @@ export class StringUtils {
         }
 
         return count + 1; // convert count to line number
+    }
+
+    static getColumnAtPos(str: string, pos: number) {
+        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        const startPos = pos;
+
+        while (pos > 0) {
+            const previousChar = str[pos - 1];
+            if (previousChar === "\n" || previousChar === "\r")
+                break;
+            pos--;
+        }
+
+        return startPos - pos;
     }
 
     static escapeForWithinString(str: string, quoteKind: QuoteKind) {

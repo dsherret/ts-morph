@@ -1,6 +1,6 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { Node } from "../../compiler";
 import { Chars } from "../../constants";
+import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 

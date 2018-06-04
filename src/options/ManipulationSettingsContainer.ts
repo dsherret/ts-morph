@@ -1,7 +1,6 @@
-import * as objectAssign from "object-assign";
-import { ts, NewLineKind, EditorSettings } from "../typescript";
-import { QuoteKind } from "../compiler";
-import { newLineKindToString, fillDefaultEditorSettings } from "../utils";
+import { QuoteKind, UserPreferences } from "../compiler";
+import { EditorSettings, NewLineKind } from "../typescript";
+import { fillDefaultEditorSettings, newLineKindToString } from "../utils";
 import { SettingsContainer } from "./SettingsContainer";
 
 /** Kinds of indentation */
@@ -52,6 +51,7 @@ export interface SupportedFormatCodeSettingsOnly {
 export class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
     private editorSettings: EditorSettings | undefined;
     private formatCodeSettings: SupportedFormatCodeSettings | undefined;
+    private userPreferences: UserPreferences | undefined;
 
     constructor() {
         super({
@@ -86,6 +86,18 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         }
 
         return {...this.formatCodeSettings};
+    }
+
+    /**
+     * Gets the user preferences.
+     */
+    getUserPreferences(): Readonly<UserPreferences> {
+        if (this.userPreferences == null) {
+            this.userPreferences = {
+                quotePreference: this.getQuoteKind() === QuoteKind.Double ? "double" : "single"
+            };
+        }
+        return { ...this.userPreferences };
     }
 
     /**
@@ -124,5 +136,6 @@ export class ManipulationSettingsContainer extends SettingsContainer<Manipulatio
         super.set(settings);
         this.editorSettings = undefined;
         this.formatCodeSettings = undefined;
+        this.userPreferences = undefined;
     }
 }

@@ -1,14 +1,13 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
-import { getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, insertIntoParentTextRange } from "../../manipulation";
 import * as errors from "../../errors";
-import { ExtendsClauseableNodeStructure } from "../../structures";
+import { getNodeOrNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
 import { CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../structurePrinters";
+import { ExtendsClauseableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { HeritageClause } from "../general";
-import { HeritageClauseableNode } from "./HeritageClauseableNode";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
+import { HeritageClauseableNode } from "./HeritageClauseableNode";
 
 export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "../../../fileSystem";
-import { TsConfigResolver, FileUtils } from "../../../utils";
 import * as errors from "../../../errors";
+import { FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "../../../fileSystem";
+import { TsConfigResolver } from "../../../utils";
 import * as testHelpers from "../../testHelpers";
 
 describe(nameof(TsConfigResolver), () => {

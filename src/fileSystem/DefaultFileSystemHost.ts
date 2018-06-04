@@ -1,6 +1,6 @@
 ﻿import * as fs from "fs-extra";
-import * as nodePath from "path";
 import * as globby from "globby";
+import * as nodePath from "path";
 import * as errors from "../errors";
 import { FileUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";

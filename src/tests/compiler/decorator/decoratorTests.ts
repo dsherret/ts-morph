@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { Decorator, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, Decorator } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Decorator), () => {

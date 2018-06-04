@@ -25,7 +25,7 @@ export class CodeBlock {
     }
 
     getLineNumber() {
-        return getLineNumberFromPos(this.markdownFile.getText(), this.opts.position);
+        return getLineNumberAtPos(this.markdownFile.getText(), this.opts.position);
     }
 
     getIgnoredErrorCodes() {
@@ -52,7 +52,7 @@ export class CodeBlock {
     }
 }
 
-function getLineNumberFromPos(str: string, pos: number) {
+function getLineNumberAtPos(str: string, pos: number) {
     // do not allocate a string in this method
     let count = 0;
 

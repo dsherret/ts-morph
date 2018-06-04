@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { ImportDeclarationStructurePrinter } from "../../../structurePrinters";
-import { StructurePrinterFactory } from "../../../factories";
-import { ImportDeclarationStructure } from "../../../structures";
 import { FormatCodeSettings } from "../../../compiler";
+import { StructurePrinterFactory } from "../../../factories";
+import { ImportDeclarationStructurePrinter } from "../../../structurePrinters";
+import { ImportDeclarationStructure } from "../../../structures";
 import { getDefaultFormatCodeSettings } from "../../testHelpers";
 
 describe(nameof(ImportDeclarationStructurePrinter), () => {

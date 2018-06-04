@@ -1,7 +1,7 @@
-import { WriterFunction } from "../../../../types";
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../../typescript";
 import { ArrayLiteralExpression, VariableStatement } from "../../../../compiler";
+import { WriterFunction } from "../../../../types";
+import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(ArrayLiteralExpression), () => {

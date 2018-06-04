@@ -6,7 +6,7 @@
 
 /* tslint:disable */
 import * as compiler from "../compiler";
-import { ts, SyntaxKind } from "../typescript";
+import { SyntaxKind } from "../typescript";
 
 /**
  * Type guards for checking the type of a node.
@@ -849,6 +849,14 @@ export class TypeGuards {
      */
     static isImportSpecifier(node: compiler.Node): node is compiler.ImportSpecifier {
         return node.getKind() === SyntaxKind.ImportSpecifier;
+    }
+
+    /**
+     * Gets if the node is a ImportTypeNode.
+     * @param node - Node to check.
+     */
+    static isImportTypeNode(node: compiler.Node): node is compiler.ImportTypeNode {
+        return node.getKind() === SyntaxKind.ImportType;
     }
 
     /**
@@ -2189,6 +2197,7 @@ export class TypeGuards {
         switch (node.getKind()) {
             case SyntaxKind.CallExpression:
             case SyntaxKind.NewExpression:
+            case SyntaxKind.ImportType:
                 return true;
             default:
                 return false;
@@ -2253,6 +2262,7 @@ export class TypeGuards {
             case SyntaxKind.ConstructorType:
             case SyntaxKind.ExpressionWithTypeArguments:
             case SyntaxKind.FunctionType:
+            case SyntaxKind.ImportType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
             case SyntaxKind.TupleType:

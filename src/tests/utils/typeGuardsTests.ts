@@ -1,4 +1,3 @@
-import { ts } from "../../typescript";
 import { expect } from "chai";
 import { TypeGuards } from "../../utils";
 import { getInfoFromText } from "../compiler/testHelpers";
