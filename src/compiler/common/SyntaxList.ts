@@ -1,8 +1,7 @@
-import { ts } from "../../typescript";
+import { getInsertPosFromIndex, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
 import { WriterFunction } from "../../types";
-import { verifyAndGetIndex, getInsertPosFromIndex, insertIntoParentTextRange, getNodesToReturn } from "../../manipulation";
-import { TypeGuards, StringUtils, getTextFromStringOrWriter } from "../../utils";
-import * as errors from "../../errors";
+import { ts } from "../../typescript";
+import { getTextFromStringOrWriter, StringUtils, TypeGuards } from "../../utils";
 import { Node } from "./Node";
 
 export class SyntaxList extends Node<ts.SyntaxList> {

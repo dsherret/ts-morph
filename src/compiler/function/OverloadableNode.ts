@@ -1,10 +1,9 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as objectAssign from "object-assign";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { verifyAndGetIndex, insertIntoParentTextRange, getRangeFromArray } from "../../manipulation";
+import { getRangeFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
 import { ArrayUtils } from "../../utils";
-import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";
 

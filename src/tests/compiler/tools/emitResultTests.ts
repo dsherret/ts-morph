@@ -1,8 +1,6 @@
 import { expect } from "chai";
-import { ts } from "../../../typescript";
 import { EmitResult } from "../../../compiler";
 import { Project } from "../../../Project";
-import { FileUtils } from "../../../utils";
 import * as testHelpers from "../../testHelpers";
 
 describe(nameof(EmitResult), () => {

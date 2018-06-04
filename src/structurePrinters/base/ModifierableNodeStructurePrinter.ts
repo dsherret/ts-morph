@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure,
-    ReadonlyableNodeStructure, ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../../structures";
+import { AbstractableNodeStructure, AmbientableNodeStructure, AsyncableNodeStructure, ExportableNodeStructure, ReadonlyableNodeStructure,
+    ScopeableNodeStructure, ScopedNodeStructure, StaticableNodeStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export type ModifierableNodeStructures = AbstractableNodeStructure | AmbientableNodeStructure | AsyncableNodeStructure |

@@ -1,12 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
 import { replaceNodeText } from "../../manipulation";
 import { NamespaceDeclarationStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
+import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node, Identifier } from "../common";
-import { NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, BodiedNode, TextInsertableNode, UnwrappableNode,
-    ChildOrderableNode } from "../base";
-import { StatementedNode, Statement } from "../statement";
+import { Identifier } from "../common";
+import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
 
 export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(

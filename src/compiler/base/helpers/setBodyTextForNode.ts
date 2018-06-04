@@ -1,6 +1,6 @@
+import { insertIntoParentTextRange } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind } from "../../../typescript";
-import { insertIntoParentTextRange } from "../../../manipulation";
 import { Node } from "../../common";
 import { getBodyText } from "./getBodyText";
 

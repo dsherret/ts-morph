@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import { ts, CompilerOptions, ScriptTarget, ModuleResolutionKind } from "../../typescript";
 import { SourceFile } from "../../compiler";
 import * as errors from "../../errors";
+import { Directory, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "../../fileSystem";
 import { Project } from "../../Project";
 import { SourceFileStructure } from "../../structures";
-import { Directory, DirectoryEmitResult, FileSystemHost, DirectoryCopyOptions, DirectoryMoveOptions } from "../../fileSystem";
+import { CompilerOptions, ModuleResolutionKind, ScriptTarget } from "../../typescript";
 import { FileUtils } from "../../utils";
-import { getFileSystemHostWithFiles, CustomFileSystemProps, testDirectoryTree } from "../testHelpers";
+import { CustomFileSystemProps, getFileSystemHostWithFiles, testDirectoryTree } from "../testHelpers";
 
 describe(nameof(Directory), () => {
     function getProject(initialFiles: { filePath: string; text: string; }[] = [], initialDirectories: string[] = []) {

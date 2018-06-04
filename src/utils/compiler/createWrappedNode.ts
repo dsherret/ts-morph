@@ -1,9 +1,9 @@
 /* barrel:ignore */
+import { CompilerNodeToWrappedType } from "../../compiler";
 import * as errors from "../../errors";
-import { ts, SyntaxKind, CompilerOptions } from "../../typescript";
-import { SourceFile, Node, CompilerNodeToWrappedType } from "../../compiler";
-import { GlobalContainer } from "../../GlobalContainer";
 import { DefaultFileSystemHost, FileSystemWrapper } from "../../fileSystem";
+import { GlobalContainer } from "../../GlobalContainer";
+import { CompilerOptions, SyntaxKind, ts } from "../../typescript";
 
 export interface CreateWrappedNodeOptions {
     /**

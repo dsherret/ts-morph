@@ -1,8 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { insertIntoParentTextRange, replaceNodeText, removeCommaSeparatedChild } from "../../manipulation";
+import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { Node, Identifier } from "../common";
-import { ImportDeclaration } from "./ImportDeclaration";
+import { Node } from "../common";
 
 export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**

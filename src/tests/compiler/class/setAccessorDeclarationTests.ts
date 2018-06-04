@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
 import { ClassDeclaration, SetAccessorDeclaration } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 

@@ -1,7 +1,6 @@
-import { ts } from "../../typescript";
 import { expect } from "chai";
-import { VirtualFileSystemHost } from "../../fileSystem";
 import * as errors from "../../errors";
+import { VirtualFileSystemHost } from "../../fileSystem";
 
 describe(nameof(VirtualFileSystemHost), () => {
     describe("constructor", () => {

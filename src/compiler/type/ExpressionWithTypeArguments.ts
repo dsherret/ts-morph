@@ -1,6 +1,5 @@
 import { ts } from "../../typescript";
 import { LeftHandSideExpressionedNode } from "../expression";
-import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
 
 export const ExpressionWithTypeArgumentsBase = LeftHandSideExpressionedNode(TypeNode);

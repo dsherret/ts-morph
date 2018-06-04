@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../../typescript";
-import { ShorthandPropertyAssignment, PropertyAssignment } from "../../../../compiler";
+import { PropertyAssignment, ShorthandPropertyAssignment } from "../../../../compiler";
+import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(PropertyAssignment), () => {

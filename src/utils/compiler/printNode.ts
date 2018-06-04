@@ -1,5 +1,4 @@
-import { ts, SyntaxKind, ScriptKind, ScriptTarget, NewLineKind, EmitHint } from "../../typescript";
-import { Node } from "../../compiler";
+import { EmitHint, NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "../../typescript";
 
 /**
  * Options for printing a node.

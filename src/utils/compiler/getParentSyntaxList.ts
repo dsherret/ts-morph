@@ -1,4 +1,4 @@
-﻿import { ts, SyntaxKind } from "../../typescript";
+﻿import { SyntaxKind, ts } from "../../typescript";
 
 export function getParentSyntaxList(node: ts.Node) {
     const parent = node.parent;

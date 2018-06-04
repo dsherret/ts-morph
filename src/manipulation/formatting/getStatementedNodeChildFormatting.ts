@@ -1,6 +1,4 @@
-import { ts } from "../../typescript";
 import { Node } from "../../compiler";
-import { TypeGuards } from "../../utils";
 import { FormattingKind } from "./FormattingKind";
 import { hasBody } from "./hasBody";
 

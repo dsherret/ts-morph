@@ -1,8 +1,8 @@
-import { ts } from "../../typescript";
 import { removeClausedNodeChild } from "../../manipulation";
-import { Expression } from "../expression";
-import { Node } from "../common";
+import { ts } from "../../typescript";
 import { ChildOrderableNode, TextInsertableNode } from "../base";
+import { Node } from "../common";
+import { Expression } from "../expression";
 import { StatementedNode } from "./StatementedNode";
 
 export const CaseClauseBase = ChildOrderableNode(TextInsertableNode(StatementedNode(Node)));

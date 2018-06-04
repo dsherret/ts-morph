@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { Node } from "../common";
+import { Identifier } from "../../main";
+import { ts } from "../../typescript";
 import { ChildOrderableNode } from "../base";
 import { Statement } from "./Statement";
-import { Identifier } from "../../main";
 
 export const ContinueStatementBase = ChildOrderableNode(Statement);
 export class ContinueStatement extends ContinueStatementBase<ts.ContinueStatement> {

@@ -1,9 +1,9 @@
-﻿import { ts, SyntaxKind } from "../../typescript";
-import * as errors from "../../errors";
+﻿import * as errors from "../../errors";
 import { insertIntoParentTextRange } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { TypeArgumentedNode } from "../base";
 import { EntityName } from "../aliases";
+import { TypeArgumentedNode } from "../base";
 import { TypeNode } from "./TypeNode";
 
 export const ImportTypeNodeBase = TypeArgumentedNode(TypeNode);

@@ -1,5 +1,5 @@
-﻿import { CompilerFactory } from "../../factories";
-import { SourceFile } from "../../compiler";
+﻿import { SourceFile } from "../../compiler";
+import { CompilerFactory } from "../../factories";
 import { createHashSet } from "../collections";
 
 /**

@@ -1,13 +1,13 @@
 import { AssertTrue, IsExactType } from "conditional-type-checks";
-import { ts, SyntaxKind } from "../typescript";
-import { Identifier, ComputedPropertyName, QualifiedName, Node } from "./common";
-import { PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, PrimaryExpression, PropertyAccessExpression } from "./expression";
-import { JsxAttribute, JsxSpreadAttribute, JsxText, JsxExpression, JsxElement, JsxSelfClosingElement, JsxFragment } from "./jsx";
-import { PropertySignature, MethodSignature, ConstructSignatureDeclaration, CallSignatureDeclaration, IndexSignatureDeclaration } from "./interface";
+import { ts } from "../typescript";
+import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
+import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
+import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment } from "./expression";
 import { ExternalModuleReference } from "./file";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";
+import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
+import { NoSubstitutionTemplateLiteral, NumericLiteral, StringLiteral, TemplateExpression } from "./literal";
 import { CaseClause, DefaultClause } from "./statement";
-import { GetAccessorDeclaration, SetAccessorDeclaration, MethodDeclaration } from "./class";
-import { StringLiteral, NumericLiteral, TemplateExpression, NoSubstitutionTemplateLiteral } from "./literal";
 
 type WrappedToCompilerNodeType<T extends Node> = T["compilerNode"];
 

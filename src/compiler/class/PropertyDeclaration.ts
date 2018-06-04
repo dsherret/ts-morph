@@ -1,12 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
+import { removeClassMember } from "../../manipulation";
 import { PropertyDeclarationStructure } from "../../structures";
-import { removeClassMember, removeInterfaceMember } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
+import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
+    QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { PropertyNamedNode, TypedNode, InitializerExpressionableNode, QuestionTokenableNode, ExclamationTokenableNode, ReadonlyableNode, JSDocableNode, StaticableNode,
-    ModifierableNode, ScopedNode, DecoratableNode, ChildOrderableNode } from "../base";
-import { ClassDeclaration } from "./ClassDeclaration";
 import { AbstractableNode } from "./base";
 
 export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(

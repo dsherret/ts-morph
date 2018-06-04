@@ -1,9 +1,8 @@
+import { Node } from "../../../compiler";
 import { GlobalContainer } from "../../../GlobalContainer";
-import { ts, SyntaxKind } from "../../../typescript";
-import { SourceFile, Node } from "../../../compiler";
+import { SyntaxKind, ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { DocumentSpan } from "./DocumentSpan";
-import { TextSpan } from "./TextSpan";
 
 /**
  * Definition info.

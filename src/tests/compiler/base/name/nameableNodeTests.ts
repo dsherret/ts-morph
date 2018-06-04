@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, FunctionExpression, NameableNode, Identifier, VariableStatement } from "../../../../compiler";
+import { ClassDeclaration, FunctionExpression, NameableNode, VariableStatement } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NameableNode), () => {

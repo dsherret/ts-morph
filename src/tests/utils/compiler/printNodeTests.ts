@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { printNode, PrintNodeOptions } from "../../../utils";
-import { ts, ScriptTarget, ScriptKind, SyntaxKind, NewLineKind } from "../../../typescript";
+import { NewLineKind, ScriptKind, ScriptTarget, SyntaxKind, ts } from "../../../typescript";
+import { printNode } from "../../../utils";
 import { getInfoFromText } from "../../compiler/testHelpers";
 
 describe(nameof(printNode), () => {

@@ -1,6 +1,6 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { GetAccessorDeclarationStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
+import { GetAccessorDeclarationStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
 

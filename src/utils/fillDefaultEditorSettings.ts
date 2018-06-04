@@ -1,5 +1,5 @@
-﻿import { ManipulationSettingsContainer, IndentationText } from "../options";
-import { ts, IndentStyle, EditorSettings } from "../typescript";
+﻿import { IndentationText, ManipulationSettingsContainer } from "../options";
+import { EditorSettings, IndentStyle } from "../typescript";
 import { setValueIfUndefined } from "./setValueIfUndefined";
 
 export function fillDefaultEditorSettings(settings: EditorSettings, manipulationSettings: ManipulationSettingsContainer) {

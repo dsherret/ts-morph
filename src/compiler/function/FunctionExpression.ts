@@ -1,7 +1,6 @@
 import { ts } from "../../typescript";
+import { AsyncableNode, BodiedNode, GeneratorableNode, JSDocableNode, ModifierableNode, NameableNode, SignaturedDeclaration, TextInsertableNode, TypeParameteredNode } from "../base";
 import { PrimaryExpression } from "../expression";
-import { JSDocableNode, NameableNode, ModifierableNode, AsyncableNode, GeneratorableNode, BodiedNode, TextInsertableNode, TypeParameteredNode,
-    SignaturedDeclaration } from "../base";
 import { StatementedNode } from "../statement";
 
 export const FunctionExpressionBase = JSDocableNode(TextInsertableNode(BodiedNode(AsyncableNode(GeneratorableNode(StatementedNode(

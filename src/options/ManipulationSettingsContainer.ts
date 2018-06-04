@@ -1,7 +1,6 @@
-import * as objectAssign from "object-assign";
-import { ts, NewLineKind, EditorSettings } from "../typescript";
 import { QuoteKind, UserPreferences } from "../compiler";
-import { newLineKindToString, fillDefaultEditorSettings } from "../utils";
+import { EditorSettings, NewLineKind } from "../typescript";
+import { fillDefaultEditorSettings, newLineKindToString } from "../utils";
 import { SettingsContainer } from "./SettingsContainer";
 
 /** Kinds of indentation */

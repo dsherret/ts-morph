@@ -1,8 +1,8 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { WriterFunction } from "../../../types";
 import * as errors from "../../../errors";
-import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeCommaSeparatedChild, getNodesToReturn } from "../../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, removeCommaSeparatedChild, verifyAndGetIndex } from "../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, CommaSeparatedStructuresPrinter, StringStructurePrinter } from "../../../structurePrinters";
+import { WriterFunction } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
 import { Expression } from "../Expression";
 import { PrimaryExpression } from "../PrimaryExpression";
 

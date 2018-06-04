@@ -1,18 +1,16 @@
-import { ts, SyntaxKind, TypeFlags } from "../typescript";
-import { SourceFile, Node, SymbolDisplayPart, Symbol, Type, TypeParameter, Signature, DefinitionInfo, Diagnostic, DiagnosticWithLocation,
-    DiagnosticMessageChain, JSDocTagInfo, ReferencedSymbol, ReferencedSymbolDefinitionInfo, DocumentSpan,
-    ReferenceEntry, CompilerNodeToWrappedType } from "../compiler";
+import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
+    ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
-import { SourceFileStructure } from "../structures";
-import { SourceFileStructurePrinter } from "../structurePrinters";
-import { KeyValueCache, WeakCache, FileUtils, EventContainer, createHashSet, ArrayUtils, createCompilerSourceFile } from "../utils";
-import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
-import { GlobalContainer } from "../GlobalContainer";
 import { Directory } from "../fileSystem";
+import { GlobalContainer } from "../GlobalContainer";
+import { SourceFileAddOptions, SourceFileCreateOptions } from "../Project";
+import { SourceFileStructure } from "../structures";
+import { SyntaxKind, ts, TypeFlags } from "../typescript";
+import { ArrayUtils, createCompilerSourceFile, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";
 import { createTempSourceFile } from "./createTempSourceFile";
-import { kindToWrapperMappings } from "./kindToWrapperMappings";
-import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { DirectoryCache } from "./DirectoryCache";
+import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
+import { kindToWrapperMappings } from "./kindToWrapperMappings";
 
 /**
  * Factory for creating compiler wrappers.

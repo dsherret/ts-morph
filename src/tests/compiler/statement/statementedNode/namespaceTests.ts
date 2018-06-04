@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, NamespaceDeclaration } from "../../../../compiler";
+import { NamespaceDeclaration, StatementedNode } from "../../../../compiler";
 import { NamespaceDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

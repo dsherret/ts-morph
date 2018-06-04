@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { TypeArgumentedNode, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, TypeArgumentedNode } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeArgumentedNode), () => {

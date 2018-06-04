@@ -1,6 +1,6 @@
 import { ts } from "../../typescript";
-import { UnaryExpression } from "./UnaryExpression";
 import { LeftHandSideExpression } from "./LeftHandSideExpression";
+import { UnaryExpression } from "./UnaryExpression";
 
 export const PostfixUnaryExpressionBase = UnaryExpression;
 export class PostfixUnaryExpression extends PostfixUnaryExpressionBase<ts.PostfixUnaryExpression> {

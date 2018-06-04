@@ -1,12 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { insertIntoCommaSeparatedNodes, getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange,
-    getNodesToReturn } from "../../manipulation";
-import { TypeParameteredNodeStructure, TypeParameterDeclarationStructure } from "../../structures";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
 import { NamedNode } from "../base";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { TypeParameterDeclaration } from "../type/TypeParameterDeclaration";
 

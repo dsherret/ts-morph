@@ -1,12 +1,11 @@
-import { ts } from "../../typescript";
+import { removeInterfaceMember } from "../../manipulation";
 import { IndexSignatureDeclarationStructure } from "../../structures";
 import { WriterFunction } from "../../types";
+import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
-import { removeInterfaceMember } from "../../manipulation";
+import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node, Identifier } from "../common";
-import { TypeNode, Type } from "../type";
-import { JSDocableNode, ChildOrderableNode, ModifierableNode, ReadonlyableNode } from "../base";
+import { Type, TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
 
 export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));

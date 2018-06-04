@@ -1,6 +1,4 @@
-﻿import { Diagnostic } from "../compiler";
-
-export class DirectoryEmitResult {
+﻿export class DirectoryEmitResult {
     /** @internal */
     constructor(private readonly _emitSkipped: boolean, private readonly _outputFilePaths: string[]) {
     }

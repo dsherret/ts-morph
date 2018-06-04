@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { Constructor } from "../../../types";
-import { LeftHandSideExpression } from "../LeftHandSideExpression";
+import { ts } from "../../../typescript";
 import { Node } from "../../common";
+import { LeftHandSideExpression } from "../LeftHandSideExpression";
 
 export type LeftHandSideExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.LeftHandSideExpression}>;
 

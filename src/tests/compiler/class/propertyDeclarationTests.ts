@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { PropertyDeclaration, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, PropertyDeclaration } from "../../../compiler";
 import { PropertyDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

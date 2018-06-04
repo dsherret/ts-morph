@@ -1,7 +1,7 @@
-import { ts, SyntaxKind } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
-import { Node, Identifier } from "../../common";
+import { Constructor } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
+import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 // todo: support other types other than identifier

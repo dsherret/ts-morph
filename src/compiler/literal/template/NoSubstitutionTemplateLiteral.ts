@@ -1,6 +1,6 @@
+import { replaceNodeText } from "../../../manipulation";
 import { ts } from "../../../typescript";
 import { LiteralExpression } from "../../expression";
-import { replaceNodeText } from "../../../manipulation";
 import { TemplateExpression } from "./TemplateExpression";
 
 export const NoSubstitutionTemplateLiteralBase = LiteralExpression;

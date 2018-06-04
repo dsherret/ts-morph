@@ -1,5 +1,5 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
 import { Node } from "../common";
 import { NamespaceDeclaration } from "./NamespaceDeclaration";
 

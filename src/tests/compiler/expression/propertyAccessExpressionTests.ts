@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import { ts } from "../../../typescript";
-import { PropertyAccessExpression, VariableDeclaration, TypeReferenceNode } from "../../../compiler";
+import { PropertyAccessExpression } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(PropertyAccessExpression), () => {

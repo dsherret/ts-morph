@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { StatementedNode, ClassDeclaration, Scope } from "../../../../compiler";
+import { ClassDeclaration, StatementedNode } from "../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 

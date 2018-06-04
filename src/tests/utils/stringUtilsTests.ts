@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import * as errors from "../../errors";
 import { QuoteKind } from "../../compiler";
-import { StringUtils, Es5StringUtils } from "../../utils";
+import * as errors from "../../errors";
+import { Es5StringUtils, StringUtils } from "../../utils";
 
 describe(nameof(StringUtils), () => {
     describe(nameof(StringUtils.getLineNumberFromPos), () => {

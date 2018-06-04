@@ -1,5 +1,5 @@
-﻿import { ts } from "../../../typescript";
-import { Constructor } from "../../../types";
+﻿import { Constructor } from "../../../types";
+import { ts } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { Node } from "../../common";
 import { ReferencedSymbol } from "../../tools";

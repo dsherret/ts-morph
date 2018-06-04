@@ -1,10 +1,10 @@
-import { ts, TypeFlags, ObjectFlags, TypeFormatFlags } from "../../typescript";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
+import { ObjectFlags, ts, TypeFlags, TypeFormatFlags } from "../../typescript";
 import { getSymbolByNameOrFindFunction } from "../../utils";
 import { Node } from "../common/Node";
-import { Symbol } from "../common/Symbol";
 import { Signature } from "../common/Signature";
+import { Symbol } from "../common/Symbol";
 import { TypeParameter } from "./TypeParameter";
 
 export class Type<TType extends ts.Type = ts.Type> {

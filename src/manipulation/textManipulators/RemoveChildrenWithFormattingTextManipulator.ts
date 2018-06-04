@@ -1,10 +1,10 @@
-﻿import { TextManipulator } from "./TextManipulator";
-import { Node } from "../../compiler";
-import { FormattingKind, getFormattingKindText } from "../formatting";
-import { getPosAtNextNonBlankLine, getNextMatchingPos, getPosAtEndOfPreviousLine, getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
+﻿import { Node } from "../../compiler";
+import { FormattingKind } from "../formatting";
 import { isNewLineAtPos } from "../textChecks";
+import { getPosAtEndOfPreviousLine, getPosAtNextNonBlankLine, getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 import { getSpacingBetweenNodes } from "./getSpacingBetweenNodes";
 import { getTextForError } from "./getTextForError";
+import { TextManipulator } from "./TextManipulator";
 
 export interface RemoveChildrenWithFormattingTextManipulatorOptions<TNode extends Node> {
     children: Node[];

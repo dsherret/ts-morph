@@ -1,11 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import { removeCommaSeparatedChild, removeChildren } from "../../manipulation";
+import { removeChildren, removeCommaSeparatedChild } from "../../manipulation";
 import { VariableDeclarationStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
+import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { InitializerExpressionableNode, BindingNamedNode, TypedNode, ExclamationTokenableNode } from "../base";
-import { VariableStatement } from "./VariableStatement";
 
 export const VariableDeclarationBase = ExclamationTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(Node))));
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {

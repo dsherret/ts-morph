@@ -1,4 +1,4 @@
-import { ts, SyntaxKind } from "../../typescript";
+import { SyntaxKind } from "../../typescript";
 
 /**
  * Gets if the kind is a string kind.

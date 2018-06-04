@@ -1,8 +1,7 @@
 import { ts } from "../../typescript";
-import { Type } from "../type";
 import { ReferenceFindableNode } from "../base";
-import { ReferencedSymbol, DefinitionInfo, ImplementationLocation } from "../tools";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
+import { DefinitionInfo, ImplementationLocation } from "../tools";
 import { Node } from "./Node";
 
 export const IdentifierBase = ReferenceFindableNode(PrimaryExpression);

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { MethodDeclaration, StaticableNode, ClassDeclaration, PropertyDeclaration } from "../../../compiler";
-import { TypeGuards } from "../../../utils";
+import { ClassDeclaration, MethodDeclaration, PropertyDeclaration, StaticableNode } from "../../../compiler";
 import { StaticableNodeStructure } from "../../../structures";
+import { TypeGuards } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(StaticableNode), () => {

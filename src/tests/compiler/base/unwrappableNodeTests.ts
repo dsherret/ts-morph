@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
-import * as errors from "../../../errors";
-import { UnwrappableNode, SourceFile } from "../../../compiler";
+import { UnwrappableNode } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(UnwrappableNode), () => {

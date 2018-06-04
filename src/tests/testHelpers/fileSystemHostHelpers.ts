@@ -1,5 +1,4 @@
-﻿import { FileNotFoundError } from "../../errors";
-import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
+﻿import { FileSystemHost, VirtualFileSystemHost } from "../../fileSystem";
 import { ArrayUtils, KeyValueCache } from "../../utils";
 
 export interface CustomFileSystemProps {

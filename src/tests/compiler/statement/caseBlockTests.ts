@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { CaseBlock, Node } from "../../../compiler";
+import { CaseBlock } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 function getCaseBlock(text: string) {

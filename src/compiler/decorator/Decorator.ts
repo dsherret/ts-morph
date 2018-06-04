@@ -1,9 +1,9 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import { removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList, FormattingKind, insertIntoParentTextRange } from "../../manipulation";
+import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../manipulation";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
+import { Node } from "../common";
 import { CallExpression, Expression } from "../expression";
-import { Node, Identifier } from "../common";
 import { TypeNode } from "../type";
 
 export const DecoratorBase = Node;

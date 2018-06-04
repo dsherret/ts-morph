@@ -1,4 +1,4 @@
-﻿import { NamedNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodiedNodeStructure } from "../base";
+﻿import { AmbientableNodeStructure, BodiedNodeStructure, ExportableNodeStructure, JSDocableNodeStructure, NamedNodeStructure } from "../base";
 import { StatementedNodeStructure } from "../statement";
 
 export interface NamespaceDeclarationStructure

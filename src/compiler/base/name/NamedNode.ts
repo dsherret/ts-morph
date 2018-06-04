@@ -1,10 +1,9 @@
-import { ts } from "../../../typescript";
-import { Constructor } from "../../../types";
 import * as errors from "../../../errors";
 import { NamedNodeStructure } from "../../../structures";
-import { Node, Identifier } from "../../common";
-import { ReferencedSymbol } from "../../tools";
+import { Constructor } from "../../../types";
+import { ts } from "../../../typescript";
 import { callBaseFill } from "../../callBaseFill";
+import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name

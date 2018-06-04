@@ -1,8 +1,8 @@
 ﻿import { expect } from "chai";
+import * as errors from "../../../errors";
 import { FileSystemHost } from "../../../fileSystem";
 import { CompilerOptions } from "../../../typescript";
-import { getCompilerOptionsFromTsConfig, FileUtils } from "../../../utils";
-import * as errors from "../../../errors";
+import { getCompilerOptionsFromTsConfig } from "../../../utils";
 import * as testHelpers from "../../testHelpers";
 
 // Remember, need this function because it's public

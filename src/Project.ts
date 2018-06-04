@@ -1,13 +1,12 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
+import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import * as errors from "./errors";
-import { ts, CompilerOptions, ScriptTarget } from "./typescript";
-import { SourceFile, Node, Diagnostic, Program, TypeChecker, LanguageService, EmitOptions, EmitResult } from "./compiler";
-import * as factories from "./factories";
-import { SourceFileStructure } from "./structures";
-import { TsConfigResolver, FileUtils, ArrayUtils, matchGlobs } from "./utils";
-import { DefaultFileSystemHost, VirtualFileSystemHost, FileSystemHost, FileSystemWrapper, Directory, DirectoryAddOptions } from "./fileSystem";
-import { ManipulationSettings, ManipulationSettingsContainer, CompilerOptionsContainer } from "./options";
+import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { GlobalContainer } from "./GlobalContainer";
+import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
+import { SourceFileStructure } from "./structures";
+import { CompilerOptions, ScriptTarget } from "./typescript";
+import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface Options {
     /** Compiler options */

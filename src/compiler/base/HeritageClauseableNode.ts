@@ -1,6 +1,6 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
 import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getSyntaxKindName } from "../../utils";
 import { Node } from "../common";
 import { HeritageClause } from "../general/HeritageClause";

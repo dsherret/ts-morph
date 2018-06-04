@@ -1,5 +1,5 @@
-import { ts } from "../../../typescript";
 import { GlobalContainer } from "../../../GlobalContainer";
+import { ts } from "../../../typescript";
 
 /**
  * Output file of an emit.

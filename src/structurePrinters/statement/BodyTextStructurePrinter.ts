@@ -1,9 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
-import { StatementedNodeStructure, BodiedNodeStructure, BodyableNodeStructure } from "../../structures";
-import { ArrayUtils } from "../../utils";
-import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { StructurePrinterFactory } from "../../factories";
+import { BodyableNodeStructure, StatementedNodeStructure } from "../../structures";
+import { WriterFunction } from "../../types";
+import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export type BodyTextStructures = StatementedNodeStructure | { bodyText?: string | WriterFunction; };
 

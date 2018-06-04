@@ -1,8 +1,8 @@
-import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { insertIntoParentTextRange } from "../../manipulation";
-import { ts, SyntaxKind } from "../../typescript";
-import { TypeGuards, getTextFromStringOrWriter } from "../../utils";
+import { Constructor, WriterFunction } from "../../types";
+import { SyntaxKind } from "../../typescript";
+import { getTextFromStringOrWriter, TypeGuards } from "../../utils";
 import { Node } from "../common";
 
 export type TextInsertableNodeExtensionType = Node;

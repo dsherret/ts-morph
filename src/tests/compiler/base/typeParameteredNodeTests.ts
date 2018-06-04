@@ -1,7 +1,7 @@
 import { expect } from "chai";
+import { CallSignatureDeclaration, FunctionDeclaration, TypeAliasDeclaration, TypeParameterDeclaration, TypeParameteredNode } from "../../../compiler";
 import { TypeParameterDeclarationStructure, TypeParameteredNodeStructure } from "../../../structures";
-import { ts, SyntaxKind } from "../../../typescript";
-import { TypeParameteredNode, TypeParameterDeclaration, FunctionDeclaration, TypeAliasDeclaration, CallSignatureDeclaration } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(TypeParameteredNode), () => {

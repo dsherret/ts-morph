@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { ModifierableNode, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, ModifierableNode } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ModifierableNode), () => {

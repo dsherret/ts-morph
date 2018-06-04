@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { printTextFromStringOrWriter } from "../../utils";
 import { IndexSignatureDeclarationStructure } from "../../structures";
+import { printTextFromStringOrWriter } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
 

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { ManipulationSettings, ManipulationSettingsContainer, IndentationText } from "../options";
-import { ts, NewLineKind, EditorSettings, IndentStyle } from "../typescript";
 import { QuoteKind, UserPreferences } from "../compiler";
+import { IndentationText, ManipulationSettings, ManipulationSettingsContainer } from "../options";
+import { EditorSettings, IndentStyle, NewLineKind } from "../typescript";
 import { StringUtils } from "../utils";
 
 describe(nameof(IndentationText), () => {

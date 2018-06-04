@@ -1,11 +1,9 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { verifyAndGetIndex, removeClausedNodeChildren } from "../../manipulation";
-import { Node } from "../common";
-import { TextInsertableNode } from "../base";
-import { CaseClause } from "./CaseClause";
+import { removeClausedNodeChildren, verifyAndGetIndex } from "../../manipulation";
+import { ts } from "../../typescript";
 import { CaseOrDefaultClause } from "../aliases";
-import { DefaultClause } from "./DefaultClause";
+import { TextInsertableNode } from "../base";
+import { Node } from "../common";
 
 export const CaseBlockBase = TextInsertableNode(Node);
 export class CaseBlock extends CaseBlockBase<ts.CaseBlock> {

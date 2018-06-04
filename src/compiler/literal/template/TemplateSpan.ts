@@ -1,6 +1,6 @@
 import { ts } from "../../../typescript";
-import { ExpressionedNode } from "../../expression";
 import { Node } from "../../common";
+import { ExpressionedNode } from "../../expression";
 import { TemplateMiddle } from "./TemplateMiddle";
 import { TemplateTail } from "./TemplateTail";
 

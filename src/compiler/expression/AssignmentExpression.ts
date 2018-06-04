@@ -1,7 +1,5 @@
 import { ts } from "../../typescript";
 import { BinaryExpression } from "./BinaryExpression";
-import { Expression } from "./Expression";
-import { Node } from "../common";
 
 export const AssignmentExpressionBase = BinaryExpression;
 export class AssignmentExpression<

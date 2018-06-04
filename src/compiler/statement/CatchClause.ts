@@ -1,8 +1,7 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { Block } from "./Block";
-import { Statement } from "./Statement";
+import { ts } from "../../typescript";
 import { Node } from "../common";
+import { Block } from "./Block";
 import { VariableDeclaration } from "./VariableDeclaration";
 
 export const CatchClauseBase = Node;

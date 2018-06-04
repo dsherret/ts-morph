@@ -1,7 +1,7 @@
-import { ts } from "../../../typescript";
 import { Constructor } from "../../../types";
-import { Expression } from "../Expression";
+import { ts } from "../../../typescript";
 import { Node } from "../../common";
+import { Expression } from "../Expression";
 
 export type ExpressionedNodeExtensionType = Node<ts.Node & {expression: ts.Expression}>;
 

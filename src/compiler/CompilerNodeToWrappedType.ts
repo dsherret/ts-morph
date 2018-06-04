@@ -1,6 +1,6 @@
 // DO NOT EDIT - Automatically maintained by createCompilerNodeToWrappedType.ts
-import * as compiler from "./index";
 import { ts } from "../typescript";
+import * as compiler from "./index";
 
 export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? compiler.ClassDeclaration :
     T extends ts.ConstructorDeclaration ? compiler.ConstructorDeclaration :

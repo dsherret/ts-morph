@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
 import { ChildOrderableNode, EnumDeclaration } from "../../../compiler";
-import * as errors from "../../../errors";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ChildOrderableNode), () => {

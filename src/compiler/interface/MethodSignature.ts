@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
-import { MethodSignatureStructure } from "../../structures";
 import { removeInterfaceMember } from "../../manipulation";
+import { MethodSignatureStructure } from "../../structures";
+import { ts } from "../../typescript";
+import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
-import { PropertyNamedNode, QuestionTokenableNode, JSDocableNode, ChildOrderableNode, TypeParameteredNode, SignaturedDeclaration } from "../base";
 import { TypeElement } from "./TypeElement";
 
 export const MethodSignatureBase = ChildOrderableNode(JSDocableNode(QuestionTokenableNode(TypeParameteredNode(SignaturedDeclaration(PropertyNamedNode(TypeElement))))));

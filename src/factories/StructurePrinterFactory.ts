@@ -1,6 +1,6 @@
 // DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts
-import * as structurePrinters from "../structurePrinters";
 import { SupportedFormatCodeSettings } from "../options";
+import * as structurePrinters from "../structurePrinters";
 import { Memoize } from "../utils";
 
 /**

@@ -1,6 +1,6 @@
-import { ts, SymbolFlags } from "../../typescript";
-import { GlobalContainer } from "../../GlobalContainer";
 import * as errors from "../../errors";
+import { GlobalContainer } from "../../GlobalContainer";
+import { SymbolFlags, ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { Node } from "../common";
 import { Type } from "../type";

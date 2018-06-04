@@ -1,7 +1,7 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
+import { StructurePrinterFactory } from "../../factories";
 import { StatementedNodeStructure } from "../../structures";
 import { ArrayUtils } from "../../utils";
-import { StructurePrinterFactory } from "../../factories";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class StatementedNodeStructurePrinter extends FactoryStructurePrinter<StatementedNodeStructure> {

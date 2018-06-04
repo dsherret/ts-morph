@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import { ts } from "../../../typescript";
-import { AwaitableNode, FunctionDeclaration, ClassDeclaration, ForOfStatement } from "../../../compiler";
+import { AwaitableNode, ForOfStatement } from "../../../compiler";
 import { AwaitableNodeStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 describe(nameof(AwaitableNode), () => {

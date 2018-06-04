@@ -1,9 +1,9 @@
 ﻿import { expect } from "chai";
 import { ImportDeclaration } from "../../../compiler";
-import { Project } from "../../../Project";
-import { ModuleResolutionKind, ScriptTarget } from "../../../typescript";
 import * as errors from "../../../errors";
+import { Project } from "../../../Project";
 import { ImportSpecifierStructure } from "../../../structures";
+import { ModuleResolutionKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ImportDeclaration), () => {

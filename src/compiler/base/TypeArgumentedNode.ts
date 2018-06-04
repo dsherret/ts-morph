@@ -1,8 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { verifyAndGetIndex, removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange, insertIntoCommaSeparatedNodes,
-    getNodesToReturn } from "../../manipulation";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild, verifyAndGetIndex } from "../../manipulation";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { Node } from "../common";
 import { TypeNode } from "../type";

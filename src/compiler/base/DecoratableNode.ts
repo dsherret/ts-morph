@@ -1,11 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
-import { DecoratorStructure, DecoratableNodeStructure } from "../../structures";
 import * as errors from "../../errors";
-import { callBaseFill } from "../callBaseFill";
-import { getEndIndexFromArray, verifyAndGetIndex, insertIntoParentTextRange, getNewInsertCode, FormattingKind, getNodesToReturn } from "../../manipulation";
-import { getNextNonWhitespacePos } from "../../manipulation/textSeek";
+import { FormattingKind, getEndIndexFromArray, getNewInsertCode, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { DecoratableNodeStructure, DecoratorStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
 

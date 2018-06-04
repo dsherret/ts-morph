@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { DiagnosticCategory } from "../../../typescript";
 import { Diagnostic } from "../../../compiler";
+import { DiagnosticCategory } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Diagnostic), () => {

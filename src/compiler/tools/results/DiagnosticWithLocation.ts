@@ -1,6 +1,6 @@
-﻿import { Diagnostic } from "./Diagnostic";
+﻿import { GlobalContainer } from "../../../GlobalContainer";
 import { ts } from "../../../typescript";
-import { GlobalContainer } from "../../../GlobalContainer";
+import { Diagnostic } from "./Diagnostic";
 
 export class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
     /** @internal */

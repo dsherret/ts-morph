@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Node } from "../../../compiler";
+import { FileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
 import { Project } from "../../../Project";
-import { FileSystemHost, DefaultFileSystemHost, VirtualFileSystemHost } from "../../../fileSystem";
-import { ts, SyntaxKind, CompilerOptions, ScriptTarget } from "../../../typescript";
-import { Node, SourceFile, Diagnostic, Program } from "../../../compiler";
+import { CompilerOptions, ScriptTarget, SyntaxKind } from "../../../typescript";
 
 function getTextForLibFile(fileName: string) {
     return {

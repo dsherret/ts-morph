@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { Identifier, PropertyAccessExpression, FunctionDeclaration, NamespaceDeclaration, ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
+import { ClassDeclaration, FunctionDeclaration, Identifier, InterfaceDeclaration, NamespaceDeclaration, PropertyAccessExpression } from "../../../compiler";
+import { SyntaxKind, ts } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Identifier), () => {

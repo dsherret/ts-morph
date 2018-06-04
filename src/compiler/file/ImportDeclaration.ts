@@ -1,11 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../manipulation";
 import { ImportSpecifierStructure } from "../../structures";
-import { insertIntoParentTextRange, verifyAndGetIndex, insertIntoCommaSeparatedNodes, removeChildren, getNodesToReturn } from "../../manipulation";
-import { ArrayUtils, TypeGuards, StringUtils, ModuleUtils } from "../../utils";
-import { Node, Identifier } from "../common";
-import { Statement } from "../statement";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../utils";
+import { Identifier, Node } from "../common";
 import { StringLiteral } from "../literal";
+import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
 import { SourceFile } from "./SourceFile";
 

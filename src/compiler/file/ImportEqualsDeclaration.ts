@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { ModuleReference } from "../aliases";
 import { JSDocableNode, NamedNode } from "../base";
-import { Node } from "../common";
 import { Statement } from "../statement";
 import { SourceFile } from "./SourceFile";
 

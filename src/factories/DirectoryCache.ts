@@ -1,8 +1,8 @@
 ﻿/* barrel:ignore */
-import { GlobalContainer } from "../GlobalContainer";
-import { KeyValueCache, ArrayUtils, FileUtils } from "../utils";
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
+import { GlobalContainer } from "../GlobalContainer";
+import { ArrayUtils, FileUtils, KeyValueCache } from "../utils";
 
 /**
  * Cache for the directories.

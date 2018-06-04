@@ -1,15 +1,14 @@
-import { ts, CompilerOptions, ScriptTarget, EditorSettings } from "../../typescript";
-import { GlobalContainer } from "../../GlobalContainer";
-import { replaceSourceFileTextForRename, getTextFromFormattingEdits } from "../../manipulation";
 import * as errors from "../../errors";
 import { DefaultFileSystemHost } from "../../fileSystem";
-import { KeyValueCache, ArrayUtils, FileUtils, StringUtils, ObjectUtils, fillDefaultFormatCodeSettings, fillDefaultEditorSettings } from "../../utils";
-import { SourceFile } from "../file";
+import { GlobalContainer } from "../../GlobalContainer";
+import { getTextFromFormattingEdits, replaceSourceFileTextForRename } from "../../manipulation";
+import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescript";
+import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node } from "../common";
-import { Program } from "./Program";
+import { SourceFile } from "../file";
 import { FormatCodeSettings, UserPreferences } from "./inputs";
-import { ReferencedSymbol, DefinitionInfo, RenameLocation, ImplementationLocation, TextChange, EmitOutput,
-    FileTextChanges } from "./results";
+import { Program } from "./Program";
+import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;

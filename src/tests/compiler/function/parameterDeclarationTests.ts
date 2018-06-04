@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ParameterDeclaration, FunctionDeclaration } from "../../../compiler";
-import { ParameterDeclarationStructure, ParameterDeclarationSpecificStructure } from "../../../structures";
+import { FunctionDeclaration, ParameterDeclaration } from "../../../compiler";
+import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../structures";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 

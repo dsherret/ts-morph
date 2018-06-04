@@ -1,12 +1,12 @@
+import { insertIntoParentTextRange } from "../../manipulation";
 import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
-import { insertIntoParentTextRange } from "../../manipulation";
-import { getTextFromStringOrWriter, printTextFromStringOrWriter } from "../../utils";
+import { printTextFromStringOrWriter } from "../../utils";
+import { JsxChild } from "../aliases";
 import { getBodyText } from "../base/helpers";
 import { PrimaryExpression } from "../expression";
-import { JsxChild } from "../aliases";
-import { JsxOpeningElement } from "./JsxOpeningElement";
 import { JsxClosingElement } from "./JsxClosingElement";
+import { JsxOpeningElement } from "./JsxOpeningElement";
 
 export class JsxElement extends PrimaryExpression<ts.JsxElement> {
     /**

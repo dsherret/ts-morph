@@ -1,9 +1,8 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { Node } from "../common";
+import { ts } from "../../typescript";
 import { Expression } from "./Expression";
-import { MemberExpression } from "./MemberExpression";
 import { LeftHandSideExpressionedNode } from "./expressioned";
+import { MemberExpression } from "./MemberExpression";
 
 export const ElementAccessExpressionBase = LeftHandSideExpressionedNode(MemberExpression);
 export class ElementAccessExpression<T extends ts.ElementAccessExpression = ts.ElementAccessExpression> extends ElementAccessExpressionBase<T> {

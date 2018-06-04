@@ -1,8 +1,8 @@
 ﻿/* barrel:ignore */
-import * as tsInternal from "../../typescript/tsInternal";
-import { ts, CompilerOptions } from "../../typescript";
 import { FileSystemWrapper } from "../../fileSystem";
-import { ArrayUtils, FileUtils, createHashSet } from "../../utils";
+import { ts } from "../../typescript";
+import * as tsInternal from "../../typescript/tsInternal";
+import { FileUtils } from "../../utils";
 
 export interface GetTsParseConfigHostOptions {
     encoding: string;

@@ -1,11 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
-import { removeChildrenWithFormatting, FormattingKind } from "../../manipulation";
 import { ExportableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
-import { Node, SyntaxList } from "../common";
+import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;

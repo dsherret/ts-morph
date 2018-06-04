@@ -1,6 +1,6 @@
-import { ts, DiagnosticCategory } from "../../../typescript";
 import { SourceFile } from "../../../compiler";
 import { GlobalContainer } from "../../../GlobalContainer";
+import { DiagnosticCategory, ts } from "../../../typescript";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
 /**

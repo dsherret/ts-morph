@@ -1,8 +1,8 @@
 import { expect } from "chai";
+import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode } from "../../../compiler";
 import { Chars } from "../../../constants";
-import { ts, SyntaxKind } from "../../../typescript";
-import { CaseClause, DefaultClause, StatementedNode, SourceFile, FunctionDeclaration, NamespaceDeclaration, Node } from "../../../compiler";
 import { StatementedNodeStructure } from "../../../structures";
+import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 

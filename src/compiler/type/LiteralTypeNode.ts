@@ -1,6 +1,6 @@
 import { ts } from "../../typescript";
-import { BooleanLiteral } from "../literal";
 import { LiteralExpression, PrefixUnaryExpression } from "../expression";
+import { BooleanLiteral } from "../literal";
 import { TypeNode } from "./TypeNode";
 
 export class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {

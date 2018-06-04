@@ -1,4 +1,4 @@
-﻿import { TextChange, SourceFile } from "../../compiler";
+﻿import { SourceFile, TextChange } from "../../compiler";
 
 export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: TextChange[]) {
     // reverse the order

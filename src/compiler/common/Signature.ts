@@ -1,8 +1,8 @@
-import { ts } from "../../typescript";
 import { GlobalContainer } from "../../GlobalContainer";
-import { SymbolDisplayPart } from "../tools";
+import { ts } from "../../typescript";
 import { JSDocTagInfo } from "../doc";
-import { TypeParameter, Type } from "../type";
+import { SymbolDisplayPart } from "../tools";
+import { Type } from "../type";
 import { Symbol } from "./Symbol";
 
 export class Signature {

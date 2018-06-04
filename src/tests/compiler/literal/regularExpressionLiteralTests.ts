@@ -1,7 +1,7 @@
-import * as os from "os";
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
+import * as os from "os";
 import { RegularExpressionLiteral } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(RegularExpressionLiteral), () => {

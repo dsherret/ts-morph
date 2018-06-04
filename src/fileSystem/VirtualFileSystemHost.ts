@@ -1,5 +1,5 @@
 ﻿import * as errors from "../errors";
-import { KeyValueCache, FileUtils, ArrayUtils, matchGlobs } from "../utils";
+import { ArrayUtils, FileUtils, KeyValueCache, matchGlobs } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 interface VirtualDirectory {

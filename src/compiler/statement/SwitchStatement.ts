@@ -1,10 +1,9 @@
 import { ts } from "../../typescript";
-import { Expression } from "../expression";
-import { Node } from "../common";
-import { ChildOrderableNode } from "../base";
-import { Statement } from "./Statement";
-import { CaseBlock } from "./CaseBlock";
 import { CaseOrDefaultClause } from "../aliases";
+import { ChildOrderableNode } from "../base";
+import { Expression } from "../expression";
+import { CaseBlock } from "./CaseBlock";
+import { Statement } from "./Statement";
 
 export const SwitchStatementBase = ChildOrderableNode(Statement);
 export class SwitchStatement extends SwitchStatementBase<ts.SwitchStatement> {

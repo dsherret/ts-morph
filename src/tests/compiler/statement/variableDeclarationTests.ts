@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { VariableDeclaration, TryStatement } from "../../../compiler";
+import { TryStatement, VariableDeclaration } from "../../../compiler";
 import { VariableDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

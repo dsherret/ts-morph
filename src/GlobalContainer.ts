@@ -1,12 +1,12 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
+import { LanguageService, QuoteKind, TypeChecker } from "./compiler";
 import * as errors from "./errors";
 import { CompilerFactory, StructurePrinterFactory } from "./factories";
-import { ts, CompilerOptions } from "./typescript";
-import { LanguageService, TypeChecker, QuoteKind } from "./compiler";
+import { DirectoryCoordinator, FileSystemWrapper } from "./fileSystem";
+import { CompilerOptionsContainer, IndentationText, ManipulationSettingsContainer } from "./options";
+import { CompilerOptions, ts } from "./typescript";
+import { ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 import { createWrappedNode } from "./utils/compiler/createWrappedNode";
-import { ManipulationSettingsContainer, CompilerOptionsContainer, IndentationText } from "./options";
-import { FileSystemWrapper, DirectoryCoordinator } from "./fileSystem";
-import { Logger, ConsoleLogger, LazyReferenceCoordinator } from "./utils";
 
 /**
  * @internal

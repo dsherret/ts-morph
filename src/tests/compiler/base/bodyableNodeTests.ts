@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { WriterFunction } from "../../../types";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../compiler";
 import { BodyableNodeStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(BodyableNode), () => {

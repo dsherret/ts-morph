@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { ts, SyntaxKind } from "../../../typescript";
-import { StringLiteral, LiteralLikeNode, Node } from "../../../compiler";
+import { LiteralLikeNode, Node } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(LiteralLikeNode), () => {

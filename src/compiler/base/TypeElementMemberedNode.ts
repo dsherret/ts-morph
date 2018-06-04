@@ -1,15 +1,15 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, ArrayUtils } from "../../utils";
-import { ConstructSignatureDeclarationStructure, MethodSignatureStructure, PropertySignatureStructure,
-    CallSignatureDeclarationStructure, IndexSignatureDeclarationStructure, TypeElementMemberedNodeStructure } from "../../structures";
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
+    PropertySignatureStructure, TypeElementMemberedNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { TypeElementTypes } from "../aliases";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { PropertySignature, MethodSignature, IndexSignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration } from "../interface";
-import { TypeElementTypes } from "../aliases";
+import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
 
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
 

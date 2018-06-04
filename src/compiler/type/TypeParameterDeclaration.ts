@@ -1,6 +1,6 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { removeChildren, removeCommaSeparatedChild } from "../../manipulation";
-import { NamedNode, TypeParameteredNode } from "../base";
+import { SyntaxKind, ts } from "../../typescript";
+import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
 

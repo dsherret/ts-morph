@@ -1,10 +1,9 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { ArrayUtils, StringUtils } from "../../utils";
-import { ClassDeclarationStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
+import { ClassDeclarationStructure } from "../../structures";
+import { ArrayUtils, StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { BlankLineFormattingStructuresPrinter } from "../formatting";
-import { ModifierableNodeStructurePrinter } from "../base";
 
 export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<ClassDeclarationStructure> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);

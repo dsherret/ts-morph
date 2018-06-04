@@ -1,8 +1,7 @@
 import { expect } from "chai";
-import { ts, ScriptTarget } from "../../../typescript";
-import { LanguageService, EmitOutput, SourceFile, FileTextChanges, TextChange, TextSpan } from "../../../compiler";
+import { EmitOutput, FileTextChanges, LanguageService, SourceFile, TextChange, TextSpan } from "../../../compiler";
 import { FileNotFoundError } from "../../../errors";
-import { FileUtils } from "../../../utils";
+import { ScriptTarget, ts } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(LanguageService), () => {

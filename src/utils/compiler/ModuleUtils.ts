@@ -1,6 +1,6 @@
-﻿import { StringUtils } from "../StringUtils";
-import { Symbol, SourceFile } from "../../compiler";
+﻿import { SourceFile, Symbol } from "../../compiler";
 import { SyntaxKind } from "../../typescript";
+import { StringUtils } from "../StringUtils";
 
 export class ModuleUtils {
     private constructor() {

@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { TypeParameterDeclaration, FunctionDeclaration } from "../../../compiler";
+import { FunctionDeclaration, TypeParameterDeclaration } from "../../../compiler";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(TypeParameterDeclaration), () => {

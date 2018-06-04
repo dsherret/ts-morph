@@ -1,12 +1,12 @@
-﻿import { Constructor } from "../../../types";
-import * as errors from "../../../errors";
-import { insertIntoParentTextRange, verifyAndGetIndex, getNodesToReturn } from "../../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
-import { Node } from "../../common";
-import { ts, SyntaxKind } from "../../../typescript";
-import { JsxAttributeStructure } from "../../../structures";
+﻿import * as errors from "../../../errors";
+import { getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../../manipulation";
 import { SpaceFormattingStructuresPrinter } from "../../../structurePrinters";
+import { JsxAttributeStructure } from "../../../structures";
+import { Constructor } from "../../../types";
+import { SyntaxKind, ts } from "../../../typescript";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../../utils";
 import { JsxAttributeLike } from "../../aliases";
+import { Node } from "../../common";
 import { JsxTagNamedNode } from "./JsxTagNamedNode";
 
 export type JsxAttributedNodeExtensionType = Node<ts.Node & { attributes: ts.JsxAttributes; }> & JsxTagNamedNode;

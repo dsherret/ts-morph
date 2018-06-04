@@ -1,6 +1,6 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
 import { removeChildren } from "../../manipulation";
+import { ts } from "../../typescript";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { StringLiteral } from "../literal";

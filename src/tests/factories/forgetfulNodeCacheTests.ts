@@ -1,8 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { expect } from "chai";
-import { ArrayUtils } from "../../utils";
-import { getInfoFromText } from "../compiler/testHelpers";
 import { ForgetfulNodeCache } from "../../factories/ForgetfulNodeCache";
+import { SyntaxKind } from "../../typescript";
+import { getInfoFromText } from "../compiler/testHelpers";
 
 describe(nameof(ForgetfulNodeCache), () => {
     it("should forget nodes created after a forget point", () => {

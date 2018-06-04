@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, EnumDeclaration, NamedNode, Identifier } from "../../../../compiler";
+import { EnumDeclaration, FunctionDeclaration, Identifier, NamedNode } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {

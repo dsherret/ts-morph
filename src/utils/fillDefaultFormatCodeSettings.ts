@@ -1,8 +1,7 @@
-import { ManipulationSettingsContainer } from "../options";
-import { ts } from "../typescript";
 import { FormatCodeSettings } from "../compiler";
-import { setValueIfUndefined } from "./setValueIfUndefined";
+import { ManipulationSettingsContainer } from "../options";
 import { fillDefaultEditorSettings } from "./fillDefaultEditorSettings";
+import { setValueIfUndefined } from "./setValueIfUndefined";
 
 export function fillDefaultFormatCodeSettings(settings: FormatCodeSettings, manipulationSettings: ManipulationSettingsContainer) {
     fillDefaultEditorSettings(settings, manipulationSettings);

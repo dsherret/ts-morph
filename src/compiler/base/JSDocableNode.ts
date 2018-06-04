@@ -1,9 +1,9 @@
-import { ts } from "../../typescript";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
+import { JSDocableNodeStructure, JSDocStructure } from "../../structures";
 import { Constructor } from "../../types";
-import { insertIntoParentTextRange, verifyAndGetIndex, getEndIndexFromArray, getNodesToReturn } from "../../manipulation";
-import { JSDocStructure, JSDocableNodeStructure } from "../../structures";
-import { callBaseFill } from "../callBaseFill";
+import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
+import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
 

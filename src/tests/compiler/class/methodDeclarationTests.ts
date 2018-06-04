@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { MethodDeclaration, ClassDeclaration } from "../../../compiler";
+import { ClassDeclaration, MethodDeclaration } from "../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 

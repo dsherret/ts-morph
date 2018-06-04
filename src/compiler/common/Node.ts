@@ -1,28 +1,21 @@
-import { ts, SyntaxKind } from "../../typescript";
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { GlobalContainer } from "../../GlobalContainer";
-import { IndentationText } from "../../options";
-import { StructurePrinter } from "../../structurePrinters";
-import { insertIntoParentTextRange, getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, replaceSourceFileTextForFormatting,
-    getTextFromFormattingEdits } from "../../manipulation";
-import { TypeGuards, getTextFromStringOrWriter, ArrayUtils, isStringKind, printNode, PrintNodeOptions, StringUtils, getSyntaxKindName,
-    getParentSyntaxList } from "../../utils";
-import { SourceFile } from "../file";
-import { ConstructorDeclaration, MethodDeclaration } from "../class";
-import { FunctionDeclaration } from "../function";
-import { FormatCodeSettings } from "../tools";
-import { TypeAliasDeclaration, Type } from "../type";
-import { InterfaceDeclaration } from "../interface";
-import { QuoteKind } from "../literal/QuoteKind";
-import { NamespaceDeclaration } from "../namespace";
-import { Statement, StatementedNode } from "../statement";
-import { KindToNodeMappings } from "../kindToNodeMappings";
+import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits, insertIntoParentTextRange,
+    replaceSourceFileTextForFormatting } from "../../manipulation";
+import { WriterFunction } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
+    TypeGuards } from "../../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
+import { SourceFile } from "../file";
+import { KindToNodeMappings } from "../kindToNodeMappings";
+import { Statement } from "../statement";
+import { FormatCodeSettings } from "../tools";
+import { Type } from "../type";
+import { CommentRange } from "./CommentRange";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
-import { CommentRange } from "./CommentRange";
 
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :

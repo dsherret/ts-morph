@@ -1,7 +1,7 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
-import { WriterFunction } from "../../types";
-import { TypedNodeStructure } from "../../structures";
 import { StructurePrinterFactory } from "../../factories";
+import { TypedNodeStructure } from "../../structures";
+import { WriterFunction } from "../../types";
 import { StringUtils } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 

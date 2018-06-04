@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
-import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
 import { CommentRange } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(CommentRange), () => {

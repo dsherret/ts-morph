@@ -1,10 +1,10 @@
-﻿import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions, OutputFile } from "../compiler";
+﻿import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
 import * as errors from "../errors";
-import { ModuleResolutionKind } from "../typescript";
-import { ArrayUtils, FileUtils, StringUtils, setValueIfUndefined, ObjectUtils } from "../utils";
-import { SourceFileStructure } from "../structures";
 import { GlobalContainer } from "../GlobalContainer";
-import { SourceFileCreateOptions, SourceFileAddOptions } from "../Project";
+import { SourceFileAddOptions, SourceFileCreateOptions } from "../Project";
+import { SourceFileStructure } from "../structures";
+import { ModuleResolutionKind } from "../typescript";
+import { ArrayUtils, FileUtils, ObjectUtils, setValueIfUndefined, StringUtils } from "../utils";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
 export interface DirectoryAddOptions {

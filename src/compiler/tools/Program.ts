@@ -1,9 +1,9 @@
-import { ts, CompilerOptions, ModuleResolutionKind } from "../../typescript";
-import * as tsInternal from "../../typescript/tsInternal";
 import { GlobalContainer } from "../../GlobalContainer";
-import { TypeChecker } from "./TypeChecker";
+import { ModuleResolutionKind, ts } from "../../typescript";
+import * as tsInternal from "../../typescript/tsInternal";
 import { SourceFile } from "../file";
-import { EmitResult, Diagnostic, DiagnosticWithLocation } from "./results";
+import { Diagnostic, DiagnosticWithLocation, EmitResult } from "./results";
+import { TypeChecker } from "./TypeChecker";
 
 /**
  * Options for emitting.

@@ -1,9 +1,8 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { TypeGuards, ModuleUtils } from "../../utils";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
+import { ModuleUtils, TypeGuards } from "../../utils";
 import { Node } from "../common";
 import { Expression } from "../expression";
-import { SourceFile } from "./SourceFile";
 
 export class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
     /**

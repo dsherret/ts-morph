@@ -1,8 +1,8 @@
-﻿import { CompilerFactory } from "../factories";
-import * as errors from "../errors";
+﻿import * as errors from "../errors";
+import { CompilerFactory } from "../factories";
 import { FileUtils } from "../utils";
+import { DirectoryAddOptions } from "./Directory";
 import { FileSystemWrapper } from "./FileSystemWrapper";
-import { Directory, DirectoryAddOptions } from "./Directory";
 
 /**
  * Contains common methods between Project and Directory.

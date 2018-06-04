@@ -1,5 +1,5 @@
 ﻿/* barrel:ignore */
-import { ts, CompilerOptions } from "./typescript";
+import { CompilerOptions, ts } from "./typescript";
 
 /* tslint:disable:align */
 export function matchFiles(this: any,

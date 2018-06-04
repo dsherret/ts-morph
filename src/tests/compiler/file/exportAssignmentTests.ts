@@ -1,7 +1,5 @@
 ﻿import { expect } from "chai";
 import { ExportAssignment } from "../../../compiler";
-import { ExportSpecifierStructure } from "../../../structures";
-import * as errors from "../../../errors";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportAssignment), () => {

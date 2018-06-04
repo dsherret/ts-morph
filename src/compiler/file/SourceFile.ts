@@ -1,25 +1,24 @@
-import { ts, SyntaxKind, LanguageVariant, ScriptTarget } from "../../typescript";
 import * as errors from "../../errors";
-import { GlobalContainer } from "../../GlobalContainer";
 import { Directory } from "../../fileSystem";
-import { removeChildrenWithFormatting, FormattingKind, replaceSourceFileTextForFormatting, getTextFromFormattingEdits, replaceNodeText,
-    replaceSourceFileForFilePathMove } from "../../manipulation";
-import { getPreviousMatchingPos, getNextMatchingPos } from "../../manipulation/textSeek";
+import { GlobalContainer } from "../../GlobalContainer";
+import { FormattingKind, getTextFromFormattingEdits, removeChildrenWithFormatting, replaceNodeText, replaceSourceFileForFilePathMove,
+    replaceSourceFileTextForFormatting } from "../../manipulation";
+import { getNextMatchingPos, getPreviousMatchingPos } from "../../manipulation/textSeek";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure } from "../../structures";
 import { Constructor } from "../../types";
-import { ImportDeclarationStructure, ExportDeclarationStructure, ExportAssignmentStructure, SourceFileStructure } from "../../structures";
-import { ArrayUtils, FileUtils, TypeGuards, StringUtils, createHashSet, EventContainer, SourceFileReferenceContainer,
-    SourceFileReferencingNodes, ModuleUtils } from "../../utils";
-import { callBaseFill } from "../callBaseFill";
+import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
+import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
 import { TextInsertableNode } from "../base";
-import { Node, Symbol, Identifier } from "../common";
-import { StatementedNode } from "../statement";
+import { callBaseFill } from "../callBaseFill";
+import { Node, Symbol } from "../common";
 import { StringLiteral } from "../literal";
-import { Diagnostic, EmitOptionsBase, EmitResult, EmitOutput, FormatCodeSettings, TextChange } from "../tools";
-import { ImportDeclaration } from "./ImportDeclaration";
-import { ExportDeclaration } from "./ExportDeclaration";
+import { StatementedNode } from "../statement";
+import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange } from "../tools";
 import { ExportAssignment } from "./ExportAssignment";
+import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
+import { ImportDeclaration } from "./ImportDeclaration";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;

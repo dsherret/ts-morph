@@ -1,7 +1,7 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
-import { Expression } from "./Expression";
+import { ts } from "../../typescript";
 import { GeneratorableNode } from "../base";
+import { Expression } from "./Expression";
 
 export const YieldExpressionBase = GeneratorableNode(Expression);
 export class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {

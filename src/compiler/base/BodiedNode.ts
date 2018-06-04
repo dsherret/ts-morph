@@ -1,9 +1,9 @@
-import { Constructor, WriterFunction } from "../../types";
 import * as errors from "../../errors";
 import { BodiedNodeStructure } from "../../structures";
+import { Constructor, WriterFunction } from "../../types";
+import { ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { ts } from "../../typescript";
 import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
 
 export type BodiedNodeExtensionType = Node<ts.Node & { body: ts.Node; }>;

@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
-import { WriterFunction } from "../../../types";
 import { IndexSignatureDeclaration, InterfaceDeclaration } from "../../../compiler";
 import { IndexSignatureDeclarationStructure } from "../../../structures";
+import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(IndexSignatureDeclaration), () => {

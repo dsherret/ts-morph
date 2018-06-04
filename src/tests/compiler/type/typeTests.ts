@@ -1,7 +1,7 @@
 import { expect } from "chai";
-import { ts, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags } from "../../../typescript";
-import { Type, VariableStatement, Node, FunctionDeclaration, TypeAliasDeclaration } from "../../../compiler";
-import { VirtualFileSystemHost, DefaultFileSystemHost } from "../../../fileSystem";
+import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
+import { VirtualFileSystemHost } from "../../../fileSystem";
+import { ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Type), () => {

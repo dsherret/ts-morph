@@ -1,9 +1,8 @@
-import { ts } from "../../../typescript";
 import { replaceNodeText } from "../../../manipulation";
-import { PrimaryExpression } from "../../expression";
+import { ts } from "../../../typescript";
 import { TemplateLiteral } from "../../aliases";
+import { PrimaryExpression } from "../../expression";
 import { TemplateHead } from "./TemplateHead";
-import { TemplateSpan } from "./TemplateSpan";
 
 export const TemplateExpressionBase = PrimaryExpression;
 export class TemplateExpression extends TemplateExpressionBase<ts.TemplateExpression> {

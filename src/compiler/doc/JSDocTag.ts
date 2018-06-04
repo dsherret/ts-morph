@@ -1,5 +1,5 @@
 import { ts } from "../../typescript";
-import { Node, Identifier } from "../common";
+import { Identifier, Node } from "../common";
 
 /**
  * JS doc tag node.

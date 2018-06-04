@@ -1,11 +1,11 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
+import { FormattingKind, insertIntoParentTextRange, removeChildrenWithFormatting } from "../../manipulation";
 import { GeneratorableNodeStructure } from "../../structures";
-import { callBaseFill } from "../callBaseFill";
-import { insertIntoParentTextRange, removeChildrenWithFormatting, FormattingKind } from "../../manipulation";
-import { Node } from "../common";
+import { Constructor } from "../../types";
+import { SyntaxKind, ts } from "../../typescript";
 import { NamedNode } from "../base";
+import { callBaseFill } from "../callBaseFill";
+import { Node } from "../common";
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 

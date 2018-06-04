@@ -1,11 +1,10 @@
-import { ts, SyntaxKind } from "../../typescript";
 import * as errors from "../../errors";
-import { EnumMemberStructure, EnumDeclarationStructure } from "../../structures";
-import { insertIntoCommaSeparatedNodes, verifyAndGetIndex, getNodesToReturn } from "../../manipulation";
-import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, TypeGuards } from "../../utils";
+import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../manipulation";
+import { EnumDeclarationStructure, EnumMemberStructure } from "../../structures";
+import { SyntaxKind, ts } from "../../typescript";
+import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
+import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { NamedNode, ExportableNode, ModifierableNode, AmbientableNode, JSDocableNode, TextInsertableNode, ChildOrderableNode } from "../base";
-import { Node } from "../common";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";

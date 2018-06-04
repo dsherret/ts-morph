@@ -1,7 +1,7 @@
-import { ts, SyntaxKind } from "../../typescript";
-import { Constructor } from "../../types";
 import * as errors from "../../errors";
 import { StaticableNodeStructure } from "../../structures";
+import { Constructor } from "../../types";
+import { SyntaxKind } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";

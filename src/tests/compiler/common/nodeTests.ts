@@ -1,11 +1,11 @@
-import { CodeBlockWriter } from "../../../codeBlockWriter";
-import { assert, IsNullableType, IsExactType } from "conditional-type-checks";
-import { WriterFunction } from "../../../types";
 import { expect } from "chai";
-import { ts, SyntaxKind, NewLineKind } from "../../../typescript";
-import { Node, EnumDeclaration, ClassDeclaration, FunctionDeclaration, InterfaceDeclaration, PropertySignature, PropertyAccessExpression,
-    SourceFile, FormatCodeSettings, CallExpression, TypeParameterDeclaration, Identifier } from "../../../compiler";
+import { assert, IsExactType, IsNullableType } from "conditional-type-checks";
+import { CodeBlockWriter } from "../../../codeBlockWriter";
+import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
+    PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
+import { WriterFunction } from "../../../types";
+import { NewLineKind, SyntaxKind, ts } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 

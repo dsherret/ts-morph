@@ -1,5 +1,5 @@
-import { ts } from "../../typescript";
 import * as errors from "../../errors";
+import { ts } from "../../typescript";
 import { Block } from "./Block";
 import { CatchClause } from "./CatchClause";
 import { Statement } from "./Statement";
