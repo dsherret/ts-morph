@@ -41,6 +41,20 @@ export class StringUtils {
         return count + 1; // convert count to line number
     }
 
+    static getColumnAtPos(str: string, pos: number) {
+        errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
+        const startPos = pos;
+
+        while (pos > 0) {
+            const previousChar = str[pos - 1];
+            if (previousChar === "\n" || previousChar === "\r")
+                break;
+            pos--;
+        }
+
+        return startPos - pos;
+    }
+
     static escapeForWithinString(str: string, quoteKind: QuoteKind) {
         return StringUtils.escapeChar(str, quoteKind).replace(/(\r?\n)/g, "\\$1");
     }

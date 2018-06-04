@@ -919,7 +919,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getStartLinePos(includeJsDocComment?: boolean) {
         const sourceFileText = this.sourceFile.getFullText();
-        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n");
+        return getPreviousMatchingPos(sourceFileText, this.getStart(includeJsDocComment), char => char === "\n" || char === "\r");
     }
 
     /**
@@ -935,8 +935,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getEndLineNumber() {
         const sourceFileText = this.sourceFile.getFullText();
-        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n");
+        const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
         return this.sourceFile.getLineNumberFromPos(endLinePos);
+    }
+
+    /**
+     * Gets the length from the start of the line to the start of the node.
+     * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     */
+    getStartColumn(includeJsDocComment?: boolean) {
+        return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
+    }
+
+    /**
+     * Gets the length from the start of the line to the end of the node.
+     */
+    getEndColumn() {
+        return this.sourceFile.getColumnAtPos(this.getEnd());
     }
 
     /**

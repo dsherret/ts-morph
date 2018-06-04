@@ -154,6 +154,14 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets the length from the start of the line to the provided position.
+     * @param pos - Position.
+     */
+    getColumnAtPos(pos: number) {
+        return StringUtils.getColumnAtPos(this.getFullText(), pos);
+    }
+
+    /**
      * Copy this source file to a new file.
      *
      * This will modify the module specifiers in the new file, if necessary.
