@@ -13,7 +13,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node, Symbol } from "../common";
 import { StringLiteral } from "../literal";
 import { StatementedNode } from "../statement";
-import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, TextChange } from "../tools";
+import { Diagnostic, EmitOptionsBase, EmitOutput, EmitResult, FormatCodeSettings, UserPreferences, TextChange } from "../tools";
 import { ExportAssignment } from "./ExportAssignment";
 import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportSpecifier } from "./ExportSpecifier";
@@ -978,9 +978,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      *
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param settings - Format code settings.
+     * @param userPreferences - User preferences for refactoring.
      */
-    organizeImports(settings: FormatCodeSettings = {}) {
-        this.applyTextChanges(ArrayUtils.flatten(this.global.languageService.organizeImports(this, settings).map(r => r.getTextChanges())));
+    organizeImports(settings: FormatCodeSettings = {}, userPreferences: UserPreferences = {}) {
+        this.applyTextChanges(ArrayUtils.flatten(this.global.languageService.organizeImports(this, settings, userPreferences).map(r => r.getTextChanges())));
         return this;
     }
 
