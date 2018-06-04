@@ -1,286 +1,6 @@
 import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind, CompilerApiNodeBrandPropertyNamesType } from "./typescript/typescript";
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
-export declare type Constructor<T> = new (...args: any[]) => T;
-
-export declare type WriterFunction = (writer: CodeBlockWriter) => void;
-
-/**
- * Project that holds source files.
- */
-export declare class Project {
-    /**
-     * Initializes a new instance.
-     * @param options - Optional options.
-     * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
-     */
-    constructor(options?: Options, fileSystem?: FileSystemHost);
-    /** Gets the manipulation settings. */
-    readonly manipulationSettings: ManipulationSettingsContainer;
-    /** Gets the compiler options for modification. */
-    readonly compilerOptions: CompilerOptionsContainer;
-    /**
-     * Adds an existing directory from the path or returns undefined if it doesn't exist.
-     *
-     * Will return the directory if it was already added.
-     * @param dirPath - Path to add the directory at.
-     * @param options - Options.
-     */
-    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
-    /**
-     * Adds an existing directory from the path or throws if it doesn't exist.
-     *
-     * Will return the directory if it was already added.
-     * @param dirPath - Path to add the directory at.
-     * @param options - Options.
-     * @throws DirectoryNotFoundError when the directory does not exist.
-     */
-    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
-    /**
-     * Creates a directory at the specified path.
-     * @param dirPath - Path to create the directory at.
-     */
-    createDirectory(dirPath: string): Directory;
-    /**
-     * Gets a directory by the specified path or throws if it doesn't exist.
-     * @param dirPath - Path to create the directory at.
-     */
-    getDirectoryOrThrow(dirPath: string): Directory;
-    /**
-     * Gets a directory by the specified path or returns undefined if it doesn't exist.
-     * @param dirPath - Directory path.
-     */
-    getDirectory(dirPath: string): Directory | undefined;
-    /**
-     * Gets all the directories.
-     */
-    getDirectories(): Directory[];
-    /**
-     * Gets the directories without a parent.
-     */
-    getRootDirectories(): Directory[];
-    /**
-     * Add source files based on a file glob.
-     * @param fileGlobs - File glob to add files based on.
-     * @param options - Options for adding the source file.
-     * @returns The matched source files.
-     */
-    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
-    /**
-     * Add source files based on file globs.
-     * @param fileGlobs - File globs to add files based on.
-     * @param options - Options for adding the source file.
-     * @returns The matched source files.
-     */
-    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
-    /**
-     * Adds a source file from a file path if it exists or returns undefined.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
-     */
-    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
-    /**
-     * Adds an existing source file from a file path or throws if it doesn't exist.
-     *
-     * Will return the source file if it was already added.
-     * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
-     * @throws FileNotFoundError when the file is not found.
-     */
-    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile;
-    /**
-     * Adds all the source files from the specified tsconfig.json.
-     *
-     * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
-     * addFilesFromTsConfig option to false.
-     * @param tsConfigFilePath - File path to the tsconfig.json file.
-     * @param options - Options for adding the source file.
-     */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
-    /**
-     * Creates a source file at the specified file path.
-     *
-     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
-     * @param filePath - File path of the source file.
-     * @throws - InvalidOperationError if a source file already exists at the provided file path.
-     */
-    createSourceFile(filePath: string): SourceFile;
-    /**
-     * Creates a source file at the specified file path with the specified text.
-     *
-     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
-     * @param filePath - File path of the source file.
-     * @param sourceFileText - Text of the source file.
-     * @param options - Options.
-     * @throws - InvalidOperationError if a source file already exists at the provided file path.
-     */
-    createSourceFile(filePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
-    /**
-     * Creates a source file at the specified file path with the specified text.
-     *
-     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
-     * @param filePath - File path of the source file.
-     * @param structure - Structure that represents the source file.
-     * @param options - Options.
-     * @throws - InvalidOperationError if a source file already exists at the provided file path.
-     */
-    createSourceFile(filePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
-    /**
-     * Removes a source file from the AST.
-     * @param sourceFile - Source file to remove.
-     * @returns True if removed.
-     */
-    removeSourceFile(sourceFile: SourceFile): boolean;
-    /**
-     * Gets a source file by a file name or file path. Throws an error if it doesn't exist.
-     * @param fileNameOrPath - File name or path that the path could end with or equal.
-     */
-    getSourceFileOrThrow(fileNameOrPath: string): SourceFile;
-    /**
-     * Gets a source file by a search function. Throws an erorr if it doesn't exist.
-     * @param searchFunction - Search function.
-     */
-    getSourceFileOrThrow(searchFunction: (file: SourceFile) => boolean): SourceFile;
-    /**
-     * Gets a source file by a file name or file path. Returns undefined if none exists.
-     * @param fileNameOrPath - File name or path that the path could end with or equal.
-     */
-    getSourceFile(fileNameOrPath: string): SourceFile | undefined;
-    /**
-     * Gets a source file by a search function. Returns undefined if none exists.
-     * @param searchFunction - Search function.
-     */
-    getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
-    /**
-     * Gets all the source files contained in the compiler wrapper.
-     * @param globPattern - Glob pattern for filtering out the source files.
-     */
-    getSourceFiles(): SourceFile[];
-    /**
-     * Gets all the source files contained in the compiler wrapper that match a pattern.
-     * @param globPattern - Glob pattern for filtering out the source files.
-     */
-    getSourceFiles(globPattern: string): SourceFile[];
-    /**
-     * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
-     * @param globPatterns - Glob patterns for filtering out the source files.
-     */
-    getSourceFiles(globPatterns: string[]): SourceFile[];
-    /**
-     * Saves all the unsaved source files to the file system and deletes all deleted files.
-     */
-    save(): Promise<void>;
-    /**
-     * Synchronously saves all the unsaved source files to the file system and deletes all deleted files.
-     *
-     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
-     */
-    saveSync(): void;
-    /**
-     * Enables logging to the console.
-     * @param enabled - Enabled.
-     */
-    enableLogging(enabled?: boolean): void;
-    private getUnsavedSourceFiles;
-    /**
-     * Gets the compiler diagnostics.
-     */
-    getDiagnostics(): Diagnostic[];
-    /**
-     * Gets the pre-emit diagnostics.
-     */
-    getPreEmitDiagnostics(): Diagnostic[];
-    /**
-     * Gets the language service.
-     */
-    getLanguageService(): LanguageService;
-    /**
-     * Gets the program.
-     */
-    getProgram(): Program;
-    /**
-     * Gets the type checker.
-     */
-    getTypeChecker(): TypeChecker;
-    /**
-     * Gets the file system.
-     */
-    getFileSystem(): FileSystemHost;
-    /**
-     * Emits all the source files.
-     * @param emitOptions - Optional emit options.
-     */
-    emit(emitOptions?: EmitOptions): EmitResult;
-    /**
-     * Gets the compiler options.
-     */
-    getCompilerOptions(): CompilerOptions;
-    /**
-     * Creates a writer with the current manipulation settings.
-     * @remarks Generally it's best to use a provided writer, but this may be useful in some scenarios.
-     */
-    createWriter(): CodeBlockWriter;
-    /**
-     * Forgets the nodes created in the scope of the passed in block.
-     *
-     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
-     */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void): void;
-    /**
-     * Forgets the nodes created in the scope of the passed in block asynchronously.
-     *
-     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
-     * @param block - Block of code to run.
-     */
-    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
-}
-export default Project;
-
-export interface Options {
-    /** Compiler options */
-    compilerOptions?: CompilerOptions;
-    /** File path to the tsconfig.json file */
-    tsConfigFilePath?: string;
-    /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
-    addFilesFromTsConfig?: boolean;
-    /** Manipulation settings */
-    manipulationSettings?: Partial<ManipulationSettings>;
-    /** Whether to use a virtual file system. */
-    useVirtualFileSystem?: boolean;
-}
-
-export interface SourceFileCreateOptions extends SourceFileAddOptions {
-    overwrite?: boolean;
-}
-
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
-}
-export interface FileSystemHost {
-    delete(path: string): Promise<void>;
-    deleteSync(path: string): void;
-    readDirSync(dirPath: string): string[];
-    readFile(filePath: string, encoding?: string): Promise<string>;
-    readFileSync(filePath: string, encoding?: string): string;
-    writeFile(filePath: string, fileText: string): Promise<void>;
-    writeFileSync(filePath: string, fileText: string): void;
-    mkdir(dirPath: string): Promise<void>;
-    mkdirSync(dirPath: string): void;
-    move(srcPath: string, destPath: string): Promise<void>;
-    moveSync(srcPath: string, destPath: string): void;
-    copy(srcPath: string, destPath: string): Promise<void>;
-    copySync(srcPath: string, destPath: string): void;
-    fileExists(filePath: string): Promise<boolean>;
-    fileExistsSync(filePath: string): boolean;
-    directoryExists(dirPath: string): Promise<boolean>;
-    directoryExistsSync(dirPath: string): boolean;
-    getCurrentDirectory(): string;
-    glob(patterns: string[]): string[];
-}
-
 export declare class Directory {
     private _global;
     private _path;
@@ -546,18 +266,6 @@ export declare class Directory {
      */
     wasForgotten(): boolean;
 }
-export declare class DirectoryEmitResult {
-    private readonly _emitSkipped;
-    private readonly _outputFilePaths;
-    /**
-     * Gets if the emit was skipped.
-     */
-    getEmitSkipped(): boolean;
-    /**
-     * Gets the output file paths.
-     */
-    getOutputFilePaths(): string[];
-}
 
 export interface DirectoryAddOptions {
     /**
@@ -574,9 +282,301 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
      */
     includeUntrackedFiles?: boolean;
 }
+export declare class DirectoryEmitResult {
+    private readonly _emitSkipped;
+    private readonly _outputFilePaths;
+    /**
+     * Gets if the emit was skipped.
+     */
+    getEmitSkipped(): boolean;
+    /**
+     * Gets the output file paths.
+     */
+    getOutputFilePaths(): string[];
+}
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
+export interface FileSystemHost {
+    delete(path: string): Promise<void>;
+    deleteSync(path: string): void;
+    readDirSync(dirPath: string): string[];
+    readFile(filePath: string, encoding?: string): Promise<string>;
+    readFileSync(filePath: string, encoding?: string): string;
+    writeFile(filePath: string, fileText: string): Promise<void>;
+    writeFileSync(filePath: string, fileText: string): void;
+    mkdir(dirPath: string): Promise<void>;
+    mkdirSync(dirPath: string): void;
+    move(srcPath: string, destPath: string): Promise<void>;
+    moveSync(srcPath: string, destPath: string): void;
+    copy(srcPath: string, destPath: string): Promise<void>;
+    copySync(srcPath: string, destPath: string): void;
+    fileExists(filePath: string): Promise<boolean>;
+    fileExistsSync(filePath: string): boolean;
+    directoryExists(dirPath: string): Promise<boolean>;
+    directoryExistsSync(dirPath: string): boolean;
+    getCurrentDirectory(): string;
+    glob(patterns: string[]): string[];
+}
+
+export interface Options {
+    /** Compiler options */
+    compilerOptions?: CompilerOptions;
+    /** File path to the tsconfig.json file */
+    tsConfigFilePath?: string;
+    /** Whether to add the source files from the specified tsconfig.json or not. Defaults to true. */
+    addFilesFromTsConfig?: boolean;
+    /** Manipulation settings */
+    manipulationSettings?: Partial<ManipulationSettings>;
+    /** Whether to use a virtual file system. */
+    useVirtualFileSystem?: boolean;
+}
+
+/**
+ * Project that holds source files.
+ */
+export declare class Project {
+    /**
+     * Initializes a new instance.
+     * @param options - Optional options.
+     * @param fileSystem - Optional file system host. Useful for mocking access to the file system.
+     */
+    constructor(options?: Options, fileSystem?: FileSystemHost);
+    /** Gets the manipulation settings. */
+    readonly manipulationSettings: ManipulationSettingsContainer;
+    /** Gets the compiler options for modification. */
+    readonly compilerOptions: CompilerOptionsContainer;
+    /**
+     * Adds an existing directory from the path or returns undefined if it doesn't exist.
+     *
+     * Will return the directory if it was already added.
+     * @param dirPath - Path to add the directory at.
+     * @param options - Options.
+     */
+    addExistingDirectoryIfExists(dirPath: string, options?: DirectoryAddOptions): Directory | undefined;
+    /**
+     * Adds an existing directory from the path or throws if it doesn't exist.
+     *
+     * Will return the directory if it was already added.
+     * @param dirPath - Path to add the directory at.
+     * @param options - Options.
+     * @throws DirectoryNotFoundError when the directory does not exist.
+     */
+    addExistingDirectory(dirPath: string, options?: DirectoryAddOptions): Directory;
+    /**
+     * Creates a directory at the specified path.
+     * @param dirPath - Path to create the directory at.
+     */
+    createDirectory(dirPath: string): Directory;
+    /**
+     * Gets a directory by the specified path or throws if it doesn't exist.
+     * @param dirPath - Path to create the directory at.
+     */
+    getDirectoryOrThrow(dirPath: string): Directory;
+    /**
+     * Gets a directory by the specified path or returns undefined if it doesn't exist.
+     * @param dirPath - Directory path.
+     */
+    getDirectory(dirPath: string): Directory | undefined;
+    /**
+     * Gets all the directories.
+     */
+    getDirectories(): Directory[];
+    /**
+     * Gets the directories without a parent.
+     */
+    getRootDirectories(): Directory[];
+    /**
+     * Add source files based on a file glob.
+     * @param fileGlobs - File glob to add files based on.
+     * @param options - Options for adding the source file.
+     * @returns The matched source files.
+     */
+    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
+    /**
+     * Add source files based on file globs.
+     * @param fileGlobs - File globs to add files based on.
+     * @param options - Options for adding the source file.
+     * @returns The matched source files.
+     */
+    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
+    /**
+     * Adds a source file from a file path if it exists or returns undefined.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the source file.
+     */
+    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
+    /**
+     * Adds an existing source file from a file path or throws if it doesn't exist.
+     *
+     * Will return the source file if it was already added.
+     * @param filePath - File path to get the file from.
+     * @param options - Options for adding the source file.
+     * @throws FileNotFoundError when the file is not found.
+     */
+    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile;
+    /**
+     * Adds all the source files from the specified tsconfig.json.
+     *
+     * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
+     * addFilesFromTsConfig option to false.
+     * @param tsConfigFilePath - File path to the tsconfig.json file.
+     * @param options - Options for adding the source file.
+     */
+    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
+    /**
+     * Creates a source file at the specified file path.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
+     * @throws - InvalidOperationError if a source file already exists at the provided file path.
+     */
+    createSourceFile(filePath: string): SourceFile;
+    /**
+     * Creates a source file at the specified file path with the specified text.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
+     * @param sourceFileText - Text of the source file.
+     * @param options - Options.
+     * @throws - InvalidOperationError if a source file already exists at the provided file path.
+     */
+    createSourceFile(filePath: string, sourceFileText: string, options?: SourceFileCreateOptions): SourceFile;
+    /**
+     * Creates a source file at the specified file path with the specified text.
+     *
+     * Note: The file will not be created and saved to the file system until .save() is called on the source file.
+     * @param filePath - File path of the source file.
+     * @param structure - Structure that represents the source file.
+     * @param options - Options.
+     * @throws - InvalidOperationError if a source file already exists at the provided file path.
+     */
+    createSourceFile(filePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
+    /**
+     * Removes a source file from the AST.
+     * @param sourceFile - Source file to remove.
+     * @returns True if removed.
+     */
+    removeSourceFile(sourceFile: SourceFile): boolean;
+    /**
+     * Gets a source file by a file name or file path. Throws an error if it doesn't exist.
+     * @param fileNameOrPath - File name or path that the path could end with or equal.
+     */
+    getSourceFileOrThrow(fileNameOrPath: string): SourceFile;
+    /**
+     * Gets a source file by a search function. Throws an erorr if it doesn't exist.
+     * @param searchFunction - Search function.
+     */
+    getSourceFileOrThrow(searchFunction: (file: SourceFile) => boolean): SourceFile;
+    /**
+     * Gets a source file by a file name or file path. Returns undefined if none exists.
+     * @param fileNameOrPath - File name or path that the path could end with or equal.
+     */
+    getSourceFile(fileNameOrPath: string): SourceFile | undefined;
+    /**
+     * Gets a source file by a search function. Returns undefined if none exists.
+     * @param searchFunction - Search function.
+     */
+    getSourceFile(searchFunction: (file: SourceFile) => boolean): SourceFile | undefined;
+    /**
+     * Gets all the source files contained in the compiler wrapper.
+     * @param globPattern - Glob pattern for filtering out the source files.
+     */
+    getSourceFiles(): SourceFile[];
+    /**
+     * Gets all the source files contained in the compiler wrapper that match a pattern.
+     * @param globPattern - Glob pattern for filtering out the source files.
+     */
+    getSourceFiles(globPattern: string): SourceFile[];
+    /**
+     * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
+     * @param globPatterns - Glob patterns for filtering out the source files.
+     */
+    getSourceFiles(globPatterns: string[]): SourceFile[];
+    /**
+     * Saves all the unsaved source files to the file system and deletes all deleted files.
+     */
+    save(): Promise<void>;
+    /**
+     * Synchronously saves all the unsaved source files to the file system and deletes all deleted files.
+     *
+     * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
+     */
+    saveSync(): void;
+    /**
+     * Enables logging to the console.
+     * @param enabled - Enabled.
+     */
+    enableLogging(enabled?: boolean): void;
+    private getUnsavedSourceFiles;
+    /**
+     * Gets the compiler diagnostics.
+     */
+    getDiagnostics(): Diagnostic[];
+    /**
+     * Gets the pre-emit diagnostics.
+     */
+    getPreEmitDiagnostics(): Diagnostic[];
+    /**
+     * Gets the language service.
+     */
+    getLanguageService(): LanguageService;
+    /**
+     * Gets the program.
+     */
+    getProgram(): Program;
+    /**
+     * Gets the type checker.
+     */
+    getTypeChecker(): TypeChecker;
+    /**
+     * Gets the file system.
+     */
+    getFileSystem(): FileSystemHost;
+    /**
+     * Emits all the source files.
+     * @param emitOptions - Optional emit options.
+     */
+    emit(emitOptions?: EmitOptions): EmitResult;
+    /**
+     * Gets the compiler options.
+     */
+    getCompilerOptions(): CompilerOptions;
+    /**
+     * Creates a writer with the current manipulation settings.
+     * @remarks Generally it's best to use a provided writer, but this may be useful in some scenarios.
+     */
+    createWriter(): CodeBlockWriter;
+    /**
+     * Forgets the nodes created in the scope of the passed in block.
+     *
+     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => void): void;
+    /**
+     * Forgets the nodes created in the scope of the passed in block asynchronously.
+     *
+     * This is an advanced method that can be used to easily "forget" all the nodes created within the scope of the block.
+     * @param block - Block of code to run.
+     */
+    forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
+}
+export default Project;
+
+export interface SourceFileAddOptions {
+    languageVersion?: ScriptTarget;
+}
+
+export interface SourceFileCreateOptions extends SourceFileAddOptions {
+    overwrite?: boolean;
+}
+
+export declare type Constructor<T> = new (...args: any[]) => T;
+
+export declare type WriterFunction = (writer: CodeBlockWriter) => void;
 
 /**
  * Creates a wrapped node from a compiler node.
@@ -598,23 +598,6 @@ export interface CreateWrappedNodeOptions {
      * Type checker.
      */
     typeChecker?: ts.TypeChecker;
-}
-
-/**
- * Gets the compiler options from a specified tsconfig.json
- * @param filePath - File path to the tsconfig.json.
- * @param options - Options.
- */
-export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
-
-export interface CompilerOptionsFromTsConfigOptions {
-    encoding?: string;
-    fileSystem?: FileSystemHost;
-}
-
-export interface CompilerOptionsFromTsConfigResult {
-    options: CompilerOptions;
-    errors: Diagnostic[];
 }
 
 /**
@@ -662,6 +645,25 @@ export interface PrintNodeOptions {
      */
     scriptKind?: ScriptKind;
 }
+
+export declare type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
+
+export interface CompilerOptionsFromTsConfigOptions {
+    encoding?: string;
+    fileSystem?: FileSystemHost;
+}
+
+export interface CompilerOptionsFromTsConfigResult {
+    options: CompilerOptions;
+    errors: Diagnostic[];
+}
+
+/**
+ * Gets the compiler options from a specified tsconfig.json
+ * @param filePath - File path to the tsconfig.json.
+ * @param options - Options.
+ */
+export declare function getCompilerOptionsFromTsConfig(filePath: string, options?: CompilerOptionsFromTsConfigOptions): CompilerOptionsFromTsConfigResult;
 
 /**
  * Type guards for checking the type of a node.
@@ -1731,8 +1733,6 @@ export declare class TypeGuards {
     static isYieldExpression(node: Node): node is YieldExpression;
 }
 
-export declare type SourceFileReferencingNodes = ImportDeclaration | ExportDeclaration | ImportEqualsDeclaration | CallExpression;
-
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
@@ -2216,6 +2216,67 @@ export interface ImplementsClauseableNode {
 
 export declare type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
+export declare function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T;
+
+export interface InitializerExpressionableNode extends InitializerGetExpressionableNode, InitializerSetExpressionableNode {
+}
+
+export declare type InitializerExpressionableExtensionType = Node<ts.Node & {
+    initializer?: ts.Expression;
+}>;
+
+export declare function InitializerGetExpressionableNode<T extends Constructor<InitializerGetExpressionableExtensionType>>(Base: T): Constructor<InitializerGetExpressionableNode> & T;
+
+export interface InitializerGetExpressionableNode {
+    /**
+     * Gets if node has an initializer.
+     */
+    hasInitializer(): boolean;
+    /**
+     * Gets the initializer.
+     */
+    getInitializer(): Expression | undefined;
+    /**
+     * Gets the initializer if it's a certain kind or throws.
+     */
+    getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
+    /**
+     * Gets the initializer if it's a certain kind.
+     */
+    getInitializerIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
+    /**
+     * Gets the initializer or throw.
+     */
+    getInitializerOrThrow(): Expression;
+}
+
+export declare type InitializerGetExpressionableExtensionType = Node<ts.Node & {
+    initializer?: ts.Expression;
+}>;
+
+export declare function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T;
+
+export interface InitializerSetExpressionableNode {
+    /**
+     * Removes the initailizer.
+     */
+    removeInitializer(): this;
+    /**
+     * Sets the initializer.
+     * @param text - New text to set for the initializer.
+     */
+    setInitializer(text: string): this;
+    /**
+     * Sets the initializer using a writer function.
+     * @param writerFunction - Function to write the initializer with.
+     */
+    setInitializer(writerFunction: WriterFunction): this;
+}
+
+export declare type InitializerSetExpressionableExtensionType = Node<ts.Node & {
+    initializer?: ts.Expression;
+}> & InitializerGetExpressionableNode;
+
 export declare function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T;
 
 export interface JSDocableNode {
@@ -2308,6 +2369,154 @@ export interface ModifierableNode {
 export declare type ModiferableNodeExtensionType = Node;
 
 export declare type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";
+
+export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
+
+export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export declare type BindingNamedNodeExtensionType = Node<ts.Declaration & {
+    name: ts.BindingName;
+}>;
+
+export interface BindingNamedNodeSpecific {
+    /**
+     * Gets the declaration's name node.
+     */
+    getNameNode(): Identifier;
+    /**
+     * Gets the declaration's name as a string.
+     */
+    getName(): string;
+    /**
+     * Renames the name.
+     * @param text - New name.
+     */
+    rename(text: string): this;
+}
+
+export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
+
+export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export declare type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
+
+export interface DeclarationNamedNodeSpecific {
+    /**
+     * Gets the name node.
+     */
+    getNameNode(): Identifier | undefined;
+    /**
+     * Gets the name node or throws an error if it doesn't exists.
+     */
+    getNameNodeOrThrow(): Identifier;
+    /**
+     * Gets the name.
+     */
+    getName(): string | undefined;
+    /**
+     * Gets the name or throws if it doens't exist.
+     */
+    getNameOrThrow(): string;
+    /**
+     * Renames the name.
+     * @param text - Text to set as the name.
+     */
+    rename(text: string): this;
+}
+
+export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
+
+export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode {
+}
+
+export declare type NameableNodeExtensionType = Node<ts.Node & {
+    name?: ts.Identifier;
+}>;
+
+export interface NameableNodeSpecific {
+    /**
+     * Gets the name node if it exists.
+     */
+    getNameNode(): Identifier | undefined;
+    /**
+     * Gets the name node if it exists, or throws.
+     */
+    getNameNodeOrThrow(): Identifier;
+    /**
+     * Gets the name if it exists.
+     */
+    getName(): string | undefined;
+    /**
+     * Gets the name if it exists, or throws.
+     */
+    getNameOrThrow(): string;
+    /**
+     * Renames the name or sets the name if it doesn't exist.
+     * @param newName - New name.
+     */
+    rename(newName: string): this;
+}
+
+export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+
+export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode {
+}
+
+export declare function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T;
+
+export declare type NamedNodeExtensionType = Node<ts.Node & {
+    name: ts.Identifier;
+}>;
+
+export interface NamedNodeSpecific {
+    /**
+     * Gets the name node.
+     */
+    getNameNode(): Identifier;
+    /**
+     * Gets the name.
+     */
+    getName(): string;
+    /**
+     * Renames the name.
+     * @param newName - New name.
+     */
+    rename(newName: string): this;
+}
+
+export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
+
+export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode {
+}
+
+export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
+    name: ts.PropertyName;
+}>;
+
+export interface PropertyNamedNodeSpecific {
+    getNameNode(): PropertyName;
+    getName(): string;
+    rename(text: string): this;
+}
+
+export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
+
+export interface ReferenceFindableNode {
+    /**
+     * Finds the references of the definition of the node.
+     */
+    findReferences(): ReferencedSymbol[];
+    /**
+     * Finds the nodes that reference the definition of the node.
+     */
+    findReferencesAsNodes(): Node[];
+}
+
+export declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
+    name?: ts.PropertyName | ts.BindingName;
+}>;
 
 export declare function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T;
 
@@ -2923,215 +3132,6 @@ export interface UnwrappableNode {
 }
 
 export declare type UnwrappableNodeExtensionType = Node;
-
-export declare function InitializerExpressionableNode<T extends Constructor<InitializerExpressionableExtensionType>>(Base: T): Constructor<InitializerExpressionableNode> & T;
-
-export interface InitializerExpressionableNode extends InitializerGetExpressionableNode, InitializerSetExpressionableNode {
-}
-
-export declare type InitializerExpressionableExtensionType = Node<ts.Node & {
-    initializer?: ts.Expression;
-}>;
-
-export declare function InitializerGetExpressionableNode<T extends Constructor<InitializerGetExpressionableExtensionType>>(Base: T): Constructor<InitializerGetExpressionableNode> & T;
-
-export interface InitializerGetExpressionableNode {
-    /**
-     * Gets if node has an initializer.
-     */
-    hasInitializer(): boolean;
-    /**
-     * Gets the initializer.
-     */
-    getInitializer(): Expression | undefined;
-    /**
-     * Gets the initializer if it's a certain kind or throws.
-     */
-    getInitializerIfKindOrThrow<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind];
-    /**
-     * Gets the initializer if it's a certain kind.
-     */
-    getInitializerIfKind<TKind extends SyntaxKind>(kind: TKind): KindToExpressionMappings[TKind] | undefined;
-    /**
-     * Gets the initializer or throw.
-     */
-    getInitializerOrThrow(): Expression;
-}
-
-export declare type InitializerGetExpressionableExtensionType = Node<ts.Node & {
-    initializer?: ts.Expression;
-}>;
-
-export declare function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T;
-
-export interface InitializerSetExpressionableNode {
-    /**
-     * Removes the initailizer.
-     */
-    removeInitializer(): this;
-    /**
-     * Sets the initializer.
-     * @param text - New text to set for the initializer.
-     */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer using a writer function.
-     * @param writerFunction - Function to write the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
-}
-
-export declare type InitializerSetExpressionableExtensionType = Node<ts.Node & {
-    initializer?: ts.Expression;
-}> & InitializerGetExpressionableNode;
-
-export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
-
-export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode {
-}
-
-export declare type BindingNamedNodeExtensionType = Node<ts.Declaration & {
-    name: ts.BindingName;
-}>;
-
-export interface BindingNamedNodeSpecific {
-    /**
-     * Gets the declaration's name node.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Gets the declaration's name as a string.
-     */
-    getName(): string;
-    /**
-     * Renames the name.
-     * @param text - New name.
-     */
-    rename(text: string): this;
-}
-
-export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
-
-export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode {
-}
-
-export declare type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
-
-export interface DeclarationNamedNodeSpecific {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): Identifier | undefined;
-    /**
-     * Gets the name node or throws an error if it doesn't exists.
-     */
-    getNameNodeOrThrow(): Identifier;
-    /**
-     * Gets the name.
-     */
-    getName(): string | undefined;
-    /**
-     * Gets the name or throws if it doens't exist.
-     */
-    getNameOrThrow(): string;
-    /**
-     * Renames the name.
-     * @param text - Text to set as the name.
-     */
-    rename(text: string): this;
-}
-
-export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
-
-export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode {
-}
-
-export declare type NameableNodeExtensionType = Node<ts.Node & {
-    name?: ts.Identifier;
-}>;
-
-export interface NameableNodeSpecific {
-    /**
-     * Gets the name node if it exists.
-     */
-    getNameNode(): Identifier | undefined;
-    /**
-     * Gets the name node if it exists, or throws.
-     */
-    getNameNodeOrThrow(): Identifier;
-    /**
-     * Gets the name if it exists.
-     */
-    getName(): string | undefined;
-    /**
-     * Gets the name if it exists, or throws.
-     */
-    getNameOrThrow(): string;
-    /**
-     * Renames the name or sets the name if it doesn't exist.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
-}
-
-export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
-
-export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode {
-}
-
-export declare function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T;
-
-export declare type NamedNodeExtensionType = Node<ts.Node & {
-    name: ts.Identifier;
-}>;
-
-export interface NamedNodeSpecific {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Gets the name.
-     */
-    getName(): string;
-    /**
-     * Renames the name.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
-}
-
-export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
-
-export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode {
-}
-
-export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
-    name: ts.PropertyName;
-}>;
-
-export interface PropertyNamedNodeSpecific {
-    getNameNode(): PropertyName;
-    getName(): string;
-    rename(text: string): this;
-}
-
-export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
-
-export interface ReferenceFindableNode {
-    /**
-     * Finds the references of the definition of the node.
-     */
-    findReferences(): ReferencedSymbol[];
-    /**
-     * Finds the nodes that reference the definition of the node.
-     */
-    findReferencesAsNodes(): Node[];
-}
-
-export declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
-    name?: ts.PropertyName | ts.BindingName;
-}>;
 
 export declare function AbstractableNode<T extends Constructor<AbstractableNodeExtensionType>>(Base: T): Constructor<AbstractableNode> & T;
 
@@ -4417,6 +4417,8 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, writer: WriterFunction): Node[];
 }
 
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
+
 declare const DecoratorBase: typeof Node;
 
 export declare class Decorator extends DecoratorBase<ts.Decorator> {
@@ -4530,6 +4532,13 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      */
     remove(): void;
 }
+
+export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
+
+export interface JSDocPropertyLikeTag {
+}
+
+export declare type JSDocPropertyLikeTagExtensionType = Node;
 
 /**
  * JS doc node.
@@ -4649,13 +4658,6 @@ export declare class JSDocTypeTag extends JSDocTag<ts.JSDocTypeTag> {
 export declare class JSDocUnknownTag extends JSDocTag<ts.JSDocUnknownTag> {
 }
 
-export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
-
-export interface JSDocPropertyLikeTag {
-}
-
-export declare type JSDocPropertyLikeTagExtensionType = Node;
-
 declare const EnumDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
 
 export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
@@ -4745,6 +4747,75 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Removes this enum member.
      */
     remove(): void;
+}
+
+declare const ArrayDestructuringAssignmentBase: typeof AssignmentExpression;
+
+export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.ArrayDestructuringAssignment, ts.EqualsToken> {
+    /**
+     * Gets the left array literal expression of the array destructuring assignment.
+     */
+    getLeft(): ArrayLiteralExpression;
+}
+
+export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExpression> {
+    /**
+     * Gets the array's elements.
+     */
+    getElements(): Expression[];
+    /**
+     * Adds an element to the array.
+     * @param text - Text to add as an element.
+     * @param options - Options.
+     */
+    addElement(text: string, options?: {
+        useNewLines?: boolean;
+    }): Expression<ts.Expression>;
+    /**
+     * Adds elements to the array.
+     * @param texts - Texts to add as elements.
+     * @param options - Options.
+     */
+    addElements(texts: string[], options?: {
+        useNewLines?: boolean;
+    }): Expression<ts.Expression>[];
+    /**
+     * Insert an element into the array.
+     * @param index - Index to insert at.
+     * @param text - Text to insert as an element.
+     * @param options - Options.
+     */
+    insertElement(index: number, text: string, options?: {
+        useNewLines?: boolean;
+    }): Expression<ts.Expression>;
+    /**
+     * Insert elements into the array.
+     * @param index - Index to insert at.
+     * @param texts - Texts to insert as elements.
+     * @param options - Options.
+     */
+    insertElements(index: number, texts: string[], options?: {
+        useNewLines?: boolean;
+    }): Expression[];
+    /**
+     * Insert elements into the array.
+     * @param index - Index to insert at.
+     * @param writerFunction - Write the text using the provided writer.
+     * @param options - Options.
+     */
+    insertElements(index: number, writerFunction: WriterFunction, options?: {
+        useNewLines?: boolean;
+    }): Expression[];
+    /**
+     * Removes an element from the array.
+     * @param index - Index to remove from.
+     */
+    removeElement(index: number): void;
+    /**
+     * Removes an element from the array.
+     * @param element - Element to remove.
+     */
+    removeElement(element: Expression): void;
 }
 
 declare const AsExpressionBase: Constructor<TypedNode> & Constructor<ExpressionedNode> & typeof Expression;
@@ -4851,218 +4922,6 @@ export declare class Expression<T extends ts.Expression = ts.Expression> extends
     getContextualType(): Type | undefined;
 }
 
-declare const ImportExpressionBase: typeof PrimaryExpression;
-
-export declare class ImportExpression extends ImportExpressionBase<ts.ImportExpression> {
-}
-
-export declare class LeftHandSideExpression<T extends ts.LeftHandSideExpression = ts.LeftHandSideExpression> extends UpdateExpression<T> {
-}
-
-declare const LiteralExpressionBase: Constructor<LiteralLikeNode> & typeof PrimaryExpression;
-
-export declare class LiteralExpression<T extends ts.LiteralExpression = ts.LiteralExpression> extends LiteralExpressionBase<T> {
-}
-
-export declare class MemberExpression<T extends ts.MemberExpression = ts.MemberExpression> extends LeftHandSideExpression<T> {
-}
-
-declare const MetaPropertyBase: Constructor<NamedNode> & typeof PrimaryExpression;
-
-export declare class MetaProperty extends MetaPropertyBase<ts.MetaProperty> {
-    /**
-     * Gets the keyword token.
-     */
-    getKeywordToken(): SyntaxKind.ImportKeyword | SyntaxKind.NewKeyword;
-}
-
-declare const NewExpressionBase: Constructor<TypeArgumentedNode> & Constructor<ArgumentedNode> & Constructor<LeftHandSideExpressionedNode> & typeof PrimaryExpression;
-
-export declare class NewExpression extends NewExpressionBase<ts.NewExpression> {
-}
-
-declare const NonNullExpressionBase: Constructor<ExpressionedNode> & typeof LeftHandSideExpression;
-
-export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullExpression> {
-}
-
-declare const OmittedExpressionBase: typeof Expression;
-
-export declare class OmittedExpression extends OmittedExpressionBase<ts.OmittedExpression> {
-}
-
-declare const ParenthesizedExpressionBase: Constructor<ExpressionedNode> & typeof Expression;
-
-export declare class ParenthesizedExpression extends ParenthesizedExpressionBase<ts.ParenthesizedExpression> {
-}
-
-declare const PartiallyEmittedExpressionBase: Constructor<ExpressionedNode> & typeof Expression;
-
-export declare class PartiallyEmittedExpression extends PartiallyEmittedExpressionBase<ts.PartiallyEmittedExpression> {
-}
-
-declare const PostfixUnaryExpressionBase: typeof UnaryExpression;
-
-export declare class PostfixUnaryExpression extends PostfixUnaryExpressionBase<ts.PostfixUnaryExpression> {
-    /**
-     * Gets the operator token of the postfix unary expression.
-     */
-    getOperatorToken(): ts.PostfixUnaryOperator;
-    /**
-     * Gets the operand of the postfix unary expression.
-     */
-    getOperand(): LeftHandSideExpression;
-}
-
-declare const PrefixUnaryExpressionBase: typeof UnaryExpression;
-
-export declare class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.PrefixUnaryExpression> {
-    /**
-     * Gets the operator token of the prefix unary expression.
-     */
-    getOperatorToken(): ts.PrefixUnaryOperator;
-    /**
-     * Gets the operand of the prefix unary expression.
-     */
-    getOperand(): UnaryExpression;
-}
-
-export declare class PrimaryExpression<T extends ts.PrimaryExpression = ts.PrimaryExpression> extends MemberExpression<T> {
-}
-
-declare const PropertyAccessExpressionBase: Constructor<NamedNode> & Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
-
-export declare class PropertyAccessExpression<T extends ts.PropertyAccessExpression = ts.PropertyAccessExpression> extends PropertyAccessExpressionBase<T> {
-}
-
-declare const SpreadElementBase: Constructor<ExpressionedNode> & typeof Expression;
-
-export declare class SpreadElement extends SpreadElementBase<ts.SpreadElement> {
-}
-
-declare const SuperElementAccessExpressionBase: Constructor<SuperExpressionedNode> & typeof ElementAccessExpression;
-
-export declare class SuperElementAccessExpression extends SuperElementAccessExpressionBase<ts.SuperElementAccessExpression> {
-}
-
-declare const SuperExpressionBase: typeof PrimaryExpression;
-
-export declare class SuperExpression extends SuperExpressionBase<ts.SuperExpression> {
-}
-
-declare const SuperPropertyAccessExpressionBase: Constructor<SuperExpressionedNode> & typeof PropertyAccessExpression;
-
-export declare class SuperPropertyAccessExpression extends SuperPropertyAccessExpressionBase<ts.SuperPropertyAccessExpression> {
-}
-
-declare const ThisExpressionBase: typeof PrimaryExpression;
-
-export declare class ThisExpression extends ThisExpressionBase<ts.ThisExpression> {
-}
-
-declare const TypeAssertionBase: Constructor<TypedNode> & Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
-
-export declare class TypeAssertion extends TypeAssertionBase<ts.TypeAssertion> {
-}
-
-declare const TypeOfExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
-
-export declare class TypeOfExpression extends TypeOfExpressionBase<ts.TypeOfExpression> {
-}
-
-export declare class UnaryExpression<T extends ts.UnaryExpression = ts.UnaryExpression> extends Expression<T> {
-}
-
-export declare class UpdateExpression<T extends ts.UpdateExpression = ts.UpdateExpression> extends UnaryExpression<T> {
-}
-
-declare const VoidExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
-
-export declare class VoidExpression extends VoidExpressionBase<ts.VoidExpression> {
-}
-
-declare const YieldExpressionBase: Constructor<GeneratorableNode> & typeof Expression;
-
-export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
-    /**
-     * Gets the expression or undefined of the yield expression.
-     */
-    getExpression(): Expression | undefined;
-    /**
-     * Gets the expression of the yield expression or throws if it does not exist.
-     */
-    getExpressionOrThrow(): Expression<ts.Expression>;
-}
-
-declare const ArrayDestructuringAssignmentBase: typeof AssignmentExpression;
-
-export declare class ArrayDestructuringAssignment extends ArrayDestructuringAssignmentBase<ts.ArrayDestructuringAssignment, ts.EqualsToken> {
-    /**
-     * Gets the left array literal expression of the array destructuring assignment.
-     */
-    getLeft(): ArrayLiteralExpression;
-}
-
-export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExpression> {
-    /**
-     * Gets the array's elements.
-     */
-    getElements(): Expression[];
-    /**
-     * Adds an element to the array.
-     * @param text - Text to add as an element.
-     * @param options - Options.
-     */
-    addElement(text: string, options?: {
-        useNewLines?: boolean;
-    }): Expression<ts.Expression>;
-    /**
-     * Adds elements to the array.
-     * @param texts - Texts to add as elements.
-     * @param options - Options.
-     */
-    addElements(texts: string[], options?: {
-        useNewLines?: boolean;
-    }): Expression<ts.Expression>[];
-    /**
-     * Insert an element into the array.
-     * @param index - Index to insert at.
-     * @param text - Text to insert as an element.
-     * @param options - Options.
-     */
-    insertElement(index: number, text: string, options?: {
-        useNewLines?: boolean;
-    }): Expression<ts.Expression>;
-    /**
-     * Insert elements into the array.
-     * @param index - Index to insert at.
-     * @param texts - Texts to insert as elements.
-     * @param options - Options.
-     */
-    insertElements(index: number, texts: string[], options?: {
-        useNewLines?: boolean;
-    }): Expression[];
-    /**
-     * Insert elements into the array.
-     * @param index - Index to insert at.
-     * @param writerFunction - Write the text using the provided writer.
-     * @param options - Options.
-     */
-    insertElements(index: number, writerFunction: WriterFunction, options?: {
-        useNewLines?: boolean;
-    }): Expression[];
-    /**
-     * Removes an element from the array.
-     * @param index - Index to remove from.
-     */
-    removeElement(index: number): void;
-    /**
-     * Removes an element from the array.
-     * @param element - Element to remove.
-     */
-    removeElement(element: Expression): void;
-}
-
 export declare function ExpressionedNode<T extends Constructor<ExpressionedNodeExtensionType>>(Base: T): Constructor<ExpressionedNode> & T;
 
 export interface ExpressionedNode {
@@ -5127,6 +4986,41 @@ export interface UnaryExpressionedNode {
 export declare type UnaryExpressionedNodeExtensionType = Node<ts.Node & {
     expression: ts.UnaryExpression;
 }>;
+
+declare const ImportExpressionBase: typeof PrimaryExpression;
+
+export declare class ImportExpression extends ImportExpressionBase<ts.ImportExpression> {
+}
+
+export declare class LeftHandSideExpression<T extends ts.LeftHandSideExpression = ts.LeftHandSideExpression> extends UpdateExpression<T> {
+}
+
+declare const LiteralExpressionBase: Constructor<LiteralLikeNode> & typeof PrimaryExpression;
+
+export declare class LiteralExpression<T extends ts.LiteralExpression = ts.LiteralExpression> extends LiteralExpressionBase<T> {
+}
+
+export declare class MemberExpression<T extends ts.MemberExpression = ts.MemberExpression> extends LeftHandSideExpression<T> {
+}
+
+declare const MetaPropertyBase: Constructor<NamedNode> & typeof PrimaryExpression;
+
+export declare class MetaProperty extends MetaPropertyBase<ts.MetaProperty> {
+    /**
+     * Gets the keyword token.
+     */
+    getKeywordToken(): SyntaxKind.ImportKeyword | SyntaxKind.NewKeyword;
+}
+
+declare const NewExpressionBase: Constructor<TypeArgumentedNode> & Constructor<ArgumentedNode> & Constructor<LeftHandSideExpressionedNode> & typeof PrimaryExpression;
+
+export declare class NewExpression extends NewExpressionBase<ts.NewExpression> {
+}
+
+declare const NonNullExpressionBase: Constructor<ExpressionedNode> & typeof LeftHandSideExpression;
+
+export declare class NonNullExpression extends NonNullExpressionBase<ts.NonNullExpression> {
+}
 
 declare const ObjectDestructuringAssignmentBase: typeof AssignmentExpression;
 
@@ -5362,227 +5256,113 @@ declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof Node;
 export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
 }
 
-export interface KindToNodeMappings {
-    [kind: number]: Node;
-    [SyntaxKind.SourceFile]: SourceFile;
-    [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
-    [SyntaxKind.ArrayType]: ArrayTypeNode;
-    [SyntaxKind.ArrowFunction]: ArrowFunction;
-    [SyntaxKind.AsExpression]: AsExpression;
-    [SyntaxKind.AwaitExpression]: AwaitExpression;
-    [SyntaxKind.BinaryExpression]: BinaryExpression;
-    [SyntaxKind.Block]: Block;
-    [SyntaxKind.BreakStatement]: BreakStatement;
-    [SyntaxKind.CallExpression]: CallExpression;
-    [SyntaxKind.CallSignature]: CallSignatureDeclaration;
-    [SyntaxKind.CaseBlock]: CaseBlock;
-    [SyntaxKind.CaseClause]: CaseClause;
-    [SyntaxKind.CatchClause]: CatchClause;
-    [SyntaxKind.ClassDeclaration]: ClassDeclaration;
-    [SyntaxKind.Constructor]: ConstructorDeclaration;
-    [SyntaxKind.ConstructorType]: ConstructorTypeNode;
-    [SyntaxKind.ConstructSignature]: ConstructSignatureDeclaration;
-    [SyntaxKind.ContinueStatement]: ContinueStatement;
-    [SyntaxKind.CommaListExpression]: CommaListExpression;
-    [SyntaxKind.ComputedPropertyName]: ComputedPropertyName;
-    [SyntaxKind.ConditionalExpression]: ConditionalExpression;
-    [SyntaxKind.DebuggerStatement]: DebuggerStatement;
-    [SyntaxKind.Decorator]: Decorator;
-    [SyntaxKind.DefaultClause]: DefaultClause;
-    [SyntaxKind.DeleteExpression]: DeleteExpression;
-    [SyntaxKind.DoStatement]: DoStatement;
-    [SyntaxKind.ElementAccessExpression]: ElementAccessExpression;
-    [SyntaxKind.EmptyStatement]: EmptyStatement;
-    [SyntaxKind.EnumDeclaration]: EnumDeclaration;
-    [SyntaxKind.EnumMember]: EnumMember;
-    [SyntaxKind.ExportAssignment]: ExportAssignment;
-    [SyntaxKind.ExportDeclaration]: ExportDeclaration;
-    [SyntaxKind.ExportSpecifier]: ExportSpecifier;
-    [SyntaxKind.ExpressionWithTypeArguments]: ExpressionWithTypeArguments;
-    [SyntaxKind.ExpressionStatement]: ExpressionStatement;
-    [SyntaxKind.ExternalModuleReference]: ExternalModuleReference;
-    [SyntaxKind.QualifiedName]: QualifiedName;
-    [SyntaxKind.FirstNode]: QualifiedName;
-    [SyntaxKind.ForInStatement]: ForInStatement;
-    [SyntaxKind.ForOfStatement]: ForOfStatement;
-    [SyntaxKind.ForStatement]: ForStatement;
-    [SyntaxKind.FunctionDeclaration]: FunctionDeclaration;
-    [SyntaxKind.FunctionExpression]: FunctionExpression;
-    [SyntaxKind.FunctionType]: FunctionTypeNode;
-    [SyntaxKind.GetAccessor]: GetAccessorDeclaration;
-    [SyntaxKind.HeritageClause]: HeritageClause;
-    [SyntaxKind.Identifier]: Identifier;
-    [SyntaxKind.IfStatement]: IfStatement;
-    [SyntaxKind.ImportDeclaration]: ImportDeclaration;
-    [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration;
-    [SyntaxKind.ImportSpecifier]: ImportSpecifier;
-    [SyntaxKind.ImportType]: ImportTypeNode;
-    [SyntaxKind.LastTypeNode]: ImportTypeNode;
-    [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
-    [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
-    [SyntaxKind.IntersectionType]: IntersectionTypeNode;
-    [SyntaxKind.JSDocTag]: JSDocUnknownTag;
-    [SyntaxKind.FirstJSDocTagNode]: JSDocUnknownTag;
-    [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
-    [SyntaxKind.JSDocClassTag]: JSDocClassTag;
-    [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
-    [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
-    [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
-    [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
-    [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;
-    [SyntaxKind.LastJSDocNode]: JSDocPropertyTag;
-    [SyntaxKind.LastJSDocTagNode]: JSDocPropertyTag;
-    [SyntaxKind.JsxAttribute]: JsxAttribute;
-    [SyntaxKind.JsxClosingElement]: JsxClosingElement;
-    [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
-    [SyntaxKind.JsxElement]: JsxElement;
-    [SyntaxKind.JsxExpression]: JsxExpression;
-    [SyntaxKind.JsxFragment]: JsxFragment;
-    [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
-    [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
-    [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
-    [SyntaxKind.JsxSpreadAttribute]: JsxSpreadAttribute;
-    [SyntaxKind.JsxText]: JsxText;
-    [SyntaxKind.LabeledStatement]: LabeledStatement;
-    [SyntaxKind.LiteralType]: LiteralTypeNode;
-    [SyntaxKind.MetaProperty]: MetaProperty;
-    [SyntaxKind.MethodDeclaration]: MethodDeclaration;
-    [SyntaxKind.MethodSignature]: MethodSignature;
-    [SyntaxKind.ModuleDeclaration]: NamespaceDeclaration;
-    [SyntaxKind.NewExpression]: NewExpression;
-    [SyntaxKind.NonNullExpression]: NonNullExpression;
-    [SyntaxKind.NotEmittedStatement]: NotEmittedStatement;
-    [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.NumericLiteral]: NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
-    [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
-    [SyntaxKind.OmittedExpression]: OmittedExpression;
-    [SyntaxKind.Parameter]: ParameterDeclaration;
-    [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
-    [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
-    [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
-    [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
-    [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
-    [SyntaxKind.PropertyAssignment]: PropertyAssignment;
-    [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
-    [SyntaxKind.PropertySignature]: PropertySignature;
-    [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
-    [SyntaxKind.ReturnStatement]: ReturnStatement;
-    [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
-    [SyntaxKind.ShorthandPropertyAssignment]: ShorthandPropertyAssignment;
-    [SyntaxKind.SpreadAssignment]: SpreadAssignment;
-    [SyntaxKind.SpreadElement]: SpreadElement;
-    [SyntaxKind.StringLiteral]: StringLiteral;
-    [SyntaxKind.SwitchStatement]: SwitchStatement;
-    [SyntaxKind.SyntaxList]: SyntaxList;
-    [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
-    [SyntaxKind.TemplateExpression]: TemplateExpression;
-    [SyntaxKind.TemplateHead]: TemplateHead;
-    [SyntaxKind.TemplateMiddle]: TemplateMiddle;
-    [SyntaxKind.TemplateSpan]: TemplateSpan;
-    [SyntaxKind.TemplateTail]: TemplateTail;
-    [SyntaxKind.LastTemplateToken]: TemplateTail;
-    [SyntaxKind.ThrowStatement]: ThrowStatement;
-    [SyntaxKind.TryStatement]: TryStatement;
-    [SyntaxKind.TupleType]: TupleTypeNode;
-    [SyntaxKind.TypeAliasDeclaration]: TypeAliasDeclaration;
-    [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
-    [SyntaxKind.TypeLiteral]: TypeLiteralNode;
-    [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
-    [SyntaxKind.TypeReference]: TypeReferenceNode;
-    [SyntaxKind.UnionType]: UnionTypeNode;
-    [SyntaxKind.VariableDeclaration]: VariableDeclaration;
-    [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
-    [SyntaxKind.VariableStatement]: VariableStatement;
-    [SyntaxKind.JSDocComment]: JSDoc;
-    [SyntaxKind.TypePredicate]: TypeNode;
-    [SyntaxKind.FirstTypeNode]: TypeNode;
-    [SyntaxKind.SemicolonToken]: Node;
-    [SyntaxKind.TypeOfExpression]: TypeOfExpression;
-    [SyntaxKind.WhileStatement]: WhileStatement;
-    [SyntaxKind.WithStatement]: WithStatement;
-    [SyntaxKind.YieldExpression]: YieldExpression;
-    [SyntaxKind.AnyKeyword]: Expression;
-    [SyntaxKind.BooleanKeyword]: Expression;
-    [SyntaxKind.NeverKeyword]: Expression;
-    [SyntaxKind.NumberKeyword]: Expression;
-    [SyntaxKind.ObjectKeyword]: Expression;
-    [SyntaxKind.StringKeyword]: Expression;
-    [SyntaxKind.SymbolKeyword]: Expression;
-    [SyntaxKind.UndefinedKeyword]: Expression;
-    [SyntaxKind.FalseKeyword]: BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: BooleanLiteral;
-    [SyntaxKind.ImportKeyword]: ImportExpression;
-    [SyntaxKind.NullKeyword]: NullLiteral;
-    [SyntaxKind.SuperKeyword]: SuperExpression;
-    [SyntaxKind.ThisKeyword]: ThisExpression;
-    [SyntaxKind.VoidKeyword]: VoidExpression;
+declare const OmittedExpressionBase: typeof Expression;
+
+export declare class OmittedExpression extends OmittedExpressionBase<ts.OmittedExpression> {
 }
 
-export interface KindToExpressionMappings {
-    [kind: number]: Node;
-    [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
-    [SyntaxKind.ArrowFunction]: ArrowFunction;
-    [SyntaxKind.AsExpression]: AsExpression;
-    [SyntaxKind.AwaitExpression]: AwaitExpression;
-    [SyntaxKind.BinaryExpression]: BinaryExpression;
-    [SyntaxKind.CallExpression]: CallExpression;
-    [SyntaxKind.CommaListExpression]: CommaListExpression;
-    [SyntaxKind.ConditionalExpression]: ConditionalExpression;
-    [SyntaxKind.DeleteExpression]: DeleteExpression;
-    [SyntaxKind.ElementAccessExpression]: ElementAccessExpression;
-    [SyntaxKind.FunctionExpression]: FunctionExpression;
-    [SyntaxKind.Identifier]: Identifier;
-    [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
-    [SyntaxKind.JsxElement]: JsxElement;
-    [SyntaxKind.JsxExpression]: JsxExpression;
-    [SyntaxKind.JsxFragment]: JsxFragment;
-    [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
-    [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
-    [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
-    [SyntaxKind.MetaProperty]: MetaProperty;
-    [SyntaxKind.NewExpression]: NewExpression;
-    [SyntaxKind.NonNullExpression]: NonNullExpression;
-    [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
-    [SyntaxKind.NumericLiteral]: NumericLiteral;
-    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
-    [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
-    [SyntaxKind.OmittedExpression]: OmittedExpression;
-    [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
-    [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
-    [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
-    [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
-    [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
-    [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
-    [SyntaxKind.SpreadElement]: SpreadElement;
-    [SyntaxKind.StringLiteral]: StringLiteral;
-    [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
-    [SyntaxKind.TemplateExpression]: TemplateExpression;
-    [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
-    [SyntaxKind.TypeOfExpression]: TypeOfExpression;
-    [SyntaxKind.YieldExpression]: YieldExpression;
-    [SyntaxKind.AnyKeyword]: Expression;
-    [SyntaxKind.BooleanKeyword]: Expression;
-    [SyntaxKind.NeverKeyword]: Expression;
-    [SyntaxKind.NumberKeyword]: Expression;
-    [SyntaxKind.ObjectKeyword]: Expression;
-    [SyntaxKind.StringKeyword]: Expression;
-    [SyntaxKind.SymbolKeyword]: Expression;
-    [SyntaxKind.UndefinedKeyword]: Expression;
-    [SyntaxKind.FalseKeyword]: BooleanLiteral;
-    [SyntaxKind.TrueKeyword]: BooleanLiteral;
-    [SyntaxKind.ImportKeyword]: ImportExpression;
-    [SyntaxKind.NullKeyword]: NullLiteral;
-    [SyntaxKind.SuperKeyword]: SuperExpression;
-    [SyntaxKind.ThisKeyword]: ThisExpression;
-    [SyntaxKind.VoidKeyword]: VoidExpression;
+declare const ParenthesizedExpressionBase: Constructor<ExpressionedNode> & typeof Expression;
+
+export declare class ParenthesizedExpression extends ParenthesizedExpressionBase<ts.ParenthesizedExpression> {
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
+declare const PartiallyEmittedExpressionBase: Constructor<ExpressionedNode> & typeof Expression;
+
+export declare class PartiallyEmittedExpression extends PartiallyEmittedExpressionBase<ts.PartiallyEmittedExpression> {
+}
+
+declare const PostfixUnaryExpressionBase: typeof UnaryExpression;
+
+export declare class PostfixUnaryExpression extends PostfixUnaryExpressionBase<ts.PostfixUnaryExpression> {
+    /**
+     * Gets the operator token of the postfix unary expression.
+     */
+    getOperatorToken(): ts.PostfixUnaryOperator;
+    /**
+     * Gets the operand of the postfix unary expression.
+     */
+    getOperand(): LeftHandSideExpression;
+}
+
+declare const PrefixUnaryExpressionBase: typeof UnaryExpression;
+
+export declare class PrefixUnaryExpression extends PrefixUnaryExpressionBase<ts.PrefixUnaryExpression> {
+    /**
+     * Gets the operator token of the prefix unary expression.
+     */
+    getOperatorToken(): ts.PrefixUnaryOperator;
+    /**
+     * Gets the operand of the prefix unary expression.
+     */
+    getOperand(): UnaryExpression;
+}
+
+export declare class PrimaryExpression<T extends ts.PrimaryExpression = ts.PrimaryExpression> extends MemberExpression<T> {
+}
+
+declare const PropertyAccessExpressionBase: Constructor<NamedNode> & Constructor<LeftHandSideExpressionedNode> & typeof MemberExpression;
+
+export declare class PropertyAccessExpression<T extends ts.PropertyAccessExpression = ts.PropertyAccessExpression> extends PropertyAccessExpressionBase<T> {
+}
+
+declare const SpreadElementBase: Constructor<ExpressionedNode> & typeof Expression;
+
+export declare class SpreadElement extends SpreadElementBase<ts.SpreadElement> {
+}
+
+declare const SuperElementAccessExpressionBase: Constructor<SuperExpressionedNode> & typeof ElementAccessExpression;
+
+export declare class SuperElementAccessExpression extends SuperElementAccessExpressionBase<ts.SuperElementAccessExpression> {
+}
+
+declare const SuperExpressionBase: typeof PrimaryExpression;
+
+export declare class SuperExpression extends SuperExpressionBase<ts.SuperExpression> {
+}
+
+declare const SuperPropertyAccessExpressionBase: Constructor<SuperExpressionedNode> & typeof PropertyAccessExpression;
+
+export declare class SuperPropertyAccessExpression extends SuperPropertyAccessExpressionBase<ts.SuperPropertyAccessExpression> {
+}
+
+declare const ThisExpressionBase: typeof PrimaryExpression;
+
+export declare class ThisExpression extends ThisExpressionBase<ts.ThisExpression> {
+}
+
+declare const TypeAssertionBase: Constructor<TypedNode> & Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
+
+export declare class TypeAssertion extends TypeAssertionBase<ts.TypeAssertion> {
+}
+
+declare const TypeOfExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
+
+export declare class TypeOfExpression extends TypeOfExpressionBase<ts.TypeOfExpression> {
+}
+
+export declare class UnaryExpression<T extends ts.UnaryExpression = ts.UnaryExpression> extends Expression<T> {
+}
+
+export declare class UpdateExpression<T extends ts.UpdateExpression = ts.UpdateExpression> extends UnaryExpression<T> {
+}
+
+declare const VoidExpressionBase: Constructor<UnaryExpressionedNode> & typeof UnaryExpression;
+
+export declare class VoidExpression extends VoidExpressionBase<ts.VoidExpression> {
+}
+
+declare const YieldExpressionBase: Constructor<GeneratorableNode> & typeof Expression;
+
+export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpression> {
+    /**
+     * Gets the expression or undefined of the yield expression.
+     */
+    getExpression(): Expression | undefined;
+    /**
+     * Gets the expression of the yield expression or throws if it does not exist.
+     */
+    getExpressionOrThrow(): Expression<ts.Expression>;
+}
 
 export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**
@@ -6625,19 +6405,6 @@ export declare class PropertySignature extends PropertySignatureBase<ts.Property
 export declare class TypeElement<TNode extends ts.TypeElement = ts.TypeElement> extends Node<TNode> {
 }
 
-export declare function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionType>>(Base: T): Constructor<JsxTagNamedNode> & T;
-
-export interface JsxTagNamedNode {
-    /**
-     * Gets the tag name of the JSX closing element.
-     */
-    getTagName(): JsxTagNameExpression;
-}
-
-export declare type JsxTagNamedNodeExtensionType = Node<ts.Node & {
-    tagName: ts.JsxTagNameExpression;
-}>;
-
 export declare function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T;
 
 export interface JsxAttributedNode {
@@ -6686,6 +6453,19 @@ export interface JsxAttributedNode {
 export declare type JsxAttributedNodeExtensionType = Node<ts.Node & {
     attributes: ts.JsxAttributes;
 }> & JsxTagNamedNode;
+
+export declare function JsxTagNamedNode<T extends Constructor<JsxTagNamedNodeExtensionType>>(Base: T): Constructor<JsxTagNamedNode> & T;
+
+export interface JsxTagNamedNode {
+    /**
+     * Gets the tag name of the JSX closing element.
+     */
+    getTagName(): JsxTagNameExpression;
+}
+
+export declare type JsxTagNamedNodeExtensionType = Node<ts.Node & {
+    tagName: ts.JsxTagNameExpression;
+}>;
 
 declare const JsxAttributeBase: Constructor<NamedNode> & typeof Node;
 
@@ -6810,6 +6590,226 @@ export declare class JsxText extends Node<ts.JsxText> {
      * Gets if the JSX text contains only white spaces.
      */
     containsOnlyWhiteSpaces(): boolean;
+}
+
+export interface KindToNodeMappings {
+    [kind: number]: Node;
+    [SyntaxKind.SourceFile]: SourceFile;
+    [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
+    [SyntaxKind.ArrayType]: ArrayTypeNode;
+    [SyntaxKind.ArrowFunction]: ArrowFunction;
+    [SyntaxKind.AsExpression]: AsExpression;
+    [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BinaryExpression]: BinaryExpression;
+    [SyntaxKind.Block]: Block;
+    [SyntaxKind.BreakStatement]: BreakStatement;
+    [SyntaxKind.CallExpression]: CallExpression;
+    [SyntaxKind.CallSignature]: CallSignatureDeclaration;
+    [SyntaxKind.CaseBlock]: CaseBlock;
+    [SyntaxKind.CaseClause]: CaseClause;
+    [SyntaxKind.CatchClause]: CatchClause;
+    [SyntaxKind.ClassDeclaration]: ClassDeclaration;
+    [SyntaxKind.Constructor]: ConstructorDeclaration;
+    [SyntaxKind.ConstructorType]: ConstructorTypeNode;
+    [SyntaxKind.ConstructSignature]: ConstructSignatureDeclaration;
+    [SyntaxKind.ContinueStatement]: ContinueStatement;
+    [SyntaxKind.CommaListExpression]: CommaListExpression;
+    [SyntaxKind.ComputedPropertyName]: ComputedPropertyName;
+    [SyntaxKind.ConditionalExpression]: ConditionalExpression;
+    [SyntaxKind.DebuggerStatement]: DebuggerStatement;
+    [SyntaxKind.Decorator]: Decorator;
+    [SyntaxKind.DefaultClause]: DefaultClause;
+    [SyntaxKind.DeleteExpression]: DeleteExpression;
+    [SyntaxKind.DoStatement]: DoStatement;
+    [SyntaxKind.ElementAccessExpression]: ElementAccessExpression;
+    [SyntaxKind.EmptyStatement]: EmptyStatement;
+    [SyntaxKind.EnumDeclaration]: EnumDeclaration;
+    [SyntaxKind.EnumMember]: EnumMember;
+    [SyntaxKind.ExportAssignment]: ExportAssignment;
+    [SyntaxKind.ExportDeclaration]: ExportDeclaration;
+    [SyntaxKind.ExportSpecifier]: ExportSpecifier;
+    [SyntaxKind.ExpressionWithTypeArguments]: ExpressionWithTypeArguments;
+    [SyntaxKind.ExpressionStatement]: ExpressionStatement;
+    [SyntaxKind.ExternalModuleReference]: ExternalModuleReference;
+    [SyntaxKind.QualifiedName]: QualifiedName;
+    [SyntaxKind.FirstNode]: QualifiedName;
+    [SyntaxKind.ForInStatement]: ForInStatement;
+    [SyntaxKind.ForOfStatement]: ForOfStatement;
+    [SyntaxKind.ForStatement]: ForStatement;
+    [SyntaxKind.FunctionDeclaration]: FunctionDeclaration;
+    [SyntaxKind.FunctionExpression]: FunctionExpression;
+    [SyntaxKind.FunctionType]: FunctionTypeNode;
+    [SyntaxKind.GetAccessor]: GetAccessorDeclaration;
+    [SyntaxKind.HeritageClause]: HeritageClause;
+    [SyntaxKind.Identifier]: Identifier;
+    [SyntaxKind.IfStatement]: IfStatement;
+    [SyntaxKind.ImportDeclaration]: ImportDeclaration;
+    [SyntaxKind.ImportEqualsDeclaration]: ImportEqualsDeclaration;
+    [SyntaxKind.ImportSpecifier]: ImportSpecifier;
+    [SyntaxKind.ImportType]: ImportTypeNode;
+    [SyntaxKind.LastTypeNode]: ImportTypeNode;
+    [SyntaxKind.IndexSignature]: IndexSignatureDeclaration;
+    [SyntaxKind.InterfaceDeclaration]: InterfaceDeclaration;
+    [SyntaxKind.IntersectionType]: IntersectionTypeNode;
+    [SyntaxKind.JSDocTag]: JSDocUnknownTag;
+    [SyntaxKind.FirstJSDocTagNode]: JSDocUnknownTag;
+    [SyntaxKind.JSDocAugmentsTag]: JSDocAugmentsTag;
+    [SyntaxKind.JSDocClassTag]: JSDocClassTag;
+    [SyntaxKind.JSDocReturnTag]: JSDocReturnTag;
+    [SyntaxKind.JSDocTypeTag]: JSDocTypeTag;
+    [SyntaxKind.JSDocTypedefTag]: JSDocTypedefTag;
+    [SyntaxKind.JSDocParameterTag]: JSDocParameterTag;
+    [SyntaxKind.JSDocPropertyTag]: JSDocPropertyTag;
+    [SyntaxKind.LastJSDocNode]: JSDocPropertyTag;
+    [SyntaxKind.LastJSDocTagNode]: JSDocPropertyTag;
+    [SyntaxKind.JsxAttribute]: JsxAttribute;
+    [SyntaxKind.JsxClosingElement]: JsxClosingElement;
+    [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
+    [SyntaxKind.JsxElement]: JsxElement;
+    [SyntaxKind.JsxExpression]: JsxExpression;
+    [SyntaxKind.JsxFragment]: JsxFragment;
+    [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
+    [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
+    [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
+    [SyntaxKind.JsxSpreadAttribute]: JsxSpreadAttribute;
+    [SyntaxKind.JsxText]: JsxText;
+    [SyntaxKind.LabeledStatement]: LabeledStatement;
+    [SyntaxKind.LiteralType]: LiteralTypeNode;
+    [SyntaxKind.MetaProperty]: MetaProperty;
+    [SyntaxKind.MethodDeclaration]: MethodDeclaration;
+    [SyntaxKind.MethodSignature]: MethodSignature;
+    [SyntaxKind.ModuleDeclaration]: NamespaceDeclaration;
+    [SyntaxKind.NewExpression]: NewExpression;
+    [SyntaxKind.NonNullExpression]: NonNullExpression;
+    [SyntaxKind.NotEmittedStatement]: NotEmittedStatement;
+    [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.NumericLiteral]: NumericLiteral;
+    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
+    [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
+    [SyntaxKind.OmittedExpression]: OmittedExpression;
+    [SyntaxKind.Parameter]: ParameterDeclaration;
+    [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
+    [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
+    [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
+    [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
+    [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
+    [SyntaxKind.PropertyAssignment]: PropertyAssignment;
+    [SyntaxKind.PropertyDeclaration]: PropertyDeclaration;
+    [SyntaxKind.PropertySignature]: PropertySignature;
+    [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+    [SyntaxKind.ReturnStatement]: ReturnStatement;
+    [SyntaxKind.SetAccessor]: SetAccessorDeclaration;
+    [SyntaxKind.ShorthandPropertyAssignment]: ShorthandPropertyAssignment;
+    [SyntaxKind.SpreadAssignment]: SpreadAssignment;
+    [SyntaxKind.SpreadElement]: SpreadElement;
+    [SyntaxKind.StringLiteral]: StringLiteral;
+    [SyntaxKind.SwitchStatement]: SwitchStatement;
+    [SyntaxKind.SyntaxList]: SyntaxList;
+    [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
+    [SyntaxKind.TemplateExpression]: TemplateExpression;
+    [SyntaxKind.TemplateHead]: TemplateHead;
+    [SyntaxKind.TemplateMiddle]: TemplateMiddle;
+    [SyntaxKind.TemplateSpan]: TemplateSpan;
+    [SyntaxKind.TemplateTail]: TemplateTail;
+    [SyntaxKind.LastTemplateToken]: TemplateTail;
+    [SyntaxKind.ThrowStatement]: ThrowStatement;
+    [SyntaxKind.TryStatement]: TryStatement;
+    [SyntaxKind.TupleType]: TupleTypeNode;
+    [SyntaxKind.TypeAliasDeclaration]: TypeAliasDeclaration;
+    [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
+    [SyntaxKind.TypeLiteral]: TypeLiteralNode;
+    [SyntaxKind.TypeParameter]: TypeParameterDeclaration;
+    [SyntaxKind.TypeReference]: TypeReferenceNode;
+    [SyntaxKind.UnionType]: UnionTypeNode;
+    [SyntaxKind.VariableDeclaration]: VariableDeclaration;
+    [SyntaxKind.VariableDeclarationList]: VariableDeclarationList;
+    [SyntaxKind.VariableStatement]: VariableStatement;
+    [SyntaxKind.JSDocComment]: JSDoc;
+    [SyntaxKind.TypePredicate]: TypeNode;
+    [SyntaxKind.FirstTypeNode]: TypeNode;
+    [SyntaxKind.SemicolonToken]: Node;
+    [SyntaxKind.TypeOfExpression]: TypeOfExpression;
+    [SyntaxKind.WhileStatement]: WhileStatement;
+    [SyntaxKind.WithStatement]: WithStatement;
+    [SyntaxKind.YieldExpression]: YieldExpression;
+    [SyntaxKind.AnyKeyword]: Expression;
+    [SyntaxKind.BooleanKeyword]: Expression;
+    [SyntaxKind.NeverKeyword]: Expression;
+    [SyntaxKind.NumberKeyword]: Expression;
+    [SyntaxKind.ObjectKeyword]: Expression;
+    [SyntaxKind.StringKeyword]: Expression;
+    [SyntaxKind.SymbolKeyword]: Expression;
+    [SyntaxKind.UndefinedKeyword]: Expression;
+    [SyntaxKind.FalseKeyword]: BooleanLiteral;
+    [SyntaxKind.TrueKeyword]: BooleanLiteral;
+    [SyntaxKind.ImportKeyword]: ImportExpression;
+    [SyntaxKind.NullKeyword]: NullLiteral;
+    [SyntaxKind.SuperKeyword]: SuperExpression;
+    [SyntaxKind.ThisKeyword]: ThisExpression;
+    [SyntaxKind.VoidKeyword]: VoidExpression;
+}
+
+export interface KindToExpressionMappings {
+    [kind: number]: Node;
+    [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
+    [SyntaxKind.ArrowFunction]: ArrowFunction;
+    [SyntaxKind.AsExpression]: AsExpression;
+    [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BinaryExpression]: BinaryExpression;
+    [SyntaxKind.CallExpression]: CallExpression;
+    [SyntaxKind.CommaListExpression]: CommaListExpression;
+    [SyntaxKind.ConditionalExpression]: ConditionalExpression;
+    [SyntaxKind.DeleteExpression]: DeleteExpression;
+    [SyntaxKind.ElementAccessExpression]: ElementAccessExpression;
+    [SyntaxKind.FunctionExpression]: FunctionExpression;
+    [SyntaxKind.Identifier]: Identifier;
+    [SyntaxKind.JsxClosingFragment]: JsxClosingFragment;
+    [SyntaxKind.JsxElement]: JsxElement;
+    [SyntaxKind.JsxExpression]: JsxExpression;
+    [SyntaxKind.JsxFragment]: JsxFragment;
+    [SyntaxKind.JsxOpeningElement]: JsxOpeningElement;
+    [SyntaxKind.JsxOpeningFragment]: JsxOpeningFragment;
+    [SyntaxKind.JsxSelfClosingElement]: JsxSelfClosingElement;
+    [SyntaxKind.MetaProperty]: MetaProperty;
+    [SyntaxKind.NewExpression]: NewExpression;
+    [SyntaxKind.NonNullExpression]: NonNullExpression;
+    [SyntaxKind.NoSubstitutionTemplateLiteral]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.LastLiteralToken]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
+    [SyntaxKind.NumericLiteral]: NumericLiteral;
+    [SyntaxKind.FirstLiteralToken]: NumericLiteral;
+    [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
+    [SyntaxKind.OmittedExpression]: OmittedExpression;
+    [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
+    [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
+    [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
+    [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
+    [SyntaxKind.PropertyAccessExpression]: PropertyAccessExpression;
+    [SyntaxKind.RegularExpressionLiteral]: RegularExpressionLiteral;
+    [SyntaxKind.SpreadElement]: SpreadElement;
+    [SyntaxKind.StringLiteral]: StringLiteral;
+    [SyntaxKind.TaggedTemplateExpression]: TaggedTemplateExpression;
+    [SyntaxKind.TemplateExpression]: TemplateExpression;
+    [SyntaxKind.TypeAssertionExpression]: TypeAssertion;
+    [SyntaxKind.TypeOfExpression]: TypeOfExpression;
+    [SyntaxKind.YieldExpression]: YieldExpression;
+    [SyntaxKind.AnyKeyword]: Expression;
+    [SyntaxKind.BooleanKeyword]: Expression;
+    [SyntaxKind.NeverKeyword]: Expression;
+    [SyntaxKind.NumberKeyword]: Expression;
+    [SyntaxKind.ObjectKeyword]: Expression;
+    [SyntaxKind.StringKeyword]: Expression;
+    [SyntaxKind.SymbolKeyword]: Expression;
+    [SyntaxKind.UndefinedKeyword]: Expression;
+    [SyntaxKind.FalseKeyword]: BooleanLiteral;
+    [SyntaxKind.TrueKeyword]: BooleanLiteral;
+    [SyntaxKind.ImportKeyword]: ImportExpression;
+    [SyntaxKind.NullKeyword]: NullLiteral;
+    [SyntaxKind.SuperKeyword]: SuperExpression;
+    [SyntaxKind.ThisKeyword]: ThisExpression;
+    [SyntaxKind.VoidKeyword]: VoidExpression;
 }
 
 declare const BooleanLiteralBase: typeof PrimaryExpression;
@@ -7083,6 +7083,23 @@ export declare class CaseClause extends CaseClauseBase<ts.CaseClause> {
     remove(): void;
 }
 
+declare const CatchClauseBase: typeof Node;
+
+export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
+    /**
+     * Gets this catch clause's block.
+     */
+    getBlock(): Block;
+    /**
+     * Gets this catch clause's variable declaration or undefined if none exists.
+     */
+    getVariableDeclaration(): VariableDeclaration | undefined;
+    /**
+     * Gets this catch clause's variable declaration or throws if none exists.
+     */
+    getVariableDeclarationOrThrow(): VariableDeclaration;
+}
+
 declare const ContinueStatementBase: Constructor<ChildOrderableNode> & typeof Statement;
 
 export declare class ContinueStatement extends ContinueStatementBase<ts.ContinueStatement> {
@@ -7094,6 +7111,11 @@ export declare class ContinueStatement extends ContinueStatementBase<ts.Continue
      * Gets this continue statement's label or throw if it does not exist.
      */
     getLabelOrThrow(): Identifier;
+}
+
+declare const DebuggerStatementBase: typeof Statement;
+
+export declare class DebuggerStatement extends DebuggerStatementBase<ts.DebuggerStatement> {
 }
 
 declare const DefaultClauseBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Node;
@@ -7114,21 +7136,9 @@ export declare class DoStatement extends DoStatementBase<ts.DoStatement> {
     getExpression(): Expression;
 }
 
-declare const CatchClauseBase: typeof Node;
+declare const EmptyStatementBase: typeof Statement;
 
-export declare class CatchClause extends CatchClauseBase<ts.CatchClause> {
-    /**
-     * Gets this catch clause's block.
-     */
-    getBlock(): Block;
-    /**
-     * Gets this catch clause's variable declaration or undefined if none exists.
-     */
-    getVariableDeclaration(): VariableDeclaration | undefined;
-    /**
-     * Gets this catch clause's variable declaration or throws if none exists.
-     */
-    getVariableDeclarationOrThrow(): VariableDeclaration;
+export declare class EmptyStatement extends EmptyStatementBase<ts.EmptyStatement> {
 }
 
 declare const ExpressionStatementBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & typeof Statement;
@@ -7138,16 +7148,6 @@ export declare class ExpressionStatement extends ExpressionStatementBase<ts.Expr
      * Gets this expression statement's expression.
      */
     getExpression(): Expression;
-}
-
-declare const DebuggerStatementBase: typeof Statement;
-
-export declare class DebuggerStatement extends DebuggerStatementBase<ts.DebuggerStatement> {
-}
-
-declare const EmptyStatementBase: typeof Statement;
-
-export declare class EmptyStatement extends EmptyStatementBase<ts.EmptyStatement> {
 }
 
 declare const ForInStatementBase: typeof IterationStatement;
@@ -7186,7 +7186,7 @@ export declare class ForStatement extends ForStatementBase<ts.ForStatement> {
     /**
      * Gets this for statement's initializer or throws if none exists.
      */
-    getInitializerOrThrow(): Expression<ts.Expression> | VariableDeclarationList;
+    getInitializerOrThrow(): VariableDeclarationList | Expression<ts.Expression>;
     /**
      * Gets this for statement's condition or undefined if none exists.
      */
@@ -7744,6 +7744,11 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
      */
     remove(): void;
 }
+export declare enum VariableDeclarationKind {
+    Var = "var",
+    Let = "let",
+    Const = "const"
+}
 
 declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
 
@@ -7792,11 +7797,6 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      * @param structure - Structure to fill.
      */
     fill(structure: Partial<VariableDeclarationListStructure>): this;
-}
-export declare enum VariableDeclarationKind {
-    Var = "var",
-    Let = "let",
-    Const = "const"
 }
 
 declare const VariableStatementBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
@@ -7872,6 +7872,16 @@ export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
      * Gets this with statement's statement.
      */
     getStatement(): Statement;
+}
+
+export interface FormatCodeSettings extends ts.FormatCodeSettings {
+    ensureNewLineAtEndOfFile?: boolean;
+}
+
+/**
+ * User preferences for refactoring.
+ */
+export interface UserPreferences extends ts.UserPreferences {
 }
 
 export declare class LanguageService {
@@ -8067,112 +8077,6 @@ export declare class Program {
 }
 
 /**
- * Wrapper around the TypeChecker.
- */
-export declare class TypeChecker {
-    /**
-     * Gets the compiler's TypeChecker.
-     */
-    readonly compilerObject: ts.TypeChecker;
-    /**
-     * Gets the apparent type of a type.
-     * @param type - Type to get the apparent type of.
-     */
-    getApparentType(type: Type): Type<ts.Type>;
-    /**
-     * Gets the constant value of a declaration.
-     * @param node - Node to get the constant value from.
-     */
-    getConstantValue(node: EnumMember): string | number | undefined;
-    /**
-     * Gets the fully qualified name of a symbol.
-     * @param symbol - Symbol to get the fully qualified name of.
-     */
-    getFullyQualifiedName(symbol: Symbol): string;
-    /**
-     * Gets the type at the specified location.
-     * @param node - Node to get the type for.
-     */
-    getTypeAtLocation(node: Node): Type;
-    /**
-     * Gets the contextual type of an expression.
-     * @param expression - Expression.
-     */
-    getContextualType(expression: Expression): Type | undefined;
-    /**
-     * Gets the type of a symbol at the specified location.
-     * @param symbol - Symbol to get the type for.
-     * @param node - Location to get the type for.
-     */
-    getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type;
-    /**
-     * Gets the declared type of a symbol.
-     * @param symbol - Symbol to get the type for.
-     */
-    getDeclaredTypeOfSymbol(symbol: Symbol): Type;
-    /**
-     * Gets the symbol at the specified location or undefined if none exists.
-     * @param node - Node to get the symbol for.
-     */
-    getSymbolAtLocation(node: Node): Symbol | undefined;
-    /**
-     * Gets the aliased symbol of a symbol.
-     * @param symbol - Symbol to get the alias symbol of.
-     */
-    getAliasedSymbol(symbol: Symbol): Symbol | undefined;
-    /**
-     * Gets the properties of a type.
-     * @param type - Type.
-     */
-    getPropertiesOfType(type: Type): Symbol[];
-    /**
-     * Gets the type text
-     * @param type - Type to get the text of.
-     * @param enclosingNode - Enclosing node.
-     * @param typeFormatFlags - Type format flags.
-     */
-    getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags): string;
-    /**
-     * Gets the return type of a signature.
-     * @param signature - Signature to get the return type of.
-     */
-    getReturnTypeOfSignature(signature: Signature): Type;
-    /**
-     * Gets a signature from a node.
-     * @param node - Node to get the signature from.
-     */
-    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined;
-    /**
-     * Gets the exports of a module.
-     * @param moduleSymbol - Module symbol.
-     */
-    getExportsOfModule(moduleSymbol: Symbol): Symbol[];
-    /**
-     * Gets the local target symbol of the provided export specifier.
-     * @param exportSpecifier - Export specifier.
-     */
-    getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier): Symbol | undefined;
-    /**
-     * Gets the base type of a literal type.
-     *
-     * For example, for a number literal type it will return the number type.
-     * @param type - Literal type to get the base type of.
-     */
-    getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
-    private getDefaultTypeFormatFlags;
-}
-
-export interface FormatCodeSettings extends ts.FormatCodeSettings {
-    ensureNewLineAtEndOfFile?: boolean;
-}
-
-/**
- * User preferences for refactoring.
- */
-export interface UserPreferences extends ts.UserPreferences {
-}
-
-/**
  * Definition info.
  */
 export declare class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.DefinitionInfo> extends DocumentSpan<TCompilerObject> {
@@ -8240,25 +8144,6 @@ export declare class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagn
     getSource(): string | undefined;
 }
 
-export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
-    /**
-     * Gets the line number.
-     */
-    getLineNumber(): number;
-    /**
-     * Gets the start.
-     */
-    getStart(): number;
-    /**
-     * Gets the length
-     */
-    getLength(): number;
-    /**
-     * Gets the source file.
-     */
-    getSourceFile(): SourceFile;
-}
-
 /**
  * Diagnostic message chain.
  */
@@ -8283,6 +8168,25 @@ export declare class DiagnosticMessageChain {
      * Gets the category of the diagnostic message chain.
      */
     getCategory(): DiagnosticCategory;
+}
+
+export declare class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
+    /**
+     * Gets the line number.
+     */
+    getLineNumber(): number;
+    /**
+     * Gets the start.
+     */
+    getStart(): number;
+    /**
+     * Gets the length
+     */
+    getLength(): number;
+    /**
+     * Gets the source file.
+     */
+    getSourceFile(): SourceFile;
 }
 
 /**
@@ -8489,6 +8393,102 @@ export declare class TextSpan {
      * Gets the length.
      */
     getLength(): number;
+}
+
+/**
+ * Wrapper around the TypeChecker.
+ */
+export declare class TypeChecker {
+    /**
+     * Gets the compiler's TypeChecker.
+     */
+    readonly compilerObject: ts.TypeChecker;
+    /**
+     * Gets the apparent type of a type.
+     * @param type - Type to get the apparent type of.
+     */
+    getApparentType(type: Type): Type<ts.Type>;
+    /**
+     * Gets the constant value of a declaration.
+     * @param node - Node to get the constant value from.
+     */
+    getConstantValue(node: EnumMember): string | number | undefined;
+    /**
+     * Gets the fully qualified name of a symbol.
+     * @param symbol - Symbol to get the fully qualified name of.
+     */
+    getFullyQualifiedName(symbol: Symbol): string;
+    /**
+     * Gets the type at the specified location.
+     * @param node - Node to get the type for.
+     */
+    getTypeAtLocation(node: Node): Type;
+    /**
+     * Gets the contextual type of an expression.
+     * @param expression - Expression.
+     */
+    getContextualType(expression: Expression): Type | undefined;
+    /**
+     * Gets the type of a symbol at the specified location.
+     * @param symbol - Symbol to get the type for.
+     * @param node - Location to get the type for.
+     */
+    getTypeOfSymbolAtLocation(symbol: Symbol, node: Node): Type;
+    /**
+     * Gets the declared type of a symbol.
+     * @param symbol - Symbol to get the type for.
+     */
+    getDeclaredTypeOfSymbol(symbol: Symbol): Type;
+    /**
+     * Gets the symbol at the specified location or undefined if none exists.
+     * @param node - Node to get the symbol for.
+     */
+    getSymbolAtLocation(node: Node): Symbol | undefined;
+    /**
+     * Gets the aliased symbol of a symbol.
+     * @param symbol - Symbol to get the alias symbol of.
+     */
+    getAliasedSymbol(symbol: Symbol): Symbol | undefined;
+    /**
+     * Gets the properties of a type.
+     * @param type - Type.
+     */
+    getPropertiesOfType(type: Type): Symbol[];
+    /**
+     * Gets the type text
+     * @param type - Type to get the text of.
+     * @param enclosingNode - Enclosing node.
+     * @param typeFormatFlags - Type format flags.
+     */
+    getTypeText(type: Type, enclosingNode?: Node, typeFormatFlags?: TypeFormatFlags): string;
+    /**
+     * Gets the return type of a signature.
+     * @param signature - Signature to get the return type of.
+     */
+    getReturnTypeOfSignature(signature: Signature): Type;
+    /**
+     * Gets a signature from a node.
+     * @param node - Node to get the signature from.
+     */
+    getSignatureFromNode(node: Node<ts.SignatureDeclaration>): Signature | undefined;
+    /**
+     * Gets the exports of a module.
+     * @param moduleSymbol - Module symbol.
+     */
+    getExportsOfModule(moduleSymbol: Symbol): Symbol[];
+    /**
+     * Gets the local target symbol of the provided export specifier.
+     * @param exportSpecifier - Export specifier.
+     */
+    getExportSpecifierLocalTargetSymbol(exportSpecifier: ExportSpecifier): Symbol | undefined;
+    /**
+     * Gets the base type of a literal type.
+     *
+     * For example, for a number literal type it will return the number type.
+     * @param type - Literal type to get the base type of.
+     */
+    getBaseTypeOfLiteralType(type: Type): Type<ts.Type>;
+    private getDefaultTypeFormatFlags;
 }
 
 export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
@@ -8796,7 +8796,7 @@ export declare class Type<TType extends ts.Type = ts.Type> {
      * Gets the object flags.
      * @remarks Returns 0 for a non-object type.
      */
-    getObjectFlags(): 0 | ObjectFlags;
+    getObjectFlags(): ObjectFlags | 0;
     private _hasTypeFlag;
     private _hasAnyTypeFlag;
     private _hasObjectFlag;
@@ -8873,6 +8873,116 @@ export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
      */
     getTypeNodes(): TypeNode[];
 }
+
+/**
+ * Holds the compiler options.
+ */
+export declare class CompilerOptionsContainer extends SettingsContainer<CompilerOptions> {
+    constructor();
+}
+
+/** Kinds of indentation */
+export declare enum IndentationText {
+    /** Two spaces */
+    TwoSpaces = "  ",
+    /** Four spaces */
+    FourSpaces = "    ",
+    /** Eight spaces */
+    EightSpaces = "        ",
+    /** Tab */
+    Tab = "\t"
+}
+
+/**
+ * Manipulation settings.
+ */
+export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
+    /** Indentation text */
+    indentationText: IndentationText;
+    /** New line kind */
+    newLineKind: NewLineKind;
+    /** Quote type used for string literals. */
+    quoteKind: QuoteKind;
+}
+
+/**
+ * FormatCodeSettings that are currently supported in the library.
+ */
+export interface SupportedFormatCodeSettings extends SupportedFormatCodeSettingsOnly, EditorSettings {
+}
+
+/**
+ * FormatCodeSettings that are currently supported in the library.
+ */
+export interface SupportedFormatCodeSettingsOnly {
+    /**
+     * Whether to insert a space after opening and before closing non-empty braces.
+     *
+     * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
+     */
+    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: boolean;
+}
+
+/**
+ * Holds the manipulation settings.
+ */
+export declare class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
+    private editorSettings;
+    private formatCodeSettings;
+    private userPreferences;
+    constructor();
+    /**
+     * Gets the editor settings based on the current manipulation settings.
+     */
+    getEditorSettings(): Readonly<EditorSettings>;
+    /**
+     * Gets the format code settings.
+     */
+    getFormatCodeSettings(): Readonly<SupportedFormatCodeSettings>;
+    /**
+     * Gets the user preferences.
+     */
+    getUserPreferences(): Readonly<UserPreferences>;
+    /**
+     * Gets the quote kind used for string literals.
+     */
+    getQuoteKind(): QuoteKind;
+    /**
+     * Gets the new line kind.
+     */
+    getNewLineKind(): NewLineKind;
+    /**
+     * Gets the new line kind as a string.
+     */
+    getNewLineKindAsString(): "\n" | "\r\n";
+    /**
+     * Gets the indentation text;
+     */
+    getIndentationText(): IndentationText;
+    /**
+     * Sets one or all of the settings.
+     * @param settings - Settings to set.
+     */
+    set(settings: Partial<ManipulationSettings>): void;
+}
+export declare abstract class SettingsContainer<T extends object> {
+    private readonly defaultSettings;
+    protected settings: T;
+    constructor(defaultSettings: T);
+    /**
+     * Resets the settings to the default.
+     */
+    reset(): void;
+    /**
+     * Gets a copy of the settings as an object.
+     */
+    get(): T;
+    /**
+     * Sets one or all of the settings.
+     * @param settings - Settings to set.
+     */
+    set(settings: Partial<T>): void;
+}
 export interface AbstractableNodeStructure {
     isAbstract?: boolean;
 }
@@ -8924,6 +9034,24 @@ export interface InitializerSetExpressionableNodeStructure {
 export interface JSDocableNodeStructure {
     docs?: (JSDocStructure | string)[];
 }
+export interface BindingNamedNodeStructure {
+    name: string;
+}
+export interface DeclarationNamedNodeStructure {
+    name: string;
+}
+export interface NameableNodeStructure {
+    name?: string;
+}
+export interface NamedNodeStructure {
+    name: string;
+}
+export interface PropertyNameableNodeStructure {
+    name?: string;
+}
+export interface PropertyNamedNodeStructure {
+    name: string;
+}
 
 export interface ParameteredNodeStructure {
     parameters?: ParameterDeclarationStructure[];
@@ -8967,24 +9095,6 @@ export interface TypeElementMemberedNodeStructure {
 
 export interface TypeParameteredNodeStructure {
     typeParameters?: TypeParameterDeclarationStructure[];
-}
-export interface BindingNamedNodeStructure {
-    name: string;
-}
-export interface DeclarationNamedNodeStructure {
-    name: string;
-}
-export interface NamedNodeStructure {
-    name: string;
-}
-export interface NameableNodeStructure {
-    name?: string;
-}
-export interface PropertyNameableNodeStructure {
-    name?: string;
-}
-export interface PropertyNamedNodeStructure {
-    name: string;
 }
 
 export interface ClassDeclarationStructure extends NameableNodeStructure, ClassDeclarationSpecificStructure, ImplementsClauseableNodeStructure, DecoratableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, AbstractableNodeStructure, ExportableNodeStructure {
@@ -9214,116 +9324,6 @@ export interface TypeAliasDeclarationStructure extends NamedNodeStructure, Typed
 
 export interface TypeParameterDeclarationStructure extends NamedNodeStructure {
     constraint?: string;
-}
-
-/**
- * Holds the compiler options.
- */
-export declare class CompilerOptionsContainer extends SettingsContainer<CompilerOptions> {
-    constructor();
-}
-
-/** Kinds of indentation */
-export declare enum IndentationText {
-    /** Two spaces */
-    TwoSpaces = "  ",
-    /** Four spaces */
-    FourSpaces = "    ",
-    /** Eight spaces */
-    EightSpaces = "        ",
-    /** Tab */
-    Tab = "\t"
-}
-
-/**
- * Manipulation settings.
- */
-export interface ManipulationSettings extends SupportedFormatCodeSettingsOnly {
-    /** Indentation text */
-    indentationText: IndentationText;
-    /** New line kind */
-    newLineKind: NewLineKind;
-    /** Quote type used for string literals. */
-    quoteKind: QuoteKind;
-}
-
-/**
- * FormatCodeSettings that are currently supported in the library.
- */
-export interface SupportedFormatCodeSettings extends SupportedFormatCodeSettingsOnly, EditorSettings {
-}
-
-/**
- * FormatCodeSettings that are currently supported in the library.
- */
-export interface SupportedFormatCodeSettingsOnly {
-    /**
-     * Whether to insert a space after opening and before closing non-empty braces.
-     *
-     * ex. `import { Item } from "./Item";` or `import {Item} from "./Item";`
-     */
-    insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: boolean;
-}
-
-/**
- * Holds the manipulation settings.
- */
-export declare class ManipulationSettingsContainer extends SettingsContainer<ManipulationSettings> {
-    private editorSettings;
-    private formatCodeSettings;
-    private userPreferences;
-    constructor();
-    /**
-     * Gets the editor settings based on the current manipulation settings.
-     */
-    getEditorSettings(): Readonly<EditorSettings>;
-    /**
-     * Gets the format code settings.
-     */
-    getFormatCodeSettings(): Readonly<SupportedFormatCodeSettings>;
-    /**
-     * Gets the user preferences.
-     */
-    getUserPreferences(): Readonly<UserPreferences>;
-    /**
-     * Gets the quote kind used for string literals.
-     */
-    getQuoteKind(): QuoteKind;
-    /**
-     * Gets the new line kind.
-     */
-    getNewLineKind(): NewLineKind;
-    /**
-     * Gets the new line kind as a string.
-     */
-    getNewLineKindAsString(): "\n" | "\r\n";
-    /**
-     * Gets the indentation text;
-     */
-    getIndentationText(): IndentationText;
-    /**
-     * Sets one or all of the settings.
-     * @param settings - Settings to set.
-     */
-    set(settings: Partial<ManipulationSettings>): void;
-}
-export declare abstract class SettingsContainer<T extends object> {
-    private readonly defaultSettings;
-    protected settings: T;
-    constructor(defaultSettings: T);
-    /**
-     * Resets the settings to the default.
-     */
-    reset(): void;
-    /**
-     * Gets a copy of the settings as an object.
-     */
-    get(): T;
-    /**
-     * Sets one or all of the settings.
-     * @param settings - Settings to set.
-     */
-    set(settings: Partial<T>): void;
 }
 
 export * from "./typescript/typescript";
