@@ -1,7 +1,8 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope } from "../../../compiler";
+import { FunctionDeclaration, ParameterDeclaration, ParameteredNode, Scope, ArrowFunction, VariableStatement } from "../../../compiler";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { SyntaxKind } from "typescript";
 
 describe(nameof(ParameteredNode), () => {
     describe(nameof<ParameteredNode>(d => d.getParameter), () => {
@@ -153,6 +154,48 @@ describe(nameof(ParameteredNode), () => {
 
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("function identifier() {}", {}, "function identifier() {}");
+        });
+    });
+
+    describe(nameof<ParameteredNode>(n => n.removeParameter), () => {
+        function doTest(startingCode: string, parameterName: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startingCode);
+            firstChild.removeParameter(parameterName);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should remove first parameter of function with two without explicit type", () => {
+            doTest("function identifier(param1, param2) {}", "param1", "function identifier(param2) {}");
+        });
+
+        it("should remove last parameter of function with two without explicit type", () => {
+            doTest("function identifier(param1, param2) {}", "param2", "function identifier(param1) {}");
+        });
+
+        it("should remove second parameter of function with three with explicit type", () => {
+            doTest("function identifier(param1: number[][], param2: Array<Date>, param3?: Date) {}", "param2", 
+                "function identifier(param1: number[][], param3?: Date) {}");
+        });
+
+        function doTestArrow(startingCode: string, parameterName: string, expectedCode: string) {
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<ArrowFunction>(startingCode, SyntaxKind.ArrowFunction);            
+            descendant.removeParameter(parameterName);
+            expect(descendant.getText()).to.equal(expectedCode);
+        }
+
+        it("should remove second parameter of arrow function with three with explicit type", () => {
+            doTestArrow("(a: {}, b: {foo: number}, c: (msg: string) => boolean): any => ({a, b, c})", "b", 
+                "(a: {}, c: (msg: string) => boolean): any => ({a, b, c})");
+        });
+
+        it("should remove third parameter of arrow function with three with question token", () => {
+            doTestArrow("(a: string, b: Error, c?: Date[][]): any => ({a, b, c})", "c", 
+                "(a: string, b: Error): any => ({a, b, c})");
+        });
+
+        it("should remove middle parameter of arrow function which has an assignament", () => {
+            doTestArrow("(a: Date, b: number = 1, c?: Error): any => ({a, b, c})", "b", 
+                "(a: Date, c?: Error): any => ({a, b, c})");
         });
     });
 });
