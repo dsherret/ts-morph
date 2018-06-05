@@ -87,4 +87,9 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
 
         return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.PropertyAssignment) as PropertyAssignment;
     }
+
+    /**
+     * Removes this property
+     */
+    remove = PropertyAssignment.prototype.remove
 }

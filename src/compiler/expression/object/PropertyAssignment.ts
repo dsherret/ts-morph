@@ -1,4 +1,4 @@
-import { insertIntoParentTextRange } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
@@ -12,7 +12,7 @@ import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 export const PropertyAssignmentBase = InitializerGetExpressionableNode(QuestionTokenableNode(PropertyNamedNode(Node)));
 export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
-     * Removes the initailizer and returns the new shorthand property assignment.
+     * Removes the initializer and returns the new shorthand property assignment.
      *
      * Note: The current node will no longer be valid because it's no longer a property assignment.
      */
@@ -58,7 +58,28 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
                 textLength: initializer.getWidth()
             }
         });
-
         return this;
+    }
+
+    /**
+     * Removes this property
+     */
+    remove() {
+        const children: Node[] = []
+        let previousComma = this.getPreviousSiblingIfKind(SyntaxKind.CommaToken);
+        let nextComma;
+        let removePrecedingSpaces = false;
+        let removeFollowingSpaces = false;
+
+        if(previousComma) {
+            children.push(previousComma); 
+            removePrecedingSpaces = true;
+        }
+        children.push(this);
+        if (!previousComma && (nextComma = this.getNextSiblingIfKind(SyntaxKind.CommaToken))) {
+            children.push(nextComma);
+            removeFollowingSpaces = true;
+        }
+        removeChildren({ children, removePrecedingSpaces, removeFollowingSpaces });
     }
 }
