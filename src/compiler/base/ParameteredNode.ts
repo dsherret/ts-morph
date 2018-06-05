@@ -1,5 +1,5 @@
 import * as errors from "../../errors";
-import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../manipulation";
+import { getEndIndexFromArray, getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex, removeChildren } from "../../manipulation";
 import { ParameterDeclarationStructure, ParameteredNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
@@ -57,6 +57,12 @@ export interface ParameteredNode {
      * @param structures - Parameter to insert.
      */
     insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
+    
+    /**
+     * Remove parameter with given name
+     */
+    removeParameter(name: string): this;
+
 }
 
 export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T {
@@ -114,6 +120,25 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             if (structure.parameters != null && structure.parameters.length > 0)
                 this.addParameters(structure.parameters);
 
+            return this;
+        }
+
+        removeParameter(name: string): this {
+            const parameter = this.getParameter(name);
+            if (!parameter)
+                return this;
+
+            const children: Node[] = []
+            let previousComma;
+            let nextComma;
+            
+            if (previousComma = parameter.getPreviousSiblingIfKind(SyntaxKind.CommaToken))
+                children.push(previousComma);
+            children.push(parameter);
+            if (!previousComma && (nextComma = parameter.getNextSiblingIfKind(SyntaxKind.CommaToken)))
+                children.push(nextComma);
+
+            removeChildren({ children, removePrecedingSpaces: true, removeFollowingSpaces: true });
             return this;
         }
     };
