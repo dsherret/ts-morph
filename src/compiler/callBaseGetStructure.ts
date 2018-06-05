@@ -18,10 +18,10 @@ export function callBaseGetStructure<T>(basePrototype: any, node: Node, structur
 }
 
 /** @internal */
-export function joinStructures(bases: any[], node: Node) : any {
+export function joinStructures(bases: any[], node: Node): any {
     let structure = {};
     bases.forEach(Base => {
         structure = callBaseGetStructure(Base(Node).prototype, node, structure);
     });
     return structure;
-} 
+}

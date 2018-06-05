@@ -141,6 +141,7 @@ describe(nameof(ParameterDeclaration), () => {
                 expect(paramStructure[structureKey]).equals(expectedStructure[structureKey])
             );
         }
+        
         it("should generate structure with correct name and type", () => {
             doTest("function f(param: string[]) {}", "param", {name: 'param', type: 'string[]'});
         });
