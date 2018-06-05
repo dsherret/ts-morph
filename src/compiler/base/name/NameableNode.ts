@@ -7,6 +7,7 @@ import { StringUtils } from "../../../utils";
 import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { callBaseGetStructure } from '../../callBaseGetStructure';
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 
@@ -95,6 +96,12 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
                 this.rename(structure.name);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<NameableNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

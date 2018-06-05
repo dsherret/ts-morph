@@ -7,6 +7,7 @@ import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, Initiali
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { AbstractableNode } from "./base";
+import { joinStructures } from '../callBaseGetStructure';
 
 export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(
     ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node)))))))
@@ -35,5 +36,12 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
             default:
                 throw new errors.NotImplementedError(`Not implemented parent syntax kind: ${parent.getKindName()}`);
         }
+    }
+    
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure() : PropertyDeclarationStructure {
+        return joinStructures([ChildOrderableNode, DecoratableNode, AbstractableNode, ScopedNode, StaticableNode, JSDocableNode,ReadonlyableNode, ExclamationTokenableNode, QuestionTokenableNode, InitializerExpressionableNode, TypedNode, PropertyNamedNode, ModifierableNode], this);
     }
 }

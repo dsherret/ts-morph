@@ -8,6 +8,7 @@ import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
 import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
+import { joinStructures } from '../callBaseGetStructure';
 
 export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
     BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
@@ -48,5 +49,14 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
      */
     remove() {
         removeClassMember(this);
+    }
+
+
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure() : SetAccessorDeclarationStructure {
+        return joinStructures([ChildOrderableNode, TextInsertableNode, DecoratableNode, AbstractableNode, ScopedNode, StaticableNode, 
+            BodiedNode, FunctionLikeDeclaration, PropertyNamedNode], this);
     }
 }

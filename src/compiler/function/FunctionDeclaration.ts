@@ -81,6 +81,9 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
         removeOverloadableStatementedNodeChild(this);
     }
 
+    /**
+     * Gets the structure equivalent to this node
+     */
     getStructure() : FunctionDeclarationStructure {
         // TODO: I'm not sure how to join all mixing getStructure() results automatically or if
         // there is a more straightforward way of doing this - So I'm doing it "manually" - see

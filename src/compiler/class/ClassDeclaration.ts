@@ -1,11 +1,9 @@
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../manipulation";
-import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure } from "../../structures";
+import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../utils";
-import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode, JSDocableNode, ModifierableNode,
-    NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
+import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode, JSDocableNode, ModifierableNode, NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function";
@@ -18,6 +16,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { PropertyDeclaration } from "./PropertyDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
+import { joinStructures, callBaseGetStructure } from '../callBaseGetStructure';
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
@@ -26,8 +25,7 @@ export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclarat
 export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
-export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement)))))))
+export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement)))))))
 ))))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
@@ -184,7 +182,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the constructor declarations.
      */
-    getConstructors() {
+    getConstructors(): ConstructorDeclaration[] {
         return this.getMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
     }
 
@@ -905,6 +903,29 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
         return classes;
     }
+
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure() : ClassDeclarationStructure {
+        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if
+        // there is a more straightforward way of doing this - So I'm doing it "manually" - see
+        // joinStructures()
+
+        // TODO: if this is the final solution - then the information in the following array is
+        // duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
+
+        const structure = joinStructures([ChildOrderableNode, TextInsertableNode, ImplementsClauseableNode, HeritageClauseableNode, DecoratableNode, TypeParameteredNode, NamespaceChildableNode, JSDocableNode, AmbientableNode, AbstractableNode, ExportableNode, ModifierableNode, NameableNode, Statement], this);
+
+        return Object.assign(structure, ({
+            ctors: this.getConstructors().map(ctor => ctor.getStructure()),
+            methods: this.getMethods().map(method => method.getStructure()),
+            properties: this.getProperties().map(property => property.getStructure()),
+            extends: this.getExtends() ? this.getExtends() : undefined,
+            getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
+            setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure()),
+        } as ClassDeclarationStructure));
+    } 
 
     private getImmediateDerivedClasses() {
         const classes: ClassDeclaration[] = [];
