@@ -216,10 +216,10 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should insert statements in a Block", () => {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ('function():number{const a = 1, b = true;}', SyntaxKind.Block);
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.IfStatement)).equals(undefined);
-            firstChild.insertStatements(1, 'if(b){return 1;}else {return 2;}');
-            expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals('if(b){return 1;}else {return 2;}');
+            firstChild.insertStatements(1, "if(b){return 1;}else {return 2;}");
+            expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals("if(b){return 1;}else {return 2;}");
         });
     });
 
@@ -299,7 +299,7 @@ describe(nameof(StatementedNode), () => {
         });
 
         it("should remove statements in a Block", () => {
-            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ('function():number{const a = 1, b = true;}', SyntaxKind.Block);
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ("function():number{const a = 1, b = true;}", SyntaxKind.Block);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.not.be.undefined;
             firstChild.removeStatement(0);
             expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.be.undefined;
