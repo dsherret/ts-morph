@@ -3,7 +3,8 @@ import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getSyntaxKindName } from "../../utils";
-import { Node, Scope } from "../common";
+import { Node } from "../common/Node";
+import { Scope } from "../common/Scope";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { ModifierableNodeStructurePrinter, ModifierableNodeStructures } from '../../structurePrinters';
 import { callBaseGetStructure } from '../callBaseGetStructure';
@@ -56,8 +57,6 @@ export interface ModifierableNode {
      * @internal
      */
     removeModifier(text: ModifierTexts): boolean;
-
-    getStructure(): ModifierableNodeStructures;
 }
 
 export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionType>>(Base: T): Constructor<ModifierableNode> & T {
@@ -176,17 +175,18 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return true;
         }
 
-        getStructure(): ModifierableNodeStructures {
+        getStructure() {
             const modifierableStructure: ModifierableNodeStructures = {
                 isDefaultExport: this.hasModifier("default") && this.hasModifier("export"),
                 hasDeclareKeyword: this.hasModifier("declare"),
                 isExported: this.hasModifier("export"),
                 isAbstract: this.hasModifier('abstract'),
-                scope: this.hasModifier('public') ? Scope.Public : this.hasModifier("private") ? Scope.Private : this.hasModifier("protected") ? Scope.Protected : undefined,
+                scope: this.hasModifier('public') ? Scope.Public : this.hasModifier("private") ? 
+                    Scope.Private : this.hasModifier("protected") ? 
+                        Scope.Protected : undefined,
                 isReadonly: this.hasModifier('readonly'),
                 isStatic: this.hasModifier('static'),
-                isAsync: this.hasModifier('async'),
-                isConst: this.hasModifier('const')
+                isAsync: this.hasModifier('async')
             }
             return callBaseGetStructure<ModifierableNodeStructures>(Base.prototype, this, modifierableStructure);
         }

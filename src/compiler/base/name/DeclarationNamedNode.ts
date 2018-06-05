@@ -1,10 +1,11 @@
 import * as errors from "../../../errors";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { Identifier, Node } from "../../common";
+import { Identifier } from "../../common/Identifier";
+import { Node } from "../../common/Node";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
-import { callBaseGetStructure } from '../../callBaseGetStructure';
-import { DeclarationNamedNodeStructure } from '../../../main';
+import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { DeclarationNamedNodeStructure } from "../../../structures";
 
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
@@ -28,7 +29,7 @@ export interface DeclarationNamedNodeSpecific {
      */
     getName(): string | undefined;
     /**
-     * Gets the name or throws if it doens't exist.
+     * Gets the name or throws if it doesn't exist.
      */
     getNameOrThrow(): string;
     /**
@@ -36,8 +37,6 @@ export interface DeclarationNamedNodeSpecific {
      * @param text - Text to set as the name.
      */
     rename(text: string): this;
-    
-    getStructure(): DeclarationNamedNodeStructure;
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {

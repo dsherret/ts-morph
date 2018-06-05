@@ -27,8 +27,7 @@ export interface ReadonlyableNode {
      * @param value - If readonly or not.
      */
     setIsReadonly(value: boolean): this;
-
-    getStructure(): ReadonlyableNodeStructure;
+    
 }
 
 export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtensionType>>(Base: T): Constructor<ReadonlyableNode> & T {
@@ -58,9 +57,8 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
 
             return this;
         }
-
-        //TODO - Note : I think ReadonlyableNode and ReadonlyableNodeStructure intersects with ModifierableNode and its structure - readonly is also there! ingeneral this information is repeated in both places. 
-        getStructure(): ReadonlyableNodeStructure {
+        
+        getStructure() {
             return callBaseGetStructure<ReadonlyableNodeStructure>(Base.prototype, this, {
                 isReadonly: this.isReadonly()
             });

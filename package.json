@@ -9,6 +9,7 @@
     "lint": "tslint src/**/*.ts scripts/**/*.ts",
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
+    "test-fast": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
     "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
     "refactor": "ts-node scripts/refactor --ignoreDiagnostics",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",

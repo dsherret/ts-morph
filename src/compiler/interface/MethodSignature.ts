@@ -24,10 +24,10 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
         removeInterfaceMember(this);
     }
 
-    getStructure():MethodSignatureStructure {
+    getStructure(): MethodSignatureStructure {
         return {
             name: this.getName(),
-            parameters: this.getParameters().map(param=>param.getStructure())
-        }
+            parameters: this.getParameters().map(param => param.getStructure())
+        };
     }
 }

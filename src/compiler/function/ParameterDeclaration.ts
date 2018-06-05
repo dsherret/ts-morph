@@ -1,16 +1,10 @@
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../manipulation";
-<<<<<<< HEAD
 import { ParameterDeclarationStructure, AbstractableNodeStructure } from "../../structures";
-import { DeclarationNamedNode, InitializerExpressionableNode, TypedNode, ModifierableNode, ScopeableNode, ReadonlyableNode, DecoratableNode, QuestionTokenableNode } from "../base";
-import { callBaseFill } from "../callBaseFill";
-import { callBaseGetStructure } from '../callBaseGetStructure';
-=======
-import { ParameterDeclarationStructure } from "../../structures";
 import { ts, SyntaxKind } from "../../typescript";
 import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
->>>>>>> upstream/master
+import { Node } from "../common/Node";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
@@ -85,9 +79,23 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         removeCommaSeparatedChild(this);
     }
 
-    getStructure():ParameterDeclarationStructure {
-        return callBaseGetStructure<AbstractableNodeStructure>(ParameterDeclarationBase, this, {
-            isAbstract: false // TODO
-        });
+    getStructure() {
+        // TODO: i'm not sure how to join all mixing structures or if there is a more straightforward way of doing this - i'm doing it "manually"
+
+        // TODO: if this is the final solution - then this information is duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
+        return joinStructures([QuestionTokenableNode, DecoratableNode, ScopeableNode, ReadonlyableNode, ModifierableNode, 
+            TypedNode, InitializerExpressionableNode, DeclarationNamedNode].reverse(), this);
+        
     } 
 }
+
+function joinStructures(bases: any[], node: Node) : {} {
+    let structure = {};
+    [QuestionTokenableNode, DecoratableNode, ScopeableNode, ReadonlyableNode, ModifierableNode, 
+        TypedNode, InitializerExpressionableNode, DeclarationNamedNode].reverse()
+    .forEach(C => {
+        structure = callBaseGetStructure(C(Node).prototype, node, structure);
+        
+    });
+    return structure;
+} 

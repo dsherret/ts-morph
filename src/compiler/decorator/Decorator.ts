@@ -2,11 +2,12 @@ import * as errors from "../../errors";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { Node } from "../common";
+import { Node } from "../common/Node";
+import { Identifier } from "../common/Identifier";
 import { CallExpression, Expression } from "../expression";
 import { TypeNode } from "../type";
-import { DecoratorStructure } from '../../main';
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { DecoratorStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const DecoratorBase = Node;
 export class Decorator extends DecoratorBase<ts.Decorator> {
@@ -20,7 +21,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     /**
      * Gets the name node of the decorator.
      */
-    getNameNode() {
+    getNameNode(): Identifier {
         const sourceFile = this.getSourceFile();
 
         if (this.isDecoratorFactory()) {
@@ -281,7 +282,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     getStructure(): DecoratorStructure {
         return {
             name: this.getName(),
-            arguments: this.getArguments().map(arg=>arg.getText()) // TODO: not sure about this
+            arguments: this.getArguments().map(arg => arg.getText())
         };
     }
 }

@@ -109,7 +109,6 @@ describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
-            console.log(firstChild.getParameters().map(p=>p.getStructure()))
             ArrayUtils.find(firstChild.getParameters(), p => p.getName() === nameToRemove)!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -130,4 +129,29 @@ describe(nameof(ParameterDeclaration), () => {
             doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
         });
     });
+
+
+    describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
+        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
+            console.log('sebsbsbsb',firstChild.getParameters().map(p=>p.getStructure()));
+        }
+        // initializer, questionable, name, type, 
+        it("should remove when it's the only parameter", () => {
+            doTest("function identifier(param) {}", "param", "function identifier() {}");
+        });
+
+        // it("should remove when it's the first parameter", () => {
+        //     doTest("function identifier(param: string, param2) {}", "param", "function identifier(param2) {}");
+        // });
+
+        // it("should remove when it's the last parameter", () => {
+        //     doTest("function identifier(param: string, param2?: string = '') {}", "param2", "function identifier(param: string) {}");
+        // });
+
+        // it("should remove when it's the middle parameter", () => {
+        //     doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
+        // });
+    });
+
 });
