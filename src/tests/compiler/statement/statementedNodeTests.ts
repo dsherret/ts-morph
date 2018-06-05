@@ -300,9 +300,9 @@ describe(nameof(StatementedNode), () => {
 
         it("should remove statements in a Block", () => {
             const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ('function():number{const a = 1, b = true;}', SyntaxKind.Block);
-            expect(!!firstChild.getStatementByKind(SyntaxKind.VariableStatement)).equals(true);
+            expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.not.be.undefined;
             firstChild.removeStatement(0);
-            expect(!!firstChild.getStatementByKind(SyntaxKind.VariableStatement)).equals(false);
+            expect(firstChild.getStatementByKind(SyntaxKind.VariableStatement)).to.be.undefined;
         });
     });
 
