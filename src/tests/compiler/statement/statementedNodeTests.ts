@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode } from "../../../compiler";
+import { CaseClause, DefaultClause, FunctionDeclaration, NamespaceDeclaration, Node, SourceFile, StatementedNode, Block } from "../../../compiler";
 import { Chars } from "../../../constants";
 import { StatementedNodeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
@@ -214,6 +214,13 @@ describe(nameof(StatementedNode), () => {
             doFirstChildTest<DefaultClause>(defaultClause, 3, "newText;\nsecondText;", 2,
                 "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n        newText;\n        secondText;\n}", SyntaxKind.DefaultClause);
         });
+
+        it("should insert statements in a Block", () => {
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ('function():number{const a = 1, b = true;}', SyntaxKind.Block);
+            expect(firstChild.getStatementByKind(SyntaxKind.IfStatement)).equals(undefined);
+            firstChild.insertStatements(1, 'if(b){return 1;}else {return 2;}');
+            expect(firstChild.getStatementByKindOrThrow(SyntaxKind.IfStatement).getText()).equals('if(b){return 1;}else {return 2;}');
+        });
     });
 
     describe(nameof<StatementedNode>(s => s.addStatements), () => {
@@ -289,6 +296,13 @@ describe(nameof(StatementedNode), () => {
 
         it("should remove statements at the end default clause", () => {
             doFirstChildTest<DefaultClause>(defaultClause, [1, 2], "switch (x) {\n    default:\n        x = 0;\n}", SyntaxKind.DefaultClause);
+        });
+
+        it("should remove statements in a Block", () => {
+            const {sourceFile, firstChild} = getInfoFromTextWithSyntax<Block>  ('function():number{const a = 1, b = true;}', SyntaxKind.Block);
+            expect(!!firstChild.getStatementByKind(SyntaxKind.VariableStatement)).equals(true);
+            firstChild.removeStatement(0);
+            expect(!!firstChild.getStatementByKind(SyntaxKind.VariableStatement)).equals(false);
         });
     });
 
