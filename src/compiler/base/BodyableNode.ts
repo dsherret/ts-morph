@@ -4,9 +4,9 @@ import { BodyableNodeStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { Node } from "../common/Node";
 import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
-import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 
@@ -108,9 +108,29 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getStructure() {
-            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
-                bodyText: this.getBody() ? this.getBody()!.getText() : undefined
-            });
+            
+            // TODO: This complication is because we need to remove body text wrapping braces. 
+            // if not they will be duplicatedwhen printing a functiondeclaration and others, not sure why. 
+            // Investigate. 
+
+            const body = this.getBody();
+            const structure: MakeRequired<BodyableNodeStructure> = { bodyText: undefined }
+            if (body) {
+                const openBrace = body.getFirstChildByKind(SyntaxKind.OpenBraceToken);
+                const closeBrace = body.getFirstChildByKind(SyntaxKind.CloseBraceToken);
+                if (!openBrace || !closeBrace) {
+                    structure.bodyText = body.getText();
+                }
+                else {
+                    structure.bodyText = body.getText().trim();
+                    structure.bodyText = structure.bodyText.substring(1, structure.bodyText.length - 1);
+                }
+            }
+            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, structure);
+            
+            // return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
+            //     bodyText: body ? body.getText() : undefined
+            // });
         }
     };
 }

@@ -1,7 +1,8 @@
-﻿import { expect } from "chai";
+﻿import { expect, assert } from "chai";
 import { FunctionDeclaration } from "../../../compiler";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
+import { TypeGuards } from '../../../utils/TypeGuards';
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {
@@ -137,24 +138,42 @@ describe(nameof(FunctionDeclaration), () => {
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
 
+        // this is comparing original Node.getText() with a the getText() of a new Node filled with generated structure. 
+        // Compared strings have no spaces so comparision doesn't fail. 
+        function doTest(text: string) {
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
+            const structure = firstChild.getStructure();
+            const aux = sourceFile.addStatements('function aux(){}')
+            const decl = aux[0];
+            if(!TypeGuards.isFunctionDeclaration(decl)){
+                return assert.fail('!TypeGuards.isFunctionDeclaration(decl)');
+            }
+            decl.fill(structure);
+            expect( decl.getText().replace(/\s+/gm, '')).equals(firstChild.getText().replace(/\s+/gm, ''));
+            // console.log('seba',  decl.getText().replace(/\s+/gm, ''), firstChild.getText().replace(/\s+/gm, ''));
+        }
+
         it("should generate structure with correct return type and parameter names and types", () => {
             const code = 'export function f(param: string[]):string[][] {return null}';
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
-            const structure = (firstChild as FunctionDeclaration).getStructure();
-            // console.log('seba', firstChild.getText(), structure);
+            const structure = firstChild.getStructure();
             expect(structure.returnType!.toString()).equals('string[][]');
-            expect(structure.bodyText!.toString()).equals('{return null}');
+            expect(structure.bodyText!.toString()).equals('return null');
             expect(structure.parameters!.length).equals(1);
             expect(structure.parameters![0].name).equals('param');
             expect(structure.parameters![0].type).equals('string[]');
         });
 
-        // test: jsdoc, typeParameters, inner class / interface, enums, typealias, etc declared in its body
+        // test: jsdoc, typeParameters, body text,  inner class / interface, enums, typealias, etc declared in its body
 
-        // it("should generate structure with question token if appropriate", () => {
-        //     doTest("function g(matrix? : boolean[][]) {}", "matrix", 
-        //         {hasQuestionToken: true, name: 'matrix', type: 'boolean[][]'});
-        // });
+
+        it("should generate structure with question token if appropriate", () => {
+            doTest("function g(matrix? : boolean[][]): number {return 3.14}");
+        });
+
+        it("should generate structure that don't mess up body's braces and typeparameters ", () => {
+            doTest("function customSum<T>(a:T):{result: T} {return {result: 3.14 + a}}");
+        });
 
         // it("should generate structure with initializer if appropriate", () => {
         //     doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg", 
