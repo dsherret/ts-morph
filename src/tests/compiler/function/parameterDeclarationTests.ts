@@ -132,26 +132,28 @@ describe(nameof(ParameterDeclaration), () => {
 
 
     describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, nameToRemove: string, expectedCode: string) {
+        function doTest(code: string, nameToTest: string, expectedStructure: any) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
-            console.log('sebsbsbsb',firstChild.getParameters().map(p=>p.getStructure()));
+            const param = firstChild.getParameterOrThrow(nameToTest);
+            const paramStructure = param.getStructure();
+            // console.log('seba', param.getText(), paramStructure);
+            Object.keys(expectedStructure).forEach(structureKey =>
+                expect(paramStructure[structureKey]).equals(expectedStructure[structureKey])
+            );
         }
-        // initializer, questionable, name, type, 
-        it("should remove when it's the only parameter", () => {
-            doTest("function identifier(param) {}", "param", "function identifier() {}");
+        it("should generate structure with correct name and type", () => {
+            doTest("function f(param: string[]) {}", "param", {name: 'param', type: 'string[]'});
         });
 
-        // it("should remove when it's the first parameter", () => {
-        //     doTest("function identifier(param: string, param2) {}", "param", "function identifier(param2) {}");
-        // });
+        it("should generate structure with question token if appropriate", () => {
+            doTest("function g(matrix? : boolean[][]) {}", "matrix", 
+                {hasQuestionToken: true, name: 'matrix', type: 'boolean[][]'});
+        });
 
-        // it("should remove when it's the last parameter", () => {
-        //     doTest("function identifier(param: string, param2?: string = '') {}", "param2", "function identifier(param: string) {}");
-        // });
-
-        // it("should remove when it's the middle parameter", () => {
-        //     doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
-        // });
+        it("should generate structure with initializer if appropriate", () => {
+            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg", 
+                {name: 'msg', type: 'string', initializer: "'hello world'"});
+        });
     });
 
 });

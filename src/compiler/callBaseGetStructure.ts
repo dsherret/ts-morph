@@ -1,6 +1,6 @@
 ﻿/* barrel:ignore */
 import * as objectAssign from "object-assign";
-import { Node } from "./common";
+import { Node } from "./common/Node";
 
 // todo: add code verification to ensure all fill functions call this
 
@@ -16,3 +16,12 @@ export function callBaseGetStructure<T>(basePrototype: any, node: Node, structur
 
     return newStructure;
 }
+
+/** @internal */
+export function joinStructures(bases: any[], node: Node) : any {
+    let structure = {};
+    bases.forEach(Base => {
+        structure = callBaseGetStructure(Base(Node).prototype, node, structure);
+    });
+    return structure;
+} 
