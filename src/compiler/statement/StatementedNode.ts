@@ -18,6 +18,7 @@ import { KindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../namespace";
 import { Statement, VariableDeclaration, VariableStatement } from "../statement";
 import { TypeAliasDeclaration } from "../type";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
 
@@ -851,6 +852,18 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
             return this;
         }
+        
+        getStructure() {
+            return callBaseGetStructure<StatementedNodeStructure>(Base.prototype, this, {
+                classes: [],//TODO: this.getClasses().map(c=>c.getStructure())
+                functions: this.getFunctions().map(f=>f.getStructure()),
+                enums: [],/// TODO: this.getEnums().map(e=>e.getStructure()),
+                interfaces: [], //TODO
+                namespaces: [], //TODO
+                typeAliases: []// TODO
+            });
+        }
+
 
         /**
          * @internal

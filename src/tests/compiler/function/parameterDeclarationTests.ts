@@ -137,13 +137,13 @@ describe(nameof(ParameterDeclaration), () => {
             const param = firstChild.getParameterOrThrow(nameToTest);
             const paramStructure = param.getStructure();
             // console.log('seba', param.getText(), paramStructure);
-            Object.keys(expectedStructure).forEach(structureKey =>
-                expect(paramStructure[structureKey]).equals(expectedStructure[structureKey])
-            );
+            Object.keys(expectedStructure).forEach(structureKey => {
+                expect(paramStructure[structureKey]).equals(expectedStructure[structureKey]);
+            });
         }
-        
+
         it("should generate structure with correct name and type", () => {
-            doTest("function f(param: string[]) {}", "param", {name: 'param', type: 'string[]'});
+            doTest("function f(param: string[]) {}", "param", {name: "param", type: "string[]"});
         });
 
         it("should generate structure with question token if appropriate", () => {

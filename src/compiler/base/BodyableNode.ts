@@ -6,6 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 
@@ -104,6 +105,12 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 this.setBodyText(structure.bodyText);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
+                bodyText: this.getBody() ? this.getBody()!.getText() : undefined
+            });
         }
     };
 }

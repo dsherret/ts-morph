@@ -8,6 +8,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type ReturnTypedNodeExtensionReturnType = Node<ts.SignatureDeclaration>;
 
@@ -95,6 +96,13 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
             removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ReturnTypedNodeStructure>(Base.prototype, this, {
+                // TODO: should we implement getStructure in Type and call it from here ? fill() is not so I'm nighter
+                returnType: this.getReturnTypeNode() ? this.getReturnTypeNode()!.getText() : undefined 
+            });
         }
     };
 }

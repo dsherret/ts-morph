@@ -9,6 +9,7 @@ export type FunctionLikeDeclarationExtensionType = Node<ts.FunctionLikeDeclarati
 export interface FunctionLikeDeclaration extends JSDocableNode, TypeParameteredNode, SignaturedDeclaration, StatementedNode, ModifierableNode {
 }
 
+//TODO: implement getStructure calling mixing joinStructures
 export function FunctionLikeDeclaration<T extends Constructor<FunctionLikeDeclarationExtensionType>>(Base: T): Constructor<FunctionLikeDeclaration> & T {
     return JSDocableNode(TypeParameteredNode(SignaturedDeclaration(StatementedNode(ModifierableNode(Base)))));
 }

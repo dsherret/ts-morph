@@ -176,7 +176,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
         }
 
         getStructure() {
-            const modifierableStructure: ModifierableNodeStructures = {
+            return callBaseGetStructure<ModifierableNodeStructures>(Base.prototype, this, {
                 isDefaultExport: this.hasModifier("default") && this.hasModifier("export"),
                 hasDeclareKeyword: this.hasModifier("declare"),
                 isExported: this.hasModifier("export"),
@@ -187,8 +187,7 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
                 isReadonly: this.hasModifier('readonly'),
                 isStatic: this.hasModifier('static'),
                 isAsync: this.hasModifier('async')
-            }
-            return callBaseGetStructure<ModifierableNodeStructures>(Base.prototype, this, modifierableStructure);
+            });
         }
 
         private getCompilerModifiers() {

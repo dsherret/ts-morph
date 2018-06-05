@@ -10,6 +10,7 @@ import { NamespaceChildableNode } from "../namespace";
 import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
+import { joinStructures } from '../callBaseGetStructure';
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
@@ -79,4 +80,13 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
     remove() {
         removeOverloadableStatementedNodeChild(this);
     }
+
+    getStructure() : FunctionDeclarationStructure {
+        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if there is a more straightforward way of doing this - So I'm doing it "manually" - see joinStructures()
+
+        // TODO: if this is the final solution - then the information in the following array is duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
+        return joinStructures([ChildOrderableNode,UnwrappableNode,TextInsertableNode,OverloadableNode,BodyableNode,AsyncableNode,GeneratorableNode,
+            FunctionLikeDeclaration,StatementedNode,AmbientableNode,NamespaceChildableNode,ExportableNode,ModifierableNode,NamedNode], this);
+        
+    } 
 }

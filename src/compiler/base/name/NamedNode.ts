@@ -5,6 +5,7 @@ import { ts } from "../../../typescript";
 import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { callBaseGetStructure } from '../../callBaseGetStructure';
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
 // (maybe NameableNode and rename some of the other "-ed" classes)
@@ -59,6 +60,12 @@ export function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>
                 this.rename(structure.name);
 
             return this;
+        }
+
+        getStructure(): NamedNodeStructure {
+            return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

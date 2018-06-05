@@ -3,6 +3,8 @@ import { SyntaxKind, ts } from "../../typescript";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
+import { TypeParameterDeclarationStructure } from '../../structures';
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
@@ -41,5 +43,12 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
 
             removeChildren({ children });
         }
+    }
+
+    getStructure() {
+        return callBaseGetStructure<TypeParameterDeclarationStructure>({}, this, {
+            constraint: this.getConstraintNode() ? this.getConstraintNode()!.getText() : undefined,
+            name: this.getName()
+        });
     }
 }

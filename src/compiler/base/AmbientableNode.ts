@@ -6,6 +6,7 @@ import { isNodeAmbientOrInAmbientContext, TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type AmbientableNodeExtensionType = Node & ModifierableNode;
 
@@ -67,6 +68,12 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
                 this.setHasDeclareKeyword(structure.hasDeclareKeyword);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<AmbientableNodeStructure>(Base.prototype, this, {
+                hasDeclareKeyword: this.hasDeclareKeyword()
+            });
         }
     };
 }

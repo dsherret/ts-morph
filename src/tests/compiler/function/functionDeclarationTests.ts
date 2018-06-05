@@ -133,4 +133,32 @@ describe(nameof(FunctionDeclaration), () => {
                 "function I() {}\n\nfunction J(first): void;\nfunction J() {}\n\nfunction K() {}");
         });
     });
+
+
+    describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
+
+        it("should generate structure with correct return type and parameter names and types", () => {
+            const code = 'export function f(param: string[]):string[][] {return null}';
+            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
+            const structure = (firstChild as FunctionDeclaration).getStructure();
+            // console.log('seba', firstChild.getText(), structure);
+            expect(structure.returnType!.toString()).equals('string[][]');
+            expect(structure.bodyText!.toString()).equals('{return null}');
+            expect(structure.parameters!.length).equals(1);
+            expect(structure.parameters![0].name).equals('param');
+            expect(structure.parameters![0].type).equals('string[]');
+        });
+
+        // test: jsdoc, typeParameters, inner class / interface, enums, typealias, etc declared in its body
+
+        // it("should generate structure with question token if appropriate", () => {
+        //     doTest("function g(matrix? : boolean[][]) {}", "matrix", 
+        //         {hasQuestionToken: true, name: 'matrix', type: 'boolean[][]'});
+        // });
+
+        // it("should generate structure with initializer if appropriate", () => {
+        //     doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg", 
+        //         {name: 'msg', type: 'string', initializer: "'hello world'"});
+        // });
+    });
 });

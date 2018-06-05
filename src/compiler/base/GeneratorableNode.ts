@@ -6,6 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { NamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 
@@ -74,6 +75,12 @@ export function GeneratorableNode<T extends Constructor<GeneratorableNodeExtensi
                 this.setIsGenerator(structure.isGenerator);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<GeneratorableNodeStructure>(Base.prototype, this, {
+                isGenerator: this.isGenerator()
+            });
         }
     };
 }

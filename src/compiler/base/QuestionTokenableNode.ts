@@ -28,8 +28,6 @@ export interface QuestionTokenableNode {
      * @param value - If it should have a question token or not.
      */
     setHasQuestionToken(value: boolean): this;
-
-    getStructure(): QuestionTokenableNodeStructure;
 }
 
 export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNodeExtensionType>>(Base: T): Constructor<QuestionTokenableNode> & T {
