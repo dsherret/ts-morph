@@ -70,7 +70,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
         let removePrecedingSpaces = false;
         let removeFollowingSpaces = false;
 
-        if(previousComma) {
+        if (previousComma) {
             children.push(previousComma);
             removePrecedingSpaces = true;
         }

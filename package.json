@@ -6,7 +6,7 @@
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && npm publish",
-    "lint": "tslint --project tsconfig.json",
+    "lint": "tslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "test-fast": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
@@ -87,8 +87,8 @@
     "source-map-support": "^0.5.5",
     "ts-nameof": "^1.0.0",
     "ts-node": "^6.0.2",
-    "ts-simple-ast": "12.0.0",
-    "tslint": "^5.8.0",
+    "ts-simple-ast": "12.2.0",
+    "tslint": "^5.10.0",
     "ttypescript": "1.4.6"
   },
   "standard-version": {
