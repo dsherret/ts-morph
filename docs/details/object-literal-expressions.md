@@ -100,7 +100,7 @@ const method = objectLiteralExpression.addMethod({
 
 ### Removing
 
-Remove a property, method, etc by calling `.remove()` on it: 
+Remove a member by calling `.remove()` on it.
 
 ```ts
 obj.getPropertyOrThrow("prop1").remove();
