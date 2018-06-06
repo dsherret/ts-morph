@@ -870,8 +870,10 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
             else if (TypeGuards.isBodiedNode(this))
                 return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else if (TypeGuards.isBlock(this))
+                return (this.compilerNode as any).statements as ts.NodeArray<ts.Statement>;
             else
-                throw new errors.NotImplementedError(`Could not find the statements for the node: ${this.getText()}`);
+                throw new errors.NotImplementedError(`Could not find the statements for node kind: ${this.getKindName()}, text: ${this.getText()}`);
         }
 
         _insertChildren<TNode extends Node, TStructure>(opts: InsertChildrenOptions<TStructure>) {
