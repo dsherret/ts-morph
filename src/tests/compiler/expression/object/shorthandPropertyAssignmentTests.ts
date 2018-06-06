@@ -1,7 +1,8 @@
 import { expect } from "chai";
-import { PropertyAssignment, ShorthandPropertyAssignment } from "../../../../compiler";
+import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, Node } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { doTestForRemove } from "./propertyAssignmentTests";
 
 describe(nameof(ShorthandPropertyAssignment), () => {
     function getShorthandPropertyAssignemntExpression(text: string) {
@@ -103,4 +104,12 @@ describe(nameof(ShorthandPropertyAssignment), () => {
             doTest("({ start = 5 })", "({ start })");
         });
     });
+
+    describe(nameof<ShorthandPropertyAssignment>(p => p.remove), () => {
+        it("should remove ShorthandPropertyAssignment", () => {
+            doTestForRemove("const prop2 = 2; const t = { prop1: {prop1: 2}, prop2, foo: {bar: '98989'} };", "prop2",
+                "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
+        });
+    });
+
 });

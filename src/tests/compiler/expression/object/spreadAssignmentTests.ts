@@ -1,7 +1,9 @@
 import { expect } from "chai";
-import { SpreadAssignment } from "../../../../compiler";
+import { SpreadAssignment, Node, ObjectLiteralExpression } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
+import { TypeGuards } from "../../../../utils/TypeGuards";
+import { doTestForRemove } from "./propertyAssignmentTests";
 
 describe(nameof(SpreadAssignment), () => {
     function getSpreadAssignment(text: string) {
@@ -19,4 +21,17 @@ describe(nameof(SpreadAssignment), () => {
             expect(spreadAssignment.getExpression().getText()).to.equal("obj");
         });
     });
+
+    describe(nameof<SpreadAssignment>(p => p.remove), () => {
+        it("should remove ShorthandPropertyAssignment", () => {
+            doTestForRemove("const prop2 = 2; const t = { prop1: {prop1: 2}, prop2, foo: {bar: '98989'} };", "prop2",
+                "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
+        });
+
+        it("should remove SpreadAssignment", () => {
+            doTestForRemove("const t = { prop1: {prop1: 2}, ... {a: 2}, foo: {bar: '98989'} };", TypeGuards.isSpreadAssignment,
+                "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
+        });
+    });
+
 });

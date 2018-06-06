@@ -77,7 +77,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
         children.push(this);
         if (!previousComma) {
             const nextComma = this.getNextSiblingIfKind(SyntaxKind.CommaToken);
-            if(nextComma) {
+            if (nextComma) {
                 children.push(nextComma);
                 removeFollowingSpaces = true;
             }
