@@ -96,3 +96,12 @@ const method = objectLiteralExpression.addMethod({
     bodyText: `return "some string";`
 });
 ```
+
+
+### Removing
+
+Remove a property, method, etc by calling `.remove()` on it: 
+
+```ts
+obj.getPropertyOrThrow("prop1").remove();
+```

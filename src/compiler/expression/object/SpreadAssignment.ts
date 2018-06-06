@@ -5,7 +5,6 @@ import { PropertyAssignment } from './PropertyAssignment';
 
 export const SpreadAssignmentBase = ExpressionedNode(Node);
 export class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
-
     /**
      * Removes this property
      */

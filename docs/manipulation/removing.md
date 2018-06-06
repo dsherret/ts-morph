@@ -28,4 +28,4 @@ enum MyEnum {
 
 ### Support
 
-Currently removing is implemented individually for each kind of node. If you find something is not implemented, please open an issue on github.
+Currently removing is implemented individually for each kind of node. In general this will work for many kind of nodes, including methods, properties, constructors, parmeters, statements, declarations. Nevertheless, if you find that ```remove()``` method is not implemented for a particular kind of Node, please open an issue on github.
