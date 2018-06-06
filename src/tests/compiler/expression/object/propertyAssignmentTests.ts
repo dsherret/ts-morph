@@ -2,7 +2,7 @@ import { expect, assert } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, ObjectLiteralElementLike, Node } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
-import { TypeGuards } from "../../../../utils/TypeGuards";
+import { TypeGuards } from "../../../../utils";
 
 describe(nameof(PropertyAssignment), () => {
     describe(nameof<PropertyAssignment>(p => p.removeInitializer), () => {
@@ -34,11 +34,11 @@ describe(nameof(PropertyAssignment), () => {
 
     describe(nameof<PropertyAssignment>(p => p.remove), () => {
         it("should remove first property assignment", () => {
-            doTestForRemove("const t = { prop1: 5, prop2: 6 };", "prop1", "{ prop2: 6 }");
+            doTestForRemove("const t = { prop1: 5, prop2: 6 };", "prop1", "{prop2: 6 }");
         });
 
         it("should remove last property assignment and preserve trailing comma", () => {
-            doTestForRemove("const t = { prop1: [1,2,3], prop2: [['hello']], };", "prop2", "{ prop1: [1,2,3], }");
+            doTestForRemove("const t = { prop1: [1,2,3], prop2: [['hello']], };", "prop2", "{ prop1: [1,2,3] }");
         });
 
         it("should remove property assignment in the middle", () => {

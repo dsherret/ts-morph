@@ -1,4 +1,4 @@
-import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { WriterFunction } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { getTextFromStringOrWriter } from "../../../utils";
@@ -65,23 +65,6 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      * Removes this property.
      */
     remove() {
-        const children: Node[] = [];
-        const previousComma = this.getPreviousSiblingIfKind(SyntaxKind.CommaToken);
-        let removePrecedingSpaces = false;
-        let removeFollowingSpaces = false;
-
-        if (previousComma) {
-            children.push(previousComma);
-            removePrecedingSpaces = true;
-        }
-        children.push(this);
-        if (!previousComma) {
-            const nextComma = this.getNextSiblingIfKind(SyntaxKind.CommaToken);
-            if (nextComma) {
-                children.push(nextComma);
-                removeFollowingSpaces = true;
-            }
-         }
-        removeChildren({ children, removePrecedingSpaces, removeFollowingSpaces });
+        removeCommaSeparatedChild(this);
     }
 }
