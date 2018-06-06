@@ -91,5 +91,5 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
     /**
      * Removes this property
      */
-    remove = PropertyAssignment.prototype.remove
+    remove = PropertyAssignment.prototype.remove;
 }

@@ -62,24 +62,26 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
     }
 
     /**
-     * Removes this property
+     * Removes this property.
      */
     remove() {
-        const children: Node[] = []
-        let previousComma = this.getPreviousSiblingIfKind(SyntaxKind.CommaToken);
-        let nextComma;
+        const children: Node[] = [];
+        const previousComma = this.getPreviousSiblingIfKind(SyntaxKind.CommaToken);
         let removePrecedingSpaces = false;
         let removeFollowingSpaces = false;
 
         if(previousComma) {
-            children.push(previousComma); 
+            children.push(previousComma);
             removePrecedingSpaces = true;
         }
         children.push(this);
-        if (!previousComma && (nextComma = this.getNextSiblingIfKind(SyntaxKind.CommaToken))) {
-            children.push(nextComma);
-            removeFollowingSpaces = true;
-        }
+        if (!previousComma) {
+            const nextComma = this.getNextSiblingIfKind(SyntaxKind.CommaToken);
+            if(nextComma) {
+                children.push(nextComma);
+                removeFollowingSpaces = true;
+            }
+         }
         removeChildren({ children, removePrecedingSpaces, removeFollowingSpaces });
     }
 }
