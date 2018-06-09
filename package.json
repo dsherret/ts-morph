@@ -6,7 +6,9 @@
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && npm publish",
-    "lint": "tslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
+    "lint": "npm run lint-src && npm run lint-scripts",
+    "lint-src": "tslint \"src/**/*.ts\"",
+    "lint-scripts": "tslint \"scripts/**/*.ts\"",
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "test-fast": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",

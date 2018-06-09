@@ -40,7 +40,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
             if (declarations.length === 1)
                 variableStatement.remove();
             else
-                removeCommaSeparatedChild(node, { removePrecedingSpaces: declarations[0] === node ? false : undefined });
+                removeCommaSeparatedChild(node);
         }
 
         function removeFromCatchClause(node: VariableDeclaration) {

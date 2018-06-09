@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, Node } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
-import { doTestForRemove } from "./propertyAssignmentTests";
 
 describe(nameof(ShorthandPropertyAssignment), () => {
     function getShorthandPropertyAssignemntExpression(text: string) {
@@ -106,31 +105,40 @@ describe(nameof(ShorthandPropertyAssignment), () => {
     });
 
     describe(nameof<ShorthandPropertyAssignment>(p => p.remove), () => {
-        it("should remove ShorthandPropertyAssignment", () => {
-            doTestForRemove("const prop2 = 2; const t = { prop1: {prop1: 2}, prop2, foo: {bar: '98989'} };", "prop2",
-                "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
+        function doTest(code: string, propertyToRemove: string, expectedCode: string) {
+            const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
+                SyntaxKind.ObjectLiteralExpression);
+
+            descendant.getPropertyOrThrow(propertyToRemove).remove();
+            expect(descendant.getText()).to.equal(expectedCode);
+        }
+
+        it("should remove the first", () => {
+            doTest("const t = { prop1, prop2 };", "prop1", "{ prop2 }");
         });
 
-        it("should remove ShorthandPropertyAssignment in the middle, each on own line", () => {
-            doTestForRemove(`const t = {
-    prop1: {
-        prop1: 2
-    },
-    prop2,
-    foo: {
-        bar: '98989'
-    }
-};`, "prop2", `{
-    prop1: {
-        prop1: 2
-    },
+        it("should remove in the middle", () => {
+            doTest("const t = { prop1, prop2, };", "prop2", "{ prop1 }");
+        });
 
-    foo: {
-        bar: '98989'
-    }
-}`);
+        it("should remove the last", () => {
+            doTest("const t = { prop1, prop2, prop3 };", "prop3",
+                "{ prop1, prop2 }");
+        });
 
+        it("should remove the first when on separate lines", () => {
+            doTest(`const t = {\n    prop1,\n    prop2,\n    prop3\n};`, "prop1",
+                `{\n    prop2,\n    prop3\n}`);
+        });
+
+        it("should remove in the middle when on separate lines", () => {
+            doTest(`const t = {\n    prop1,\n    prop2,\n    prop3\n};`, "prop2",
+                `{\n    prop1,\n    prop3\n}`);
+        });
+
+        it("should remove the last when on separate lines", () => {
+            doTest(`const t = {\n    prop1,\n    prop2,\n    prop3\n};`, "prop3",
+                `{\n    prop1,\n    prop2\n}`);
         });
     });
-
 });

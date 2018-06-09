@@ -1,5 +1,5 @@
-import { expect, assert } from "chai";
-import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, ObjectLiteralElementLike, Node } from "../../../../compiler";
+import { expect } from "chai";
+import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../compiler";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 import { TypeGuards } from "../../../../utils";
@@ -33,51 +33,40 @@ describe(nameof(PropertyAssignment), () => {
     });
 
     describe(nameof<PropertyAssignment>(p => p.remove), () => {
-        it("should remove first property assignment", () => {
-            doTestForRemove("const t = { prop1: 5, prop2: 6 };", "prop1", "{prop2: 6 }");
+        function doTest(code: string, propertyToRemove: string, expectedCode: string) {
+            const { sourceFile, descendant } = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
+                SyntaxKind.ObjectLiteralExpression);
+
+            descendant.getPropertyOrThrow(propertyToRemove).remove();
+            expect(descendant.getText()).to.equal(expectedCode);
+        }
+
+        it("should remove the first", () => {
+            doTest("const t = { prop1: 1, prop2: 2 };", "prop1", "{ prop2: 2 }");
         });
 
-        it("should remove last property assignment and preserve trailing comma", () => {
-            doTestForRemove("const t = { prop1: [1,2,3], prop2: [['hello']], };", "prop2", "{ prop1: [1,2,3] }");
+        it("should remove in the middle", () => {
+            doTest("const t = { prop1: 1, prop2: 2, };", "prop2", "{ prop1: 1 }");
         });
 
-        it("should remove property assignment in the middle", () => {
-            doTestForRemove("const t = { prop1: {prop1: 2}, prop2: {prop2: 3}, foo: {bar: '98989'} };", "prop2",
-                "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
+        it("should remove the last", () => {
+            doTest("const t = { prop1: 1, prop2: 2, prop3: 3 };", "prop3",
+                "{ prop1: 1, prop2: 2 }");
         });
 
-        it("should remove property assignment in the middle each on own line", () => {
-            doTestForRemove(`const t = {
-    prop1: {
-        prop1: 2
-    },
-    prop2: {
-        prop2: 3
-    },
-    foo: {
-        bar: '98989'
-    }
-};`, "prop2", `{
-    prop1: {
-        prop1: 2
-    },
+        it("should remove the first when on separate lines", () => {
+            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop1",
+                `{\n    prop2: 2,\n    prop3: 3\n}`);
+        });
 
-    foo: {
-        bar: '98989'
-    }
-}`);
+        it("should remove in the middle when on separate lines", () => {
+            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop2",
+                `{\n    prop1: 1,\n    prop3: 3\n}`);
+        });
 
+        it("should remove the last when on separate lines", () => {
+            doTest(`const t = {\n    prop1: 1,\n    prop2: 2,\n    prop3: 3\n};`, "prop3",
+                `{\n    prop1: 1,\n    prop2: 2\n}`);
         });
     });
-
 });
-
-export function doTestForRemove(code: string, propertyToRemove: string | ((p: Node) => boolean), expectedCode: string) {
-    const {sourceFile, descendant} = getInfoFromTextWithDescendant<ObjectLiteralExpression>(code,
-        SyntaxKind.ObjectLiteralExpression);
-    if (typeof propertyToRemove === "string")
-        descendant.getPropertyOrThrow(propertyToRemove).remove();
-    else
-        descendant.getProperties().find(propertyToRemove)!.remove();
-    expect(descendant.getText()).to.equal(expectedCode);
-}

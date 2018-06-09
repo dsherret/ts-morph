@@ -96,26 +96,20 @@ export function removeInterfaceMembers(classMembers: Node[]) {
     });
 }
 
-export interface RemoveCommaSeparatedChildOptions {
-    removePrecedingSpaces?: boolean;
-}
-
-/**
- * @param child Removes given node that is separated by commas from its siblings, like for example,
- * the members of a ObjectLiteralExpression.
- */
-export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparatedChildOptions) {
-    const {removePrecedingSpaces = undefined} = opts || {};
+export function removeCommaSeparatedChild(child: Node) {
     const childrenToRemove: Node[] = [child];
     const syntaxList = child.getParentSyntaxListOrThrow();
+    const isRemovingFirstChild = childrenToRemove[0] === syntaxList.getFirstChild();
 
     addNextCommaIfAble();
     addPreviousCommaIfAble();
 
     removeChildren({
         children: childrenToRemove,
-        removePrecedingSpaces: removePrecedingSpaces == null ? true : removePrecedingSpaces,
-        removeFollowingSpaces: childrenToRemove[0] === syntaxList.getFirstChild()
+        removePrecedingSpaces: !isRemovingFirstChild,
+        removeFollowingSpaces: isRemovingFirstChild,
+        removePrecedingNewLines: !isRemovingFirstChild,
+        removeFollowingNewLines: isRemovingFirstChild
     });
 
     function addNextCommaIfAble() {
