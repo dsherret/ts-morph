@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.3.0"></a>
+# [12.3.0](https://github.com/dsherret/ts-simple-ast/compare/12.2.0...12.3.0) (2018-06-09)
+
+
+### Features
+
+* [#342](https://github.com/dsherret/ts-simple-ast/issues/342) - Finish work on removing property assignment. ([9e35623](https://github.com/dsherret/ts-simple-ast/commit/9e35623))
+* [#343](https://github.com/dsherret/ts-simple-ast/issues/343) - Ability to remove more object literal expression members ([e82d45f](https://github.com/dsherret/ts-simple-ast/commit/e82d45f))
+
+
+
 <a name="12.2.0"></a>
 # [12.2.0](https://github.com/dsherret/ts-simple-ast/compare/12.1.0...12.2.0) (2018-06-04)
 
