@@ -15,27 +15,67 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getConstraintNode), () => {
+    describe(nameof<TypeParameterDeclaration>(d => d.getConstraint), () => {
         it("should return undefined when there's no constraint", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
-            expect(typeParameterDeclaration.getConstraintNode()).to.be.undefined;
+            expect(typeParameterDeclaration.getConstraint()).to.be.undefined;
         });
 
         it("should return the constraint type node when there's a constraint", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T extends string>() {}\n");
-            expect(typeParameterDeclaration.getConstraintNode()!.getText()).to.equal("string");
+            expect(typeParameterDeclaration.getConstraint()!.getText()).to.equal("string");
         });
     });
 
-    describe(nameof<TypeParameterDeclaration>(d => d.getDefaultNode), () => {
+    describe(nameof<TypeParameterDeclaration>(d => d.removeConstraint), () => {
+        function doTest(text: string, expected: string) {
+            const typeParameterDeclaration = getTypeParameterFromText(text);
+            typeParameterDeclaration.removeConstraint();
+            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest("function func<T = string>() {}", "function func<T = string>() {}");
+        });
+
+        it("should remove when it exists", () => {
+            doTest("function func<T extends string>() {}", "function func<T>() {}");
+        });
+
+        it("should remove when it and a default exists", () => {
+            doTest("function func<T extends string = string>() {}", "function func<T = string>() {}");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(d => d.getDefault), () => {
         it("should return undefined when there's no default node", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
-            expect(typeParameterDeclaration.getDefaultNode()).to.be.undefined;
+            expect(typeParameterDeclaration.getDefault()).to.be.undefined;
         });
 
         it("should return the default type node when there's a default", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T = string>() {}\n");
-            expect(typeParameterDeclaration.getDefaultNode()!.getText()).to.equal("string");
+            expect(typeParameterDeclaration.getDefault()!.getText()).to.equal("string");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(d => d.removeDefault), () => {
+        function doTest(text: string, expected: string) {
+            const typeParameterDeclaration = getTypeParameterFromText(text);
+            typeParameterDeclaration.removeDefault();
+            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should do nothing when it doesn't exist", () => {
+            doTest("function func<T extends string>() {}", "function func<T extends string>() {}");
+        });
+
+        it("should remove when it exists", () => {
+            doTest("function func<T = string>() {}", "function func<T>() {}");
+        });
+
+        it("should remove when it and a constraint exists", () => {
+            doTest("function func<T extends string = string>() {}", "function func<T extends string>() {}");
         });
     });
 
