@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.3.0"></a>
+# [12.3.0](https://github.com/dsherret/ts-simple-ast/compare/12.2.0...12.3.0) (2018-06-09)
+
+
+### Features
+
+* [#342](https://github.com/dsherret/ts-simple-ast/issues/342) - Ability to remove more object literal expression members ([e82d45f](https://github.com/dsherret/ts-simple-ast/commit/e82d45f),
+  [9e35623](https://github.com/dsherret/ts-simple-ast/commit/9e35623)) -- Thanks [@cancerberoSgx](https://github.com/cancerberoSgx) for the help!
+
+### Bug Fixes
+
+* [#340](https://github.com/dsherret/ts-simple-ast/pull/340) - Fix insert/remove support for Block ([@cancerberoSgx](https://github.com/cancerberoSgx).
+
 <a name="12.2.0"></a>
 # [12.2.0](https://github.com/dsherret/ts-simple-ast/compare/12.1.0...12.2.0) (2018-06-04)
 
