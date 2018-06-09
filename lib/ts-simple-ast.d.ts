@@ -5205,7 +5205,7 @@ declare const PropertyAssignmentBase: Constructor<InitializerGetExpressionableNo
 
 export declare class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
-     * Removes the initailizer and returns the new shorthand property assignment.
+     * Removes the initializer and returns the new shorthand property assignment.
      *
      * Note: The current node will no longer be valid because it's no longer a property assignment.
      */
@@ -5220,6 +5220,10 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
      * @param writerFunction - Writer function to set the initializer with.
      */
     setInitializer(writerFunction: WriterFunction): this;
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const ShorthandPropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
@@ -5258,11 +5262,19 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
      * @param text - New text to set for the initializer.
      */
     setInitializer(text: string): PropertyAssignment;
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof Node;
 
 export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const OmittedExpressionBase: typeof Expression;
