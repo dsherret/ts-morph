@@ -1,8 +1,8 @@
 import * as errors from "../../../errors";
-import { insertIntoParentTextRange, removeChildren } from "../../../manipulation";
+import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../../manipulation";
 import { SyntaxKind, ts } from "../../../typescript";
 import { InitializerGetExpressionableNode, NamedNode, QuestionTokenableNode } from "../../base";
-import { Node } from "../../common";
+import { Node } from "../../common/Node";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
 
@@ -86,5 +86,12 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
         });
 
         return parent.getChildAtIndexIfKindOrThrow(childIndex, SyntaxKind.PropertyAssignment) as PropertyAssignment;
+    }
+
+    /**
+     * Removes this property.
+     */
+    remove() {
+        removeCommaSeparatedChild(this);
     }
 }

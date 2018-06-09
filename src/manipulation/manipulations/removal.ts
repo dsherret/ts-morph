@@ -100,6 +100,10 @@ export interface RemoveCommaSeparatedChildOptions {
     removePrecedingSpaces?: boolean;
 }
 
+/**
+ * @param child Removes given node that is separated by commas from its siblings, like for example,
+ * the members of a ObjectLiteralExpression.
+ */
 export function removeCommaSeparatedChild(child: Node, opts?: RemoveCommaSeparatedChildOptions) {
     const {removePrecedingSpaces = undefined} = opts || {};
     const childrenToRemove: Node[] = [child];
