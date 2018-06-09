@@ -124,12 +124,17 @@ describe(nameof(TypeParameteredNode), () => {
             doTest("function identifier<T, U>() {}", 1, { name: "V", constraint: "string" }, "function identifier<T, V extends string, U>() {}");
         });
 
+        it("should insert with default", () => {
+            doTest("function identifier<T, U>() {}", 1, { name: "V", default: "string" }, "function identifier<T, V = string, U>() {}");
+        });
+
         it("should insert all the properties of the structure", () => {
             const structure: MakeRequired<TypeParameterDeclarationStructure> = {
                 name: "V",
-                constraint: "string"
+                constraint: "string",
+                default: "number"
             };
-            doTest("function identifier() {}", 0, structure, "function identifier<V extends string>() {}");
+            doTest("function identifier() {}", 0, structure, "function identifier<V extends string = number>() {}");
         });
     });
 
