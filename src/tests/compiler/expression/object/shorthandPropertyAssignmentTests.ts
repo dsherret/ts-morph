@@ -110,6 +110,27 @@ describe(nameof(ShorthandPropertyAssignment), () => {
             doTestForRemove("const prop2 = 2; const t = { prop1: {prop1: 2}, prop2, foo: {bar: '98989'} };", "prop2",
                 "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
         });
+
+        it("should remove ShorthandPropertyAssignment in the middle, each on own line", () => {
+            doTestForRemove(`const t = {
+    prop1: {
+        prop1: 2
+    },
+    prop2,
+    foo: {
+        bar: '98989'
+    }
+};`, "prop2", `{
+    prop1: {
+        prop1: 2
+    },
+
+    foo: {
+        bar: '98989'
+    }
+}`);
+
+        });
     });
 
 });

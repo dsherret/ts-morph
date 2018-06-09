@@ -45,6 +45,29 @@ describe(nameof(PropertyAssignment), () => {
             doTestForRemove("const t = { prop1: {prop1: 2}, prop2: {prop2: 3}, foo: {bar: '98989'} };", "prop2",
                 "{ prop1: {prop1: 2}, foo: {bar: '98989'} }");
         });
+
+        it("should remove property assignment in the middle each on own line", () => {
+            doTestForRemove(`const t = {
+    prop1: {
+        prop1: 2
+    },
+    prop2: {
+        prop2: 3
+    },
+    foo: {
+        bar: '98989'
+    }
+};`, "prop2", `{
+    prop1: {
+        prop1: 2
+    },
+
+    foo: {
+        bar: '98989'
+    }
+}`);
+
+        });
     });
 
 });
