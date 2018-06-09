@@ -27,6 +27,30 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
+    describe(nameof<TypeParameterDeclaration>(d => d.setConstraint), () => {
+        function doTest(text: string, name: string, expected: string) {
+            const typeParameterDeclaration = getTypeParameterFromText(text);
+            typeParameterDeclaration.setConstraint(name);
+            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set when it doesn't exist", () => {
+            doTest("function func<T>() {}", "string", "function func<T extends string>() {}");
+        });
+
+        it("should set when it exists", () => {
+            doTest("function func<T extends number>() {}", "string", "function func<T extends string>() {}");
+        });
+
+        it("should remove when passing in an empty string", () => {
+            doTest("function func<T extends number>() {}", "", "function func<T>() {}");
+        });
+
+        it("should set when it has a default exists", () => {
+            doTest("function func<T = number>() {}", "string", "function func<T extends string = number>() {}");
+        });
+    });
+
     describe(nameof<TypeParameterDeclaration>(d => d.removeConstraint), () => {
         function doTest(text: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
@@ -56,6 +80,30 @@ describe(nameof(TypeParameterDeclaration), () => {
         it("should return the default type node when there's a default", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T = string>() {}\n");
             expect(typeParameterDeclaration.getDefault()!.getText()).to.equal("string");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(d => d.setDefault), () => {
+        function doTest(text: string, name: string, expected: string) {
+            const typeParameterDeclaration = getTypeParameterFromText(text);
+            typeParameterDeclaration.setDefault(name);
+            expect(typeParameterDeclaration.sourceFile.getFullText()).to.equal(expected);
+        }
+
+        it("should set when it doesn't exist", () => {
+            doTest("function func<T>() {}", "string", "function func<T = string>() {}");
+        });
+
+        it("should set when it exists", () => {
+            doTest("function func<T = number>() {}", "string", "function func<T = string>() {}");
+        });
+
+        it("should remove when passing in an empty string", () => {
+            doTest("function func<T = number>() {}", "", "function func<T>() {}");
+        });
+
+        it("should set when it has a constraint exists", () => {
+            doTest("function func<T extends number>() {}", "string", "function func<T extends number = string>() {}");
         });
     });
 

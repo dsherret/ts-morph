@@ -1,5 +1,6 @@
-import { removeChildren, removeCommaSeparatedChild } from "../../manipulation";
+import { removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
+import { StringUtils } from "../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
@@ -19,6 +20,32 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getConstraint(): TypeNode | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
+    }
+
+    /**
+     * Sets the type parameter constraint.
+     * @param text - Text to set as the constraint.
+     */
+    setConstraint(text: string) {
+        if (StringUtils.isNullOrWhitespace(text)) {
+            this.removeConstraint();
+            return this;
+        }
+
+        const constraint = this.getConstraint();
+        if (constraint != null) {
+            constraint.replaceWithText(text);
+            return this;
+        }
+
+        const nameNode = this.getNameNode();
+        insertIntoParentTextRange({
+            parent: this,
+            insertPos: nameNode.getEnd(),
+            newText: ` extends ${text}`
+        });
+
+        return this;
     }
 
     /**
@@ -42,6 +69,32 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getDefaultNode(): TypeNode | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.default);
+    }
+
+    /**
+     * Sets the type parameter default type node.
+     * @param text - Text to set as the default type node.
+     */
+    setDefault(text: string) {
+        if (StringUtils.isNullOrWhitespace(text)) {
+            this.removeDefault();
+            return this;
+        }
+
+        const defaultNode = this.getDefault();
+        if (defaultNode != null) {
+            defaultNode.replaceWithText(text);
+            return this;
+        }
+
+        const insertAfterNode = this.getConstraint() || this.getNameNode();
+        insertIntoParentTextRange({
+            parent: this,
+            insertPos: insertAfterNode.getEnd(),
+            newText: ` = ${text}`
+        });
+
+        return this;
     }
 
     /**
