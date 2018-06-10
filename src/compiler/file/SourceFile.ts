@@ -504,7 +504,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add an import.
+     * Adds an import.
      * @param structure - Structure that represents the import.
      */
     addImportDeclaration(structure: ImportDeclarationStructure) {
@@ -512,7 +512,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add imports.
+     * Adds imports.
      * @param structures - Structures that represent the imports.
      */
     addImportDeclarations(structures: ImportDeclarationStructure[]) {
