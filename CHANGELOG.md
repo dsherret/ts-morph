@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.4.0"></a>
+# [12.4.0](https://github.com/dsherret/ts-simple-ast/compare/12.2.0...12.4.0) (2018-06-10)
+
+
+### Features
+
+* [#342](https://github.com/dsherret/ts-simple-ast/issues/342) - Finish work on removing property assignment. ([9e35623](https://github.com/dsherret/ts-simple-ast/commit/9e35623))
+* [#343](https://github.com/dsherret/ts-simple-ast/issues/343) - Ability to remove more object literal expression members ([e82d45f](https://github.com/dsherret/ts-simple-ast/commit/e82d45f))
+* Add ability to add/insert type parameters with a default type node. ([cd05c3f](https://github.com/dsherret/ts-simple-ast/commit/cd05c3f))
+* Add SourceFile.isFromExternalLibrary ([136a2da](https://github.com/dsherret/ts-simple-ast/commit/136a2da))
+* Add Symbol.getEscapedName() ([4360bab](https://github.com/dsherret/ts-simple-ast/commit/4360bab))
+* Add TypeParameterDeclaration - getConstraintOrThrow() and getDefaultOrThrow() ([8e8166b](https://github.com/dsherret/ts-simple-ast/commit/8e8166b))
+* TypeParameterDeclaration - Add .removeDefault() and .removeConstraint() ([7a9d329](https://github.com/dsherret/ts-simple-ast/commit/7a9d329))
+* TypeParameterDeclaration - Add .setDefault(text) and .setConstraint(text) ([de9d91b](https://github.com/dsherret/ts-simple-ast/commit/de9d91b))
+
+
+
 <a name="12.3.0"></a>
 # [12.3.0](https://github.com/dsherret/ts-simple-ast/compare/12.2.0...12.3.0) (2018-06-09)
 
