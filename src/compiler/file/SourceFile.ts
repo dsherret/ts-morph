@@ -482,6 +482,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets if the source file is from an external library.
+     */
+    isFromExternalLibrary() {
+        return this.global.program.isSourceFileFromExternalLibrary(this);
+    }
+
+    /**
      * Gets if this source file has been saved or if the latest changes have been saved.
      */
     isSaved() {
