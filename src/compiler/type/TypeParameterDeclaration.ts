@@ -1,5 +1,6 @@
 import { removeChildren, removeCommaSeparatedChild, insertIntoParentTextRange } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
+import * as errors from "../../errors";
 import { StringUtils } from "../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
@@ -20,6 +21,13 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getConstraint(): TypeNode | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.constraint);
+    }
+
+    /**
+     * Gets the constraint of the type parameter or throws if it doesn't exist.
+     */
+    getConstraintOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getConstraint(), "Expected to find the type parameter's constraint.");
     }
 
     /**
@@ -61,6 +69,13 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
      */
     getDefault(): TypeNode | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.default);
+    }
+
+    /**
+     * Gets the default node of the type parameter or throws if it doesn't exist.
+     */
+    getDefaultOrThrow() {
+        return errors.throwIfNullOrUndefined(this.getDefault(), "Expected to find the type parameter's default.");
     }
 
     /**

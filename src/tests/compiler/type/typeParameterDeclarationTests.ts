@@ -27,6 +27,18 @@ describe(nameof(TypeParameterDeclaration), () => {
         });
     });
 
+    describe(nameof<TypeParameterDeclaration>(d => d.getConstraintOrThrow), () => {
+        it("should throw when there's no constraint", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
+            expect(() => typeParameterDeclaration.getConstraintOrThrow()).to.throw();
+        });
+
+        it("should return the constraint type node when there's a constraint", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T extends string>() {}\n");
+            expect(typeParameterDeclaration.getConstraintOrThrow().getText()).to.equal("string");
+        });
+    });
+
     describe(nameof<TypeParameterDeclaration>(d => d.setConstraint), () => {
         function doTest(text: string, name: string, expected: string) {
             const typeParameterDeclaration = getTypeParameterFromText(text);
@@ -80,6 +92,18 @@ describe(nameof(TypeParameterDeclaration), () => {
         it("should return the default type node when there's a default", () => {
             const typeParameterDeclaration = getTypeParameterFromText("function func<T = string>() {}\n");
             expect(typeParameterDeclaration.getDefault()!.getText()).to.equal("string");
+        });
+    });
+
+    describe(nameof<TypeParameterDeclaration>(d => d.getDefault), () => {
+        it("should throw when there's no default node", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T>() {}\n");
+            expect(() => typeParameterDeclaration.getDefaultOrThrow()).to.throw();
+        });
+
+        it("should return the default type node when there's a default", () => {
+            const typeParameterDeclaration = getTypeParameterFromText("function func<T = string>() {}\n");
+            expect(typeParameterDeclaration.getDefaultOrThrow().getText()).to.equal("string");
         });
     });
 
