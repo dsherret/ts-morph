@@ -8,7 +8,7 @@ import { NamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { TypeParameterDeclaration } from "../type/TypeParameterDeclaration";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypeParameteredNodeExtensionType = Node<ts.Node & { typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>; }>;
 

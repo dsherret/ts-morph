@@ -7,7 +7,7 @@ import { StringUtils } from "../../../utils";
 import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
-import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 

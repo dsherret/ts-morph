@@ -5,7 +5,7 @@ import { ts } from "../../../typescript";
 import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
-import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 // todo: make name optional, but in a different class because TypeParameterDeclaration expects a name
 // (maybe NameableNode and rename some of the other "-ed" classes)

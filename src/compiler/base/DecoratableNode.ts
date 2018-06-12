@@ -7,7 +7,7 @@ import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForName
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Decorator } from "../decorator/Decorator";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type DecoratableNodeExtensionType = Node<ts.Node & { decorators: ts.NodeArray<ts.Decorator> | undefined; }>;
 
@@ -127,7 +127,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
 
         getStructure() {
             return callBaseGetStructure<DecoratableNodeStructure>(Base.prototype, this, {
-                decorators: this.getDecorators().map(d=>d.getStructure())
+                decorators: this.getDecorators().map(d => d.getStructure())
             });
         }
     };

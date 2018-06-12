@@ -5,7 +5,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ScopeableNodeExtensionType = Node & ModifierableNode;
 

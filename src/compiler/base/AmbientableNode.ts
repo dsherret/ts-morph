@@ -6,7 +6,7 @@ import { isNodeAmbientOrInAmbientContext, TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type AmbientableNodeExtensionType = Node & ModifierableNode;
 

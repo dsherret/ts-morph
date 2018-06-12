@@ -6,7 +6,7 @@ import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode } from
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
-import { callBaseGetStructure, joinStructures } from '../callBaseGetStructure';
+import { callBaseGetStructure, joinStructures } from "../callBaseGetStructure";
 
 export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))))));
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
@@ -73,14 +73,14 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
     remove() {
         removeOverloadableClassMember(this);
     }
-    
+
     /**
      * Gets the structure equivalent to this node
      */
-    getStructure() : ConstructorDeclarationStructure {
+    getStructure(): ConstructorDeclarationStructure {
         const structure = joinStructures([ChildOrderableNode, TextInsertableNode, OverloadableNode, ScopedNode, FunctionLikeDeclaration, BodyableNode], this);
         return Object.assign(structure, {
-            overloads: this.getOverloads().map(o => (o.getStructure() as ConstructorDeclarationOverloadStructure)),            
+            overloads: this.getOverloads().map(o => (o.getStructure() as ConstructorDeclarationOverloadStructure))
         }) as ConstructorDeclarationStructure;
     }
 }

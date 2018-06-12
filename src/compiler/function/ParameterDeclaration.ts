@@ -4,7 +4,7 @@ import { ts, SyntaxKind } from "../../typescript";
 import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common/Node";
-import { callBaseGetStructure, joinStructures } from '../callBaseGetStructure';
+import { callBaseGetStructure, joinStructures } from "../callBaseGetStructure";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
@@ -80,11 +80,12 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
     }
 
     getStructure() {
-        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if there is a more straightforward way of doing this - So I'm doing it "manually" - see joinStructures()
+        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if there is a more straightforward way
+        // of doing this - So I'm doing it "manually" - see joinStructures()
 
         // TODO: if this is the final solution - then the information in the following array is duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
-        return joinStructures([QuestionTokenableNode, DecoratableNode, ScopeableNode, ReadonlyableNode, ModifierableNode, 
+        return joinStructures([QuestionTokenableNode, DecoratableNode, ScopeableNode, ReadonlyableNode, ModifierableNode,
             TypedNode, InitializerExpressionableNode, DeclarationNamedNode], this);
-        
-    } 
+
+    }
 }

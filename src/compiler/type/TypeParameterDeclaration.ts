@@ -5,8 +5,8 @@ import { StringUtils } from "../../utils";
 import { NamedNode } from "../base";
 import { Node } from "../common";
 import { TypeNode } from "./TypeNode";
-import { TypeParameterDeclarationStructure } from '../../structures';
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { TypeParameterDeclarationStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const TypeParameterDeclarationBase = NamedNode(Node);
 export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
@@ -148,7 +148,8 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     getStructure() {
         return callBaseGetStructure<TypeParameterDeclarationStructure>({}, this, {
             constraint: this.getConstraintNode() ? this.getConstraintNode()!.getText() : undefined,
-            name: this.getName()
+            name: this.getName(),
+            default: this.getDefault() ? this.getDefault()!.getText() : undefined
         });
     }
 }

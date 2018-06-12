@@ -8,7 +8,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ImplementsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 

@@ -130,7 +130,6 @@ describe(nameof(ParameterDeclaration), () => {
         });
     });
 
-
     describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, nameToTest: string, expectedStructure: any) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
@@ -147,13 +146,13 @@ describe(nameof(ParameterDeclaration), () => {
         });
 
         it("should generate structure with question token if appropriate", () => {
-            doTest("function g(matrix? : boolean[][]) {}", "matrix", 
-                {hasQuestionToken: true, name: 'matrix', type: 'boolean[][]'});
+            doTest("function g(matrix? : boolean[][]) {}", "matrix",
+                {hasQuestionToken: true, name: "matrix", type: "boolean[][]"});
         });
 
         it("should generate structure with initializer if appropriate", () => {
-            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg", 
-                {name: 'msg', type: 'string', initializer: "'hello world'"});
+            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg",
+                {name: "msg", type: "string", initializer: "'hello world'"});
         });
     });
 

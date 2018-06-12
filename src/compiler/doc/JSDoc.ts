@@ -5,8 +5,8 @@ import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
-import { JSDocStructure } from '../../structures';
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { JSDocStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 /**
  * JS doc node.
@@ -83,7 +83,6 @@ export class JSDoc extends Node<ts.JSDoc> {
             removeFollowingNewLines: true
         });
     }
-
 
     getStructure() {
         return callBaseGetStructure<JSDocStructure>({}, this, {

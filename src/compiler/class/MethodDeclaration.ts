@@ -7,7 +7,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
-import { joinStructures } from '../callBaseGetStructure';
+import { joinStructures } from "../callBaseGetStructure";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
@@ -81,11 +81,11 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
     /**
      * Gets the structure equivalent to this node
      */
-    getStructure() : MethodDeclarationStructure {
-        const structure = joinStructures([ChildOrderableNode, TextInsertableNode, OverloadableNode, BodyableNode, DecoratableNode, AbstractableNode, ScopedNode, StaticableNode, AsyncableNode, GeneratorableNode, FunctionLikeDeclaration, PropertyNamedNode], this);
+    getStructure(): MethodDeclarationStructure {
+        const structure = joinStructures([ChildOrderableNode, TextInsertableNode, OverloadableNode, BodyableNode, DecoratableNode, AbstractableNode,
+            ScopedNode, StaticableNode, AsyncableNode, GeneratorableNode, FunctionLikeDeclaration, PropertyNamedNode], this);
         return Object.assign(structure, {
-            overloads: this.getOverloads().map(o => (o.getStructure() as MethodDeclarationOverloadStructure)),            
+            overloads: this.getOverloads().map(o => (o.getStructure() as MethodDeclarationOverloadStructure))
         });
     }
-    
 }

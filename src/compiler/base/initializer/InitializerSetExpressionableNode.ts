@@ -7,7 +7,7 @@ import { getTextFromStringOrWriter } from "../../../utils";
 import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
-import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
 

@@ -108,13 +108,11 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getStructure() {
-            
-            // TODO: This complication is because we need to remove body text wrapping braces. 
-            // if not they will be duplicatedwhen printing a functiondeclaration and others, not sure why. 
-            // Investigate. 
+            // TODO: This complication is because we need to remove body text wrapping braces.
+            // If not they will be duplicated when printing a functiondeclaration and others, not sure why. Investigate.
 
             const body = this.getBody();
-            const structure: MakeRequired<BodyableNodeStructure> = { bodyText: undefined }
+            const structure: MakeRequired<BodyableNodeStructure> = { bodyText: undefined };
             if (body) {
                 const openBrace = body.getFirstChildByKind(SyntaxKind.OpenBraceToken);
                 const closeBrace = body.getFirstChildByKind(SyntaxKind.CloseBraceToken);
@@ -127,7 +125,8 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                 }
             }
             return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, structure);
-            
+
+            // TODO: if it were not because of this issue then it should be as easy as :
             // return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
             //     bodyText: body ? body.getText() : undefined
             // });

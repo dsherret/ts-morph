@@ -278,7 +278,6 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             });
     }
 
-
     getStructure(): DecoratorStructure {
         return {
             name: this.getName(),

@@ -6,7 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { NamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type GeneratorableNodeExtensionType = Node<ts.Node & { asteriskToken?: ts.AsteriskToken; }>;
 

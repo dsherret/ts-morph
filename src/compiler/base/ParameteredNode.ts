@@ -7,7 +7,7 @@ import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForName
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
