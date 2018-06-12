@@ -1,15 +1,17 @@
 {
   "name": "ts-simple-ast",
-  "version": "12.2.0",
+  "version": "12.4.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
   "scripts": {
     "dopublish": "npm run type-check-docs && npm run package && npm run publish-code-verification && npm publish",
-    "lint": "tslint src/**/*.ts scripts/**/*.ts",
+    "lint": "npm run lint-src && npm run lint-scripts",
+    "lint-src": "tslint \"src/**/*.ts\"",
+    "lint-scripts": "tslint \"scripts/**/*.ts\"",
     "build": "rimraf dist && npx ttsc",
-    "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
-    "test-fast": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
+    "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
+    "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
     "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
     "refactor": "ts-node scripts/refactor --ignoreDiagnostics",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
@@ -87,8 +89,8 @@
     "source-map-support": "^0.5.5",
     "ts-nameof": "^1.0.0",
     "ts-node": "^6.0.2",
-    "ts-simple-ast": "12.0.0",
-    "tslint": "^5.8.0",
+    "ts-simple-ast": "12.2.0",
+    "tslint": "^5.10.0",
     "ttypescript": "1.4.6"
   },
   "standard-version": {

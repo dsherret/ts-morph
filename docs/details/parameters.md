@@ -12,7 +12,7 @@ const parameters = functionDeclaration.getParameters();
 
 ### Inserting/Adding
 
-Insert or add rest parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`.
+Insert or add parameters by calling `insertParameter()`, `insertParameters()`, `addParameter()`, or `addParameters()`.
 
 For example:
 

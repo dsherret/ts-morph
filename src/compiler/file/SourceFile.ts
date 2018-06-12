@@ -482,6 +482,13 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
+     * Gets if the source file is from an external library.
+     */
+    isFromExternalLibrary() {
+        return this.global.program.isSourceFileFromExternalLibrary(this);
+    }
+
+    /**
      * Gets if this source file has been saved or if the latest changes have been saved.
      */
     isSaved() {
@@ -497,7 +504,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add an import.
+     * Adds an import.
      * @param structure - Structure that represents the import.
      */
     addImportDeclaration(structure: ImportDeclarationStructure) {
@@ -505,7 +512,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Add imports.
+     * Adds imports.
      * @param structures - Structures that represent the imports.
      */
     addImportDeclarations(structures: ImportDeclarationStructure[]) {

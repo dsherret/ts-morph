@@ -18,7 +18,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
         const declaration = this._getTypeParameterDeclaration();
         if (declaration == null)
             return undefined;
-        const constraintNode = declaration.getConstraintNode();
+        const constraintNode = declaration.getConstraint();
         if (constraintNode == null)
             return undefined;
         return this.global.typeChecker.getTypeAtLocation(constraintNode);
@@ -38,7 +38,7 @@ export class TypeParameter extends Type<ts.TypeParameter> {
         const declaration = this._getTypeParameterDeclaration();
         if (declaration == null)
             return undefined;
-        const defaultNode = declaration.getDefaultNode();
+        const defaultNode = declaration.getDefault();
         if (defaultNode == null)
             return undefined;
         return this.global.typeChecker.getTypeAtLocation(defaultNode);

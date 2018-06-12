@@ -22,5 +22,7 @@ export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePr
         writer.write(structure.name);
         if (structure.constraint != null && structure.constraint.length > 0)
             writer.write(` extends ${structure.constraint}`);
+        if (structure.default != null && structure.default.length > 0)
+            writer.write(` = ${structure.default}`);
     }
 }

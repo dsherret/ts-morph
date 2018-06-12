@@ -4345,6 +4345,10 @@ export declare class Symbol {
      */
     getName(): string;
     /**
+     * Gets the escaped name.
+     */
+    getEscapedName(): string;
+    /**
      * Gets the aliased symbol.
      */
     getAliasedSymbol(): Symbol | undefined;
@@ -5205,7 +5209,7 @@ declare const PropertyAssignmentBase: Constructor<InitializerGetExpressionableNo
 
 export declare class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssignment> {
     /**
-     * Removes the initailizer and returns the new shorthand property assignment.
+     * Removes the initializer and returns the new shorthand property assignment.
      *
      * Note: The current node will no longer be valid because it's no longer a property assignment.
      */
@@ -5220,6 +5224,10 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
      * @param writerFunction - Writer function to set the initializer with.
      */
     setInitializer(writerFunction: WriterFunction): this;
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const ShorthandPropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
@@ -5258,11 +5266,19 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
      * @param text - New text to set for the initializer.
      */
     setInitializer(text: string): PropertyAssignment;
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof Node;
 
 export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
+    /**
+     * Removes this property.
+     */
+    remove(): void;
 }
 
 declare const OmittedExpressionBase: typeof Expression;
@@ -5903,16 +5919,20 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     isDeclarationFile(): boolean;
     /**
+     * Gets if the source file is from an external library.
+     */
+    isFromExternalLibrary(): boolean;
+    /**
      * Gets if this source file has been saved or if the latest changes have been saved.
      */
     isSaved(): boolean;
     /**
-     * Add an import.
+     * Adds an import.
      * @param structure - Structure that represents the import.
      */
     addImportDeclaration(structure: ImportDeclarationStructure): ImportDeclaration;
     /**
-     * Add imports.
+     * Adds imports.
      * @param structures - Structures that represent the imports.
      */
     addImportDeclarations(structures: ImportDeclarationStructure[]): ImportDeclaration[];
@@ -8093,6 +8113,11 @@ export declare class Program {
      * Gets the emit module resolution kind.
      */
     getEmitModuleResolutionKind(): ModuleResolutionKind;
+    /**
+     * Gets if the provided source file is from an external library.
+     * @param sourceFile - Source file.
+     */
+    isSourceFileFromExternalLibrary(sourceFile: SourceFile): boolean;
 }
 
 /**
@@ -8863,12 +8888,48 @@ declare const TypeParameterDeclarationBase: Constructor<NamedNode> & typeof Node
 export declare class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.TypeParameterDeclaration> {
     /**
      * Gets the constraint node of the type parameter.
+     * @deprecated - Use .getConstraint().
      */
     getConstraintNode(): TypeNode | undefined;
     /**
+     * Gets the constraint of the type parameter.
+     */
+    getConstraint(): TypeNode | undefined;
+    /**
+     * Gets the constraint of the type parameter or throws if it doesn't exist.
+     */
+    getConstraintOrThrow(): TypeNode<ts.TypeNode>;
+    /**
+     * Sets the type parameter constraint.
+     * @param text - Text to set as the constraint.
+     */
+    setConstraint(text: string): this;
+    /**
+     * Removes the constraint type node.
+     */
+    removeConstraint(): this;
+    /**
      * Gets the default node of the type parameter.
      */
+    getDefault(): TypeNode | undefined;
+    /**
+     * Gets the default node of the type parameter or throws if it doesn't exist.
+     */
+    getDefaultOrThrow(): TypeNode<ts.TypeNode>;
+    /**
+     * Gets the default node of the type parameter.
+     * @deprecated Use .getDefault().
+     */
     getDefaultNode(): TypeNode | undefined;
+    /**
+     * Sets the type parameter default type node.
+     * @param text - Text to set as the default type node.
+     */
+    setDefault(text: string): this;
+    /**
+     * Removes the default type node.
+     */
+    removeDefault(): this;
     /**
      * Removes this type parameter.
      */
@@ -9343,6 +9404,7 @@ export interface TypeAliasDeclarationStructure extends NamedNodeStructure, Typed
 
 export interface TypeParameterDeclarationStructure extends NamedNodeStructure {
     constraint?: string;
+    default?: string;
 }
 
 export * from "./typescript/typescript";
