@@ -28,7 +28,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         this.printOverloads(writer, structure.name, getOverloadStructures());
         this.printBase(writer, structure.name, structure);
 
-        if (this.options.isAmbient)
+        if (this.options.isAmbient || structure.isAbstract)
             writer.write(";");
         else
             writer.spaceIfLastNot().inlineBlock(() => {

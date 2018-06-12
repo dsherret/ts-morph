@@ -111,6 +111,23 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
+    describe(nameof<MethodDeclaration>(m => m.isOverload), () => {
+        function doTest(startingCode: string, methodName: string, expected: boolean) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const method = firstChild.getInstanceMethods().find(m => m.getName() === methodName);
+            expect(method).to.not.be.undefined;
+            expect(method!.isOverload()).to.be.equals(expected);
+        }
+
+        xit("should be false for a non overloaded abstract method ?", () => {
+            doTest(`
+abstract class Person {
+    abstract eat(food: number[]): void;
+}
+            `, "eat", false);
+        });
+    });
+
     describe(nameof<MethodDeclaration>(m => m.remove), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
@@ -212,7 +229,7 @@ describe(nameof(MethodDeclaration), () => {
             expect(Object.assign({}, structure, {parameters: undefined})).to.contain(Object.assign({}, expectedStructure, {parameters: undefined}));
             expect(expectedStructure.parameters && expectedStructure.parameters.length).to.equals(structure.parameters && structure.parameters.length);
             (expectedStructure.parameters || []).forEach((expectedParameter, i) => {
-                expect(structure.parameters![i], `${i}th parameter`).to.contain(expectedParameter);
+                expect(structure.parameters![i], `${i}th parameter of method ${structure.name}`).to.contain(expectedParameter);
             });
             // and also recreate the AST using structure and compare getText() of generated code with original node's
             const aux = sourceFile.addStatements("class __AuxClass{}");

@@ -1350,14 +1350,15 @@ class Child extends Mixin(Base) {}
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: ClassDeclarationStructure) {
-            const {descendant, sourceFile, project} = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
+        function doTest(code: string, expectedStructure?: ClassDeclarationStructure) {
+            const {descendant, project} = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
-            expect(Object.assign({}, structure, {methods: undefined, properties: undefined, ctors: undefined})).to.contain(
-                Object.assign({}, expectedStructure, {methods: undefined, properties: undefined, ctors: undefined}));
+            if (expectedStructure) {
+                expect(Object.assign({}, structure, {methods: undefined, properties: undefined, ctors: undefined})).to.contain(
+                    Object.assign({}, expectedStructure, {methods: undefined, properties: undefined, ctors: undefined}));
+            }
             const sourceFile2 = project.createSourceFile("__tmp_sourceFile1.ts", "", {overwrite: true});
             const generatedClassDecl = sourceFile2.addClass(structure);
-            // console.log(generatedClassDecl.getText(), descendant.getText());
             expect(generatedClassDecl.getText().replace(/\s+/gm, "")).equals(descendant.getText().replace(/\s+/gm, ""));
             return;
         }
@@ -1372,9 +1373,9 @@ class FirstClass {
 
         it("should generate class structure with correct method and constructors overloads", () => {
             doTest(`
-class SecondClass {
+class FirstClass {
     constructor(property1: string);
-    constructor(public property2: string, arg2: number= 2) {
+    constructor(public property2: string, arg2: number = 2) {
         this.overloadedMethod1(arg2);
     }
     overloadedMethod1(a: number): string;
@@ -1382,20 +1383,29 @@ class SecondClass {
         return "";
     }
 }
-`,
-            {name: "SecondClass"});
+`
+            );
         });
 
+        it("should generate class structure with getters & setters property accessors and abstract members", () => {
+            doTest(`
+abstract class Person {
+    private _name: string;
+    public readonly createDate: Date = new Date();
+    static DEFAULT_NAME: string = "unnamed";
+    constructor(name: string= Person.DEFAULT_NAME) {
+        this._name = name;
+    }
+    public get name(): string {
+        return this._name;
+    }
+    public set name(value: string) {
+        this._name = value;
+    }
+    abstract eat(food: number[]): void;
+}
+`
+            );
+        });
     });
 });
-
-class SecondClass {
-    constructor(property1: string);
-    constructor(public property2: string, arg2: number= 2) {
-        this.overloadedMethod1(arg2);
-    }
-    overloadedMethod1(a: number): string;
-    overloadedMethod1(a: number, opts: {o: Date} = {o: new Date()}): string {
-        return "";
-    }
-}

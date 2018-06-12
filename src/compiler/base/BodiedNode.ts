@@ -5,6 +5,7 @@ import { ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type BodiedNodeExtensionType = Node<ts.Node & { body: ts.Node; }>;
 
@@ -48,6 +49,17 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
                 this.setBodyText(structure.bodyText);
 
             return this;
+        }
+
+        getStructure() {
+            let bodyText = this.getBody().getText().trim();
+            if (bodyText.startsWith("{"))
+                bodyText = bodyText.substring(1, bodyText.length);
+            if (bodyText.endsWith("}"))
+                bodyText = bodyText.substring(0, bodyText.length - 1);
+            return callBaseGetStructure<BodiedNodeStructure>(Base.prototype, this, {
+                bodyText
+            });
         }
     };
 }
