@@ -1,8 +1,9 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, ParameterDeclaration } from "../../../compiler";
+import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../structures";
 import { ArrayUtils } from "../../../utils";
-import { getInfoFromText } from "../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { SyntaxKind } from "../../../typescript";
 
 describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.isRestParameter), () => {
@@ -131,28 +132,25 @@ describe(nameof(ParameterDeclaration), () => {
     });
 
     describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, nameToTest: string, expectedStructure: any) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
-            const param = firstChild.getParameterOrThrow(nameToTest);
-            const paramStructure = param.getStructure();
-            // console.log('seba', param.getText(), paramStructure);
-            Object.keys(expectedStructure).forEach(structureKey => {
-                expect(paramStructure[structureKey]).equals(expectedStructure[structureKey]);
-            });
+        function doTest(code: string, nameToTest: string, expectedStructure: ParameterDeclarationStructure) {
+            const {descendant} = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
+            const paramStructure = descendant.getStructure();
+            expect(paramStructure).to.contain(expectedStructure);
         }
 
         it("should generate structure with correct name and type", () => {
-            doTest("function f(param: string[]) {}", "param", {name: "param", type: "string[]"});
+            const expected: ParameterDeclarationStructure = {
+                name: "param", type: "string[]", hasQuestionToken: false, isRestParameter: false, scope: undefined
+            };
+            doTest("function f(param: string[]) {}", "param", {
+                name: "param", type: "string[]", hasQuestionToken: false, isRestParameter: false, scope: undefined
+            });
         });
 
-        it("should generate structure with question token if appropriate", () => {
-            doTest("function g(matrix? : boolean[][]) {}", "matrix",
-                {hasQuestionToken: true, name: "matrix", type: "boolean[][]"});
-        });
-
-        it("should generate structure with initializer if appropriate", () => {
-            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg",
-                {name: "msg", type: "string", initializer: "'hello world'"});
+        it("should generate structure with question token, and correct scope and initializer", () => {
+            doTest("function g(public matrix? : boolean[][] = [[true]]) {}", "matrix", {
+                hasQuestionToken: true, name: "matrix", type: "boolean[][]", scope: Scope.Public, initializer: "[[true]]"
+            });
         });
     });
 
