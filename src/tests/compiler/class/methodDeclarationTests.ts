@@ -3,6 +3,7 @@ import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 import { SyntaxKind } from "../../../typescript";
+import { TypeGuards } from "../../../utils";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -207,13 +208,27 @@ describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expectedStructure: MethodDeclarationStructure) {
             // TODO: using the same as in parameterdeclarationTests - move it to testHelpers
-            const {descendant} = getInfoFromTextWithDescendant<MethodDeclaration>(code, SyntaxKind.MethodDeclaration);
+            const {descendant, sourceFile} = getInfoFromTextWithDescendant<MethodDeclaration>(code, SyntaxKind.MethodDeclaration);
             const structure = descendant.getStructure();
             expect(Object.assign({}, structure, {parameters: undefined})).to.contain(Object.assign({}, expectedStructure, {parameters: undefined}));
             expect(expectedStructure.parameters && expectedStructure.parameters.length).to.equals(structure.parameters && structure.parameters.length);
             (expectedStructure.parameters || []).forEach((expectedParameter, i) => {
                 expect(structure.parameters![i], `${i}th parameter`).to.contain(expectedParameter);
             });
+            // and also recreate the AST using structure and compare getText() of generated code with original node's
+            const aux = sourceFile.addStatements("class __AuxClass{}");
+            const decl = aux[0];
+            if (!TypeGuards.isClassDeclaration(decl)) {
+                expect("!TypeGuards.isClassDeclaration(decl)").to.be.undefined;
+                return;
+            }
+            expect(decl.getMethods().length).to.eq(0);
+            decl.addMethod(structure);
+            expect(decl.getMethods().length).to.eq(1);
+            const methodDecl = decl.getMethods()[0];
+            console.log(methodDecl.getText().replace(/\s+/gm, ""), descendant.getText().replace(/\s+/gm, ""));
+            expect(methodDecl.getText().replace(/\s+/gm, "")).equals(descendant.getText().replace(/\s+/gm, ""));
+            return;
         }
 
         it("should generate method structure with correct name, return type and parameter declarations", () => {
