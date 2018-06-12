@@ -914,7 +914,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
             ctors: this.getConstructors().filter(ctor => !ctor.isOverload())
                 .map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
-            methods: this.getMethods().filter(method => !method.isOverload() || !(method.isAbstract() && method.getOverloads().length === 0))
+            methods: this.getMethods().filter(method => !method.isOverload() || method.isAbstract())
                 .map(method => method.getStructure() as MethodDeclarationStructure),
             properties: this.getProperties().map(property => property.getStructure()),
             extends: this.getExtends() ? this.getExtends()!.getText() : undefined,
