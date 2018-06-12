@@ -207,7 +207,6 @@ describe(nameof(MethodDeclaration), () => {
 
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expectedStructure: MethodDeclarationStructure) {
-            // TODO: using the same as in parameterdeclarationTests - move it to testHelpers
             const {descendant, sourceFile} = getInfoFromTextWithDescendant<MethodDeclaration>(code, SyntaxKind.MethodDeclaration);
             const structure = descendant.getStructure();
             expect(Object.assign({}, structure, {parameters: undefined})).to.contain(Object.assign({}, expectedStructure, {parameters: undefined}));
@@ -219,21 +218,19 @@ describe(nameof(MethodDeclaration), () => {
             const aux = sourceFile.addStatements("class __AuxClass{}");
             const decl = aux[0];
             if (!TypeGuards.isClassDeclaration(decl)) {
-                expect("!TypeGuards.isClassDeclaration(decl)").to.be.undefined;
-                return;
+                return expect("!TypeGuards.isClassDeclaration(decl)").to.be.undefined;
             }
             expect(decl.getMethods().length).to.eq(0);
             decl.addMethod(structure);
             expect(decl.getMethods().length).to.eq(1);
             const methodDecl = decl.getMethods()[0];
-            console.log(methodDecl.getText().replace(/\s+/gm, ""), descendant.getText().replace(/\s+/gm, ""));
             expect(methodDecl.getText().replace(/\s+/gm, "")).equals(descendant.getText().replace(/\s+/gm, ""));
             return;
         }
 
         it("should generate method structure with correct name, return type and parameter declarations", () => {
-            doTest("class A { private method1(a: Date[] = new Date()): boolean {return false; } }", {
-                name: "method1", returnType: "boolean", scope: Scope.Private,
+            doTest("class A { private method1(a: Date[] = new Date()): boolean {return false;} }", {
+                name: "method1", returnType: "boolean", scope: Scope.Private, bodyText: "return false;",
                     parameters: [{name: "a", type: "Date[]", initializer: "new Date()"}]
             });
         });

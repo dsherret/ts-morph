@@ -2,9 +2,10 @@ import { removeOverloadableClassMember } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
 import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode,
+    PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
+import { Node, Signature } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
 import { callBaseGetStructure } from "../callBaseGetStructure";
@@ -12,6 +13,11 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
 )))))));
+
+export const MethodDeclarationOverloadBase = ChildOrderableNode(TextInsertableNode(AbstractableNode(ScopedNode(
+    StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(PropertyNamedNode(Node))
+))))))));
+
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
      * Fills the node from a structure.
@@ -82,8 +88,8 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      * Gets the structure equivalent to this node
      */
     getStructure(): MethodDeclarationStructure {
-        return callBaseGetStructure<MethodDeclarationSpecificStructure>(MethodDeclarationBase.prototype, this, {
-            overloads: undefined// TODO: not sure how to implement this.  this.getOverloads().map(overload => overload.getStructure())
+        return callBaseGetStructure<MethodDeclarationSpecificStructure>(this.isOverload() ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype, this, {
+            overloads: this.isOverload() ? undefined : this.getOverloads().map(o => o.getStructure())
         }) as any as MethodDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 }

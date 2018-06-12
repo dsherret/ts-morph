@@ -2,13 +2,18 @@ import { removeOverloadableClassMember } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
 import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode } from "../base";
+import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))))));
+
+export const ConstructorDeclarationOverloadBase = ChildOrderableNode(TextInsertableNode(ScopedNode(
+    ModifierableNode(SignaturedDeclaration(Node))
+)));
+
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
      * Fills the node from a structure.
@@ -78,8 +83,9 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Gets the structure equivalent to this node
      */
     getStructure(): ConstructorDeclarationStructure {
-        return callBaseGetStructure<ConstructorDeclarationSpecificStructure>(ConstructorDeclarationBase.prototype, this, {
-            overloads: undefined // TODO: don't know how to implement this or if I have to.
+        return callBaseGetStructure<ConstructorDeclarationSpecificStructure>(this.isOverload() ?
+            ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype, this, {
+            overloads: this.isOverload() ? undefined : this.getOverloads().map(o => o.getStructure())
         }) as any as ConstructorDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 }
