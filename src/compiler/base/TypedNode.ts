@@ -34,8 +34,6 @@ export interface TypedNode {
      * Removes the type.
      */
     removeType(): this;
-
-    getStructure(): TypedNodeStructure;
 }
 
 export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T): Constructor<TypedNode> & T {
@@ -109,7 +107,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             return this;
         }
 
-        getStructure() {
+        getStructure(): TypedNodeStructure {
             return callBaseGetStructure<TypedNodeStructure>(Base.prototype, this, {
                 type: this.getTypeNode() ? this.getTypeNode()!.getText() : undefined
             });

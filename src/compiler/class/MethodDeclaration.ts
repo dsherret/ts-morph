@@ -90,6 +90,6 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
     getStructure(): MethodDeclarationStructure {
         return callBaseGetStructure<MethodDeclarationSpecificStructure>(this.isOverload() ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype, this, {
             overloads: this.isOverload() ? undefined : this.getOverloads().map(o => o.getStructure())
-        }) as any as MethodDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as MethodDeclarationStructure;
     }
 }

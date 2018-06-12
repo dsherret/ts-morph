@@ -26,8 +26,6 @@ export interface InitializerSetExpressionableNode {
      * @param writerFunction - Function to write the initializer with.
      */
     setInitializer(writerFunction: WriterFunction): this;
-
-    getStructure(): InitializerSetExpressionableNodeStructure;
 }
 
 export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {
@@ -71,7 +69,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             return this;
         }
 
-        getStructure() {
+        getStructure(): InitializerSetExpressionableNodeStructure {
             return callBaseGetStructure<InitializerSetExpressionableNodeStructure>(Base.prototype, this, {
                 initializer: this.getInitializer() ?  this.getInitializerOrThrow().getText() : undefined
             });

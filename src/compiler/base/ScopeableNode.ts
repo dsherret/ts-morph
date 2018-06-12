@@ -23,8 +23,6 @@ export interface ScopeableNode {
      * Gets if the node has a scope keyword.
      */
     hasScopeKeyword(): boolean;
-
-    getStructure(): ScopeableNodeStructure;
 }
 
 export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>(Base: T): Constructor<ScopeableNode> & T {
@@ -51,7 +49,7 @@ export function ScopeableNode<T extends Constructor<ScopeableNodeExtensionType>>
             return this;
         }
 
-        getStructure() {
+        getStructure(): ScopeableNodeStructure {
             return callBaseGetStructure<ScopeableNodeStructure>(Base.prototype, this, {
                 scope: this.getScope()
             });

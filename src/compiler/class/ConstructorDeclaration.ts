@@ -86,6 +86,6 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
         return callBaseGetStructure<ConstructorDeclarationSpecificStructure>(this.isOverload() ?
             ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype, this, {
             overloads: this.isOverload() ? undefined : this.getOverloads().map(o => o.getStructure())
-        }) as any as ConstructorDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as ConstructorDeclarationStructure;
     }
 }

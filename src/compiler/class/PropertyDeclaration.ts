@@ -44,6 +44,6 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
     getStructure(): PropertyDeclarationStructure {
         return callBaseGetStructure<PropertyDeclarationSpecificStructure>(PropertyDeclarationBase.prototype, this, {
 
-        }) as any as PropertyDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as PropertyDeclarationStructure;
     }
 }

@@ -56,6 +56,6 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
      */
     getStructure(): SetAccessorDeclarationStructure {
         return callBaseGetStructure<SetAccessorDeclarationSpecificStructure>(SetAccessorDeclarationBase.prototype, this, {
-        }) as any as SetAccessorDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as SetAccessorDeclarationStructure;
     }
 }

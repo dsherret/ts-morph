@@ -56,7 +56,7 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     getStructure(): GetAccessorDeclarationStructure {
         return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
-        }) as any as GetAccessorDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as GetAccessorDeclarationStructure;
     }
 
 }
