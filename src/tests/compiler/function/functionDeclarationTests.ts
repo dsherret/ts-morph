@@ -136,7 +136,6 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
-
         // this is comparing original Node.getText() with a the getText() of a new Node filled with generated structure.
         // Compared strings have no spaces so comparision doesn't fail.
         function doTest(text: string) {
@@ -149,7 +148,6 @@ describe(nameof(FunctionDeclaration), () => {
             }
             decl.fill(structure);
             expect( decl.getText().replace(/\s+/gm, "")).equals(firstChild.getText().replace(/\s+/gm, ""));
-            // console.log("seba",  decl.getText().replace(/\s+/gm, "), firstChild.getText().replace(/\s+/gm, "));
         }
 
         it("should generate structure with correct return type and parameter names and types", () => {
@@ -173,9 +171,8 @@ describe(nameof(FunctionDeclaration), () => {
             doTest("function customSum<T>(a:T):{result: T} {return {result: 3.14 + a}}");
         });
 
-        // it("should generate structure with initializer if appropriate", () => {
-        //     doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}", "msg",
-        //         {name: 'msg', type: 'string', initializer: "'hello world'"});
-        // });
+        it("should generate correct structure for unnamed function containing parameter declarations with  initializer and questionToken", () => {
+            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}");
+        });
     });
 });
