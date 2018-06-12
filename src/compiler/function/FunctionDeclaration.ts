@@ -1,6 +1,6 @@
 import { removeOverloadableStatementedNodeChild } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NamedNode,
     TextInsertableNode, UnwrappableNode } from "../base";
@@ -10,7 +10,7 @@ import { NamespaceChildableNode } from "../namespace";
 import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
-import { joinStructures } from "../callBaseGetStructure";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
@@ -85,15 +85,9 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * Gets the structure equivalent to this node
      */
     getStructure(): FunctionDeclarationStructure {
-        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if
-        // there is a more straightforward way of doing this - So I'm doing it "manually" - see
-        // joinStructures()
-
-        // TODO: if this is the final solution - then the information in the following array is
-        // duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
-
-        return joinStructures([ChildOrderableNode, UnwrappableNode, TextInsertableNode, OverloadableNode,
-            BodyableNode, AsyncableNode, GeneratorableNode, FunctionLikeDeclaration, StatementedNode,
-            AmbientableNode, NamespaceChildableNode, ExportableNode, ModifierableNode, NamedNode], this);
+        return callBaseGetStructure<FunctionDeclarationSpecificStructure>(FunctionDeclarationBase.prototype, this, {
+            overloads: undefined // TODO: don't know how to implement this
+        }) as any as FunctionDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
+
 }

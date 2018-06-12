@@ -5,6 +5,7 @@ import { SyntaxKind } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type StaticableNodeExtensionType = Node & ModifierableNode;
 
@@ -54,6 +55,12 @@ export function StaticableNode<T extends Constructor<StaticableNodeExtensionType
                 this.setIsStatic(structure.isStatic);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<StaticableNodeStructure>(Base.prototype, this, {
+                isStatic: this.isStatic()
+            });
         }
     };
 }

@@ -1,13 +1,13 @@
 import * as errors from "../../errors";
 import { removeClassMember } from "../../manipulation";
-import { PropertyDeclarationStructure } from "../../structures";
+import { PropertyDeclarationSpecificStructure, PropertyDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
-    QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
+import { ChildOrderableNode, DecoratableNode, ExclamationTokenableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode,
+    PropertyNamedNode, QuestionTokenableNode, ReadonlyableNode, ScopedNode, StaticableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
 import { AbstractableNode } from "./base";
-import { joinStructures } from "../callBaseGetStructure";
 
 export const PropertyDeclarationBase = ChildOrderableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(JSDocableNode(
     ReadonlyableNode(ExclamationTokenableNode(QuestionTokenableNode(InitializerExpressionableNode(TypedNode(PropertyNamedNode(ModifierableNode(Node)))))))
@@ -42,7 +42,8 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
      * Gets the structure equivalent to this node
      */
     getStructure(): PropertyDeclarationStructure {
-        return joinStructures([ChildOrderableNode, DecoratableNode, AbstractableNode, ScopedNode, StaticableNode, JSDocableNode, ReadonlyableNode, ExclamationTokenableNode,
-            QuestionTokenableNode, InitializerExpressionableNode, TypedNode, PropertyNamedNode, ModifierableNode], this);
+        return callBaseGetStructure<PropertyDeclarationSpecificStructure>(PropertyDeclarationBase.prototype, this, {
+
+        }) as any as PropertyDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 }

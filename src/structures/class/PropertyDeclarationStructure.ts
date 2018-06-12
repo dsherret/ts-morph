@@ -7,3 +7,7 @@ export interface PropertyDeclarationStructure
         JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure
 {
 }
+
+export interface PropertyDeclarationSpecificStructure
+{
+}

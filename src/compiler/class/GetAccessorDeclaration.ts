@@ -1,6 +1,6 @@
 import * as errors from "../../errors";
 import { removeClassMember } from "../../manipulation";
-import { GetAccessorDeclarationStructure } from "../../structures";
+import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { BodiedNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
@@ -8,7 +8,7 @@ import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
-import { joinStructures } from "../callBaseGetStructure";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const GetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
     BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))
@@ -55,8 +55,9 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      * Gets the structure equivalent to this node
      */
     getStructure(): GetAccessorDeclarationStructure {
-        return joinStructures([ChildOrderableNode, TextInsertableNode, DecoratableNode, AbstractableNode, ScopedNode, StaticableNode,
-            BodiedNode, FunctionLikeDeclaration, PropertyNamedNode], this);
+        return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
+
+        }) as any as GetAccessorDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 
 }

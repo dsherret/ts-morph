@@ -6,6 +6,7 @@ import { PropertyName } from "../../aliases";
 import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
@@ -45,6 +46,12 @@ function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtens
                 this.rename(structure.name);
 
             return this;
+        }
+
+        getStructure(): PropertyNamedNodeStructure {
+            return callBaseGetStructure<PropertyNamedNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

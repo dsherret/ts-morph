@@ -1,13 +1,13 @@
 import { removeOverloadableClassMember } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
-import { joinStructures } from "../callBaseGetStructure";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
@@ -82,10 +82,8 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      * Gets the structure equivalent to this node
      */
     getStructure(): MethodDeclarationStructure {
-        const structure = joinStructures([ChildOrderableNode, TextInsertableNode, OverloadableNode, BodyableNode, DecoratableNode, AbstractableNode,
-            ScopedNode, StaticableNode, AsyncableNode, GeneratorableNode, FunctionLikeDeclaration, PropertyNamedNode], this);
-        return Object.assign(structure, {
-            overloads: this.getOverloads().map(o => (o.getStructure() as MethodDeclarationOverloadStructure))
-        });
+        return callBaseGetStructure<MethodDeclarationSpecificStructure>(MethodDeclarationBase.prototype, this, {
+            overloads: undefined// TODO: not sure how to implement this.  this.getOverloads().map(overload => overload.getStructure())
+        }) as any as MethodDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 }

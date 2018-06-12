@@ -4,7 +4,7 @@ import { ts, SyntaxKind } from "../../typescript";
 import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common/Node";
-import { callBaseGetStructure, joinStructures } from "../callBaseGetStructure";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))

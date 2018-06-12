@@ -1,7 +1,8 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration } from "../../../compiler";
-import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
+import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { SyntaxKind } from "../../../typescript";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -201,5 +202,26 @@ describe(nameof(MethodDeclaration), () => {
                     "declare class Identifier {\n    method(): void;\n}");
             });
         });
+    });
+
+    describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
+        function doTest(code: string, expectedStructure: MethodDeclarationStructure) {
+            // TODO: using the same as in parameterdeclarationTests - move it to testHelpers
+            const {descendant} = getInfoFromTextWithDescendant<MethodDeclaration>(code, SyntaxKind.MethodDeclaration);
+            const structure = descendant.getStructure();
+            expect(Object.assign({}, structure, {parameters: undefined})).to.contain(Object.assign({}, expectedStructure, {parameters: undefined}));
+            expect(expectedStructure.parameters && expectedStructure.parameters.length).to.equals(structure.parameters && structure.parameters.length);
+            (expectedStructure.parameters || []).forEach((expectedParameter, i) => {
+                expect(structure.parameters![i], `${i}th parameter`).to.contain(expectedParameter);
+            });
+        }
+
+        it("should generate method structure with correct name, return type and parameter declarations", () => {
+            doTest("class A { private method1(a: Date[] = new Date()): boolean {return false; } }", {
+                name: "method1", returnType: "boolean", scope: Scope.Private,
+                    parameters: [{name: "a", type: "Date[]", initializer: "new Date()"}]
+            });
+        });
+        // TODO: overloads, scope, iStatic, abstract, body, type params
     });
 });

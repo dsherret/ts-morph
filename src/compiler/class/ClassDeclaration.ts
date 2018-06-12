@@ -1,7 +1,7 @@
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../manipulation";
 import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
-    PropertyDeclarationStructure, SetAccessorDeclarationStructure } from "../../structures";
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, ClassDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode,
@@ -18,7 +18,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { PropertyDeclaration } from "./PropertyDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
-import { joinStructures, callBaseGetStructure } from "../callBaseGetStructure";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
@@ -911,24 +911,14 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Gets the structure equivalent to this node
      */
     getStructure(): ClassDeclarationStructure {
-        // TODO: I'm not sure how to join all mixing getStructure() results automatically or if
-        // there is a more straightforward way of doing this - So I'm doing it "manually" - see
-        // joinStructures()
-
-        // TODO: if this is the final solution - then the information in the following array is
-        // duplicated in ParameterDeclarationBase declaration - we should have one source of truth.
-
-        const structure = joinStructures([ChildOrderableNode, TextInsertableNode, ImplementsClauseableNode, HeritageClauseableNode, DecoratableNode, TypeParameteredNode,
-            NamespaceChildableNode, JSDocableNode, AmbientableNode, AbstractableNode, ExportableNode, ModifierableNode, NameableNode, Statement], this);
-
-        return Object.assign(structure, ({
+        return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
             ctors: this.getConstructors().map(ctor => ctor.getStructure()),
             methods: this.getMethods().map(method => method.getStructure()),
             properties: this.getProperties().map(property => property.getStructure()),
-            extends: this.getExtends() ? this.getExtends() : undefined,
+            extends: this.getExtends() ? this.getExtends()!.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
             setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
-        } as ClassDeclarationStructure));
+        }) as any as ClassDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
     }
 
     private getImmediateDerivedClasses() {
