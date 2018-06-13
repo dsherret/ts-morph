@@ -118,7 +118,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this;
         }
 
-        getStructure() {
+        getStructure(): ParameteredNodeStructure {
             return callBaseGetStructure<ParameteredNodeStructure>(Base.prototype, this, {
                 parameters: this.getParameters().map(p => p.getStructure())
             });

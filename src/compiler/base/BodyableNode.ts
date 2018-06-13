@@ -107,27 +107,30 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             return this;
         }
 
-        getStructure() {
-            // TODO: This complication is because we need to remove body text wrapping braces.
-            // If not they will be duplicated when printing a functiondeclaration and others, not sure why. Investigate.
-            // if it were not because of this issue then it should be as easy as :
-            // return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
-            //     bodyText: body ? body.getText() : undefined
-            // });
+        getStructure(): BodyableNodeStructure {
+            // Extract body text without breaking current statement indentation:
+            // Get the statements within the body and then get the text within the source file from
+            // statements[0].getNonWhitespaceStart() to statements[statements.length - 1].getTrailingTriviaEnd().
+            // Then remove the leading spaces from every line (so remove statements[0].getIndentationText() from every line
             const body = this.getBody();
-            const structure: MakeRequired<BodyableNodeStructure> = { bodyText: undefined };
+            let bodyText: string|undefined = undefined;
             if (body) {
-                const openBrace = body.getFirstChildByKind(SyntaxKind.OpenBraceToken);
-                const closeBrace = body.getFirstChildByKind(SyntaxKind.CloseBraceToken);
-                if (!openBrace || !closeBrace) {
-                    structure.bodyText = body.getText();
+                const statements = body.getDescendantStatements();
+                if (!statements.length) {
+                    bodyText = "";
                 }
                 else {
-                    structure.bodyText = body.getText().trim();
-                    structure.bodyText = structure.bodyText.substring(1, structure.bodyText.length - 1);
+                    const leadingSpacesLength = statements[0].getIndentationText().length;
+                    bodyText = this.sourceFile.getFullText()
+                        .substring(statements[0].getNonWhitespaceStart(), statements[statements.length - 1].getTrailingTriviaEnd())
+                        .split(this.global.manipulationSettings.getNewLineKindAsString())
+                        .map((line, index) => index !== 0 ? line.substring(leadingSpacesLength - 1, line.length) : line)
+                        .join(this.global.manipulationSettings.getNewLineKindAsString());
                 }
             }
-            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, structure);
+            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
+                bodyText
+            });
         }
     };
 }

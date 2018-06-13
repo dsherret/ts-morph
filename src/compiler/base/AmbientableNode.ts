@@ -70,7 +70,7 @@ export function AmbientableNode<T extends Constructor<AmbientableNodeExtensionTy
             return this;
         }
 
-        getStructure() {
+        getStructure(): AmbientableNodeStructure {
             return callBaseGetStructure<AmbientableNodeStructure>(Base.prototype, this, {
                 hasDeclareKeyword: this.hasDeclareKeyword()
             });

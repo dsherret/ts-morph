@@ -175,10 +175,10 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             return this;
         }
 
-        getStructure() {
+        getStructure(): ExportableNodeStructure {
             return callBaseGetStructure<ExportableNodeStructure>(Base.prototype, this, {
                 isExported: this.isExported(),
-                isDefaultExport: this.isDefaultExport()
+                isDefaultExport: this.hasDefaultKeyword()
             });
         }
     };

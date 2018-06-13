@@ -920,7 +920,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
             extends: this.getExtends() ? this.getExtends()!.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
             setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
-        }) as any as ClassDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as ClassDeclarationStructure;
     }
 
     private getImmediateDerivedClasses() {

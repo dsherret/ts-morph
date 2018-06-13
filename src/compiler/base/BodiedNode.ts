@@ -51,12 +51,21 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
             return this;
         }
 
-        getStructure() {
-            let bodyText = this.getBody().getText().trim();
-            if (bodyText.startsWith("{"))
-                bodyText = bodyText.substring(1, bodyText.length);
-            if (bodyText.endsWith("}"))
-                bodyText = bodyText.substring(0, bodyText.length - 1);
+        getStructure(): BodiedNodeStructure {
+            // Extract body text without breaking current statement indentation:
+            // Get the statements within the body and then get the text within the source file from
+            // statements[0].getNonWhitespaceStart() to statements[statements.length - 1].getTrailingTriviaEnd().
+            // Then remove the leading spaces from every line (so remove statements[0].getIndentationText() from every line
+            const statements = this.getBody().getDescendantStatements();
+            let bodyText: string = "";
+            if (statements.length) {
+                const leadingSpacesLength = statements[0].getIndentationText().length;
+                bodyText = this.sourceFile.getFullText()
+                    .substring(statements[0].getNonWhitespaceStart(), statements[statements.length - 1].getTrailingTriviaEnd())
+                    .split(this.global.manipulationSettings.getNewLineKindAsString())
+                    .map((line, index) => index !== 0 ? line.substring(leadingSpacesLength - 1, line.length) : line)
+                    .join(this.global.manipulationSettings.getNewLineKindAsString());
+            }
             return callBaseGetStructure<BodiedNodeStructure>(Base.prototype, this, {
                 bodyText
             });

@@ -1359,7 +1359,10 @@ class Child extends Mixin(Base) {}
             }
             const sourceFile2 = project.createSourceFile("__tmp_sourceFile1.ts", "", {overwrite: true});
             const generatedClassDecl = sourceFile2.addClass(structure);
-            expect(generatedClassDecl.getText().replace(/\s+/gm, "")).equals(descendant.getText().replace(/\s+/gm, ""));
+            const actualText = generatedClassDecl.getText().replace(/\s+/gm, "");
+            const expectedText = descendant.getText().replace(/\s+/gm, "");
+            // console.log(generatedClassDecl.getText(), descendant.getText());
+            expect(actualText).equals(expectedText);
             return;
         }
 
