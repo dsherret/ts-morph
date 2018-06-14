@@ -175,21 +175,6 @@ export function ModifierableNode<T extends Constructor<ModiferableNodeExtensionT
             return true;
         }
 
-        getStructure() {
-            return callBaseGetStructure<ModifierableNodeStructures>(Base.prototype, this, {
-                isDefaultExport: this.hasModifier("default") && this.hasModifier("export"),
-                hasDeclareKeyword: this.hasModifier("declare"),
-                isExported: this.hasModifier("export"),
-                isAbstract: this.hasModifier("abstract"),
-                scope: this.hasModifier("public") ? Scope.Public : this.hasModifier("private") ?
-                    Scope.Private : this.hasModifier("protected") ?
-                        Scope.Protected : undefined,
-                isReadonly: this.hasModifier("readonly"),
-                isStatic: this.hasModifier("static"),
-                isAsync: this.hasModifier("async")
-            });
-        }
-
         private getCompilerModifiers() {
             return this.compilerNode.modifiers || ([] as any as ts.NodeArray<ts.Modifier>);
         }

@@ -908,16 +908,17 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): ClassDeclarationStructure {
+        const getExtends = this.getExtends();
         return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
             ctors: this.getConstructors().filter(ctor => !ctor.isOverload())
-                .map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
+                .map(ctor => ctor.getStructure()),
             methods: this.getMethods().filter(method => !method.isOverload() || method.isAbstract())
-                .map(method => method.getStructure() as MethodDeclarationStructure),
+                .map(method => method.getStructure()),
             properties: this.getProperties().map(property => property.getStructure()),
-            extends: this.getExtends() ? this.getExtends()!.getText() : undefined,
+            extends: getExtends ? getExtends.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
             setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
         }) as any as ClassDeclarationStructure;

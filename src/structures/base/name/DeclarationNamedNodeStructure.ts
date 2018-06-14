@@ -1,3 +1,3 @@
 ﻿export interface DeclarationNamedNodeStructure {
-    name: string;
+    name: string | undefined;
 }

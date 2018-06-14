@@ -5,6 +5,7 @@ import { Node } from "../common";
 import { Scope } from "../common/Scope";
 import { ModifierableNode } from "./ModifierableNode";
 import * as scopeableNode from "./ScopeableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ScopedNodeExtensionType = Node & ModifierableNode;
 
@@ -47,5 +48,14 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
 
             return this;
         }
+
+        getStructure() {
+            return callBaseGetStructure<ScopedNodeStructure>(Base.prototype, this, {
+                scope: this.hasModifier("public") ? Scope.Public : this.hasModifier("private") ?
+                    Scope.Private : this.hasModifier("protected") ?
+                        Scope.Protected : undefined
+            });
+        }
+
     };
 }

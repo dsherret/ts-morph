@@ -133,7 +133,7 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
 
         getStructure() {
             return callBaseGetStructure<ImplementsClauseableNodeStructure>(Base.prototype, this, {
-                implements: this.getImplements() ? this.getImplements().map(node => node.getText()) : undefined
+                implements: this.getImplements().map(node => node.getText())
             });
         }
     };

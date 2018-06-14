@@ -132,21 +132,22 @@ describe(nameof(ParameterDeclaration), () => {
     });
 
     describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: ParameterDeclarationStructure) {
+        function doTest(code: string, expectedStructure: MakeRequired<ParameterDeclarationStructure>) {
             const {descendant} = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             const structure = descendant.getStructure();
-            expect(structure).to.contain(expectedStructure);
+            expect(structure).to.deep.include(expectedStructure);
         }
 
         it("should generate structure with correct name and type", () => {
             doTest("function f(param: string[]) {}", {
-                name: "param", type: "string[]", hasQuestionToken: false, isRestParameter: false, scope: undefined
+                name: "param", type: "string[]", hasQuestionToken: false, isRestParameter: false, scope: undefined, isReadonly: false, decorators: [], initializer: undefined
             });
         });
 
         it("should generate structure with question token, and correct scope and initializer", () => {
             doTest("function g(public matrix? : boolean[][] = [[true]]) {}", {
-                hasQuestionToken: true, name: "matrix", type: "boolean[][]", scope: Scope.Public, initializer: "[[true]]"
+                hasQuestionToken: true, name: "matrix", type: "boolean[][]", scope: Scope.Public, initializer: "[[true]]", isReadonly: false,
+                decorators: [], isRestParameter: false
             });
         });
     });

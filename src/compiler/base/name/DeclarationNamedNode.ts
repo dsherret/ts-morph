@@ -89,7 +89,7 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
 
         getStructure() {
             return callBaseGetStructure<DeclarationNamedNodeStructure>(Base.prototype, this, {
-                name: this.getNameOrThrow()
+                name: this.getName()
             });
         }
     };

@@ -108,8 +108,9 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
         }
 
         getStructure(): TypedNodeStructure {
+            const typeNode = this.getTypeNode();
             return callBaseGetStructure<TypedNodeStructure>(Base.prototype, this, {
-                type: this.getTypeNode() ? this.getTypeNode()!.getText() : undefined
+                type: typeNode ? typeNode.getText() : undefined
             });
         }
     };

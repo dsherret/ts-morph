@@ -1350,7 +1350,7 @@ class Child extends Mixin(Base) {}
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure?: ClassDeclarationStructure) {
+        function doTest(code: string, expectedStructure?: MakeRequired<ClassDeclarationStructure>) {
             const {descendant, project} = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
             if (expectedStructure) {
@@ -1361,7 +1361,6 @@ class Child extends Mixin(Base) {}
             const generatedClassDecl = sourceFile2.addClass(structure);
             const actualText = generatedClassDecl.getText().replace(/\s+/gm, "");
             const expectedText = descendant.getText().replace(/\s+/gm, "");
-            // console.log(generatedClassDecl.getText(), descendant.getText());
             expect(actualText).equals(expectedText);
             return;
         }
@@ -1370,8 +1369,7 @@ class Child extends Mixin(Base) {}
             doTest(`
 class FirstClass {
     private method1(a: Date[] = new Date()): boolean {return false;}
-}`,
-            {name: "FirstClass"});
+}`          );
         });
 
         it("should generate class structure with correct method and constructors overloads", () => {

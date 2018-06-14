@@ -62,7 +62,7 @@ export function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>
             return this;
         }
 
-        getStructure(): NamedNodeStructure {
+        getStructure() {
             return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
                 name: this.getName()
             });
