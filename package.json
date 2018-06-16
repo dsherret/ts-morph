@@ -1,5 +1,5 @@
 {
-  "name": "ts-simple-ast",
+  "name": "ts-simple-ast-structures",
   "version": "12.4.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
