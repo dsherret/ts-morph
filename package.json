@@ -9,6 +9,7 @@
     "lint": "npm run lint-src && npm run lint-scripts",
     "lint-src": "tslint \"src/**/*.ts\"",
     "lint-scripts": "tslint \"scripts/**/*.ts\"",
+    "lint-src-and-fix": "tslint \"src/**/*.ts\" --fix",
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
     "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
