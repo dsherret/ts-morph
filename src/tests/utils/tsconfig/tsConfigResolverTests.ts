@@ -173,6 +173,21 @@ describe(nameof(TsConfigResolver), () => {
             });
         });
 
+        it("should correctly parse file paths relative to rootDirs", () => {
+            const fs = new VirtualFileSystemHost();
+            fs.writeFileSync("tsconfig.json", `{
+              "compilerOptions": {"rootDirs": ["/test/test1", "/test/test2"] },
+              "files": [ "./file1.ts", "./file2.ts" ]
+            }`);
+            fs.writeFileSync("/test/file.ts", "");
+            fs.writeFileSync("/test/test1/file1.ts", "");
+            fs.writeFileSync("/test/test2/file2.ts", "");
+            doTest(fs, {
+                files: ["/test/test1/file1.ts", "/test/test2/file2.ts"],
+                dirs: []
+            });
+        });
+
         it("should add the files from tsconfig.json when using extends", () => {
             const fs = new VirtualFileSystemHost();
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { }, "extends": "./base" }`);

@@ -35,10 +35,18 @@ export class TsConfigResolver {
 
         for (const rootDir of getRootDirs(compilerOptions)) {
             const result = this.parseJsonConfigFileContent(this.fileSystem.getStandardizedAbsolutePath(rootDir, this.tsConfigDirPath));
-            for (const filePath of result.fileNames)
-                files.add(this.fileSystem.getStandardizedAbsolutePath(filePath));
-            for (const dirPath of result.directories)
-                directories.add(this.fileSystem.getStandardizedAbsolutePath(dirPath));
+            for (const filePath of result.fileNames) {
+                const absoluteFilePath = this.fileSystem.getStandardizedAbsolutePath(filePath);
+                if (this.fileSystem.fileExistsSync(absoluteFilePath)) {
+                    files.add(absoluteFilePath);
+                }
+            }
+            for (const dirPath of result.directories) {
+                const absoluteDirPath = this.fileSystem.getStandardizedAbsolutePath(dirPath);
+                if (this.fileSystem.directoryExistsSync(absoluteDirPath)) {
+                    directories.add(absoluteDirPath);
+                }
+            }
         }
 
         return {
