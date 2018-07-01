@@ -19,6 +19,7 @@ Find out more information about:
 * [Interfaces](interfaces)
 * [Namespaces](namespaces)
 * [Parameters](parameters)
+* [Type Parameters](type-parameters)
 * [Type Aliases](type-aliases)
 * [Variables](variables)
 * Type parameters - todo

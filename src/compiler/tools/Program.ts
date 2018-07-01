@@ -127,4 +127,12 @@ export class Program {
     getEmitModuleResolutionKind(): ModuleResolutionKind {
         return tsInternal.getEmitModuleResolutionKind(this.compilerObject.getCompilerOptions());
     }
+
+    /**
+     * Gets if the provided source file is from an external library.
+     * @param sourceFile - Source file.
+     */
+    isSourceFileFromExternalLibrary(sourceFile: SourceFile) {
+        return this.compilerObject.isSourceFileFromExternalLibrary(sourceFile.compilerNode);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
-import { EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings, ImportDeclaration, QuoteKind, SourceFile } from "../../../compiler";
+import { Node, EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings,
+    ImportDeclaration, QuoteKind, SourceFile } from "../../../compiler";
 import { Chars } from "../../../constants";
 import * as errors from "../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../options";
@@ -434,6 +435,28 @@ describe(nameof(SourceFile), () => {
             const project = new Project({ useVirtualFileSystem: true });
             const sourceFile = project.createSourceFile("MyFile.ts", "");
             expect(sourceFile.isDeclarationFile()).to.be.false;
+        });
+    });
+
+    describe(nameof<SourceFile>(n => n.isFromExternalLibrary), () => {
+        it("should not be when not", () => {
+            const { sourceFile } = getInfoFromText("");
+            expect(sourceFile.isFromExternalLibrary()).to.be.false;
+        });
+
+        it("should be when is", () => {
+            const fileSystem = getFileSystemHostWithFiles([
+                { filePath: "package.json", text: `{ "name": "testing", "version": "0.0.1" }` },
+                {
+                    filePath: "node_modules/library/package.json",
+                    text: `{ "name": "library", "version": "0.0.1", "main": "index.js", "typings": "index.d.ts", "typescript": { "definition": "index.d.ts" } }`
+                },
+                { filePath: "node_modules/library/index.js", text: "export class Test {}" },
+                { filePath: "node_modules/library/index.d.ts", text: "export class Test {}" }
+            ], ["node_modules", "node_modules/library"]);
+            const { sourceFile } = getInfoFromText("import { Test } from 'library';", { host: fileSystem });
+            const librarySourceFile = sourceFile.getImportDeclarations()[0].getModuleSpecifierSourceFileOrThrow();
+            expect(librarySourceFile.isFromExternalLibrary()).to.be.true;
         });
     });
 

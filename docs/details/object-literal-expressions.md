@@ -102,6 +102,6 @@ const method = objectLiteralExpression.addMethod({
 
 Remove a member by calling `.remove()` on it.
 
-```ts
+```ts setup: const obj: ObjectLiteralExpression;
 obj.getPropertyOrThrow("prop1").remove();
 ```

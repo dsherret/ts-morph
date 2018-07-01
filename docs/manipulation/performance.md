@@ -6,9 +6,47 @@ title: Performance
 
 There's a lot of opportunity for performance improvements. The library originally started off favouring correctness, but it's now starting to switch to improving performance.
 
-Issues: [#224](https://github.com/dsherret/ts-simple-ast/issues/224), [#141](https://github.com/dsherret/ts-simple-ast/issues/141), [#142](https://github.com/dsherret/ts-simple-ast/issues/142)
+[View Issues](https://github.com/dsherret/ts-simple-ast/labels/performance)
 
-## Overview
+
+### Performance Tip: Analyze then Manipulate
+
+If the code analysis is using types, symbols type checker, or program, then a large performance improvement can be gained by doing an initial analysis of the code first, then afterwards carrying out the manipulations.
+
+For example, given the following code:
+
+```ts setup: const sourceFiles: SourceFile[]; const someCheckOnSymbol: any;
+for (const sourceFile of sourceFiles) {
+    for (const classDec of sourceFile.getClasses()) {
+        if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
+            classDec.remove();
+    }
+}
+```
+
+Write it this way instead:
+
+```ts setup: const sourceFiles: SourceFile[]; const someCheckOnSymbol: any;
+for (const classDec of getClassesToRemove())
+    classDec.remove();
+
+function getClassesToRemove() {
+    const classesToRemove: ClassDeclaration[] = [];
+
+    for (const sourceFile of sourceFiles) {
+        for (const classDec of sourceFile.getClasses()) {
+            if (someCheckOnSymbol(classDec.getSymbolOrThrow()))
+                classesToRemove.push(classDec);
+        }
+    }
+
+    return classesToRemove;
+}
+```
+
+This is because the program is reset between manipulations.
+
+### Tracking Nodes - Overview
 
 This library makes manipulations easy for you by keeping track of how the underlying syntax tree changes between manipulations.
 
@@ -42,7 +80,7 @@ nameProperty.getText(); // "name: number;"
 
 When thinking about performance, the key point here is that if you have a lot of previously navigated nodes and a very large file, then manipulation might start to become sluggish.
 
-### Forgetting Nodes (Advanced)
+#### Forgetting Nodes (Advanced)
 
 The main way to improve performance when manipulating, is to "forget" a node when you're done with it.
 
@@ -53,7 +91,7 @@ personInterface.forget();
 That will stop tracking the node and all its previously navigated descendants (ex. in this case, `nameProperty` as well).
 It won't be updated when manipulation happens again. Note that after doing this, the node will throw an error if one of its properties or methods is accessed.
 
-### Forget Blocks (Advanced)
+#### Forget Blocks (Advanced)
 
 It's possible to make sure all created nodes within a block are forgotten:
 
@@ -104,7 +142,7 @@ interfaceDeclaration.getText(); // throws, was forgotten
 classDeclaration.getText();     // throws, was forgotten
 ```
 
-#### Async
+##### Async
 
 This method supports async and await:
 

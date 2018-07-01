@@ -95,7 +95,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             if (thisSymbol == null || sourceFileSymbol == null)
                 return false;
 
-            return sourceFileSymbol.getExports().some(e => thisSymbol === e.getAliasedSymbol());
+            return sourceFileSymbol.getExports().some(e => e === thisSymbol || e.getAliasedSymbol() === thisSymbol);
         }
 
         isDefaultExport() {

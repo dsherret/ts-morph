@@ -41,6 +41,13 @@ export class Symbol {
     }
 
     /**
+     * Gets the escaped name.
+     */
+    getEscapedName() {
+        return this.compilerSymbol.escapedName as string;
+    }
+
+    /**
      * Gets the aliased symbol.
      */
     getAliasedSymbol(): Symbol | undefined {
