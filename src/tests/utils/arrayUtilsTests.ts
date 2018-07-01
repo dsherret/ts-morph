@@ -1,7 +1,17 @@
 ﻿import { expect } from "chai";
-import { ArrayUtils } from "../../utils";
+import { ArrayUtils, Comparer, ComparerToStoredComparer } from "../../utils";
 
 describe(nameof(ArrayUtils), () => {
+    class NumberComparer implements Comparer<number> {
+        compareTo(a: number, b: number) {
+            if (a < b)
+                return -1;
+            else if (a === b)
+                return 0;
+            return 1;
+        }
+    }
+
     describe(`#${nameof(ArrayUtils.isNullOrEmpty)}()`, () => {
         it("should return true when null", () => {
             expect(ArrayUtils.isNullOrEmpty(null as any)).to.equal(true);
@@ -53,7 +63,7 @@ describe(nameof(ArrayUtils), () => {
 
     describe(`#${nameof(ArrayUtils.binarySearch)}()`, () => {
         function doTest(items: number[], value: number, expectedValue: number) {
-            const result = ArrayUtils.binarySearch(items, item => item === value, item => item > value);
+            const result = ArrayUtils.binarySearch(items, new ComparerToStoredComparer(new NumberComparer(), value));
             expect(result).to.equal(expectedValue);
         }
 
@@ -98,15 +108,11 @@ describe(nameof(ArrayUtils), () => {
         });
     });
 
-    describe(`#${nameof(ArrayUtils.binaryInsert)}()`, () => {
+    describe(`#${nameof(ArrayUtils.binaryInsertWithOverwrite)}()`, () => {
         function doTest(items: number[], value: number, expectedItems: number[]) {
-            ArrayUtils.binaryInsert(items, value, item => item > value);
+            ArrayUtils.binaryInsertWithOverwrite(items, value, new NumberComparer());
             expect(items).to.deep.equal(expectedItems);
         }
-
-        it("should add a number in the correct place when equal", () => {
-            doTest([1, 2, 3], 2, [1, 2, 2, 3]);
-        });
 
         it("should add a number in the correct place in an odd position", () => {
             doTest([1, 2, 4], 3, [1, 2, 3, 4]);
@@ -122,6 +128,10 @@ describe(nameof(ArrayUtils), () => {
 
         it("should add a number in the correct place at the end", () => {
             doTest([1, 2, 3, 5], 6, [1, 2, 3, 5, 6]);
+        });
+
+        it("should overwrite when equal", () => {
+            doTest([1, 2, 3, 5], 5, [1, 2, 3, 5]);
         });
     });
 

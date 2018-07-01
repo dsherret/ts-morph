@@ -6,7 +6,7 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, ge
 import { WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
-    TypeGuards } from "../../utils";
+    TypeGuards, StoredComparer } from "../../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../file";
 import { KindToNodeMappings } from "../kindToNodeMappings";
@@ -216,7 +216,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             }
         }
 
-        return ArrayUtils.binarySearch(this._childStringRanges, range => range[0] < pos && pos < range[1] - 1, range => range[0] > pos) !== -1;
+        class InStringRangeComparer implements StoredComparer<[number, number]> {
+            compareTo(value: [number, number]) {
+                if (pos <= value[0])
+                    return -1;
+                if (pos >= value[1] - 1)
+                    return 1;
+                return 0;
+            }
+        }
+
+        return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
     }
 
     /**

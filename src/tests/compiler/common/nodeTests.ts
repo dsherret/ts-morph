@@ -87,6 +87,10 @@ describe(nameof(Node), () => {
             doTest(`'t'`, [false, true, false, false]);
         });
 
+        it("should be within a mix of double and single quotes when it is", () => {
+            doTest(`"t";'t'`, [false, true, false, false, false, true, false, false]);
+        });
+
         it("should be within a tagged template string when it is", () => {
             doTest("`t${v}" + "t${u}t`", [
                 false, true, true, false, false, false,

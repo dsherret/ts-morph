@@ -2,7 +2,7 @@
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
 import { GlobalContainer } from "../GlobalContainer";
-import { ArrayUtils, FileUtils, KeyValueCache } from "../utils";
+import { ArrayUtils, FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
 
 /**
  * Cache for the directories.
@@ -10,8 +10,8 @@ import { ArrayUtils, FileUtils, KeyValueCache } from "../utils";
  */
 export class DirectoryCache {
     private readonly directoriesByPath = new KeyValueCache<string, Directory>();
-    private readonly sourceFilesByDirPath = new KeyValueCache<string, SourceFile[]>();
-    private readonly directoriesByDirPath = new KeyValueCache<string, Directory[]>();
+    private readonly sourceFilesByDirPath = new KeyValueCache<string, SortedKeyValueArray<string, SourceFile>>();
+    private readonly directoriesByDirPath = new KeyValueCache<string, SortedKeyValueArray<string, Directory>>();
     private readonly orphanDirs = new KeyValueCache<string, Directory>();
 
     constructor(private readonly global: GlobalContainer) {
@@ -77,22 +77,22 @@ export class DirectoryCache {
         const directories = this.directoriesByDirPath.get(dirPath);
         if (directories == null)
             return [];
-        return [...directories];
+        return directories.getArrayCopy();
     }
 
     getChildSourceFilesOfDirectory(dirPath: string) {
         const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
         if (sourceFiles == null)
             return [];
-        return [...sourceFiles];
+        return sourceFiles.getArrayCopy();
     }
 
     addSourceFile(sourceFile: SourceFile) {
         const dirPath = sourceFile.getDirectoryPath();
         this.createOrAddIfExists(dirPath);
-        const sourceFiles = this.sourceFilesByDirPath.getOrCreate(dirPath, () => []);
-        const baseName = sourceFile.getBaseName().toUpperCase();
-        ArrayUtils.binaryInsert(sourceFiles, sourceFile, item => item.getBaseName().toUpperCase() > baseName);
+        const sourceFiles = this.sourceFilesByDirPath.getOrCreate(dirPath,
+            () => new SortedKeyValueArray<string, SourceFile>(item => item.getBaseName(), LocaleStringComparer.instance));
+        sourceFiles.set(sourceFile);
     }
 
     removeSourceFile(filePath: string) {
@@ -100,14 +100,10 @@ export class DirectoryCache {
         const sourceFiles = this.sourceFilesByDirPath.get(dirPath);
         if (sourceFiles == null)
             return;
-        const baseName = FileUtils.getBaseName(filePath).toUpperCase();
-        const index = ArrayUtils.binarySearch(sourceFiles, item => item.getFilePath() === filePath, item => item.getBaseName().toUpperCase() > baseName);
-
-        if (index >= 0)
-            sourceFiles.splice(index, 1);
+        sourceFiles.removeByKey(FileUtils.getBaseName(filePath));
 
         // clean up
-        if (sourceFiles.length === 0)
+        if (!sourceFiles.hasItems())
             this.sourceFilesByDirPath.removeByKey(dirPath);
     }
 
@@ -159,9 +155,9 @@ export class DirectoryCache {
         if (FileUtils.isRootDirPath(directory.getPath()))
             return;
         const parentDirPath = FileUtils.getDirPath(directory.getPath());
-        const directories = this.directoriesByDirPath.getOrCreate(parentDirPath, () => []);
-        const baseName = directory.getBaseName().toUpperCase();
-        ArrayUtils.binaryInsert(directories, directory, item => item.getBaseName().toUpperCase() > baseName);
+        const directories = this.directoriesByDirPath.getOrCreate(parentDirPath,
+            () => new SortedKeyValueArray<string, Directory>(item => item.getBaseName(), LocaleStringComparer.instance));
+        directories.set(directory);
     }
 
     private removeFromDirectoriesByDirPath(dirPath: string) {
@@ -171,13 +167,10 @@ export class DirectoryCache {
         const directories = this.directoriesByDirPath.get(parentDirPath);
         if (directories == null)
             return;
-        const baseName = FileUtils.getBaseName(dirPath).toUpperCase();
-        const index = ArrayUtils.binarySearch(directories, item => item.getPath() === dirPath, item => item.getBaseName().toUpperCase() > baseName);
-        if (index >= 0)
-            directories.splice(index, 1);
+        directories.removeByKey(FileUtils.getBaseName(dirPath));
 
         // clean up
-        if (directories.length === 0)
+        if (!directories.hasItems())
             this.directoriesByDirPath.removeByKey(parentDirPath);
     }
 
