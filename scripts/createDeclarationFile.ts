@@ -16,8 +16,15 @@ const mainFile = project.getSourceFileOrThrow("main.d.ts");
 flattenDeclarationFiles(project, mainFile);
 removeImportTypes();
 hideBaseDeclarations();
+removeSkipOrThrowCheck();
 
 project.save();
+
+function removeImportTypes() {
+    for (const type of mainFile.getDescendantsOfKind(SyntaxKind.ImportType)) {
+        type.replaceWithText(type.getText().replace(/import\([^\)]+\)\./, ""));
+    }
+}
 
 function hideBaseDeclarations() {
     const baseDeclarations = mainFile.getVariableDeclarations().filter(s => StringUtils.endsWith(s.getName(), "Base"));
@@ -32,8 +39,7 @@ function hideBaseDeclarations() {
     }
 }
 
-function removeImportTypes() {
-    for (const type of mainFile.getDescendantsOfKind(SyntaxKind.ImportType)) {
-        type.replaceWithText(type.getText().replace(/import\([^\)]+\)\./, ""));
-    }
+function removeSkipOrThrowCheck() {
+    // no real good support for jsdocs yet so doing this regex solution that I know will work
+    mainFile.replaceWithText(mainFile.getFullText().replace(/\n\s+\*\s+@skipOrThrowCheck\r?\n/g, "\n"));
 }
