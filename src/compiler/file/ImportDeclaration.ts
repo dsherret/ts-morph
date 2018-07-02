@@ -229,13 +229,13 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
     /**
      * Inserts a named import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the named import.
      */
     insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
     /**
      * Inserts a named import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param name - Name of the named import.
      */
     insertNamedImport(index: number, name: string): ImportSpecifier;
@@ -247,7 +247,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
     /**
      * Inserts named imports into the import declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
     insertNamedImports(index: number, structuresOrNames: (ImportSpecifierStructure | string)[]) {

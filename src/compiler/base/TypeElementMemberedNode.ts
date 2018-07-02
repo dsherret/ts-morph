@@ -26,13 +26,13 @@ export interface TypeElementMemberedNode {
     addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the construct signature.
      */
     insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
     /**
      * Insert construct signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
     insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
@@ -63,13 +63,13 @@ export interface TypeElementMemberedNode {
     addCallSignatures(structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
     /**
      * Insert call signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the call signature.
      */
     insertCallSignature(index: number, structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
     /**
      * Insert call signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
     insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
@@ -100,13 +100,13 @@ export interface TypeElementMemberedNode {
     addIndexSignatures(structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the index signature.
      */
     insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
     /**
      * Insert index signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
     insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
@@ -137,13 +137,13 @@ export interface TypeElementMemberedNode {
     addMethods(structures: MethodSignatureStructure[]): MethodSignature[];
     /**
      * Insert method.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
     insertMethod(index: number, structure: MethodSignatureStructure): MethodSignature;
     /**
      * Insert methods.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
     insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[];
@@ -186,13 +186,13 @@ export interface TypeElementMemberedNode {
     addProperties(structures: PropertySignatureStructure[]): PropertySignature[];
     /**
      * Insert property.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
     insertProperty(index: number, structure: PropertySignatureStructure): PropertySignature;
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[];

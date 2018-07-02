@@ -1147,7 +1147,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or throws an exception.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind) {
@@ -1156,7 +1156,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or returns undefined.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {

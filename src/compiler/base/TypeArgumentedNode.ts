@@ -25,13 +25,13 @@ export interface TypeArgumentedNode {
     addTypeArguments(argumentTexts: string[]): TypeNode[];
     /**
      * Inserts a type argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentText - Argument text to insert.
      */
     insertTypeArgument(index: number, argumentText: string): TypeNode;
     /**
      * Inserts type arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
     insertTypeArguments(index: number, argumentTexts: string[]): TypeNode[];

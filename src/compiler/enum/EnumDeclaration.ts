@@ -46,7 +46,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
 
     /**
      * Inserts a member to the enum.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
     insertMember(index: number, structure: EnumMemberStructure) {
@@ -55,7 +55,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
 
     /**
      * Inserts members to an enum.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
     insertMembers(index: number, structures: EnumMemberStructure[]) {

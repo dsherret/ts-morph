@@ -47,13 +47,13 @@ export interface DecoratableNode {
     addDecorators(structures: DecoratorStructure[]): Decorator[];
     /**
      * Inserts a decorator.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the decorator.
      */
     insertDecorator(index: number, structure: DecoratorStructure): Decorator;
     /**
      * Insert decorators.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertDecorators(index: number, structures: DecoratorStructure[]): Decorator[];

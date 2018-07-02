@@ -46,7 +46,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
 
     /**
      * Inserts a function overload.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the overload.
      */
     insertOverload(index: number, structure: FunctionDeclarationOverloadStructure) {
@@ -55,7 +55,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
 
     /**
      * Inserts function overloads.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
     insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]) {

@@ -138,13 +138,13 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
     /**
      * Inserts a named export.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the named export.
      */
     insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
     /**
      * Inserts a named export.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param name - Name of the named export.
      */
     insertNamedExport(index: number, name: string): ExportSpecifier;
@@ -156,7 +156,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
     /**
      * Inserts named exports into the export declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
     insertNamedExports(index: number, structuresOrNames: (ExportSpecifierStructure | string)[]) {
