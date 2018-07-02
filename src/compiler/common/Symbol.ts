@@ -48,7 +48,14 @@ export class Symbol {
     }
 
     /**
-     * Gets the aliased symbol.
+     * Gets the aliased symbol or throws if it doesn't exist.
+     */
+    getAliasedSymbolOrThrow(): Symbol {
+        return errors.throwIfNullOrUndefined(this.getAliasedSymbol(), "Expected to find an aliased symbol.");
+    }
+
+    /**
+     * Gets the aliased symbol or returns undefined if it doesn't exist.
      */
     getAliasedSymbol(): Symbol | undefined {
         return this.global.typeChecker.getAliasedSymbol(this);
@@ -102,7 +109,15 @@ export class Symbol {
     }
 
     /**
-     * Get the exports of the symbol.
+     * Get the export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getExportByNameOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getExportByName(name), `Expected to find export with name: ${name}`);
+    }
+
+    /**
+     * Get the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined {
