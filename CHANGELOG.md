@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.0"></a>
+# [12.5.0](https://github.com/dsherret/ts-simple-ast/compare/12.4.1...12.5.0) (2018-07-02)
+
+
+### Bug Fixes
+
+* [#354](https://github.com/dsherret/ts-simple-ast/issues/354) - Support using ts-simple-ast in the browser without mocking "fs" or "fs-extra" ([795fe55](https://github.com/dsherret/ts-simple-ast/commit/795fe55))
+* BooleanLiteral#setLiteralValue(value: boolean) should never return undefined. ([d1ee709](https://github.com/dsherret/ts-simple-ast/commit/d1ee709))
+* NamespaceDeclaration#getDeclarationKindKeyword should never return undefined. ([0b81c00](https://github.com/dsherret/ts-simple-ast/commit/0b81c00))
+
+
+### Features
+
+* Add JSDocTag#getName(). ([0c868e9](https://github.com/dsherret/ts-simple-ast/commit/0c868e9))
+* Add Symbol#getAliasedSymbolOrThrow() and Symbol#getExportByNameOrThrow(name: string). ([78c7ea3](https://github.com/dsherret/ts-simple-ast/commit/78c7ea3))
+
+
+
 <a name="12.4.1"></a>
 # [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
 

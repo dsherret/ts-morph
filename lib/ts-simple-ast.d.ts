@@ -4349,7 +4349,11 @@ export declare class Symbol {
      */
     getEscapedName(): string;
     /**
-     * Gets the aliased symbol.
+     * Gets the aliased symbol or throws if it doesn't exist.
+     */
+    getAliasedSymbolOrThrow(): Symbol;
+    /**
+     * Gets the aliased symbol or returns undefined if it doesn't exist.
      */
     getAliasedSymbol(): Symbol | undefined;
     /**
@@ -4378,7 +4382,12 @@ export declare class Symbol {
      */
     getDeclarations(): Node[];
     /**
-     * Get the exports of the symbol.
+     * Get the export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getExportByNameOrThrow(name: string): Symbol;
+    /**
+     * Get the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined;
@@ -4627,6 +4636,10 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
      * Gets the at token.
      */
     getAtToken(): Node;
+    /**
+     * Gets the tag's name as a string.
+     */
+    getName(): string;
     /**
      * Gets the tag name node.
      */
@@ -6864,7 +6877,7 @@ export declare class BooleanLiteral extends BooleanLiteralBase<ts.BooleanLiteral
      * Note: For the time being, this forgets the current node and returns the new node.
      * @param value - Value to set.
      */
-    setLiteralValue(value: boolean): BooleanLiteral | undefined;
+    setLiteralValue(value: boolean): BooleanLiteral;
 }
 
 declare const NullLiteralBase: typeof PrimaryExpression;
@@ -7069,7 +7082,7 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
     /**
      * Gets the namespace or module keyword.
      */
-    getDeclarationKindKeyword(): Node<ts.Node> | undefined;
+    getDeclarationKindKeyword(): Node<ts.Node>;
 }
 
 declare const BlockBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Statement;
