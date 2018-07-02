@@ -1,4 +1,4 @@
-﻿import * as fs from "fs-extra";
+﻿import * as fsForType from "fs-extra";
 import * as globby from "globby";
 import * as nodePath from "path";
 import * as errors from "../errors";
@@ -6,9 +6,13 @@ import { FileUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 export class DefaultFileSystemHost implements FileSystemHost {
+    // Prevent "fs-extra" from being loaded in environments that don't support it (ex. browsers).
+    // This means if someone specifies to use a virtual file system then it won't load this.
+    private fs: typeof fsForType = require("fs-extra");
+
     delete(path: string) {
         return new Promise<void>((resolve, reject) => {
-            fs.unlink(path, err => {
+            this.fs.unlink(path, err => {
                 if (err)
                     reject(this.getFileNotFoundErrorIfNecessary(err, path));
                 else
@@ -19,7 +23,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     deleteSync(path: string) {
         try {
-            fs.unlinkSync(path);
+            this.fs.unlinkSync(path);
         } catch (err) {
             throw this.getFileNotFoundErrorIfNecessary(err, path);
         }
@@ -27,7 +31,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     readDirSync(dirPath: string) {
         try {
-            return fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
+            return this.fs.readdirSync(dirPath).map(name => FileUtils.pathJoin(dirPath, name));
         } catch (err) {
             throw this.getDirectoryNotFoundErrorIfNecessary(err, dirPath);
         }
@@ -35,7 +39,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     readFile(filePath: string, encoding = "utf-8") {
         return new Promise<string>((resolve, reject) => {
-            fs.readFile(filePath, encoding, (err, data) => {
+            this.fs.readFile(filePath, encoding, (err, data) => {
                 if (err)
                     reject(this.getFileNotFoundErrorIfNecessary(err, filePath));
                 else
@@ -46,7 +50,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     readFileSync(filePath: string, encoding = "utf-8") {
         try {
-            return fs.readFileSync(filePath, encoding);
+            return this.fs.readFileSync(filePath, encoding);
         } catch (err) {
             throw this.getFileNotFoundErrorIfNecessary(err, filePath);
         }
@@ -54,7 +58,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     async writeFile(filePath: string, fileText: string) {
         await new Promise<void>((resolve, reject) => {
-            fs.writeFile(filePath, fileText, err => {
+            this.fs.writeFile(filePath, fileText, err => {
                 if (err)
                     reject(err);
                 else
@@ -64,12 +68,12 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     writeFileSync(filePath: string, fileText: string) {
-        fs.writeFileSync(filePath, fileText);
+        this.fs.writeFileSync(filePath, fileText);
     }
 
     mkdir(dirPath: string) {
         return new Promise<void>((resolve, reject) => {
-            fs.mkdir(dirPath, err => {
+            this.fs.mkdir(dirPath, err => {
                 if (err)
                     reject(err);
                 else
@@ -79,28 +83,28 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     mkdirSync(dirPath: string) {
-        fs.mkdirSync(dirPath);
+        this.fs.mkdirSync(dirPath);
     }
 
     move(srcPath: string, destPath: string) {
-        return fs.move(srcPath, destPath, { overwrite: true });
+        return this.fs.move(srcPath, destPath, { overwrite: true });
     }
 
     moveSync(srcPath: string, destPath: string) {
-        fs.moveSync(srcPath, destPath, { overwrite: true });
+        this.fs.moveSync(srcPath, destPath, { overwrite: true });
     }
 
     copy(srcPath: string, destPath: string) {
-        return fs.copy(srcPath, destPath, { overwrite: true });
+        return this.fs.copy(srcPath, destPath, { overwrite: true });
     }
 
     copySync(srcPath: string, destPath: string) {
-        fs.copySync(srcPath, destPath, { overwrite: true });
+        this.fs.copySync(srcPath, destPath, { overwrite: true });
     }
 
     fileExists(filePath: string) {
         return new Promise<boolean>((resolve, reject) => {
-            fs.stat(filePath, (err, stat) => {
+            this.fs.stat(filePath, (err, stat) => {
                 if (err)
                     resolve(false);
                 else
@@ -111,7 +115,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     fileExistsSync(filePath: string) {
         try {
-            return fs.statSync(filePath).isFile();
+            return this.fs.statSync(filePath).isFile();
         } catch (err) {
             return false;
         }
@@ -119,7 +123,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     directoryExists(dirPath: string) {
         return new Promise<boolean>((resolve, reject) => {
-            fs.stat(dirPath, (err, stat) => {
+            this.fs.stat(dirPath, (err, stat) => {
                 if (err)
                     resolve(false);
                 else
@@ -130,7 +134,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
 
     directoryExistsSync(dirPath: string) {
         try {
-            return fs.statSync(dirPath).isDirectory();
+            return this.fs.statSync(dirPath).isDirectory();
         } catch (err) {
             return false;
         }
