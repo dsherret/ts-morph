@@ -2,3 +2,6 @@
 
 * CompilerApiNodeBrandPropertyNamesType
 * getLineNumberFromPos
+* getStartColumn
+* getEndColumn
+* getColumnAtPos

@@ -44,21 +44,21 @@ describe(nameof(StringUtils), () => {
         });
     });
 
-    describe(nameof(StringUtils.getColumnAtPos), () => {
+    describe(nameof(StringUtils.getLengthFromLineStartAtPos), () => {
         it("should throw if providing a negative pos", () => {
-            expect(() => StringUtils.getColumnAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLengthFromLineStartAtPos("", -1)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         it("should not throw if providing a pos the length of the string", () => {
-            expect(() => StringUtils.getColumnAtPos("", 1)).to.not.throw();
+            expect(() => StringUtils.getLengthFromLineStartAtPos("", 1)).to.not.throw();
         });
 
         it("should throw if providing a pos greater than the length + 1", () => {
-            expect(() => StringUtils.getColumnAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
+            expect(() => StringUtils.getLengthFromLineStartAtPos("", 2)).to.throw(errors.ArgumentOutOfRangeError);
         });
 
         function doTest(text: string, pos: number, expected: number) {
-            expect(StringUtils.getColumnAtPos(text, pos)).to.equal(expected);
+            expect(StringUtils.getLengthFromLineStartAtPos(text, pos)).to.equal(expected);
         }
 
         function doNewlineTest(newLineKind: string) {

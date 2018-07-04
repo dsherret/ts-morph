@@ -41,7 +41,7 @@ export class StringUtils {
         return count + 1; // convert count to line number
     }
 
-    static getColumnAtPos(str: string, pos: number) {
+    static getLengthFromLineStartAtPos(str: string, pos: number) {
         errors.throwIfOutOfRange(pos, [0, str.length + 1], nameof(pos));
         const startPos = pos;
 
