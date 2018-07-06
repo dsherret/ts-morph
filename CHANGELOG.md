@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.1"></a>
+# [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
+
+
+### Bug Fixes
+
+* [#356](https://github.com/dsherret/ts-simple-ast/issues/356) - Setting method as abstract in structure should not write method body. ([8f70df2](https://github.com/dsherret/ts-simple-ast/commit/8f70df2))
+
+
+
 <a name="12.5.0"></a>
 # [12.5.0](https://github.com/dsherret/ts-simple-ast/compare/12.4.1...12.5.0) (2018-07-02)
 
