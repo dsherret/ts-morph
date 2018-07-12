@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.2"></a>
+# [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
+
+
+### Bug Fixes
+
+* [#359](https://github.com/dsherret/ts-simple-ast/issues/359) - Fix problems when manipulating within forEachChild or forEachDescendant. ([bc124ed](https://github.com/dsherret/ts-simple-ast/commit/bc124ed))
+
+
+
 <a name="12.5.1"></a>
 # [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
 
