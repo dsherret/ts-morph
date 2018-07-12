@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file. See [standa
 ## [12.5.3](https://github.com/dsherret/ts-simple-ast/compare/12.5.2...12.5.3) (2018-07-12)
 
 
+### Bug Fixes
+
+* [#361](https://github.com/dsherret/ts-simple-ast/pull/361) - Conditionally import "globby" to allow using library in browser (thanks [@cancerberoSgx](https://github.com/cancerberoSgx)!)
+
 
 <a name="12.5.2"></a>
 # [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
