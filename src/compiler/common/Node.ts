@@ -437,16 +437,30 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     forEachChild(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
         let stop = false;
         const stopFunc = () => stop = true;
-        const nodeCallback = (node: ts.Node) => {
-            cbNode(this.getNodeFromCompilerNode(node), stopFunc);
-            return stop;
-        };
-        const arrayCallback = cbNodeArray == null ? undefined : (nodes: ts.NodeArray<ts.Node>) => {
-            cbNodeArray(nodes.map(n => this.getNodeFromCompilerNode(n)), stopFunc);
-            return stop;
-        };
+        const snapshots: (Node | Node[])[] = [];
 
-        this.compilerNode.forEachChild(nodeCallback, arrayCallback);
+        // Get all the nodes from the compiler's forEachChild. Taking this snapshot prevents the results of
+        // .forEachChild from returning out of date nodes due to a manipulation or deletion
+        this.compilerNode.forEachChild(node => {
+            // use function block to ensure a truthy value is not returned
+            snapshots.push(this.getNodeFromCompilerNode(node));
+        }, cbNodeArray == null ? undefined : nodes => {
+            snapshots.push(nodes.map(n => this.getNodeFromCompilerNode(n)));
+        });
+
+        // now send them to the user
+        for (const snapshot of snapshots) {
+            if (snapshot instanceof Array) {
+                const filteredNodes = snapshot.filter(n => !n.wasForgotten());
+                if (filteredNodes.length > 0)
+                    cbNodeArray!(filteredNodes, stopFunc);
+            }
+            else if (!snapshot.wasForgotten())
+                cbNode(snapshot, stopFunc);
+
+            if (stop)
+                break;
+        }
     }
 
     /**

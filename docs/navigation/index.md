@@ -26,7 +26,7 @@ In the compiler API, there exists a `node.getChildren()` method and a `ts.forEac
 * `.getChildren()` - Returns all the children including the all the tokens (ex. `OpenBraceToken`, `SemiColonToken` etc.).
 * `.forEachChild(child => {})` - Iterates all the child nodes that are properties of the node.
 
-[![getChildren vs forEachKind](images/getChildrenVsForEachKind.gif)](http://ts-ast-viewer.com)
+[![getChildren vs forEachChild](images/getChildrenVsForEachKind.gif)](http://ts-ast-viewer.com)
 
 In ts-simple-ast, these methods also exist and they can be used similarly to the compiler API:
 

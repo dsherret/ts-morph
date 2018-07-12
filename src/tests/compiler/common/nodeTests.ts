@@ -1034,6 +1034,37 @@ class MyClass {
             expect(foundNodeKinds).to.deep.equal([SyntaxKind.Identifier]);
             expect(foundArrayKinds).to.deep.equal([[SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration]]);
         });
+
+        it("should be able to modify nodes midway through", () => {
+            const { sourceFile } = getInfoFromText("const t = 5;");
+            const variable = sourceFile.getVariableDeclarationOrThrow("t");
+            const nodeTexts: string[] = [];
+            variable.forEachChild(node => {
+                if (TypeGuards.isIdentifier(node))
+                    variable.setType("any");
+                nodeTexts.push(node.getText());
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "t",
+                "5"
+            ]);
+        });
+
+        it("should not go over a node that was deleted on a previous iteration", () => {
+            const { sourceFile } = getInfoFromText("const t = 5;");
+            const variable = sourceFile.getVariableDeclarationOrThrow("t");
+            const nodeTexts: string[] = [];
+            variable.forEachChild(node => {
+                if (TypeGuards.isIdentifier(node))
+                    variable.removeInitializer();
+                nodeTexts.push(node.getText());
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "t"
+            ]);
+        });
     });
 
     describe(nameof<Node>(n => n.forEachDescendant), () => {
@@ -1101,8 +1132,6 @@ class MyClass {
                 [SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration],
                 [SyntaxKind.ExportKeyword],
                 [SyntaxKind.PropertyDeclaration, SyntaxKind.MethodDeclaration],
-                [],
-                [],
                 [SyntaxKind.PropertySignature]
             ]);
         });
@@ -1127,6 +1156,46 @@ class MyClass {
                 if (nodes.some(n => n.getKind() === SyntaxKind.PropertyDeclaration))
                     stop();
             });
+        });
+
+        it("should be able to modify nodes midway through", () => {
+            const { sourceFile } = getInfoFromText("const t = 5;");
+            const nodeTexts: string[] = [];
+            sourceFile.forEachDescendant(node => {
+                if (TypeGuards.isTypedNode(node))
+                    node.setType("any");
+                nodeTexts.push(node.getText());
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "const t = 5;",
+                "const t = 5",
+                "t: any = 5",
+                "t",
+                "any",
+                "5",
+                "" // end of file token
+            ]);
+        });
+
+        it("should not go over a node that was deleted on a previous iteration", () => {
+            const { sourceFile } = getInfoFromText("let t: any = 5;");
+            const nodeTexts: string[] = [];
+            sourceFile.forEachDescendant(node => {
+                if (TypeGuards.isInitializerExpressionableNode(node))
+                    node.removeInitializer();
+                if (TypeGuards.isTypedNode(node))
+                    node.removeType();
+                nodeTexts.push(node.getText());
+            });
+
+            expect(nodeTexts).to.deep.equal([
+                "let t: any = 5;",
+                "let t: any = 5",
+                "t",
+                "t",
+                "" // end of file token
+            ]);
         });
     });
 
