@@ -713,8 +713,10 @@ describe(nameof(Project), () => {
             project.createSourceFile("dir/child/file.ts");
             project.createSourceFile("dir/file.ts");
             project.createSourceFile("file1.ts");
+            project.createSourceFile("File1.ts");
             project.createSourceFile("file2.ts");
             expect(project.getSourceFiles().map(s => s.getFilePath())).to.deep.equal([
+                "/File1.ts", // upercase first
                 "/file1.ts",
                 "/file2.ts",
                 "/dir/file.ts",

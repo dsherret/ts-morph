@@ -782,6 +782,10 @@ describe(nameof(ClassDeclaration), () => {
         it("should write as ambient when inserting into a insert when none exists", () => {
             doTest("declare module Ambient { class c {\n} }", 0, [{ name: "method" }], "declare module Ambient { class c {\n    method();\n} }");
         });
+
+        it("should not write an abstract method's body", () => {
+            doTest("class c {\n}", 0, [{ name: "method", isAbstract: true }], "class c {\n    abstract method();\n}");
+        });
     });
 
     describe(nameof<ClassDeclaration>(d => d.insertMethod), () => {

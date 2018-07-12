@@ -6,7 +6,7 @@ import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, ge
 import { WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
-    TypeGuards } from "../../utils";
+    TypeGuards, StoredComparer } from "../../utils";
 import { CompilerNodeToWrappedType } from "../CompilerNodeToWrappedType";
 import { SourceFile } from "../file";
 import { KindToNodeMappings } from "../kindToNodeMappings";
@@ -216,7 +216,17 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             }
         }
 
-        return ArrayUtils.binarySearch(this._childStringRanges, range => range[0] < pos && pos < range[1] - 1, range => range[0] > pos) !== -1;
+        class InStringRangeComparer implements StoredComparer<[number, number]> {
+            compareTo(value: [number, number]) {
+                if (pos <= value[0])
+                    return -1;
+                if (pos >= value[1] - 1)
+                    return 1;
+                return 0;
+            }
+        }
+
+        return ArrayUtils.binarySearch(this._childStringRanges, new InStringRangeComparer()) !== -1;
     }
 
     /**
@@ -530,15 +540,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the child count.
+     * Gets the number of children the node has.
      */
     getChildCount() {
         return this.compilerNode.getChildCount(this.sourceFile.compilerNode);
     }
 
     /**
-     * Gets the child at the provided position, or undefined if not found.
-     * @param pos - Position to search for.
+     * Gets the child at the provided text position, or undefined if not found.
+     * @param pos - Text position to search for.
      */
     getChildAtPos(pos: number): Node | undefined {
         if (pos < this.getPos() || pos >= this.getEnd())
@@ -553,8 +563,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the most specific descendant at the provided position, or undefined if not found.
-     * @param pos - Position to search for.
+     * Gets the most specific descendant at the provided text position, or undefined if not found.
+     * @param pos - Text position to search for.
      */
     getDescendantAtPos(pos: number): Node | undefined {
         let node: Node | undefined;
@@ -569,9 +579,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the most specific descendant at the provided start position with the specified width, or undefined if not found.
-     * @param start - Start position to search for.
-     * @param width - Width of the node to search for.
+     * Gets the most specific descendant at the provided start text position with the specified width, or undefined if not found.
+     * @param start - Start text position to search for.
+     * @param width - Text length of the node to search for.
      */
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
         let foundNode: Node | undefined;
@@ -597,21 +607,23 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the start position with leading trivia.
+     * Gets the source file text position where the node starts that includes the leading trivia (comments and whitespace).
      */
     getPos() {
         return this.compilerNode.pos;
     }
 
     /**
-     * Gets the end position.
+     * Gets the source file text position where the node ends.
+     *
+     * @remarks This does not include the following trivia (comments and whitespace).
      */
     getEnd() {
         return this.compilerNode.end;
     }
 
     /**
-     * Gets the start position without leading trivia.
+     * Gets the source file text position where the node starts that does not include the leading trivia (comments and whitespace).
      * @param includeJsDocComment - Whether to include the JS doc comment.
      */
     getStart(includeJsDocComment?: boolean) {
@@ -620,53 +632,49 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the end position of the last significant token.
+     * Gets the source file text position of the end of the last significant token or the start of the source file.
      */
     getFullStart() {
         return this.compilerNode.getFullStart();
     }
 
     /**
-     * Gets the first position from the pos that is not whitespace.
+     * Gets the first source file text position from the result of .getPos() that is not whitespace.
      */
     getNonWhitespaceStart() {
         return getNextNonWhitespacePos(this.sourceFile.getFullText(), this.getPos());
     }
 
     /**
-     * Gets the width of the node (length without trivia).
+     * Gets the text length of the node without trivia.
      */
     getWidth() {
         return this.compilerNode.getWidth(this.sourceFile.compilerNode);
     }
 
     /**
-     * Gets the full width of the node (length with trivia).
+     * Gets the text length of the node with trivia.
      */
     getFullWidth() {
         return this.compilerNode.getFullWidth();
     }
 
     /**
-     * Gets the leading trivia width.
+     * Gets the node's leading trivia's text length.
      */
     getLeadingTriviaWidth() {
         return this.compilerNode.getLeadingTriviaWidth(this.sourceFile.compilerNode);
     }
 
     /**
-     * Gets the trailing trivia width.
-     *
-     * This is the width from the end of the current node to the next significant token or new line.
+     * Gets the text length from the end of the current node to the next significant token or new line.
      */
     getTrailingTriviaWidth() {
         return this.getTrailingTriviaEnd() - this.getEnd();
     }
 
     /**
-     * Gets the trailing trivia end.
-     *
-     * This is the position of the next significant token or new line.
+     * Gets the text position of the next significant token or new line.
      */
     getTrailingTriviaEnd() {
         const parent = this.getParent();
@@ -687,14 +695,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the text without leading trivia.
+     * Gets the text without leading trivia (comments and whitespace).
      */
     getText() {
         return this.compilerNode.getText(this.sourceFile.compilerNode);
     }
 
     /**
-     * Gets the full text with leading trivia.
+     * Gets the full text with leading trivia (comments and whitespace).
      */
     getFullText() {
         return this.compilerNode.getFullText(this.sourceFile.compilerNode);

@@ -1,4 +1,5 @@
 import { ts } from "../typescript";
+import { Comparer, StoredComparer } from "./comparers";
 
 export class ArrayUtils {
     private constructor() {
@@ -71,31 +72,35 @@ export class ArrayUtils {
         return items;
     }
 
-    static binaryInsert<T>(items: T[], newItem: T, isGreaterThan: (item: T) => boolean) {
+    static binaryInsertWithOverwrite<T>(items: T[], newItem: T, comparer: Comparer<T>) {
         let top = items.length - 1;
         let bottom = 0;
 
         while (bottom <= top) {
             const mid = Math.floor((top + bottom) / 2);
-            if (isGreaterThan(items[mid]))
+            if (comparer.compareTo(newItem, items[mid]) < 0)
                 top = mid - 1;
             else
                 bottom = mid + 1;
         }
 
-        items.splice(top + 1, 0, newItem);
+        // overwrite an existing item
+        if (items[top] != null && comparer.compareTo(newItem, items[top]) === 0)
+            items[top] = newItem;
+        else
+            items.splice(top + 1, 0, newItem);
     }
 
-    static binarySearch<T>(items: T[], isEqual: (item: T) => boolean, isGreaterThan: (item: T) => boolean) {
+    static binarySearch<T>(items: T[], storedComparer: StoredComparer<T>) {
         let top = items.length - 1;
         let bottom = 0;
 
         while (bottom <= top) {
             const mid = Math.floor((top + bottom) / 2);
-            if (isEqual(items[mid]))
+            const comparisonResult = storedComparer.compareTo(items[mid]);
+            if (comparisonResult === 0)
                 return mid;
-
-            if (isGreaterThan(items[mid]))
+            else if (comparisonResult < 0)
                 top = mid - 1;
             else
                 bottom = mid + 1;

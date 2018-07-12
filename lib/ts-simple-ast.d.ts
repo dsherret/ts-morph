@@ -3963,76 +3963,74 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getDescendantStatements(): Statement[];
     /**
-     * Gets the child count.
+     * Gets the number of children the node has.
      */
     getChildCount(): number;
     /**
-     * Gets the child at the provided position, or undefined if not found.
-     * @param pos - Position to search for.
+     * Gets the child at the provided text position, or undefined if not found.
+     * @param pos - Text position to search for.
      */
     getChildAtPos(pos: number): Node | undefined;
     /**
-     * Gets the most specific descendant at the provided position, or undefined if not found.
-     * @param pos - Position to search for.
+     * Gets the most specific descendant at the provided text position, or undefined if not found.
+     * @param pos - Text position to search for.
      */
     getDescendantAtPos(pos: number): Node | undefined;
     /**
-     * Gets the most specific descendant at the provided start position with the specified width, or undefined if not found.
-     * @param start - Start position to search for.
-     * @param width - Width of the node to search for.
+     * Gets the most specific descendant at the provided start text position with the specified width, or undefined if not found.
+     * @param start - Start text position to search for.
+     * @param width - Text length of the node to search for.
      */
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined;
     /**
-     * Gets the start position with leading trivia.
+     * Gets the source file text position where the node starts that includes the leading trivia (comments and whitespace).
      */
     getPos(): number;
     /**
-     * Gets the end position.
+     * Gets the source file text position where the node ends.
+     *
+     * @remarks This does not include the following trivia (comments and whitespace).
      */
     getEnd(): number;
     /**
-     * Gets the start position without leading trivia.
+     * Gets the source file text position where the node starts that does not include the leading trivia (comments and whitespace).
      * @param includeJsDocComment - Whether to include the JS doc comment.
      */
     getStart(includeJsDocComment?: boolean): number;
     /**
-     * Gets the end position of the last significant token.
+     * Gets the source file text position of the end of the last significant token or the start of the source file.
      */
     getFullStart(): number;
     /**
-     * Gets the first position from the pos that is not whitespace.
+     * Gets the first source file text position from the result of .getPos() that is not whitespace.
      */
     getNonWhitespaceStart(): number;
     /**
-     * Gets the width of the node (length without trivia).
+     * Gets the text length of the node without trivia.
      */
     getWidth(): number;
     /**
-     * Gets the full width of the node (length with trivia).
+     * Gets the text length of the node with trivia.
      */
     getFullWidth(): number;
     /**
-     * Gets the leading trivia width.
+     * Gets the node's leading trivia's text length.
      */
     getLeadingTriviaWidth(): number;
     /**
-     * Gets the trailing trivia width.
-     *
-     * This is the width from the end of the current node to the next significant token or new line.
+     * Gets the text length from the end of the current node to the next significant token or new line.
      */
     getTrailingTriviaWidth(): number;
     /**
-     * Gets the trailing trivia end.
-     *
-     * This is the position of the next significant token or new line.
+     * Gets the text position of the next significant token or new line.
      */
     getTrailingTriviaEnd(): number;
     /**
-     * Gets the text without leading trivia.
+     * Gets the text without leading trivia (comments and whitespace).
      */
     getText(): string;
     /**
-     * Gets the full text with leading trivia.
+     * Gets the full text with leading trivia (comments and whitespace).
      */
     getFullText(): string;
     /**
@@ -4349,7 +4347,11 @@ export declare class Symbol {
      */
     getEscapedName(): string;
     /**
-     * Gets the aliased symbol.
+     * Gets the aliased symbol or throws if it doesn't exist.
+     */
+    getAliasedSymbolOrThrow(): Symbol;
+    /**
+     * Gets the aliased symbol or returns undefined if it doesn't exist.
      */
     getAliasedSymbol(): Symbol | undefined;
     /**
@@ -4378,7 +4380,12 @@ export declare class Symbol {
      */
     getDeclarations(): Node[];
     /**
-     * Get the exports of the symbol.
+     * Get the export of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getExportByNameOrThrow(name: string): Symbol;
+    /**
+     * Get the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined;
@@ -4627,6 +4634,10 @@ export declare class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extend
      * Gets the at token.
      */
     getAtToken(): Node;
+    /**
+     * Gets the tag's name as a string.
+     */
+    getName(): string;
     /**
      * Gets the tag name node.
      */
@@ -6864,7 +6875,7 @@ export declare class BooleanLiteral extends BooleanLiteralBase<ts.BooleanLiteral
      * Note: For the time being, this forgets the current node and returns the new node.
      * @param value - Value to set.
      */
-    setLiteralValue(value: boolean): BooleanLiteral | undefined;
+    setLiteralValue(value: boolean): BooleanLiteral;
 }
 
 declare const NullLiteralBase: typeof PrimaryExpression;
@@ -7069,7 +7080,7 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
     /**
      * Gets the namespace or module keyword.
      */
-    getDeclarationKindKeyword(): Node<ts.Node> | undefined;
+    getDeclarationKindKeyword(): Node<ts.Node>;
 }
 
 declare const BlockBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Statement;

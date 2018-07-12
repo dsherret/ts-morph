@@ -102,9 +102,6 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
             return this;
 
         const declarationKindKeyword = this.getDeclarationKindKeyword();
-        /* istanbul ignore if */
-        if (declarationKindKeyword == null)
-            throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
 
         replaceNodeText({
             sourceFile: this.getSourceFile(),
@@ -127,8 +124,12 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
      * Gets the namespace or module keyword.
      */
     getDeclarationKindKeyword() {
-        return this.getFirstChild(child =>
+        const keyword = this.getFirstChild(child =>
             child.getKind() === SyntaxKind.NamespaceKeyword ||
             child.getKind() === SyntaxKind.ModuleKeyword);
+        /* istanbul ignore if */
+        if (keyword == null)
+            throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
+        return keyword;
     }
 }

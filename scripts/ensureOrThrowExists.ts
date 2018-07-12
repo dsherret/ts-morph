@@ -38,18 +38,20 @@ for (const i of inspector.getPublicInterfaces()) {
 
 problems.forEach(p => console.error(p));
 
+console.log(`\nFound ${problems.length} issues.`);
+
 function doesReturnTypeRequireOrThrow(returnType: Type) {
     return returnType.isNullable();
 }
 
 function isIgnoredMethod(parent: ClassDeclaration | InterfaceDeclaration, method: MethodDeclaration | MethodSignature) {
-    switch (parent.getName()) {
-        case "Project":
-            return matches(method.getName(), ["addExistingDirectoryIfExists", "addExistingSourceFileIfExists"]);
-        case "Directory":
-            return matches(method.getName(), ["addExistingDirectoryIfExists", "addExistingSourceFileIfExists"]);
-        default:
-            return false;
+    if (parent.getName() === "CodeBlockWriter")
+        return true;
+
+    return hasTag("internal") || hasTag("skipOrThrowCheck");
+
+    function hasTag(tagName: string) {
+        return method.getJsDocs().some(d => d.getTags().some(t => t.getTagNameNode().getText() === tagName));
     }
 }
 

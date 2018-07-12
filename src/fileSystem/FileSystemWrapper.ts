@@ -1,5 +1,5 @@
 ﻿import * as errors from "../errors";
-import { ArrayUtils, FileUtils, KeyValueCache } from "../utils";
+import { ArrayUtils, FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 type Operation = DeleteDirectoryOperation | DeleteFileOperation | MoveDirectoryOperation | MakeDirectoryOperation | CopyDirectoryOperation;
@@ -40,7 +40,7 @@ class Directory {
     private isDeleted = false;
     private wasEverDeleted = false;
     private parent: Directory | undefined;
-    private childDirs: Directory[] = [];
+    private readonly childDirs = new SortedKeyValueArray<string, Directory>(item => item.path, LocaleStringComparer.instance);
 
     constructor(public readonly path: string) {
     }
@@ -104,7 +104,7 @@ class Directory {
 
         if (isDeleted) {
             this.wasEverDeleted = true;
-            for (const child of this.childDirs)
+            for (const child of this.childDirs.entries())
                 child.setIsDeleted(true);
         }
         else {
@@ -124,7 +124,7 @@ class Directory {
             throw new errors.InvalidOperationError("For some reason, a parent was being set when the directory already had a parent. Please open an issue.");
 
         this.parent = parent;
-        ArrayUtils.binaryInsert(parent.childDirs, this, item => item.path > this.path);
+        parent.childDirs.set(this);
         if (parent.isDeleted && !this.isDeleted)
             parent.setIsDeleted(false);
     }
@@ -134,9 +134,7 @@ class Directory {
         if (parent == null)
             return;
 
-        const index = ArrayUtils.binarySearch(parent.childDirs, item => item === this, item => item.path > this.path);
-        if (index >= 0)
-            parent.childDirs.splice(index, 1);
+        parent.childDirs.removeByValue(this);
         this.parent = undefined;
     }
 
@@ -154,7 +152,7 @@ class Directory {
 
     getDescendants() {
         const descendants: Directory[] = [];
-        for (const child of this.childDirs) {
+        for (const child of this.childDirs.entries()) {
             descendants.push(child);
             descendants.push(...child.getDescendants());
         }

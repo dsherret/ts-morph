@@ -12,6 +12,7 @@ export type ScopeableNodeExtensionType = Node & ModifierableNode;
 export interface ScopeableNode {
     /**
      * Gets the scope.
+     * @skipOrThrowCheck
      */
     getScope(): Scope | undefined;
     /**

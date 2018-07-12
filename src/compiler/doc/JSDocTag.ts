@@ -13,6 +13,13 @@ export class JSDocTag<NodeType extends ts.JSDocTag = ts.JSDocTag> extends Node<N
     }
 
     /**
+     * Gets the tag's name as a string.
+     */
+    getName() {
+        return this.getTagNameNode().getText();
+    }
+
+    /**
      * Gets the tag name node.
      */
     getTagNameNode(): Identifier {

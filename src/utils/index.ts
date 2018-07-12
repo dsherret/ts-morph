@@ -1,5 +1,6 @@
 export * from "./AdvancedIterator";
 export * from "./ArrayUtils";
+export * from "./comparers";
 export * from "./collections";
 export * from "./compiler";
 export * from "./decorators";

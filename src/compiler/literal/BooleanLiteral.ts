@@ -18,7 +18,7 @@ export class BooleanLiteral extends BooleanLiteralBase<ts.BooleanLiteral> {
      */
     setLiteralValue(value: boolean) {
         if (this.getLiteralValue() === value)
-            return;
+            return this;
 
         // todo: make this not forget the current node
         const parent = this.getParentSyntaxList() || this.getParentOrThrow();

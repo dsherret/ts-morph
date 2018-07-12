@@ -103,6 +103,7 @@ export class Project {
      * Will return the directory if it was already added.
      * @param dirPath - Path to add the directory at.
      * @param options - Options.
+     * @skipOrThrowCheck
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
         dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
@@ -202,6 +203,7 @@ export class Project {
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
      * @param options - Options for adding the source file.
+     * @skipOrThrowCheck
      */
     addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
         return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});

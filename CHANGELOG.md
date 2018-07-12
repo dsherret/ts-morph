@@ -2,14 +2,52 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.1"></a>
+# [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
+
+
+### Bug Fixes
+
+* [#356](https://github.com/dsherret/ts-simple-ast/issues/356) - Setting method as abstract in structure should not write method body. ([8f70df2](https://github.com/dsherret/ts-simple-ast/commit/8f70df2))
+
+
+
+<a name="12.5.0"></a>
+# [12.5.0](https://github.com/dsherret/ts-simple-ast/compare/12.4.1...12.5.0) (2018-07-02)
+
+
+### Bug Fixes
+
+* [#354](https://github.com/dsherret/ts-simple-ast/issues/354) - Support using ts-simple-ast in the browser without mocking "fs" or "fs-extra" ([795fe55](https://github.com/dsherret/ts-simple-ast/commit/795fe55))
+* BooleanLiteral#setLiteralValue(value: boolean) should never return undefined. ([d1ee709](https://github.com/dsherret/ts-simple-ast/commit/d1ee709))
+* NamespaceDeclaration#getDeclarationKindKeyword should never return undefined. ([0b81c00](https://github.com/dsherret/ts-simple-ast/commit/0b81c00))
+
+
+### Features
+
+* Add JSDocTag#getName(). ([0c868e9](https://github.com/dsherret/ts-simple-ast/commit/0c868e9))
+* Add Symbol#getAliasedSymbolOrThrow() and Symbol#getExportByNameOrThrow(name: string). ([78c7ea3](https://github.com/dsherret/ts-simple-ast/commit/78c7ea3))
+
+
+
+<a name="12.4.1"></a>
+# [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
+
+
+### Bug Fixes
+
+* [#348](https://github.com/dsherret/ts-simple-ast/issues/348) - project.getSourceFiles() would sometimes return multiple instances of the same source file. ([8888967](https://github.com/dsherret/ts-simple-ast/commit/8888967))
+* [#352](https://github.com/dsherret/ts-simple-ast/issues/352) - Fixed reading relative files from tsconfig.json with multiple rootDirs ([c2e948f](https://github.com/dsherret/ts-simple-ast/commit/c2e948f)) -- Thanks [@dzinxed](https://github.com/dzinxed)!
+
+
+
 <a name="12.4.0"></a>
-# [12.4.0](https://github.com/dsherret/ts-simple-ast/compare/12.2.0...12.4.0) (2018-06-10)
+# [12.4.0](https://github.com/dsherret/ts-simple-ast/compare/12.3.0...12.4.0) (2018-06-10)
 
 
 ### Features
 
 * [#342](https://github.com/dsherret/ts-simple-ast/issues/342) - Finish work on removing property assignment. ([9e35623](https://github.com/dsherret/ts-simple-ast/commit/9e35623))
-* [#343](https://github.com/dsherret/ts-simple-ast/issues/343) - Ability to remove more object literal expression members ([e82d45f](https://github.com/dsherret/ts-simple-ast/commit/e82d45f))
 * Add ability to add/insert type parameters with a default type node. ([cd05c3f](https://github.com/dsherret/ts-simple-ast/commit/cd05c3f))
 * Add SourceFile.isFromExternalLibrary ([136a2da](https://github.com/dsherret/ts-simple-ast/commit/136a2da))
 * Add Symbol.getEscapedName() ([4360bab](https://github.com/dsherret/ts-simple-ast/commit/4360bab))
