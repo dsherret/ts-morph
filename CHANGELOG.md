@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.3"></a>
+## [12.5.3](https://github.com/dsherret/ts-simple-ast/compare/12.5.2...12.5.3) (2018-07-12)
+
+
+
 <a name="12.5.2"></a>
 # [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
 
