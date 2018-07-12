@@ -6,9 +6,10 @@ import { FileUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
 
 export class DefaultFileSystemHost implements FileSystemHost {
-    // Prevent "fs-extra" from being loaded in environments that don't support it (ex. browsers).
+    // Prevent "fs-extra" and "globby" from being loaded in environments that don't support it (ex. browsers).
     // This means if someone specifies to use a virtual file system then it won't load this.
     private fs: typeof fsForType = require("fs-extra");
+    private globby: typeof globby = require("globby");
 
     delete(path: string) {
         return new Promise<void>((resolve, reject) => {
@@ -145,7 +146,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
     }
 
     glob(patterns: string[]) {
-        return globby.sync(patterns, {
+        return this.globby.sync(patterns, {
             cwd: this.getCurrentDirectory(),
             absolute: true
         });
