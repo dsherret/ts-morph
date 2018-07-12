@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="12.5.2"></a>
-# [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
+## [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
 
 
 ### Bug Fixes
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="12.5.1"></a>
-# [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
+## [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
 
 
 ### Bug Fixes
@@ -50,7 +50,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="12.4.1"></a>
-# [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
+## [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
 
 
 ### Bug Fixes

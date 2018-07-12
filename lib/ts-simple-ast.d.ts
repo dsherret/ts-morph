@@ -3904,7 +3904,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getNextSiblingOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
     /**
      * Gets the next sibling.
-     * @param condition - Optional condition for getting the previous sibling.
+     * @param condition - Optional condition for getting the next sibling.
      */
     getNextSibling(condition?: (node: Node) => boolean): Node | undefined;
     /**
