@@ -1,6 +1,4 @@
-﻿import * as fsForType from "fs-extra";
-import * as globby from "globby";
-import * as nodePath from "path";
+﻿import * as nodePath from "path";
 import * as errors from "../errors";
 import { FileUtils } from "../utils";
 import { FileSystemHost } from "./FileSystemHost";
@@ -8,8 +6,8 @@ import { FileSystemHost } from "./FileSystemHost";
 export class DefaultFileSystemHost implements FileSystemHost {
     // Prevent "fs-extra" and "globby" from being loaded in environments that don't support it (ex. browsers).
     // This means if someone specifies to use a virtual file system then it won't load this.
-    private fs: typeof fsForType = require("fs-extra");
-    private globby: typeof globby = require("globby");
+    private fs: typeof import ("fs-extra") = require("fs-extra");
+    private globby: typeof import ("globby") = require("globby");
 
     delete(path: string) {
         return new Promise<void>((resolve, reject) => {

@@ -470,7 +470,20 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertStatements(index: number, writerFunction: WriterFunction): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction) {
-            return this.getChildSyntaxListOrThrow().insertChildText(index, textOrWriterFunction);
+            return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction);
+
+            function getChildSyntaxList(this: Node) {
+                const childSyntaxList = this.getChildSyntaxListOrThrow();
+
+                // case and default clauses can optionally have blocks
+                if (TypeGuards.isCaseClause(this) || TypeGuards.isDefaultClause(this)) {
+                    const block = childSyntaxList.getFirstChildIfKind(SyntaxKind.Block);
+                    if (block != null)
+                        return block.getChildSyntaxListOrThrow();
+                }
+
+                return childSyntaxList;
+            }
         }
 
         removeStatement(index: number) {

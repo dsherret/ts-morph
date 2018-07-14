@@ -1,4 +1,4 @@
-import { Node } from "../../compiler";
+import { Node, SyntaxList } from "../../compiler";
 import { Chars } from "../../constants";
 import { SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
@@ -7,22 +7,27 @@ import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 /**
  * Gets the insert pos from an index.
  */
-export function getInsertPosFromIndex(index: number, parent: Node, children: Node[]) {
+export function getInsertPosFromIndex(index: number, syntaxList: SyntaxList, children: Node[]) {
     if (index === 0) {
+        const parent = syntaxList.getParentOrThrow();
         if (TypeGuards.isSourceFile(parent))
             return parent.getFullText()[0] === Chars.BOM ? 1 : 0;
         else if (TypeGuards.isCaseClause(parent) || TypeGuards.isDefaultClause(parent)) {
+            const block = parent.getFirstChildIfKind(SyntaxKind.Block);
             const colonToken = parent.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
             return colonToken.getEnd();
         }
-        else {
-            const parentContainer = getParentContainer(parent);
-            const openBraceToken = parentContainer.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
-            return openBraceToken.getEnd();
-        }
-    }
 
-    return children[index - 1].getEnd();
+        const isInline = syntaxList !== parent.getChildSyntaxList();
+        if (isInline)
+            return syntaxList.getStart();
+
+        const parentContainer = getParentContainer(parent);
+        const openBraceToken = parentContainer.getFirstChildByKindOrThrow(SyntaxKind.OpenBraceToken);
+        return openBraceToken.getEnd();
+    }
+    else
+        return children[index - 1].getEnd();
 }
 
 export function getEndPosFromIndex(index: number, parent: Node, children: Node[], fullText: string) {

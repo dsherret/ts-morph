@@ -135,7 +135,7 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
     const {parent, index, children} = opts;
     const fullText = parent.sourceFile.getFullText();
-    const insertPos = getInsertPosFromIndex(index, parent, children);
+    const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
     const endPos = getEndPosFromIndex(index, parent, children, fullText);
     const replacingLength = endPos - insertPos;
     const newText = getNewText();
