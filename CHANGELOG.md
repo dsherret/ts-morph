@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.5.4"></a>
+## [12.5.4](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.5.4) (2018-07-14)
+
+
+### Bug Fixes
+
+* [#362](https://github.com/dsherret/ts-simple-ast/issues/362) - SyntaxList.insertChildText(...) would throw when not inserting to the child syntax list. ([738fb47](https://github.com/dsherret/ts-simple-ast/commit/738fb47))
+* Should properly add statements to a case or default clause with a block. ([65d96bc](https://github.com/dsherret/ts-simple-ast/commit/65d96bc))
+
+
+
 <a name="12.5.3"></a>
 ## [12.5.3](https://github.com/dsherret/ts-simple-ast/compare/12.5.2...12.5.3) (2018-07-12)
 
