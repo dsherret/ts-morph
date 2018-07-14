@@ -183,36 +183,46 @@ describe(nameof(StatementedNode), () => {
                 "function i() { var t;\n    newText;var m; }");
         });
 
-        const caseClause = "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        break;\n}";
+        const caseClause = "switch (x) {\n    case 1:\n        x = 0;\n        break;\n}";
         it("should insert statements at the beginning and into a case clase", () => {
             doFirstChildTest<CaseClause>(caseClause, 0, "newText;\nsecondText;", 2,
-                "switch (x) {\n    case 1:\n        newText;\n        secondText;\n        x = 0;\n        y = 1;\n        break;\n}", SyntaxKind.CaseClause);
+                "switch (x) {\n    case 1:\n        newText;\n        secondText;\n        x = 0;\n        break;\n}", SyntaxKind.CaseClause);
         });
 
         it("should insert statements in the middle and into a case clause", () => {
-            doFirstChildTest<CaseClause>(caseClause, 2, "newText;\nsecondText;", 2,
-                "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        newText;\n        secondText;\n        break;\n}", SyntaxKind.CaseClause);
+            doFirstChildTest<CaseClause>(caseClause, 1, "newText;\nsecondText;", 2,
+                "switch (x) {\n    case 1:\n        x = 0;\n        newText;\n        secondText;\n        break;\n}", SyntaxKind.CaseClause);
         });
 
         it("should insert statements at the end and into a case clause", () => {
-            doFirstChildTest<CaseClause>(caseClause, 3, "newText;\nsecondText;", 2,
-                "switch (x) {\n    case 1:\n        x = 0;\n        y = 1;\n        break;\n        newText;\n        secondText;\n}", SyntaxKind.CaseClause);
+            doFirstChildTest<CaseClause>(caseClause, 2, "newText;\nsecondText;", 2,
+                "switch (x) {\n    case 1:\n        x = 0;\n        break;\n        newText;\n        secondText;\n}", SyntaxKind.CaseClause);
         });
 
-        const defaultClause = "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n}";
+        it("should insert into a case clause with a block", () => {
+            doFirstChildTest<CaseClause>("switch (x) {\n    case 1: {\n    }\n\n}", 0, "newText;", 1,
+                "switch (x) {\n    case 1: {\n        newText;\n    }\n\n}", SyntaxKind.CaseClause);
+        });
+
+        const defaultClause = "switch (x) {\n    default:\n        x = 0;\n        break;\n}";
         it("should insert statements at the beginning and into a default clause", () => {
             doFirstChildTest<DefaultClause>(defaultClause, 0, "newText;\nsecondText;", 2,
-                "switch (x) {\n    default:\n        newText;\n        secondText;\n        x = 0;\n        y = 1;\n        break;\n}", SyntaxKind.DefaultClause);
+                "switch (x) {\n    default:\n        newText;\n        secondText;\n        x = 0;\n        break;\n}", SyntaxKind.DefaultClause);
         });
 
         it("should insert statements in the middle and into a default clause", () => {
-            doFirstChildTest<DefaultClause>(defaultClause, 2, "newText;\nsecondText;", 2,
-                "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        newText;\n        secondText;\n        break;\n}", SyntaxKind.DefaultClause);
+            doFirstChildTest<DefaultClause>(defaultClause, 1, "newText;\nsecondText;", 2,
+                "switch (x) {\n    default:\n        x = 0;\n        newText;\n        secondText;\n        break;\n}", SyntaxKind.DefaultClause);
         });
 
         it("should insert statements at the end and into a default clause", () => {
-            doFirstChildTest<DefaultClause>(defaultClause, 3, "newText;\nsecondText;", 2,
-                "switch (x) {\n    default:\n        x = 0;\n        y = 1;\n        break;\n        newText;\n        secondText;\n}", SyntaxKind.DefaultClause);
+            doFirstChildTest<DefaultClause>(defaultClause, 2, "newText;\nsecondText;", 2,
+                "switch (x) {\n    default:\n        x = 0;\n        break;\n        newText;\n        secondText;\n}", SyntaxKind.DefaultClause);
+        });
+
+        it("should insert into a default clause with a block", () => {
+            doFirstChildTest<CaseClause>("switch (x) {\n    default: {\n    }\n\n}", 0, "newText;", 1,
+                "switch (x) {\n    default: {\n        newText;\n    }\n\n}", SyntaxKind.DefaultClause);
         });
 
         it("should insert statements in a Block", () => {
