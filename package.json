@@ -102,7 +102,6 @@
   "browser": {
     "fs": false,
     "os": false,
-    "path": false,
     "fs.realpath": false,
     "fs-extra": false,
     "dir-glob": false,
