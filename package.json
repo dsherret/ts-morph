@@ -98,5 +98,19 @@
   },
   "standard-version": {
     "tagPrefix": ""
+  },
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false,
+    "fs.realpath": false,
+    "fs-extra": false,
+    "dir-glob": false,
+    "graceful-fs": false,
+    "fast-glob": false,
+    "source-map-support": false,
+    "globby": false,
+    "glob-parent": false,
+    "glob": false
   }
 }
