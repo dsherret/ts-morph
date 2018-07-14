@@ -7,20 +7,9 @@ import { Node } from "./Node";
 export class SyntaxList extends Node<ts.SyntaxList> {
     /**
      * Adds text at the end of the current children.
-     * @param text - Text to insert.
+     * @param textOrWriterFunction - Text to add or function that provides a writer to write with.
      * @returns The children that were added.
      */
-    addChildText(text: string): Node[];
-    /**
-     * Adds text at the end of the current children.
-     * @param writer - Write the text using the provided writer.
-     * @returns The children that were added.
-     */
-    addChildText(writer: WriterFunction): Node[];
-    /**
-     * @internal
-     */
-    addChildText(textOrWriterFunction: string | WriterFunction): Node[];
     addChildText(textOrWriterFunction: string | WriterFunction) {
         return this.insertChildText(this.getChildCount(), textOrWriterFunction);
     }
@@ -28,21 +17,9 @@ export class SyntaxList extends Node<ts.SyntaxList> {
     /**
      * Inserts text at the specified child index.
      * @param index - Child index to insert at.
-     * @param text - Text to insert.
+     * @param textOrWriterFunction - Text to insert or function that provides a writer to write with.
      * @returns The children that were inserted.
      */
-    insertChildText(index: number, text: string): Node[];
-    /**
-     * Inserts text at the specified child index.
-     * @param index - Child index to insert at.
-     * @param writer - Write the text using the provided writer.
-     * @returns The children that were inserted.
-     */
-    insertChildText(index: number, writer: WriterFunction): Node[];
-    /**
-     * @internal
-     */
-    insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node[];
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction) {
         // get index
         const initialChildCount = this.getChildCount();
@@ -51,20 +28,29 @@ export class SyntaxList extends Node<ts.SyntaxList> {
         index = verifyAndGetIndex(index, initialChildCount);
 
         // get text
-        let insertText = getTextFromStringOrWriter(parent.getWriterWithChildIndentation(), textOrWriterFunction);
+        const isInline = this !== parent.getChildSyntaxList();
+        let insertText = getTextFromStringOrWriter(isInline ? parent.getWriterWithQueuedChildIndentation() : parent.getWriterWithChildIndentation(), textOrWriterFunction);
 
         if (insertText.length === 0)
             return [];
 
-        if (index === 0 && TypeGuards.isSourceFile(parent)) {
-            if (!StringUtils.endsWith(insertText, newLineKind))
-                insertText += newLineKind;
+        if (isInline) {
+            if (index === 0)
+                insertText += " ";
+            else
+                insertText = " " + insertText;
         }
-        else
-            insertText = newLineKind + insertText;
+        else {
+            if (index === 0 && TypeGuards.isSourceFile(parent)) {
+                if (!StringUtils.endsWith(insertText, newLineKind))
+                    insertText += newLineKind;
+            }
+            else
+                insertText = newLineKind + insertText;
+        }
 
         // insert
-        const insertPos = getInsertPosFromIndex(index, parent, this.getChildren());
+        const insertPos = getInsertPosFromIndex(index, this, this.getChildren());
         insertIntoParentTextRange({
             insertPos,
             newText: insertText,
