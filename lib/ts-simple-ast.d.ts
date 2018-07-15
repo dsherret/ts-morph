@@ -1802,13 +1802,13 @@ export interface ArgumentedNode {
     addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Inserts an argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentText - Argument text to insert.
      */
     insertArgument(index: number, argumentText: string | WriterFunction): Node;
     /**
      * Inserts arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
     insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];
@@ -1819,7 +1819,7 @@ export interface ArgumentedNode {
     removeArgument(arg: Node): this;
     /**
      * Removes an argument.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeArgument(index: number): this;
 }
@@ -1988,13 +1988,13 @@ export interface DecoratableNode {
     addDecorators(structures: DecoratorStructure[]): Decorator[];
     /**
      * Inserts a decorator.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the decorator.
      */
     insertDecorator(index: number, structure: DecoratorStructure): Decorator;
     /**
      * Insert decorators.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertDecorators(index: number, structures: DecoratorStructure[]): Decorator[];
@@ -2114,7 +2114,7 @@ export interface ExtendsClauseableNode {
     insertExtends(index: number, text: string): ExpressionWithTypeArguments;
     /**
      * Removes the extends at the specified index.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeExtends(index: number): this;
     /**
@@ -2204,7 +2204,7 @@ export interface ImplementsClauseableNode {
     insertImplements(index: number, text: string): ExpressionWithTypeArguments;
     /**
      * Removes the implements at the specified index.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeImplements(index: number): this;
     /**
@@ -2296,13 +2296,13 @@ export interface JSDocableNode {
     addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
     /**
      * Inserts a JS doc.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
     insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
     /**
      * Inserts JS docs.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
@@ -2557,13 +2557,13 @@ export interface ParameteredNode {
     addParameters(structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts parameters.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
     insertParameters(index: number, structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts a parameter.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Parameter to insert.
      */
     insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;
@@ -2797,13 +2797,13 @@ export interface TypeArgumentedNode {
     addTypeArguments(argumentTexts: string[]): TypeNode[];
     /**
      * Inserts a type argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentText - Argument text to insert.
      */
     insertTypeArgument(index: number, argumentText: string): TypeNode;
     /**
      * Inserts type arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
     insertTypeArguments(index: number, argumentTexts: string[]): TypeNode[];
@@ -2814,7 +2814,7 @@ export interface TypeArgumentedNode {
     removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeTypeArgument(index: number): this;
 }
@@ -2869,13 +2869,13 @@ export interface TypeElementMemberedNode {
     addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the construct signature.
      */
     insertConstructSignature(index: number, structure: ConstructSignatureDeclarationStructure): ConstructSignatureDeclaration;
     /**
      * Insert construct signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
     insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
@@ -2905,13 +2905,13 @@ export interface TypeElementMemberedNode {
     addCallSignatures(structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
     /**
      * Insert call signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the call signature.
      */
     insertCallSignature(index: number, structure: CallSignatureDeclarationStructure): CallSignatureDeclaration;
     /**
      * Insert call signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
     insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
@@ -2941,13 +2941,13 @@ export interface TypeElementMemberedNode {
     addIndexSignatures(structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the index signature.
      */
     insertIndexSignature(index: number, structure: IndexSignatureDeclarationStructure): IndexSignatureDeclaration;
     /**
      * Insert index signatures.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
     insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
@@ -2977,13 +2977,13 @@ export interface TypeElementMemberedNode {
     addMethods(structures: MethodSignatureStructure[]): MethodSignature[];
     /**
      * Insert method.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
     insertMethod(index: number, structure: MethodSignatureStructure): MethodSignature;
     /**
      * Insert methods.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
     insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[];
@@ -3023,13 +3023,13 @@ export interface TypeElementMemberedNode {
     addProperties(structures: PropertySignatureStructure[]): PropertySignature[];
     /**
      * Insert property.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
     insertProperty(index: number, structure: PropertySignatureStructure): PropertySignature;
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[];
@@ -3106,13 +3106,13 @@ export interface TypeParameteredNode {
     addTypeParameters(structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
     insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
     insertTypeParameters(index: number, structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
@@ -3206,13 +3206,13 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     addConstructors(structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
     /**
      * Inserts a constructor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure?: ConstructorDeclarationStructure): ConstructorDeclaration;
     /**
      * Inserts constructors.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
     insertConstructors(index: number, structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
@@ -3232,13 +3232,13 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     addGetAccessors(structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
     /**
      * Insert get accessor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the get accessor.
      */
     insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
@@ -3254,13 +3254,13 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     addSetAccessors(structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
     /**
      * Insert set accessor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the set accessor.
      */
     insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
@@ -3276,13 +3276,13 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     addProperties(structures: PropertyDeclarationStructure[]): PropertyDeclaration[];
     /**
      * Insert property.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
     insertProperty(index: number, structure: PropertyDeclarationStructure): PropertyDeclaration;
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertyDeclarationStructure[]): PropertyDeclaration[];
@@ -3418,13 +3418,13 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
     addMethods(structures: MethodDeclarationStructure[]): MethodDeclaration[];
     /**
      * Insert method.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
     insertMethod(index: number, structure: MethodDeclarationStructure): MethodDeclaration;
     /**
      * Insert methods.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]): MethodDeclaration[];
@@ -3617,13 +3617,13 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
     addOverloads(structures: ConstructorDeclarationOverloadStructure[]): ConstructorDeclaration[];
     /**
      * Inserts a constructor overload.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
     insertOverload(index: number, structure: ConstructorDeclarationOverloadStructure): ConstructorDeclaration;
     /**
      * Inserts constructor overloads.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]): ConstructorDeclaration[];
@@ -3675,13 +3675,13 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
     addOverloads(structures: MethodDeclarationOverloadStructure[]): MethodDeclaration[];
     /**
      * Inserts a method overload.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
     insertOverload(index: number, structure: MethodDeclarationOverloadStructure): MethodDeclaration;
     /**
      * Inserts method overloads.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: MethodDeclarationOverloadStructure[]): MethodDeclaration[];
@@ -4225,13 +4225,13 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     getLastChildIfKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
      * Gets the child at the specified index if it's the specified kind or throws an exception.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind];
     /**
      * Gets the child at the specified index if it's the specified kind or returns undefined.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined;
@@ -4482,13 +4482,13 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     addTypeArguments(argumentTexts: string[]): TypeNode<ts.TypeNode>[];
     /**
      * Inserts a type argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
     insertTypeArgument(index: number, argumentText: string): TypeNode<ts.TypeNode>;
     /**
      * Inserts type arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
     insertTypeArguments(index: number, argumentTexts: string[]): TypeNode<ts.TypeNode>[];
@@ -4499,7 +4499,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeTypeArgument(index: number): this;
     /**
@@ -4514,13 +4514,13 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     addArguments(argumentTexts: string[]): Node<ts.Node>[];
     /**
      * Inserts an argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
     insertArgument(index: number, argumentText: string): Node<ts.Node>;
     /**
      * Inserts arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
     insertArguments(index: number, argumentTexts: string[]): Node<ts.Node>[];
@@ -4531,7 +4531,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     removeArgument(node: Node): this;
     /**
      * Removes an argument based on the specified index.
-     * @param index - Index to remove.
+     * @param index - Child index to remove.
      */
     removeArgument(index: number): this;
     /**
@@ -4689,13 +4689,13 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
     addMembers(structures: EnumMemberStructure[]): EnumMember[];
     /**
      * Inserts a member to the enum.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the enum.
      */
     insertMember(index: number, structure: EnumMemberStructure): EnumMember;
     /**
      * Inserts members to an enum.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
     insertMembers(index: number, structures: EnumMemberStructure[]): EnumMember[];
@@ -4792,7 +4792,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     }): Expression<ts.Expression>[];
     /**
      * Insert an element into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param text - Text to insert as an element.
      * @param options - Options.
      */
@@ -4801,7 +4801,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     }): Expression<ts.Expression>;
     /**
      * Insert elements into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param texts - Texts to insert as elements.
      * @param options - Options.
      */
@@ -4810,7 +4810,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     }): Expression[];
     /**
      * Insert elements into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param writerFunction - Write the text using the provided writer.
      * @param options - Options.
      */
@@ -4819,7 +4819,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     }): Expression[];
     /**
      * Removes an element from the array.
-     * @param index - Index to remove from.
+     * @param index - Child index to remove from.
      */
     removeElement(index: number): void;
     /**
@@ -5081,13 +5081,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addPropertyAssignments(structures: PropertyAssignmentStructure[]): PropertyAssignment[];
     /**
      * Inserts a property assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the property assignment to insert.
      */
     insertPropertyAssignment(index: number, structure: PropertyAssignmentStructure): PropertyAssignment;
     /**
      * Inserts property assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the property assignments to insert.
      */
     insertPropertyAssignments(index: number, structures: PropertyAssignmentStructure[]): PropertyAssignment[];
@@ -5103,13 +5103,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addShorthandPropertyAssignments(structures: ShorthandPropertyAssignmentStructure[]): ShorthandPropertyAssignment[];
     /**
      * Inserts a shorthand property assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the shorthand property assignment to insert.
      */
     insertShorthandPropertyAssignment(index: number, structure: ShorthandPropertyAssignmentStructure): ShorthandPropertyAssignment;
     /**
      * Inserts shorthand property assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
     insertShorthandPropertyAssignments(index: number, structures: ShorthandPropertyAssignmentStructure[]): ShorthandPropertyAssignment[];
@@ -5125,13 +5125,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addSpreadAssignments(structures: SpreadAssignmentStructure[]): SpreadAssignment[];
     /**
      * Inserts a spread assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the spread assignment to insert.
      */
     insertSpreadAssignment(index: number, structure: SpreadAssignmentStructure): SpreadAssignment;
     /**
      * Inserts spread assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the spread assignments to insert.
      */
     insertSpreadAssignments(index: number, structures: SpreadAssignmentStructure[]): SpreadAssignment[];
@@ -5147,13 +5147,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addMethods(structures: MethodDeclarationStructure[]): MethodDeclaration[];
     /**
      * Inserts a method at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the method to insert.
      */
     insertMethod(index: number, structure: MethodDeclarationStructure): MethodDeclaration;
     /**
      * Inserts methods at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the methods to insert.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]): MethodDeclaration[];
@@ -5169,13 +5169,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addGetAccessors(structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
     /**
      * Inserts a get accessor at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the get accessor to insert.
      */
     insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure): GetAccessorDeclaration;
     /**
      * Inserts get accessors at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the get accessors to insert.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
@@ -5191,13 +5191,13 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
     addSetAccessors(structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
     /**
      * Inserts a set accessor at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the set accessor to insert.
      */
     insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure): SetAccessorDeclaration;
     /**
      * Inserts set accessors at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the set accessors to insert.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
@@ -5460,19 +5460,19 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     addNamedExports(structuresOrNames: (ExportSpecifierStructure | string)[]): ExportSpecifier[];
     /**
      * Inserts a named export.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the named export.
      */
     insertNamedExport(index: number, structure: ExportSpecifierStructure): ExportSpecifier;
     /**
      * Inserts a named export.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param name - Name of the named export.
      */
     insertNamedExport(index: number, name: string): ExportSpecifier;
     /**
      * Inserts named exports into the export declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
     insertNamedExports(index: number, structuresOrNames: (ExportSpecifierStructure | string)[]): ExportSpecifier[];
@@ -5643,19 +5643,19 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     addNamedImports(structuresOrNames: (ImportSpecifierStructure | string)[]): ImportSpecifier[];
     /**
      * Inserts a named import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the named import.
      */
     insertNamedImport(index: number, structure: ImportSpecifierStructure): ImportSpecifier;
     /**
      * Inserts a named import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param name - Name of the named import.
      */
     insertNamedImport(index: number, name: string): ImportSpecifier;
     /**
      * Inserts named imports into the import declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
     insertNamedImports(index: number, structuresOrNames: (ImportSpecifierStructure | string)[]): ImportSpecifier[];
@@ -5936,13 +5936,13 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     addImportDeclarations(structures: ImportDeclarationStructure[]): ImportDeclaration[];
     /**
      * Insert an import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the import.
      */
     insertImportDeclaration(index: number, structure: ImportDeclarationStructure): ImportDeclaration;
     /**
      * Insert imports into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
     insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[];
@@ -5972,13 +5972,13 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     addExportDeclarations(structures: ExportDeclarationStructure[]): ExportDeclaration[];
     /**
      * Insert an export declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
     insertExportDeclaration(index: number, structure: ExportDeclarationStructure): ExportDeclaration;
     /**
      * Insert export declarations into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
     insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[];
@@ -6016,13 +6016,13 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     addExportAssignments(structures: ExportAssignmentStructure[]): ExportAssignment[];
     /**
      * Insert an export assignment.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
     insertExportAssignment(index: number, structure: ExportAssignmentStructure): ExportAssignment;
     /**
      * Insert export assignments into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
     insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[];
@@ -6187,13 +6187,13 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
     addOverloads(structures: FunctionDeclarationOverloadStructure[]): FunctionDeclaration[];
     /**
      * Inserts a function overload.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the overload.
      */
     insertOverload(index: number, structure: FunctionDeclarationOverloadStructure): FunctionDeclaration;
     /**
      * Inserts function overloads.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
     insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]): FunctionDeclaration[];
@@ -7347,21 +7347,21 @@ export interface StatementedNode {
     addStatements(writerFunction: WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param text - Text of the statement or statements to insert.
      * @returns The statements that were inserted.
      */
     insertStatements(index: number, text: string): Statement[];
     /**
      * Inserts statements at the specified index.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were inserted.
      */
     insertStatements(index: number, writerFunction: WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
-     * @param index - Index to remove the statement at.
+     * @param index - Child index to remove the statement at.
      */
     removeStatement(index: number): this;
     /**
@@ -7381,13 +7381,13 @@ export interface StatementedNode {
     addClasses(structures: ClassDeclarationStructure[]): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
     insertClass(index: number, structure: ClassDeclarationStructure): ClassDeclaration;
     /**
      * Inserts class declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
     insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[];
@@ -7427,13 +7427,13 @@ export interface StatementedNode {
     addEnums(structures: EnumDeclarationStructure[]): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
     insertEnum(index: number, structure: EnumDeclarationStructure): EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
     insertEnums(index: number, structures: EnumDeclarationStructure[]): EnumDeclaration[];
@@ -7473,13 +7473,13 @@ export interface StatementedNode {
     addFunctions(structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
     insertFunction(index: number, structure: FunctionDeclarationStructure): FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
     insertFunctions(index: number, structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
@@ -7519,13 +7519,13 @@ export interface StatementedNode {
     addInterfaces(structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
     insertInterface(index: number, structure: InterfaceDeclarationStructure): InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
     insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
@@ -7565,13 +7565,13 @@ export interface StatementedNode {
     addNamespaces(structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
     insertNamespace(index: number, structure: NamespaceDeclarationStructure): NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
     insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
@@ -7611,13 +7611,13 @@ export interface StatementedNode {
     addTypeAliases(structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
     insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
     insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
@@ -7819,13 +7819,13 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
     addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
     /**
      * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
     insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
     /**
      * Inserts variable declarations at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];
@@ -7872,13 +7872,13 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
     addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
     /**
      * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
     insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
     /**
      * Inserts variable declarations at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];

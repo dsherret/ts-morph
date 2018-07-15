@@ -1038,6 +1038,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the length from the start of the line to the start of the node.
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
      */
     getStartColumn(includeJsDocComment?: boolean) {
         return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
@@ -1045,6 +1046,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the length from the start of the line to the end of the node.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
      */
     getEndColumn() {
         return this.sourceFile.getColumnAtPos(this.getEnd());
@@ -1235,7 +1237,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or throws an exception.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind) {
@@ -1244,7 +1246,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or returns undefined.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {

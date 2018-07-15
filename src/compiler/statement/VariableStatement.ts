@@ -64,7 +64,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
 
     /**
      * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the variable declaration to insert.
      */
     insertDeclaration(index: number, structure: VariableDeclarationStructure) {
@@ -73,7 +73,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
 
     /**
      * Inserts variable declarations at the specified index within the statement.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
     insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {

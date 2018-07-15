@@ -60,21 +60,21 @@ export interface StatementedNode {
     addStatements(writerFunction: WriterFunction): Statement[];
     /**
      * Inserts statements at the specified index.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param text - Text of the statement or statements to insert.
      * @returns The statements that were inserted.
      */
     insertStatements(index: number, text: string): Statement[];
     /**
      * Inserts statements at the specified index.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param writerFunction - Write the text using the provided writer.
      * @returns The statements that were inserted.
      */
     insertStatements(index: number, writerFunction: WriterFunction): Statement[];
     /**
      * Removes the statement at the specified index.
-     * @param index - Index to remove the statement at.
+     * @param index - Child index to remove the statement at.
      */
     removeStatement(index: number): this;
     /**
@@ -94,13 +94,13 @@ export interface StatementedNode {
     addClasses(structures: ClassDeclarationStructure[]): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the class declaration to insert.
      */
     insertClass(index: number, structure: ClassDeclarationStructure): ClassDeclaration;
     /**
      * Inserts class declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
     insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[];
@@ -140,13 +140,13 @@ export interface StatementedNode {
     addEnums(structures: EnumDeclarationStructure[]): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the enum declaration to insert.
      */
     insertEnum(index: number, structure: EnumDeclarationStructure): EnumDeclaration;
     /**
      * Inserts enum declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
     insertEnums(index: number, structures: EnumDeclarationStructure[]): EnumDeclaration[];
@@ -186,13 +186,13 @@ export interface StatementedNode {
     addFunctions(structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the function declaration to insert.
      */
     insertFunction(index: number, structure: FunctionDeclarationStructure): FunctionDeclaration;
     /**
      * Inserts function declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
     insertFunctions(index: number, structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
@@ -232,13 +232,13 @@ export interface StatementedNode {
     addInterfaces(structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the interface declaration to insert.
      */
     insertInterface(index: number, structure: InterfaceDeclarationStructure): InterfaceDeclaration;
     /**
      * Inserts interface declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
     insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
@@ -278,13 +278,13 @@ export interface StatementedNode {
     addNamespaces(structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the namespace declaration to insert.
      */
     insertNamespace(index: number, structure: NamespaceDeclarationStructure): NamespaceDeclaration;
     /**
      * Inserts namespace declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
     insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
@@ -324,13 +324,13 @@ export interface StatementedNode {
     addTypeAliases(structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the type alias declaration to insert.
      */
     insertTypeAlias(index: number, structure: TypeAliasDeclarationStructure): TypeAliasDeclaration;
     /**
      * Inserts type alias declarations as a child.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
     insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];

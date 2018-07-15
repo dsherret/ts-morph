@@ -26,13 +26,13 @@ export interface JSDocableNode {
     addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
     /**
      * Inserts a JS doc.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
     insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
     /**
      * Inserts JS docs.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];

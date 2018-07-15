@@ -43,7 +43,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
 
     /**
      * Inserts a method overload.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
     insertOverload(index: number, structure: MethodDeclarationOverloadStructure) {
@@ -52,7 +52,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
 
     /**
      * Inserts method overloads.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: MethodDeclarationOverloadStructure[]) {
