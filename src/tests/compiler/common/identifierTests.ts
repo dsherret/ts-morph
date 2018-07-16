@@ -11,6 +11,15 @@ describe(nameof(Identifier), () => {
             firstChild.getNameNode().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
         });
+
+        it("should rename an identifier to a ThisKeyword", () => {
+            const text = "const that = this; that.test;";
+            const { sourceFile } = getInfoFromText(text);
+            const thatIdentifier = sourceFile.getFirstDescendantOrThrow(d => d.getKind() === SyntaxKind.Identifier && d.getText() === "that") as Identifier;
+            thatIdentifier.rename("this");
+            expect(thatIdentifier.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal("const this = this; this.test;");
+        });
     });
 
     describe(nameof<Identifier>(n => n.getDefinitions), () => {
