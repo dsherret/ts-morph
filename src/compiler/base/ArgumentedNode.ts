@@ -24,13 +24,13 @@ export interface ArgumentedNode {
     addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
     /**
      * Inserts an argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentText - Argument text to insert.
      */
     insertArgument(index: number, argumentText: string | WriterFunction): Node;
     /**
      * Inserts arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
     insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];

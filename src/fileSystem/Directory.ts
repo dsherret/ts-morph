@@ -1,9 +1,9 @@
 ﻿import { SourceFile, SourceFileCopyOptions, SourceFileMoveOptions } from "../compiler";
 import * as errors from "../errors";
 import { GlobalContainer } from "../GlobalContainer";
-import { SourceFileAddOptions, SourceFileCreateOptions } from "../Project";
+import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
-import { ModuleResolutionKind } from "../typescript";
+import { ModuleResolutionKind, ScriptTarget } from "../typescript";
 import { ArrayUtils, FileUtils, ObjectUtils, setValueIfUndefined, StringUtils } from "../utils";
 import { DirectoryEmitResult } from "./DirectoryEmitResult";
 
@@ -24,6 +24,10 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
      * @remarks - Defaults to true.
      */
     includeUntrackedFiles?: boolean;
+}
+
+export interface SourceFileAddOptions {
+    languageVersion?: ScriptTarget;
 }
 
 export class Directory {
@@ -235,6 +239,24 @@ export class Directory {
     }
 
     /**
+     * Add source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @param options - Options for adding the source file.
+     * @returns The matched source files.
+     */
+    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
+        fileGlobs = typeof fileGlobs === "string" ? [fileGlobs] : fileGlobs;
+        fileGlobs = fileGlobs.map(g => {
+            if (FileUtils.pathIsAbsolute(g))
+                return g;
+
+            return FileUtils.pathJoin(this.getPath(), g);
+        });
+
+        return this.global.directoryCoordinator.addExistingSourceFiles(fileGlobs, options);
+    }
+
+    /**
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
@@ -311,7 +333,7 @@ export class Directory {
      */
     addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
         const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
+        return this.global.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
     }
 
     /**
@@ -323,10 +345,8 @@ export class Directory {
      * @throws FileNotFoundError when the file doesn't exist.
      */
     addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(relativeFilePath, options);
-        if (sourceFile == null)
-            throw new errors.FileNotFoundError(this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath()));
-        return sourceFile;
+        const filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
+        return this.global.directoryCoordinator.addExistingSourceFile(filePath, options);
     }
 
     /**

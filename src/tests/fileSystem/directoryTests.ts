@@ -365,6 +365,39 @@ describe(nameof(Directory), () => {
         });
     });
 
+    describe(nameof<Directory>(d => d.addExistingSourceFiles), () => {
+        const fileSystem = getFileSystemHostWithFiles([{ filePath: "otherDir/file.ts", text: "" }, { filePath: "dir/dir1/dir1/file.ts", text: "" }],
+            ["dir", "dir/dir1", "dir/dir2", "dir/dir1/dir1", "otherDir"]);
+
+        it("should add source files by a relative file glob", () => {
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFiles = directory.addExistingSourceFiles("**/*.ts");
+            expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/dir/dir1/dir1/file.ts"]);
+        });
+
+        it("should add source files by multiple file globs", () => {
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFiles = directory.addExistingSourceFiles(["**/*.ts", "../**/*.ts"]);
+            expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/dir/dir1/dir1/file.ts", "/otherDir/file.ts"]);
+        });
+
+        it("should add source files by an absolute file glob", () => {
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFiles = directory.addExistingSourceFiles("/otherDir/**/*.ts");
+            expect(sourceFiles.map(s => s.getFilePath())).to.deep.equal(["/otherDir/file.ts"]);
+        });
+
+        it("should add source files with the specified script target", () => {
+            const project = new Project(undefined, fileSystem);
+            const directory = project.addExistingDirectory("dir");
+            const sourceFiles = directory.addExistingSourceFiles("dir1/**/*.ts", { languageVersion: ScriptTarget.ES5 });
+            expect(sourceFiles.map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5]);
+        });
+    });
+
     describe(nameof<Directory>(d => d.createDirectory), () => {
         const project = getProject([], ["childDir"]);
         const directory = project.createDirectory("some/path");

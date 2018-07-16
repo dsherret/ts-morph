@@ -163,9 +163,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the length from the start of the line to the provided position.
      * @param pos - Position.
+     * @deprecated - Use `getLengthFromLineStartAtPos`
      */
     getColumnAtPos(pos: number) {
-        return StringUtils.getColumnAtPos(this.getFullText(), pos);
+        return this.getLengthFromLineStartAtPos(pos);
+    }
+
+    /**
+     * Gets the character count from the start of the line to the provided position.
+     * @param pos - Position.
+     */
+    getLengthFromLineStartAtPos(pos: number) {
+        return StringUtils.getLengthFromLineStartAtPos(this.getFullText(), pos);
     }
 
     /**
@@ -523,7 +532,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert an import.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the import.
      */
     insertImportDeclaration(index: number, structure: ImportDeclarationStructure) {
@@ -532,7 +541,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert imports into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
     insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[] {
@@ -594,7 +603,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert an export declaration.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
     insertExportDeclaration(index: number, structure: ExportDeclarationStructure) {
@@ -603,7 +612,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert export declarations into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
     insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[] {
@@ -710,7 +719,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert an export assignment.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the export.
      */
     insertExportAssignment(index: number, structure: ExportAssignmentStructure) {
@@ -719,7 +728,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Insert export assignments into a file.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
     insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[] {

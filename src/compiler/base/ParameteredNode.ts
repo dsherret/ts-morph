@@ -48,13 +48,13 @@ export interface ParameteredNode {
     addParameters(structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts parameters.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
     insertParameters(index: number, structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
     /**
      * Inserts a parameter.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Parameter to insert.
      */
     insertParameter(index: number, structure: ParameterDeclarationStructure): ParameterDeclaration;

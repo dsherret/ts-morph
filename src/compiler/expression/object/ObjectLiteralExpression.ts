@@ -82,7 +82,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a property assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the property assignment to insert.
      */
     insertPropertyAssignment(index: number, structure: PropertyAssignmentStructure) {
@@ -91,7 +91,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts property assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the property assignments to insert.
      */
     insertPropertyAssignments(index: number, structures: PropertyAssignmentStructure[]) {
@@ -118,7 +118,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a shorthand property assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the shorthand property assignment to insert.
      */
     insertShorthandPropertyAssignment(index: number, structure: ShorthandPropertyAssignmentStructure) {
@@ -127,7 +127,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts shorthand property assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
     insertShorthandPropertyAssignments(index: number, structures: ShorthandPropertyAssignmentStructure[]) {
@@ -154,7 +154,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a spread assignment at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the spread assignment to insert.
      */
     insertSpreadAssignment(index: number, structure: SpreadAssignmentStructure) {
@@ -163,7 +163,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts spread assignments at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the spread assignments to insert.
      */
     insertSpreadAssignments(index: number, structures: SpreadAssignmentStructure[]) {
@@ -190,7 +190,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a method at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the method to insert.
      */
     insertMethod(index: number, structure: MethodDeclarationStructure) {
@@ -199,7 +199,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts methods at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the methods to insert.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {
@@ -226,7 +226,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a get accessor at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the get accessor to insert.
      */
     insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure) {
@@ -235,7 +235,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts get accessors at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the get accessors to insert.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
@@ -262,7 +262,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts a set accessor at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structure - Structure that represents the set accessor to insert.
      */
     insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure) {
@@ -271,7 +271,7 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
 
     /**
      * Inserts set accessors at the specified index.
-     * @param index - Index to insert.
+     * @param index - Child index to insert at.
      * @param structures - Structures that represent the set accessors to insert.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {

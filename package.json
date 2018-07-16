@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "12.5.1",
+  "version": "12.6.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -21,7 +21,7 @@
     "code-verification": "ts-node scripts/ensureStructuresMatchClasses && ts-node scripts/ensureOverloadStructuresMatch",
     "ensure-no-declaration-file-errors": "ts-node scripts/ensureNoDeclarationFileErrors",
     "ensure-declaration-file-not-changed": "ts-node scripts/ensureDeclarationFileNotChanged",
-    "overwrite-declaration-file": "npm run package && copy /Y dist\\main.d.ts lib\\ts-simple-ast.d.ts && copy /Y dist\\typescript\\typescript.d.ts lib\\typescript\\typescript.d.ts && copy /Y dist\\codeBlockWriter\\code-block-writer.d.ts lib\\codeBlockWriter\\code-block-writer.d.ts",
+    "overwrite-declaration-file": "npm run package && shx cp -rf dist/main.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist/typescript/typescript.d.ts lib/typescript/typescript.d.ts && shx cp -rf dist/codeBlockWriter/code-block-writer.d.ts lib/codeBlockWriter/code-block-writer.d.ts",
     "ensure-or-throw-exists": "ts-node scripts/ensureOrThrowExists",
     "type-check-docs": "ts-node scripts/typeCheckDocumentation.ts"
   },
@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@dsherret/to-absolute-glob": "^2.0.2",
-    "code-block-writer": "^7.2.0",
+    "code-block-writer": "^7.2.1",
     "fs-extra": "^6.0.1",
     "glob-parent": "^3.1.0",
     "globby": "^8.0.1",
@@ -88,6 +88,8 @@
     "mocha": "^5.1.1",
     "nyc": "^11.7.1",
     "rimraf": "^2.6.2",
+    "shelljs": "^0.8.2",
+    "shx": "^0.3.2",
     "source-map-support": "^0.5.5",
     "ts-nameof": "^1.0.0",
     "ts-node": "^6.0.2",

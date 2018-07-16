@@ -169,7 +169,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
     /**
      * Inserts a type argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
     insertTypeArgument(index: number, argumentText: string) {
@@ -178,7 +178,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
     /**
      * Inserts type arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
     insertTypeArguments(index: number, argumentTexts: string[]) {
@@ -222,7 +222,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
     /**
      * Inserts an argument.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument text.
      */
     insertArgument(index: number, argumentText: string) {
@@ -231,7 +231,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
 
     /**
      * Inserts arguments.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
     insertArguments(index: number, argumentTexts: string[]) {

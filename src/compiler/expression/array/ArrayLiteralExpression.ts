@@ -34,7 +34,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
 
     /**
      * Insert an element into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param text - Text to insert as an element.
      * @param options - Options.
      */
@@ -44,14 +44,14 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
 
     /**
      * Insert elements into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param texts - Texts to insert as elements.
      * @param options - Options.
      */
     insertElements(index: number, texts: string[], options?: { useNewLines?: boolean; }): Expression[];
     /**
      * Insert elements into the array.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param writerFunction - Write the text using the provided writer.
      * @param options - Options.
      */

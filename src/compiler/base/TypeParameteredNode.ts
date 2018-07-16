@@ -49,13 +49,13 @@ export interface TypeParameteredNode {
     addTypeParameters(structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structure - Structure of the type parameter.
      */
     insertTypeParameter(index: number, structure: TypeParameterDeclarationStructure): TypeParameterDeclaration;
     /**
      * Inserts type parameters.
-     * @param index - Index to insert at. Specify a negative index to insert from the reverse.
+     * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
     insertTypeParameters(index: number, structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];

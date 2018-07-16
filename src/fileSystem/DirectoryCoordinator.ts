@@ -1,7 +1,8 @@
 ﻿import * as errors from "../errors";
+import { SourceFile } from "../compiler";
 import { CompilerFactory } from "../factories";
 import { FileUtils } from "../utils";
-import { DirectoryAddOptions } from "./Directory";
+import { DirectoryAddOptions, SourceFileAddOptions } from "./Directory";
 import { FileSystemWrapper } from "./FileSystemWrapper";
 
 /**
@@ -35,5 +36,35 @@ export class DirectoryCoordinator {
 
     createDirectoryOrAddIfExists(dirPath: string) {
         return this.compilerFactory.createDirectoryOrAddIfExists(dirPath);
+    }
+
+    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
+        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
+    }
+
+    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
+        const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
+        if (sourceFile == null)
+            throw new errors.FileNotFoundError(this.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
+        return sourceFile;
+    }
+
+    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
+        if (typeof fileGlobs === "string")
+            fileGlobs = [fileGlobs];
+
+        const sourceFiles: SourceFile[] = [];
+        const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
+
+        for (const filePath of this.fileSystemWrapper.glob(fileGlobs)) {
+            const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
+            if (sourceFile != null)
+                sourceFiles.push(sourceFile);
+        }
+
+        for (const dirPath of globbedDirectories)
+            this.addExistingDirectoryIfExists(dirPath, { recursive: true });
+
+        return sourceFiles;
     }
 }

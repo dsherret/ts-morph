@@ -1,9 +1,9 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
-import { Directory } from "../fileSystem";
+import { Directory, SourceFileAddOptions } from "../fileSystem";
 import { GlobalContainer } from "../GlobalContainer";
-import { SourceFileAddOptions, SourceFileCreateOptions } from "../Project";
+import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { SyntaxKind, ts, TypeFlags } from "../typescript";
 import { ArrayUtils, createCompilerSourceFile, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";

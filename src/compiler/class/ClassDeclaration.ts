@@ -147,7 +147,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Inserts a constructor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure of the constructor.
      */
     insertConstructor(index: number, structure: ConstructorDeclarationStructure = {}) {
@@ -156,7 +156,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Inserts constructors.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
     insertConstructors(index: number, structures: ConstructorDeclarationStructure[]) {
@@ -207,7 +207,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert get accessor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the get accessor.
      */
     insertGetAccessor(index: number, structure: GetAccessorDeclarationStructure) {
@@ -216,7 +216,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
@@ -258,7 +258,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert set accessor.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the set accessor.
      */
     insertSetAccessor(index: number, structure: SetAccessorDeclarationStructure) {
@@ -267,7 +267,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
@@ -309,7 +309,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert property.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the property.
      */
     insertProperty(index: number, structure: PropertyDeclarationStructure) {
@@ -318,7 +318,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert properties.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
     insertProperties(index: number, structures: PropertyDeclarationStructure[]) {
@@ -555,7 +555,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert method.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structure representing the method.
      */
     insertMethod(index: number, structure: MethodDeclarationStructure) {
@@ -564,7 +564,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
 
     /**
      * Insert methods.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
     insertMethods(index: number, structures: MethodDeclarationStructure[]) {

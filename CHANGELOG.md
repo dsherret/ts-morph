@@ -2,8 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.6.0"></a>
+# [12.6.0](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.6.0) (2018-07-16)
+
+
+### Bug Fixes
+
+* [#362](https://github.com/dsherret/ts-simple-ast/issues/362) - SyntaxList.insertChildText(...) would throw when not inserting to the child syntax list. ([738fb47](https://github.com/dsherret/ts-simple-ast/commit/738fb47))
+* Should properly add statements to a case or default clause with a block. ([65d96bc](https://github.com/dsherret/ts-simple-ast/commit/65d96bc))
+
+
+### Features
+
+* [#339](https://github.com/dsherret/ts-simple-ast/issues/339) - Add Directory.addExistingSourceFiles(...). ([bb5cd6e](https://github.com/dsherret/ts-simple-ast/commit/bb5cd6e))
+* [#355](https://github.com/dsherret/ts-simple-ast/issues/355) - Add `getLengthFromLineStartAtPos` to replace `getColumnAtPos` in next major. ([e82cdff](https://github.com/dsherret/ts-simple-ast/commit/e82cdff))
+* [#363](https://github.com/dsherret/ts-simple-ast/issues/363) - Add type guard overloads to methods with a condition for a node. ([21da2fc](https://github.com/dsherret/ts-simple-ast/commit/21da2fc))
+
+
+
+<a name="12.5.4"></a>
+## [12.5.4](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.5.4) (2018-07-14)
+
+
+### Bug Fixes
+
+* [#362](https://github.com/dsherret/ts-simple-ast/issues/362) - SyntaxList.insertChildText(...) would throw when not inserting to the child syntax list. ([738fb47](https://github.com/dsherret/ts-simple-ast/commit/738fb47))
+* Should properly add statements to a case or default clause with a block. ([65d96bc](https://github.com/dsherret/ts-simple-ast/commit/65d96bc))
+
+
+
+<a name="12.5.3"></a>
+## [12.5.3](https://github.com/dsherret/ts-simple-ast/compare/12.5.2...12.5.3) (2018-07-12)
+
+
+### Bug Fixes
+
+* [#361](https://github.com/dsherret/ts-simple-ast/pull/361) - Conditionally import "globby" to allow using library in browser (thanks [@cancerberoSgx](https://github.com/cancerberoSgx)!)
+
+
+<a name="12.5.2"></a>
+## [12.5.2](https://github.com/dsherret/ts-simple-ast/compare/12.5.1...12.5.2) (2018-07-12)
+
+
+### Bug Fixes
+
+* [#359](https://github.com/dsherret/ts-simple-ast/issues/359) - Fix problems when manipulating within forEachChild or forEachDescendant. ([bc124ed](https://github.com/dsherret/ts-simple-ast/commit/bc124ed))
+
+
+
 <a name="12.5.1"></a>
-# [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
+## [12.5.1](https://github.com/dsherret/ts-simple-ast/compare/12.5.0...12.5.1) (2018-07-06)
 
 
 ### Bug Fixes
@@ -31,7 +79,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="12.4.1"></a>
-# [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
+## [12.4.1](https://github.com/dsherret/ts-simple-ast/compare/12.4.0...12.4.1) (2018-07-02)
 
 
 ### Bug Fixes
