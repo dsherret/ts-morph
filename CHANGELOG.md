@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.6.1"></a>
+## [12.6.1](https://github.com/dsherret/ts-simple-ast/compare/12.6.0...12.6.1) (2018-07-16)
+
+
+### Bug Fixes
+
+* [#365](https://github.com/dsherret/ts-simple-ast/issues/365) - Replacing text of an identifier deep in a property access expression would throw. ([4a7b1e2](https://github.com/dsherret/ts-simple-ast/commit/4a7b1e2))
+
+
+
 <a name="12.6.0"></a>
 # [12.6.0](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.6.0) (2018-07-16)
 
