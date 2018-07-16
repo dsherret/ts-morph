@@ -88,6 +88,13 @@ export declare class Directory {
      */
     getDescendantDirectories(): Directory[];
     /**
+     * Add source files based on file globs.
+     * @param fileGlobs - File glob or globs to add files based on.
+     * @param options - Options for adding the source file.
+     * @returns The matched source files.
+     */
+    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
+    /**
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
      * Will return the directory if it was already added.
@@ -297,6 +304,10 @@ export declare class DirectoryEmitResult {
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
+
+export interface SourceFileAddOptions {
+    languageVersion?: ScriptTarget;
+}
 export interface FileSystemHost {
     delete(path: string): Promise<void>;
     deleteSync(path: string): void;
@@ -387,19 +398,12 @@ export declare class Project {
      */
     getRootDirectories(): Directory[];
     /**
-     * Add source files based on a file glob.
-     * @param fileGlobs - File glob to add files based on.
-     * @param options - Options for adding the source file.
-     * @returns The matched source files.
-     */
-    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
-    /**
      * Add source files based on file globs.
-     * @param fileGlobs - File globs to add files based on.
+     * @param fileGlobs - File glob or globs to add files based on.
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
@@ -565,10 +569,6 @@ export declare class Project {
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
 }
 export default Project;
-
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
-}
 
 export interface SourceFileCreateOptions extends SourceFileAddOptions {
     overwrite?: boolean;
@@ -1819,7 +1819,7 @@ export interface ArgumentedNode {
     removeArgument(arg: Node): this;
     /**
      * Removes an argument.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeArgument(index: number): this;
 }
@@ -2114,7 +2114,7 @@ export interface ExtendsClauseableNode {
     insertExtends(index: number, text: string): ExpressionWithTypeArguments;
     /**
      * Removes the extends at the specified index.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeExtends(index: number): this;
     /**
@@ -2204,7 +2204,7 @@ export interface ImplementsClauseableNode {
     insertImplements(index: number, text: string): ExpressionWithTypeArguments;
     /**
      * Removes the implements at the specified index.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeImplements(index: number): this;
     /**
@@ -2814,7 +2814,7 @@ export interface TypeArgumentedNode {
     removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeTypeArgument(index: number): this;
 }
@@ -3861,7 +3861,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by a condition or throws.
      * @param condition - Condition.
      */
-    getFirstChildOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
+    getFirstChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstChildOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the first child by a condition.
+     * @param condition - Condition.
+     */
+    getFirstChild<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
     /**
      * Gets the first child by a condition.
      * @param condition - Condition.
@@ -3871,7 +3881,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by a condition or throws.
      * @param condition - Condition.
      */
-    getLastChildOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
+    getLastChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the last child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getLastChildOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the last child by a condition.
+     * @param condition - Condition.
+     */
+    getLastChild<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
     /**
      * Gets the last child by a condition.
      * @param condition - Condition.
@@ -3881,17 +3901,37 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by a condition or throws.
      * @param condition - Condition.
      */
-    getFirstDescendantOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
+    getFirstDescendantOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first descendant by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstDescendantOrThrow(condition?: (node: Node) => boolean): Node;
     /**
      * Gets the first descendant by a condition.
      * @param condition - Condition.
      */
-    getFirstDescendant(condition?: (node: Node) => boolean): Node<ts.Node> | undefined;
+    getFirstDescendant<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first descendant by a condition.
+     * @param condition - Condition.
+     */
+    getFirstDescendant(condition?: (node: Node) => boolean): Node | undefined;
     /**
      * Gets the previous sibling or throws.
      * @param condition - Optional condition for getting the previous sibling.
      */
-    getPreviousSiblingOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
+    getPreviousSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the previous sibling or throws.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSiblingOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the previous sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSibling<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
     /**
      * Gets the previous sibling.
      * @param condition - Optional condition for getting the previous sibling.
@@ -3901,7 +3941,17 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibling or throws.
      * @param condition - Optional condition for getting the next sibling.
      */
-    getNextSiblingOrThrow(condition?: (node: Node) => boolean): Node<ts.Node>;
+    getNextSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the next sibling or throws.
+     * @param condition - Optional condition for getting the next sibling.
+     */
+    getNextSiblingOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the next sibling.
+     * @param condition - Optional condition for getting the next sibling.
+     */
+    getNextSibling<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
     /**
      * Gets the next sibling.
      * @param condition - Optional condition for getting the next sibling.
@@ -4063,13 +4113,25 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhileOrThrow(condition: (node: Node) => boolean): Node<ts.Node>;
+    getParentWhileOrThrow<T extends Node>(condition: (node: Node) => node is T): T;
+    /**
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Throws if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
+     */
+    getParentWhileOrThrow(condition: (node: Node) => boolean): Node;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
-    getParentWhile(condition: (node: Node) => boolean): Node<ts.Node> | undefined;
+    getParentWhile<T extends Node>(condition: (node: Node) => node is T): T | undefined;
+    /**
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Returns undefined if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
+     */
+    getParentWhile(condition: (node: Node) => boolean): Node | undefined;
     /**
      * Goes up the parents (ancestors) of the node while the parent is the specified syntax kind.
      * Throws if the initial parent is not the specified syntax kind.
@@ -4081,7 +4143,7 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind];
+    getParentWhileKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
      * Gets the last token of this node. Usually this is a close brace.
      */
@@ -4137,10 +4199,12 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the length from the start of the line to the start of the node.
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
      */
     getStartColumn(includeJsDocComment?: boolean): number;
     /**
      * Gets the length from the start of the line to the end of the node.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
      */
     getEndColumn(): number;
     /**
@@ -4499,7 +4563,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     removeTypeArgument(typeArg: Node): this;
     /**
      * Removes a type argument.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeTypeArgument(index: number): this;
     /**
@@ -4531,7 +4595,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
     removeArgument(node: Node): this;
     /**
      * Removes an argument based on the specified index.
-     * @param index - Child index to remove.
+     * @param index - Index to remove.
      */
     removeArgument(index: number): this;
     /**
@@ -4819,7 +4883,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
     }): Expression[];
     /**
      * Removes an element from the array.
-     * @param index - Child index to remove from.
+     * @param index - Index to remove from.
      */
     removeElement(index: number): void;
     /**
@@ -5808,8 +5872,14 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the length from the start of the line to the provided position.
      * @param pos - Position.
+     * @deprecated - Use `getLengthFromLineStartAtPos`
      */
     getColumnAtPos(pos: number): number;
+    /**
+     * Gets the character count from the start of the line to the provided position.
+     * @param pos - Position.
+     */
+    getLengthFromLineStartAtPos(pos: number): number;
     /**
      * Copy this source file to a new file.
      *
