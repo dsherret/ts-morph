@@ -871,6 +871,20 @@ class MyClass {
                 propAccess.replaceWithText("SomeTest; Test");
             }).to.throw();
         });
+
+        it("should replace identifier in property access expression with a call expression", () => {
+            const { sourceFile } = getInfoFromText("Some.Prop.Access.Expr;");
+            const someIdentifier = sourceFile.getFirstDescendantOrThrow(d => d.getKind() === SyntaxKind.Identifier && d.getText() === "Some");
+            someIdentifier.replaceWithText("Some()");
+            expect(sourceFile.getFullText()).to.equal("Some().Prop.Access.Expr;");
+        });
+
+        it("should replace call expression identifier deep in a property access expression", () => {
+            const { sourceFile } = getInfoFromText("Some().Prop.Access.Expr;");
+            const someIdentifier = sourceFile.getFirstDescendantOrThrow(d => d.getKind() === SyntaxKind.Identifier && d.getText() === "Some");
+            someIdentifier.replaceWithText("Some()");
+            expect(sourceFile.getFullText()).to.equal("Some()().Prop.Access.Expr;");
+        });
     });
 
     describe(nameof<Node>(n => n.print), () => {
