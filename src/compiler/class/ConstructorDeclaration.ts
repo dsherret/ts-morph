@@ -40,7 +40,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
 
     /**
      * Inserts a constructor overload.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structure - Structures to insert.
      */
     insertOverload(index: number, structure: ConstructorDeclarationOverloadStructure) {
@@ -49,7 +49,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
 
     /**
      * Inserts constructor overloads.
-     * @param index - Index to insert at.
+     * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
     insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]) {

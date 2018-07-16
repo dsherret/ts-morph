@@ -436,6 +436,15 @@ class MyClass {
             const child = sourceFile.getVariableStatements()[0];
             expect(child.getParentWhile(() => false)).to.be.undefined;
         });
+
+        it("should get by a type guard", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const node = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test4");
+            const result = node.getParentWhile(TypeGuards.isPropertyAccessExpression);
+            assert<IsExactType<typeof result, PropertyAccessExpression | undefined>>(true);
+            expect(result).to.be.instanceOf(PropertyAccessExpression);
+            expect(result!.getText()).to.equal("Test.Test2.Test3.Test4");
+        });
     });
 
     describe(nameof<Node>(n => n.getParentWhileOrThrow), () => {
@@ -450,6 +459,15 @@ class MyClass {
             const {sourceFile} = getInfoFromText("const t;");
             const child = sourceFile.getVariableStatements()[0];
             expect(() => child.getParentWhileOrThrow(() => false)).to.throw();
+        });
+
+        it("should get by a type guard", () => {
+            const {sourceFile} = getInfoFromText("const t = Test.Test2.Test3.Test4;");
+            const node = sourceFile.getFirstDescendantOrThrow(n => n.getText() === "Test4");
+            const result = node.getParentWhileOrThrow(TypeGuards.isPropertyAccessExpression);
+            assert<IsExactType<typeof result, PropertyAccessExpression>>(true);
+            expect(result).to.be.instanceOf(PropertyAccessExpression);
+            expect(result.getText()).to.equal("Test.Test2.Test3.Test4");
         });
     });
 
@@ -483,6 +501,25 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getFirstChild), () => {
+        const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the first child by a condition", () => {
+            expect(syntaxList.getFirstChild(n => n.getKind() === SyntaxKind.InterfaceDeclaration)).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should get the first child by a type guard", () => {
+            const result = syntaxList.getFirstChild(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should return undefined when it can't find the child", () => {
+            expect(syntaxList.getFirstChild(n => n.getKind() === SyntaxKind.IsKeyword)).to.be.undefined;
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstChildOrThrow), () => {
         const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { prop: string; }\ninterface MyInterface {}");
         const syntaxList = sourceFile.getChildSyntaxListOrThrow();
@@ -491,8 +528,34 @@ class MyClass {
             expect(syntaxList.getFirstChildOrThrow(n => n.getKind() === SyntaxKind.InterfaceDeclaration)).to.be.instanceOf(InterfaceDeclaration);
         });
 
+        it("should get the first child by a type guard", () => {
+            const result = syntaxList.getFirstChildOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
         it("should throw when it can't find the child", () => {
             expect(() => syntaxList.getFirstChildOrThrow(n => n.getKind() === SyntaxKind.IsKeyword)).to.throw();
+        });
+    });
+
+    describe(nameof<Node>(n => n.getLastChild), () => {
+        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface {}");
+        const syntaxList = sourceFile.getChildSyntaxListOrThrow();
+
+        it("should get the last child by a condition", () => {
+            const interfaceDec = syntaxList.getLastChild(n => n.getKind() === SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration;
+            expect(interfaceDec.getName()).to.equal("MyInterface");
+        });
+
+        it("should get the last child by a type guard", () => {
+            const result = syntaxList.getLastChild(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should return undefined when it can't find the child", () => {
+            expect(syntaxList.getLastChild(n => n.getKind() === SyntaxKind.IsKeyword)).to.be.undefined;
         });
     });
 
@@ -503,6 +566,12 @@ class MyClass {
         it("should get the last child by a condition", () => {
             const interfaceDec = syntaxList.getLastChildOrThrow(n => n.getKind() === SyntaxKind.InterfaceDeclaration) as InterfaceDeclaration;
             expect(interfaceDec.getName()).to.equal("MyInterface");
+        });
+
+        it("should get the last child by a type guard", () => {
+            const result = syntaxList.getLastChildOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
 
         it("should throw when it can't find the child", () => {
@@ -519,6 +588,12 @@ class MyClass {
             expect((prop as PropertySignature).getName()).to.equal("prop");
         });
 
+        it("should get by a type guard", () => {
+            const result = sourceFile.getFirstDescendant(TypeGuards.isPropertySignature);
+            assert<IsExactType<typeof result, PropertySignature | undefined>>(true);
+            expect(result).to.be.instanceOf(PropertySignature);
+        });
+
         it("should return undefined when it can't find it", () => {
             const privateKeyword = sourceFile.getFirstDescendant(n => n.getKind() === SyntaxKind.PrivateKeyword);
             expect(privateKeyword).to.be.undefined;
@@ -532,6 +607,12 @@ class MyClass {
             const prop = sourceFile.getFirstDescendantOrThrow(n => n.getKind() === SyntaxKind.PropertySignature);
             expect(prop).to.be.instanceOf(PropertySignature);
             expect((prop as PropertySignature).getName()).to.equal("prop");
+        });
+
+        it("should get by a type guard", () => {
+            const result = sourceFile.getFirstDescendantOrThrow(TypeGuards.isPropertySignature);
+            assert<IsExactType<typeof result, PropertySignature>>(true);
+            expect(result).to.be.instanceOf(PropertySignature);
         });
 
         it("should return undefined when it can't find it", () => {
@@ -598,6 +679,12 @@ class MyClass {
         it("should return undefined when there isn't a previous sibling", () => {
             expect(sourceFile.getInterfaces()[0].getPreviousSibling()).to.be.undefined;
         });
+
+        it("should get by a type guard", () => {
+            const result = sourceFile.getInterfaces()[1].getPreviousSibling(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
     });
 
     describe(nameof<Node>(n => n.getPreviousSiblingOrThrow), () => {
@@ -618,6 +705,12 @@ class MyClass {
 
         it("should throw when there isn't a previous sibling", () => {
             expect(() => sourceFile.getInterfaces()[0].getPreviousSiblingOrThrow()).to.throw();
+        });
+
+        it("should get by a type guard", () => {
+            const result = sourceFile.getInterfaces()[1].getPreviousSiblingOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
 
@@ -640,6 +733,12 @@ class MyClass {
         it("should return undefined when there isn't a next sibling", () => {
             expect(sourceFile.getInterfaces()[2].getNextSibling()).to.be.undefined;
         });
+
+        it("should get by a type guard", () => {
+            const result = sourceFile.getInterfaces()[1].getNextSibling(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
     });
 
     describe(nameof<Node>(n => n.getNextSiblingOrThrow), () => {
@@ -660,6 +759,12 @@ class MyClass {
 
         it("should throw when there isn't a next sibling", () => {
             expect(() => sourceFile.getInterfaces()[2].getNextSiblingOrThrow()).to.throw();
+        });
+
+        it("should get by a type guard", () => {
+            const result = sourceFile.getInterfaces()[1].getNextSiblingOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
         });
     });
 

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.6.0"></a>
+# [12.6.0](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.6.0) (2018-07-16)
+
+
+### Bug Fixes
+
+* [#362](https://github.com/dsherret/ts-simple-ast/issues/362) - SyntaxList.insertChildText(...) would throw when not inserting to the child syntax list. ([738fb47](https://github.com/dsherret/ts-simple-ast/commit/738fb47))
+* Should properly add statements to a case or default clause with a block. ([65d96bc](https://github.com/dsherret/ts-simple-ast/commit/65d96bc))
+
+
+### Features
+
+* [#339](https://github.com/dsherret/ts-simple-ast/issues/339) - Add Directory.addExistingSourceFiles(...). ([bb5cd6e](https://github.com/dsherret/ts-simple-ast/commit/bb5cd6e))
+* [#355](https://github.com/dsherret/ts-simple-ast/issues/355) - Add `getLengthFromLineStartAtPos` to replace `getColumnAtPos` in next major. ([e82cdff](https://github.com/dsherret/ts-simple-ast/commit/e82cdff))
+* [#363](https://github.com/dsherret/ts-simple-ast/issues/363) - Add type guard overloads to methods with a condition for a node. ([21da2fc](https://github.com/dsherret/ts-simple-ast/commit/21da2fc))
+
+
+
 <a name="12.5.4"></a>
 ## [12.5.4](https://github.com/dsherret/ts-simple-ast/compare/12.5.3...12.5.4) (2018-07-14)
 

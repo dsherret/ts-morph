@@ -233,6 +233,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by a condition or throws.
      * @param condition - Condition.
      */
+    getFirstChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstChildOrThrow(condition?: (node: Node) => boolean): Node;
     getFirstChildOrThrow(condition?: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getFirstChild(condition), "Could not find a child that matched the specified condition.");
     }
@@ -241,7 +247,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first child by a condition.
      * @param condition - Condition.
      */
-    getFirstChild(condition?: (node: Node) => boolean): Node | undefined {
+    getFirstChild<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first child by a condition.
+     * @param condition - Condition.
+     */
+    getFirstChild(condition?: (node: Node) => boolean): Node | undefined;
+    getFirstChild(condition?: (node: Node) => boolean) {
         const firstChild = this.getCompilerFirstChild(getWrappedCondition(this, condition));
         return this.getNodeFromCompilerNodeIfExists(firstChild);
     }
@@ -250,6 +262,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by a condition or throws.
      * @param condition - Condition.
      */
+    getLastChildOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the last child by a condition or throws.
+     * @param condition - Condition.
+     */
+    getLastChildOrThrow(condition?: (node: Node) => boolean): Node;
     getLastChildOrThrow(condition?: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getLastChild(condition), "Could not find a child that matched the specified condition.");
     }
@@ -258,6 +276,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the last child by a condition.
      * @param condition - Condition.
      */
+    getLastChild<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the last child by a condition.
+     * @param condition - Condition.
+     */
+    getLastChild(condition?: (node: Node) => boolean): Node | undefined;
     getLastChild(condition?: (node: Node) => boolean): Node | undefined {
         const lastChild = this.getCompilerLastChild(getWrappedCondition(this, condition));
         return this.getNodeFromCompilerNodeIfExists(lastChild);
@@ -267,6 +291,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by a condition or throws.
      * @param condition - Condition.
      */
+    getFirstDescendantOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first descendant by a condition or throws.
+     * @param condition - Condition.
+     */
+    getFirstDescendantOrThrow(condition?: (node: Node) => boolean): Node;
     getFirstDescendantOrThrow(condition?: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getFirstDescendant(condition), "Could not find a descendant that matched the specified condition.");
     }
@@ -275,6 +305,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the first descendant by a condition.
      * @param condition - Condition.
      */
+    getFirstDescendant<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first descendant by a condition.
+     * @param condition - Condition.
+     */
+    getFirstDescendant(condition?: (node: Node) => boolean): Node | undefined;
     getFirstDescendant(condition?: (node: Node) => boolean) {
         for (const descendant of this.getDescendantsIterator()) {
             if (condition == null || condition(descendant))
@@ -301,6 +337,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the previous sibling or throws.
      * @param condition - Optional condition for getting the previous sibling.
      */
+    getPreviousSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the previous sibling or throws.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSiblingOrThrow(condition?: (node: Node) => boolean): Node;
     getPreviousSiblingOrThrow(condition?: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getPreviousSibling(condition), "Could not find the previous sibling.");
     }
@@ -309,6 +351,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the previous sibling.
      * @param condition - Optional condition for getting the previous sibling.
      */
+    getPreviousSibling<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the previous sibling.
+     * @param condition - Optional condition for getting the previous sibling.
+     */
+    getPreviousSibling(condition?: (node: Node) => boolean): Node | undefined;
     getPreviousSibling(condition?: (node: Node) => boolean): Node | undefined {
         const previousSibling = this.getCompilerPreviousSibling(getWrappedCondition(this, condition));
         return this.getNodeFromCompilerNodeIfExists(previousSibling);
@@ -318,6 +366,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibling or throws.
      * @param condition - Optional condition for getting the next sibling.
      */
+    getNextSiblingOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the next sibling or throws.
+     * @param condition - Optional condition for getting the next sibling.
+     */
+    getNextSiblingOrThrow(condition?: (node: Node) => boolean): Node;
     getNextSiblingOrThrow(condition?: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getNextSibling(condition), "Could not find the next sibling.");
     }
@@ -326,6 +380,12 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the next sibling.
      * @param condition - Optional condition for getting the next sibling.
      */
+    getNextSibling<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the next sibling.
+     * @param condition - Optional condition for getting the next sibling.
+     */
+    getNextSibling(condition?: (node: Node) => boolean): Node | undefined;
     getNextSibling(condition?: (node: Node) => boolean): Node | undefined {
         const nextSibling = this.getCompilerNextSibling(getWrappedCondition(this, condition));
         return this.getNodeFromCompilerNodeIfExists(nextSibling);
@@ -807,6 +867,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Throws if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
+    getParentWhileOrThrow<T extends Node>(condition: (node: Node) => node is T): T;
+    /**
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Throws if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
+     */
+    getParentWhileOrThrow(condition: (node: Node) => boolean): Node;
     getParentWhileOrThrow(condition: (node: Node) => boolean) {
         return errors.throwIfNullOrUndefined(this.getParentWhile(condition), "The initial parent did not match the provided condition.");
     }
@@ -816,6 +883,13 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent doesn't match the condition.
      * @param condition - Condition that tests the parent to see if the expression is true.
      */
+    getParentWhile<T extends Node>(condition: (node: Node) => node is T): T | undefined;
+    /**
+     * Goes up the parents (ancestors) of the node while a condition is true.
+     * Returns undefined if the initial parent doesn't match the condition.
+     * @param condition - Condition that tests the parent to see if the expression is true.
+     */
+    getParentWhile(condition: (node: Node) => boolean): Node | undefined;
     getParentWhile(condition: (node: Node) => boolean) {
         let node: Node | undefined = undefined;
         let nextParent = this.getParent();
@@ -841,8 +915,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Returns undefined if the initial parent is not the specified syntax kind.
      * @param kind - Syntax kind to check for.
      */
-    getParentWhileKind<TKind extends SyntaxKind>(kind: TKind) {
-        return this.getParentWhile(n => n.getKind() === kind) as KindToNodeMappings[TKind];
+    getParentWhileKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
+        return this.getParentWhile(n => n.getKind() === kind);
     }
 
     /**
@@ -964,6 +1038,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the length from the start of the line to the start of the node.
      * @param includeJsDocComment - Whether to include the JS doc comment or not.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
      */
     getStartColumn(includeJsDocComment?: boolean) {
         return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
@@ -971,6 +1046,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the length from the start of the line to the end of the node.
+     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
      */
     getEndColumn() {
         return this.sourceFile.getColumnAtPos(this.getEnd());
@@ -1161,7 +1237,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or throws an exception.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKindOrThrow<TKind extends SyntaxKind>(index: number, kind: TKind) {
@@ -1170,7 +1246,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the child at the specified index if it's the specified kind or returns undefined.
-     * @param index - Index to get.
+     * @param index - Child index to get.
      * @param kind - Expected kind.
      */
     getChildAtIndexIfKind<TKind extends SyntaxKind>(index: number, kind: TKind): KindToNodeMappings[TKind] | undefined {

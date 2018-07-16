@@ -1,11 +1,11 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import * as errors from "./errors";
-import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
+import { DefaultFileSystemHost, Directory, DirectoryAddOptions, SourceFileAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { GlobalContainer } from "./GlobalContainer";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
 import { SourceFileStructure } from "./structures";
-import { CompilerOptions, ScriptTarget } from "./typescript";
+import { CompilerOptions } from "./typescript";
 import { ArrayUtils, FileUtils, matchGlobs, TsConfigResolver } from "./utils";
 
 export interface Options {
@@ -23,10 +23,6 @@ export interface Options {
 
 export interface SourceFileCreateOptions extends SourceFileAddOptions {
     overwrite?: boolean;
-}
-
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
 }
 
 /**
@@ -165,19 +161,11 @@ export class Project {
     }
 
     /**
-     * Add source files based on a file glob.
-     * @param fileGlobs - File glob to add files based on.
-     * @param options - Options for adding the source file.
-     * @returns The matched source files.
-     */
-    addExistingSourceFiles(fileGlob: string, options?: SourceFileAddOptions): SourceFile[];
-    /**
      * Add source files based on file globs.
-     * @param fileGlobs - File globs to add files based on.
+     * @param fileGlobs - File glob or globs to add files based on.
      * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string[], options?: SourceFileAddOptions): SourceFile[];
     addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
@@ -206,7 +194,7 @@ export class Project {
      * @skipOrThrowCheck
      */
     addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
-        return this.global.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
+        return this.global.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
     }
 
     /**
@@ -218,12 +206,7 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
-        if (sourceFile == null) {
-            const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-            throw new errors.FileNotFoundError(absoluteFilePath);
-        }
-        return sourceFile;
+        return this.global.directoryCoordinator.addExistingSourceFile(filePath, options);
     }
 
     /**
