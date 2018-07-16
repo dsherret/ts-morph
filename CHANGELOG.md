@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * [#365](https://github.com/dsherret/ts-simple-ast/issues/365) - Replacing text of an identifier deep in a property access expression would throw. ([4a7b1e2](https://github.com/dsherret/ts-simple-ast/commit/4a7b1e2))
+* [#364](https://github.com/dsherret/ts-simple-ast/issues/364) - More browser fixes (thanks [@cancerberoSgx](https://github.com/cancerberoSgx))
 
 
 
