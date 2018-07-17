@@ -433,7 +433,6 @@ export class TypeGuards {
             case SyntaxKind.ImportEqualsDeclaration:
             case SyntaxKind.IndexSignature:
             case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.LabeledStatement:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.MethodSignature:
             case SyntaxKind.MissingDeclaration:
