@@ -45,7 +45,7 @@ describe(nameof(SyntaxList), () => {
             const syntaxList = firstChild.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList);
             syntaxList.insertChildText(1, "\nabstract");
 
-            expect(sourceFile.getFullText()).to.equal(`export \nabstract class MyClass {}`);
+            expect(sourceFile.getFullText()).to.equal(`export \n    abstract class MyClass {}`);
         });
     });
 
