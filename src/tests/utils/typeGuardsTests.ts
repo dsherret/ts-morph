@@ -63,14 +63,14 @@ describe(nameof(TypeGuards), () => {
         });
 
         xit("should have a name if it is renameable", () => {
-            //TODO: like we did for "should be renameable if it has a name" but viceversa
+            // TODO: like we did for "should be renameable if it has a name" but viceversa
         });
     });
 
     describe(nameof(TypeGuards.isRenameableNode), () => {
         it("should be renameable when it is a declaration that has name", () => {
             const { sourceFile } = getInfoFromText(`
-                function a(){}; var b = 1; class c{}; interface d{f();h:string}; 
+                function a(){}; var b = 1; class c{}; interface d{f();h:string};
                 export default function e(){};export type g = typeof b`);
             ["a", "b", "c", "d", "e", "f", "g"].forEach(name => {
                 const node = sourceFile.getDescendants().find(n => TypeGuards.isDeclaration(n) &&
@@ -87,7 +87,6 @@ describe(nameof(TypeGuards), () => {
             `);
             ["g", "h", "i", "j", "k", "l", "m"].forEach(name => {
                 const node = sourceFile.getDescendants().find(n => TypeGuards.hasName(n) && n.getName() === name)!;
-                // console.log(name, node && node.getKindName(), node && 'renameable: '+TypeGuards.isRenameableNode(node), !node &&sourceFile.getDescendants().filter(n=>n.getText()===name).map(n=>n.getKindName()).join(','));
                 expect(!!node, `no node with name ${name} found`).to.be.true;
                 const notRenameableLabel = node.getText() + "-" + node.getKindName();
                 expect(TypeGuards.isRenameableNode(node) || notRenameableLabel, "has a name but is not renameable").to.be.true;
