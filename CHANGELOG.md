@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.6.2"></a>
+## [12.6.2](https://github.com/dsherret/ts-simple-ast/compare/12.6.1...12.6.2) (2018-07-17)
+
+
+### Bug Fixes
+
+* [#366](https://github.com/dsherret/ts-simple-ast/issues/366) - Should be able to add a question token to a node without a type. ([c43c1e7](https://github.com/dsherret/ts-simple-ast/commit/c43c1e7))
+
+
+
 <a name="12.6.1"></a>
 ## [12.6.1](https://github.com/dsherret/ts-simple-ast/compare/12.6.0...12.6.1) (2018-07-16)
 
