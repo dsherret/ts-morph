@@ -9,7 +9,7 @@ export class Identifier extends IdentifierBase<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
-    getText() {
+    getText(): string {
         return this.compilerNode.text;
     }
 
@@ -37,6 +37,12 @@ export class Identifier extends IdentifierBase<ts.Identifier> {
         return this.global.languageService.getDefinitions(this);
     }
 
+    /**
+     * Gets the name of what this identifier is referencing.
+     */
+    getName(): string {
+        return this.compilerNode.text;
+    }
     /**
      * Gets the implementations of the identifier.
      *

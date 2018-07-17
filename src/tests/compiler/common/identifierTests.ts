@@ -8,7 +8,9 @@ describe(nameof(Identifier), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
+            expect(firstChild.getNameNode().getName()).to.equal("myFunction");
             firstChild.getNameNode().rename("newFunction");
+            expect(firstChild.getNameNode().getName()).to.equal("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
         });
 
