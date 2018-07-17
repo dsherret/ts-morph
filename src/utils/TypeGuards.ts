@@ -64,7 +64,7 @@ export class TypeGuards {
                 return false;
         }
     }
-
+    
     /**
      * Gets if the node is an AmbientableNode.
      * @param node - Node to check.
@@ -410,6 +410,45 @@ export class TypeGuards {
      */
     static isDebuggerStatement(node: compiler.Node): node is compiler.DebuggerStatement {
         return node.getKind() === SyntaxKind.DebuggerStatement;
+    }
+
+    /**
+     * Gets if the node is a declaration.
+     * @param node - Node to check.
+     */
+    static isDeclaration(node: compiler.Node): node is compiler.ArgumentedNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.CallSignature:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.Constructor:
+            case SyntaxKind.ConstructorType:
+            case SyntaxKind.ConstructSignature:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.ExportDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.ImportDeclaration:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.IndexSignature:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.LabeledStatement:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.MissingDeclaration:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.NamespaceExportDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableDeclaration:
+            // Heads up - not considering Parameter nor TypeParameter as declarations
+                return true;
+            default: 
+                return false
+        }
     }
 
     /**
@@ -1807,6 +1846,17 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node can be renamed, this is, implements `rename()` method .
+     * @param node - Node to check.
+     */
+    static isRenameableNode(node: compiler.Node): node is compiler.Node & { rename: (name: string)=> this; } {
+        // this method is manually maintained
+        if ((node as any).rename == null)
+            return false;
+        return typeof (node as any).rename === "function";
+    }
+
+    /**
      * Gets if the node is a ReturnStatement.
      * @param node - Node to check.
      */
@@ -1988,7 +2038,6 @@ export class TypeGuards {
             case SyntaxKind.SetAccessor:
             case SyntaxKind.SourceFile:
             case SyntaxKind.ArrowFunction:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.ModuleDeclaration:
