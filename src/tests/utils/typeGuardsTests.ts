@@ -61,10 +61,6 @@ describe(nameof(TypeGuards), () => {
                 expect(TypeGuards.hasName(node) || nodeLabel, `no name found for identifier ${node.getText()}` ).to.be.true;
             });
         });
-
-        xit("should have a name if it is renameable", () => {
-            // TODO: like we did for "should be renameable if it has a name" but viceversa
-        });
     });
 
     describe(nameof(TypeGuards.isRenameableNode), () => {
@@ -81,7 +77,7 @@ describe(nameof(TypeGuards), () => {
             });
         });
 
-        xit("should be renameable if it has a name", () => {
+        it("should be renameable if it has a name", () => {
             const { sourceFile } = getInfoFromText(`
                 import {g} from 'g_'; const c = function (h: i): j { var k = l as m; }
             `);
