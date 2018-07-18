@@ -5568,8 +5568,13 @@ export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
     setAlias(alias: string): this;
     /**
      * Gets the alias identifier, if it exists.
+     * @deprecated Use .getAliasNode().
      */
     getAliasIdentifier(): Identifier | undefined;
+    /**
+     * Gets the alias identifier, if it exists.
+     */
+    getAliasNode(): Identifier | undefined;
     /**
      * Gets the export declaration associated with this export specifier.
      */
@@ -5797,8 +5802,13 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
     setAlias(alias: string): this;
     /**
      * Gets the alias identifier, if it exists.
+     * @deprecated Use .getAliasNode().
      */
     getAliasIdentifier(): Identifier | undefined;
+    /**
+     * Gets the alias identifier, if it exists.
+     */
+    getAliasNode(): Identifier | undefined;
     /**
      * Gets the import declaration associated with this import specifier.
      */
