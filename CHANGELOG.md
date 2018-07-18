@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.7.0"></a>
+# [12.7.0](https://github.com/dsherret/ts-simple-ast/compare/12.6.2...12.7.0) (2018-07-18)
+
+
+### Features
+
+* [#370](https://github.com/dsherret/ts-simple-ast/issues/370) - Add RenameableNode. ([1d18158](https://github.com/dsherret/ts-simple-ast/commit/1d18158))
+
+
+
 <a name="12.6.2"></a>
 ## [12.6.2](https://github.com/dsherret/ts-simple-ast/compare/12.6.1...12.6.2) (2018-07-17)
 
