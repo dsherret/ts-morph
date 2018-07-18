@@ -1807,6 +1807,42 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a RenameableNode.
+     * @param node - Node to check.
+     */
+    static isRenameableNode(node: compiler.Node): node is compiler.RenameableNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeParameter:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Gets if the node is a ReturnStatement.
      * @param node - Node to check.
      */

@@ -1,24 +1,16 @@
 import { ts } from "../../typescript";
-import { ReferenceFindableNode } from "../base";
+import { ReferenceFindableNode, RenameableNode } from "../base";
 import { PrimaryExpression } from "../expression/PrimaryExpression";
 import { DefinitionInfo, ImplementationLocation } from "../tools";
 import { Node } from "./Node";
 
-export const IdentifierBase = ReferenceFindableNode(PrimaryExpression);
+export const IdentifierBase = ReferenceFindableNode(RenameableNode(PrimaryExpression));
 export class Identifier extends IdentifierBase<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
     getText() {
         return this.compilerNode.text;
-    }
-
-    /**
-     * Renames the identifier.
-     * @param newName - New name of the identifier.
-     */
-    rename(newName: string) {
-        this.global.languageService.renameNode(this, newName);
     }
 
     /**

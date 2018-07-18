@@ -3,12 +3,13 @@ import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { RenameableNode } from "./RenameableNode";
 
 // todo: consolidate these named classes somehow
 
 export type BindingNamedNodeExtensionType = Node<ts.Declaration & { name: ts.BindingName; }>;
 
-export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode {
+export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export interface BindingNamedNodeSpecific {
@@ -20,15 +21,10 @@ export interface BindingNamedNodeSpecific {
      * Gets the declaration's name as a string.
      */
     getName(): string;
-    /**
-     * Renames the name.
-     * @param text - New name.
-     */
-    rename(text: string): this;
 }
 
 export function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T {
-    return BindingNamedNodeInternal(ReferenceFindableNode(Base));
+    return BindingNamedNodeInternal(ReferenceFindableNode(RenameableNode(Base)));
 }
 
 function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNodeSpecific> & T {
@@ -47,12 +43,6 @@ function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensio
 
         getName() {
             return this.getNameNode().getText();
-        }
-
-        rename(text: string) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            this.getNameNode().rename(text);
-            return this;
         }
     };
 }

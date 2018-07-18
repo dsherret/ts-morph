@@ -3,13 +3,14 @@ import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { RenameableNode } from "./RenameableNode";
 
 // todo: support other types other than identifier
 // todo: consolidate these named classes somehow
 
 export type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
 
-export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode {
+export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export interface DeclarationNamedNodeSpecific {
@@ -29,15 +30,10 @@ export interface DeclarationNamedNodeSpecific {
      * Gets the name or throws if it doens't exist.
      */
     getNameOrThrow(): string;
-    /**
-     * Renames the name.
-     * @param text - Text to set as the name.
-     */
-    rename(text: string): this;
 }
 
 export function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T {
-    return DeclarationNamedNodeInternal(ReferenceFindableNode(Base));
+    return DeclarationNamedNodeInternal(ReferenceFindableNode(RenameableNode(Base)));
 }
 
 function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNodeSpecific> & T {
@@ -71,17 +67,6 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
         getName() {
             const nameNode = this.getNameNode();
             return nameNode == null ? undefined : nameNode.getText();
-        }
-
-        rename(text: string) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            const nameNode = this.getNameNode();
-
-            if (nameNode == null)
-                throw errors.getNotImplementedForSyntaxKindError(this.getKind());
-
-            nameNode.rename(text);
-            return this;
         }
     };
 }

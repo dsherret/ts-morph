@@ -1,6 +1,6 @@
 // DO NOT EDIT - Automatically maintained by createStructurePrinterFactory.ts
-import { SupportedFormatCodeSettings } from "../options";
 import * as structurePrinters from "../structurePrinters";
+import { SupportedFormatCodeSettings } from "../options";
 import { Memoize } from "../utils";
 
 /**
@@ -32,16 +32,6 @@ export class StructurePrinterFactory {
     @Memoize
     forTypedNode(separator: string, alwaysWrite?: boolean): structurePrinters.TypedNodeStructurePrinter {
         return new structurePrinters.TypedNodeStructurePrinter(this, separator, alwaysWrite);
-    }
-
-    @Memoize
-    forJSDoc(): structurePrinters.JSDocStructurePrinter {
-        return new structurePrinters.JSDocStructurePrinter(this);
-    }
-
-    @Memoize
-    forDecorator(): structurePrinters.DecoratorStructurePrinter {
-        return new structurePrinters.DecoratorStructurePrinter(this);
     }
 
     @Memoize
@@ -87,6 +77,16 @@ export class StructurePrinterFactory {
     @Memoize
     forSpreadAssignment(): structurePrinters.SpreadAssignmentStructurePrinter {
         return new structurePrinters.SpreadAssignmentStructurePrinter(this);
+    }
+
+    @Memoize
+    forDecorator(): structurePrinters.DecoratorStructurePrinter {
+        return new structurePrinters.DecoratorStructurePrinter(this);
+    }
+
+    @Memoize
+    forJSDoc(): structurePrinters.JSDocStructurePrinter {
+        return new structurePrinters.JSDocStructurePrinter(this);
     }
 
     @Memoize
