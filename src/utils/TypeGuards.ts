@@ -1413,6 +1413,7 @@ export class TypeGuards {
     static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
                 return true;
             default:
@@ -1430,7 +1431,6 @@ export class TypeGuards {
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ModuleDeclaration:

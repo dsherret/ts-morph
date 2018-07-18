@@ -8,7 +8,7 @@ describe(nameof(Identifier), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
-            firstChild.getNameNode().rename("newFunction");
+            firstChild.getNameNodeOrThrow().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
         });
 
@@ -32,7 +32,7 @@ describe(nameof(Identifier), () => {
             expect(definitions[0].getName()).to.equal("myFunction");
             expect(definitions[0].getSourceFile().getFullText()).to.equal(sourceFileText);
             expect(definitions[0].getKind()).to.equal(ts.ScriptElementKind.functionElement);
-            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNode().getStart());
+            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNodeOrThrow().getStart());
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild);
         });
 
@@ -59,7 +59,7 @@ describe(nameof(Identifier), () => {
         it("should find all the references", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencedSymbols = firstChild.getNameNode().findReferences();
+            const referencedSymbols = firstChild.getNameNodeOrThrow().findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];
             const references = referencedSymbol.getReferences();
@@ -126,7 +126,7 @@ const t = MyNamespace.MyClass;
         it("should find all the references and exclude the definition", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencingNodes = firstChild.getNameNode().findReferencesAsNodes();
+            const referencingNodes = firstChild.getNameNodeOrThrow().findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");

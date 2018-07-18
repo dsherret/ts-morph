@@ -14,6 +14,18 @@ const firstFunctionWithChildFunction = sourceFile.getFunction(f => f.getFunction
 
 Most of the information you can get about functions is covered in other sections.
 
+### Name
+
+It's important to note that function declarations may not have a name. For example:
+
+```ts
+export default function() {
+    // etc...
+}
+```
+
+For this reason, the methods like `.getName()` and `.getNameNode()` are nullable on `FunctionDeclaration`.
+
 ### Add/Insert
 
 Add or insert enums to a source file, namespace, or function like declarations by calling `addFunction()`, `addFunctions()`, `insertFunction()`, or `insertFunctions()`.

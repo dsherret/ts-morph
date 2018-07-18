@@ -4,6 +4,21 @@ import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStruct
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(FunctionDeclaration), () => {
+    describe(nameof<FunctionDeclaration>(f => f.getName), () => {
+        function doTest(startCode: string, name: string | undefined) {
+            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            expect(firstChild.getName()).to.equal(name);
+        }
+
+        it("should be undefined when it doesn't have a name", () => {
+            doTest("export default function() {}", undefined);
+        });
+
+        it("should get when has a name", () => {
+            doTest("export default function name() {}", "name");
+        });
+    });
+
     describe(nameof<FunctionDeclaration>(f => f.insertOverloads), () => {
         function doTest(startCode: string, index: number, structures: FunctionDeclarationOverloadStructure[], expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
