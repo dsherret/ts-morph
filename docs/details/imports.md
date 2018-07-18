@@ -169,7 +169,6 @@ Import specifiers are the individual named imports.
 ```ts
 namedImport.getNameNode(); // returns: Identifier
 namedImport.setName("NewName");
-namedImport.renameName("NewName");
 ```
 
 ##### Alias

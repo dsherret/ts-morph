@@ -26,6 +26,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
 
     /**
      * Renames the name of what's being exported.
+     * @deprecated Use specifier.getNameNode().rename("newNameHere");
      */
     renameName(name: string) {
         this.getNameNode().rename(name);

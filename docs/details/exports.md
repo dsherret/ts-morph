@@ -150,7 +150,6 @@ Export specifiers are the individual named exports.
 ```ts
 namedExport.getNameNode(); // returns: Identifier
 namedExport.setName("NewName");
-namedExport.renameName("NewName");
 ```
 
 ##### Alias

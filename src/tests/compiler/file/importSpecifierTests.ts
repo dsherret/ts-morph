@@ -24,17 +24,6 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.renameName), () => {
-        it("should rename what's being imported", () => {
-            const {firstChild, sourceFile, project} = getInfoFromText<ImportDeclaration>("import {name} from './file'; const t = name;");
-            const namedImport = firstChild.getNamedImports()[0];
-            const otherSourceFile = project.createSourceFile("file.ts", "export class name {}");
-            namedImport.renameName("newName");
-            expect(sourceFile.getText()).to.equal("import {newName} from './file'; const t = newName;");
-            expect(otherSourceFile.getText()).to.equal("export class newName {}");
-        });
-    });
-
     describe(nameof<ImportSpecifier>(n => n.getNameNode), () => {
         function doTest(text: string, name: string) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);

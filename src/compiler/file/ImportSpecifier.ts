@@ -27,6 +27,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**
      * Renames the identifier being imported.
      * @param name - New name.
+     * @deprecated Use specifier.getNameNode().rename("newNameHere");
      */
     renameName(name: string) {
         this.getNameNode().rename(name);

@@ -66,18 +66,6 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
-    describe(nameof<ExportSpecifier>(n => n.renameName), () => {
-        it("should rename in current file if exporting from current file", () => {
-            const project = getProject();
-            const myClassFile = project.createSourceFile("MyClass.ts", {
-                classes: [{ name: "MyClass" }],
-                exports: [{ namedExports: ["MyClass"]}]
-            });
-            myClassFile.getExportDeclarations()[0].getNamedExports()[0].renameName("Identifier");
-            expect(myClassFile.getFullText()).to.equal(`class Identifier {\n}\n\nexport { Identifier };\n`);
-        });
-    });
-
     describe(nameof<ExportSpecifier>(n => n.getAliasIdentifier), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
