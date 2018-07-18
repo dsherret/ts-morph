@@ -155,7 +155,7 @@ namedExport.setName("NewName");
 ##### Alias
 
 ```ts
-namedExport.getAliasIdentifier(); // returns: Identifier | undefined
+namedExport.getAliasNode(); // returns: Identifier | undefined
 namedExport.setAlias("NewAliasName");
 ```
 

@@ -1447,6 +1447,11 @@ export declare class TypeGuards {
      */
     static isRegularExpressionLiteral(node: Node): node is RegularExpressionLiteral;
     /**
+     * Gets if the node is a RenameableNode.
+     * @param node - Node to check.
+     */
+    static isRenameableNode(node: Node): node is RenameableNode & Node;
+    /**
      * Gets if the node is a ReturnStatement.
      * @param node - Node to check.
      */
@@ -2372,7 +2377,7 @@ export declare type ModifierTexts = "export" | "default" | "declare" | "abstract
 
 export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeExtensionType>>(Base: T): Constructor<BindingNamedNode> & T;
 
-export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode {
+export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export declare type BindingNamedNodeExtensionType = Node<ts.Declaration & {
@@ -2388,16 +2393,11 @@ export interface BindingNamedNodeSpecific {
      * Gets the declaration's name as a string.
      */
     getName(): string;
-    /**
-     * Renames the name.
-     * @param text - New name.
-     */
-    rename(text: string): this;
 }
 
 export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
 
-export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode {
+export interface DeclarationNamedNode extends DeclarationNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export declare type DeclarationNamedNodeExtensionType = Node<ts.NamedDeclaration>;
@@ -2419,16 +2419,11 @@ export interface DeclarationNamedNodeSpecific {
      * Gets the name or throws if it doens't exist.
      */
     getNameOrThrow(): string;
-    /**
-     * Renames the name.
-     * @param text - Text to set as the name.
-     */
-    rename(text: string): this;
 }
 
 export declare function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T;
 
-export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode {
+export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export declare type NameableNodeExtensionType = Node<ts.Node & {
@@ -2452,16 +2447,11 @@ export interface NameableNodeSpecific {
      * Gets the name if it exists, or throws.
      */
     getNameOrThrow(): string;
-    /**
-     * Renames the name or sets the name if it doesn't exist.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
 }
 
 export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
 
-export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode {
+export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export declare function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T;
@@ -2479,16 +2469,11 @@ export interface NamedNodeSpecific {
      * Gets the name.
      */
     getName(): string;
-    /**
-     * Renames the name.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
 }
 
 export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
 
-export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode {
+export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
@@ -2496,9 +2481,14 @@ export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
 }>;
 
 export interface PropertyNamedNodeSpecific {
+    /**
+     * Gets the name node.
+     */
     getNameNode(): PropertyName;
+    /**
+     * Gets the text of the name of the node.
+     */
     getName(): string;
-    rename(text: string): this;
 }
 
 export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
@@ -2517,6 +2507,18 @@ export interface ReferenceFindableNode {
 export declare type ReferenceFindableNodeExtensionType = Node<ts.Node & {
     name?: ts.PropertyName | ts.BindingName;
 }>;
+
+export declare function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T;
+
+export interface RenameableNode {
+    /**
+     * Renames the name of the node.
+     * @param newName - New name.
+     */
+    rename(newName: string): this;
+}
+
+export declare type RenameableNodeExtensionType = Node<ts.Node>;
 
 export declare function ParameteredNode<T extends Constructor<ParameteredNodeExtensionType>>(Base: T): Constructor<ParameteredNode> & T;
 
@@ -3772,18 +3774,13 @@ export declare class ComputedPropertyName extends Node<ts.ComputedPropertyName> 
     getExpression(): Expression;
 }
 
-declare const IdentifierBase: Constructor<ReferenceFindableNode> & typeof PrimaryExpression;
+declare const IdentifierBase: Constructor<ReferenceFindableNode> & Constructor<RenameableNode> & typeof PrimaryExpression;
 
 export declare class Identifier extends IdentifierBase<ts.Identifier> {
     /**
      * Gets the text for the identifier.
      */
     getText(): string;
-    /**
-     * Renames the identifier.
-     * @param newName - New name of the identifier.
-     */
-    rename(newName: string): void;
     /**
      * Gets the definition nodes of the identifier.
      * @remarks This is similar to "go to definition" and `.getDefinitions()`, but only returns the nodes.
@@ -5557,6 +5554,7 @@ export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
     setName(name: string): this;
     /**
      * Renames the name of what's being exported.
+     * @deprecated Use specifier.getNameNode().rename("newNameHere");
      */
     renameName(name: string): this;
     /**
@@ -5781,6 +5779,7 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**
      * Renames the identifier being imported.
      * @param name - New name.
+     * @deprecated Use specifier.getNameNode().rename("newNameHere");
      */
     renameName(name: string): this;
     /**

@@ -174,7 +174,7 @@ namedImport.setName("NewName");
 ##### Alias
 
 ```ts
-namedImport.getAliasIdentifier(); // returns: Identifier | undefined
+namedImport.getAliasNode(); // returns: Identifier | undefined
 namedImport.setAlias("NewAliasName");
 ```
 

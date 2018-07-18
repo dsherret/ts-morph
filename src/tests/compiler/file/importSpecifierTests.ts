@@ -79,14 +79,14 @@ describe(nameof(ImportSpecifier), () => {
         });
     });
 
-    describe(nameof<ImportSpecifier>(n => n.getAliasIdentifier), () => {
+    describe(nameof<ImportSpecifier>(n => n.getAliasNode), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ImportDeclaration>(text);
             const namedImport = firstChild.getNamedImports()[0];
             if (alias == null)
-                expect(namedImport.getAliasIdentifier()).to.equal(undefined);
+                expect(namedImport.getAliasNode()).to.equal(undefined);
             else
-                expect(namedImport.getAliasIdentifier()!.getText()).to.equal(alias);
+                expect(namedImport.getAliasNode()!.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {

@@ -5,4 +5,4 @@
 * getStartColumn
 * getEndColumn
 * getColumnAtPos
-* renameName on ImportSpecifier and ExportSpecifier
+* renameName and getAliasIdentifier on ImportSpecifier and ExportSpecifier

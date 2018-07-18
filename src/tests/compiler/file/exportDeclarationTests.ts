@@ -218,9 +218,9 @@ describe(nameof(ExportDeclaration), () => {
             for (let i = 0; i < namedExports.length; i++) {
                 expect(namedExports[i].getNameNode().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
-                    expect(namedExports[i].getAliasIdentifier()).to.equal(undefined);
+                    expect(namedExports[i].getAliasNode()).to.equal(undefined);
                 else
-                    expect(namedExports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
+                    expect(namedExports[i].getAliasNode()!.getText()).to.equal(expected[i].alias);
             }
         }
 

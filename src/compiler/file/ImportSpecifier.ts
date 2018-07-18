@@ -45,7 +45,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Gets the name node of what's being imported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+        return this.getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
     }
 
     /**
@@ -53,7 +53,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * @param alias - Alias to set.
      */
     setAlias(alias: string) {
-        let aliasIdentifier = this.getAliasIdentifier();
+        let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
             const nameNode = this.getNameNode();
@@ -62,7 +62,7 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
                 parent: this,
                 newText: ` as ${nameNode.getText()}`
             });
-            aliasIdentifier = this.getAliasIdentifier()!;
+            aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
         return this;
@@ -70,15 +70,19 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
 
     /**
      * Gets the alias identifier, if it exists.
+     * @deprecated Use .getAliasNode().
      */
     getAliasIdentifier() {
-        const asKeyword = this.getFirstChildByKind(SyntaxKind.AsKeyword);
-        if (asKeyword == null)
+        return this.getAliasNode();
+    }
+
+    /**
+     * Gets the alias identifier, if it exists.
+     */
+    getAliasNode() {
+        if (this.compilerNode.propertyName == null)
             return undefined;
-        const aliasIdentifier = asKeyword.getNextSibling();
-        if (aliasIdentifier == null || !(TypeGuards.isIdentifier(aliasIdentifier)))
-            return undefined;
-        return aliasIdentifier;
+        return this.getNodeFromCompilerNode(this.compilerNode.name);
     }
 
     /**
