@@ -17,6 +17,24 @@ import { CommentRange } from "./CommentRange";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
 
+export interface ForEachChildTraversalControl {
+    /**
+     * Stops traversal.
+     */
+    stop(): void;
+}
+
+export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
+    /**
+     * Skips traversal of the current node's descendants.
+     */
+    skip(): void;
+    /**
+     * Skips traversal of the current node, siblings, and all their descendants.
+     */
+    up(): void;
+}
+
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
@@ -490,13 +508,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Invokes the `cbNode` callback for each child and the `cbNodeArray` for every array of nodes stored in properties of the node.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal.stop()` function on the second parameter that allows stopping iteration.
      * @param cbNode - Callback invoked for each child.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachChild(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+    forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void) {
         let stop = false;
-        const stopFunc = () => stop = true;
+        const traversal: ForEachChildTraversalControl = {
+            stop: () => stop = true
+        };
         const snapshots: (Node | Node[])[] = [];
 
         // Get all the nodes from the compiler's forEachChild. Taking this snapshot prevents the results of
@@ -513,10 +533,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (snapshot instanceof Array) {
                 const filteredNodes = snapshot.filter(n => !n.wasForgotten());
                 if (filteredNodes.length > 0)
-                    cbNodeArray!(filteredNodes, stopFunc);
+                    cbNodeArray!(filteredNodes, traversal);
             }
             else if (!snapshot.wasForgotten())
-                cbNode(snapshot, stopFunc);
+                cbNode(snapshot, traversal);
 
             if (stop)
                 break;
@@ -527,34 +547,72 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Invokes the `cbNode` callback for each descendant and the `cbNodeArray` for every array of nodes stored in properties of the node and descendant nodes.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal` object on the second parameter that allows various control of iteration.
      * @param cbNode - Callback invoked for each descendant.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachDescendant(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+    forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void) {
         let stop = false;
-        const stopFunc = () => stop = true;
+        let up = false;
+        const traversal = {
+            stop: () => stop = true,
+            up: () => up = true
+        };
         const nodeCallback = (node: Node) => {
-            if (stop) return true;
-            cbNode(node, stopFunc);
-            if (stop) return true;
-            node.forEachChild(nodeCallback, arrayCallback);
-            return stop;
+            if (stop)
+                return;
+
+            let skip = false;
+
+            cbNode(node, {
+                ...traversal,
+                skip: () => skip = true
+            });
+
+            if (stop || skip || up)
+                return;
+
+            forEachChildForNode(node);
         };
         const arrayCallback = cbNodeArray == null ? undefined : (nodes: Node[]) => {
-            if (stop) return true;
-            cbNodeArray(nodes, stopFunc);
-            if (stop) return true;
+            if (stop)
+                return;
+
+            let skip = false;
+
+            cbNodeArray(nodes, {
+                ...traversal,
+                skip: () => skip = true
+            });
+
+            if (skip)
+                return;
 
             for (const node of nodes) {
-                node.forEachChild(nodeCallback, arrayCallback);
-                if (stop) return true;
-            }
+                if (stop || up)
+                    return;
 
-            return stop;
+                forEachChildForNode(node);
+            }
         };
 
-        this.forEachChild(nodeCallback, arrayCallback);
+        forEachChildForNode(this);
+
+        function forEachChildForNode(node: Node) {
+            node.forEachChild((innerNode, innerTraversal) => {
+                nodeCallback(innerNode);
+                if (up) {
+                    innerTraversal.stop();
+                    up = false;
+                }
+            }, arrayCallback == null ? undefined : (nodes, innerTraversal) => {
+                arrayCallback(nodes);
+                if (up) {
+                    innerTraversal.stop();
+                    up = false;
+                }
+            });
+        }
     }
 
     /**

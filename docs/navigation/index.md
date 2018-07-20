@@ -38,15 +38,15 @@ node.forEachChild(node => {
 });
 ```
 
-One major difference between the `.forEachChild` method in ts-simple-ast and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the stop parameter function:
+One major difference between the `.forEachChild` method in ts-simple-ast and the compiler API, is that returning a truthy value in the callback will not stop iteration. If you wish to stop iteration, then use the `stop` method on the second parameter:
 
 ```ts
-node.forEachChild((node, stop) => {
+node.forEachChild((node, traversal) => {
     console.log(node.getText());
 
     // stop iterating when the node is a class declaration
     if (node.getKind() === SyntaxKind.ClassDeclaration)
-        stop();
+        traversal.stop();
 });
 ```
 
@@ -55,7 +55,7 @@ node.forEachChild((node, stop) => {
 If you wish to iterate all the descendants, then use the `forEachDescendant` method:
 
 ```ts
-node.forEachDescendant((node, stop) => console.log(node.getText()));
+node.forEachDescendant(node => console.log(node.getText()));
 ```
 
 This is especially useful when writing code that implements a visitor pattern:
@@ -69,4 +69,28 @@ const myVisitors: Visitor[] = ...;
 
 for (const sourceFile of sourceFiles)
     sourceFile.forEachDescendant(node => myVisitors.forEach(v => v.visit(node)));
+```
+
+#### Traversal Control
+
+Traversal can similarly be controlled with the second parameter as with `forEachChild`, but
+`forEachDescendant` offers a bit more control:
+
+```ts
+node.forEachDescendant((node, traversal) => {
+    switch (node.getKind()) {
+        case SyntaxKind.ClassDeclaration:
+            // skips traversal of the current node's descendants
+            traversal.skip();
+            break;
+        case SyntaxKind.ParameterDeclaration:
+            // skips traversal of the current node, siblings, and all their descendants
+            traversal.up();
+            break;
+        case SyntaxKind.FunctionDeclaration:
+            // stop traversal completely
+            traversal.stop();
+            break;
+    }
+});
 ```
