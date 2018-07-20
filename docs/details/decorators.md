@@ -65,6 +65,7 @@ And remove them by calling `.removeArgument()`:
 decorator.removeArgument(0);
 // or specify the argument node
 decorator.removeArgument(args[0]);
+```
 
 ### Type arguments
 
