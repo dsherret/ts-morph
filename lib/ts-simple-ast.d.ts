@@ -1,4 +1,4 @@
-import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind, CompilerApiNodeBrandPropertyNamesType } from "./typescript/typescript";
+import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, LanguageVariant, ScriptTarget, TypeFlags, ObjectFlags, SymbolFlags, TypeFormatFlags, DiagnosticCategory, EditorSettings, ModuleResolutionKind } from "./typescript/typescript";
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 export declare class Directory {
@@ -3799,6 +3799,24 @@ export declare class Identifier extends IdentifierBase<ts.Identifier> {
     getImplementations(): ImplementationLocation[];
 }
 
+export interface ForEachChildTraversalControl {
+    /**
+     * Stops traversal.
+     */
+    stop(): void;
+}
+
+export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
+    /**
+     * Skips traversal of the current node's descendants.
+     */
+    skip(): void;
+    /**
+     * Skips traversal of the current node, siblings, and all their descendants.
+     */
+    up(): void;
+}
+
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
@@ -3987,20 +4005,20 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * Invokes the `cbNode` callback for each child and the `cbNodeArray` for every array of nodes stored in properties of the node.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal.stop()` function on the second parameter that allows stopping iteration.
      * @param cbNode - Callback invoked for each child.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachChild(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void): void;
+    forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void): void;
     /**
      * Invokes the `cbNode` callback for each descendant and the `cbNodeArray` for every array of nodes stored in properties of the node and descendant nodes.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal` object on the second parameter that allows various control of iteration.
      * @param cbNode - Callback invoked for each descendant.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachDescendant(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void): void;
+    forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void): void;
     /**
      * Gets the node's descendants.
      */

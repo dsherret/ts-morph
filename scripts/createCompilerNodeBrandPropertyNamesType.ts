@@ -14,10 +14,8 @@ export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspecto
         .filter(name => brandMatchRegex.test(name));
     const sourceFile = tsInspector.getApiLayerFile();
     const typeAliasName = "CompilerNodeBrandPropertyNamesType";
-    const deprecatedTypeAliasName = "CompilerApiNodeBrandPropertyNamesType";
 
     removeTypeAliasIfExists(typeAliasName);
-    removeTypeAliasIfExists(deprecatedTypeAliasName);
 
     if (brandNames.length === 0)
         throw new Error("Unexpected! For some reason there were no brand names.");
@@ -26,12 +24,6 @@ export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspecto
         isExported: true,
         name: typeAliasName,
         type: brandNames.map(n => `"${n}"`).join(" | ")
-    });
-    sourceFile.addTypeAlias({
-        isExported: true,
-        name: deprecatedTypeAliasName,
-        type: typeAliasName,
-        docs: [{ description: `@deprecated Use ${typeAliasName}.` }]
     });
 
     function removeTypeAliasIfExists(name: string) {
