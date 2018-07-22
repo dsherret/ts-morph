@@ -211,4 +211,51 @@ describe(nameof(EnumDeclaration), () => {
             doTest("enum I {}\n\nenum J {}\n\nenum K {}", 1, "enum I {}\n\nenum K {}");
         });
     });
+
+
+
+    describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
+        function doTest(code: string, expected: any) {
+            const {firstChild} = getInfoFromText<EnumDeclaration>(code);
+            console.log(JSON.stringify(firstChild.getStructure()));
+            expect(firstChild.getStructure()).to.deep.equal(expected);
+        }
+
+        it("should respect empty enum", () => {
+            doTest("enum Identifier {\n}", { name: "Identifier", isExported: false, isDefaultExport: false,
+                hasDeclareKeyword: false, docs: [], isConst: false, members: [] });
+        });
+
+        it("should respect names with spaces initializers and docs", () => {
+            doTest(`
+            /** lorem ipsum */
+            export enum CONSTANTS {
+                /** Use when opinionated */
+                'a very peculiar name' = 3.14,
+                foo,
+                /** bar */
+                bar="bar"
+            };
+            `,
+            { 
+                name: "CONSTANTS",
+                isExported: true,
+                isDefaultExport: false,
+                hasDeclareKeyword: false,
+                docs: [ { description: "lorem ipsum" } ],
+                isConst: false,
+                members:
+                [ { name: "\'a very peculiar name\'",
+                    initializer: "3.14",
+                    docs: [Array],
+                    value: 3.14 },
+                    { name: "foo",
+                    initializer: undefined,
+                    docs: [],
+                    value: 4.140000000000001 },
+                    { name: "bar", initializer: "\"bar\"", docs: [{description: "bar"}], value: "bar" } 
+                ] 
+            });
+        });
+    });
 });

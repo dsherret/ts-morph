@@ -35,13 +35,18 @@ for (const node of nodes) {
         continue;
 
     for (const baseStructure of structure.getBaseStructures()) {
+
+        // TODO: things like InitializerExpressionableNode, FunctionLikeDeclaration will always fail because
+        // getStructure will be never implemented for them. We need to check that class
+        // baseStructure.getNsame() and baseStructure.getName().replace(/Structure$/, 'SpecificStructure')
+        // classes are not empty like in the case of these cllsses - if so we skip them and warn the user.
         let declarationName: string = baseStructure.getName().replace(/Structure$/, "");
 
-        // Abstract things like FunctionLikeDeclaration that are just composition of other mixins
-        if (!isThereClassOrInterfaceDeclarationNamed(declarationName)){
-            problems.push(`WARNING, Skipping ${declarationName} since no type was found with that name. Verify it's OK`);
-            continue;
-        }
+        // // Abstract things like FunctionLikeDeclaration that are just composition of other mixins
+        // if (!isThereClassOrInterfaceDeclarationNamed(declarationName)){
+        //     problems.push(`WARNING, Skipping ${declarationName} since no type was found with that name. Verify it's OK`);
+        //     continue;
+        // }
 
         let declaration: InterfaceDeclaration | undefined = interfaces.find(c => c.getName() === declarationName);
         if (declaration && !declaration.getImplementations().length) {
@@ -64,8 +69,10 @@ for (const node of nodes) {
                 problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
         }
 
-        problems.push(problem);
-        console.log(declarationName, problem || "OK");
+        if (problem) {
+            problems.push(problem);
+            console.log(declarationName);
+        }
     }
 }
 
@@ -76,8 +83,8 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
-function isThereClassOrInterfaceDeclarationNamed(name: string): boolean {
-    return !!classes.find(c => c.getName() === name) ||
-        !!interfaces.find(i => i.getName() === name) ||
-        !!interfaces.find(i => i.getName() === name + "Specific");
-}
+// function isThereClassOrInterfaceDeclarationNamed(name: string): boolean {
+//     return !!classes.find(c => c.getName() === name) ||
+//         !!interfaces.find(i => i.getName() === name) ||
+//         !!interfaces.find(i => i.getName() === name + "Specific");
+// }

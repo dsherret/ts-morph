@@ -101,4 +101,25 @@ describe(nameof(EnumMember), () => {
             doTest("enum Identifier { member }", structure, "enum Identifier { member = 5 }");
         });
     });
+
+    describe(nameof<EnumMember>(d => d.getStructure), () => {
+        function doTest(code: string, expected: any) {
+            const {firstEnumMember} = getInfoFromTextWithFirstMember(code);
+            expect(firstEnumMember.getStructure()).to.deep.equal(expected);
+        }
+
+        it("should respect defaults when nothing but name is declared", () => {
+            doTest("enum a { member }", { name: "member", initializer: undefined, docs: [], value: 0 });
+        });
+
+        it("should respect names with spaces initializers and docs", () => {
+            doTest(`enum b {/** Use when opinionated */'a very peculiar name' = 3.14}`,
+            {
+                name: "\'a very peculiar name\'", // TODO: Should the quotes be part of the name ? (I don't think so)
+                initializer: "3.14",
+                docs: [ { description: "Use when opinionated" } ],
+                value: 3.14
+            });
+        });
+    });
 });
