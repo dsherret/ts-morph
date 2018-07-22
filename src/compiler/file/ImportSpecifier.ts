@@ -60,14 +60,6 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
 
     /**
      * Gets the alias identifier, if it exists.
-     * @deprecated Use .getAliasNode().
-     */
-    getAliasIdentifier() {
-        return this.getAliasNode();
-    }
-
-    /**
-     * Gets the alias identifier, if it exists.
      */
     getAliasNode() {
         if (this.compilerNode.propertyName == null)

@@ -53,14 +53,6 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
 
     /**
      * Gets the alias identifier, if it exists.
-     * @deprecated Use .getAliasNode().
-     */
-    getAliasIdentifier() {
-        return this.getAliasNode();
-    }
-
-    /**
-     * Gets the alias identifier, if it exists.
      */
     getAliasNode() {
         if (this.compilerNode.propertyName == null)
