@@ -5571,11 +5571,6 @@ export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
      */
     setName(name: string): this;
     /**
-     * Renames the name of what's being exported.
-     * @deprecated Use specifier.getNameNode().rename("newNameHere");
-     */
-    renameName(name: string): this;
-    /**
      * Gets the name node of what's being exported.
      */
     getNameNode(): Identifier;
@@ -5799,12 +5794,6 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * @param name - Name being imported.
      */
     setName(name: string): this;
-    /**
-     * Renames the identifier being imported.
-     * @param name - New name.
-     * @deprecated Use specifier.getNameNode().rename("newNameHere");
-     */
-    renameName(name: string): this;
     /**
      * Gets the name of the import specifier.
      */
