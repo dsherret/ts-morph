@@ -5861,10 +5861,6 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getLineNumberAtPos(pos: number): number;
     /**
-     * @deprecated Use getLineNumberAtPos.
-     */
-    getLineNumberFromPos(pos: number): number;
-    /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.
      */

@@ -154,13 +154,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * @deprecated Use getLineNumberAtPos.
-     */
-    getLineNumberFromPos(pos: number) {
-        return StringUtils.getLineNumberAtPos(this.getFullText(), pos);
-    }
-
-    /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.
      */
