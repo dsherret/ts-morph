@@ -1,6 +1,6 @@
 import * as errors from "../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../manipulation";
-import { EnumDeclarationStructure, EnumMemberStructure } from "../../structures";
+import { EnumDeclarationStructure, EnumMemberStructure, EnumDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode } from "../base";
@@ -8,6 +8,7 @@ import { callBaseFill } from "../callBaseFill";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
 import { EnumMember } from "./EnumMember";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const EnumDeclarationBase = ChildOrderableNode(TextInsertableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(
     ModifierableNode(NamedNode(Statement))
@@ -123,7 +124,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
     }
 
     /**
-     * Toggle if it's a const enum
+     * Toggle if it's a const enum.
      */
     setIsConstEnum(value: boolean) {
         return this.toggleModifier("const", value);
@@ -141,5 +142,15 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      */
     getConstKeyword() {
         return this.getFirstModifierByKind(SyntaxKind.ConstKeyword);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure() {
+        return callBaseGetStructure<EnumDeclarationSpecificStructure>(EnumDeclarationBase.prototype, this, {
+            isConst: this.isConstEnum(),
+            members: this.getMembers().map(member => member.getStructure())
+        });
     }
 }

@@ -1,10 +1,11 @@
 import { FormattingKind, removeChildrenWithFormatting } from "../../manipulation";
-import { EnumMemberStructure } from "../../structures";
+import { EnumMemberStructure, EnumMemberSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const EnumMemberBase = JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
@@ -59,4 +60,14 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
             getSiblingFormatting: () => FormattingKind.Newline
         });
     }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure() {
+        return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
+            value: this.getValue()
+        });
+    }
+
 }

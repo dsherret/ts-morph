@@ -35,34 +35,36 @@ for (const node of nodes) {
         continue;
 
     for (const baseStructure of structure.getBaseStructures()) {
-        const declarationName: string = baseStructure.getName().replace(/Structure$/, "");
+        let declarationName: string = baseStructure.getName().replace(/Structure$/, "");
+
+        // Abstract things like FunctionLikeDeclaration that are just composition of other mixins
+        if (!isThereClassOrInterfaceDeclarationNamed(declarationName)){
+            problems.push(`WARNING, Skipping ${declarationName} since no type was found with that name. Verify it's OK`);
+            continue;
+        }
+
         let declaration: InterfaceDeclaration | undefined = interfaces.find(c => c.getName() === declarationName);
         if (declaration && !declaration.getImplementations().length) {
             declaration = interfaces.find(c => c.getName() === declarationName + "Specific");
         }
-        // let found: boolean = false;
         let problem: string = "";
         if (declaration && declaration.getImplementations().length) {
-            // found = !!;
             if (!declaration.getImplementations().find(loc =>
                 !!loc.getNode().getDescendants().find(d => TypeGuards.isMethodDeclaration(d) && d.getName() === "getStructure")))
                 problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
 
         }
-        else if (declaration && !declaration.getImplementations().length) {
-            // declarationName = declarationName.replace(/Specific$/, "");
-            problem = `Expected to find implementations for declaration ${declarationName}`
-        }
+        else if (declaration && !declaration.getImplementations().length)
+            problem = `Expected to find implementations for declaration ${declarationName}`;
 
         else {
-            const c = classes.find(c => c.getName() === declarationName)
-            if (!c || !c.getMethod("getStructure"))
+            declarationName = declarationName.replace(/Specific$/, "");
+            const decl = classes.find(c => c.getName() === declarationName);
+            if (!decl || !decl.getMethod("getStructure"))
                 problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
-            // declaration = undefined
-
         }
 
-        problems.push(problem)
+        problems.push(problem);
         console.log(declarationName, problem || "OK");
     }
 }
@@ -74,6 +76,8 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
-function getStructureName(name: string) {
-    return name + "Structure";
+function isThereClassOrInterfaceDeclarationNamed(name: string): boolean {
+    return !!classes.find(c => c.getName() === name) ||
+        !!interfaces.find(i => i.getName() === name) ||
+        !!interfaces.find(i => i.getName() === name + "Specific");
 }
