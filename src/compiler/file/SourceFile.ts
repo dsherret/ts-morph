@@ -161,15 +161,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the length from the start of the line to the provided position.
-     * @param pos - Position.
-     * @deprecated - Use `getLengthFromLineStartAtPos`
-     */
-    getColumnAtPos(pos: number) {
-        return this.getLengthFromLineStartAtPos(pos);
-    }
-
-    /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.
      */

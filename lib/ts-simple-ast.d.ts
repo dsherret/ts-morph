@@ -4212,17 +4212,6 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getEndLineNumber(): number;
     /**
-     * Gets the length from the start of the line to the start of the node.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
-     */
-    getStartColumn(includeJsDocComment?: boolean): number;
-    /**
-     * Gets the length from the start of the line to the end of the node.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
-     */
-    getEndColumn(): number;
-    /**
      * Gets if this is the first node on the current line.
      */
     isFirstNodeOnLine(): boolean;
@@ -5875,12 +5864,6 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @deprecated Use getLineNumberAtPos.
      */
     getLineNumberFromPos(pos: number): number;
-    /**
-     * Gets the length from the start of the line to the provided position.
-     * @param pos - Position.
-     * @deprecated - Use `getLengthFromLineStartAtPos`
-     */
-    getColumnAtPos(pos: number): number;
     /**
      * Gets the character count from the start of the line to the provided position.
      * @param pos - Position.

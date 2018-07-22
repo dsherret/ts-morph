@@ -1094,23 +1094,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /**
-     * Gets the length from the start of the line to the start of the node.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
-     */
-    getStartColumn(includeJsDocComment?: boolean) {
-        return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
-    }
-
-    /**
-     * Gets the length from the start of the line to the end of the node.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
-     */
-    getEndColumn() {
-        return this.sourceFile.getColumnAtPos(this.getEnd());
-    }
-
-    /**
      * Gets if this is the first node on the current line.
      */
     isFirstNodeOnLine() {
