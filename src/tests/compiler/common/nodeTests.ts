@@ -352,30 +352,6 @@ class MyClass {
         });
     });
 
-    describe(nameof<Node>(n => n.getStartColumn), () => {
-        it("should get the column of the node", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("    class MyClass {}");
-            expect(firstChild.getStartColumn()).to.equal(4);
-        });
-
-        it("should get the column of the node including js docs", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("    /** Testing */class MyClass {}");
-            expect(firstChild.getStartColumn(true)).to.equal(4);
-        });
-
-        it("should get the column of the node not including js docs", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("    /** Testing */class MyClass {}");
-            expect(firstChild.getStartColumn()).to.equal(18);
-        });
-    });
-
-    describe(nameof<Node>(n => n.getEndColumn), () => {
-        it("should get the column of the end of the node", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class MyClass {}");
-            expect(firstChild.getEndColumn()).to.equal(16);
-        });
-    });
-
     describe(nameof<Node>(n => n.getStart), () => {
         function doTest(text: string, expectedPos: number, includeJsDocComment?: boolean) {
             const {firstChild} = getInfoFromText(text);
