@@ -6,6 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ExclamationTokenableNodeExtensionType = Node<ts.Node & { exclamationToken?: ts.ExclamationToken; }>;
 
@@ -77,6 +78,12 @@ export function ExclamationTokenableNode<T extends Constructor<ExclamationTokena
                 this.setHasExclamationToken(structure.hasExclamationToken);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ExclamationTokenableNodeStructure>(Base.prototype, this, {
+                hasExclamationToken: this.hasExclamationToken()
+            });
         }
     };
 }

@@ -9,7 +9,7 @@
  */
 import { ArrayUtils } from "../src/utils";
 import { InspectorFactory } from "./inspectors";
-import { TypeGuards } from 'ts-simple-ast';
+import { TypeGuards, InterfaceDeclaration } from "ts-simple-ast";
 
 // setup
 const factory = new InspectorFactory();
@@ -17,6 +17,8 @@ const inspector = factory.getTsSimpleAstInspector();
 
 const compilerSourceFiles = inspector.getProject().getSourceFiles("src/compiler/**/*.ts");
 const interfaces = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getInterfaces()));
+
+const classes = ArrayUtils.flatten(compilerSourceFiles.map(f => f.getClasses()));
 
 // get info
 const nodes = inspector.getWrappedNodes();
@@ -26,31 +28,44 @@ const structures = inspector.getStructures();
 const problems: string[] = [];
 
 for (const node of nodes) {
-    const structureName = node.getName() + 'Structure';
+    const structureName = node.getName() + "Structure";
 
     const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
     if (structure == null)
         continue;
 
     for (const baseStructure of structure.getBaseStructures()) {
-        const declarationName = baseStructure.getName().replace(/Structure$/, "");
-        let declaration = interfaces.find(c => c.getName() === declarationName);
+        const declarationName: string = baseStructure.getName().replace(/Structure$/, "");
+        let declaration: InterfaceDeclaration | undefined = interfaces.find(c => c.getName() === declarationName);
         if (declaration && !declaration.getImplementations().length) {
-            declaration = interfaces.find(c => c.getName() === declarationName + "Specific")
+            declaration = interfaces.find(c => c.getName() === declarationName + "Specific");
         }
-        if (!declaration) {
-            problems.push(`Expected to find declaration for ${declarationName}`);
-            break;
-        }
-        const implementsGetStructure = declaration.getImplementations().find(loc =>
-            !!loc.getNode().getDescendants().find(d => TypeGuards.isMethodDeclaration(d) && d.getName() === 'getStructure'))
+        // let found: boolean = false;
+        let problem: string = "";
+        if (declaration && declaration.getImplementations().length) {
+            // found = !!;
+            if (!declaration.getImplementations().find(loc =>
+                !!loc.getNode().getDescendants().find(d => TypeGuards.isMethodDeclaration(d) && d.getName() === "getStructure")))
+                problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
 
-        if (!implementsGetStructure)
-            problems.push(`Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`);
-        console.log(declarationName, !!implementsGetStructure);
+        }
+        else if (declaration && !declaration.getImplementations().length) {
+            // declarationName = declarationName.replace(/Specific$/, "");
+            problem = `Expected to find implementations for declaration ${declarationName}`
+        }
+
+        else {
+            const c = classes.find(c => c.getName() === declarationName)
+            if (!c || !c.getMethod("getStructure"))
+                problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
+            // declaration = undefined
+
+        }
+
+        problems.push(problem)
+        console.log(declarationName, problem || "OK");
     }
 }
-
 
 // output
 if (problems.length > 0) {
