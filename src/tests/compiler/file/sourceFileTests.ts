@@ -1498,39 +1498,24 @@ function myFunction(param: MyClass) {
             export * from "./export";
             `;
             doTest(startText, {
-                classes: [],
-                functions: [],
-                enums: [],
-                interfaces: [],
-                namespaces: [],
-                typeAliases: [],
-                exports: [{
-                    moduleSpecifier: '"./export"',
-                    namedExports: []
-                }],
+                classes: [], functions: [], enums: [], interfaces: [], namespaces: [], typeAliases: [],
+                exports: [{ moduleSpecifier: '"./export"', namedExports: [] }],
                 imports: [
                     {
-                        defaultImport: undefined,
-                        moduleSpecifier: "'./MyInterface'",
-                        namedImports: [{ name: "foo", alias: "bar" }],
-                        namespaceImport: undefined
+                        defaultImport: undefined, moduleSpecifier: "'./MyInterface'",
+                        namedImports: [{ name: "foo", alias: "bar" }], namespaceImport: undefined
                     },
                     {
-                        defaultImport: "MyClass",
-                        moduleSpecifier: '"./MyClass"',
-                        namedImports: [],
-                        namespaceImport: undefined
+                        defaultImport: "MyClass", moduleSpecifier: '"./MyClass"',
+                        namedImports: [], namespaceImport: undefined
                     },
                     {
-                        defaultImport: undefined,
-                        moduleSpecifier: '"absolute-path"',
-                        namedImports: [],
-                        namespaceImport: "UnusedInterface"
+                        defaultImport: undefined, moduleSpecifier: '"absolute-path"',
+                        namedImports: [], namespaceImport: "UnusedInterface"
                     }]
             });
         });
 
-        // TODO: classes, interfaces, typeAliases, enums not working, only functions.
         it("should work for import and export declations", () => {
             const startText = `
                 import {I} from './I';
@@ -1541,18 +1526,31 @@ function myFunction(param: MyClass) {
                 export function f(){}
                 function g(){}
                 export type T = any;
-                export enum U = {a}
+                export enum U {a='a'}
+                namespace ns{interface nsi{}}
                 `;
             const structure = getInfoFromText(startText).sourceFile.getStructure();
-            // console.log(structure);
-
             expect(structure.functions).to.length(2);
             expect(structure.classes).to.length(2);
             expect(structure.interfaces).to.length(2);
-            // expect(structure.typeAliases).to.length(1);
+            expect(structure.typeAliases).to.length(1);
             expect(structure.enums).to.length(1);
+            expect(structure.namespaces).to.length(1);
+
+            expect(structure.enums).to.deep.equals([{
+                name: "U", isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [],
+                isConst: false, members: [{ docs: [], initializer: "'a'", name: "a", value: "a" }]
+            }]);
+            expect(structure.namespaces).to.deep.equals([{
+                name: "ns", isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [],
+                classes: [], functions: [], enums: [],
+                interfaces: [{
+                    name: "nsi", isExported: false, isDefaultExport: false, hasDeclareKeyword: false,
+                    docs: [], typeParameters: [], extends: [], callSignatures: [], constructSignatures: [],
+                    indexSignatures: [], methods: [], properties: []
+                }],
+                namespaces: [], typeAliases: [], bodyText: "interface nsi{}", hasModuleKeyword: false
+            }]);
         });
-
     });
-
 });

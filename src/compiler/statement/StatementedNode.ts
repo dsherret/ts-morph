@@ -872,14 +872,17 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             return this;
         }
 
+        /**
+         * Gets the structure equivalent to this node.
+         */
         getStructure() {
             return callBaseGetStructure<StatementedNodeStructure>(Base.prototype, this, {
                 classes: this.getClasses().map(c => c.getStructure()),
                 functions: this.getFunctions().map(f => f.getStructure()),
                 enums: this.getEnums().map(node => node.getStructure()),
                 interfaces: this.getInterfaces().map(node => node.getStructure()),
-                namespaces: [], // TODO: this.getNamespaces().map(node=>node.getStructure()),
-                typeAliases: []// TODO: this.getTypeAliases().map(node=>node.getStructure()),
+                namespaces: this.getNamespaces().map(node => node.getStructure()),
+                typeAliases: this.getTypeAliases().map(node => node.getStructure())
             });
         }
 

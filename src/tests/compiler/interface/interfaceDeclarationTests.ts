@@ -123,17 +123,13 @@ describe(nameof(InterfaceDeclaration), () => {
                 name: "I", isExported: true, isDefaultExport: false, hasDeclareKeyword: false,
                 docs: [{ description: "interface description" }], typeParameters: [{
                     name: "T", constraint: "S", default: undefined
-                }],
-                extends: ["J<String>", "K<Array<string>,Date>"],
-                callSignatures: [],
+                }], extends: ["J<String>", "K<Array<string>,Date>"], callSignatures: [],
                 constructSignatures: [{
                     parameters: [{
                         name: "value", type: "number | string | Date", initializer: undefined, scope: undefined, isReadonly: false,
                         decorators: [], hasQuestionToken: false, isRestParameter: false
                     }],
-                    returnType: undefined,
-                    docs: [{ description: "constructor description" }],
-                    typeParameters: []
+                    returnType: undefined, docs: [{ description: "constructor description" }], typeParameters: []
                 }],
                 indexSignatures: [],
                 methods: [{
@@ -152,15 +148,13 @@ describe(nameof(InterfaceDeclaration), () => {
                             name: "q", initializer: "9", type: "string|number", isReadonly: false, scope: undefined,
                             decorators: [], hasQuestionToken: false, isRestParameter: false
                         }
-                    ],
-                    returnType: "string|Date", typeParameters: [], hasQuestionToken: false, docs: [{
+                    ], returnType: "string|Date", typeParameters: [], hasQuestionToken: false, docs: [{
                         description: "method description 2"
-                    }
-                    ]
+                    }]
                 }],
                 properties: [{
-                    name: "a", type: "number|string", hasQuestionToken: true, initializer: undefined, isReadonly: true,
-                    docs: [{ description: "property description" }]
+                    name: "a", type: "number|string", hasQuestionToken: true, initializer: undefined,
+                    isReadonly: true, docs: [{ description: "property description" }]
                 }]
             });
         });
