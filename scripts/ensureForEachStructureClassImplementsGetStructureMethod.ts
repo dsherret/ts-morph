@@ -29,7 +29,8 @@ const problems: string[] = [];
 const oks: string[] = [];
 const ignoreDeclarations = [
     'FunctionLikeDeclaration',
-    'InitializerExpressionableNode' // because extends InitializerSetExpressionableNode and it does implements it
+    'InitializerExpressionableNode', // because extends InitializerSetExpressionableNode and it does implements it
+    'SignaturedDeclaration',
 ]
 
 function verifyStructure(structureName: string, baseStructure: Structure) {

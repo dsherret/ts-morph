@@ -1,4 +1,5 @@
-﻿import Project, { FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, TypeGuards, Decorator,
+﻿import Project, {
+    FunctionDeclaration, ClassDeclaration, Node, SourceFile, MethodDeclaration, TypeGuards, Decorator,
     EnumDeclaration, EnumMember, ExportDeclaration, ExportSpecifier, ImportDeclaration, ImportSpecifier,
     InterfaceDeclaration, ShorthandPropertyAssignment, SpreadAssignment, ObjectLiteralExpression, ParameterDeclaration,
     Type, Symbol, Signature, TypeFormatFlags, NamespaceDeclaration, Directory, Diagnostic, DiagnosticMessageChain,
@@ -6,7 +7,9 @@
     ExpressionWithTypeArguments, CallExpression, SyntaxKind, Identifier, VariableDeclaration, ConstructSignatureDeclaration,
     CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, TypeAliasDeclaration,
     NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
-    PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration } from "../../src/main";
+    PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration
+} from "../../src/main";
+import { expect as Expect } from "chai";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration,
     sourceFile: SourceFile, method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration,
@@ -21,4 +24,4 @@ let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDe
     callSignature: CallSignatureDeclaration, indexSignature: IndexSignatureDeclaration, methodSignature: MethodSignature,
     propertySignature: PropertySignature, typeAliasDeclaration: TypeAliasDeclaration, numericLiteral: NumericLiteral,
     variableStatement: VariableStatement, propertyAccessExpression: PropertyAccessExpression, languageService: LanguageService,
-    program: Program, typeChecker: TypeChecker, typeParameter: TypeParameterDeclaration;
+    program: Program, typeChecker: TypeChecker, typeParameter: TypeParameterDeclaration, expect: typeof Expect

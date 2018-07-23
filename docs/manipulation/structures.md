@@ -19,10 +19,8 @@ In the following example we will be using structures to add a new variable. Then
 
 ```ts
 const code = `const a = 1;`;
-const program = new Project({ useVirtualFileSystem: true });
-const sourceFile = program.createSourceFile('one.ts', code);
-const a = sourceFile.getDescendantsOfKind(SyntaxKind.VariableDeclaration)
-  .find(declaration => declaration.getName() === 'a')!;
+const sourceFile = project.createSourceFile('one.ts', `const a = 1;`);
+const a = sourceFile.getDescendantsOfKind(SyntaxKind.VariableDeclaration)[0];
 
 // now let's get a's structure and use it for creating a new variable declaration.
 const structure = a.getStructure();
@@ -30,10 +28,9 @@ structure.name = "b";
 structure.type = "string";
 structure.initializer = "'so artificial'";
 
-// we are ready to add it to the parent declaration list, just next to "a". 
-// TIP: container kind of nodes methods add or insert accept structures
+// we are ready to add it to the parent declaration list, just next to "a".
 const parent = a.getAncestors().find(TypeGuards.isVariableDeclarationList)!;
-const newDeclarations = parent.addDeclarations([structure]);
+const newDeclarations = parent.addDeclaration(structure);
 
 expect(sourceFile.getText()).to.equals("const a = 1, b: string = 'so artificial';");
 
@@ -48,7 +45,7 @@ expect(sourceFile.getText()).to.equals(
 // and of course we can serialize structures to text and re-create the nodes after:
 const parentStatement = a.getAncestors().find(TypeGuards.isVariableStatement)!;
 const str = JSON.stringify(parentStatement.getStructure());
-const emptyFile = program.createSourceFile('other.ts', '');
+const emptyFile = project.createSourceFile('other.ts', '');
 emptyFile.addVariableStatement(JSON.parse(str));
 expect(emptyFile.getText()).to.equals(
     "const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';\n");
