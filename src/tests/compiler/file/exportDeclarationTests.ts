@@ -348,22 +348,22 @@ describe(nameof(ExportDeclaration), () => {
         function doTest(text: string, expectedStructure: any) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
             console.log(firstChild.getStructure());
-            
+            expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
-        it("should throw when no module specifier exists", () => {
-            doTest(`export {name};`, { moduleSpecifier: undefined,
-                namedExports: [ { alias: undefined, name: 'name' } ] });
-            // expect(() => firstChild.toNamespaceExport()).to.throw(errors.InvalidOperationError);
+        it("should work with named export declarations", () => {
+            doTest(`export {name, name2, name3 as name4} from "./test";`, { moduleSpecifier: '"./test"',
+            namedExports:
+             [ { alias: undefined, name: "name" },
+               { alias: undefined, name: "name2" },
+               { alias: "name4", name: "name3" } ] });
         });
 
-        // it("should change to a namespace import when there's only one to remove", () => {
-        //     doTest(`export {name} from "./test";`, `export * from "./test";`);
-        // });
+        it("should work with wildcard export declarations", () => {
+            doTest(`export * from "./test";`, { moduleSpecifier: '"./test"',
+            namedExports: [] });
+        });
 
-        // it("should change to a namespace import when there's multiple to remove", () => {
-        //     doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
-        // });
     });
 
 });

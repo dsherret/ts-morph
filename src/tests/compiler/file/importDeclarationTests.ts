@@ -515,7 +515,7 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: any) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
-            console.log(firstChild.getStructure());
+            // console.log(firstChild.getStructure());
             expect(firstChild.getStructure()).to.deep.eq(expectedStructure);
         }
 

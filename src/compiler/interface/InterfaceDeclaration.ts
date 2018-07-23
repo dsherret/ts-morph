@@ -1,4 +1,4 @@
-import { InterfaceDeclarationStructure } from "../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
@@ -9,6 +9,7 @@ import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "../statement";
 import { ImplementationLocation } from "../tools";
 import { Type, TypeAliasDeclaration } from "../type";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const InterfaceDeclarationBase = TypeElementMemberedNode(ChildOrderableNode(TextInsertableNode(ExtendsClauseableNode(HeritageClauseableNode(
     TypeParameteredNode(JSDocableNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Statement)))))))
@@ -47,5 +48,13 @@ export class InterfaceDeclaration extends InterfaceDeclarationBase<ts.InterfaceD
      */
     getImplementations(): ImplementationLocation[] {
         return this.getNameNode().getImplementations();
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): InterfaceDeclarationStructure {
+        return callBaseGetStructure<InterfaceDeclarationSpecificStructure>(InterfaceDeclarationBase.prototype, this, {
+        });
     }
 }

@@ -2,7 +2,7 @@
 import * as objectAssign from "object-assign";
 import { Node } from "./common/Node";
 
-// todo: add code verification to ensure all fill functions call this
+// todo: add code verification to ensure all fill and getStructure functions call this
 
 /** @internal */
 export function callBaseGetStructure<T>(basePrototype: any, node: Node, structure: MakeRequired<T>): any {

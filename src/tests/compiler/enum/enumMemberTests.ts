@@ -12,7 +12,7 @@ function getInfoFromTextWithFirstMember(text: string) {
 describe(nameof(EnumMember), () => {
     describe(nameof<EnumMember>(d => d.getValue), () => {
         describe("number enum", () => {
-            const {firstChild} = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
+            const { firstChild } = getInfoFromTextWithFirstMember("enum MyEnum {myMember1=4,myMember2}");
             const members = firstChild.getMembers();
 
             it("should get the correct value for members with an initializer", () => {
@@ -25,7 +25,7 @@ describe(nameof(EnumMember), () => {
         });
 
         describe("string enum", () => {
-            const {firstEnumMember} = getInfoFromTextWithFirstMember("enum MyEnum {member = 'str'}");
+            const { firstEnumMember } = getInfoFromTextWithFirstMember("enum MyEnum {member = 'str'}");
 
             it("should get the correct value for member", () => {
                 expect(firstEnumMember.getValue()).to.equal("str");
@@ -35,7 +35,7 @@ describe(nameof(EnumMember), () => {
 
     describe(nameof<EnumMember>(d => d.setValue), () => {
         function doTest(text: string, value: string | number, expected: string) {
-            const {firstChild, firstEnumMember} = getInfoFromTextWithFirstMember(text);
+            const { firstChild, firstEnumMember } = getInfoFromTextWithFirstMember(text);
             firstEnumMember.setValue(value);
             expect(firstChild.getText()).to.equal(expected);
         }
@@ -59,25 +59,25 @@ describe(nameof(EnumMember), () => {
 
     describe(nameof<EnumMember>(d => d.remove), () => {
         it("should remove the member and its comma when its the only member", () => {
-            const {firstEnumMember, firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member,\n}\n");
+            const { firstEnumMember, firstChild, sourceFile } = getInfoFromTextWithFirstMember("enum MyEnum {\n  member,\n}\n");
             firstEnumMember.remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n}\n");
         });
 
         it("should remove the member and its comma when it's the first member", () => {
-            const {firstEnumMember, firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
+            const { firstEnumMember, firstChild, sourceFile } = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
             firstEnumMember.remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member2\n}\n");
         });
 
         it("should remove the member when it's the last member", () => {
-            const {firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
+            const { firstChild, sourceFile } = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2\n}\n");
             firstChild.getMembers()[1].remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member1 = 2,\n}\n");
         });
 
         it("should remove the member when it's in the middle", () => {
-            const {firstChild, sourceFile} = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2,\n  member3\n}\n");
+            const { firstChild, sourceFile } = getInfoFromTextWithFirstMember("enum MyEnum {\n  member1 = 2,\n  member2,\n  member3\n}\n");
             firstChild.getMembers()[1].remove();
             expect(sourceFile.getText()).to.equal("enum MyEnum {\n  member1 = 2,\n  member3\n}\n");
         });
@@ -85,7 +85,7 @@ describe(nameof(EnumMember), () => {
 
     describe(nameof<EnumMember>(d => d.fill), () => {
         function doTest(code: string, structure: Partial<EnumMemberSpecificStructure>, expectedCode: string) {
-            const {firstEnumMember, sourceFile} = getInfoFromTextWithFirstMember(code);
+            const { firstEnumMember, sourceFile } = getInfoFromTextWithFirstMember(code);
             firstEnumMember.fill(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -104,7 +104,8 @@ describe(nameof(EnumMember), () => {
 
     describe(nameof<EnumMember>(d => d.getStructure), () => {
         function doTest(code: string, expected: any) {
-            const {firstEnumMember} = getInfoFromTextWithFirstMember(code);
+            const { firstEnumMember } = getInfoFromTextWithFirstMember(code);
+            // console.log(firstEnumMember.getStructure());
             expect(firstEnumMember.getStructure()).to.deep.equal(expected);
         }
 
@@ -113,13 +114,17 @@ describe(nameof(EnumMember), () => {
         });
 
         it("should respect names with spaces initializers and docs", () => {
-            doTest(`enum b {/** Use when opinionated */'a very peculiar name' = 3.14}`,
-            {
-                name: "\'a very peculiar name\'", // TODO: Should the quotes be part of the name ? (I don't think so)
-                initializer: "3.14",
-                docs: [ { description: "Use when opinionated" } ],
-                value: 3.14
-            });
+            doTest(`
+            enum b {
+                /** Use when opinionated */
+                'a very peculiar name' = 3.14
+            }`,
+                {
+                    name: "\'a very peculiar name\'", // TODO: Should the quotes be part of the name ? (I don't think so)
+                    initializer: "3.14",
+                    docs: [{ description: "Use when opinionated" }],
+                    value: 3.14
+                });
         });
     });
 });

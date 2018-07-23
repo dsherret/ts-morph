@@ -4,6 +4,7 @@ import { ts } from "../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { TypeElement } from "./TypeElement";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(TypeElement))));
 export class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
@@ -22,5 +23,17 @@ export class ConstructSignatureDeclaration extends ConstructSignatureDeclaration
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ConstructSignatureDeclarationStructure {
+        return callBaseGetStructure<ConstructSignatureDeclarationStructure>(ConstructSignatureDeclarationBase.prototype, this, {
+            docs: this.getJsDocs().map(doc => doc.getStructure()),
+            parameters: this.getParameters().map(param => param.getStructure()),
+            returnType: this.getReturnType().getText(),
+            typeParameters: this.getTypeParameters().map(param => param.getStructure())
+        }) as ConstructSignatureDeclarationStructure;
     }
 }

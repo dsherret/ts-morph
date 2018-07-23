@@ -6,36 +6,36 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getMember), () => {
         it("should get a member by its name", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMember("member2")!.getText()).to.equal("member2");
         });
 
         it("should get a member by a function", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMember(m => m.getName() === "member2")!.getText()).to.equal("member2");
         });
     });
 
     describe(nameof<EnumDeclaration>(d => d.getMemberOrThrow), () => {
         it("should get a member by its name", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMemberOrThrow("member2").getText()).to.equal("member2");
         });
 
         it("should get a member by a function", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(firstChild.getMemberOrThrow(m => m.getName() === "member2").getText()).to.equal("member2");
         });
 
         it("should get a member by a function", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1, member2 }");
             expect(() => firstChild.getMemberOrThrow(m => m.getName() === "member9")).to.throw();
         });
     });
 
     describe(nameof<EnumDeclaration>(d => d.getMembers), () => {
         it("should get all the members", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum { member1 = 1, member2 }");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum { member1 = 1, member2 }");
             const members = firstChild.getMembers();
             expect(members.length).to.equal(2);
         });
@@ -43,7 +43,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.insertMembers), () => {
         function doTest(startCode: string, index: number, structures: EnumMemberStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMembers(index, structures);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -97,7 +97,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.insertMember), () => {
         function doTest(startCode: string, index: number, structure: EnumMemberStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.insertMember(index, structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(EnumMember);
@@ -110,7 +110,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.addMember), () => {
         function doTest(startCode: string, structure: EnumMemberStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMember(structure);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(EnumMember);
@@ -123,7 +123,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.addMembers), () => {
         function doTest(startCode: string, structures: EnumMemberStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startCode);
             const result = firstChild.addMembers(structures);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -136,43 +136,43 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.isConstEnum), () => {
         it("should have a const keyword when it has one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             expect(firstChild.isConstEnum()).is.true;
         });
 
         it("should not have a const keyword when it doesn't have one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(firstChild.isConstEnum()).is.false;
         });
     });
 
     describe(nameof<EnumDeclaration>(d => d.getConstKeyword), () => {
         it("should get a const keyword when it has one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             expect(firstChild.getConstKeyword()!.getText()).to.equal("const");
         });
 
         it("should not get a const keyword when it doesn't have one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             expect(firstChild.getConstKeyword()).is.undefined;
         });
     });
 
     describe(nameof<EnumDeclaration>(d => d.setIsConstEnum), () => {
         it("should set as const enum when not one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
             firstChild.setIsConstEnum(true);
             expect(firstChild.getText()).to.equal("const enum MyEnum {}");
         });
 
         it("should set as not const enum when is one", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             firstChild.setIsConstEnum(false);
             expect(firstChild.getText()).to.equal("enum MyEnum {}");
         });
 
         it("should stay the same if setting to same value", () => {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
+            const { firstChild } = getInfoFromText<EnumDeclaration>("const enum MyEnum {}");
             firstChild.setIsConstEnum(true);
             expect(firstChild.getText()).to.equal("const enum MyEnum {}");
         });
@@ -180,7 +180,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: EnumDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<EnumDeclaration>(startingCode);
             firstChild.fill(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -202,7 +202,7 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getEnums()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -214,13 +214,16 @@ describe(nameof(EnumDeclaration), () => {
 
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expected: any) {
-            const {firstChild} = getInfoFromText<EnumDeclaration>(code);
+            const { firstChild } = getInfoFromText<EnumDeclaration>(code);
+            // console.log(JSON.stringify(firstChild.getStructure(), null, 2));
             expect(firstChild.getStructure()).to.deep.equal(expected);
         }
 
         it("should respect empty enum", () => {
-            doTest("enum Identifier {\n}", { name: "Identifier", isExported: false, isDefaultExport: false,
-                hasDeclareKeyword: false, docs: [], isConst: false, members: [] });
+            doTest("enum Identifier {\n}", {
+                name: "Identifier", isExported: false, isDefaultExport: false,
+                hasDeclareKeyword: false, docs: [], isConst: false, members: []
+            });
         });
 
         it("should respect names with spaces initializers and docs", () => {
@@ -234,25 +237,31 @@ describe(nameof(EnumDeclaration), () => {
                 bar="bar"
             };
             `,
-            {
-                name: "CONSTANTS",
-                isExported: true,
-                isDefaultExport: false,
-                hasDeclareKeyword: false,
-                docs: [ { description: "lorem ipsum" } ],
-                isConst: false,
-                members:
-                [ { name: "\'a very peculiar name\'",
-                    initializer: "3.14",
-                    docs: [Array],
-                    value: 3.14 },
-                    { name: "foo",
-                    initializer: undefined,
-                    docs: [],
-                    value: 4.140000000000001 },
-                    { name: "bar", initializer: "\"bar\"", docs: [{description: "bar"}], value: "bar" }
-                ]
-            });
+                {
+                    name: "CONSTANTS",
+                    isExported: true,
+                    isDefaultExport: false,
+                    hasDeclareKeyword: false,
+                    docs: [{ description: "lorem ipsum" }],
+                    isConst: false,
+                    members:
+                        [{
+                            name: "\'a very peculiar name\'",
+                            initializer: "3.14",
+                            docs: [{
+                                description: "Use when opinionated"
+                            }],
+                            value: 3.14
+                        },
+                        {
+                            name: "foo",
+                            initializer: undefined,
+                            docs: [],
+                            value: 4.140000000000001
+                        },
+                        { name: "bar", initializer: "\"bar\"", docs: [{ description: "bar" }], value: "bar" }
+                        ]
+                });
         });
     });
 });

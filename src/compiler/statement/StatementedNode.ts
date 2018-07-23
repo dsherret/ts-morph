@@ -1,13 +1,19 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
-import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
-    verifyAndGetIndex } from "../../manipulation";
-import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure } from "../../structures";
+import {
+    InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
+    verifyAndGetIndex
+} from "../../manipulation";
+import {
+    ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure
+} from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
-    TypeGuards } from "../../utils";
+import {
+    ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
+    TypeGuards
+} from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { ClassDeclaration } from "../class";
 import { Node } from "../common";
@@ -614,11 +620,11 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.global.structurePrinterFactory.forFunctionDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember =>
-                            structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
-                        nextNewLine: nextMember =>
-                            structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
-                    });
+                            previousNewLine: previousMember =>
+                                structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
+                            nextNewLine: nextMember =>
+                                structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
+                        });
                 }
             });
         }
@@ -754,9 +760,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.global.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
-                        nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
-                    });
+                            previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
+                            nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
+                        });
                 }
             });
         }
@@ -814,9 +820,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.global.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
-                        previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
-                        nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
-                    });
+                            previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
+                            nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
+                        });
                 }
             });
         }
@@ -868,12 +874,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         getStructure() {
             return callBaseGetStructure<StatementedNodeStructure>(Base.prototype, this, {
-                classes: [], // TODO: this.getClasses().map(c=>c.getStructure())
+                classes: this.getClasses().map(c => c.getStructure()),
                 functions: this.getFunctions().map(f => f.getStructure()),
-                enums: [], /// TODO: this.getEnums().map(e=>e.getStructure()),
-                interfaces: [], // TODO
-                namespaces: [], // TODO
-                typeAliases: []// TODO
+                enums: this.getEnums().map(node => node.getStructure()),
+                interfaces: this.getInterfaces().map(node => node.getStructure()),
+                namespaces: [], // TODO: this.getNamespaces().map(node=>node.getStructure()),
+                typeAliases: []// TODO: this.getTypeAliases().map(node=>node.getStructure()),
             });
         }
 
