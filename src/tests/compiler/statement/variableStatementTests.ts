@@ -6,7 +6,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(VariableStatement), () => {
     describe(nameof<VariableStatement>(d => d.getDeclarationKind), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
-            const {firstChild} = getInfoFromText<VariableStatement>(code);
+            const { firstChild } = getInfoFromText<VariableStatement>(code);
             expect(firstChild.getDeclarationKind()).to.equal(expectedType);
         }
 
@@ -25,7 +25,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.getDeclarationKindKeyword), () => {
         function doTest(code: string, expectedType: VariableDeclarationKind) {
-            const {firstChild} = getInfoFromText<VariableStatement>(code);
+            const { firstChild } = getInfoFromText<VariableStatement>(code);
             expect(firstChild.getDeclarationKindKeyword().getText()).to.equal(expectedType);
         }
 
@@ -44,7 +44,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.setDeclarationKind), () => {
         function doTest(code: string, newType: VariableDeclarationKind, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(code);
+            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(code);
             firstChild.setDeclarationKind(newType);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -68,7 +68,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.insertDeclarations), () => {
         function doTest(startText: string, index: number, structures: VariableDeclarationStructure[], expectedText: string) {
-            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.insertDeclarations(index, structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -92,7 +92,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.insertDeclaration), () => {
         function doTest(startText: string, index: number, structure: VariableDeclarationStructure, expectedText: string) {
-            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.insertDeclaration(index, structure);
             expect(result).to.be.instanceOf(VariableDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -105,7 +105,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.addDeclarations), () => {
         function doTest(startText: string, structures: VariableDeclarationStructure[], expectedText: string) {
-            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.addDeclarations(structures);
             expect(result.length).to.equal(structures.length);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -118,7 +118,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.addDeclaration), () => {
         function doTest(startText: string, structure: VariableDeclarationStructure, expectedText: string) {
-            const {firstChild, sourceFile} = getInfoFromText<VariableStatement>(startText);
+            const { firstChild, sourceFile } = getInfoFromText<VariableStatement>(startText);
             const result = firstChild.addDeclaration(structure);
             expect(result).to.be.instanceOf(VariableDeclaration);
             expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -131,7 +131,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getVariableStatements()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -143,7 +143,7 @@ describe(nameof(VariableStatement), () => {
 
     describe(nameof<VariableStatement>(d => d.fill), () => {
         function doTest(text: string, fillStructure: Partial<VariableStatementStructure>, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getVariableStatements()[0].fill(fillStructure);
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -156,4 +156,31 @@ describe(nameof(VariableStatement), () => {
             doTest("const t = '';", { declarations: [{ name: "v2" }, { name: "v3" }] }, "const t = '', v2, v3;");
         });
     });
+
+    describe(nameof<VariableStatement>(d => d.fill), () => {
+        function doTest(text: string, expected: any) {
+            const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
+            // console.log(structure);
+            expect(structure).to.deep.equal(expected);
+        }
+
+        it("should get structure for exported single variable declaration with type", () => {
+            doTest("export var a:Date[]", {
+                isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: 'var',
+                declarations: [{ name: 'a', initializer: undefined, type: 'Date[]', hasExclamationToken: false }]
+            });
+        });
+
+        it("should get structure for exported single variable declaration with type", () => {
+            doTest("const a:Date[]=[new Date()],b=1,c=a", {
+                isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: 'const',
+                declarations: [{ name: 'a', initializer: '[new Date()]', type: 'Date[]', hasExclamationToken: false },
+                { name: 'b', initializer: '1', type: undefined, hasExclamationToken: false }, {
+                    name: 'c', initializer: 'a', type: undefined, hasExclamationToken: false
+                }]
+            });
+        });
+    });
+
+
 });

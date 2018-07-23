@@ -1,4 +1,4 @@
-import { VariableDeclarationStructure, VariableStatementStructure } from "../../structures";
+import { VariableDeclarationStructure, VariableStatementStructure, VariableStatementSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
@@ -7,6 +7,7 @@ import { Statement } from "./Statement";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
 import { VariableDeclarationList } from "./VariableDeclarationList";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
@@ -93,5 +94,15 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
             this.addDeclarations(structure.declarations);
 
         return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure(): VariableStatementStructure {
+        return callBaseGetStructure<VariableStatementSpecificStructure>(VariableStatementBase.prototype, this, {
+            declarationKind: this.getDeclarationKind(),
+            declarations: this.getDeclarations().map(declaration => declaration.getStructure())
+        }) as any as VariableStatementStructure;
     }
 }
