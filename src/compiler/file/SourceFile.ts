@@ -4,7 +4,7 @@ import { GlobalContainer } from "../../GlobalContainer";
 import { FormattingKind, getTextFromFormattingEdits, removeChildrenWithFormatting, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../manipulation/textSeek";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure } from "../../structures";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure, SourceFileSpecificStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
@@ -19,6 +19,7 @@ import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
 import { ImportDeclaration } from "./ImportDeclaration";
+import { callBaseGetStructure } from '../callBaseGetStructure';
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
@@ -1032,6 +1033,18 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         });
         return this;
     }
+
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure() {
+        return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {
+            exports: this.getExportDeclarations().map(declaration=>declaration.getStructure()),
+            imports: this.getImportDeclarations().map(declaration=>declaration.getStructure())
+        });
+    }
+
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
         if (fileReadResult === false) {

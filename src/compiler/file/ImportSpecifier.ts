@@ -2,6 +2,8 @@ import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText }
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node } from "../common";
+import { callBaseGetStructure } from '../callBaseGetStructure';
+import { ImportSpecifierStructure } from '../../structures';
 
 export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**
@@ -99,4 +101,16 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         else
             importDeclaration.removeNamedImports();
     }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure() {
+        const alias = this.getAliasIdentifier();
+        return callBaseGetStructure<ImportSpecifierStructure>(Node.prototype, this, {
+            name: this.getName(),
+            alias: alias ? alias.getText() : undefined
+        });
+    }
+
 }

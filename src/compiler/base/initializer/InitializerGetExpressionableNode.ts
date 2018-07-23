@@ -38,14 +38,14 @@ export function InitializerGetExpressionableNode<T extends Constructor<Initializ
         }
 
         getInitializerIfKindOrThrow(kind: SyntaxKind) {
-            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initiailizer of kind '${getSyntaxKindName(kind)}'.`);
+            return errors.throwIfNullOrUndefined(this.getInitializerIfKind(kind), `Expected to find an initializer of kind '${getSyntaxKindName(kind)}'.`);
         }
 
         getInitializerIfKind(kind: SyntaxKind) {
-            const initiailizer = this.getInitializer();
-            if (initiailizer != null && initiailizer.getKind() !== kind)
+            const initializer = this.getInitializer();
+            if (initializer != null && initializer.getKind() !== kind)
                 return undefined;
-            return initiailizer;
+            return initializer;
         }
 
         getInitializerOrThrow() {

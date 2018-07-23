@@ -217,7 +217,6 @@ describe(nameof(EnumDeclaration), () => {
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expected: any) {
             const {firstChild} = getInfoFromText<EnumDeclaration>(code);
-            console.log(JSON.stringify(firstChild.getStructure()));
             expect(firstChild.getStructure()).to.deep.equal(expected);
         }
 

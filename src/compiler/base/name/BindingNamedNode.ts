@@ -3,6 +3,8 @@ import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { BindingNamedNodeStructure } from "../../../structures";
 
 // todo: consolidate these named classes somehow
 
@@ -53,6 +55,12 @@ function BindingNamedNodeInternal<T extends Constructor<BindingNamedNodeExtensio
             errors.throwIfNotStringOrWhitespace(text, nameof(text));
             this.getNameNode().rename(text);
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<BindingNamedNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

@@ -9,7 +9,7 @@ import { getInfoFromText } from "../testHelpers";
 describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.setModuleSpecifier), () => {
         function doTest(text: string, newModuleSpecifier: string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setModuleSpecifier(newModuleSpecifier);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -27,7 +27,7 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should set the module specifier when it's provided a source file", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(`import {test} from "./other";`);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(`import {test} from "./other";`);
             firstChild.setModuleSpecifier(sourceFile.copy("newFile.ts"));
             expect(sourceFile.getText()).to.equal(`import {test} from "./newFile";`);
         });
@@ -35,7 +35,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getModuleSpecifier().getText()).to.equal(expected);
         }
 
@@ -46,7 +46,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getModuleSpecifierValue), () => {
         function doTest(text: string, expected: string) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getModuleSpecifierValue()).to.equal(expected);
         }
 
@@ -116,7 +116,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.isModuleSpecifierRelative), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.isModuleSpecifierRelative()).to.equal(expected);
         }
 
@@ -139,13 +139,13 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.setDefaultImport), () => {
         function doTest(text: string, newDefaultImport: string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setDefaultImport(newDefaultImport);
             expect(sourceFile.getText()).to.equal(expected);
         }
 
         it("should throw when whitespace", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>("import d from './file';");
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>("import d from './file';");
             expect(() => firstChild.setDefaultImport(" ")).to.throw(errors.ArgumentNullOrWhitespaceError);
         });
 
@@ -168,7 +168,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getDefaultImport), () => {
         function doTest(text: string, expectedName: string | undefined) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const defaultImport = firstChild.getDefaultImport();
             if (expectedName == null)
                 expect(defaultImport).to.be.undefined;
@@ -221,7 +221,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.setNamespaceImport), () => {
         function doTest(text: string, newNamespaceImport: string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.setNamespaceImport(newNamespaceImport);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -244,7 +244,7 @@ describe(nameof(ImportDeclaration), () => {
 
         it("should throw an error when a named import exists", () => {
             expect(() => {
-                const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(`import {named} from './file';`);
+                const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(`import {named} from './file';`);
                 firstChild.setNamespaceImport("identifier");
             }).to.throw();
         });
@@ -256,7 +256,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getNamespaceImportOrThrow), () => {
         function doTest(text: string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.removeNamespaceImport();
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -276,7 +276,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getNamespaceImport), () => {
         function doTest(text: string, expectedName: string | undefined) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const identifier = firstChild.getNamespaceImport();
             if (expectedName == null)
                 expect(identifier).to.be.undefined;
@@ -329,7 +329,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.getNamedImports), () => {
         function doTest(text: string, expected: { name: string; alias?: string; }[]) {
-            const {firstChild} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             const namedImports = firstChild.getNamedImports();
             expect(namedImports.length).to.equal(expected.length);
             for (let i = 0; i < namedImports.length; i++) {
@@ -368,7 +368,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImports), () => {
         function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
                 firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedImports(index, structuresOrNames);
@@ -406,7 +406,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.insertNamedImport), () => {
         function doTest(text: string, index: number, structureOrName: ImportSpecifierStructure | string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.insertNamedImport(index, structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -422,7 +422,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.addNamedImport), () => {
         function doTest(text: string, structureOrName: ImportSpecifierStructure | string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImport(structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -438,7 +438,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(n => n.addNamedImports), () => {
         function doTest(text: string, structures: (ImportSpecifierStructure | string)[], expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             firstChild.addNamedImports(structures);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -450,7 +450,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getImportDeclarations()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -462,7 +462,7 @@ describe(nameof(ImportDeclaration), () => {
 
     describe(nameof<ImportDeclaration>(d => d.removeNamedImports), () => {
         function doTest(text: string, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getImportDeclarations()[0].removeNamedImports();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -511,4 +511,44 @@ describe(nameof(ImportDeclaration), () => {
             doTest(`import "./test";`, undefined);
         });
     });
+
+    describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: any) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            console.log(firstChild.getStructure());
+            expect(firstChild.getStructure()).to.deep.eq(expectedStructure);
+        }
+
+        it("should work for named multiple import declarations", () => {
+            doTest(`import {a as bar, b} from 'foo'`, {
+                defaultImport: undefined,
+                moduleSpecifier: "'foo'",
+                namedImports: [
+                    { name: "a", alias: "bar" },
+                    { name: "b", alias: undefined }
+                ],
+                namespaceImport: undefined
+            });
+        });
+
+        it("should work for wildcard import declarations", () => {
+            doTest(`import * as ts from 'typescript'`, { 
+                defaultImport: undefined,
+                moduleSpecifier: "\'typescript\'",
+                namedImports: [],
+                namespaceImport: "ts" 
+            });
+        });
+
+        it("should work for default import declarations", () => {
+            doTest(`import bar from 'foo'`, { 
+                defaultImport: "bar",
+                moduleSpecifier: "\'foo\'",
+                namedImports: [],
+                namespaceImport: undefined 
+            });
+        });
+
+    });
+
 });
