@@ -30,7 +30,7 @@ const oks: string[] = [];
 const ignoreDeclarations = [
     'FunctionLikeDeclaration',
     'InitializerExpressionableNode', // because extends InitializerSetExpressionableNode and it does implements it
-    'SignaturedDeclaration',
+    'SignaturedDeclaration', // because extends ParameteredNode, ReturnTypedNode and both impl getstructure and it doesnt add anithing new and is not even a class
 ]
 
 function verifyStructure(structureName: string, baseStructure: Structure) {

@@ -1,8 +1,10 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../structurePrinters";
-import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../structures";
+import {
+    GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionStructure
+} from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
@@ -11,6 +13,7 @@ import { PrimaryExpression } from "../PrimaryExpression";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
+import { callBaseGetStructure } from '../../callBaseGetStructure';
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {
@@ -276,6 +279,15 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
         return this._insertProperty(index, structures, () => this.global.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })) as SetAccessorDeclaration[];
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ObjectLiteralExpressionStructure {
+        return callBaseGetStructure<ObjectLiteralExpressionStructure>(ObjectLiteralExpressionBase.prototype, this, {
+            properties: this.getProperties().map(property => property.getStructure())
+        }) as any as ObjectLiteralExpressionStructure;
     }
 
     /**
