@@ -5,6 +5,8 @@ import { getTextFromStringOrWriter } from "../../../utils";
 import { InitializerGetExpressionableNode, PropertyNamedNode, QuestionTokenableNode } from "../../base";
 import { Node } from "../../common";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
+import { PropertyAssignmentStructure, PropertyAssignmentSpecificStructure } from '../../../structures';
+import { callBaseGetStructure } from '../../callBaseGetStructure';
 
 // This node only has a question token in order to tell the user about bad code.
 // (See https://github.com/Microsoft/TypeScript/pull/5121/files)
@@ -66,5 +68,15 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure(): PropertyAssignmentStructure {
+        const initializer = this.getInitializer();
+        return callBaseGetStructure<PropertyAssignmentSpecificStructure>(PropertyAssignmentBase.prototype, this, {
+            initializer: initializer ? initializer.getText() : ''
+        }) as any as PropertyAssignmentStructure;
     }
 }

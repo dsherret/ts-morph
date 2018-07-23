@@ -27,9 +27,16 @@ const structures = inspector.getStructures();
 // find problems
 const problems: string[] = [];
 const oks: string[] = [];
+const ignoreDeclarations = [
+    'FunctionLikeDeclaration',
+    'InitializerExpressionableNode' // because extends InitializerSetExpressionableNode and it does implements it
+]
 
 function verifyStructure(structureName: string, baseStructure: Structure) {
     let declarationName: string = baseStructure.getName().replace(/Structure$/, "");
+    if (ignoreDeclarations.includes(declarationName)) {
+        return;
+    }
     let declaration: InterfaceDeclaration | undefined = interfaces.find(c => c.getName() === declarationName);
     if (declaration && !declaration.getImplementations().length) {
         declaration = interfaces.find(c => c.getName() === declarationName + "Specific");
@@ -53,9 +60,10 @@ function verifyStructure(structureName: string, baseStructure: Structure) {
         else
             oks.push(`class found ${decl.getName()}`)
     }
-    if (problem)
+    if (problem) {
         problems.push(problem);
-        // console.log(declarationName, { ok, problem });
+        console.log(declarationName, { ok, problem });
+    }
 }
 
 

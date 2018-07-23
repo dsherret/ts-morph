@@ -69,4 +69,20 @@ describe(nameof(PropertyAssignment), () => {
                 `{\n    prop1: 1,\n    prop2: 2\n}`);
         });
     });
+
+    describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
+        function test(code: string, expectedStructure: any){
+            const {sourceFile} = getInfoFromText(code);
+            const structure = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment).getStructure();
+            expect(structure).to.deep.equals(expectedStructure);
+        }
+        it("should get structure of simple expression", () => {
+            test("const t = { prop1: 1};", { name: 'prop1', hasQuestionToken: false, initializer: '1' });
+        });
+
+        it("should get structure of simple expression", () => {
+            test("const t = { 'long name': (()=>1)() };", { name: "'long name'", hasQuestionToken: false, initializer: "(()=>1)()" });
+        });
+    });
+
 });
