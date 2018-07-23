@@ -532,20 +532,20 @@ describe(nameof(ImportDeclaration), () => {
         });
 
         it("should work for wildcard import declarations", () => {
-            doTest(`import * as ts from 'typescript'`, { 
+            doTest(`import * as ts from 'typescript'`, {
                 defaultImport: undefined,
                 moduleSpecifier: "\'typescript\'",
                 namedImports: [],
-                namespaceImport: "ts" 
+                namespaceImport: "ts"
             });
         });
 
         it("should work for default import declarations", () => {
-            doTest(`import bar from 'foo'`, { 
+            doTest(`import bar from 'foo'`, {
                 defaultImport: "bar",
                 moduleSpecifier: "\'foo\'",
                 namedImports: [],
-                namespaceImport: undefined 
+                namespaceImport: undefined
             });
         });
 

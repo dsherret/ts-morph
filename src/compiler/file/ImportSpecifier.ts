@@ -2,8 +2,8 @@ import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText }
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node } from "../common";
-import { callBaseGetStructure } from '../callBaseGetStructure';
-import { ImportSpecifierStructure } from '../../structures';
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ImportSpecifierStructure } from "../../structures";
 
 export class ImportSpecifier extends Node<ts.ImportSpecifier> {
     /**

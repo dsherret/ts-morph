@@ -7,7 +7,7 @@ import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { SourceFile } from "./SourceFile";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     /**
@@ -235,7 +235,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
         const moduleSpecifier = this.getModuleSpecifier();
         return callBaseGetStructure<ExportDeclarationStructure>(Statement.prototype, this, {
             moduleSpecifier: moduleSpecifier ? moduleSpecifier.getText() : undefined,
-            namedExports: this.getNamedExports().map(node=>node.getStructure())
+            namedExports: this.getNamedExports().map(node => node.getStructure())
         });
     }
 }

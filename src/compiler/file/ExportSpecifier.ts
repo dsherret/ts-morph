@@ -3,8 +3,8 @@ import { insertIntoParentTextRange, removeCommaSeparatedChild, replaceNodeText }
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { Node, Symbol } from "../common";
-import { callBaseGetStructure } from '../callBaseGetStructure';
-import { ExportSpecifierStructure } from '../../structures';
+import { callBaseGetStructure } from "../callBaseGetStructure";
+import { ExportSpecifierStructure } from "../../structures";
 
 export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     /**
@@ -118,15 +118,15 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             exportDeclaration.remove();
     }
 
-        /**
+    /**
      * Gets the structure equivalent to this node.
      */
     getStructure() {
         const alias = this.getAliasIdentifier();
         return callBaseGetStructure<ExportSpecifierStructure>(Node.prototype, this, {
-            alias: alias ? alias.getText() : undefined, 
+            alias: alias ? alias.getText() : undefined,
             name: this.getNameNode().getText()
         });
     }
-    
+
 }

@@ -6,7 +6,7 @@ import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../utils";
 import { Identifier, Node } from "../common";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
-import { ImportSpecifier } from "./ImportSpecifier"; 
+import { ImportSpecifier } from "./ImportSpecifier";
 import { SourceFile } from "./SourceFile";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 

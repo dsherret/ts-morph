@@ -212,8 +212,6 @@ describe(nameof(EnumDeclaration), () => {
         });
     });
 
-
-
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expected: any) {
             const {firstChild} = getInfoFromText<EnumDeclaration>(code);
@@ -236,7 +234,7 @@ describe(nameof(EnumDeclaration), () => {
                 bar="bar"
             };
             `,
-            { 
+            {
                 name: "CONSTANTS",
                 isExported: true,
                 isDefaultExport: false,
@@ -252,8 +250,8 @@ describe(nameof(EnumDeclaration), () => {
                     initializer: undefined,
                     docs: [],
                     value: 4.140000000000001 },
-                    { name: "bar", initializer: "\"bar\"", docs: [{description: "bar"}], value: "bar" } 
-                ] 
+                    { name: "bar", initializer: "\"bar\"", docs: [{description: "bar"}], value: "bar" }
+                ]
             });
         });
     });

@@ -343,4 +343,27 @@ describe(nameof(ExportDeclaration), () => {
             doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
         });
     });
+
+    describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: any) {
+            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            console.log(firstChild.getStructure());
+            
+        }
+
+        it("should throw when no module specifier exists", () => {
+            doTest(`export {name};`, { moduleSpecifier: undefined,
+                namedExports: [ { alias: undefined, name: 'name' } ] });
+            // expect(() => firstChild.toNamespaceExport()).to.throw(errors.InvalidOperationError);
+        });
+
+        // it("should change to a namespace import when there's only one to remove", () => {
+        //     doTest(`export {name} from "./test";`, `export * from "./test";`);
+        // });
+
+        // it("should change to a namespace import when there's multiple to remove", () => {
+        //     doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
+        // });
+    });
+
 });

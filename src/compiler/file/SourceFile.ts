@@ -19,7 +19,7 @@ import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
 import { ImportDeclaration } from "./ImportDeclaration";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
@@ -1034,17 +1034,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         return this;
     }
 
-
     /**
      * Gets the structure equivalent to this node.
      */
     getStructure() {
         return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {
-            exports: this.getExportDeclarations().map(declaration=>declaration.getStructure()),
-            imports: this.getImportDeclarations().map(declaration=>declaration.getStructure())
+            exports: this.getExportDeclarations().map(declaration => declaration.getStructure()),
+            imports: this.getImportDeclarations().map(declaration => declaration.getStructure())
         });
     }
-
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {
         if (fileReadResult === false) {
