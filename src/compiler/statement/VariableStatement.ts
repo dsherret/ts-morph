@@ -7,7 +7,7 @@ import { Statement } from "./Statement";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
 import { VariableDeclarationList } from "./VariableDeclarationList";
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {

@@ -157,30 +157,28 @@ describe(nameof(VariableStatement), () => {
         });
     });
 
-    describe(nameof<VariableStatement>(d => d.fill), () => {
+    describe(nameof<VariableStatement>(d => d.getStructure), () => {
         function doTest(text: string, expected: any) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
-            // console.log(structure);
             expect(structure).to.deep.equal(expected);
         }
 
         it("should get structure for exported single variable declaration with type", () => {
             doTest("export var a:Date[]", {
-                isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: 'var',
-                declarations: [{ name: 'a', initializer: undefined, type: 'Date[]', hasExclamationToken: false }]
+                isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: "var",
+                declarations: [{ name: "a", initializer: undefined, type: "Date[]", hasExclamationToken: false }]
             });
         });
 
         it("should get structure for exported single variable declaration with type", () => {
             doTest("const a:Date[]=[new Date()],b=1,c=a", {
-                isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: 'const',
-                declarations: [{ name: 'a', initializer: '[new Date()]', type: 'Date[]', hasExclamationToken: false },
-                { name: 'b', initializer: '1', type: undefined, hasExclamationToken: false }, {
-                    name: 'c', initializer: 'a', type: undefined, hasExclamationToken: false
+                isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: "const",
+                declarations: [{ name: "a", initializer: "[new Date()]", type: "Date[]", hasExclamationToken: false },
+                { name: "b", initializer: "1", type: undefined, hasExclamationToken: false }, {
+                    name: "c", initializer: "a", type: undefined, hasExclamationToken: false
                 }]
             });
         });
     });
-
 
 });

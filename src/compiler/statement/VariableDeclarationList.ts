@@ -1,13 +1,14 @@
 import * as errors from "../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange } from "../../manipulation";
 import { CommaSeparatedStructuresPrinter } from "../../structurePrinters";
-import { VariableDeclarationListStructure, VariableDeclarationStructure } from "../../structures";
+import { VariableDeclarationListStructure, VariableDeclarationStructure, VariableDeclarationListSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ModifierableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { VariableDeclaration } from "./VariableDeclaration";
 import { VariableDeclarationKind } from "./VariableDeclarationKind";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const VariableDeclarationListBase = ModifierableNode(Node);
 export class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
@@ -129,5 +130,15 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
             this.addDeclarations(structure.declarations);
 
         return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node
+     */
+    getStructure(): VariableDeclarationListStructure {
+        return callBaseGetStructure<VariableDeclarationListSpecificStructure>(VariableDeclarationListBase.prototype, this, {
+            declarationKind: this.getDeclarationKind(),
+            declarations: this.getDeclarations().map(declaration => declaration.getStructure())
+        }) as any as VariableDeclarationListStructure;
     }
 }
