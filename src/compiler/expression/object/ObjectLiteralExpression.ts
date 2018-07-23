@@ -13,7 +13,7 @@ import { PrimaryExpression } from "../PrimaryExpression";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { ShorthandPropertyAssignment } from "./ShorthandPropertyAssignment";
 import { SpreadAssignment } from "./SpreadAssignment";
-import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export const ObjectLiteralExpressionBase = PrimaryExpression;
 export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.ObjectLiteralExpression> {

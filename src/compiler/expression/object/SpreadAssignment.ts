@@ -3,8 +3,8 @@ import { Node } from "../../common/Node";
 import { ExpressionedNode } from "../expressioned";
 import { PropertyAssignment } from "./PropertyAssignment";
 import { removeCommaSeparatedChild } from "../../../manipulation";
-import { SpreadAssignmentStructure } from '../../../structures';
-import { callBaseGetStructure } from '../../callBaseGetStructure';
+import { SpreadAssignmentStructure } from "../../../structures";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export const SpreadAssignmentBase = ExpressionedNode(Node);
 export class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssignment> {
