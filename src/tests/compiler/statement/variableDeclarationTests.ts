@@ -7,7 +7,7 @@ describe(nameof(VariableDeclaration), () => {
     describe(nameof<VariableDeclaration>(d => d.remove), () => {
         describe("removing from variable statement", () => {
             function doTest(text: string, index: number, expectedText: string) {
-                const {sourceFile} = getInfoFromText(text);
+                const { sourceFile } = getInfoFromText(text);
                 sourceFile.getVariableDeclarations()[index].remove();
                 expect(sourceFile.getFullText()).to.equal(expectedText);
             }
@@ -31,7 +31,7 @@ describe(nameof(VariableDeclaration), () => {
 
         describe("removing from catch clause", () => {
             function doTest(text: string, expectedText: string) {
-                const {sourceFile} = getInfoFromText(text);
+                const { sourceFile } = getInfoFromText(text);
                 const tryStatement = sourceFile.getStatements()[0] as TryStatement;
                 tryStatement.getCatchClauseOrThrow().getVariableDeclarationOrThrow().remove();
                 expect(sourceFile.getFullText()).to.equal(expectedText);
@@ -45,7 +45,7 @@ describe(nameof(VariableDeclaration), () => {
 
     describe(nameof<VariableDeclaration>(d => d.fill), () => {
         function doTest(startCode: string, structure: Partial<VariableDeclarationStructure>, expectedCode: string) {
-            const {sourceFile} = getInfoFromText(startCode);
+            const { sourceFile } = getInfoFromText(startCode);
             const variableDeclaration = sourceFile.getVariableDeclarations()[0];
             variableDeclaration.fill(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -54,6 +54,24 @@ describe(nameof(VariableDeclaration), () => {
         it("should fill both an exclamation token and type", () => {
             // needs to be tested because adding an exclamation token when there's no type will do nothing
             doTest("var t;", { hasExclamationToken: true, type: "string" }, "var t!: string;");
+        });
+    });
+
+    describe(nameof<VariableDeclaration>(d => d.getStructure), () => {
+        function doTest(startCode: string, expectedStructure: any) {
+            const structure = getInfoFromText(startCode).sourceFile.getVariableDeclarations()[0].getStructure();
+            // console.log(structure);
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get structure variable declaration without assignament", () => {
+            doTest("var t;", { name: "t", initializer: undefined, type: undefined, hasExclamationToken: false });
+        });
+
+        it("should get structure variable declaration with type and initializer", () => {
+            doTest("var t:Promise<string> = Promise.resolve('hi');", {
+                name: "t", initializer: "Promise.resolve('hi')", type: "Promise<string>", hasExclamationToken: false
+            });
         });
     });
 });

@@ -7,7 +7,7 @@ import { TypeGuards } from "../../../../utils";
 describe(nameof(PropertyAssignment), () => {
     describe(nameof<PropertyAssignment>(p => p.removeInitializer), () => {
         it("should remove the property assignment and change into a shorthand property assignment", () => {
-            const {sourceFile} = getInfoFromText("const t = { /* test */prop: 5, prop2: 6 };");
+            const { sourceFile } = getInfoFromText("const t = { /* test */prop: 5, prop2: 6 };");
             const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
             const shorthandPropAssignment = propAssignment.removeInitializer();
             expect(shorthandPropAssignment).to.be.instanceOf(ShorthandPropertyAssignment);
@@ -18,14 +18,14 @@ describe(nameof(PropertyAssignment), () => {
 
     describe(nameof<PropertyAssignment>(p => p.setInitializer), () => {
         it("should set the initializer", () => {
-            const {sourceFile} = getInfoFromText("const t = { prop: 5, prop2: 6 };");
+            const { sourceFile } = getInfoFromText("const t = { prop: 5, prop2: 6 };");
             const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
             propAssignment.setInitializer("{ t } as string");
             expect(sourceFile.getFullText()).to.equal("const t = { prop: { t } as string, prop2: 6 };");
         });
 
         it("should set the initializer using a writer function", () => {
-            const {sourceFile} = getInfoFromText("const t = { prop: 5, prop2: 6 };");
+            const { sourceFile } = getInfoFromText("const t = { prop: 5, prop2: 6 };");
             const propAssignment = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment);
             propAssignment.setInitializer(writer => writer.write("{ t } as string"));
             expect(sourceFile.getFullText()).to.equal("const t = { prop: { t } as string, prop2: 6 };");
@@ -71,13 +71,14 @@ describe(nameof(PropertyAssignment), () => {
     });
 
     describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: any){
-            const {sourceFile} = getInfoFromText(code);
+        function test(code: string, expectedStructure: any) {
+            const { sourceFile } = getInfoFromText(code);
             const structure = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment).getStructure();
             expect(structure).to.deep.equals(expectedStructure);
         }
+
         it("should get structure of simple expression", () => {
-            test("const t = { prop1: 1};", { name: 'prop1', hasQuestionToken: false, initializer: '1' });
+            test("const t = { prop1: 1};", { name: "prop1", hasQuestionToken: false, initializer: "1" });
         });
 
         it("should get structure of simple expression", () => {
