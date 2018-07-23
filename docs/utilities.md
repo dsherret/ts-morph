@@ -66,4 +66,4 @@ console.log(functionText);
 // export function myFunction(): number {
 //     return 5;
 // }
-````
+```

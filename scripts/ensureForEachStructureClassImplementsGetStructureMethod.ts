@@ -34,7 +34,7 @@ const ignoreDeclarations = [
 
 function verifyStructure(structureName: string, baseStructure: Structure) {
     let declarationName: string = baseStructure.getName().replace(/Structure$/, "");
-    if (ignoreDeclarations.includes(declarationName)) {
+    if (ignoreDeclarations.indexOf(declarationName) !== -1) {
         return;
     }
     let declaration: InterfaceDeclaration | undefined = interfaces.find(c => c.getName() === declarationName);
