@@ -1,8 +1,10 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
-import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure } from "../../structures";
+import {
+    CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
+    PropertySignatureStructure, TypeElementMemberedNodeStructure
+} from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";
@@ -10,6 +12,7 @@ import { TypeElementTypes } from "../aliases";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
 
@@ -330,7 +333,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return errors.throwIfNullOrUndefined(this.getIndexSignature(findFunction), "Expected to find a index signature with the provided condition.");
         }
 
-        getIndexSignatures() {
+        getIndexSignatures(): IndexSignatureDeclaration[] {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.IndexSignature)
                 .map(m => this.getNodeFromCompilerNode(m as ts.IndexSignatureDeclaration));
         }
@@ -402,7 +405,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 () => getNotFoundErrorMessageForNameOrFindFunction("interface property signature", nameOrFindFunction));
         }
 
-        getProperties() {
+        getProperties(): PropertySignature[] {
             return this.compilerNode.members.filter(m => m.kind === SyntaxKind.PropertySignature)
                 .map(m => this.getNodeFromCompilerNode(m as ts.PropertySignature));
         }
@@ -426,6 +429,19 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 this.addMethods(structure.methods);
 
             return this;
+        }
+
+        /**
+         * Gets the structure equivalent to this node.
+         */
+        getStructure(): TypeElementMemberedNodeStructure {
+            return callBaseGetStructure<TypeElementMemberedNodeStructure>(Base.prototype, this, {
+                callSignatures: this.getCallSignatures().map(node => node.getStructure()),
+                constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),
+                indexSignatures: this.getIndexSignatures().map(node => node.getStructure()),
+                methods: this.getMethods().map(node => node.getStructure()),
+                properties: this.getProperties().map(node => node.getStructure())
+            });
         }
     };
 }

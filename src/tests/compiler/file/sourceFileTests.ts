@@ -1544,8 +1544,8 @@ function myFunction(param: MyClass) {
                 export enum U = {a}
                 `;
             const structure = getInfoFromText(startText).sourceFile.getStructure();
-            console.log(structure);
-            
+            // console.log(structure);
+
             expect(structure.functions).to.length(2);
             expect(structure.classes).to.length(2);
             expect(structure.interfaces).to.length(2);

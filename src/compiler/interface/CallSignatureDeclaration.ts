@@ -1,9 +1,10 @@
 import { removeInterfaceMember } from "../../manipulation";
-import { CallSignatureDeclarationStructure } from "../../structures";
+import { CallSignatureDeclarationStructure, CallSignatureDeclarationSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { TypeElement } from "./TypeElement";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const CallSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(TypeElement))));
 export class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.CallSignatureDeclaration> {
@@ -22,5 +23,13 @@ export class CallSignatureDeclaration extends CallSignatureDeclarationBase<ts.Ca
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): CallSignatureDeclarationStructure {
+        return callBaseGetStructure<CallSignatureDeclarationSpecificStructure>(CallSignatureDeclarationBase.prototype, this, {
+        });
     }
 }

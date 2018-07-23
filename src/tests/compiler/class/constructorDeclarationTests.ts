@@ -1,12 +1,12 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, ConstructorDeclaration } from "../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure } from "../../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure, JSDocStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
         function doTest(startCode: string, index: number, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getConstructors()[0];
             const result = methodDeclaration.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -41,7 +41,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.insertOverload), () => {
         function doTest(startCode: string, index: number, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
@@ -56,7 +56,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverloads), () => {
         function doTest(startCode: string, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
@@ -71,7 +71,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverload), () => {
         function doTest(startCode: string, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverload(structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
@@ -86,7 +86,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(d => d.remove), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -118,7 +118,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
         it("should only remove the overload when calling remove on the overload", () => {
             const startCode = "class MyClass {\n    constructor();\n    constructor() {\n    }\n}";
-            const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].getOverloads()[0].remove();
             expect(sourceFile.getFullText()).to.equal("class MyClass {\n    constructor() {\n    }\n}");
         });
@@ -126,7 +126,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.fill(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -141,6 +141,23 @@ describe(nameof(ConstructorDeclaration), () => {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    constructor() {}\n}", structure, "class identifier {\n    constructor(param);\n    constructor() {}\n}");
+        });
+    });
+
+    describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
+        it("should get structure", () => {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(`
+            class A<T> {
+                /** something in the way she moves */
+                protected constructor(public a: T[]){}
+            }
+            `);
+            const structure = firstChild.getConstructors()[0].getStructure();
+            expect(structure.scope).to.equals("protected");
+            expect(structure.parameters![0].name).to.equals("a");
+            expect(structure.parameters![0].type).to.equals("T[]");
+            expect(structure.parameters![0].scope).to.equals("public");
+            expect((structure.docs![0] as JSDocStructure).description).to.equals("something in the way she moves");
         });
     });
 });
