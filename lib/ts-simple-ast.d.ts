@@ -2268,14 +2268,9 @@ export interface InitializerSetExpressionableNode {
     removeInitializer(): this;
     /**
      * Sets the initializer.
-     * @param text - New text to set for the initializer.
+     * @param text - Text or writer function to set for the initializer.
      */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer using a writer function.
-     * @param writerFunction - Function to write the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare type InitializerSetExpressionableExtensionType = Node<ts.Node & {
@@ -2838,14 +2833,9 @@ export interface TypedNode {
     getTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the type.
-     * @param writerFunction - Writer function to set the type with.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
      */
-    setType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the type.
-     * @param text - Text to set the type to.
-     */
-    setType(text: string): this;
+    setType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the type.
      */
@@ -6357,6 +6347,21 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      * Remove this parameter.
      */
     remove(): void;
+    /**
+     * Sets if this node has a question token.
+     * @param value - If it should have a question token or not.
+     */
+    setHasQuestionToken(value: boolean): this;
+    /**
+     * Sets the initializer.
+     * @param text - Text or writer function to set for the initializer.
+     */
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Sets the type.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
+     */
+    setType(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare class HeritageClause extends Node<ts.HeritageClause> {
