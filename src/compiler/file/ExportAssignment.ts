@@ -1,8 +1,8 @@
 import { ts } from "../../typescript";
 import { Expression } from "../expression";
 import { Statement } from "../statement";
-import { ExportAssignmentStructure } from '../../structures';
-import { callBaseGetStructure } from '../callBaseGetStructure';
+import { ExportAssignmentStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**

@@ -15,6 +15,8 @@ The library supports a lightweight - serializable node representation called **s
 
 TIP: When possible is recommended to use `fill()`, `add*()` or `insert*()` methods for modifying the AST instead of string based methods like `insertText`, `replaceText`, or `removeText` because the AST will keep being valid (no forgotten nodes).
 
+IMPORTANT: when recreating an AST from a structure and then printing back, is probable that the resulting string won't be identical to the original one, if, for example, the target project has different formatting rules. Expect that indentation could be different.  
+
 In the following example we will be using structures to add a new variable. Then `fill()` to change an existing variable and finally serialize the structure to a string to then recreate the same nodes in a new source file: 
 
 ```ts

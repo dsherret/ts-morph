@@ -40,11 +40,11 @@ describe(nameof(ExportAssignment), () => {
         }
 
         it("should get structure for an export equals", () => {
-            doTest("export = 5;", { expression: '5', isExportEquals: true });
+            doTest("export = 5;", { expression: "5", isExportEquals: true });
         });
 
         it("should get structure for an export default", () => {
-            doTest("export default 5;", { expression: '5', isExportEquals: false });
+            doTest("export default 5;", { expression: "5", isExportEquals: false });
         });
     });
 });
