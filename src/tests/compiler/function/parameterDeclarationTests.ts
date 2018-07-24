@@ -1,8 +1,9 @@
 ﻿import { expect } from "chai";
 import { FunctionDeclaration, ParameterDeclaration } from "../../../compiler";
+import { SyntaxKind } from "../../../typescript";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../structures";
 import { ArrayUtils } from "../../../utils";
-import { getInfoFromText } from "../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.isRestParameter), () => {
@@ -23,9 +24,8 @@ describe(nameof(ParameterDeclaration), () => {
 
     describe(nameof<ParameterDeclaration>(d => d.setIsRestParameter), () => {
         function doTest(startCode: string, isRestParameter: boolean, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
-            const firstParam = firstChild.getParameters()[0];
-            firstParam.setIsRestParameter(isRestParameter);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(startCode, SyntaxKind.Parameter);
+            descendant.setIsRestParameter(isRestParameter);
             expect(sourceFile.getFullText()).to.be.equal(expectedCode);
         }
 
@@ -39,6 +39,14 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should remove as rest parameter", () => {
             doTest("function func(...param: string[]){}", false, "function func(param: string[]){}");
+        });
+
+        it("should add parens when there isn't any in an arrow function", () => {
+            doTest("const t = u => '';", true, "const t = (...u) => '';");
+        });
+
+        it("should do nothing when setting to false and there are no parens", () => {
+            doTest("const t = u => '';", false, "const t = u => '';");
         });
     });
 
@@ -127,6 +135,58 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should remove when it's the middle parameter", () => {
             doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(d => d.setHasQuestionToken), () => {
+        function doTest(code: string, value: boolean, expectedCode: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
+            descendant.setHasQuestionToken(value);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should set when there is no parens in an arrow function", () => {
+            doTest("const t = u => '';", true, "const t = (u?) => '';");
+        });
+
+        it("should set when there is parens in an arrow function", () => {
+            doTest("const t = (u) => '';", true, "const t = (u?) => '';");
+        });
+
+        it("should do nothing when setting to false and there are no parens or question token", () => {
+            doTest("const t = u => '';", false, "const t = u => '';");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(d => d.setInitializer), () => {
+        function doTest(code: string, initializer: string, expectedCode: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
+            descendant.setInitializer(initializer);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should set when there is no parens in an arrow function", () => {
+            doTest("const t = u => '';", "5", "const t = (u = 5) => '';");
+        });
+
+        it("should set when there is parens in an arrow function", () => {
+            doTest("const t = (u) => '';", "5", "const t = (u = 5) => '';");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(d => d.setType), () => {
+        function doTest(code: string, type: string, expectedCode: string) {
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
+            descendant.setType(type);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should set the type when there is no parens in an arrow function", () => {
+            doTest("const t = u => '';", "any", "const t = (u: any) => '';");
+        });
+
+        it("should set the type when there is parens in an arrow function", () => {
+            doTest("const t = (u) => '';", "any", "const t = (u: any) => '';");
         });
     });
 });

@@ -21,14 +21,9 @@ export interface TypedNode {
     getTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the type.
-     * @param writerFunction - Writer function to set the type with.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
      */
-    setType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the type.
-     * @param text - Text to set the type to.
-     */
-    setType(text: string): this;
+    setType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the type.
      */
