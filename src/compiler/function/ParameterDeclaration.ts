@@ -81,7 +81,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         removeCommaSeparatedChild(this);
     }
 
-    // ------ Methods to overwrite to add parens ------
+    // ------ Methods to override to add parens ------
 
     /**
      * Sets if this node has a question token.

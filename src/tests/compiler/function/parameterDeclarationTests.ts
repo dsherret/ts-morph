@@ -142,6 +142,7 @@ describe(nameof(ParameterDeclaration), () => {
         function doTest(code: string, value: boolean, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setHasQuestionToken(value);
+            expect(descendant.wasForgotten()).to.be.false;
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
@@ -162,6 +163,7 @@ describe(nameof(ParameterDeclaration), () => {
         function doTest(code: string, initializer: string, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setInitializer(initializer);
+            expect(descendant.wasForgotten()).to.be.false;
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
@@ -178,6 +180,7 @@ describe(nameof(ParameterDeclaration), () => {
         function doTest(code: string, type: string, expectedCode: string) {
             const { descendant, sourceFile } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
             descendant.setType(type);
+            expect(descendant.wasForgotten()).to.be.false;
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
 
