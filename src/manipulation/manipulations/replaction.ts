@@ -21,7 +21,7 @@ export function replaceNodeText(opts: ReplaceNodeTextOptions) {
             newText: opts.newText,
             replacingLength: opts.replacingLength
         }),
-        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile.global.compilerFactory));
+        new NodeHandlerFactory().getForForgetChanged(opts.sourceFile.context.compilerFactory));
 }
 
 /**
@@ -33,7 +33,7 @@ export function replaceSourceFileTextForFormatting(opts: { sourceFile: SourceFil
     const {sourceFile, newText} = opts;
     doManipulation(sourceFile,
         new FullReplacementTextManipulator(newText),
-        new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory));
+        new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory));
 }
 
 /**
@@ -45,7 +45,7 @@ export function replaceSourceFileTextForRename(opts: { sourceFile: SourceFile; r
 
     doManipulation(sourceFile,
         new RenameLocationTextManipulator(renameLocations, newName),
-        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForForgetChanged(sourceFile.global.compilerFactory)));
+        nodeHandlerFactory.getForTryOrForget(nodeHandlerFactory.getForForgetChanged(sourceFile.context.compilerFactory)));
 }
 
 export interface ReplaceTextPossiblyCreatingChildNodesOptions {
@@ -84,6 +84,6 @@ export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFileP
     const {sourceFile, newFilePath} = opts;
     const replacementSourceFile = createCompilerSourceFile(newFilePath, sourceFile.getFullText(), sourceFile.getLanguageVersion());
 
-    new NodeHandlerFactory().getForStraightReplacement(sourceFile.global.compilerFactory)
+    new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory)
         .handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
 }

@@ -172,7 +172,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printTexts(writer, structures);
+                this.context.structurePrinterFactory.forConstructorDeclaration({ isAmbient }).printTexts(writer, structures);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -230,7 +230,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
+                this.context.structurePrinterFactory.forGetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -281,7 +281,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
+                this.context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: this.isAmbient() }).printTexts(writer, structures);
                 if (info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else
@@ -332,7 +332,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
+                this.context.structurePrinterFactory.forPropertyDeclaration().printTexts(writer, structures);
                 if (info.nextMember != null && TypeGuards.hasBody(info.nextMember))
                     writer.blankLineIfLastNot();
                 else
@@ -580,7 +580,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
                     writer.blankLineIfLastNot();
                 else
                     writer.newLineIfLastNot();
-                this.global.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
+                this.context.structurePrinterFactory.forMethodDeclaration({ isAmbient }).printTexts(writer, structures);
                 if (!isAmbient && info.nextMember != null)
                     writer.blankLineIfLastNot();
                 else

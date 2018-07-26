@@ -1,7 +1,7 @@
 ﻿/* barrel:ignore */
 import { SourceFile } from "../compiler";
 import { Directory } from "../fileSystem/Directory";
-import { GlobalContainer } from "../GlobalContainer";
+import { ProjectContext } from "../ProjectContext";
 import { ArrayUtils, FileUtils, KeyValueCache, SortedKeyValueArray, LocaleStringComparer } from "../utils";
 
 /**
@@ -14,7 +14,7 @@ export class DirectoryCache {
     private readonly directoriesByDirPath = new KeyValueCache<string, SortedKeyValueArray<string, Directory>>();
     private readonly orphanDirs = new KeyValueCache<string, Directory>();
 
-    constructor(private readonly global: GlobalContainer) {
+    constructor(private readonly context: ProjectContext) {
     }
 
     has(dirPath: string) {
@@ -116,7 +116,7 @@ export class DirectoryCache {
     }
 
     private createDirectory(path: string) {
-        const newDirectory = new Directory(this.global, path);
+        const newDirectory = new Directory(this.context, path);
         this.addDirectory(newDirectory);
         return newDirectory;
     }
@@ -142,8 +142,8 @@ export class DirectoryCache {
             this.orphanDirs.set(path, directory);
 
         this.directoriesByPath.set(path, directory);
-        if (!this.global.fileSystemWrapper.directoryExistsSync(path))
-            this.global.fileSystemWrapper.queueMkdir(path);
+        if (!this.context.fileSystemWrapper.directoryExistsSync(path))
+            this.context.fileSystemWrapper.queueMkdir(path);
 
         for (const orphanDir of this.orphanDirs.getValues()) {
             if (directory.isAncestorOf(orphanDir))

@@ -2,7 +2,7 @@ import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, Lan
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 export declare class Directory {
-    private _global;
+    private _context;
     private _path;
     private _pathParts;
     /**
@@ -6594,7 +6594,7 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */
-    getInitializerOrThrow(): JsxExpression | StringLiteral;
+    getInitializerOrThrow(): StringLiteral | JsxExpression;
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
@@ -8408,7 +8408,6 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
  * Output file of an emit.
  */
 export declare class OutputFile {
-    private readonly global;
     /**
      * TypeScript compiler emit result.
      */
@@ -9116,7 +9115,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     /**
      * Gets the new line kind as a string.
      */
-    getNewLineKindAsString(): "\n" | "\r\n";
+    getNewLineKindAsString(): "\r\n" | "\n";
     /**
      * Gets the indentation text;
      */

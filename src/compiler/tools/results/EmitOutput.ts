@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { OutputFile } from "./OutputFile";
@@ -8,15 +8,15 @@ import { OutputFile } from "./OutputFile";
  */
 export class EmitOutput {
     /** @internal */
-    private readonly global: GlobalContainer;
+    private readonly context: ProjectContext;
     /** @internal */
     private readonly _compilerObject: ts.EmitOutput;
 
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, private readonly filePath: string, compilerObject: ts.EmitOutput) {
-        this.global = global;
+    constructor(context: ProjectContext, private readonly filePath: string, compilerObject: ts.EmitOutput) {
+        this.context = context;
         this._compilerObject = compilerObject;
     }
 
@@ -39,6 +39,6 @@ export class EmitOutput {
      */
     @Memoize
     getOutputFiles() {
-        return this.compilerObject.outputFiles.map(f => new OutputFile(this.global, f));
+        return this.compilerObject.outputFiles.map(f => new OutputFile(this.context, f));
     }
 }

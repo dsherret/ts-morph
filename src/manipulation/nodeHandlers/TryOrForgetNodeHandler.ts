@@ -19,11 +19,11 @@ export class TryOrForgetNodeHandler implements NodeHandler {
         try {
             this.handler.handleNode(currentNode, newNode, newSourceFile);
         } catch (ex) {
-            currentNode.global.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
+            currentNode.context.logger.warn("Could not replace tree, so forgetting all nodes instead. Message: " + ex);
             // forget all the source file's nodes
             currentNode.getChildSyntaxListOrThrow().forget();
             // replace the source file with the temporary source file
-            currentNode.global.compilerFactory.replaceCompilerNode(currentNode, newNode);
+            currentNode.context.compilerFactory.replaceCompilerNode(currentNode, newNode);
         }
     }
 }

@@ -94,7 +94,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             index = verifyAndGetIndex(index, parameters.length);
 
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = this.global.structurePrinterFactory.forParameterDeclaration();
+            const structurePrinter = this.context.structurePrinterFactory.forParameterDeclaration();
 
             structurePrinter.printTexts(writer, structures);
 

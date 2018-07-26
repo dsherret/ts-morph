@@ -75,7 +75,7 @@ export class RangeParentHandler implements NodeHandler {
         const customMappings = this.customMappings(newParentNode);
 
         for (const mapping of customMappings)
-            mapping.currentNode.global.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
+            mapping.currentNode.context.compilerFactory.replaceCompilerNode(mapping.currentNode, mapping.newNode);
     }
 
     private straightReplace(currentNode: ts.Node, nextNode: ts.Node, newSourceFile: ts.SourceFile) {

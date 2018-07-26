@@ -64,7 +64,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
                 return [];
 
             const writer = this.getWriterWithQueuedIndentation();
-            const structurePrinter = this.global.structurePrinterFactory.forJSDoc();
+            const structurePrinter = this.context.structurePrinterFactory.forJSDoc();
             structurePrinter.printDocs(writer, structures);
             writer.write(""); // final indentation
             const code = writer.toString();

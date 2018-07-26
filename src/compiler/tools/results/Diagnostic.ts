@@ -1,5 +1,5 @@
 import { SourceFile } from "../../../compiler";
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { DiagnosticCategory, ts } from "../../../typescript";
 import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
 
@@ -8,13 +8,13 @@ import { DiagnosticMessageChain } from "./DiagnosticMessageChain";
  */
 export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
     /** @internal */
-    readonly global: GlobalContainer | undefined;
+    readonly context: ProjectContext | undefined;
     /** @internal */
     readonly _compilerObject: TCompilerObject;
 
     /** @internal */
-    constructor(global: GlobalContainer | undefined, compilerObject: TCompilerObject) {
-        this.global = global;
+    constructor(context: ProjectContext | undefined, compilerObject: TCompilerObject) {
+        this.context = context;
         this._compilerObject = compilerObject;
     }
 
@@ -29,10 +29,10 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
      * Gets the source file.
      */
     getSourceFile(): SourceFile | undefined {
-        if (this.global == null)
+        if (this.context == null)
             return undefined;
         const file = this.compilerObject.file;
-        return file == null ? undefined : this.global.compilerFactory.getSourceFile(file);
+        return file == null ? undefined : this.context.compilerFactory.getSourceFile(file);
     }
 
     /**
@@ -43,10 +43,10 @@ export class Diagnostic<TCompilerObject extends ts.Diagnostic = ts.Diagnostic> {
         if (typeof messageText === "string")
             return messageText;
 
-        if (this.global == null)
+        if (this.context == null)
             return new DiagnosticMessageChain(messageText);
         else
-            return this.global.compilerFactory.getDiagnosticMessageChain(messageText);
+            return this.context.compilerFactory.getDiagnosticMessageChain(messageText);
     }
 
     /**
