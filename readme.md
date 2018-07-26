@@ -87,7 +87,7 @@ const compilerNode = myClassFile.compilerNode;
 Or navigate existing compiler nodes created with the TypeScript compiler (the `ts` named export is the TypeScript compiler):
 
 ```ts ignore-error: 1109
-import {createWrappedNode, ClassDeclaration, ts} from "ts-simple-ast";
+import { createWrappedNode, ClassDeclaration, ts } from "ts-simple-ast";
 
 // some code that creates a class declaration using the ts object
 const classNode: ts.ClassDeclaration = ...; 
