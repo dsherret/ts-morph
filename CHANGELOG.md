@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="12.7.2"></a>
+## [12.7.2](https://github.com/dsherret/ts-simple-ast/compare/12.7.1...12.7.2) (2018-07-24)
+
+
+### Bug Fixes
+
+* [#374](https://github.com/dsherret/ts-simple-ast/issues/374) - Surround parameter in parenthesis when there is none and setting its initializer, type, or adding a question token. ([847dab6](https://github.com/dsherret/ts-simple-ast/commit/847dab6))
+
+
+
+<a name="12.7.1"></a>
+## [12.7.1](https://github.com/dsherret/ts-simple-ast/compare/12.7.0...12.7.1) (2018-07-24)
+
+
+### Bug Fixes
+
+* [#373](https://github.com/dsherret/ts-simple-ast/issues/373) - Fix setType when only a question or exclamation token exists. ([15d6a24](https://github.com/dsherret/ts-simple-ast/commit/15d6a24))
+
+
+
 <a name="12.7.0"></a>
 # [12.7.0](https://github.com/dsherret/ts-simple-ast/compare/12.6.2...12.7.0) (2018-07-18)
 

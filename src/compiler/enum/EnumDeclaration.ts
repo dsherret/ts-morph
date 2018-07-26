@@ -68,7 +68,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         // create member code
         // todo: pass in the StructureToText to the function below
         const writer = this.getWriterWithChildIndentation();
-        const structurePrinter = this.global.structurePrinterFactory.forEnumMember();
+        const structurePrinter = this.context.structurePrinterFactory.forEnumMember();
         structurePrinter.printTexts(writer, structures);
 
         // insert

@@ -1,5 +1,5 @@
 import { SourceFile } from "../../../compiler";
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { TextSpan } from "./TextSpan";
@@ -9,7 +9,7 @@ import { TextSpan } from "./TextSpan";
  */
 export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentSpan> {
     /** @internal */
-    protected readonly global: GlobalContainer;
+    protected readonly context: ProjectContext;
     /** @internal */
     protected readonly _compilerObject: TCompilerObject;
     /** @internal */
@@ -18,12 +18,12 @@ export class DocumentSpan<TCompilerObject extends ts.DocumentSpan = ts.DocumentS
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: TCompilerObject) {
-        this.global = global;
+    constructor(context: ProjectContext, compilerObject: TCompilerObject) {
+        this.context = context;
         this._compilerObject = compilerObject;
 
         // store this node so that it's start doesn't go out of date because of manipulation (though the text span may)
-        this.sourceFile = this.global.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
+        this.sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(this.compilerObject.fileName)!;
         // fill the memoize
         this.getNode();
     }

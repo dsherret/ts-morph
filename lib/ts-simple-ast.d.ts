@@ -2,7 +2,7 @@ import { ts, SyntaxKind, CompilerOptions, EmitHint, ScriptKind, NewLineKind, Lan
 import { CodeBlockWriter } from "./codeBlockWriter/code-block-writer";
 
 export declare class Directory {
-    private _global;
+    private _context;
     private _path;
     private _pathParts;
     /**
@@ -2268,14 +2268,9 @@ export interface InitializerSetExpressionableNode {
     removeInitializer(): this;
     /**
      * Sets the initializer.
-     * @param text - New text to set for the initializer.
+     * @param text - Text or writer function to set for the initializer.
      */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer using a writer function.
-     * @param writerFunction - Function to write the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare type InitializerSetExpressionableExtensionType = Node<ts.Node & {
@@ -2838,14 +2833,9 @@ export interface TypedNode {
     getTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the type.
-     * @param writerFunction - Writer function to set the type with.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
      */
-    setType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the type.
-     * @param text - Text to set the type to.
-     */
-    setType(text: string): this;
+    setType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the type.
      */
@@ -6333,6 +6323,21 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      * Remove this parameter.
      */
     remove(): void;
+    /**
+     * Sets if this node has a question token.
+     * @param value - If it should have a question token or not.
+     */
+    setHasQuestionToken(value: boolean): this;
+    /**
+     * Sets the initializer.
+     * @param text - Text or writer function to set for the initializer.
+     */
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
+    /**
+     * Sets the type.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
+     */
+    setType(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare class HeritageClause extends Node<ts.HeritageClause> {
@@ -6565,7 +6570,7 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */
-    getInitializerOrThrow(): JsxExpression | StringLiteral;
+    getInitializerOrThrow(): StringLiteral | JsxExpression;
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
@@ -8379,7 +8384,6 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
  * Output file of an emit.
  */
 export declare class OutputFile {
-    private readonly global;
     /**
      * TypeScript compiler emit result.
      */
@@ -9087,7 +9091,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     /**
      * Gets the new line kind as a string.
      */
-    getNewLineKindAsString(): "\n" | "\r\n";
+    getNewLineKindAsString(): "\r\n" | "\n";
     /**
      * Gets the indentation text;
      */

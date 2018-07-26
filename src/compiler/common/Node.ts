@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
-import { GlobalContainer } from "../../GlobalContainer";
+import { ProjectContext } from "../../ProjectContext";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits, insertIntoParentTextRange,
     replaceSourceFileTextForFormatting } from "../../manipulation";
 import { WriterFunction } from "../../types";
@@ -44,7 +44,7 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
-    readonly global: GlobalContainer;
+    readonly context: ProjectContext;
     /** @internal */
     private _compilerNode: NodeType | undefined;
     /** @internal */
@@ -68,20 +68,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Initializes a new instance.
      * @internal
-     * @param global - Global container.
+     * @param context - Project context.
      * @param node - Underlying node.
      * @param sourceFile - Source file for the node.
      */
     constructor(
-        global: GlobalContainer,
+        context: ProjectContext,
         node: NodeType,
         sourceFile: SourceFile
     ) {
-        if (global == null || global.compilerFactory == null)
+        if (context == null || context.compilerFactory == null)
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
                 "of the package and manipulate the source file from there.");
 
-        this.global = global;
+        this.context = context;
         this._compilerNode = node;
         this.sourceFile = sourceFile;
     }
@@ -109,7 +109,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.wasForgotten())
             return;
 
-        this.global.compilerFactory.removeNodeFromCache(this);
+        this.context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
     }
 
@@ -168,7 +168,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     print(options: PrintNodeOptions = {}): string {
         if (options.newLineKind == null)
-            options.newLineKind = this.global.manipulationSettings.getNewLineKind();
+            options.newLineKind = this.context.manipulationSettings.getNewLineKind();
 
         if (this.getKind() === SyntaxKind.SourceFile)
             return printNode(this.compilerNode, options);
@@ -189,9 +189,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getSymbol(): Symbol | undefined {
         const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
-            return this.global.compilerFactory.getSymbol(boundSymbol);
+            return this.context.compilerFactory.getSymbol(boundSymbol);
 
-        const typeChecker = this.global.typeChecker;
+        const typeChecker = this.context.typeChecker;
         const typeCheckerSymbol = typeChecker.getSymbolAtLocation(this);
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
@@ -207,7 +207,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the type of the node.
      */
     getType(): Type {
-        return this.global.typeChecker.getTypeAtLocation(this);
+        return this.context.typeChecker.getTypeAtLocation(this);
     }
 
     /**
@@ -455,8 +455,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     *getChildrenInCacheIterator(): IterableIterator<Node> {
         for (const child of this.getCompilerChildren()) {
-            if (this.global.compilerFactory.hasCompilerNode(child))
-                yield this.global.compilerFactory.getExistingCompilerNode(child)!;
+            if (this.context.compilerFactory.hasCompilerNode(child))
+                yield this.context.compilerFactory.getExistingCompilerNode(child)!;
             else if (child.kind === SyntaxKind.SyntaxList) {
                 // always return syntax lists because their children could be in the cache
                 yield this.getNodeFromCompilerNode(child);
@@ -718,7 +718,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
         let foundNode: Node | undefined;
 
-        this.global.compilerFactory.forgetNodesCreatedInBlock(remember => {
+        this.context.compilerFactory.forgetNodesCreatedInBlock(remember => {
             let nextNode: Node | undefined = this.getSourceFile();
 
             do {
@@ -1030,8 +1030,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the indentation level of the current node.
      */
     getIndentationLevel() {
-        const indentationText = this.global.manipulationSettings.getIndentationText();
-        return this.global.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
+        const indentationText = this.context.manipulationSettings.getIndentationText();
+        return this.context.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
     }
 
     /**
@@ -1064,7 +1064,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     private _getIndentationTextForLevel(level: number) {
-        return StringUtils.repeat(this.global.manipulationSettings.getIndentationText(), level);
+        return StringUtils.repeat(this.context.manipulationSettings.getIndentationText(), level);
     }
 
     /**
@@ -1167,7 +1167,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param settings - Format code settings.
      */
     formatText(settings: FormatCodeSettings = {}) {
-        const formattingEdits = this.global.languageService.getFormattingEditsForRange(
+        const formattingEdits = this.context.languageService.getFormattingEditsForRange(
             this.sourceFile.getFilePath(),
             [this.getStart(true), this.getEnd()],
             settings);
@@ -1575,7 +1575,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     getWriter() {
-        return this.global.createWriter();
+        return this.context.createWriter();
     }
 
     /**
@@ -1585,7 +1585,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
     {
-        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
+        return this.context.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
     }
 
     /**

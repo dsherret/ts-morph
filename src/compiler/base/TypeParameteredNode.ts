@@ -95,7 +95,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
 
             const typeParameters = this.getTypeParameters();
             const writer = this.getWriterWithQueuedChildIndentation();
-            const structurePrinter = this.global.structurePrinterFactory.forTypeParameterDeclaration();
+            const structurePrinter = this.context.structurePrinterFactory.forTypeParameterDeclaration();
             index = verifyAndGetIndex(index, typeParameters.length);
 
             structurePrinter.printTexts(writer, structures);

@@ -17,7 +17,7 @@ export interface RenameableNode {
 export function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T {
     return class extends Base implements RenameableNode {
         rename(newName: string) {
-            this.global.languageService.renameNode(getNodeToRename.call(this), newName);
+            this.context.languageService.renameNode(getNodeToRename.call(this), newName);
             return this;
 
             function getNodeToRename(this: Node) {

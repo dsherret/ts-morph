@@ -237,7 +237,7 @@ describe(nameof(ExportDeclaration), () => {
         function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
             const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
             if (!surroundWithSpaces)
-                firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedExports(index, structures);
             expect(sourceFile.getText()).to.equal(expected);
         }

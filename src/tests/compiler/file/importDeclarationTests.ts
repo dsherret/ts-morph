@@ -370,7 +370,7 @@ describe(nameof(ImportDeclaration), () => {
         function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
             const {firstChild, sourceFile} = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
-                firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedImports(index, structuresOrNames);
             expect(sourceFile.getText()).to.equal(expected);
         }

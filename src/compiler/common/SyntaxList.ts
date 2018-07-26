@@ -23,7 +23,7 @@ export class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction) {
         // get index
         const initialChildCount = this.getChildCount();
-        const newLineKind = this.global.manipulationSettings.getNewLineKindAsString();
+        const newLineKind = this.context.manipulationSettings.getNewLineKindAsString();
         const parent = this.getParentOrThrow();
         index = verifyAndGetIndex(index, initialChildCount);
 

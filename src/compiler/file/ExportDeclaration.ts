@@ -25,7 +25,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         if (stringLiteral == null) {
             const semiColonToken = this.getLastChildIfKind(SyntaxKind.SemicolonToken);
-            const quoteKind = this.global.manipulationSettings.getQuoteKind();
+            const quoteKind = this.context.manipulationSettings.getQuoteKind();
             insertIntoParentTextRange({
                 insertPos: semiColonToken != null ? semiColonToken.getPos() : this.getEnd(),
                 parent: this,
@@ -165,7 +165,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
 
         const namedExports = this.getNamedExports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedExportStructurePrinter = this.global.structurePrinterFactory.forNamedImportExportSpecifier();
+        const namedExportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
 
         index = verifyAndGetIndex(index, namedExports.length);
 
@@ -188,7 +188,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
                 currentNodes: namedExports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this.global.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 

@@ -78,7 +78,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
      */
     getLocalTargetSymbol(): Symbol | undefined {
-        return this.global.typeChecker.getExportSpecifierLocalTargetSymbol(this);
+        return this.context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
     }
 
     /**

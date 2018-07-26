@@ -2,7 +2,7 @@ import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessag
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
 import { Directory, SourceFileAddOptions } from "../fileSystem";
-import { GlobalContainer } from "../GlobalContainer";
+import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
 import { SyntaxKind, ts, TypeFlags } from "../typescript";
@@ -39,10 +39,10 @@ export class CompilerFactory {
 
     /**
      * Initializes a new instance of CompilerFactory.
-     * @param global - Global container.
+     * @param context - Project context.
      */
-    constructor(private readonly global: GlobalContainer) {
-        this.directoryCache = new DirectoryCache(global);
+    constructor(private readonly context: ProjectContext) {
+        this.directoryCache = new DirectoryCache(context);
     }
 
     /**
@@ -106,8 +106,8 @@ export class CompilerFactory {
         if (structureOrText == null || typeof structureOrText === "string")
             return this.createSourceFileFromText(filePath, structureOrText || "", options);
 
-        const writer = this.global.createWriter();
-        const structurePrinter = this.global.structurePrinterFactory.forSourceFile({
+        const writer = this.context.createWriter();
+        const structurePrinter = this.context.structurePrinterFactory.forSourceFile({
             isAmbient: FileUtils.getExtension(filePath) === ".d.ts"
         });
         structurePrinter.printText(writer, structureOrText);
@@ -124,7 +124,7 @@ export class CompilerFactory {
      * @throws InvalidOperationError if the file exists.
      */
     createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions) {
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options != null && options.overwrite === true)
             return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
         this.throwIfFileExists(filePath);
@@ -137,14 +137,14 @@ export class CompilerFactory {
      * @param prefixMessage - Message to attach on as a prefix.
      */
     throwIfFileExists(filePath: string, prefixMessage?: string) {
-        if (!this.containsSourceFileAtPath(filePath) && !this.global.fileSystemWrapper.fileExistsSync(filePath))
+        if (!this.containsSourceFileAtPath(filePath) && !this.context.fileSystemWrapper.fileExistsSync(filePath))
             return;
         prefixMessage = prefixMessage == null ? "" : prefixMessage + " ";
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
     private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions) {
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
         if (existingSourceFile != null) {
             existingSourceFile.replaceWithText(sourceText);
@@ -163,8 +163,8 @@ export class CompilerFactory {
         const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
         return createTempSourceFile(filePath, sourceText, {
             createLanguageService,
-            compilerOptions: this.global.compilerOptions.get(),
-            manipulationSettings: this.global.manipulationSettings.get()
+            compilerOptions: this.context.compilerOptions.get(),
+            manipulationSettings: this.context.manipulationSettings.get()
         });
     }
 
@@ -173,7 +173,7 @@ export class CompilerFactory {
      * @param filePath - File path.
      */
     getSourceFileFromCacheFromFilePath(filePath: string): SourceFile | undefined {
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         return this.sourceFileCacheByFilePath.get(filePath);
     }
 
@@ -182,12 +182,12 @@ export class CompilerFactory {
      * @param filePath - File path to get the file from.
      */
     addOrGetSourceFileFromFilePath(filePath: string, options: SourceFileAddOptions): SourceFile | undefined {
-        filePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
-            if (this.global.fileSystemWrapper.fileExistsSync(filePath)) {
-                this.global.logger.log(`Loading file: ${filePath}`);
-                sourceFile = this.getSourceFileFromText(filePath, this.global.fileSystemWrapper.readFileSync(filePath, this.global.getEncoding()), options);
+            if (this.context.fileSystemWrapper.fileExistsSync(filePath)) {
+                this.context.logger.log(`Loading file: ${filePath}`);
+                sourceFile = this.getSourceFileFromText(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()), options);
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -206,7 +206,7 @@ export class CompilerFactory {
      * @param filePath - File path to check.
      */
     containsSourceFileAtPath(filePath: string) {
-        const absoluteFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
+        const absoluteFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         return this.sourceFileCacheByFilePath.has(absoluteFilePath);
     }
 
@@ -215,7 +215,7 @@ export class CompilerFactory {
      * @param dirPath - Directory path to check.
      */
     containsDirectoryAtPath(dirPath: string) {
-        const normalizedDirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        const normalizedDirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         return this.directoryCache.has(normalizedDirPath);
     }
 
@@ -261,7 +261,7 @@ export class CompilerFactory {
             // ensure the parent is created
             if (compilerNode.parent != null && !this.nodeCache.has(compilerNode.parent))
                 this.getNodeFromCompilerNode(compilerNode.parent, sourceFile);
-            return new ctor(this.global, compilerNode, sourceFile);
+            return new ctor(this.context, compilerNode, sourceFile);
         };
 
         if (kindToWrapperMappings[compilerNode.kind] != null)
@@ -272,7 +272,7 @@ export class CompilerFactory {
 
     private getSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions): SourceFile {
         const compilerSourceFile = createCompilerSourceFile(filePath, sourceText,
-            options.languageVersion != null ? options.languageVersion : this.global.compilerOptions.get().target);
+            options.languageVersion != null ? options.languageVersion : this.context.compilerOptions.get().target);
         return this.getSourceFile(compilerSourceFile);
     }
 
@@ -283,7 +283,7 @@ export class CompilerFactory {
     getSourceFile(compilerSourceFile: ts.SourceFile): SourceFile {
         let wasAdded = false;
         const sourceFile = this.nodeCache.getOrCreate<SourceFile>(compilerSourceFile, () => {
-            const createdSourceFile = new SourceFile(this.global, compilerSourceFile);
+            const createdSourceFile = new SourceFile(this.context, compilerSourceFile);
             this.addSourceFileToCache(createdSourceFile);
             wasAdded = true;
             return createdSourceFile;
@@ -297,7 +297,7 @@ export class CompilerFactory {
 
     private addSourceFileToCache(sourceFile: SourceFile) {
         this.sourceFileCacheByFilePath.set(sourceFile.getFilePath(), sourceFile);
-        this.global.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
+        this.context.fileSystemWrapper.removeFileDelete(sourceFile.getFilePath());
         this.directoryCache.addSourceFile(sourceFile);
     }
 
@@ -306,10 +306,10 @@ export class CompilerFactory {
      * @param dirPath - Directory path.
      */
     getDirectoryFromPath(dirPath: string) {
-        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
         let directory = this.directoryCache.get(dirPath);
 
-        if (directory == null && this.global.fileSystemWrapper.directoryExistsSync(dirPath))
+        if (directory == null && this.context.fileSystemWrapper.directoryExistsSync(dirPath))
             directory = this.directoryCache.createOrAddIfExists(dirPath);
 
         return directory;
@@ -360,7 +360,7 @@ export class CompilerFactory {
     getType<TType extends ts.Type = TType>(type: TType): Type<TType> {
         if ((type.flags & TypeFlags.TypeParameter) === TypeFlags.TypeParameter)
             return this.getTypeParameter(type as any as ts.TypeParameter) as any as Type<TType>;
-        return this.typeCache.getOrCreate(type, () => new Type<TType>(this.global, type));
+        return this.typeCache.getOrCreate(type, () => new Type<TType>(this.context, type));
     }
 
     /**
@@ -368,7 +368,7 @@ export class CompilerFactory {
      * @param typeParameter - Compiler type parameter
      */
     getTypeParameter(typeParameter: ts.TypeParameter): TypeParameter {
-        return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.global, typeParameter));
+        return this.typeParameterCache.getOrCreate(typeParameter, () => new TypeParameter(this.context, typeParameter));
     }
 
     /**
@@ -376,7 +376,7 @@ export class CompilerFactory {
      * @param signature - Compiler signature.
      */
     getSignature(signature: ts.Signature): Signature {
-        return this.signatureCache.getOrCreate(signature, () => new Signature(this.global, signature));
+        return this.signatureCache.getOrCreate(signature, () => new Signature(this.context, signature));
     }
 
     /**
@@ -384,7 +384,7 @@ export class CompilerFactory {
      * @param symbol - Compiler symbol.
      */
     getSymbol(symbol: ts.Symbol): Symbol {
-        return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.global, symbol));
+        return this.symbolCache.getOrCreate(symbol, () => new Symbol(this.context, symbol));
     }
 
     /**
@@ -392,7 +392,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler definition info.
      */
     getDefinitionInfo(compilerObject: ts.DefinitionInfo): DefinitionInfo {
-        return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.global, compilerObject));
+        return this.definitionInfoCache.getOrCreate(compilerObject, () => new DefinitionInfo(this.context, compilerObject));
     }
 
     /**
@@ -400,7 +400,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler document span.
      */
     getDocumentSpan(compilerObject: ts.DocumentSpan): DocumentSpan {
-        return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.global, compilerObject));
+        return this.documentSpanCache.getOrCreate(compilerObject, () => new DocumentSpan(this.context, compilerObject));
     }
 
     /**
@@ -408,7 +408,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler referenced entry.
      */
     getReferenceEntry(compilerObject: ts.ReferenceEntry): ReferenceEntry {
-        return this.referenceEntryCache.getOrCreate(compilerObject, () => new ReferenceEntry(this.global, compilerObject));
+        return this.referenceEntryCache.getOrCreate(compilerObject, () => new ReferenceEntry(this.context, compilerObject));
     }
 
     /**
@@ -416,7 +416,7 @@ export class CompilerFactory {
      * @param compilerObject - Compiler referenced symbol.
      */
     getReferencedSymbol(compilerObject: ts.ReferencedSymbol): ReferencedSymbol {
-        return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.global, compilerObject));
+        return this.referencedSymbolCache.getOrCreate(compilerObject, () => new ReferencedSymbol(this.context, compilerObject));
     }
 
     /**
@@ -425,7 +425,7 @@ export class CompilerFactory {
      */
     getReferencedSymbolDefinitionInfo(compilerObject: ts.ReferencedSymbolDefinitionInfo): ReferencedSymbolDefinitionInfo {
         return this.referencedSymbolDefinitionInfoCache.getOrCreate(compilerObject,
-            () => new ReferencedSymbolDefinitionInfo(this.global, compilerObject));
+            () => new ReferencedSymbolDefinitionInfo(this.context, compilerObject));
     }
 
     /**
@@ -435,8 +435,8 @@ export class CompilerFactory {
     getDiagnostic(diagnostic: ts.Diagnostic): Diagnostic {
         return this.diagnosticCache.getOrCreate(diagnostic, () => {
             if (diagnostic.start != null)
-                return new DiagnosticWithLocation(this.global, diagnostic as ts.DiagnosticWithLocation);
-            return new Diagnostic(this.global, diagnostic);
+                return new DiagnosticWithLocation(this.context, diagnostic as ts.DiagnosticWithLocation);
+            return new Diagnostic(this.context, diagnostic);
         });
     }
 
@@ -445,7 +445,7 @@ export class CompilerFactory {
      * @param diagnostic - Compiler diagnostic.
      */
     getDiagnosticWithLocation(diagnostic: ts.DiagnosticWithLocation): DiagnosticWithLocation {
-        return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.global, diagnostic));
+        return this.diagnosticCache.getOrCreate(diagnostic, () => new DiagnosticWithLocation(this.context, diagnostic));
     }
 
     /**
