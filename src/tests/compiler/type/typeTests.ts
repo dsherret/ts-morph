@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { FunctionDeclaration, Node, Type, TypeAliasDeclaration, VariableStatement } from "../../../compiler";
 import { VirtualFileSystemHost } from "../../../fileSystem";
 import { ObjectFlags, SymbolFlags, TypeFlags, TypeFormatFlags } from "../../../typescript";
+import { StringUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Type), () => {
@@ -594,7 +595,8 @@ let stringWithUndefinedAndNullType: string | undefined | null;
     });
 
     describe(nameof<Type>(t => t.getText), () => {
-        const longType = "string | number | Date | { reallyReallyLooooooonnnnnnnnnnnnggggggggggggggggNnnnnnnaaaaaaaaammmmmmmmmmmeeeeee: string; }";
+        const repeatedStr = StringUtils.repeat("o", 160 * 2);
+        const longType = `string | number | Date | { reallyReallyLoo${repeatedStr}ong: string; }`;
 
         it("should get the text", () => {
             const { firstType } = getTypeFromText("let myType: string[];");
@@ -608,7 +610,7 @@ let stringWithUndefinedAndNullType: string | undefined | null;
 
         it("should use the type format flags", () => {
             const { firstChild, firstType } = getTypeFromText(`let myType: ${longType};`);
-            expect(firstType.getText(firstChild, TypeFormatFlags.None)).to.equal(longType.substring(0, 97) + "...");
+            expect(firstType.getText(firstChild, TypeFormatFlags.None)).to.equal(longType.substring(0, 317) + "...");
         });
     });
 

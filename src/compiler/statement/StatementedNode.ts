@@ -444,7 +444,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {
-            return ArrayUtils.find(this.getStatements(), findFunction);
+            // explicit type arg necessary in ts 3.0 for some reason
+            return ArrayUtils.find<Statement>(this.getStatements(), findFunction);
         }
 
         getStatementOrThrow(findFunction: (statement: Node) => boolean) {

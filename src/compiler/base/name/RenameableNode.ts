@@ -17,16 +17,16 @@ export interface RenameableNode {
 export function RenameableNode<T extends Constructor<RenameableNodeExtensionType>>(Base: T): Constructor<RenameableNode> & T {
     return class extends Base implements RenameableNode {
         rename(newName: string) {
-            this.context.languageService.renameNode(getNodeToRename.call(this), newName);
+            this.context.languageService.renameNode(getNodeToRename(this), newName);
             return this;
 
-            function getNodeToRename(this: Node) {
-                if (TypeGuards.isIdentifier(this))
-                    return this;
-                else if ((this as any).getNameNode != null)
-                    return (this as any).getNameNode() as Node;
+            function getNodeToRename(thisNode: Node) {
+                if (TypeGuards.isIdentifier(thisNode))
+                    return thisNode;
+                else if ((thisNode as any).getNameNode != null)
+                    return (thisNode as any).getNameNode() as Node;
                 else
-                    throw new errors.NotImplementedError(`Not implemented renameable scenario for ${this.getKindName()}`);
+                    throw new errors.NotImplementedError(`Not implemented renameable scenario for ${thisNode.getKindName()}`);
             }
         }
     };

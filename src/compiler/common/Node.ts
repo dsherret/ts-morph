@@ -844,7 +844,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the combined modifier flags.
      */
     getCombinedModifierFlags() {
-        return ts.getCombinedModifierFlags(this.compilerNode);
+        // todo: make this method only available on declarations in the future.
+        return ts.getCombinedModifierFlags(this.compilerNode as any as ts.Declaration);
     }
 
     /**
