@@ -95,8 +95,6 @@ export class Symbol {
      */
     getValueDeclaration(): Node | undefined {
         const declaration = this.compilerSymbol.valueDeclaration;
-        if (declaration == null)
-            return undefined;
         return this.context.compilerFactory.getNodeFromCompilerNode(declaration, this.context.compilerFactory.getSourceFileForNode(declaration));
     }
 
@@ -105,7 +103,7 @@ export class Symbol {
      */
     getDeclarations(): Node[] {
         // todo: is it important that this might return undefined in ts 2.4?
-        return (this.compilerSymbol.declarations || []).map(d => this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
+        return this.compilerSymbol.declarations.map(d => this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**
