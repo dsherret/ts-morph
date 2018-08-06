@@ -50,8 +50,8 @@ describe(nameof(Identifier), () => {
             const {firstChild, sourceFile, project} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getNameNode().getImplementations();
             expect(implementations.length).to.equal(2);
-            expect((implementations[0].getNode() as ClassDeclaration).getName()).to.equal("Class1");
-            expect((implementations[1].getNode() as ClassDeclaration).getName()).to.equal("Class2");
+            expect(implementations[0].getNode().getText()).to.equal("Class1");
+            expect(implementations[1].getNode().getText()).to.equal("Class2");
         });
     });
 
