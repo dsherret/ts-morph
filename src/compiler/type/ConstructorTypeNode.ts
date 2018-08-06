@@ -1,7 +1,5 @@
 import { ts } from "../../typescript";
-import { SignaturedDeclaration } from "../base";
-import { TypeNode } from "./TypeNode";
+import { FunctionOrConstructorTypeNodeBase } from "./FunctionOrConstructorTypeNodeBase";
 
-export const ConstructorTypeNodeBase = SignaturedDeclaration(TypeNode);
-export class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.ConstructorTypeNode> {
+export class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
 }
