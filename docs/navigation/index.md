@@ -83,7 +83,7 @@ node.forEachDescendant((node, traversal) => {
             // skips traversal of the current node's descendants
             traversal.skip();
             break;
-        case SyntaxKind.ParameterDeclaration:
+        case SyntaxKind.Parameter:
             // skips traversal of the current node, siblings, and all their descendants
             traversal.up();
             break;

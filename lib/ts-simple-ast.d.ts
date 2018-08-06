@@ -1002,6 +1002,11 @@ export declare class TypeGuards {
      */
     static isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration & Node;
     /**
+     * Gets if the node is a FunctionOrConstructorTypeNodeBase.
+     * @param node - Node to check.
+     */
+    static isFunctionOrConstructorTypeNodeBase(node: Node): node is FunctionOrConstructorTypeNodeBase;
+    /**
      * Gets if the node is a FunctionTypeNode.
      * @param node - Node to check.
      */
@@ -1748,7 +1753,11 @@ export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClo
 
 export declare type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 
-export declare type JsxTagNameExpression = PrimaryExpression | PropertyAccessExpression;
+export declare type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
+
+export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
+    getExpression(): JsxTagNameExpression;
+}
 
 export declare type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
 
@@ -6203,7 +6212,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     private _refreshFromFileSystemInternal;
 }
 
-declare const ArrowFunctionBase: Constructor<JSDocableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<StatementedNode> & Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & Constructor<ModifierableNode> & typeof Expression;
+declare const ArrowFunctionBase: Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<FunctionLikeDeclaration> & typeof Expression;
 
 export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**
@@ -7798,9 +7807,13 @@ declare const ThrowStatementBase: typeof Statement;
 
 export declare class ThrowStatement extends ThrowStatementBase<ts.ThrowStatement> {
     /**
-     * Gets this do statement's expression.
+     * Gets the throw statement's expression.
      */
-    getExpression(): Expression;
+    getExpression(): Expression | undefined;
+    /**
+     * Gets the throw statement's expression or throws undefined if it doesn't exist.
+     */
+    getExpressionOrThrow(): Expression;
 }
 
 declare const TryStatementBase: typeof Statement;
@@ -8599,9 +8612,7 @@ export declare class ArrayTypeNode extends TypeNode<ts.ArrayTypeNode> {
     getElementTypeNode(): TypeNode;
 }
 
-declare const ConstructorTypeNodeBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
-
-export declare class ConstructorTypeNode extends ConstructorTypeNodeBase<ts.ConstructorTypeNode> {
+export declare class ConstructorTypeNode extends FunctionOrConstructorTypeNodeBase<ts.ConstructorTypeNode> {
 }
 
 declare const ExpressionWithTypeArgumentsBase: Constructor<LeftHandSideExpressionedNode> & typeof TypeNode;
@@ -8613,9 +8624,14 @@ export declare class ExpressionWithTypeArguments extends ExpressionWithTypeArgum
     getTypeArguments(): TypeNode[];
 }
 
-declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & typeof TypeNode;
+declare const FunctionTypeNodeBase: Constructor<TypeParameteredNode> & typeof FunctionOrConstructorTypeNodeBase;
 
 export declare class FunctionTypeNode extends FunctionTypeNodeBase<ts.FunctionTypeNode> {
+}
+
+declare const FunctionOrConstructorTypeNodeBaseBase: Constructor<SignaturedDeclaration> & typeof TypeNode;
+
+export declare class FunctionOrConstructorTypeNodeBase<T extends ts.FunctionOrConstructorTypeNode = ts.FunctionOrConstructorTypeNode> extends FunctionOrConstructorTypeNodeBaseBase<T> {
 }
 
 declare const ImportTypeNodeBase: Constructor<TypeArgumentedNode> & typeof TypeNode;

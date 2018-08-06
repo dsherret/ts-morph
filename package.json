@@ -1,6 +1,6 @@
 {
   "name": "ts-simple-ast",
-  "version": "12.7.2",
+  "version": "13.0.0",
   "description": "TypeScript compiler wrapper for static analysis and code manipulation.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",

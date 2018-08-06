@@ -4,6 +4,14 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 13
 
+* `CompilerApiNodeBrandPropertyNamesType` is now `CompilerNodeBrandPropertyNamesType`.
+* `renameName` on `ImportSpecifier` and `ExportSpecifier` is now deprecated. Use `importSpecifier.getNameNode().rename(newName)`.
+* Renamed `getAliasIdentifier()` to `getAliasNode()` on `ImportSpecifier` and `ExportSpecifier`. Done for consistency.
+* Deprecated `node.getStartColumn()` and `node.getEndColumn()`.
+* Renamed `sourceFile.getColumnAtPos(pos)` to `.getLengthFromLineStartAtPos(pos)` for correctness.
+* Renamed `sourceFile.getLineNumberFromPos(pos)` to `getLineNumberAtPos(pos)` for consistency.
+* `getImplementations()[i].getNode()` now returns the identifier range (compiler API changed behaviour).
+
 ### `FunctionDeclaration` has an optional name
 
 Similarly to `ClassDeclaration`, `FunctionDeclaration` can have an optional name when used as a default export:

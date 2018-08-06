@@ -55,6 +55,7 @@ if (problems.length > 0) {
 function isAllowedStructure(structure: Structure) {
     switch (structure.getName()) {
         case "NamedNodeStructure":
+        case "NameableNodeStructure":
         case "PropertyNamedNodeStructure":
         case "FunctionLikeDeclarationStructure":
         case "BodiedNodeStructure":

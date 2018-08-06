@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="13.0.0"></a>
+# [13.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...13.0.0) (2018-08-06)
+
+
+### Bug Fixes
+
+* [#345](https://github.com/dsherret/ts-simple-ast/issues/345) - ArrowFunction should be a FunctionLikeDeclaration. ([b3ea86f](https://github.com/dsherret/ts-simple-ast/commit/b3ea86f))
+
+
+### Features
+
+* [#347](https://github.com/dsherret/ts-simple-ast/issues/347) - Add .skip() and .up() method to `forEachDescendant`. ([361bcaf](https://github.com/dsherret/ts-simple-ast/commit/361bcaf))
+* [#369](https://github.com/dsherret/ts-simple-ast/issues/369) - FunctionDeclaration should have an optional name. ([176825d](https://github.com/dsherret/ts-simple-ast/commit/176825d))
+* [#383](https://github.com/dsherret/ts-simple-ast/issues/383) - Update to TS 3.0 ([547eb3d](https://github.com/dsherret/ts-simple-ast/commit/547eb3d))
+* Deprecate renameName on ImportSpecifier and ExportSpecifier. ([f94eed9](https://github.com/dsherret/ts-simple-ast/commit/f94eed9))
+* Deprecated node.getStartColumn() and node.getEndColumn(). Renamed sourceFile.getColumnAtPos(pos) to getLengthFromLineStartAtPos(pos). ([d8b61b6](https://github.com/dsherret/ts-simple-ast/commit/d8b61b6))
+* Rename CompilerApiNodeBrandPropertyNamesType to CompilerNodeBrandPropertyNamesType. ([1eb6a86](https://github.com/dsherret/ts-simple-ast/commit/1eb6a86))
+* Rename sourceFile.getLineNumberFromPos(pos) to getLineNumberAtPos(pos) ([fa5849a](https://github.com/dsherret/ts-simple-ast/commit/fa5849a))
+* Renamed getAliasIdentifier() to getAliasNode() on ImportSpecifier and ExportSpecifier. ([e97de72](https://github.com/dsherret/ts-simple-ast/commit/e97de72))
+
+
+### BREAKING CHANGES
+
+* getImplementations()[i].getNode() now returns the identifier instead of the parent node. This was based on a change in the compiler api.
+* Renamed sourceFile.getLineNumberFromPos(pos) to getLineNumberAtPos(pos) for consistency.
+* node.getStartColumn() and node.getEndColumn() was removed. Renamed sourceFile.getColumnAtPos(pos) to getLengthFromLineStartAtPos(pos) for correctness.
+* getAliasIdentifier() on ImportSpecifier and ExportSpecifier is now getAliasNode() for consistency.
+* renameName on ImportSpecifier and ExportSpecifier is now deprecated. Use `importSpecifier.getNameNode().rename(newName)`.
+* CompilerApiNodeBrandPropertyNamesType is now CompilerNodeBrandPropertyNamesType for consistency.
+* FunctionDeclaration now has an optional name to support cases where it does (ex. `export default function() {}`)
+
+
+
 <a name="12.7.2"></a>
 ## [12.7.2](https://github.com/dsherret/ts-simple-ast/compare/12.7.1...12.7.2) (2018-07-24)
 
