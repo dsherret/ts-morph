@@ -80,7 +80,7 @@ export class WrappedNode {
             if (typeArgs.length === 0)
                 return undefined;
             const type = typeArgs[0];
-            return type.isTypeParameter() ? type.getDefaultOrThrow() : type;
+            return type.isTypeParameter() ? type.getDefault() : type;
         }
 
         function getFromType(type: Type | undefined) {

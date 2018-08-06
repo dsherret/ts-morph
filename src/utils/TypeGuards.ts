@@ -734,7 +734,22 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a FunctionOrConstructorTypeNodeBase.
+     * @param node - Node to check.
+     */
+    static isFunctionOrConstructorTypeNodeBase(node: compiler.Node): node is compiler.FunctionOrConstructorTypeNodeBase {
+        switch (node.getKind()) {
+            case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionType:
                 return true;
             default:
                 return false;
