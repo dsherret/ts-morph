@@ -1,3 +1,4 @@
+/// <reference path="typings/index.d.ts" />
 export * from "./codeBlockWriter";
 export * from "./compiler";
 export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, SourceFileAddOptions, FileSystemHost } from "./fileSystem";

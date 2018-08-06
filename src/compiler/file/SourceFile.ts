@@ -49,6 +49,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
+    /** @internal */
+    _scriptVersion: number = 0;
 
     /**
      * Initializes a new instance.
@@ -89,6 +91,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
         super.replaceCompilerNodeFromFactory(compilerNode);
         this.context.resetProgram(); // make sure the program has the latest source file
+        this._scriptVersion++;
         this._isSaved = false;
         this._modifiedEventContainer.fire(this);
     }

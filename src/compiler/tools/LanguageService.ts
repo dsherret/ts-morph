@@ -36,6 +36,9 @@ export class LanguageService {
             getNewLine: () => context.manipulationSettings.getNewLineKindAsString(),
             getScriptFileNames: () => this.context.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
+                const sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
+                if (sourceFile != null)
+                    return sourceFile._scriptVersion.toString();
                 return (version++).toString();
             },
             getScriptSnapshot: fileName => {
@@ -219,8 +222,7 @@ export class LanguageService {
      * @param node - Node to get the rename locations for.
      */
     findRenameLocations(node: Node): RenameLocation[] {
-        const sourceFile = node.getSourceFile();
-        const renameLocations = this.compilerObject.findRenameLocations(sourceFile.getFilePath(), node.getStart(), false, false) || [];
+        const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(), false, false) || [];
         return renameLocations.map(l => new RenameLocation(this.context, l));
     }
 

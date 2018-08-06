@@ -12,7 +12,7 @@
     "build": "rimraf dist && npx ttsc",
     "test": "cross-env TS_NODE_COMPILER=\"ttypescript\" mocha --opts mocha.opts",
     "test-coverage": "cross-env TS_NODE_COMPILER=\"ttypescript\" nyc --reporter=lcov mocha --opts mocha.opts",
-    "code-generate": "ts-node scripts/code-generate --ignoreDiagnostics",
+    "code-generate": "ts-node --compiler ttypescript --project tsconfig.scripts.json scripts/code-generate",
     "refactor": "ts-node scripts/refactor --ignoreDiagnostics",
     "output-wrapped-nodes": "ts-node scripts/outputWrappedNodesInfo",
     "package": "npm run build && ts-node scripts/createDeclarationFile",
@@ -66,7 +66,7 @@
     "multimatch": "^2.1.0",
     "object-assign": "^4.1.1",
     "tslib": "^1.9.0",
-    "typescript": "2.9.1"
+    "typescript": "3.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.2",
@@ -84,17 +84,17 @@
     "coveralls": "^3.0.1",
     "cross-env": "^5.1.4",
     "diff": "^3.5.0",
-    "mocha": "^5.1.1",
-    "nyc": "^11.7.1",
+    "mocha": "5.2.0",
+    "nyc": "12.0.2",
     "rimraf": "^2.6.2",
     "shelljs": "^0.8.2",
     "shx": "^0.3.2",
     "source-map-support": "^0.5.5",
     "ts-nameof": "^1.0.0",
-    "ts-node": "^6.0.2",
+    "ts-node": "7.0.0",
     "ts-simple-ast": "12.2.0",
-    "tslint": "^5.10.0",
-    "ttypescript": "1.4.6"
+    "tslint": "^5.11.0",
+    "ttypescript": "^1.5.4"
   },
   "standard-version": {
     "tagPrefix": ""

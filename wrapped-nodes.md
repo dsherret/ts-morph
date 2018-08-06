@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 156
+**Total:** 157
 
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
@@ -92,7 +92,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: exportClause
     * :heavy_check_mark: moduleSpecifier
 * [ExportSpecifier](src/compiler/file/ExportSpecifier.ts)
-    * :x: propertyName
+    * :heavy_check_mark: propertyName
     * :heavy_check_mark: name
 * [Expression](src/compiler/expression/Expression.ts)
 * [ExpressionStatement](src/compiler/statement/ExpressionStatement.ts)
@@ -144,7 +144,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: moduleReference
 * [ImportExpression](src/compiler/expression/ImportExpression.ts)
 * [ImportSpecifier](src/compiler/file/ImportSpecifier.ts)
-    * :x: propertyName
+    * :heavy_check_mark: propertyName
     * :heavy_check_mark: name
 * [ImportTypeNode](src/compiler/type/ImportTypeNode.ts)
     * :x: isTypeOf
@@ -214,7 +214,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [LabeledStatement](src/compiler/statement/LabeledStatement.ts)
     * :heavy_check_mark: label
     * :heavy_check_mark: statement
-* [LeftHandSideExpression](src/compiler/expression/LeftHandSideExpression.ts)
+* [LeftHandSideExpression](src/compiler/decorator/Decorator.ts)
 * [LiteralExpression](src/compiler/expression/LiteralExpression.ts)
 * [LiteralTypeNode](src/compiler/type/LiteralTypeNode.ts)
     * :heavy_check_mark: literal
@@ -304,6 +304,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :x: moduleName
     * :heavy_check_mark: referencedFiles
     * :heavy_check_mark: typeReferenceDirectives
+    * :x: libReferenceDirectives
     * :heavy_check_mark: languageVariant
     * :heavy_check_mark: isDeclarationFile
     * :x: hasNoDefaultLib
@@ -341,6 +342,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [ThisExpression](src/compiler/expression/ThisExpression.ts)
 * [ThrowStatement](src/compiler/statement/ThrowStatement.ts)
     * :heavy_check_mark: expression
+* [Token](src/compiler/function/ArrowFunction.ts)
 * [TryStatement](src/compiler/statement/TryStatement.ts)
     * :heavy_check_mark: tryBlock
     * :heavy_check_mark: catchClause
@@ -395,7 +397,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 59
+**Total:** 64
 
 * ArrayBindingPattern
 * BindingElement
@@ -405,6 +407,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ClassLikeDeclarationBase
 * ConditionalTypeNode
 * DeclarationStatement
+* FunctionOrConstructorTypeNodeBase
 * ImportCall
 * ImportClause
 * IndexedAccessTypeNode
@@ -420,6 +423,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JSDocPropertyLikeTag
 * JSDocSignature
 * JSDocTemplateTag
+* JSDocThisTag
 * JSDocType
 * JSDocTypeExpression
 * JSDocTypeLiteral
@@ -429,6 +433,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * JsonObjectExpressionStatement
 * JsonSourceFile
 * JsxAttributes
+* JsxTagNamePropertyAccess
 * KeywordTypeNode
 * LiteralLikeNode
 * MappedTypeNode
@@ -443,13 +448,15 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ObjectBindingPattern
 * ObjectLiteralElement
 * ObjectLiteralExpressionBase
+* OptionalTypeNode
 * ParenthesizedTypeNode
 * PropertyAccessEntityNameExpression
 * PropertyLikeDeclaration
+* RestTypeNode
 * SemicolonClassElement
 * SuperCall
+* SyntheticExpression
 * ThisTypeNode
-* Token
 * TransientIdentifier
 * TsConfigSourceFile
 * TypeOperatorNode

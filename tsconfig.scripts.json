@@ -1,17 +1,15 @@
 {
     "extends": "./tsconfig.common.json",
     "compilerOptions": {
-        "declaration": true,
-        "strict": true,
-        "rootDir": "./src",
-        "outDir": "./dist",
+        "declaration": false,
+        "rootDirs": ["./scripts", "./src"],
+        "outDir": "./dist-scripts",
         "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
     },
     "exclude": [
-        "./scripts",
         "./lib",
         "./docs",
-        "./dist-scripts",
+        "./dist",
         "node_modules"
     ]
 }
