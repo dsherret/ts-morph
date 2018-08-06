@@ -2,6 +2,7 @@ export * from "./ArrayTypeNode";
 export * from "./ConstructorTypeNode";
 export * from "./ExpressionWithTypeArguments";
 export * from "./FunctionTypeNode";
+export * from "./FunctionOrConstructorTypeNodeBase";
 export * from "./ImportTypeNode";
 export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
