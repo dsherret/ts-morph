@@ -47,7 +47,7 @@ export function PropertyNameableNode<T extends Constructor<PropertyNameableNodeE
             const node = this.getNameNode();
             if (node == null)
                 throw new errors.InvalidOperationError("Cannot rename a node that does not have a name.");
-            this.global.languageService.renameNode(node, text);
+            this.context.languageService.renameNode(node, text);
             return this;
         }
 

@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { DocumentSpan } from "./DocumentSpan";
@@ -7,8 +7,8 @@ export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocati
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: ts.ImplementationLocation) {
-        super(global, compilerObject);
+    constructor(context: ProjectContext, compilerObject: ts.ImplementationLocation) {
+        super(context, compilerObject);
     }
 
     /**
@@ -23,6 +23,6 @@ export class ImplementationLocation extends DocumentSpan<ts.ImplementationLocati
      */
     @Memoize
     getDisplayParts() {
-        return this.compilerObject.displayParts.map(p => this.global.compilerFactory.getSymbolDisplayPart(p));
+        return this.compilerObject.displayParts.map(p => this.context.compilerFactory.getSymbolDisplayPart(p));
     }
 }

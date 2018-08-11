@@ -27,18 +27,10 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     }
 
     /**
-     * Renames the name of what's being exported.
-     */
-    renameName(name: string) {
-        this.getNameNode().rename(name);
-        return this;
-    }
-
-    /**
      * Gets the name node of what's being exported.
      */
     getNameNode() {
-        return this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+        return this.getNodeFromCompilerNode(this.compilerNode.propertyName || this.compilerNode.name);
     }
 
     /**
@@ -46,7 +38,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * @param alias - Alias to set.
      */
     setAlias(alias: string) {
-        let aliasIdentifier = this.getAliasIdentifier();
+        let aliasIdentifier = this.getAliasNode();
         if (aliasIdentifier == null) {
             // trick is to insert an alias with the same name, then rename the alias. TS compiler will take care of the rest.
             const nameNode = this.getNameNode();
@@ -55,7 +47,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
                 parent: this,
                 newText: ` as ${nameNode.getText()}`
             });
-            aliasIdentifier = this.getAliasIdentifier()!;
+            aliasIdentifier = this.getAliasNode()!;
         }
         aliasIdentifier.rename(alias);
         return this;
@@ -64,14 +56,10 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     /**
      * Gets the alias identifier, if it exists.
      */
-    getAliasIdentifier() {
-        const asKeyword = this.getFirstChildByKind(SyntaxKind.AsKeyword);
-        if (asKeyword == null)
+    getAliasNode() {
+        if (this.compilerNode.propertyName == null)
             return undefined;
-        const aliasIdentifier = asKeyword.getNextSibling();
-        if (aliasIdentifier == null || !(TypeGuards.isIdentifier(aliasIdentifier)))
-            return undefined;
-        return aliasIdentifier;
+        return this.getNodeFromCompilerNode(this.compilerNode.name);
     }
 
     /**
@@ -92,7 +80,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the local target symbol of the export specifier or undefined if it doesn't exist.
      */
     getLocalTargetSymbol(): Symbol | undefined {
-        return this.global.typeChecker.getExportSpecifierLocalTargetSymbol(this);
+        return this.context.typeChecker.getExportSpecifierLocalTargetSymbol(this);
     }
 
     /**
@@ -122,7 +110,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Gets the structure equivalent to this node.
      */
     getStructure() {
-        const alias = this.getAliasIdentifier();
+        const alias = this.getAliasNode();
         return callBaseGetStructure<ExportSpecifierStructure>(Node.prototype, this, {
             alias: alias ? alias.getText() : undefined,
             name: this.getNameNode().getText()

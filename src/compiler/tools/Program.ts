@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../GlobalContainer";
+import { ProjectContext } from "../../ProjectContext";
 import { ModuleResolutionKind, ts } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 import { SourceFile } from "../file";
@@ -27,7 +27,7 @@ export interface EmitOptionsBase {
  */
 export class Program {
     /** @internal */
-    private readonly global: GlobalContainer;
+    private readonly context: ProjectContext;
     /** @internal */
     private readonly typeChecker: TypeChecker;
     /** @internal */
@@ -36,9 +36,9 @@ export class Program {
     private _getOrCreateCompilerObject!: () => ts.Program;
 
     /** @internal */
-    constructor(global: GlobalContainer, rootNames: string[], host: ts.CompilerHost) {
-        this.global = global;
-        this.typeChecker = new TypeChecker(this.global);
+    constructor(context: ProjectContext, rootNames: string[], host: ts.CompilerHost) {
+        this.context = context;
+        this.typeChecker = new TypeChecker(this.context);
         this.reset(rootNames, host);
     }
 
@@ -54,7 +54,7 @@ export class Program {
      * @internal
      */
     reset(rootNames: string[], host: ts.CompilerHost) {
-        const compilerOptions = this.global.compilerOptions.get();
+        const compilerOptions = this.context.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
             if (this._createdCompilerObject == null)
                 this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
@@ -82,7 +82,7 @@ export class Program {
         const emitOnlyDtsFiles = options != null && options.emitOnlyDtsFiles != null ? options.emitOnlyDtsFiles : undefined;
         const customTransformers = undefined; // todo: expose this
         const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
-        return new EmitResult(this.global, emitResult);
+        return new EmitResult(this.context, emitResult);
     }
 
     /**
@@ -91,7 +91,7 @@ export class Program {
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnosticWithLocation(d));
+        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -100,7 +100,7 @@ export class Program {
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 
     /**
@@ -109,7 +109,7 @@ export class Program {
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnosticWithLocation(d));
+        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
     }
 
     /**
@@ -118,7 +118,7 @@ export class Program {
      */
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 
     /**

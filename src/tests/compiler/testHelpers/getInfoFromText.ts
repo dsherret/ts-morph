@@ -55,6 +55,7 @@ export function getInfoFromText<TFirstChild extends Node>(text: string, opts?: G
     };
 }
 
+// todo: use the mapping between syntax kind and nodes for the descendant
 export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: string, descendantKind: SyntaxKind, opts?: GetInfoFromTextOptions) {
     const info = getInfoFromTextInternal(text, opts);
     return {

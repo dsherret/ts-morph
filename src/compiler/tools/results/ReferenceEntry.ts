@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { DocumentSpan } from "./DocumentSpan";
 
@@ -6,8 +6,8 @@ export class ReferenceEntry extends DocumentSpan<ts.ReferenceEntry> {
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: ts.ReferenceEntry) {
-        super(global, compilerObject);
+    constructor(context: ProjectContext, compilerObject: ts.ReferenceEntry) {
+        super(context, compilerObject);
     }
 
     isWriteAccess() {

@@ -441,7 +441,6 @@ describe(nameof(ObjectLiteralExpression), () => {
     describe(nameof<ObjectLiteralExpression>(e => e.getStructure), () => {
         function doTest(text: string, expected: any) {
             const structure = getObjectLiteralExpression(text).objectLiteralExpression.getStructure();
-            console.log(structure);
             expect(structure).to.deep.equal(expected);
         }
 

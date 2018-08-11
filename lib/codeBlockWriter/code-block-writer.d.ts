@@ -199,6 +199,7 @@ declare class CodeBlockWriter {
     toString(): string;
     private _writeIndentingNewLines;
     private _baseWriteNewline;
+    private dequeueQueuedIndentation;
     private _updateInternalState;
     private _writeIndentation;
     private _newLineIfNewLineOnNextWrite;

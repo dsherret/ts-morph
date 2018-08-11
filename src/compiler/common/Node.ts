@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
-import { GlobalContainer } from "../../GlobalContainer";
+import { ProjectContext } from "../../ProjectContext";
 import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits, insertIntoParentTextRange,
     replaceSourceFileTextForFormatting } from "../../manipulation";
 import { WriterFunction } from "../../types";
@@ -17,6 +17,24 @@ import { CommentRange } from "./CommentRange";
 import { Symbol } from "./Symbol";
 import { SyntaxList } from "./SyntaxList";
 
+export interface ForEachChildTraversalControl {
+    /**
+     * Stops traversal.
+     */
+    stop(): void;
+}
+
+export interface ForEachDescendantTraversalControl extends ForEachChildTraversalControl {
+    /**
+     * Skips traversal of the current node's descendants.
+     */
+    skip(): void;
+    /**
+     * Skips traversal of the current node, siblings, and all their descendants.
+     */
+    up(): void;
+}
+
 export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> =
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined :
     NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] :
@@ -26,7 +44,7 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
 
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
-    readonly global: GlobalContainer;
+    readonly context: ProjectContext;
     /** @internal */
     private _compilerNode: NodeType | undefined;
     /** @internal */
@@ -50,20 +68,20 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Initializes a new instance.
      * @internal
-     * @param global - Global container.
+     * @param context - Project context.
      * @param node - Underlying node.
      * @param sourceFile - Source file for the node.
      */
     constructor(
-        global: GlobalContainer,
+        context: ProjectContext,
         node: NodeType,
         sourceFile: SourceFile
     ) {
-        if (global == null || global.compilerFactory == null)
+        if (context == null || context.compilerFactory == null)
             throw new errors.InvalidOperationError("Constructing a node is not supported. Please create a source file from the default export " +
                 "of the package and manipulate the source file from there.");
 
-        this.global = global;
+        this.context = context;
         this._compilerNode = node;
         this.sourceFile = sourceFile;
     }
@@ -91,7 +109,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         if (this.wasForgotten())
             return;
 
-        this.global.compilerFactory.removeNodeFromCache(this);
+        this.context.compilerFactory.removeNodeFromCache(this);
         this._clearInternals();
     }
 
@@ -150,7 +168,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     print(options: PrintNodeOptions = {}): string {
         if (options.newLineKind == null)
-            options.newLineKind = this.global.manipulationSettings.getNewLineKind();
+            options.newLineKind = this.context.manipulationSettings.getNewLineKind();
 
         if (this.getKind() === SyntaxKind.SourceFile)
             return printNode(this.compilerNode, options);
@@ -171,9 +189,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getSymbol(): Symbol | undefined {
         const boundSymbol = (this.compilerNode as any).symbol as ts.Symbol | undefined;
         if (boundSymbol != null)
-            return this.global.compilerFactory.getSymbol(boundSymbol);
+            return this.context.compilerFactory.getSymbol(boundSymbol);
 
-        const typeChecker = this.global.typeChecker;
+        const typeChecker = this.context.typeChecker;
         const typeCheckerSymbol = typeChecker.getSymbolAtLocation(this);
         if (typeCheckerSymbol != null)
             return typeCheckerSymbol;
@@ -189,7 +207,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the type of the node.
      */
     getType(): Type {
-        return this.global.typeChecker.getTypeAtLocation(this);
+        return this.context.typeChecker.getTypeAtLocation(this);
     }
 
     /**
@@ -437,8 +455,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     *getChildrenInCacheIterator(): IterableIterator<Node> {
         for (const child of this.getCompilerChildren()) {
-            if (this.global.compilerFactory.hasCompilerNode(child))
-                yield this.global.compilerFactory.getExistingCompilerNode(child)!;
+            if (this.context.compilerFactory.hasCompilerNode(child))
+                yield this.context.compilerFactory.getExistingCompilerNode(child)!;
             else if (child.kind === SyntaxKind.SyntaxList) {
                 // always return syntax lists because their children could be in the cache
                 yield this.getNodeFromCompilerNode(child);
@@ -490,13 +508,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Invokes the `cbNode` callback for each child and the `cbNodeArray` for every array of nodes stored in properties of the node.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal.stop()` function on the second parameter that allows stopping iteration.
      * @param cbNode - Callback invoked for each child.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachChild(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+    forEachChild(cbNode: (node: Node, traversal: ForEachChildTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachChildTraversalControl) => void) {
         let stop = false;
-        const stopFunc = () => stop = true;
+        const traversal: ForEachChildTraversalControl = {
+            stop: () => stop = true
+        };
         const snapshots: (Node | Node[])[] = [];
 
         // Get all the nodes from the compiler's forEachChild. Taking this snapshot prevents the results of
@@ -513,10 +533,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
             if (snapshot instanceof Array) {
                 const filteredNodes = snapshot.filter(n => !n.wasForgotten());
                 if (filteredNodes.length > 0)
-                    cbNodeArray!(filteredNodes, stopFunc);
+                    cbNodeArray!(filteredNodes, traversal);
             }
             else if (!snapshot.wasForgotten())
-                cbNode(snapshot, stopFunc);
+                cbNode(snapshot, traversal);
 
             if (stop)
                 break;
@@ -527,34 +547,72 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Invokes the `cbNode` callback for each descendant and the `cbNodeArray` for every array of nodes stored in properties of the node and descendant nodes.
      * If `cbNodeArray` is not defined, then it will pass every element of the array to `cbNode`.
      *
-     * @remarks There exists a `stop` function that exists to stop iteration.
+     * @remarks There exists a `traversal` object on the second parameter that allows various control of iteration.
      * @param cbNode - Callback invoked for each descendant.
      * @param cbNodeArray - Callback invoked for each array of nodes.
      */
-    forEachDescendant(cbNode: (node: Node, stop: () => void) => void, cbNodeArray?: (nodes: Node[], stop: () => void) => void) {
+    forEachDescendant(cbNode: (node: Node, traversal: ForEachDescendantTraversalControl) => void, cbNodeArray?: (nodes: Node[], traversal: ForEachDescendantTraversalControl) => void) {
         let stop = false;
-        const stopFunc = () => stop = true;
+        let up = false;
+        const traversal = {
+            stop: () => stop = true,
+            up: () => up = true
+        };
         const nodeCallback = (node: Node) => {
-            if (stop) return true;
-            cbNode(node, stopFunc);
-            if (stop) return true;
-            node.forEachChild(nodeCallback, arrayCallback);
-            return stop;
+            if (stop)
+                return;
+
+            let skip = false;
+
+            cbNode(node, {
+                ...traversal,
+                skip: () => skip = true
+            });
+
+            if (stop || skip || up)
+                return;
+
+            forEachChildForNode(node);
         };
         const arrayCallback = cbNodeArray == null ? undefined : (nodes: Node[]) => {
-            if (stop) return true;
-            cbNodeArray(nodes, stopFunc);
-            if (stop) return true;
+            if (stop)
+                return;
+
+            let skip = false;
+
+            cbNodeArray(nodes, {
+                ...traversal,
+                skip: () => skip = true
+            });
+
+            if (skip)
+                return;
 
             for (const node of nodes) {
-                node.forEachChild(nodeCallback, arrayCallback);
-                if (stop) return true;
-            }
+                if (stop || up)
+                    return;
 
-            return stop;
+                forEachChildForNode(node);
+            }
         };
 
-        this.forEachChild(nodeCallback, arrayCallback);
+        forEachChildForNode(this);
+
+        function forEachChildForNode(node: Node) {
+            node.forEachChild((innerNode, innerTraversal) => {
+                nodeCallback(innerNode);
+                if (up) {
+                    innerTraversal.stop();
+                    up = false;
+                }
+            }, arrayCallback == null ? undefined : (nodes, innerTraversal) => {
+                arrayCallback(nodes);
+                if (up) {
+                    innerTraversal.stop();
+                    up = false;
+                }
+            });
+        }
     }
 
     /**
@@ -660,7 +718,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getDescendantAtStartWithWidth(start: number, width: number): Node | undefined {
         let foundNode: Node | undefined;
 
-        this.global.compilerFactory.forgetNodesCreatedInBlock(remember => {
+        this.context.compilerFactory.forgetNodesCreatedInBlock(remember => {
             let nextNode: Node | undefined = this.getSourceFile();
 
             do {
@@ -786,7 +844,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the combined modifier flags.
      */
     getCombinedModifierFlags() {
-        return ts.getCombinedModifierFlags(this.compilerNode);
+        // todo: make this method only available on declarations in the future.
+        return ts.getCombinedModifierFlags(this.compilerNode as any as ts.Declaration);
     }
 
     /**
@@ -972,8 +1031,8 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * Gets the indentation level of the current node.
      */
     getIndentationLevel() {
-        const indentationText = this.global.manipulationSettings.getIndentationText();
-        return this.global.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
+        const indentationText = this.context.manipulationSettings.getIndentationText();
+        return this.context.languageService.getIdentationAtPosition(this.sourceFile, this.getStart()) / indentationText.length;
     }
 
     /**
@@ -1006,7 +1065,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     private _getIndentationTextForLevel(level: number) {
-        return StringUtils.repeat(this.global.manipulationSettings.getIndentationText(), level);
+        return StringUtils.repeat(this.context.manipulationSettings.getIndentationText(), level);
     }
 
     /**
@@ -1033,23 +1092,6 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         const sourceFileText = this.sourceFile.getFullText();
         const endLinePos = getPreviousMatchingPos(sourceFileText, this.getEnd(), char => char === "\n" || char === "\r");
         return this.sourceFile.getLineNumberAtPos(endLinePos);
-    }
-
-    /**
-     * Gets the length from the start of the line to the start of the node.
-     * @param includeJsDocComment - Whether to include the JS doc comment or not.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getStart())`
-     */
-    getStartColumn(includeJsDocComment?: boolean) {
-        return this.sourceFile.getColumnAtPos(this.getStart(includeJsDocComment));
-    }
-
-    /**
-     * Gets the length from the start of the line to the end of the node.
-     * @deprecated - Use `sourceFile.getLengthFromLineStartAtPos(node.getEnd())`
-     */
-    getEndColumn() {
-        return this.sourceFile.getColumnAtPos(this.getEnd());
     }
 
     /**
@@ -1126,7 +1168,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param settings - Format code settings.
      */
     formatText(settings: FormatCodeSettings = {}) {
-        const formattingEdits = this.global.languageService.getFormattingEditsForRange(
+        const formattingEdits = this.context.languageService.getFormattingEditsForRange(
             this.sourceFile.getFilePath(),
             [this.getStart(true), this.getEnd()],
             settings);
@@ -1534,7 +1576,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @internal
      */
     getWriter() {
-        return this.global.createWriter();
+        return this.context.createWriter();
     }
 
     /**
@@ -1544,7 +1586,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getNodeFromCompilerNode<LocalCompilerNodeType extends ts.Node = ts.Node>(
         compilerNode: LocalCompilerNodeType): CompilerNodeToWrappedType<LocalCompilerNodeType>
     {
-        return this.global.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
+        return this.context.compilerFactory.getNodeFromCompilerNode(compilerNode, this.sourceFile);
     }
 
     /**

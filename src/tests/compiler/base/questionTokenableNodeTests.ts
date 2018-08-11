@@ -1,7 +1,9 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../compiler";
+import { ParameterDeclaration, ClassDeclaration, PropertyDeclaration, QuestionTokenableNode } from "../../../compiler";
+import * as errors from "../../../errors";
+import { SyntaxKind } from "../../../typescript";
 import { QuestionTokenableNodeStructure } from "../../../structures";
-import { getInfoFromText } from "../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 
 describe(nameof(QuestionTokenableNode), () => {
     function getInfoWithFirstPropertyFromText(text: string) {
@@ -69,6 +71,14 @@ describe(nameof(QuestionTokenableNode), () => {
 
         it("should do nothing when setting to same value", () => {
             doTest("class MyClass { prop: string; }", false, "class MyClass { prop: string; }");
+        });
+
+        it("should be set as optional when has no type and has a semi-colon", () => {
+            doTest("class MyClass { prop; }", true, "class MyClass { prop?; }");
+        });
+
+        it("should be set as optional when has no type nor semi-colon", () => {
+            doTest("class MyClass { prop }", true, "class MyClass { prop? }");
         });
     });
 

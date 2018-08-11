@@ -4,3 +4,4 @@ export * from "./NameableNode";
 export * from "./NamedNode";
 export * from "./PropertyNamedNode";
 export * from "./ReferenceFindableNode";
+export * from "./RenameableNode";

@@ -60,7 +60,6 @@ describe(nameof(VariableDeclaration), () => {
     describe(nameof<VariableDeclaration>(d => d.getStructure), () => {
         function doTest(startCode: string, expectedStructure: any) {
             const structure = getInfoFromText(startCode).sourceFile.getVariableDeclarations()[0].getStructure();
-            // console.log(structure);
             expect(structure).to.deep.equal(expectedStructure);
         }
 

@@ -8,10 +8,11 @@ import { callBaseFill } from "../../callBaseFill";
 import { Identifier, Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { RenameableNode } from "./RenameableNode";
 
 export type NameableNodeExtensionType = Node<ts.Node & { name?: ts.Identifier; }>;
 
-export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode {
+export interface NameableNode extends NameableNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export interface NameableNodeSpecific {
@@ -31,15 +32,10 @@ export interface NameableNodeSpecific {
      * Gets the name if it exists, or throws.
      */
     getNameOrThrow(): string;
-    /**
-     * Renames the name or sets the name if it doesn't exist.
-     * @param newName - New name.
-     */
-    rename(newName: string): this;
 }
 
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
-    return NameableNodeInternal(ReferenceFindableNode(Base));
+    return NameableNodeInternal(ReferenceFindableNode(RenameableNode(Base)));
 }
 
 function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNodeSpecific> & T {
@@ -83,8 +79,9 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
                     parent: this
                 });
             }
-            else
-                nameNode.rename(newName);
+            else {
+                Base.prototype.rename.call(this, newName);
+            }
 
             return this;
         }

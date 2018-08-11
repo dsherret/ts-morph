@@ -335,9 +335,9 @@ describe(nameof(ImportDeclaration), () => {
             for (let i = 0; i < namedImports.length; i++) {
                 expect(namedImports[i].getNameNode().getText()).to.equal(expected[i].name);
                 if (expected[i].alias == null)
-                    expect(namedImports[i].getAliasIdentifier()).to.equal(undefined);
+                    expect(namedImports[i].getAliasNode()).to.equal(undefined);
                 else
-                    expect(namedImports[i].getAliasIdentifier()!.getText()).to.equal(expected[i].alias);
+                    expect(namedImports[i].getAliasNode()!.getText()).to.equal(expected[i].alias);
             }
         }
 
@@ -370,7 +370,7 @@ describe(nameof(ImportDeclaration), () => {
         function doTest(text: string, index: number, structuresOrNames: (ImportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
             const { firstChild, sourceFile } = getInfoFromText<ImportDeclaration>(text);
             if (!surroundWithSpaces)
-                firstChild.global.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
+                firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedImports(index, structuresOrNames);
             expect(sourceFile.getText()).to.equal(expected);
         }

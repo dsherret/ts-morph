@@ -3,7 +3,6 @@
     "rules": {
         "align": [
             true,
-            "parameters",
             "statements"
         ],
         "interface-name": [ false ],
@@ -18,7 +17,7 @@
         "unified-signatures": false,
         "array-type": [ true, "array" ],
         "ban-types": false,
-        "max-classes-per-file": [ false ],
+        "max-classes-per-file": false,
         "no-unused-expression": false,
         "one-line": [
             true,

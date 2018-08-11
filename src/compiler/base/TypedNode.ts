@@ -22,14 +22,9 @@ export interface TypedNode {
     getTypeNodeOrThrow(): TypeNode;
     /**
      * Sets the type.
-     * @param writerFunction - Writer function to set the type with.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
      */
-    setType(writerFunction: WriterFunction): this;
-    /**
-     * Sets the type.
-     * @param text - Text to set the type to.
-     */
-    setType(text: string): this;
+    setType(textOrWriterFunction: string | WriterFunction): this;
     /**
      * Removes the type.
      */
@@ -63,8 +58,7 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             let newText: string;
 
             if (separatorNode == null) {
-                const identifier = this.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
-                insertPos = identifier.getEnd();
+                insertPos = getInsertPosWhenNoType(this);
                 newText = (separatorSyntaxKind === SyntaxKind.EqualsToken ? " = " : ": ") + text;
             }
             else {
@@ -83,6 +77,21 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             });
 
             return this;
+
+            function getInsertPosWhenNoType(node: Node) {
+                const identifier = node.getFirstChildByKindOrThrow(SyntaxKind.Identifier);
+                const nextSibling = identifier.getNextSibling();
+                const insertAfterNode = isQuestionOrExclamation(nextSibling) ? nextSibling : identifier;
+
+                return insertAfterNode.getEnd();
+            }
+
+            function isQuestionOrExclamation(node: Node | undefined): node is Node {
+                if (node == null)
+                    return false;
+                const kind = node.getKind();
+                return kind === SyntaxKind.QuestionToken || kind === SyntaxKind.ExclamationToken;
+            }
         }
 
         fill(structure: Partial<TypedNodeStructure>) {

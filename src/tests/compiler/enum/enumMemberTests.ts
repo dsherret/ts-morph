@@ -105,7 +105,6 @@ describe(nameof(EnumMember), () => {
     describe(nameof<EnumMember>(d => d.getStructure), () => {
         function doTest(code: string, expected: any) {
             const { firstEnumMember } = getInfoFromTextWithFirstMember(code);
-            // console.log(firstEnumMember.getStructure());
             expect(firstEnumMember.getStructure()).to.deep.equal(expected);
         }
 

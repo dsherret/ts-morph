@@ -18,14 +18,9 @@ export interface InitializerSetExpressionableNode {
     removeInitializer(): this;
     /**
      * Sets the initializer.
-     * @param text - New text to set for the initializer.
+     * @param text - Text or writer function to set for the initializer.
      */
-    setInitializer(text: string): this;
-    /**
-     * Sets the initializer using a writer function.
-     * @param writerFunction - Function to write the initializer with.
-     */
-    setInitializer(writerFunction: WriterFunction): this;
+    setInitializer(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export function InitializerSetExpressionableNode<T extends Constructor<InitializerSetExpressionableExtensionType>>(Base: T): Constructor<InitializerSetExpressionableNode> & T {

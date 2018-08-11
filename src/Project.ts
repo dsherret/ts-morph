@@ -2,7 +2,7 @@ import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import * as errors from "./errors";
 import { DefaultFileSystemHost, Directory, DirectoryAddOptions, SourceFileAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
-import { GlobalContainer } from "./GlobalContainer";
+import { ProjectContext } from "./ProjectContext";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
 import { SourceFileStructure } from "./structures";
 import { CompilerOptions } from "./typescript";
@@ -30,7 +30,7 @@ export interface SourceFileCreateOptions extends SourceFileAddOptions {
  */
 export class Project {
     /** @internal */
-    private readonly global: GlobalContainer;
+    private readonly context: ProjectContext;
 
     /**
      * Initializes a new instance.
@@ -51,12 +51,12 @@ export class Project {
         const tsConfigResolver = options.tsConfigFilePath == null ? undefined : new TsConfigResolver(fileSystemWrapper, options.tsConfigFilePath, getEncoding());
         const compilerOptions = getCompilerOptions();
 
-        // setup global container
-        this.global = new GlobalContainer(fileSystemWrapper, compilerOptions, { createLanguageService: true });
+        // setup context
+        this.context = new ProjectContext(fileSystemWrapper, compilerOptions, { createLanguageService: true });
 
         // initialize manipulation settings
         if (options.manipulationSettings != null)
-            this.global.manipulationSettings.set(options.manipulationSettings);
+            this.context.manipulationSettings.set(options.manipulationSettings);
 
         // add any file paths from the tsconfig if necessary
         if (tsConfigResolver != null && options.addFilesFromTsConfig !== false)
@@ -85,12 +85,12 @@ export class Project {
 
     /** Gets the manipulation settings. */
     get manipulationSettings(): ManipulationSettingsContainer {
-        return this.global.manipulationSettings;
+        return this.context.manipulationSettings;
     }
 
     /** Gets the compiler options for modification. */
     get compilerOptions(): CompilerOptionsContainer {
-        return this.global.compilerOptions;
+        return this.context.compilerOptions;
     }
 
     /**
@@ -102,8 +102,8 @@ export class Project {
      * @skipOrThrowCheck
      */
     addExistingDirectoryIfExists(dirPath: string, options: DirectoryAddOptions = {}): Directory | undefined {
-        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.context.directoryCoordinator.addExistingDirectoryIfExists(dirPath, options);
     }
 
     /**
@@ -115,8 +115,8 @@ export class Project {
      * @throws DirectoryNotFoundError when the directory does not exist.
      */
     addExistingDirectory(dirPath: string, options: DirectoryAddOptions = {}): Directory {
-        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.directoryCoordinator.addExistingDirectory(dirPath, options);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.context.directoryCoordinator.addExistingDirectory(dirPath, options);
     }
 
     /**
@@ -124,8 +124,8 @@ export class Project {
      * @param dirPath - Path to create the directory at.
      */
     createDirectory(dirPath: string): Directory {
-        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.context.directoryCoordinator.createDirectoryOrAddIfExists(dirPath);
     }
 
     /**
@@ -134,7 +134,7 @@ export class Project {
      */
     getDirectoryOrThrow(dirPath: string): Directory {
         return errors.throwIfNullOrUndefined(this.getDirectory(dirPath),
-            () => `Could not find a directory at the specified path: ${this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`);
+            () => `Could not find a directory at the specified path: ${this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath)}`);
     }
 
     /**
@@ -142,22 +142,22 @@ export class Project {
      * @param dirPath - Directory path.
      */
     getDirectory(dirPath: string): Directory | undefined {
-        dirPath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
-        return this.global.compilerFactory.getDirectoryFromCache(dirPath);
+        dirPath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(dirPath);
+        return this.context.compilerFactory.getDirectoryFromCache(dirPath);
     }
 
     /**
      * Gets all the directories.
      */
     getDirectories() {
-        return ArrayUtils.from(this.global.compilerFactory.getDirectoriesByDepth());
+        return ArrayUtils.from(this.context.compilerFactory.getDirectoriesByDepth());
     }
 
     /**
      * Gets the directories without a parent.
      */
     getRootDirectories() {
-        return this.global.compilerFactory.getOrphanDirectories();
+        return this.context.compilerFactory.getOrphanDirectories();
     }
 
     /**
@@ -173,7 +173,7 @@ export class Project {
         const sourceFiles: SourceFile[] = [];
         const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
-        for (const filePath of this.global.fileSystemWrapper.glob(fileGlobs)) {
+        for (const filePath of this.context.fileSystemWrapper.glob(fileGlobs)) {
             const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
@@ -194,7 +194,7 @@ export class Project {
      * @skipOrThrowCheck
      */
     addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
-        return this.global.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
+        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
     }
 
     /**
@@ -206,7 +206,7 @@ export class Project {
      * @throws FileNotFoundError when the file is not found.
      */
     addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
-        return this.global.directoryCoordinator.addExistingSourceFile(filePath, options);
+        return this.context.directoryCoordinator.addExistingSourceFile(filePath, options);
     }
 
     /**
@@ -218,8 +218,8 @@ export class Project {
      * @param options - Options for adding the source file.
      */
     addSourceFilesFromTsConfig(tsConfigFilePath: string, options: SourceFileAddOptions = {}): SourceFile[] {
-        tsConfigFilePath = this.global.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
-        const resolver = new TsConfigResolver(this.global.fileSystemWrapper, tsConfigFilePath, this.global.getEncoding());
+        tsConfigFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
+        const resolver = new TsConfigResolver(this.context.fileSystemWrapper, tsConfigFilePath, this.context.getEncoding());
         return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions(), options);
     }
 
@@ -265,7 +265,7 @@ export class Project {
      */
     createSourceFile(filePath: string, structure: SourceFileStructure, options?: SourceFileCreateOptions): SourceFile;
     createSourceFile(filePath: string, structureOrText?: SourceFileStructure | string, options?: SourceFileCreateOptions): SourceFile {
-        return this.global.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
+        return this.context.compilerFactory.createSourceFile(filePath, structureOrText || "", options || {});
     }
 
     /**
@@ -292,7 +292,7 @@ export class Project {
     getSourceFileOrThrow(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile {
         const sourceFile = this.getSourceFile(fileNameOrSearchFunction);
         if (sourceFile == null) {
-            const filePathOrSearchFunction = getFilePathOrSearchFunction(this.global.fileSystemWrapper, fileNameOrSearchFunction);
+            const filePathOrSearchFunction = getFilePathOrSearchFunction(this.context.fileSystemWrapper, fileNameOrSearchFunction);
             if (typeof filePathOrSearchFunction === "string")
                 throw new errors.InvalidOperationError(`Could not find source file based on the provided name or path: ${filePathOrSearchFunction}.`);
             else
@@ -316,11 +316,11 @@ export class Project {
      */
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined;
     getSourceFile(fileNameOrSearchFunction: string | ((file: SourceFile) => boolean)): SourceFile | undefined {
-        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.global.fileSystemWrapper, fileNameOrSearchFunction);
+        const filePathOrSearchFunction = getFilePathOrSearchFunction(this.context.fileSystemWrapper, fileNameOrSearchFunction);
 
         if (typeof filePathOrSearchFunction === "string")
-            return this.global.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
-        return ArrayUtils.find(this.global.compilerFactory.getSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
+            return this.context.compilerFactory.getSourceFileFromCacheFromFilePath(filePathOrSearchFunction);
+        return ArrayUtils.find(this.context.compilerFactory.getSourceFilesByDirectoryDepth(), filePathOrSearchFunction);
     }
 
     /**
@@ -339,8 +339,8 @@ export class Project {
      */
     getSourceFiles(globPatterns: string[]): SourceFile[];
     getSourceFiles(globPatterns?: string | string[]): SourceFile[] {
-        const {compilerFactory, fileSystemWrapper} = this.global;
-        const sourceFiles = this.global.compilerFactory.getSourceFilesByDirectoryDepth();
+        const {compilerFactory, fileSystemWrapper} = this.context;
+        const sourceFiles = this.context.compilerFactory.getSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)
             return ArrayUtils.from(getFilteredSourceFiles());
         else
@@ -364,7 +364,7 @@ export class Project {
      * Saves all the unsaved source files to the file system and deletes all deleted files.
      */
     async save() {
-        await this.global.fileSystemWrapper.flush();
+        await this.context.fileSystemWrapper.flush();
         await Promise.all(this.getUnsavedSourceFiles().map(f => f.save()));
     }
 
@@ -374,7 +374,7 @@ export class Project {
      * Remarks: This might be very slow compared to the asynchronous version if there are a lot of files.
      */
     saveSync() {
-        this.global.fileSystemWrapper.flushSync();
+        this.context.fileSystemWrapper.flushSync();
         // sidenote: I wish I could do something like in c# where I do this all asynchronously then
         // wait synchronously on the task. It would not be as bad as this is performance wise. Maybe there
         // is a way, but people just shouldn't be using this method unless they're really lazy.
@@ -387,11 +387,11 @@ export class Project {
      * @param enabled - Enabled.
      */
     enableLogging(enabled = true) {
-        this.global.logger.setEnabled(enabled);
+        this.context.logger.setEnabled(enabled);
     }
 
     private getUnsavedSourceFiles() {
-        return ArrayUtils.from(getUnsavedIterator(this.global.compilerFactory.getSourceFilesByDirectoryDepth()));
+        return ArrayUtils.from(getUnsavedIterator(this.context.compilerFactory.getSourceFilesByDirectoryDepth()));
 
         function *getUnsavedIterator(sourceFiles: IterableIterator<SourceFile>) {
             for (const sourceFile of sourceFiles) {
@@ -406,9 +406,9 @@ export class Project {
      */
     getDiagnostics(): Diagnostic[] {
         return [
-            ...this.global.program.getSyntacticDiagnostics(),
-            ...this.global.program.getSemanticDiagnostics(),
-            ...this.global.program.getDeclarationDiagnostics()
+            ...this.context.program.getSyntacticDiagnostics(),
+            ...this.context.program.getSemanticDiagnostics(),
+            ...this.context.program.getDeclarationDiagnostics()
         ];
     }
 
@@ -416,35 +416,35 @@ export class Project {
      * Gets the pre-emit diagnostics.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
-        return this.global.program.getPreEmitDiagnostics();
+        return this.context.program.getPreEmitDiagnostics();
     }
 
     /**
      * Gets the language service.
      */
     getLanguageService(): LanguageService {
-        return this.global.languageService;
+        return this.context.languageService;
     }
 
     /**
      * Gets the program.
      */
     getProgram(): Program {
-        return this.global.program;
+        return this.context.program;
     }
 
     /**
      * Gets the type checker.
      */
     getTypeChecker(): TypeChecker {
-        return this.global.typeChecker;
+        return this.context.typeChecker;
     }
 
     /**
      * Gets the file system.
      */
     getFileSystem(): FileSystemHost {
-        return this.global.fileSystemWrapper.getFileSystem();
+        return this.context.fileSystemWrapper.getFileSystem();
     }
 
     /**
@@ -452,14 +452,14 @@ export class Project {
      * @param emitOptions - Optional emit options.
      */
     emit(emitOptions: EmitOptions = {}): EmitResult {
-        return this.global.program.emit(emitOptions);
+        return this.context.program.emit(emitOptions);
     }
 
     /**
      * Gets the compiler options.
      */
     getCompilerOptions(): CompilerOptions {
-        return this.global.compilerOptions.get();
+        return this.context.compilerOptions.get();
     }
 
     /**
@@ -467,7 +467,7 @@ export class Project {
      * @remarks Generally it's best to use a provided writer, but this may be useful in some scenarios.
      */
     createWriter(): CodeBlockWriter {
-        return this.global.createWriter();
+        return this.context.createWriter();
     }
 
     /**
@@ -485,7 +485,7 @@ export class Project {
      */
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => Promise<void>): void;
     forgetNodesCreatedInBlock(block: (remember: (...node: Node[]) => void) => (void | Promise<void>)) {
-        return this.global.compilerFactory.forgetNodesCreatedInBlock(block);
+        return this.context.compilerFactory.forgetNodesCreatedInBlock(block);
     }
 }
 

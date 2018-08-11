@@ -6,7 +6,7 @@
  */
 import * as path from "path";
 import Project, { SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind, VariableStatement } from "ts-simple-ast";
-import { StringUtils, ArrayUtils } from "../src/utils";
+import { StringUtils } from "../src/utils";
 import { getDefinitionProject } from "./common";
 import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 

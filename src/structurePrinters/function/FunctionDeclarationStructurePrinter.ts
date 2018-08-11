@@ -1,6 +1,6 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../structures";
-import { ObjectUtils, setValueIfUndefined } from "../../utils";
+import { StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<FunctionDeclarationStructure> {
@@ -48,7 +48,7 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, name: string, structures: FunctionDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string | undefined, structures: FunctionDeclarationOverloadStructure[] | undefined) {
         if (structures == null || structures.length === 0)
             return;
 
@@ -58,17 +58,18 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
         }
     }
 
-    printOverload(writer: CodeBlockWriter, name: string, structure: FunctionDeclarationOverloadStructure) {
+    printOverload(writer: CodeBlockWriter, name: string | undefined, structure: FunctionDeclarationOverloadStructure) {
         this.printBase(writer, name, structure);
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, name: string, structure: FunctionDeclarationOverloadStructure) {
+    private printBase(writer: CodeBlockWriter, name: string | undefined, structure: FunctionDeclarationOverloadStructure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(`function`);
         writer.conditionalWrite(structure.isGenerator, "*");
-        writer.write(` ${name}`);
+        if (!StringUtils.isNullOrWhitespace(name))
+            writer.write(` ${name}`);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);
         writer.write("(");
         if (structure.parameters != null)

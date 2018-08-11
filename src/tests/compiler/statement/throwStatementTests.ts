@@ -8,16 +8,39 @@ function getStatement(text: string) {
 }
 
 describe(nameof(ThrowStatement), () => {
-    const expression = "new Error('foo')";
-    const statement = `throw ${expression};`;
     describe(nameof<ThrowStatement>(n => n.getExpression), () => {
-        function doTest(text: string, expectedText: string) {
+        function doTest(text: string, expectedText: string | undefined) {
             const doStatement = getStatement(text);
-            expect(doStatement.getExpression().getText()).to.equal(expectedText);
+            if (expectedText == null)
+                expect(doStatement.getExpression()).to.be.undefined;
+            else
+                expect(doStatement.getExpression()!.getText()).to.equal(expectedText);
         }
 
         it("should return the correct expression", () => {
-            doTest(statement, expression);
+            doTest("throw new Error('foo');", "new Error('foo')");
+        });
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest("function test() { throw\n}", undefined);
+        });
+    });
+
+    describe(nameof<ThrowStatement>(n => n.getExpressionOrThrow), () => {
+        function doTest(text: string, expectedText: string | undefined) {
+            const doStatement = getStatement(text);
+            if (expectedText == null)
+                expect(() => doStatement.getExpressionOrThrow()).to.throw();
+            else
+                expect(doStatement.getExpressionOrThrow().getText()).to.equal(expectedText);
+        }
+
+        it("should return the correct expression", () => {
+            doTest("throw new Error('foo');", "new Error('foo')");
+        });
+
+        it("should throw when it doesn't exist", () => {
+            doTest("function test() { throw\n}", undefined);
         });
     });
 });

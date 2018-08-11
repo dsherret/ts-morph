@@ -1,4 +1,3 @@
-import * as errors from "../../../errors";
 import { PropertyNamedNodeStructure } from "../../../structures";
 import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
@@ -7,20 +6,26 @@ import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { RenameableNode } from "./RenameableNode";
 
 export type PropertyNamedNodeExtensionType = Node<ts.Node & { name: ts.PropertyName; }>;
 
-export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode {
+export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
 export interface PropertyNamedNodeSpecific {
+    /**
+     * Gets the name node.
+     */
     getNameNode(): PropertyName;
+    /**
+     * Gets the text of the name of the node.
+     */
     getName(): string;
-    rename(text: string): this;
 }
 
 export function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T {
-    return PropertyNamedNodeInternal(ReferenceFindableNode(Base));
+    return PropertyNamedNodeInternal(ReferenceFindableNode(RenameableNode(Base)));
 }
 
 function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNodeSpecific> & T {
@@ -33,17 +38,11 @@ function PropertyNamedNodeInternal<T extends Constructor<PropertyNamedNodeExtens
             return this.getNameNode().getText();
         }
 
-        rename(text: string) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            this.global.languageService.renameNode(this.getNameNode(), text);
-            return this;
-        }
-
         fill(structure: Partial<PropertyNamedNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.name != null)
-                this.rename(structure.name);
+                (this as any as RenameableNode).rename(structure.name);
 
             return this;
         }

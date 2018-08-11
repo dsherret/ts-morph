@@ -1,5 +1,5 @@
 ﻿import { Type } from "ts-simple-ast";
-import { ArrayUtils, StringUtils } from "../../src/utils";
+import { StringUtils } from "../../src/utils";
 
 export function isNodeType(type: Type) {
     return StringUtils.endsWith(type.getText(), "Node<NodeType>");

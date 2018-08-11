@@ -1112,14 +1112,14 @@ function myFunction(param: MyClass) {
 
         it("should indent when only specifying two spaces", () => {
             const { sourceFile } = getInfoFromText("//code");
-            sourceFile.global.manipulationSettings.set({ indentationText: IndentationText.TwoSpaces });
+            sourceFile.context.manipulationSettings.set({ indentationText: IndentationText.TwoSpaces });
             sourceFile.indent(0);
             expect(sourceFile.getFullText()).to.equal("  //code");
         });
 
         it("should indent when specifying tabs", () => {
             const { sourceFile } = getInfoFromText("//code");
-            sourceFile.global.manipulationSettings.set({ indentationText: IndentationText.Tab });
+            sourceFile.context.manipulationSettings.set({ indentationText: IndentationText.Tab });
             sourceFile.indent(0);
             expect(sourceFile.getFullText()).to.equal("\t//code");
         });

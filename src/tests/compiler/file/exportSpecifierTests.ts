@@ -66,26 +66,14 @@ describe(nameof(ExportSpecifier), () => {
         });
     });
 
-    describe(nameof<ExportSpecifier>(n => n.renameName), () => {
-        it("should rename in current file if exporting from current file", () => {
-            const project = getProject();
-            const myClassFile = project.createSourceFile("MyClass.ts", {
-                classes: [{ name: "MyClass" }],
-                exports: [{ namedExports: ["MyClass"]}]
-            });
-            myClassFile.getExportDeclarations()[0].getNamedExports()[0].renameName("Identifier");
-            expect(myClassFile.getFullText()).to.equal(`class Identifier {\n}\n\nexport { Identifier };\n`);
-        });
-    });
-
-    describe(nameof<ExportSpecifier>(n => n.getAliasIdentifier), () => {
+    describe(nameof<ExportSpecifier>(n => n.getAliasNode), () => {
         function doTest(text: string, alias: string | undefined) {
             const {firstChild} = getInfoFromText<ExportDeclaration>(text);
             const namedExport = firstChild.getNamedExports()[0];
             if (alias == null)
-                expect(namedExport.getAliasIdentifier()).to.equal(undefined);
+                expect(namedExport.getAliasNode()).to.equal(undefined);
             else
-                expect(namedExport.getAliasIdentifier()!.getText()).to.equal(alias);
+                expect(namedExport.getAliasNode()!.getText()).to.equal(alias);
         }
 
         it("should be undefined there is no alias", () => {

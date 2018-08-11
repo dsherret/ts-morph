@@ -44,7 +44,7 @@ export interface ReturnTypedNode {
 export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionReturnType>>(Base: T): Constructor<ReturnTypedNode> & T {
     return class extends Base implements ReturnTypedNode {
         getReturnType() {
-            const typeChecker = this.global.typeChecker;
+            const typeChecker = this.context.typeChecker;
             const signature = typeChecker.getSignatureFromNode(this)!; // should always return a signature
             return signature.getReturnType();
         }

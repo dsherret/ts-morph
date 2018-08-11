@@ -15,7 +15,7 @@ export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {
 export function getNewInsertCode<TNode extends Node, TStructure>(opts: GetNewInsertCodeOptions<TNode, TStructure>) {
     const {structures, newCodes, parent, getSeparator, previousFormattingKind, nextFormattingKind} = opts;
     const indentationText = opts.indentationText == null ? parent.getChildIndentationText() : opts.indentationText;
-    const newLineKind = parent.global.manipulationSettings.getNewLineKindAsString();
+    const newLineKind = parent.context.manipulationSettings.getNewLineKindAsString();
 
     return getFormattingKindTextWithIndent(previousFormattingKind) + getChildCode() + getFormattingKindTextWithIndent(nextFormattingKind);
 

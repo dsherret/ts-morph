@@ -55,7 +55,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     const {currentNodes, insertIndex, parent} = opts;
     const nextNode = currentNodes[insertIndex];
     const previousNode = currentNodes[insertIndex - 1];
-    const separator = opts.useNewLines ? parent.global.manipulationSettings.getNewLineKindAsString() : " ";
+    const separator = opts.useNewLines ? parent.context.manipulationSettings.getNewLineKindAsString() : " ";
     const childIndentationText = parent.getParentOrThrow().getChildIndentationText();
     const parentNextSibling = parent.getNextSibling();
     const isContained = parentNextSibling != null && (
@@ -103,7 +103,7 @@ export function insertIntoCommaSeparatedNodes(opts: InsertIntoCommaSeparatedNode
     }
     else {
         if (opts.useNewLines)
-            newText = separator + newText + parent.global.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getIndentationText();
+            newText = separator + newText + parent.context.manipulationSettings.getNewLineKindAsString() + parent.getParentOrThrow().getIndentationText();
         else if (opts.surroundWithSpaces)
             newText = ` ${newText} `;
 

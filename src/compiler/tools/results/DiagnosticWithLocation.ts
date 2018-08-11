@@ -1,11 +1,11 @@
-﻿import { GlobalContainer } from "../../../GlobalContainer";
+﻿import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Diagnostic } from "./Diagnostic";
 
 export class DiagnosticWithLocation extends Diagnostic<ts.DiagnosticWithLocation> {
     /** @internal */
-    constructor(global: GlobalContainer | undefined, compilerObject: ts.DiagnosticWithLocation) {
-        super(global, compilerObject);
+    constructor(context: ProjectContext | undefined, compilerObject: ts.DiagnosticWithLocation) {
+        super(context, compilerObject);
     }
 
     /**

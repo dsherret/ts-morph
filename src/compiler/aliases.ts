@@ -2,7 +2,8 @@ import { AssertTrue, IsExactType } from "conditional-type-checks";
 import { ts } from "../typescript";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
-import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment } from "./expression";
+import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
+    ThisExpression } from "./expression";
 import { ExternalModuleReference } from "./file";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
@@ -26,8 +27,12 @@ type _JsxChildTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<JsxChild>,
 export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
 type _JsxAttributeLikeTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<JsxAttributeLike>, ts.JsxAttributeLike>>;
 
-export type JsxTagNameExpression = PrimaryExpression | PropertyAccessExpression;
-type _JsxTagNameExpressionTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<JsxTagNameExpression>, ts.JsxTagNameExpression>>;
+export type JsxTagNameExpression = Identifier | ThisExpression | JsxTagNamePropertyAccess;
+type _JsxTagNameExpressionTest = AssertTrue<IsExactType<ts.Identifier | ts.ThisExpression | ts.JsxTagNamePropertyAccess, ts.JsxTagNameExpression>>;
+export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
+    getExpression(): JsxTagNameExpression;
+}
+type _JsxTagNamePropertyAccess = AssertTrue<IsExactType<ts.PropertyAccessExpression & { expression: ts.JsxTagNameExpression; }, ts.JsxTagNamePropertyAccess>>;
 
 export type ObjectLiteralElementLike = PropertyAssignment | ShorthandPropertyAssignment | SpreadAssignment | MethodDeclaration | AccessorDeclaration;
 type _ObjectLiteralElementLikeTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<ObjectLiteralElementLike>, ts.ObjectLiteralElementLike>>;

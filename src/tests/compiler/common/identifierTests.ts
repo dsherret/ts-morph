@@ -8,8 +8,17 @@ describe(nameof(Identifier), () => {
         it("should rename", () => {
             const text = "function myFunction() {} const reference = myFunction;";
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
-            firstChild.getNameNode().rename("newFunction");
+            firstChild.getNameNodeOrThrow().rename("newFunction");
             expect(sourceFile.getFullText()).to.equal(text.replace(/myFunction/g, "newFunction"));
+        });
+
+        it("should rename an identifier to a ThisKeyword", () => {
+            const text = "const that = this; that.test;";
+            const { sourceFile } = getInfoFromText(text);
+            const thatIdentifier = sourceFile.getFirstDescendantOrThrow(d => d.getKind() === SyntaxKind.Identifier && d.getText() === "that") as Identifier;
+            thatIdentifier.rename("this");
+            expect(thatIdentifier.wasForgotten()).to.be.true;
+            expect(sourceFile.getFullText()).to.equal("const this = this; this.test;");
         });
     });
 
@@ -23,7 +32,7 @@ describe(nameof(Identifier), () => {
             expect(definitions[0].getName()).to.equal("myFunction");
             expect(definitions[0].getSourceFile().getFullText()).to.equal(sourceFileText);
             expect(definitions[0].getKind()).to.equal(ts.ScriptElementKind.functionElement);
-            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNode().getStart());
+            expect(definitions[0].getTextSpan().getStart()).to.equal(firstChild.getNameNodeOrThrow().getStart());
             expect(definitions[0].getDeclarationNode()).to.equal(firstChild);
         });
 
@@ -41,8 +50,8 @@ describe(nameof(Identifier), () => {
             const {firstChild, sourceFile, project} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getNameNode().getImplementations();
             expect(implementations.length).to.equal(2);
-            expect((implementations[0].getNode() as ClassDeclaration).getName()).to.equal("Class1");
-            expect((implementations[1].getNode() as ClassDeclaration).getName()).to.equal("Class2");
+            expect(implementations[0].getNode().getText()).to.equal("Class1");
+            expect(implementations[1].getNode().getText()).to.equal("Class2");
         });
     });
 
@@ -50,7 +59,7 @@ describe(nameof(Identifier), () => {
         it("should find all the references", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencedSymbols = firstChild.getNameNode().findReferences();
+            const referencedSymbols = firstChild.getNameNodeOrThrow().findReferences();
             expect(referencedSymbols.length).to.equal(1);
             const referencedSymbol = referencedSymbols[0];
             const references = referencedSymbol.getReferences();
@@ -117,7 +126,7 @@ const t = MyNamespace.MyClass;
         it("should find all the references and exclude the definition", () => {
             const {firstChild, sourceFile, project} = getInfoFromText<FunctionDeclaration>("function myFunction() {}\nconst reference = myFunction;");
             const secondSourceFile = project.createSourceFile("second.ts", "const reference2 = myFunction;");
-            const referencingNodes = firstChild.getNameNode().findReferencesAsNodes();
+            const referencingNodes = firstChild.getNameNodeOrThrow().findReferencesAsNodes();
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getText()).to.equal("reference = myFunction");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = myFunction");

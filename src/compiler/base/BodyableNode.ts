@@ -113,7 +113,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             // statements[0].getNonWhitespaceStart() to statements[statements.length - 1].getTrailingTriviaEnd().
             // Then remove the leading spaces from every line (so remove statements[0].getIndentationText() from every line
             const body = this.getBody();
-            let bodyText: string|undefined = undefined;
+            let bodyText: string | undefined = undefined;
             if (body) {
                 const statements = body.getDescendantStatements();
                 if (!statements.length) {
@@ -123,9 +123,9 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
                     const leadingSpacesLength = statements[0].getIndentationText().length;
                     bodyText = this.sourceFile.getFullText()
                         .substring(statements[0].getNonWhitespaceStart(), statements[statements.length - 1].getTrailingTriviaEnd())
-                        .split(this.global.manipulationSettings.getNewLineKindAsString())
+                        .split(this.context.manipulationSettings.getNewLineKindAsString())
                         .map((line, index) => index !== 0 ? line.substring(leadingSpacesLength - 1, line.length) : line)
-                        .join(this.global.manipulationSettings.getNewLineKindAsString());
+                        .join(this.context.manipulationSettings.getNewLineKindAsString());
                 }
             }
             return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {

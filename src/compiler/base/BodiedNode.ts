@@ -62,9 +62,9 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
                 const leadingSpacesLength = statements[0].getIndentationText().length;
                 bodyText = this.sourceFile.getFullText()
                     .substring(statements[0].getNonWhitespaceStart(), statements[statements.length - 1].getTrailingTriviaEnd())
-                    .split(this.global.manipulationSettings.getNewLineKindAsString())
+                    .split(this.context.manipulationSettings.getNewLineKindAsString())
                     .map((line, index) => index !== 0 ? line.substring(leadingSpacesLength - 1, line.length) : line)
-                    .join(this.global.manipulationSettings.getNewLineKindAsString());
+                    .join(this.context.manipulationSettings.getNewLineKindAsString());
             }
             return callBaseGetStructure<BodiedNodeStructure>(Base.prototype, this, {
                 bodyText

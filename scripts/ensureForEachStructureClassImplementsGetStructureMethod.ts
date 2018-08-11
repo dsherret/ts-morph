@@ -28,10 +28,10 @@ const structures = inspector.getStructures();
 const problems: string[] = [];
 const oks: string[] = [];
 const ignoreDeclarations = [
-    'FunctionLikeDeclaration',
-    'InitializerExpressionableNode', // because extends InitializerSetExpressionableNode and it does implements it
-    'SignaturedDeclaration', // because extends ParameteredNode, ReturnTypedNode and both impl getstructure and it doesnt add anithing new and is not even a class
-]
+    "FunctionLikeDeclaration",
+    "InitializerExpressionableNode", // because extends InitializerSetExpressionableNode and it does implements it
+    "SignaturedDeclaration" // because extends ParameteredNode, ReturnTypedNode and both impl getstructure and it doesnt add anithing new and is not even a class
+];
 
 function verifyStructure(structureName: string, baseStructure: Structure) {
     let declarationName: string = baseStructure.getName().replace(/Structure$/, "");
@@ -59,7 +59,7 @@ function verifyStructure(structureName: string, baseStructure: Structure) {
         if (!decl || !decl.getMethod("getStructure"))
             problem = `Expected method ${declarationName}.getStructure to be implemented since type ${structureName} exists`;
         else
-            oks.push(`class found ${decl.getName()}`)
+            oks.push(`class found ${decl.getName()}`);
     }
     if (problem) {
         problems.push(problem);
@@ -67,13 +67,12 @@ function verifyStructure(structureName: string, baseStructure: Structure) {
     }
 }
 
-
 for (const node of nodes) {
     const structureName = node.getName() + "Structure";
     const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
     if (structure == null)
         continue;
-    verifyStructure(structureName, structure)
+    verifyStructure(structureName, structure);
     for (const baseStructure of structure.getBaseStructures())
         verifyStructure(structureName, baseStructure);
 }

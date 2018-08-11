@@ -30,7 +30,6 @@ describe(nameof(ArrowFunction), () => {
             const writer = new CodeBlockWriter();
             const structurePrinter = new ArrowFunctionStructurePrinter(new StructurePrinterFactory(() => ({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true })));
             structurePrinter.printText(writer, structure);
-            // console.log(writer.toString());
             expect(writer.toString().replace(/\s+/gm, "")).equals(text.replace(/\s+/gm, ""));
         }
 

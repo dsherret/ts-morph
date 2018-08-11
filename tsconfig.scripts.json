@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.common.json",
+    "compilerOptions": {
+        "declaration": false,
+        "rootDirs": ["./scripts", "./src"],
+        "outDir": "./dist-scripts",
+        "plugins": [{ "transform": "ts-nameof", "type": "raw" }]
+    },
+    "exclude": [
+        "./lib",
+        "./docs",
+        "./dist",
+        "node_modules"
+    ]
+}

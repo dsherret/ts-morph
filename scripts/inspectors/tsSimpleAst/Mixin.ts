@@ -26,7 +26,9 @@ export class Mixin {
         for (const expr of propertyAccessExpressions) {
             if (expr.getText() !== "this.compilerNode")
                 continue;
-            const parent = expr.getParentIfKindOrThrow(SyntaxKind.PropertyAccessExpression);
+            const parent = expr.getParentIfKind(SyntaxKind.PropertyAccessExpression);
+            if (parent == null)
+                throw new Error(`Could not find property access expression parent for: ${expr.getText()} in ${sourceFile.getFilePath()}[${expr.getStartLineNumber()}]`);
             names.push(parent.getName());
         }
 

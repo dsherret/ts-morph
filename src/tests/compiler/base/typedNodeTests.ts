@@ -72,6 +72,14 @@ describe(nameof(TypedNode), () => {
                 doTest(`class Identifier { prop: string = ""; }`, "any", `class Identifier { prop: any = ""; }`);
             });
 
+            it("should set when only has a question token", () => {
+                doTest(`class Identifier { prop?; }`, "any", `class Identifier { prop?: any; }`);
+            });
+
+            it("should set when only has an exclamation token", () => {
+                doTest(`class Identifier { prop!; }`, "any", `class Identifier { prop!: any; }`);
+            });
+
             it("should remove when the type is empty", () => {
                 doTest(`class Identifier { prop: string = ""; }`, "", `class Identifier { prop = ""; }`);
             });

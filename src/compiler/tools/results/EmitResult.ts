@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 
@@ -7,15 +7,15 @@ import { Memoize } from "../../../utils";
  */
 export class EmitResult {
     /** @internal */
-    private readonly global: GlobalContainer;
+    private readonly context: ProjectContext;
     /** @internal */
     private readonly _compilerObject: ts.EmitResult;
 
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: ts.EmitResult) {
-        this.global = global;
+    constructor(context: ProjectContext, compilerObject: ts.EmitResult) {
+        this.context = context;
         this._compilerObject = compilerObject;
     }
 
@@ -38,7 +38,7 @@ export class EmitResult {
      */
     @Memoize
     getDiagnostics() {
-        return this.compilerObject.diagnostics.map(d => this.global.compilerFactory.getDiagnostic(d));
+        return this.compilerObject.diagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 
     /*

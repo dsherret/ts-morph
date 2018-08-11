@@ -257,7 +257,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
 
         const namedImports = this.getNamedImports();
         const writer = this.getWriterWithQueuedChildIndentation();
-        const namedImportStructurePrinter = this.global.structurePrinterFactory.forNamedImportExportSpecifier();
+        const namedImportStructurePrinter = this.context.structurePrinterFactory.forNamedImportExportSpecifier();
         const importClause = this.getImportClause();
         index = verifyAndGetIndex(index, namedImports.length);
 
@@ -288,7 +288,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
                 currentNodes: namedImports,
                 insertIndex: index,
                 newText: writer.toString(),
-                surroundWithSpaces: this.global.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
+                surroundWithSpaces: this.context.getFormatCodeSettings().insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces
             });
         }
 

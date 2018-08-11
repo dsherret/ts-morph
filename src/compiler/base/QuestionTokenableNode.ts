@@ -55,9 +55,8 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 if (TypeGuards.isExclamationTokenableNode(this))
                     this.setHasExclamationToken(false);
 
-                const colonNode = this.getFirstChildByKindOrThrow(SyntaxKind.ColonToken);
                 insertIntoParentTextRange({
-                    insertPos: colonNode.getStart(),
+                    insertPos: getInsertPos.call(this),
                     parent: this,
                     newText: "?"
                 });
@@ -66,6 +65,18 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 removeChildren({ children: [questionTokenNode!] });
 
             return this;
+
+            function getInsertPos(this: QuestionTokenableNode & Node) {
+                const colonNode = this.getFirstChildByKind(SyntaxKind.ColonToken);
+                if (colonNode != null)
+                    return colonNode.getStart();
+
+                const semicolonToken = this.getLastChildByKind(SyntaxKind.SemicolonToken);
+                if (semicolonToken != null)
+                    return semicolonToken.getStart();
+
+                return this.getEnd();
+            }
         }
 
         fill(structure: Partial<QuestionTokenableNodeStructure>) {

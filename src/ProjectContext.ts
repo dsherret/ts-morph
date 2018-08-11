@@ -11,16 +11,16 @@ import { createWrappedNode } from "./utils/compiler/createWrappedNode";
 /**
  * @internal
  */
-export interface GlobalContainerOptions {
+export interface ProjectContextOptions {
     createLanguageService: boolean;
     typeChecker?: ts.TypeChecker;
 }
 
 /**
- * Global container.
+ * Context for a project instance.
  * @internal
  */
-export class GlobalContainer {
+export class ProjectContext {
     private readonly _manipulationSettings = new ManipulationSettingsContainer();
     private readonly _compilerFactory: CompilerFactory;
     private readonly _structurePrinterFactory: StructurePrinterFactory;
@@ -32,7 +32,7 @@ export class GlobalContainer {
     private readonly _customTypeChecker: TypeChecker | undefined;
     private readonly _logger = new ConsoleLogger();
 
-    constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: GlobalContainerOptions) {
+    constructor(fileSystemWrapper: FileSystemWrapper, compilerOptions: CompilerOptions, opts: ProjectContextOptions) {
         this._fileSystemWrapper = fileSystemWrapper;
         this._compilerOptions.set(compilerOptions);
         this._compilerFactory = new CompilerFactory(this);

@@ -251,7 +251,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.ConstructSignature,
-                createStructurePrinter: () => this.global.structurePrinterFactory.forConstructSignatureDeclaration()
+                createStructurePrinter: () => this.context.structurePrinterFactory.forConstructSignatureDeclaration()
             });
         }
 
@@ -286,7 +286,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.CallSignature,
-                createStructurePrinter: () => this.global.structurePrinterFactory.forCallSignatureDeclaration()
+                createStructurePrinter: () => this.context.structurePrinterFactory.forCallSignatureDeclaration()
             });
         }
 
@@ -321,7 +321,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.IndexSignature,
-                createStructurePrinter: () => this.global.structurePrinterFactory.forIndexSignatureDeclaration()
+                createStructurePrinter: () => this.context.structurePrinterFactory.forIndexSignatureDeclaration()
             });
         }
 
@@ -356,7 +356,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.MethodSignature,
-                createStructurePrinter: () => this.global.structurePrinterFactory.forMethodSignature()
+                createStructurePrinter: () => this.context.structurePrinterFactory.forMethodSignature()
             });
         }
 
@@ -392,7 +392,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 index,
                 structures,
                 expectedKind: SyntaxKind.PropertySignature,
-                createStructurePrinter: () => this.global.structurePrinterFactory.forPropertySignature()
+                createStructurePrinter: () => this.context.structurePrinterFactory.forPropertySignature()
             });
         }
 

@@ -2,7 +2,7 @@ import { removeOverloadableStatementedNodeChild } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NamedNode,
+import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
     TextInsertableNode, UnwrappableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
@@ -13,7 +13,7 @@ import { insertOverloads, OverloadableNode } from "./OverloadableNode";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
-    FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NamedNode(Node)))))))
+    FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
 )))))));
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**

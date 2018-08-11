@@ -451,7 +451,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getStatement(findFunction: (statement: Node) => boolean) {
-            return ArrayUtils.find(this.getStatements(), findFunction);
+            // explicit type arg necessary in ts 3.0 for some reason
+            return ArrayUtils.find<Statement>(this.getStatements(), findFunction);
         }
 
         getStatementOrThrow(findFunction: (statement: Node) => boolean) {
@@ -528,7 +529,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forClassDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });
@@ -573,7 +574,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forEnumDeclaration().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forEnumDeclaration().printTexts(writer, structures);
                     });
                 }
             });
@@ -618,7 +619,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forFunctionDeclaration().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forFunctionDeclaration().printTexts(writer, structures);
                     }, {
                             previousNewLine: previousMember =>
                                 structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
@@ -669,7 +670,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forInterfaceDeclaration().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forInterfaceDeclaration().printTexts(writer, structures);
                     });
                 }
             });
@@ -714,7 +715,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forNamespaceDeclaration({ isAmbient: isNodeAmbientOrInAmbientContext(this) }).printTexts(writer, structures);
                     });
                 }
             });
@@ -758,7 +759,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
                             previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
                             nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
@@ -818,7 +819,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 structures,
                 write: (writer, info) => {
                     this._standardWrite(writer, info, () => {
-                        this.global.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
+                        this.context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
                             previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
                             nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
@@ -905,7 +906,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
             else if (TypeGuards.isBodiedNode(this))
                 return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
             else if (TypeGuards.isBlock(this))
-                return (this.compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+                return this.compilerNode.statements;
             else
                 throw new errors.NotImplementedError(`Could not find the statements for node kind: ${this.getKindName()}, text: ${this.getText()}`);
         }

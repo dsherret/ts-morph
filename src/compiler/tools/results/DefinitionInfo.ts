@@ -1,5 +1,5 @@
 import { Node } from "../../../compiler";
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { SyntaxKind, ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { DocumentSpan } from "./DocumentSpan";
@@ -11,8 +11,8 @@ export class DefinitionInfo<TCompilerObject extends ts.DefinitionInfo = ts.Defin
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: TCompilerObject) {
-        super(global, compilerObject);
+    constructor(context: ProjectContext, compilerObject: TCompilerObject) {
+        super(context, compilerObject);
 
         // fill memoize
         this.getDeclarationNode();

@@ -1,5 +1,6 @@
 import { ts, SyntaxKind } from "../../typescript";
 import { AsyncableNode, BodiedNode, JSDocableNode, ModifierableNode, SignaturedDeclaration, TextInsertableNode, TypeParameteredNode } from "../base";
+import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { Node } from "../common";
 import { Expression } from "../expression";
 import { StatementedNode } from "../statement";
@@ -7,10 +8,7 @@ import { ArrowFunctionStructure, ArrowFunctionSpecificStructure } from "../../st
 import { FunctionDeclarationSpecificStructure } from "../../structures";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
-export const ArrowFunctionBase = JSDocableNode(TextInsertableNode(BodiedNode(AsyncableNode(StatementedNode(
-    TypeParameteredNode(SignaturedDeclaration(ModifierableNode(Expression))
-    ))))));
-
+export const ArrowFunctionBase = TextInsertableNode(BodiedNode(AsyncableNode(FunctionLikeDeclaration(Expression))));
 export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     /**
      * Gets the equals greater than token of the arrow function.

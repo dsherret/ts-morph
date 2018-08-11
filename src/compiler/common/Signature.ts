@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../GlobalContainer";
+import { ProjectContext } from "../../ProjectContext";
 import { ts } from "../../typescript";
 import { JSDocTagInfo } from "../doc";
 import { SymbolDisplayPart } from "../tools";
@@ -7,18 +7,18 @@ import { Symbol } from "./Symbol";
 
 export class Signature {
     /** @internal */
-    private readonly global: GlobalContainer;
+    private readonly context: ProjectContext;
     /** @internal */
     private readonly _compilerSignature: ts.Signature;
 
     /**
      * Initializes a new instance of Signature.
      * @internal
-     * @param global - GlobalContainer.
+     * @param context - Project context.
      * @param signature - Compiler signature.
      */
-    constructor(global: GlobalContainer, signature: ts.Signature) {
-        this.global = global;
+    constructor(context: ProjectContext, signature: ts.Signature) {
+        this.context = context;
         this._compilerSignature = signature;
     }
 
@@ -34,29 +34,29 @@ export class Signature {
      */
     getTypeParameters() {
         const typeParameters = this.compilerSignature.typeParameters || [];
-        return typeParameters.map(t => this.global.compilerFactory.getTypeParameter(t));
+        return typeParameters.map(t => this.context.compilerFactory.getTypeParameter(t));
     }
 
     /**
      * Gets the parameters.
      */
     getParameters(): Symbol[] {
-        return this.compilerSignature.parameters.map(p => this.global.compilerFactory.getSymbol(p));
+        return this.compilerSignature.parameters.map(p => this.context.compilerFactory.getSymbol(p));
     }
 
     /**
      * Gets the signature return type.
      */
     getReturnType(): Type {
-        return this.global.compilerFactory.getType(this.compilerSignature.getReturnType());
+        return this.context.compilerFactory.getType(this.compilerSignature.getReturnType());
     }
 
     /**
      * Get the documentation comments.
      */
     getDocumentationComments(): SymbolDisplayPart[] {
-        const docs = this.compilerSignature.getDocumentationComment(this.global.typeChecker.compilerObject);
-        return docs.map(d => this.global.compilerFactory.getSymbolDisplayPart(d));
+        const docs = this.compilerSignature.getDocumentationComment(this.context.typeChecker.compilerObject);
+        return docs.map(d => this.context.compilerFactory.getSymbolDisplayPart(d));
     }
 
     /**
@@ -64,6 +64,6 @@ export class Signature {
      */
     getJsDocTags(): JSDocTagInfo[] {
         const tags = this.compilerSignature.getJsDocTags();
-        return tags.map(t => this.global.compilerFactory.getJSDocTagInfo(t));
+        return tags.map(t => this.context.compilerFactory.getJSDocTagInfo(t));
     }
 }

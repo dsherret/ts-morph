@@ -734,7 +734,22 @@ export class TypeGuards {
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
             case SyntaxKind.SetAccessor:
+            case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionDeclaration:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Gets if the node is a FunctionOrConstructorTypeNodeBase.
+     * @param node - Node to check.
+     */
+    static isFunctionOrConstructorTypeNodeBase(node: compiler.Node): node is compiler.FunctionOrConstructorTypeNodeBase {
+        switch (node.getKind()) {
+            case SyntaxKind.ConstructorType:
+            case SyntaxKind.FunctionType:
                 return true;
             default:
                 return false;
@@ -1413,6 +1428,7 @@ export class TypeGuards {
     static isNameableNode(node: compiler.Node): node is compiler.NameableNode & compiler.Node {
         switch (node.getKind()) {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.FunctionExpression:
                 return true;
             default:
@@ -1430,7 +1446,6 @@ export class TypeGuards {
             case SyntaxKind.MetaProperty:
             case SyntaxKind.PropertyAccessExpression:
             case SyntaxKind.ImportEqualsDeclaration:
-            case SyntaxKind.FunctionDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ModuleDeclaration:
@@ -1804,6 +1819,42 @@ export class TypeGuards {
      */
     static isRegularExpressionLiteral(node: compiler.Node): node is compiler.RegularExpressionLiteral {
         return node.getKind() === SyntaxKind.RegularExpressionLiteral;
+    }
+
+    /**
+     * Gets if the node is a RenameableNode.
+     * @param node - Node to check.
+     */
+    static isRenameableNode(node: compiler.Node): node is compiler.RenameableNode & compiler.Node {
+        switch (node.getKind()) {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.GetAccessor:
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.SetAccessor:
+            case SyntaxKind.Identifier:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.EnumMember:
+            case SyntaxKind.MetaProperty:
+            case SyntaxKind.PropertyAccessExpression:
+            case SyntaxKind.ImportEqualsDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.FunctionExpression:
+            case SyntaxKind.Parameter:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.MethodSignature:
+            case SyntaxKind.PropertySignature:
+            case SyntaxKind.JsxAttribute:
+            case SyntaxKind.ModuleDeclaration:
+            case SyntaxKind.VariableDeclaration:
+            case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.TypeParameter:
+            case SyntaxKind.PropertyAssignment:
+            case SyntaxKind.ShorthandPropertyAssignment:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

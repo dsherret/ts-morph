@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 
 /**
@@ -7,12 +7,15 @@ import { ts } from "../../../typescript";
 export class OutputFile {
     /** @internal */
     private readonly _compilerObject: ts.OutputFile;
+    /** @internal */
+    private readonly _context: ProjectContext;
 
     /**
      * @internal
      */
-    constructor(private readonly global: GlobalContainer, compilerObject: ts.OutputFile) {
+    constructor(context: ProjectContext, compilerObject: ts.OutputFile) {
         this._compilerObject = compilerObject;
+        this._context = context;
     }
 
     /**
@@ -26,7 +29,7 @@ export class OutputFile {
      * Gets the file path.
      */
     getFilePath() {
-        return this.global.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
+        return this._context.fileSystemWrapper.getStandardizedAbsolutePath(this.compilerObject.name);
     }
 
     /**

@@ -1,4 +1,4 @@
-import { GlobalContainer } from "../../../GlobalContainer";
+import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
 import { DefinitionInfo } from "./DefinitionInfo";
@@ -7,8 +7,8 @@ export class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Referenced
     /**
      * @internal
      */
-    constructor(global: GlobalContainer, compilerObject: ts.ReferencedSymbolDefinitionInfo) {
-        super(global, compilerObject);
+    constructor(context: ProjectContext, compilerObject: ts.ReferencedSymbolDefinitionInfo) {
+        super(context, compilerObject);
     }
 
     /**
@@ -16,6 +16,6 @@ export class ReferencedSymbolDefinitionInfo extends DefinitionInfo<ts.Referenced
      */
     @Memoize
     getDisplayParts() {
-        return this.compilerObject.displayParts.map(p => this.global.compilerFactory.getSymbolDisplayPart(p));
+        return this.compilerObject.displayParts.map(p => this.context.compilerFactory.getSymbolDisplayPart(p));
     }
 }

@@ -2,6 +2,77 @@
 
 View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only a high level overview of breaking changes.
 
+## Version 13
+
+* `CompilerApiNodeBrandPropertyNamesType` is now `CompilerNodeBrandPropertyNamesType`.
+* `renameName` on `ImportSpecifier` and `ExportSpecifier` is now deprecated. Use `importSpecifier.getNameNode().rename(newName)`.
+* Renamed `getAliasIdentifier()` to `getAliasNode()` on `ImportSpecifier` and `ExportSpecifier`. Done for consistency.
+* Deprecated `node.getStartColumn()` and `node.getEndColumn()`.
+* Renamed `sourceFile.getColumnAtPos(pos)` to `.getLengthFromLineStartAtPos(pos)` for correctness.
+* Renamed `sourceFile.getLineNumberFromPos(pos)` to `getLineNumberAtPos(pos)` for consistency.
+* `getImplementations()[i].getNode()` now returns the identifier range (compiler API changed behaviour).
+
+### `FunctionDeclaration` has an optional name
+
+Similarly to `ClassDeclaration`, `FunctionDeclaration` can have an optional name when used as a default export:
+
+```ts
+export default function() {
+}
+```
+
+To support this scenario, `FunctionDeclaration`'s name has become optional.
+
+### `forEachDescendant` improvement
+
+Previously, stopping traveral in `node.forEachDescendant(...)` was done like the following:
+
+```ts
+node.forEachDescendant((node, stop) => {
+    if (node.getKind() === SyntaxKind.FunctionDeclaration)
+        stop();
+});
+```
+
+The new code is the following:
+
+```ts
+node.forEachDescendant((node, traversal) => {
+    if (node.getKind() === SyntaxKind.FunctionDeclaration)
+        traversal.stop();
+});
+```
+
+This is to allow for more advanced scenarios:
+
+```ts
+node.forEachDescendant((node, traversal) => {
+    switch (node.getKind()) {
+        case SyntaxKind.ClassDeclaration:
+            // skips traversal of the current node's descendants
+            traversal.skip();
+            break;
+        case SyntaxKind.ParameterDeclaration:
+            // skips traversal of the current node, siblings, and all their descendants
+            traversal.up();
+            break;
+        case SyntaxKind.FunctionDeclaration:
+            // stop traversal completely
+            traversal.stop();
+            break;
+    }
+});
+```
+
+Also, take note that `node.forEachChild` has been updated for consistency with `forEachDescendant`:
+
+```ts
+node.forEachChild((node, traversal) => {
+    if (node.getKind() === SyntaxKind.FunctionDeclaration)
+        traversal.stop();
+});
+```
+
 ## Version 12
 
 ### Conditional Types
