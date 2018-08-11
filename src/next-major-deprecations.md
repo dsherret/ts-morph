@@ -1,3 +1,3 @@
 ﻿# Deprecations in the next major
 
-None.
+* Project and SourceFile - getDiagnostics()

@@ -17,7 +17,7 @@ const project = getDefinitionProject();
 if (project.getSourceFiles().length === 0)
     throw new Error("Could not find any source files.");
 
-const problems = project.getDiagnostics().map(d => {
+const problems = project.getPreEmitDiagnostics().map(d => {
     let text = "";
     if (d.getSourceFile() != null)
         text += `${d.getSourceFile()!.getFilePath()} ${d.getStart()}: `;

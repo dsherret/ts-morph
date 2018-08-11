@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
-import { LanguageService, QuoteKind, TypeChecker } from "./compiler";
+import { LanguageService, QuoteKind, TypeChecker, SourceFile, Diagnostic } from "./compiler";
 import * as errors from "./errors";
 import { CompilerFactory, StructurePrinterFactory } from "./factories";
 import { DirectoryCoordinator, FileSystemWrapper } from "./fileSystem";
@@ -166,6 +166,15 @@ export class ProjectContext {
             useTabs: indentationText === IndentationText.Tab,
             useSingleQuote: this.manipulationSettings.getQuoteKind() === QuoteKind.Single
         });
+    }
+
+    /**
+     * Gets the pre-emit diagnostics.
+     * @param sourceFile - Optional source file to filter the results by.
+     */
+    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
+        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.program.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
+        return compilerDiagnostics.map(d => this.compilerFactory.getDiagnostic(d));
     }
 
     private getToolRequiredError(name: string) {

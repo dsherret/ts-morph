@@ -403,6 +403,7 @@ export class Project {
 
     /**
      * Gets the compiler diagnostics.
+     * @deprecated Use getPreEmitDiagnostics().
      */
     getDiagnostics(): Diagnostic[] {
         return [
@@ -416,7 +417,7 @@ export class Project {
      * Gets the pre-emit diagnostics.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
-        return this.context.program.getPreEmitDiagnostics();
+        return this.context.getPreEmitDiagnostics();
     }
 
     /**

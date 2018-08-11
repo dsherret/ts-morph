@@ -115,10 +115,10 @@ export class Program {
     /**
      * Gets the pre-emit diagnostics.
      * @param sourceFile - Source file.
+     * @deprecated - Call .getPreEmitDiagnostics() on the source file or project instead.
      */
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
-        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
+        return this.context.getPreEmitDiagnostics(sourceFile);
     }
 
     /**

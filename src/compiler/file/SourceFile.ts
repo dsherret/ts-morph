@@ -779,6 +779,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
     /**
      * Gets the syntactic, semantic, and declaration diagnostics.
+     * @deprecated - Use getPreEmitDiagnostics().
      */
     getDiagnostics(): Diagnostic[] {
         return [
@@ -789,10 +790,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the pre-emit diagnostics.
+     * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
-        return this.context.program.getPreEmitDiagnostics(this);
+        return this.context.getPreEmitDiagnostics(this);
     }
 
     /**

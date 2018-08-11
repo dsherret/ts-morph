@@ -9,11 +9,12 @@ const errorCodes = {
     AwaitOnlyAllowedInAsyncFunc: 1308,
     NoMultipleExportAssignments: 2309,
     ImportDeclarationConflictsWithLocalDeclaration: 2440,
-    ExportAssignmentCannotBeUsedTargetingESModules: 1203
+    ExportAssignmentCannotBeUsedTargetingESModules: 1203,
+    FileNotUnderRootDir: 6059
 };
 const errorCodesToIgnore = [errorCodes.CannotRedeclareVariable, errorCodes.CannotFindModule, errorCodes.DuplicateIdentifier,
     errorCodes.AwaitOnlyAllowedInAsyncFunc, errorCodes.NoMultipleExportAssignments, errorCodes.ImportDeclarationConflictsWithLocalDeclaration,
-    errorCodes.ExportAssignmentCannotBeUsedTargetingESModules];
+    errorCodes.ExportAssignmentCannotBeUsedTargetingESModules, errorCodes.FileNotUnderRootDir];
 const project = getProject();
 const docsDir = project.addExistingDirectory("./docs");
 const fileSystem = project.getFileSystem();
@@ -44,7 +45,7 @@ const markDownFilesWithCodeBlocks = markDownFiles
 for (const {markDownFile, codeBlocksWithSourceFiles} of markDownFilesWithCodeBlocks) {
     for (const {codeBlock, tempSourceFile} of codeBlocksWithSourceFiles) {
         const ignoredErrorCodes = codeBlock.getIgnoredErrorCodes();
-        const codeBlockDiagnostics = tempSourceFile.getDiagnostics()
+        const codeBlockDiagnostics = tempSourceFile.getPreEmitDiagnostics()
             .filter(d => [...errorCodesToIgnore, ...ignoredErrorCodes].indexOf(d.getCode()) === -1);
         errors.push(...codeBlockDiagnostics.map(diagnostic => ({ diagnostic, codeBlock })));
     }

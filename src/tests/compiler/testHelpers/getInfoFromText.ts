@@ -14,6 +14,9 @@ function getTextForLibFile(fileName: string) {
 
 const libFileNames = [
     "lib.d.ts",
+    "lib.dom.d.ts",
+    "lib.scripthost.d.ts",
+    "lib.webworker.importscripts.d.ts",
     "lib.es2017.full.d.ts",
     "lib.es2017.object.d.ts",
     "lib.es2017.sharedmemory.d.ts",
