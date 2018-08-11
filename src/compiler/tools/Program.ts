@@ -87,7 +87,7 @@ export class Program {
 
     /**
      * Gets the syntactic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
@@ -96,7 +96,7 @@ export class Program {
 
     /**
      * Gets the semantic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
@@ -105,11 +105,19 @@ export class Program {
 
     /**
      * Gets the declaration diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
         return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnosticWithLocation(d));
+    }
+
+    /**
+     * Gets the global diagnostics.
+     */
+    getGlobalDiagnostics(): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
+        return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 
     /**
