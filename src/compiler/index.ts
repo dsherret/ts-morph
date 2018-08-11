@@ -18,3 +18,4 @@ export * from "./namespace";
 export * from "./statement";
 export * from "./tools";
 export * from "./type";
+export * from "./variable";

@@ -4,9 +4,7 @@ import { AmbientableNode, ChildOrderableNode, ExportableNode, JSDocableNode, Mod
 import { callBaseFill } from "../callBaseFill";
 import { NamespaceChildableNode } from "../namespace";
 import { Statement } from "./Statement";
-import { VariableDeclaration } from "./VariableDeclaration";
-import { VariableDeclarationKind } from "./VariableDeclarationKind";
-import { VariableDeclarationList } from "./VariableDeclarationList";
+import { VariableDeclaration, VariableDeclarationKind, VariableDeclarationList } from "../variable";
 
 export const VariableStatementBase = ChildOrderableNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(ExportableNode(ModifierableNode(Statement))))));
 export class VariableStatement extends VariableStatementBase<ts.VariableStatement> {

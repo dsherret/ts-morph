@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { ts } from "../../typescript";
 import { Expression } from "../expression";
 import { IterationStatement } from "./IterationStatement";
-import { VariableDeclarationList } from "./VariableDeclarationList";
+import { VariableDeclarationList } from "../variable";
 
 export const ForStatementBase = IterationStatement;
 export class ForStatement extends ForStatementBase<ts.ForStatement> {

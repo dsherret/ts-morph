@@ -16,7 +16,8 @@ import { FunctionDeclaration } from "../function";
 import { InterfaceDeclaration } from "../interface";
 import { KindToNodeMappings } from "../kindToNodeMappings";
 import { NamespaceDeclaration } from "../namespace";
-import { Statement, VariableDeclaration, VariableStatement } from "../statement";
+import { Statement, VariableStatement } from "../statement";
+import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
