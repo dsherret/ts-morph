@@ -517,6 +517,7 @@ export declare class Project {
     private getUnsavedSourceFiles;
     /**
      * Gets the compiler diagnostics.
+     * @deprecated Use getPreEmitDiagnostics().
      */
     getDiagnostics(): Diagnostic[];
     /**
@@ -712,6 +713,11 @@ export declare class TypeGuards {
      */
     static isArgumentedNode(node: Node): node is ArgumentedNode & Node;
     /**
+     * Gets if the node is an ArrayBindingPattern.
+     * @param node - Node to check.
+     */
+    static isArrayBindingPattern(node: Node): node is ArrayBindingPattern;
+    /**
      * Gets if the node is an ArrayLiteralExpression.
      * @param node - Node to check.
      */
@@ -751,6 +757,11 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isBinaryExpression(node: Node): node is BinaryExpression;
+    /**
+     * Gets if the node is a BindingElement.
+     * @param node - Node to check.
+     */
+    static isBindingElement(node: Node): node is BindingElement;
     /**
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
@@ -1347,6 +1358,11 @@ export declare class TypeGuards {
      */
     static isNumericLiteral(node: Node): node is NumericLiteral;
     /**
+     * Gets if the node is a ObjectBindingPattern.
+     * @param node - Node to check.
+     */
+    static isObjectBindingPattern(node: Node): node is ObjectBindingPattern;
+    /**
      * Gets if the node is a ObjectKeyword.
      * @param node - Node to check.
      */
@@ -1746,6 +1762,12 @@ export declare class TypeGuards {
 export declare type PropertyName = Identifier | StringLiteral | NumericLiteral | ComputedPropertyName;
 
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
+
+export declare type ArrayBindingElement = BindingElement | OmittedExpression;
+
+export declare type BindingName = Identifier | BindingPattern;
+
+export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
 
 export declare type EntityName = Identifier | QualifiedName;
 
@@ -2384,20 +2406,9 @@ export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeE
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-export declare type BindingNamedNodeExtensionType = Node<ts.Declaration & {
-    name: ts.BindingName;
-}>;
+export declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
 
-export interface BindingNamedNodeSpecific {
-    /**
-     * Gets the declaration's name node.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Gets the declaration's name as a string.
-     */
-    getName(): string;
-}
+export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
 
 export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
 
@@ -2453,47 +2464,40 @@ export interface NameableNodeSpecific {
     getNameOrThrow(): string;
 }
 
-export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+export declare function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U;
 
-export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
-}
-
-export declare function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T;
-
-export declare type NamedNodeExtensionType = Node<ts.Node & {
-    name: ts.Identifier;
-}>;
-
-export interface NamedNodeSpecific {
+export interface NamedNodeSpecificBase<TNode extends Node> {
     /**
      * Gets the name node.
      */
-    getNameNode(): Identifier;
+    getNameNode(): TNode;
     /**
      * Gets the name.
      */
     getName(): string;
 }
 
+export declare type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & {
+    name: TCompilerNode;
+}>;
+
+export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+
+export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
+}
+
+export declare type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
+
+export declare type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
+
 export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
 
 export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
-    name: ts.PropertyName;
-}>;
+export declare type PropertyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.PropertyName>;
 
-export interface PropertyNamedNodeSpecific {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): PropertyName;
-    /**
-     * Gets the text of the name of the node.
-     */
-    getName(): string;
-}
+export declare type PropertyNamedNodeSpecific = NamedNodeSpecificBase<PropertyName>;
 
 export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
 
@@ -3133,6 +3137,33 @@ export interface UnwrappableNode {
 }
 
 export declare type UnwrappableNodeExtensionType = Node;
+
+export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
+    /**
+     * Gets the array binding pattern's elements.
+     */
+    getElements(): (BindingElement | OmittedExpression)[];
+}
+
+declare const BindingElementBase: Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+
+export declare class BindingElement extends BindingElementBase<ts.BindingElement> {
+    /**
+     * Gets the binding element's dot dot dot token (...) if it exists.
+     */
+    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    /**
+     * Gets binding element's property name node. For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+     */
+    getPropertyNameNode(): StringLiteral | ComputedPropertyName | Identifier | NumericLiteral | undefined;
+}
+
+export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
+    /**
+     * Gets the object binding pattern's elements.
+     */
+    getElements(): BindingElement[];
+}
 
 export declare function AbstractableNode<T extends Constructor<AbstractableNodeExtensionType>>(Base: T): Constructor<AbstractableNode> & T;
 
@@ -4491,7 +4522,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBindingPattern ? ArrayBindingPattern : T extends ts.BindingElement ? BindingElement : T extends ts.ObjectBindingPattern ? ObjectBindingPattern : T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -6104,10 +6135,11 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
     getDefaultExportSymbolOrThrow(): Symbol;
     /**
      * Gets the syntactic, semantic, and declaration diagnostics.
+     * @deprecated - Use getPreEmitDiagnostics().
      */
     getDiagnostics(): Diagnostic[];
     /**
-     * Gets the pre-emit diagnostics.
+     * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[];
     /**
@@ -6308,7 +6340,7 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      */
     fill(structure: Partial<ParameterDeclarationStructure>): this;
     /**
-     * Gets the dot dot dot token (...) for a rest parameter.
+     * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
     getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
     /**
@@ -6418,7 +6450,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     /**
      * Gets the key name node.
      */
-    getKeyNameNode(): Identifier | Node<ts.ObjectBindingPattern> | Node<ts.ArrayBindingPattern>;
+    getKeyNameNode(): ArrayBindingPattern | ObjectBindingPattern | Identifier;
     /**
      * Gets the key type.
      */
@@ -6701,11 +6733,13 @@ export declare class JsxText extends Node<ts.JsxText> {
 export interface KindToNodeMappings {
     [kind: number]: Node;
     [SyntaxKind.SourceFile]: SourceFile;
+    [SyntaxKind.ArrayBindingPattern]: ArrayBindingPattern;
     [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
     [SyntaxKind.ArrayType]: ArrayTypeNode;
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BindingElement]: BindingElement;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.Block]: Block;
     [SyntaxKind.BreakStatement]: BreakStatement;
@@ -6793,6 +6827,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: NumericLiteral;
     [SyntaxKind.FirstLiteralToken]: NumericLiteral;
+    [SyntaxKind.ObjectBindingPattern]: ObjectBindingPattern;
     [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: OmittedExpression;
     [SyntaxKind.Parameter]: ParameterDeclaration;
@@ -7841,74 +7876,6 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
     getFinallyBlockOrThrow(): Block;
 }
 
-declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
-
-export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
-    /**
-     * Fills this node with the specified structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationStructure>): this;
-    /**
-     * Removes this variable declaration.
-     */
-    remove(): void;
-}
-export declare enum VariableDeclarationKind {
-    Var = "var",
-    Let = "let",
-    Const = "const"
-}
-
-declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
-
-export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
-    /**
-     * Get the variable declarations.
-     */
-    getDeclarations(): VariableDeclaration[];
-    /**
-     * Gets the variable declaration kind.
-     */
-    getDeclarationKind(): VariableDeclarationKind;
-    /**
-     * Gets the variable declaration kind keyword.
-     */
-    getDeclarationKindKeyword(): Node;
-    /**
-     * Sets the variable declaration kind.
-     * @param type - Type to set.
-     */
-    setDeclarationKind(type: VariableDeclarationKind): this;
-    /**
-     * Add a variable declaration to the statement.
-     * @param structure - Structure representing the variable declaration to add.
-     */
-    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Adds variable declarations to the statement.
-     * @param structures - Structures representing the variable declarations to add.
-     */
-    addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
-    /**
-     * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structure - Structure representing the variable declaration to insert.
-     */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Inserts variable declarations at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structures - Structures representing the variable declarations to insert.
-     */
-    insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationListStructure>): this;
-}
-
 declare const VariableStatementBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
@@ -8162,22 +8129,27 @@ export declare class Program {
     emit(options?: EmitOptions): EmitResult;
     /**
      * Gets the syntactic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
      * Gets the semantic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[];
     /**
      * Gets the declaration diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
+     * Gets the global diagnostics.
+     */
+    getGlobalDiagnostics(): Diagnostic[];
+    /**
      * Gets the pre-emit diagnostics.
      * @param sourceFile - Source file.
+     * @deprecated - Call .getPreEmitDiagnostics() on the source file or project instead.
      */
     getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[];
     /**
@@ -9025,6 +8997,74 @@ export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
      * Gets the union type nodes.
      */
     getTypeNodes(): TypeNode[];
+}
+
+declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+
+export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
+    /**
+     * Fills this node with the specified structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<VariableDeclarationStructure>): this;
+    /**
+     * Removes this variable declaration.
+     */
+    remove(): void;
+}
+export declare enum VariableDeclarationKind {
+    Var = "var",
+    Let = "let",
+    Const = "const"
+}
+
+declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
+
+export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
+    /**
+     * Get the variable declarations.
+     */
+    getDeclarations(): VariableDeclaration[];
+    /**
+     * Gets the variable declaration kind.
+     */
+    getDeclarationKind(): VariableDeclarationKind;
+    /**
+     * Gets the variable declaration kind keyword.
+     */
+    getDeclarationKindKeyword(): Node;
+    /**
+     * Sets the variable declaration kind.
+     * @param type - Type to set.
+     */
+    setDeclarationKind(type: VariableDeclarationKind): this;
+    /**
+     * Add a variable declaration to the statement.
+     * @param structure - Structure representing the variable declaration to add.
+     */
+    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Adds variable declarations to the statement.
+     * @param structures - Structures representing the variable declarations to add.
+     */
+    addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
+    /**
+     * Inserts a variable declaration at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structure - Structure representing the variable declaration to insert.
+     */
+    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Inserts variable declarations at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structures - Structures representing the variable declarations to insert.
+     */
+    insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<VariableDeclarationListStructure>): this;
 }
 
 /**

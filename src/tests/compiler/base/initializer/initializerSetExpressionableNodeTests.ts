@@ -1,8 +1,9 @@
 import { expect } from "chai";
-import { ClassDeclaration, EnumDeclaration, InitializerSetExpressionableNode, PropertyDeclaration } from "../../../../compiler";
+import { SyntaxKind } from "../../../../typescript";
+import { ClassDeclaration, EnumDeclaration, InitializerSetExpressionableNode, PropertyDeclaration, BindingElement } from "../../../../compiler";
 import { InitializerSetExpressionableNodeStructure } from "../../../../structures";
 import { WriterFunction } from "../../../../types";
-import { getInfoFromText } from "../../testHelpers";
+import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
 describe(nameof(InitializerSetExpressionableNode), () => {
     function getEnumMemberFromText(text: string) {
@@ -11,18 +12,36 @@ describe(nameof(InitializerSetExpressionableNode), () => {
     }
 
     describe(nameof<InitializerSetExpressionableNode>(n => n.removeInitializer), () => {
-        function doTest(startCode: string, expectedCode: string) {
-            const {member, sourceFile} = getEnumMemberFromText(startCode);
-            member.removeInitializer();
-            expect(sourceFile.getFullText()).to.equal(expectedCode);
-        }
+        describe("enum", () => {
+            function doTest(startCode: string, expectedCode: string) {
+                const { member, sourceFile } = getEnumMemberFromText(startCode);
+                member.removeInitializer();
+                expect(sourceFile.getFullText()).to.equal(expectedCode);
+            }
 
-        it("should remove when it has an initializer", () => {
-            doTest("enum MyEnum { myMember = 5 }", "enum MyEnum { myMember }");
+            it("should remove when it has an initializer", () => {
+                doTest("enum MyEnum { myMember = 5 }", "enum MyEnum { myMember }");
+            });
+
+            it("should do nothing when it doesn't have an initializer", () => {
+                doTest("enum MyEnum { myMember }", "enum MyEnum { myMember }");
+            });
         });
 
-        it("should do nothing when it doesn't have an initializer", () => {
-            doTest("enum MyEnum { myMember }", "enum MyEnum { myMember }");
+        describe("binding element", () => {
+            function doTest(text: string, expectedText: string) {
+                const { sourceFile, descendant } = getInfoFromTextWithDescendant<BindingElement>(text, SyntaxKind.BindingElement);
+                descendant.removeInitializer();
+                expect(sourceFile.getFullText()).to.equal(expectedText);
+            }
+
+            it("should remove an initializer", () => {
+                doTest("const [t = 4] = [];", "const [t] = [];");
+            });
+
+            it("should remove an initializer when there's a property name", () => {
+                doTest("const { t: u = 5 } = {};", "const { t: u } = {};");
+            });
         });
     });
 
@@ -94,6 +113,30 @@ describe(nameof(InitializerSetExpressionableNode), () => {
 
             it("should set initializer when there's a comment after and no semi-colon", () => {
                 doClassPropTest("class Identifier { prop/*comment*/ }", "2", "class Identifier { prop = 2/*comment*/ }");
+            });
+        });
+
+        describe("binding element", () => {
+            function doTest(text: string, initializer: string, expectedText: string) {
+                const { sourceFile, descendant } = getInfoFromTextWithDescendant<BindingElement>(text, SyntaxKind.BindingElement);
+                descendant.setInitializer(initializer);
+                expect(sourceFile.getFullText()).to.equal(expectedText);
+            }
+
+            it("should add an initializer", () => {
+                doTest("const [t] = [];", "5", "const [t = 5] = [];");
+            });
+
+            it("should change an initializer", () => {
+                doTest("const [t = 4] = [];", "5", "const [t = 5] = [];");
+            });
+
+            it("should add an initializer when there's a property name", () => {
+                doTest("const { t: u } = {};", "5", "const { t: u = 5 } = {};");
+            });
+
+            it("should change an initializer when there's a property name", () => {
+                doTest("const { t: u = 4 } = {};", "5", "const { t: u = 5 } = {};");
             });
         });
 

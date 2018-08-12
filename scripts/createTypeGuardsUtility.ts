@@ -42,6 +42,8 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
         parameters: [{ name: "node", type: "compiler.Node" }],
         returnType: `node is compiler.${method.wrapperName}` + (method.isMixin ? " & compiler.Node" : ""),
         bodyText: (writer: CodeBlockWriter) => {
+            if (method.syntaxKinds.length === 0)
+                throw new Error(`For some reason  ${method.name} had no syntax kinds.`);
             if (method.syntaxKinds.length === 1) {
                 writer.writeLine(`return node.getKind() === SyntaxKind.${method.syntaxKinds[0]};`);
                 return;
@@ -60,7 +62,7 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
     function getMethodInfos() {
         const methodInfos = new KeyValueCache<string, MethodInfo>();
 
-        for (const node of inspector.getWrappedNodes().filter(n => n.getName() !== "Node" && isAllowedClass(n.getName()))) {
+        for (const node of inspector.getWrappedNodes().filter(n => isAllowedClass(n.getName()))) {
             const methodInfo = getMethodInfoForNode(node);
             const nodeBase = node.getBase();
             if (nodeBase != null)
@@ -140,13 +142,15 @@ export function createTypeGuardsUtility(inspector: TsSimpleAstInspector) {
 }
 
 function isAllowedName(name: string) {
-    if (name === "Node" || name.endsWith("Specific"))
+    if (name === "Node" || name.endsWith("Specific") || name.endsWith("SpecificBase"))
         return false;
     return true;
 }
 
 function isAllowedClass(name: string) {
     switch (name) {
+        case "Node":
+        case "FunctionOrConstructorTypeNodeBase":
         // todo: should support these classes eventually (they probably need to be customly implemented)
         case "ObjectDestructuringAssignment":
         case "ArrayDestructuringAssignment":

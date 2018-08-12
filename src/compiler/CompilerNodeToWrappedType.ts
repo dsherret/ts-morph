@@ -2,7 +2,10 @@
 import * as compiler from "./index";
 import { ts } from "../typescript";
 
-export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? compiler.ClassDeclaration :
+export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBindingPattern ? compiler.ArrayBindingPattern :
+    T extends ts.BindingElement ? compiler.BindingElement :
+    T extends ts.ObjectBindingPattern ? compiler.ObjectBindingPattern :
+    T extends ts.ClassDeclaration ? compiler.ClassDeclaration :
     T extends ts.ConstructorDeclaration ? compiler.ConstructorDeclaration :
     T extends ts.GetAccessorDeclaration ? compiler.GetAccessorDeclaration :
     T extends ts.MethodDeclaration ? compiler.MethodDeclaration :
@@ -109,8 +112,6 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDec
     T extends ts.SwitchStatement ? compiler.SwitchStatement :
     T extends ts.ThrowStatement ? compiler.ThrowStatement :
     T extends ts.TryStatement ? compiler.TryStatement :
-    T extends ts.VariableDeclaration ? compiler.VariableDeclaration :
-    T extends ts.VariableDeclarationList ? compiler.VariableDeclarationList :
     T extends ts.VariableStatement ? compiler.VariableStatement :
     T extends ts.WhileStatement ? compiler.WhileStatement :
     T extends ts.IterationStatement ? compiler.IterationStatement :
@@ -130,6 +131,8 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDec
     T extends ts.TypeReferenceNode ? compiler.TypeReferenceNode :
     T extends ts.UnionTypeNode ? compiler.UnionTypeNode :
     T extends ts.TypeNode ? compiler.TypeNode :
+    T extends ts.VariableDeclaration ? compiler.VariableDeclaration :
+    T extends ts.VariableDeclarationList ? compiler.VariableDeclarationList :
     T extends ts.ArrayDestructuringAssignment ? compiler.ArrayDestructuringAssignment :
     T extends ts.ArrayLiteralExpression ? compiler.ArrayLiteralExpression :
     T extends ts.ObjectDestructuringAssignment ? compiler.ObjectDestructuringAssignment :

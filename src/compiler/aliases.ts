@@ -1,9 +1,10 @@
 import { AssertTrue, IsExactType } from "conditional-type-checks";
 import { ts } from "../typescript";
+import { ArrayBindingPattern, ObjectBindingPattern, BindingElement } from "./binding";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "./class";
 import { ComputedPropertyName, Identifier, Node, QualifiedName } from "./common";
 import { PrimaryExpression, PropertyAccessExpression, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment,
-    ThisExpression } from "./expression";
+    ThisExpression, OmittedExpression } from "./expression";
 import { ExternalModuleReference } from "./file";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "./interface";
 import { JsxAttribute, JsxElement, JsxExpression, JsxFragment, JsxSelfClosingElement, JsxSpreadAttribute, JsxText } from "./jsx";
@@ -17,6 +18,15 @@ type _PropertyNameTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<Proper
 
 export type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 type _AccessorDeclarationTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<AccessorDeclaration>, ts.AccessorDeclaration>>;
+
+export type ArrayBindingElement = BindingElement | OmittedExpression;
+type _ArrayBindingElementTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<ArrayBindingElement>, ts.ArrayBindingElement>>;
+
+export type BindingName = Identifier | BindingPattern;
+type _BindingNameTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<BindingName>, ts.BindingName>>;
+
+export type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
+type _BindingPatternTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<BindingPattern>, ts.BindingPattern>>;
 
 export type EntityName = Identifier | QualifiedName;
 type _EntityNameTest = AssertTrue<IsExactType<WrappedToCompilerNodeType<EntityName>, ts.EntityName>>;

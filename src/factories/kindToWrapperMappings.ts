@@ -7,11 +7,13 @@ import { SyntaxKind } from "../typescript";
 // using an "any" type here because I couldn't figure out a way of getting the typescript compiler to understand this
 export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.SourceFile]: compiler.SourceFile,
+    [SyntaxKind.ArrayBindingPattern]: compiler.ArrayBindingPattern,
     [SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression,
     [SyntaxKind.ArrayType]: compiler.ArrayTypeNode,
     [SyntaxKind.ArrowFunction]: compiler.ArrowFunction,
     [SyntaxKind.AsExpression]: compiler.AsExpression,
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression,
+    [SyntaxKind.BindingElement]: compiler.BindingElement,
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression,
     [SyntaxKind.Block]: compiler.Block,
     [SyntaxKind.BreakStatement]: compiler.BreakStatement,
@@ -91,6 +93,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.NotEmittedStatement]: compiler.NotEmittedStatement,
     [SyntaxKind.NoSubstitutionTemplateLiteral]: compiler.NoSubstitutionTemplateLiteral,
     [SyntaxKind.NumericLiteral]: compiler.NumericLiteral,
+    [SyntaxKind.ObjectBindingPattern]: compiler.ObjectBindingPattern,
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression,
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression,
     [SyntaxKind.Parameter]: compiler.ParameterDeclaration,

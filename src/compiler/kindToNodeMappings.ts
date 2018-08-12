@@ -5,11 +5,13 @@ import { SyntaxKind } from "../typescript";
 export interface KindToNodeMappings {
     [kind: number]: compiler.Node;
     [SyntaxKind.SourceFile]: compiler.SourceFile;
+    [SyntaxKind.ArrayBindingPattern]: compiler.ArrayBindingPattern;
     [SyntaxKind.ArrayLiteralExpression]: compiler.ArrayLiteralExpression;
     [SyntaxKind.ArrayType]: compiler.ArrayTypeNode;
     [SyntaxKind.ArrowFunction]: compiler.ArrowFunction;
     [SyntaxKind.AsExpression]: compiler.AsExpression;
     [SyntaxKind.AwaitExpression]: compiler.AwaitExpression;
+    [SyntaxKind.BindingElement]: compiler.BindingElement;
     [SyntaxKind.BinaryExpression]: compiler.BinaryExpression;
     [SyntaxKind.Block]: compiler.Block;
     [SyntaxKind.BreakStatement]: compiler.BreakStatement;
@@ -97,6 +99,7 @@ export interface KindToNodeMappings {
     [SyntaxKind.FirstTemplateToken]: compiler.NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: compiler.NumericLiteral;
     [SyntaxKind.FirstLiteralToken]: compiler.NumericLiteral;
+    [SyntaxKind.ObjectBindingPattern]: compiler.ObjectBindingPattern;
     [SyntaxKind.ObjectLiteralExpression]: compiler.ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression;
     [SyntaxKind.Parameter]: compiler.ParameterDeclaration;

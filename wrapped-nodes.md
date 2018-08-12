@@ -6,8 +6,10 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 157
+**Total:** 160
 
+* [ArrayBindingPattern](src/compiler/binding/ArrayBindingPattern.ts)
+    * :heavy_check_mark: elements
 * [ArrayDestructuringAssignment](src/compiler/expression/array/ArrayDestructuringAssignment.ts)
     * :heavy_check_mark: left
 * [ArrayLiteralExpression](src/compiler/expression/array/ArrayLiteralExpression.ts)
@@ -30,6 +32,11 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: left
     * :heavy_check_mark: operatorToken
     * :heavy_check_mark: right
+* [BindingElement](src/compiler/binding/BindingElement.ts)
+    * :heavy_check_mark: propertyName
+    * :heavy_check_mark: dotDotDotToken
+    * :heavy_check_mark: name
+    * :heavy_check_mark: initializer
 * [Block](src/compiler/statement/Block.ts)
     * :heavy_check_mark: statements
 * [BooleanLiteral](src/compiler/literal/BooleanLiteral.ts)
@@ -214,7 +221,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [LabeledStatement](src/compiler/statement/LabeledStatement.ts)
     * :heavy_check_mark: label
     * :heavy_check_mark: statement
-* [LeftHandSideExpression](src/compiler/decorator/Decorator.ts)
+* [LeftHandSideExpression](src/compiler/expression/LeftHandSideExpression.ts)
 * [LiteralExpression](src/compiler/expression/LiteralExpression.ts)
 * [LiteralTypeNode](src/compiler/type/LiteralTypeNode.ts)
     * :heavy_check_mark: literal
@@ -241,6 +248,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [NotEmittedStatement](src/compiler/statement/NotEmittedStatement.ts)
 * [NullLiteral](src/compiler/literal/NullLiteral.ts)
 * [NumericLiteral](src/compiler/literal/NumericLiteral.ts)
+* [ObjectBindingPattern](src/compiler/binding/ObjectBindingPattern.ts)
+    * :heavy_check_mark: elements
 * [ObjectDestructuringAssignment](src/compiler/expression/object/ObjectDestructuringAssignment.ts)
     * :heavy_check_mark: left
 * [ObjectLiteralExpression](src/compiler/expression/object/ObjectLiteralExpression.ts)
@@ -375,12 +384,12 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * [UnionTypeNode](src/compiler/type/UnionTypeNode.ts)
     * :heavy_check_mark: types
 * [UpdateExpression](src/compiler/expression/UpdateExpression.ts)
-* [VariableDeclaration](src/compiler/statement/VariableDeclaration.ts)
+* [VariableDeclaration](src/compiler/variable/VariableDeclaration.ts)
     * :heavy_check_mark: name
     * :heavy_check_mark: exclamationToken
     * :heavy_check_mark: type
     * :heavy_check_mark: initializer
-* [VariableDeclarationList](src/compiler/statement/VariableDeclarationList.ts)
+* [VariableDeclarationList](src/compiler/variable/VariableDeclarationList.ts)
     * :heavy_check_mark: declarations
 * [VariableStatement](src/compiler/statement/VariableStatement.ts)
     * :heavy_check_mark: declarationList
@@ -397,10 +406,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 64
+**Total:** 61
 
-* ArrayBindingPattern
-* BindingElement
 * Bundle
 * ClassElement
 * ClassExpression
@@ -445,7 +452,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * NamespaceExportDeclaration
 * NamespaceImport
 * NodeWithTypeArguments
-* ObjectBindingPattern
 * ObjectLiteralElement
 * ObjectLiteralExpressionBase
 * OptionalTypeNode
