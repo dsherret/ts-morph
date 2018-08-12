@@ -1,9 +1,13 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
-    PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../compiler";
-import { ClassDeclarationSpecificStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+import {
+    ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
+    PropertyDeclaration, Scope, SetAccessorDeclaration
+} from "../../../compiler";
+import {
+    ClassDeclarationSpecificStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
     SetAccessorDeclarationStructure,
-    ClassDeclarationStructure} from "../../../structures";
+    ClassDeclarationStructure
+} from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
@@ -11,7 +15,7 @@ import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
 describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(c => c.fill), () => {
         function doTest(startingCode: string, structure: ClassDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             firstChild.fill(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -36,31 +40,31 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getExtends), () => {
         it("should return undefined when no extends clause exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(firstChild.getExtends()).to.be.undefined;
         });
 
         it("should return a heritage clause when an extends clause exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
             expect(firstChild.getExtends()).to.be.instanceOf(ExpressionWithTypeArguments);
         });
     });
 
     describe(nameof<ClassDeclaration>(d => d.getExtendsOrThrow), () => {
         it("should throw when no extends clause exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(() => firstChild.getExtendsOrThrow()).to.throw();
         });
 
         it("should return a heritage clause when an extends clause exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier extends Base { }");
             expect(firstChild.getExtendsOrThrow()).to.be.instanceOf(ExpressionWithTypeArguments);
         });
     });
 
     describe(nameof<ClassDeclaration>(d => d.setExtends), () => {
         function doTest(startCode: string, extendsText: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.setExtends(extendsText);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -92,7 +96,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.removeExtends), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.removeExtends();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -112,7 +116,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertConstructor), () => {
         function doTest(startCode: string, insertIndex: number, structure: ConstructorDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertConstructor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(ConstructorDeclaration);
@@ -123,7 +127,7 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         it("should not remove the previous constructor when one exists", () => {
-            doTest("class c {\n    constructor() {\n    }\n}", 1, { scope: Scope.Private},
+            doTest("class c {\n    constructor() {\n    }\n}", 1, { scope: Scope.Private },
                 "class c {\n    constructor() {\n    }\n\n    private constructor() {\n    }\n}");
         });
 
@@ -159,7 +163,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addConstructor), () => {
         function doTest(startCode: string, structure: ConstructorDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addConstructor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(ConstructorDeclaration);
@@ -169,6 +173,22 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    prop1;\n}", {},
                 "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
         });
+
+        it("should add constructor with parameters and body", () => {
+            const ctor: ConstructorDeclarationStructure = {
+                parameters: [
+                    {
+                        name: "a",
+                        type: "Date[][]",
+                        scope: Scope.Public
+                    }
+                ],
+                bodyText: "super();"
+            };
+            doTest("class c {\n    prop1;\n}", ctor,
+                "class c {\n    prop1;\n\n    constructor(public a: Date[][]) {\n        super();\n    }\n}");
+        });
+
     });
 
     describe(nameof<ClassDeclaration>(d => d.addConstructors), () => {
@@ -185,7 +205,7 @@ describe(nameof(ClassDeclaration), () => {
         });
 
         it("should print multiple correctly when ambient", () => {
-            doTest("declare class c {\n}", [{}, { parameters: [{ name: "p", type: "any" }]}],
+            doTest("declare class c {\n}", [{}, { parameters: [{ name: "p", type: "any" }] }],
                 "declare class c {\n    constructor();\n    constructor(p: any);\n}");
         });
     });
@@ -206,24 +226,24 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getConstructors), () => {
         it("should return undefined when no constructor exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { }");
             expect(firstChild.getConstructors().length).to.equal(0);
         });
 
         it("should return the constructor when it exists", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor() { } }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { constructor() { } }");
             expect(firstChild.getConstructors()[0]!.getText()).to.equal("constructor() { }");
         });
 
         it("should return the implementation constructor if not in an ambient context", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier { constructor(str: string);constructor(str: any) { } }");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier { constructor(str: string);constructor(str: any) { } }");
             const constructors = firstChild.getConstructors();
             expect(constructors.length).to.equal(1);
             expect(constructors[0]!.getText()).to.equal("constructor(str: any) { }");
         });
 
         it("should return both constructors in an ambient context", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("declare class Identifier { constructor(str: string);constructor(str: any);}");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("declare class Identifier { constructor(str: string);constructor(str: any);}");
             const constructors = firstChild.getConstructors();
             expect(constructors.length).to.equal(2);
             expect(constructors[0]!.getText()).to.equal("constructor(str: string);");
@@ -233,7 +253,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertGetAccessors), () => {
         function doTest(startCode: string, insertIndex: number, structures: GetAccessorDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessors(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -278,7 +298,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertGetAccessor), () => {
         function doTest(startCode: string, insertIndex: number, structure: GetAccessorDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertGetAccessor(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(GetAccessorDeclaration);
@@ -292,7 +312,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addGetAccessors), () => {
         function doTest(startCode: string, structures: GetAccessorDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessors(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -306,7 +326,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addGetAccessor), () => {
         function doTest(startCode: string, structure: GetAccessorDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addGetAccessor(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(GetAccessorDeclaration);
@@ -320,7 +340,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertProperties), () => {
         function doTest(startCode: string, insertIndex: number, structures: PropertyDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperties(insertIndex, structures);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -359,7 +379,7 @@ describe(nameof(ClassDeclaration), () => {
                 isAbstract: false,
                 isReadonly: true
             };
-            doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true}],
+            doTest("class c {\n}", 0, [structure, { name: "other", hasExclamationToken: true }],
                 "class c {\n    /**\n     * Test\n     */\n    @dec\n    public static readonly prop?: number = 5;\n    other!;\n" +
                 "}");
         });
@@ -367,7 +387,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertProperty), () => {
         function doTest(startCode: string, insertIndex: number, structure: PropertyDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertProperty(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(PropertyDeclaration);
@@ -380,7 +400,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addProperties), () => {
         function doTest(startCode: string, structures: PropertyDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperties(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -393,7 +413,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addProperty), () => {
         function doTest(startCode: string, structure: PropertyDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addProperty(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(PropertyDeclaration);
@@ -406,7 +426,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getProperty), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getProperty("member")!.getText()).to.equal("static member: string;");
@@ -419,7 +439,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getPropertyOrThrow), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getPropertyOrThrow("member2").getText()).to.equal("member2: string;");
@@ -432,7 +452,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getGetAccessor), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getGetAccessor("member")!.getText()).to.equal("get member() {}");
@@ -445,7 +465,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getGetAccessorOrThrow), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getGetAccessorOrThrow("member").getText()).to.equal("get member() {}");
@@ -458,7 +478,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getSetAccessor), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getSetAccessor("member")!.getText()).to.equal("set member() {}");
@@ -471,7 +491,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getSetAccessorOrThrow), () => {
         const code = "class Identifier { member() {} get member() {} set member() {} static member: string; member2: string; }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getSetAccessorOrThrow("member").getText()).to.equal("set member() {}");
@@ -572,7 +592,7 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getInstanceProperties), () => {
         describe("no properties", () => {
             it("should not have any properties", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getInstanceProperties().length).to.equal(0);
             });
         });
@@ -582,7 +602,7 @@ describe(nameof(ClassDeclaration), () => {
                 "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
                 "instanceProp: string;\nprop2: number;method1() {}\n" +
                 "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of properties", () => {
                 expect(firstChild.getInstanceProperties().length).to.equal(6);
@@ -617,7 +637,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method1() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
             const prop = firstChild.getInstanceProperty("prop2")! as PropertyDeclaration;
@@ -637,7 +657,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method1() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
             const prop = firstChild.getInstancePropertyOrThrow("prop2") as PropertyDeclaration;
@@ -661,7 +681,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method1() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
             const prop = firstChild.getStaticProperty("prop2")! as PropertyDeclaration;
@@ -681,7 +701,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method1() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a property by name", () => {
             const prop = firstChild.getStaticPropertyOrThrow("prop2") as PropertyDeclaration;
@@ -703,7 +723,7 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getStaticProperties), () => {
         describe("no static properties", () => {
             it("should not have any properties", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getStaticProperties().length).to.equal(0);
             });
         });
@@ -711,7 +731,7 @@ describe(nameof(ClassDeclaration), () => {
         describe("has static properties", () => {
             const code = "class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\nprop2: number;method1() {}\n" +
                 "\nstatic get prop(): string { return ''; }\nstatic set prop(val: string) {}\n}";
-            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
             it("should get the right number of static properties", () => {
                 expect(firstChild.getStaticProperties().length).to.equal(3);
@@ -733,7 +753,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertMethods), () => {
         function doTest(startCode: string, insertIndex: number, structures: MethodDeclarationStructure[], expectedCode: string) {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
+            const { descendant, sourceFile } = getInfoFromTextWithDescendant<ClassDeclaration>(startCode, SyntaxKind.ClassDeclaration);
             const result = descendant.insertMethods(insertIndex, structures);
             expect(sourceFile.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -790,7 +810,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.insertMethod), () => {
         function doTest(startCode: string, insertIndex: number, structure: MethodDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.insertMethod(insertIndex, structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(MethodDeclaration);
@@ -804,7 +824,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addMethods), () => {
         function doTest(startCode: string, structures: MethodDeclarationStructure[], expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethods(structures);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result.length).to.equal(structures.length);
@@ -818,7 +838,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.addMethod), () => {
         function doTest(startCode: string, structure: MethodDeclarationStructure, expectedCode: string) {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             const result = firstChild.addMethod(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
             expect(result).to.be.instanceOf(MethodDeclaration);
@@ -832,7 +852,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getMethod), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getMethod("member")!.getText()).to.equal("member() {}");
@@ -845,7 +865,7 @@ describe(nameof(ClassDeclaration), () => {
 
     describe(nameof<ClassDeclaration>(d => d.getMethodOrThrow), () => {
         const code = "class Identifier { get member() {} set member() {} static member: string; member() {} }\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a member when it exists", () => {
             expect(firstChild.getMethodOrThrow("member").getText()).to.equal("member() {}");
@@ -859,13 +879,13 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getInstanceMethods), () => {
         describe("no methods", () => {
             it("should not have any methods", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getInstanceMethods().length).to.equal(0);
             });
         });
 
         describe("has methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>(`class Identifier {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(`class Identifier {
     static prop2: string;
     static method() {}
     prop: string;
@@ -889,7 +909,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getInstanceMethod("method")!;
@@ -909,7 +929,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getInstanceMethodOrThrow("method");
@@ -931,13 +951,13 @@ describe(nameof(ClassDeclaration), () => {
     describe(nameof<ClassDeclaration>(d => d.getStaticMethods), () => {
         describe("no static methods", () => {
             it("should not have any static methods", () => {
-                const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
+                const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\n}\n");
                 expect(firstChild.getStaticMethods().length).to.equal(0);
             });
         });
 
         describe("has static methods", () => {
-            const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
+            const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nstatic prop2: string;\nstatic method() {}\nprop: string;\nmethod1() {}\nmethod2() {}\n}\n");
 
             it("should get the right number of static methods", () => {
                 expect(firstChild.getStaticMethods().length).to.equal(1);
@@ -954,7 +974,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getStaticMethod("method")!;
@@ -974,7 +994,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getStaticMethodOrThrow("method");
@@ -994,7 +1014,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getInstanceMembers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
+        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
             "prop2: number;method1() {}\n}\n");
         it("should get the right number of instance members", () => {
             expect(firstChild.getInstanceMembers().length).to.equal(4);
@@ -1006,7 +1026,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getInstanceMember("method")! as MethodDeclaration;
@@ -1031,7 +1051,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getInstanceMemberOrThrow("method") as MethodDeclaration;
@@ -1051,7 +1071,7 @@ describe(nameof(ClassDeclaration), () => {
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStaticMembers), () => {
-        const {firstChild} = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
+        const { firstChild } = getInfoFromText<ClassDeclaration>("class Identifier {\nconstructor(public p: string) {}\nstatic prop2: string;\nstatic method() {}\nprop: string;\n" +
             "prop2: number;method1() {}\n}\n");
         it("should get the right number of static members", () => {
             expect(firstChild.getStaticMembers().length).to.equal(2);
@@ -1063,7 +1083,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getStaticMember("method")! as MethodDeclaration;
@@ -1083,7 +1103,7 @@ describe(nameof(ClassDeclaration), () => {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getStaticMemberOrThrow("method") as MethodDeclaration;
@@ -1107,21 +1127,21 @@ describe(nameof(ClassDeclaration), () => {
             const code = "class Identifier {\nconstructor();constructor(public param) {}\nstatic prop2: string;\nstatic method();" +
                 "static method() { }\nabstract abstractMethod(): void; \n" +
                 "prop: string;\nprop2: number;method1(str);method1() {}\n}\n";
-            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(7);
         });
 
         it("should get the right number of instance, static, and constructor members in an ambient context", () => {
             const code = "declare class Identifier {\nconstructor();constructor();\nstatic prop2: string;\nstatic method();static method();\n" +
                 "prop: string;\nprop2: number;method1(str);method1();\n}\n";
-            const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             expect(firstChild.getMembers().length).to.equal(9);
         });
     });
 
     describe("inserting members", () => {
         it("should insert methods and properties in the correct location when constructor parameters and overload signatures exist", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(`
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(`
 class c {
     constructor();
     constructor(public param: string) {}
@@ -1154,7 +1174,7 @@ class c {
         });
 
         it("should insert a constructor in the correct location when constructor parameters and overload signatures exist", () => {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(`
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(`
 class c {
     constructor();
     constructor(public param: string) {}
@@ -1164,7 +1184,7 @@ class c {
     }
 }
 `);
-            firstChild.insertConstructor(2, { });
+            firstChild.insertConstructor(2, {});
             expect(sourceFile.getFullText()).to.equal(`
 class c {
     constructor();
@@ -1186,7 +1206,7 @@ class c {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getMember("method")! as MethodDeclaration;
@@ -1204,7 +1224,7 @@ class c {
             "constructor(param: string, public param2: string, readonly param3: string) {}\n" +
             "instanceProp: string;\nprop2: number;method() {}\n" +
             "get prop(): string {return '';}\nset prop(val: string) {}\n}\n";
-        const {firstChild} = getInfoFromText<ClassDeclaration>(code);
+        const { firstChild } = getInfoFromText<ClassDeclaration>(code);
 
         it("should get a method by name", () => {
             const method = firstChild.getMemberOrThrow("method") as MethodDeclaration;
@@ -1223,14 +1243,14 @@ class c {
 
     describe(nameof<ClassDeclaration>(d => d.getType), () => {
         it("should get the class' type", () => {
-            const {sourceFile} = getInfoFromText("class Identifier { prop: string; }");
+            const { sourceFile } = getInfoFromText("class Identifier { prop: string; }");
             expect(sourceFile.getClassOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
         });
     });
 
     describe(nameof<ClassDeclaration>(d => d.getBaseTypes), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const types = sourceFile.getClassOrThrow(className).getBaseTypes();
             expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
         }
@@ -1264,7 +1284,7 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassDeclaration>(d => d.getBaseClass), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const c = sourceFile.getClassOrThrow(className).getBaseClass();
             if (typeof expectedName === "undefined")
                 expect(c).to.be.undefined;
@@ -1302,7 +1322,7 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassDeclaration>(d => d.getBaseClassOrThrow), () => {
         function doTest(text: string, className: string, expectedName: string | undefined) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             if (typeof expectedName === "undefined")
                 expect(() => sourceFile.getClassOrThrow(className).getBaseClassOrThrow()).to.throw();
             else {
@@ -1321,7 +1341,7 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassDeclaration>(d => d.getDerivedClasses), () => {
         function doTest(text: string, className: string, expectedNames: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const classes = sourceFile.getClassOrThrow(className).getDerivedClasses();
             expect(classes.map(c => c.getName())).to.deep.equal(expectedNames);
         }
@@ -1343,7 +1363,7 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getClasses()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -1355,13 +1375,13 @@ class Child extends Mixin(Base) {}
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
         function doTest(code: string, expectedStructure?: MakeRequired<ClassDeclarationStructure>) {
-            const {descendant, project} = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
+            const { descendant, project } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
             if (expectedStructure) {
-                expect(Object.assign({}, structure, {methods: undefined, properties: undefined, ctors: undefined})).to.contain(
-                    Object.assign({}, expectedStructure, {methods: undefined, properties: undefined, ctors: undefined}));
+                expect(Object.assign({}, structure, { methods: undefined, properties: undefined, ctors: undefined })).to.contain(
+                    Object.assign({}, expectedStructure, { methods: undefined, properties: undefined, ctors: undefined }));
             }
-            const sourceFile2 = project.createSourceFile("__tmp_sourceFile1.ts", "", {overwrite: true});
+            const sourceFile2 = project.createSourceFile("__tmp_sourceFile1.ts", "", { overwrite: true });
             const generatedClassDecl = sourceFile2.addClass(structure);
             const actualText = generatedClassDecl.getText().replace(/\s+/gm, "");
             const expectedText = descendant.getText().replace(/\s+/gm, "");
