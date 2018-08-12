@@ -23,8 +23,13 @@ export function RenameableNode<T extends Constructor<RenameableNodeExtensionType
             function getNodeToRename(thisNode: Node) {
                 if (TypeGuards.isIdentifier(thisNode))
                     return thisNode;
-                else if ((thisNode as any).getNameNode != null)
-                    return (thisNode as any).getNameNode() as Node;
+                else if ((thisNode as any).getNameNode != null) {
+                    const node = (thisNode as any).getNameNode() as Node;
+                    errors.throwIfNullOrUndefined(node, "Expected to find a name node when renaming.");
+                    if (TypeGuards.isArrayBindingPattern(node) || TypeGuards.isObjectBindingPattern(node))
+                        throw new errors.NotImplementedError(`Not implemented renameable scenario for ${node.getKindName()}.`);
+                    return node;
+                }
                 else
                     throw new errors.NotImplementedError(`Not implemented renameable scenario for ${thisNode.getKindName()}`);
             }

@@ -2406,9 +2406,9 @@ export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeE
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-export declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
+export declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
 
-export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
+export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
 
 export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
 
@@ -6450,7 +6450,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     /**
      * Gets the key name node.
      */
-    getKeyNameNode(): ArrayBindingPattern | ObjectBindingPattern | Identifier;
+    getKeyNameNode(): BindingName;
     /**
      * Gets the key type.
      */
