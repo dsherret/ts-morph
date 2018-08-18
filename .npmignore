@@ -1,4 +1,5 @@
 /.vs
+/.github
 /node_modules
 /coverage
 /.vscode
@@ -24,5 +25,6 @@ breaking-changes.md
 CHANGELOG.md
 gulpfile.js
 tsconfig.json
+tsconfig.*.json
 tslint.json
 wrapped-nodes.md
