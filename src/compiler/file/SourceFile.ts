@@ -772,18 +772,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the syntactic, semantic, and declaration diagnostics.
-     * @deprecated - Use getPreEmitDiagnostics().
-     */
-    getDiagnostics(): Diagnostic[] {
-        return [
-            ...this.context.program.getSyntacticDiagnostics(this),
-            ...this.context.program.getSemanticDiagnostics(this),
-            ...this.context.program.getDeclarationDiagnostics(this)
-        ];
-    }
-
-    /**
      * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[] {

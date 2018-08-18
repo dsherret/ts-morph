@@ -123,15 +123,6 @@ export class Program {
     }
 
     /**
-     * Gets the pre-emit diagnostics.
-     * @param sourceFile - Source file.
-     * @deprecated - Call .getPreEmitDiagnostics() on the source file or project instead.
-     */
-    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        return this.context.getPreEmitDiagnostics(sourceFile);
-    }
-
-    /**
      * Gets the emit module resolution kind.
      */
     getEmitModuleResolutionKind(): ModuleResolutionKind {

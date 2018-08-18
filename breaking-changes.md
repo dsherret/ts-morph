@@ -4,6 +4,12 @@ View [CHANGELOG.md](CHANGELOG.md) for more detail on releases. This file is only
 
 ## Version 14
 
+### Deprecated `project/sourceFile.getDiagnostics()`
+
+Use `project.getPreEmitDiagnostics()` and `sourceFile.getPreEmitDiagnostics()` instead. Read why in [#384](issues/384).
+
+Also, deprecated `program.getPreEmitDiagnostics()`. It didn't make sense for this method to be on `Program`.
+
 ### `BindingNamedNode` now correctly possibly returns a `BindingElement`
 
 For example, given the following code:

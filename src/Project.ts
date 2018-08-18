@@ -395,18 +395,6 @@ export class Project {
     }
 
     /**
-     * Gets the compiler diagnostics.
-     * @deprecated Use getPreEmitDiagnostics().
-     */
-    getDiagnostics(): Diagnostic[] {
-        return [
-            ...this.context.program.getSyntacticDiagnostics(),
-            ...this.context.program.getSemanticDiagnostics(),
-            ...this.context.program.getDeclarationDiagnostics()
-        ];
-    }
-
-    /**
      * Gets the pre-emit diagnostics.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
