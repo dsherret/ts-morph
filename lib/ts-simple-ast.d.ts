@@ -3838,6 +3838,8 @@ export interface ForEachDescendantTraversalControl extends ForEachChildTraversal
 
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
 
+export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
+
 export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Gets the underlying compiler node.
@@ -4137,11 +4139,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent(): Node | undefined;
+    getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T;
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow(): Node<ts.Node>;
+    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>(): NonNullable<T>;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Throws if the initial parent doesn't match the condition.

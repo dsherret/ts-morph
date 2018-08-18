@@ -42,6 +42,11 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
     NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined :
     NodeType[KeyName];
 
+export type NodeParentType<NodeType extends ts.Node> =
+    NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
+    ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
+    CompilerNodeToWrappedType<NodeType["parent"]>;
+
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     readonly context: ProjectContext;
@@ -860,10 +865,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param propertyName - Property name.
      */
     getNodeProperty<
-            KeyType extends keyof LocalNodeType,
-            LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
-        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>
-    {
+        KeyType extends keyof LocalNodeType,
+        LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
+        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType> {
         const property = (this.compilerNode as any)[propertyName] as any | any[];
 
         if (property == null)
@@ -910,15 +914,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent(): Node | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
+    getParent<T extends Node | undefined = NodeParentType<NodeType>>() {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
     }
 
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
+    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>() {
+        return errors.throwIfNullOrUndefined(this.getParent<T>(), "Expected to find a parent.") as NonNullable<T>;
     }
 
     /**
@@ -951,7 +955,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getParentWhile(condition: (node: Node) => boolean): Node | undefined;
     getParentWhile(condition: (node: Node) => boolean) {
         let node: Node | undefined = undefined;
-        let nextParent = this.getParent();
+        let nextParent: Node | undefined = this.getParent();
         while (nextParent != null && condition(nextParent)) {
             node = nextParent;
             nextParent = nextParent.getParent();

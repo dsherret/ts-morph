@@ -3,7 +3,7 @@ import { assert, IsExactType, IsNullableType } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
-    ForEachDescendantTraversalControl } from "../../../compiler";
+    ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement } from "../../../compiler";
 import * as errors from "../../../errors";
 import { WriterFunction } from "../../../types";
 import { NewLineKind, SyntaxKind, ts } from "../../../typescript";
@@ -371,6 +371,34 @@ class MyClass {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier {}");
         it("should get the combined modifier flags", () => {
             expect(firstChild.getCombinedModifierFlags()).to.equal(ts.ModifierFlags.Export);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParent), () => {
+        it("should have the correct type when it will have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = firstChild.getDeclarationList().getParent();
+            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+        });
+
+        it("should have the correct type when it might not have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = (firstChild as Node).getParent();
+            assert<IsExactType<typeof parent, Node | undefined>>(true);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentOrThrow), () => {
+        it("should have the correct type when it will have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = firstChild.getDeclarationList().getParentOrThrow();
+            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+        });
+
+        it("should have the correct type when it might not have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = (firstChild as Node).getParentOrThrow();
+            assert<IsExactType<typeof parent, Node>>(true);
         });
     });
 
