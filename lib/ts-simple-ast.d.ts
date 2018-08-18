@@ -505,11 +505,6 @@ export declare class Project {
     enableLogging(enabled?: boolean): void;
     private getUnsavedSourceFiles;
     /**
-     * Gets the compiler diagnostics.
-     * @deprecated Use getPreEmitDiagnostics().
-     */
-    getDiagnostics(): Diagnostic[];
-    /**
      * Gets the pre-emit diagnostics.
      */
     getPreEmitDiagnostics(): Diagnostic[];
@@ -6125,11 +6120,6 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDefaultExportSymbolOrThrow(): Symbol;
     /**
-     * Gets the syntactic, semantic, and declaration diagnostics.
-     * @deprecated - Use getPreEmitDiagnostics().
-     */
-    getDiagnostics(): Diagnostic[];
-    /**
      * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[];
@@ -8137,12 +8127,6 @@ export declare class Program {
      * Gets the global diagnostics.
      */
     getGlobalDiagnostics(): Diagnostic[];
-    /**
-     * Gets the pre-emit diagnostics.
-     * @param sourceFile - Source file.
-     * @deprecated - Call .getPreEmitDiagnostics() on the source file or project instead.
-     */
-    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[];
     /**
      * Gets the emit module resolution kind.
      */

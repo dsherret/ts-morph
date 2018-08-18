@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.0.0"></a>
+# [14.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...14.0.0) (2018-08-18)
+
+
+### Bug Fixes
+
+* [#345](https://github.com/dsherret/ts-simple-ast/issues/345) - ArrowFunction should be a FunctionLikeDeclaration. ([b3ea86f](https://github.com/dsherret/ts-simple-ast/commit/b3ea86f))
+* BindingNamedNode should support BindingName. ([611ea99](https://github.com/dsherret/ts-simple-ast/commit/611ea99))
+
+
+### Code Refactoring
+
+* Deprecate `project/sourceFile.getDiagnostics()` and `program.getPreEmitDiagnostics()`. ([7e1a21b](https://github.com/dsherret/ts-simple-ast/commit/7e1a21b))
+
+
+### Features
+
+* [#381](https://github.com/dsherret/ts-simple-ast/issues/381) - getParent() and getParentOrThrow() return the correct type based on the type of the current node. ([efa7616](https://github.com/dsherret/ts-simple-ast/commit/efa7616))
+* Add `program.getGlobalDiagnostics()`. ([a03d257](https://github.com/dsherret/ts-simple-ast/commit/a03d257))
+
+
+### Performance Improvements
+
+* [#393](https://github.com/dsherret/ts-simple-ast/issues/393) - Use DocumentRegistry when creating language service. ([d879071](https://github.com/dsherret/ts-simple-ast/commit/d879071))
+
+
+### BREAKING CHANGES
+
+* `project/sourceFile.getDiagnostics()` and `program.getPreEmitDiagnostics()` no longer exist. Use `project/sourceFile.getPreEmitDiagnostics()`.
+* Removed ability to set a specific target for specific source files (all files are stored in a ts.DocumentRegistry now so that's not possible).
+* `BindingNamedNode` now correctly may also return a `BindingName`.
+
+
+
 <a name="13.0.0"></a>
 # [13.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...13.0.0) (2018-08-06)
 
