@@ -1,16 +1,17 @@
 import { CompilerNodeToWrappedType, DefinitionInfo, Diagnostic, DiagnosticMessageChain, DiagnosticWithLocation, DocumentSpan, JSDocTagInfo, Node,
     ReferencedSymbol, ReferencedSymbolDefinitionInfo, ReferenceEntry, Signature, SourceFile, Symbol, SymbolDisplayPart, Type, TypeParameter } from "../compiler";
 import * as errors from "../errors";
-import { Directory, SourceFileAddOptions } from "../fileSystem";
+import { Directory } from "../fileSystem";
 import { ProjectContext } from "../ProjectContext";
 import { SourceFileCreateOptions } from "../Project";
 import { SourceFileStructure } from "../structures";
-import { SyntaxKind, ts, TypeFlags } from "../typescript";
-import { ArrayUtils, createCompilerSourceFile, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";
-import { createTempSourceFile } from "./createTempSourceFile";
+import { SyntaxKind, ScriptTarget, ts, TypeFlags } from "../typescript";
+import { replaceSourceFileForCacheUpdate } from "../manipulation";
+import { ArrayUtils, EventContainer, FileUtils, KeyValueCache, WeakCache } from "../utils";
 import { DirectoryCache } from "./DirectoryCache";
 import { ForgetfulNodeCache } from "./ForgetfulNodeCache";
 import { kindToWrapperMappings } from "./kindToWrapperMappings";
+import { DocumentRegistry } from "./DocumentRegistry";
 
 /**
  * Factory for creating compiler wrappers.
@@ -37,12 +38,24 @@ export class CompilerFactory {
     private readonly sourceFileMovedEventContainer = new EventContainer<SourceFile>();
     private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
+    readonly documentRegistry = new DocumentRegistry();
+
     /**
      * Initializes a new instance of CompilerFactory.
      * @param context - Project context.
      */
     constructor(private readonly context: ProjectContext) {
         this.directoryCache = new DirectoryCache(context);
+
+        // prevent memory leaks when the document registry key changes by just reseting it
+        this.context.compilerOptions.onModified(() => {
+            // repopulate the cache
+            const currentSourceFiles = this.sourceFileCacheByFilePath.getValuesAsArray();
+            for (const sourceFile of currentSourceFiles) {
+                // reparse the source files in the new document registry, then populate the cache with the new nodes
+                replaceSourceFileForCacheUpdate(sourceFile);
+            }
+        });
     }
 
     /**
@@ -126,9 +139,9 @@ export class CompilerFactory {
     createSourceFileFromText(filePath: string, sourceText: string, options: SourceFileCreateOptions) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         if (options != null && options.overwrite === true)
-            return this.createOrOverwriteSourceFileFromText(filePath, sourceText, options);
+            return this.createOrOverwriteSourceFileFromText(filePath, sourceText);
         this.throwIfFileExists(filePath);
-        return this.getSourceFileFromText(filePath, sourceText, options);
+        return this.createSourceFileFromTextInternal(filePath, sourceText);
     }
 
     /**
@@ -143,29 +156,15 @@ export class CompilerFactory {
         throw new errors.InvalidOperationError(`${prefixMessage}A source file already exists at the provided file path: ${filePath}`);
     }
 
-    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions) {
+    private createOrOverwriteSourceFileFromText(filePath: string, sourceText: string) {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
-        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath, options);
+        const existingSourceFile = this.addOrGetSourceFileFromFilePath(filePath);
         if (existingSourceFile != null) {
-            existingSourceFile.replaceWithText(sourceText);
+            existingSourceFile.getChildren().forEach(c => c.forget());
+            this.replaceCompilerNode(existingSourceFile, this.createCompilerSourceFileFromText(filePath, sourceText));
             return existingSourceFile;
         }
-        return this.getSourceFileFromText(filePath, sourceText, options);
-    }
-
-    /**
-     * Creates a temporary source file that won't be added to the language service.
-     * @param sourceText - Text to create the source file with.
-     * @param filePath - File path to use.
-     * @returns Wrapped source file.
-     */
-    createTempSourceFileFromText(sourceText: string, opts: { filePath?: string; createLanguageService?: boolean; } = {}) {
-        const {filePath = "tsSimpleAstTempFile.ts", createLanguageService = false} = opts;
-        return createTempSourceFile(filePath, sourceText, {
-            createLanguageService,
-            compilerOptions: this.context.compilerOptions.get(),
-            manipulationSettings: this.context.manipulationSettings.get()
-        });
+        return this.createSourceFileFromTextInternal(filePath, sourceText);
     }
 
     /**
@@ -181,13 +180,13 @@ export class CompilerFactory {
      * Gets a source file from a file path. Will use the file path cache if the file exists.
      * @param filePath - File path to get the file from.
      */
-    addOrGetSourceFileFromFilePath(filePath: string, options: SourceFileAddOptions): SourceFile | undefined {
+    addOrGetSourceFileFromFilePath(filePath: string): SourceFile | undefined {
         filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(filePath);
         let sourceFile = this.sourceFileCacheByFilePath.get(filePath);
         if (sourceFile == null) {
             if (this.context.fileSystemWrapper.fileExistsSync(filePath)) {
                 this.context.logger.log(`Loading file: ${filePath}`);
-                sourceFile = this.getSourceFileFromText(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()), options);
+                sourceFile = this.createSourceFileFromTextInternal(filePath, this.context.fileSystemWrapper.readFileSync(filePath, this.context.getEncoding()));
                 sourceFile.setIsSaved(true); // source files loaded from the disk are saved to start with
             }
 
@@ -270,10 +269,12 @@ export class CompilerFactory {
             return this.nodeCache.getOrCreate<Node<NodeType>>(compilerNode, () => createNode(Node)) as Node as CompilerNodeToWrappedType<NodeType>;
     }
 
-    private getSourceFileFromText(filePath: string, sourceText: string, options: SourceFileAddOptions): SourceFile {
-        const compilerSourceFile = createCompilerSourceFile(filePath, sourceText,
-            options.languageVersion != null ? options.languageVersion : this.context.compilerOptions.get().target);
-        return this.getSourceFile(compilerSourceFile);
+    private createSourceFileFromTextInternal(filePath: string, text: string): SourceFile {
+        return this.getSourceFile(this.createCompilerSourceFileFromText(filePath, text));
+    }
+
+    createCompilerSourceFileFromText(filePath: string, text: string): ts.SourceFile {
+        return this.documentRegistry.createOrUpdateSourceFile(filePath, this.context.compilerOptions.get(), ts.ScriptSnapshot.fromString(text));
     }
 
     /**
@@ -509,6 +510,7 @@ export class CompilerFactory {
             this.directoryCache.removeSourceFile(sourceFile.fileName);
             const tsSourceFile = this.sourceFileCacheByFilePath.get(sourceFile.fileName);
             this.sourceFileCacheByFilePath.removeByKey(sourceFile.fileName);
+            this.documentRegistry.removeSourceFile(sourceFile.fileName);
             if (tsSourceFile != null)
                 this.sourceFileRemovedEventContainer.fire(tsSourceFile);
         }

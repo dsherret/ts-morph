@@ -90,10 +90,9 @@ export declare class Directory {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[];
     /**
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
@@ -148,18 +147,16 @@ export declare class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
     /**
      * Adds an existing source file to the AST, relative to this directory, or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile;
+    addExistingSourceFile(relativeFilePath: string): SourceFile;
     /**
      * Emits the files in the directory.
      * @param options - Options for emitting.
@@ -304,10 +301,6 @@ export declare class DirectoryEmitResult {
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
-
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
-}
 export interface FileSystemHost {
     delete(path: string): Promise<void>;
     deleteSync(path: string): void;
@@ -400,36 +393,32 @@ export declare class Project {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[];
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
     /**
      * Adds an existing source file from a file path or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile;
+    addExistingSourceFile(filePath: string): SourceFile;
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
-     * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[];
     /**
      * Creates a source file at the specified file path.
      *
@@ -571,7 +560,7 @@ export declare class Project {
 }
 export default Project;
 
-export interface SourceFileCreateOptions extends SourceFileAddOptions {
+export interface SourceFileCreateOptions {
     overwrite?: boolean;
 }
 
@@ -3155,7 +3144,7 @@ export declare class BindingElement extends BindingElementBase<ts.BindingElement
     /**
      * Gets binding element's property name node. For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
-    getPropertyNameNode(): StringLiteral | ComputedPropertyName | Identifier | NumericLiteral | undefined;
+    getPropertyNameNode(): ComputedPropertyName | Identifier | NumericLiteral | StringLiteral | undefined;
 }
 
 export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
@@ -6611,7 +6600,7 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */
-    getInitializerOrThrow(): StringLiteral | JsxExpression;
+    getInitializerOrThrow(): JsxExpression | StringLiteral;
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
@@ -9072,6 +9061,13 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
  */
 export declare class CompilerOptionsContainer extends SettingsContainer<CompilerOptions> {
     constructor();
+    /**
+     * Sets one or all of the compiler options.
+     *
+     * WARNING: Setting the compiler options will cause a complete reparse of all the source files.
+     * @param settings - Compiler options to set.
+     */
+    set(settings: Partial<CompilerOptions>): void;
 }
 
 /** Kinds of indentation */
@@ -9147,7 +9143,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     /**
      * Gets the new line kind as a string.
      */
-    getNewLineKindAsString(): "\r\n" | "\n";
+    getNewLineKindAsString(): "\n" | "\r\n";
     /**
      * Gets the indentation text;
      */
@@ -9159,9 +9155,6 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     set(settings: Partial<ManipulationSettings>): void;
 }
 export declare abstract class SettingsContainer<T extends object> {
-    private readonly defaultSettings;
-    protected settings: T;
-    constructor(defaultSettings: T);
     /**
      * Resets the settings to the default.
      */

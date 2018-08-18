@@ -49,8 +49,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
-    /** @internal */
-    _scriptVersion: number = 0;
 
     /**
      * Initializes a new instance.
@@ -91,7 +89,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
         super.replaceCompilerNodeFromFactory(compilerNode);
         this.context.resetProgram(); // make sure the program has the latest source file
-        this._scriptVersion++;
         this._isSaved = false;
         this._modifiedEventContainer.fire(this);
     }
@@ -196,10 +193,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return currentFile.context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), {
-                    overwrite,
-                    languageVersion: currentFile.getLanguageVersion()
-                });
+                return currentFile.context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -411,7 +405,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
+            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -422,7 +416,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
+            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 

@@ -56,6 +56,8 @@ export class Program {
     reset(rootNames: string[], host: ts.CompilerHost) {
         const compilerOptions = this.context.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
+            // need to use ts.createProgram instead of languageService.getProgram() because the
+            // program created by the language service is not fully featured (ex. does not write to the file system)
             if (this._createdCompilerObject == null)
                 this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
 

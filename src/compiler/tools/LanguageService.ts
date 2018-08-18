@@ -9,6 +9,7 @@ import { SourceFile } from "../file";
 import { FormatCodeSettings, UserPreferences } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { DocumentRegistry } from "../../factories/DocumentRegistry";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -37,14 +38,14 @@ export class LanguageService {
             getScriptFileNames: () => this.context.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
                 const sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
-                if (sourceFile != null)
-                    return sourceFile._scriptVersion.toString();
-                return (version++).toString();
+                if (sourceFile == null)
+                    return (version++).toString();
+                return this.context.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile.compilerNode);
             },
             getScriptSnapshot: fileName => {
                 if (!fileExistsSync(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, {})!.getFullText());
+                return ts.ScriptSnapshot.fromString(this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
@@ -65,7 +66,7 @@ export class LanguageService {
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
-                const sourceFile = this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { languageVersion });
+                const sourceFile = this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName);
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
@@ -87,7 +88,7 @@ export class LanguageService {
             getEnvironmentVariable: (name: string) => process.env[name]
         };
 
-        this._compilerObject = ts.createLanguageService(languageServiceHost);
+        this._compilerObject = ts.createLanguageService(languageServiceHost, this.context.compilerFactory.documentRegistry);
         this.program = new Program(this.context, this.context.compilerFactory.getSourceFilePaths(), this.compilerHost);
 
         this.context.compilerFactory.onSourceFileAdded(() => this.resetProgram());

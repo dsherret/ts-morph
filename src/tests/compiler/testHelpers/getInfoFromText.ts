@@ -44,7 +44,6 @@ export interface GetInfoFromTextOptions {
     host?: FileSystemHost;
     disableErrorCheck?: boolean;
     compilerOptions?: CompilerOptions;
-    languageVersion?: ScriptTarget;
     includeLibDts?: boolean;
     isJsx?: boolean;
 }
@@ -69,8 +68,8 @@ export function getInfoFromTextWithDescendant<TDescendant extends Node>(text: st
 
 function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     // tslint:disable-next-line:no-unnecessary-initializer -- tslint not realizing undefined is required
-    const {isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
-        compilerOptions = undefined, includeLibDts = false, languageVersion = undefined} = opts || {};
+    const { isDefinitionFile = false, isJsx = false, filePath = undefined, host = new VirtualFileSystemHost(), disableErrorCheck = false,
+        compilerOptions = undefined, includeLibDts = false } = opts || {};
 
     if (includeLibDts) {
         for (const libFile of libFiles)
@@ -78,7 +77,7 @@ function getInfoFromTextInternal(text: string, opts?: GetInfoFromTextOptions) {
     }
 
     const project = new Project({ compilerOptions }, host);
-    const sourceFile = project.createSourceFile(getFilePath(), text, { languageVersion });
+    const sourceFile = project.createSourceFile(getFilePath(), text);
 
     return {project, sourceFile};
 

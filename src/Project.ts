@@ -1,7 +1,7 @@
 import { CodeBlockWriter } from "./codeBlockWriter";
 import { Diagnostic, EmitOptions, EmitResult, LanguageService, Node, Program, SourceFile, TypeChecker } from "./compiler";
 import * as errors from "./errors";
-import { DefaultFileSystemHost, Directory, DirectoryAddOptions, SourceFileAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
+import { DefaultFileSystemHost, Directory, DirectoryAddOptions, FileSystemHost, FileSystemWrapper, VirtualFileSystemHost } from "./fileSystem";
 import { ProjectContext } from "./ProjectContext";
 import { CompilerOptionsContainer, ManipulationSettings, ManipulationSettingsContainer } from "./options";
 import { SourceFileStructure } from "./structures";
@@ -21,7 +21,7 @@ export interface Options {
     useVirtualFileSystem?: boolean;
 }
 
-export interface SourceFileCreateOptions extends SourceFileAddOptions {
+export interface SourceFileCreateOptions {
     overwrite?: boolean;
 }
 
@@ -60,7 +60,7 @@ export class Project {
 
         // add any file paths from the tsconfig if necessary
         if (tsConfigResolver != null && options.addFilesFromTsConfig !== false)
-            this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions, {});
+            this._addSourceFilesForTsConfigResolver(tsConfigResolver, compilerOptions);
 
         function getCompilerOptions(): CompilerOptions {
             return {
@@ -163,10 +163,9 @@ export class Project {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
@@ -174,7 +173,7 @@ export class Project {
         const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
         for (const filePath of this.context.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
+            const sourceFile = this.addExistingSourceFileIfExists(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }
@@ -190,11 +189,10 @@ export class Project {
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      * @skipOrThrowCheck
      */
-    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
-        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
+        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
     }
 
     /**
@@ -202,11 +200,10 @@ export class Project {
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
-        return this.context.directoryCoordinator.addExistingSourceFile(filePath, options);
+    addExistingSourceFile(filePath: string): SourceFile {
+        return this.context.directoryCoordinator.addExistingSourceFile(filePath);
     }
 
     /**
@@ -215,22 +212,18 @@ export class Project {
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
-     * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options: SourceFileAddOptions = {}): SourceFile[] {
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[] {
         tsConfigFilePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(tsConfigFilePath);
         const resolver = new TsConfigResolver(this.context.fileSystemWrapper, tsConfigFilePath, this.context.getEncoding());
-        return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions(), options);
+        return this._addSourceFilesForTsConfigResolver(resolver, resolver.getCompilerOptions());
     }
 
     /** @internal */
-    private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions, addOptions: SourceFileAddOptions) {
+    private _addSourceFilesForTsConfigResolver(tsConfigResolver: TsConfigResolver, compilerOptions: CompilerOptions) {
         const paths = tsConfigResolver.getPaths(compilerOptions);
 
-        if (addOptions.languageVersion == null && compilerOptions.target != null)
-            addOptions.languageVersion = compilerOptions.target;
-
-        const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p, addOptions));
+        const addedSourceFiles = paths.filePaths.map(p => this.addExistingSourceFile(p));
         for (const dirPath of paths.directoryPaths)
             this.addExistingDirectoryIfExists(dirPath);
         return addedSourceFiles;
