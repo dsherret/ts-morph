@@ -4,6 +4,7 @@ import { Constructor } from "../../types";
 import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
+import { WriterFunction } from "../../types";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
 
@@ -18,24 +19,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure | string): JSDoc;
+    addJsDoc(structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
+    addJsDocs(structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
+    insertJsDocs(index: number, structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
 }
 
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
@@ -47,19 +48,19 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return nodes.map(n => this.getNodeFromCompilerNode(n));
         }
 
-        addJsDoc(structure: JSDocStructure | string) {
+        addJsDoc(structure: JSDocStructure | string | WriterFunction) {
             return this.addJsDocs([structure])[0];
         }
 
-        addJsDocs(structures: (JSDocStructure | string)[]) {
+        addJsDocs(structures: (JSDocStructure | string | WriterFunction)[]) {
             return this.insertJsDocs(getEndIndexFromArray(this.compilerNode.jsDoc), structures);
         }
 
-        insertJsDoc(index: number, structure: JSDocStructure | string) {
+        insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction) {
             return this.insertJsDocs(index, [structure])[0];
         }
 
-        insertJsDocs(index: number, structures: (JSDocStructure | string)[]) {
+        insertJsDocs(index: number, structures: (JSDocStructure | string | WriterFunction)[]) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

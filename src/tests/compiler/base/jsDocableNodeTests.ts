@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionDeclaration, JSDocableNode, Node, VariableStatement } from "../../../compiler";
+import { WriterFunction } from "../../../types";
 import { JSDocableNodeStructure, JSDocStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
@@ -52,7 +53,9 @@ describe(nameof(JSDocableNode), () => {
     });
 
     describe(nameof<JSDocableNode>(n => n.insertJsDocs), () => {
-        function doTest(startCode: string, insertIndex: number, structures: (JSDocStructure | string)[], expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration) {
+        function doTest(startCode: string, insertIndex: number, structures: (JSDocStructure | string | WriterFunction)[],
+            expectedCode: string, syntaxKind = SyntaxKind.FunctionDeclaration)
+        {
             const {descendant, sourceFile} = getInfoFromTextWithDescendant(startCode, syntaxKind);
             const result = (descendant as any as JSDocableNode).insertJsDocs(insertIndex, structures);
             expect(result.length).to.equal(structures.length);
@@ -74,7 +77,7 @@ describe(nameof(JSDocableNode), () => {
         });
 
         it("should insert in the middle", () => {
-            doTest("/**\n * Desc1\n */\n/**\n * Desc3\n */\nfunction identifier() {}", 1, [{ description: "Desc2" }],
+            doTest("/**\n * Desc1\n */\n/**\n * Desc3\n */\nfunction identifier() {}", 1, [writer => writer.write("Desc2")],
                 "/**\n * Desc1\n */\n/**\n * Desc2\n */\n/**\n * Desc3\n */\nfunction identifier() {}");
         });
 

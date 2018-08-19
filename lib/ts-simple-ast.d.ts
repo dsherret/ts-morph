@@ -2303,24 +2303,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure | string): JSDoc;
+    addJsDoc(structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
+    addJsDocs(structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
+    insertJsDocs(index: number, structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
 }
 
 export declare type JSDocableNodeExtensionType = Node<ts.Node & {
