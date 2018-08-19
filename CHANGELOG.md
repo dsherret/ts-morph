@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.1.0"></a>
+# [14.1.0](https://github.com/dsherret/ts-simple-ast/compare/14.0.1...14.1.0) (2018-08-19)
+
+
+### Features
+
+* Ability to add js docs with a writer function directly from the method. ([4ad9614](https://github.com/dsherret/ts-simple-ast/commit/4ad9614))
+
+
+
 <a name="14.0.1"></a>
 ## [14.0.1](https://github.com/dsherret/ts-simple-ast/compare/14.0.0...14.0.1) (2018-08-19)
 
