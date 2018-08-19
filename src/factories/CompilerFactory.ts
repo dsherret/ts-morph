@@ -38,13 +38,14 @@ export class CompilerFactory {
     private readonly sourceFileMovedEventContainer = new EventContainer<SourceFile>();
     private readonly sourceFileRemovedEventContainer = new EventContainer<SourceFile>();
 
-    readonly documentRegistry = new DocumentRegistry();
+    readonly documentRegistry: DocumentRegistry;
 
     /**
      * Initializes a new instance of CompilerFactory.
      * @param context - Project context.
      */
     constructor(private readonly context: ProjectContext) {
+        this.documentRegistry = new DocumentRegistry(context.fileSystemWrapper);
         this.directoryCache = new DirectoryCache(context);
 
         // prevent memory leaks when the document registry key changes by just reseting it

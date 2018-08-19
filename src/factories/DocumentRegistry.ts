@@ -1,11 +1,15 @@
 ﻿/* barrel:ignore */
 import { ts, CompilerOptions, ScriptKind, ScriptTarget } from "../typescript";
 import { KeyValueCache } from "../utils";
+import { FileSystemWrapper } from "../fileSystem";
 import * as errors from "../errors";
 
 export class DocumentRegistry implements ts.DocumentRegistry {
     private readonly sourceFileCacheByFilePath = new KeyValueCache<string, ts.SourceFile>();
     private static readonly initialVersion = "0";
+
+    constructor(private readonly fileSystemWrapper: FileSystemWrapper) {
+    }
 
     removeSourceFile(fileName: string) {
         this.sourceFileCacheByFilePath.removeByKey(fileName);
@@ -74,6 +78,7 @@ export class DocumentRegistry implements ts.DocumentRegistry {
     }
 
     private updateSourceFile(fileName: string, compilationSettings: CompilerOptions, scriptSnapshot: ts.IScriptSnapshot, version: string): ts.SourceFile {
+        fileName = this.fileSystemWrapper.getStandardizedAbsolutePath(fileName);
         const newSourceFile = this.createCompilerSourceFile(fileName, scriptSnapshot, compilationSettings, version);
         this.sourceFileCacheByFilePath.set(fileName, newSourceFile);
         return newSourceFile;
