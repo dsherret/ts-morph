@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.0.1"></a>
+## [14.0.1](https://github.com/dsherret/ts-simple-ast/compare/14.0.0...14.0.1) (2018-08-19)
+
+
+### Bug Fixes
+
+* DocumentRegistry - Ensure any file paths sent from the compiler api are normalized. ([1c06559](https://github.com/dsherret/ts-simple-ast/commit/1c06559))
+
+
+
 <a name="14.0.0"></a>
 # [14.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...14.0.0) (2018-08-18)
 
