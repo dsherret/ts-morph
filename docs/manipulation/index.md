@@ -97,7 +97,7 @@ In the meantime, you can insert, replace, and remove text using the following me
 
 ```ts
 // insert text
-sourceFile.insertText(0, "// some comment\n");
+sourceFile.insertText(0, writer => writer.writeLine("// some comment")); // or provide a string
 // replace text
 sourceFile.replaceText([3, 7], "a"); // "// a comment\n"
 // remove text
