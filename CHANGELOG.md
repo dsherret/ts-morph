@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.1.1"></a>
+## [14.1.1](https://github.com/dsherret/ts-simple-ast/compare/14.1.0...14.1.1) (2018-08-22)
+
+
+### Bug Fixes
+
+* [#397](https://github.com/dsherret/ts-simple-ast/issues/397) - Fix type.getProperties() sometimes throwing an error. ([8078772](https://github.com/dsherret/ts-simple-ast/commit/8078772))
+
+### Docs
+
+* [#399](https://github.com/dsherret/ts-simple-ast/pull/399) - Thanks to [@Gerrit0](https://github.com/Gerrit0) for making the headers links!
+
+
 <a name="14.1.0"></a>
 # [14.1.0](https://github.com/dsherret/ts-simple-ast/compare/14.0.1...14.1.0) (2018-08-19)
 
