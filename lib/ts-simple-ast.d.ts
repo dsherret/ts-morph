@@ -4464,12 +4464,12 @@ export declare class Symbol {
      */
     getDeclarations(): Node[];
     /**
-     * Get the export of the symbol by the specified name or throws if not exists.
+     * Gets the export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
     getExportByNameOrThrow(name: string): Symbol;
     /**
-     * Get the export of the symbol by the specified name or returns undefined if not exists.
+     * Gets the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined;
@@ -4477,6 +4477,20 @@ export declare class Symbol {
      * Gets the exports from the symbol.
      */
     getExports(): Symbol[];
+    /**
+     * Gets the member of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getMemberByNameOrThrow(name: string): Symbol;
+    /**
+     * Gets the member of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the member.
+     */
+    getMemberByName(name: string): Symbol | undefined;
+    /**
+     * Gets the members of the symbol
+     */
+    getMembers(): Symbol[];
     /**
      * Gets the declared type of the symbol.
      */
