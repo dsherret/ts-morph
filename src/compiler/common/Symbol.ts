@@ -1,7 +1,7 @@
 import * as errors from "../../errors";
 import { ProjectContext } from "../../ProjectContext";
 import { SymbolFlags, ts } from "../../typescript";
-import { ArrayUtils } from "../../utils";
+import { ArrayUtils, Memoize } from "../../utils";
 import { Node } from "../common";
 import { Type } from "../type";
 
@@ -93,6 +93,7 @@ export class Symbol {
     /**
      * Gets the value declaration of the symbol or returns undefined if it doesn't exist.
      */
+    @Memoize
     getValueDeclaration(): Node | undefined {
         const declaration = this.compilerSymbol.valueDeclaration;
         if (declaration == null)
@@ -103,8 +104,10 @@ export class Symbol {
     /**
      * Gets the symbol declarations.
      */
+    @Memoize
     getDeclarations(): Node[] {
-        return this.compilerSymbol.declarations.map(d => this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.declarations || []).map(d =>
+            this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**
