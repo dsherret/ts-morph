@@ -10,7 +10,7 @@
  */
 import * as path from "path";
 import Project, { ts } from "ts-simple-ast";
-import { getDefinitionProject } from "./common";
+import { getDefinitionProject } from "../common";
 
 const project = getDefinitionProject();
 
@@ -27,6 +27,6 @@ const problems = project.getPreEmitDiagnostics().map(d => {
 
 if (problems.length > 0) {
     console.log(problems);
-    console.error("There were definition file issues!");
+    console.error("There were declaration file issues!");
     process.exit(1);
 }

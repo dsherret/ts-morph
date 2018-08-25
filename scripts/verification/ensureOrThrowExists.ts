@@ -9,7 +9,7 @@
  * --------------------------------------------
  */
 import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory } from "ts-simple-ast";
-import { InspectorFactory } from "./inspectors";
+import { InspectorFactory } from "../inspectors";
 
 const inspector = new InspectorFactory().getTsSimpleAstInspector();
 const problems: string[] = [];
