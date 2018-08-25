@@ -26,7 +26,7 @@ export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxEleme
         return structure.isSelfClosing == null && structure.children == null;
     }
 
-    private printAttributes(writer: CodeBlockWriter, attributes: JsxAttributeStructure[]) {
+    private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<JsxAttributeStructure>) {
         const attributePrinter = this.factory.forJsxAttribute();
         for (const attrib of attributes) {
             writer.space();
@@ -34,7 +34,7 @@ export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxEleme
         }
     }
 
-    private printChildren(writer: CodeBlockWriter, children: JsxElementStructure[]) {
+    private printChildren(writer: CodeBlockWriter, children: ReadonlyArray<JsxElementStructure>) {
         writer.newLine();
         writer.indentBlock(() => {
             for (const child of children) {

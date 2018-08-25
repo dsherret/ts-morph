@@ -24,7 +24,7 @@ export interface JSDocableNode {
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
+    addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
@@ -36,7 +36,7 @@ export interface JSDocableNode {
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: (JSDocStructure | string | WriterFunction)[]): JSDoc[];
+    insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
 }
 
 export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>(Base: T): Constructor<JSDocableNode> & T {
@@ -52,7 +52,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return this.addJsDocs([structure])[0];
         }
 
-        addJsDocs(structures: (JSDocStructure | string | WriterFunction)[]) {
+        addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>) {
             return this.insertJsDocs(getEndIndexFromArray(this.compilerNode.jsDoc), structures);
         }
 
@@ -60,7 +60,7 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
             return this.insertJsDocs(index, [structure])[0];
         }
 
-        insertJsDocs(index: number, structures: (JSDocStructure | string | WriterFunction)[]) {
+        insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

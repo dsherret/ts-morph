@@ -20,7 +20,7 @@ export interface ExtendsClauseableNode {
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
      */
-    addExtends(texts: string[]): ExpressionWithTypeArguments[];
+    addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
@@ -30,7 +30,7 @@ export interface ExtendsClauseableNode {
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
      */
-    insertExtends(index: number, texts: string[]): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
@@ -55,15 +55,15 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
             return extendsClause == null ? [] : extendsClause.getTypeNodes();
         }
 
-        addExtends(texts: string[]): ExpressionWithTypeArguments[];
+        addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
         addExtends(text: string): ExpressionWithTypeArguments;
-        addExtends(text: string | string[]): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        addExtends(text: string | ReadonlyArray<string>): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             return this.insertExtends(this.getExtends().length, text as any);
         }
 
-        insertExtends(index: number, texts: string[]): ExpressionWithTypeArguments[];
+        insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
         insertExtends(index: number, text: string): ExpressionWithTypeArguments;
-        insertExtends(index: number, texts: string | string[]): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
+        insertExtends(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments[] | ExpressionWithTypeArguments {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));

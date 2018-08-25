@@ -223,7 +223,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Adds named imports.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
-    addNamedImports(structuresOrNames: (ImportSpecifierStructure | string)[]) {
+    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>) {
         return this.insertNamedImports(this.getNamedImports().length, structuresOrNames);
     }
 
@@ -250,7 +250,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
-    insertNamedImports(index: number, structuresOrNames: (ImportSpecifierStructure | string)[]) {
+    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>) {
         if (ArrayUtils.isNullOrEmpty(structuresOrNames))
                 return [];
 

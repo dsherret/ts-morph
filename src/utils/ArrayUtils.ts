@@ -5,11 +5,11 @@ export class ArrayUtils {
     private constructor() {
     }
 
-    static isNullOrEmpty<T>(a: (T[] | undefined)): a is undefined {
+    static isNullOrEmpty<T>(a: (ReadonlyArray<T> | undefined)): a is undefined {
         return !(a instanceof Array) || a.length === 0;
     }
 
-    static getUniqueItems<T>(a: T[]) {
+    static getUniqueItems<T>(a: ReadonlyArray<T>) {
         return a.filter((item, index) => a.indexOf(item) === index);
     }
 
@@ -32,7 +32,8 @@ export class ArrayUtils {
         return removedItems;
     }
 
-    static flatten<T>(items: T[][]) {
+    // can't use ReadonlyArray here for some reason
+    static flatten<T>(items: T[][]): T[] {
         return items.reduce((a, b) => a.concat(b), []);
     }
 
@@ -46,7 +47,7 @@ export class ArrayUtils {
         return undefined;
     }
 
-    static findIndex<T>(items: T[], condition: (item: T) => boolean) {
+    static findIndex<T>(items: ReadonlyArray<T>, condition: (item: T) => boolean) {
         for (let i = 0; i < items.length; i++) {
             if (condition(items[i]))
                 return i;
@@ -61,7 +62,7 @@ export class ArrayUtils {
         return a;
     }
 
-    static *toIterator<T>(items: T[]) {
+    static *toIterator<T>(items: ReadonlyArray<T>) {
         for (const item of items) {
             yield item;
         }
@@ -91,7 +92,7 @@ export class ArrayUtils {
             items.splice(top + 1, 0, newItem);
     }
 
-    static binarySearch<T>(items: T[], storedComparer: StoredComparer<T>) {
+    static binarySearch<T>(items: ReadonlyArray<T>, storedComparer: StoredComparer<T>) {
         let top = items.length - 1;
         let bottom = 0;
 
@@ -109,7 +110,7 @@ export class ArrayUtils {
         return -1;
     }
 
-    static containsSubArray<T>(items: T[], subArray: T[]) {
+    static containsSubArray<T>(items: ReadonlyArray<T>, subArray: ReadonlyArray<T>) {
         let findIndex = 0;
         for (const item of items) {
             if (subArray[findIndex] === item) {

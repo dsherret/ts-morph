@@ -129,7 +129,7 @@ export class LanguageService {
      * @param renameLocations - Rename locations.
      * @param newName - New name for the node.
      */
-    renameLocations(renameLocations: RenameLocation[], newName: string) {
+    renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string) {
         const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
         for (const renameLocation of renameLocations) {
             const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);

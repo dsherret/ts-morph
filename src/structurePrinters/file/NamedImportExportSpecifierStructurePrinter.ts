@@ -8,14 +8,14 @@ export type NamedImportExportSpecifierStructureToTextItem = ImportSpecifierStruc
 export class NamedImportExportSpecifierStructurePrinter extends FactoryStructurePrinter<NamedImportExportSpecifierStructureToTextItem> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTextsWithBraces(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
+    printTextsWithBraces(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem>) {
         const formatSettings = this.factory.getFormatCodeSettings();
         writer.write("{").conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ");
         this.printTexts(writer, structures);
         writer.conditionalWrite(formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, " ").write("}");
     }
 
-    printTexts(writer: CodeBlockWriter, structures: NamedImportExportSpecifierStructureToTextItem[]) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<NamedImportExportSpecifierStructureToTextItem>) {
         this.multipleWriter.printText(writer, structures);
     }
 

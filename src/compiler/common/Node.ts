@@ -146,7 +146,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         this._leadingCommentRanges = undefined;
         this._trailingCommentRanges = undefined;
 
-        function clearCommentRanges(commentRanges: CommentRange[] | undefined) {
+        function clearCommentRanges(commentRanges: ReadonlyArray<CommentRange> | undefined) {
             if (commentRanges == null)
                 return;
             commentRanges.forEach(r => r.forget());
@@ -1198,7 +1198,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /** @internal */
-    private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ts.CommentRange[] | undefined) {
+    private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ReadonlyArray<ts.CommentRange> | undefined) {
         if (this.getKind() === SyntaxKind.SourceFile)
             return [];
 

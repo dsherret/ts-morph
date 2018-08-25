@@ -7,7 +7,6 @@ export function matchGlobs(paths: ReadonlyArray<string>, patterns: ReadonlyArray
     else
         patterns = patterns.map(p => FileUtils.toAbsoluteGlob(p, cwd));
 
-    // NOTE: @types/multimatch incorrectly specifies `string[]` type,
-    //       despite not modifying the array.
+    // @types/multimatch incorrectly specifies `string[]` type despite not modifying the array
     return multimatch(paths as string[], patterns as string[]);
 }

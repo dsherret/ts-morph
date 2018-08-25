@@ -1,6 +1,6 @@
 ﻿export class DirectoryEmitResult {
     /** @internal */
-    constructor(private readonly _emitSkipped: boolean, private readonly _outputFilePaths: string[]) {
+    constructor(private readonly _emitSkipped: boolean, private readonly _outputFilePaths: ReadonlyArray<string>) {
     }
 
     /**
@@ -14,6 +14,6 @@
      * Gets the output file paths.
      */
     getOutputFilePaths() {
-        return this._outputFilePaths;
+        return this._outputFilePaths as string[];
     }
 }

@@ -239,7 +239,7 @@ export class Directory {
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         fileGlobs = typeof fileGlobs === "string" ? [fileGlobs] : fileGlobs;
         fileGlobs = fileGlobs.map(g => {
             if (FileUtils.pathIsAbsolute(g))

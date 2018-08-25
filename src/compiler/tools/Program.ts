@@ -36,7 +36,7 @@ export class Program {
     private _getOrCreateCompilerObject!: () => ts.Program;
 
     /** @internal */
-    constructor(context: ProjectContext, rootNames: string[], host: ts.CompilerHost) {
+    constructor(context: ProjectContext, rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
         this.context = context;
         this.typeChecker = new TypeChecker(this.context);
         this.reset(rootNames, host);
@@ -53,7 +53,7 @@ export class Program {
      * Resets the program.
      * @internal
      */
-    reset(rootNames: string[], host: ts.CompilerHost) {
+    reset(rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
         const compilerOptions = this.context.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
             // need to use ts.createProgram instead of languageService.getProgram() because the

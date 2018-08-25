@@ -209,7 +209,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _updateReferencesForCopyInternal(literalReferences: [StringLiteral, SourceFile][]) {
+    _updateReferencesForCopyInternal(literalReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
         // update the nodes in this list to point to the nodes in this copied source file
         for (const reference of literalReferences)
             reference[0] = this.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth())! as StringLiteral;
@@ -505,7 +505,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Adds imports.
      * @param structures - Structures that represent the imports.
      */
-    addImportDeclarations(structures: ImportDeclarationStructure[]) {
+    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>) {
         const imports = this.getImportDeclarations();
         const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
         return this.insertImportDeclarations(insertIndex, structures);
@@ -525,7 +525,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[] {
+    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[] {
         return this._insertChildren<ImportDeclaration, ImportDeclarationStructure>({
             expectedKind: SyntaxKind.ImportDeclaration,
             index,
@@ -577,7 +577,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExportDeclarations(structures: ExportDeclarationStructure[]) {
+    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
         // always insert at end of file because of export {Identifier}; statements
         return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
@@ -596,7 +596,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[] {
+    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[] {
         return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
             expectedKind: SyntaxKind.ExportDeclaration,
             index,
@@ -693,7 +693,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export assignments.
      * @param structures - Structures that represent the exports.
      */
-    addExportAssignments(structures: ExportAssignmentStructure[]) {
+    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>) {
         // always insert at end of file because of export {Identifier}; statements
         return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
@@ -712,7 +712,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[] {
+    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[] {
         return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
             expectedKind: SyntaxKind.ExportAssignment,
             index,
@@ -992,7 +992,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param textChanges - Text changes.
      */
-    applyTextChanges(textChanges: TextChange[]) {
+    applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
         this.getChildSyntaxListOrThrow().forget();
         replaceNodeText({
             sourceFile: this.sourceFile,
@@ -1019,7 +1019,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 }
 
-function updateStringLiteralReferences(nodeReferences: [StringLiteral, SourceFile][]) {
+function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
     for (const [stringLiteral, sourceFile] of nodeReferences) {
         if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
             stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));

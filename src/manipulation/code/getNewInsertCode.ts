@@ -2,7 +2,7 @@ import { Node } from "../../compiler";
 import { FormattingKind, getFormattingKindText } from "../formatting";
 
 export interface GetNewInsertCodeOptions<TNode extends Node, TStructure> {
-    structures: TStructure[];
+    structures: ReadonlyArray<TStructure>;
     newCodes: string[];
     parent: Node;
     indentationText?: string;

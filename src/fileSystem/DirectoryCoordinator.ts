@@ -49,7 +49,7 @@ export class DirectoryCoordinator {
         return sourceFile;
     }
 
-    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 

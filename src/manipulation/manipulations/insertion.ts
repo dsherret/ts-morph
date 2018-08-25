@@ -174,7 +174,7 @@ export interface InsertIntoBracesOrSourceFileWithGetChildrenOptions<TNode extend
     write: (writer: CodeBlockWriter, info: InsertIntoBracesOrSourceFileOptionsWriteInfo) => void;
     // for child functions
     expectedKind: SyntaxKind;
-    structures: TStructure[];
+    structures: ReadonlyArray<TStructure>;
     parent: Node;
     index: number;
 }

@@ -43,7 +43,7 @@ export interface JsxAttributedNode {
     /**
      * Adds attributes into the element.
      */
-    addAttributes(attributes: JsxAttributeStructure[]): JsxAttributeLike[];
+    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
     /**
      * Inserts an attribute into the element.
      */
@@ -51,7 +51,7 @@ export interface JsxAttributedNode {
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: JsxAttributeStructure[]): JsxAttributeLike[];
+    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
 }
 
 export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensionType>>(Base: T): Constructor<JsxAttributedNode> & T {
@@ -73,7 +73,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             return this.addAttributes([structure])[0];
         }
 
-        addAttributes(structures: JsxAttributeStructure[]) {
+        addAttributes(structures: ReadonlyArray<JsxAttributeStructure>) {
             return this.insertAttributes(this.compilerNode.attributes.properties.length, structures);
         }
 
@@ -81,7 +81,7 @@ export function JsxAttributedNode<T extends Constructor<JsxAttributedNodeExtensi
             return this.insertAttributes(index, [structure])[0];
         }
 
-        insertAttributes(index: number, structures: JsxAttributeStructure[]) {
+        insertAttributes(index: number, structures: ReadonlyArray<JsxAttributeStructure>) {
             if (structures.length === 0)
                 return [];
 

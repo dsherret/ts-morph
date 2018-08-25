@@ -4675,7 +4675,7 @@ export declare namespace ts {
     class OperationCanceledException {
     }
     class TextChange {
-        span: ts.TextSpan;
+        span: TextSpan;
         newText: string;
     }
     function getNodeMajorVersion(): number | undefined;

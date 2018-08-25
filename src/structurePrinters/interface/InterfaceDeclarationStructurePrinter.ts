@@ -7,7 +7,7 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 export class InterfaceDeclarationStructurePrinter extends FactoryStructurePrinter<InterfaceDeclarationStructure> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: InterfaceDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<InterfaceDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

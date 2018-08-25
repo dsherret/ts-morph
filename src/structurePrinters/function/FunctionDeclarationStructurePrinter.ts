@@ -4,7 +4,7 @@ import { StringUtils, ObjectUtils, setValueIfUndefined } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter<FunctionDeclarationStructure> {
-    printTexts(writer: CodeBlockWriter, structures: FunctionDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<FunctionDeclarationStructure> | undefined) {
         if (structures == null)
             return;
 
@@ -48,7 +48,7 @@ export class FunctionDeclarationStructurePrinter extends FactoryStructurePrinter
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, name: string | undefined, structures: FunctionDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string | undefined, structures: ReadonlyArray<FunctionDeclarationOverloadStructure> | undefined) {
         if (structures == null || structures.length === 0)
             return;
 

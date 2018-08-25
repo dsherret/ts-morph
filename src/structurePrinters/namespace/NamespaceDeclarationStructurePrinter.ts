@@ -11,7 +11,7 @@ export class NamespaceDeclarationStructurePrinter extends FactoryStructurePrinte
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: NamespaceDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<NamespaceDeclarationStructure> | undefined) {
         this.blankLineFormattingWriter.printText(writer, structures);
     }
 

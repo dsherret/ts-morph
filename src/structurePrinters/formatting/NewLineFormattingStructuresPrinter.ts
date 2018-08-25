@@ -6,7 +6,7 @@ export class NewLineFormattingStructuresPrinter<T> extends StructurePrinter<T[]>
         super();
     }
 
-    printText(writer: CodeBlockWriter, structures: T[] | undefined) {
+    printText(writer: CodeBlockWriter, structures: ReadonlyArray<T> | undefined) {
         if (structures == null)
             return;
         for (let i = 0; i < structures.length; i++) {

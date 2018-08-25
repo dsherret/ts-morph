@@ -20,7 +20,7 @@ export class TypeElementMemberedNodeStructurePrinter extends FactoryStructurePri
         this.factory.forMethodSignature().printTexts(writer, structure.methods);
     }
 
-    private conditionalSeparator(writer: CodeBlockWriter, structures: any[] | undefined) {
+    private conditionalSeparator(writer: CodeBlockWriter, structures: ReadonlyArray<any> | undefined) {
         if (!ArrayUtils.isNullOrEmpty(structures) && !writer.isAtStartOfFirstLineOfBlock())
             writer.newLine();
     }

@@ -6,7 +6,7 @@ export class CommaSeparatedStructuresPrinter<T> extends StructurePrinter<T[]> {
         super();
     }
 
-    printText(writer: CodeBlockWriter, structures: T[] | undefined) {
+    printText(writer: CodeBlockWriter, structures: ReadonlyArray<T> | undefined) {
         if (structures == null)
             return;
 

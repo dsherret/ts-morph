@@ -160,7 +160,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds type arguments.
      * @param argumentTexts - Argument texts.
      */
-    addTypeArguments(argumentTexts: string[]) {
+    addTypeArguments(argumentTexts: ReadonlyArray<string>) {
         return this.getCallExpressionOrThrow().addTypeArguments(argumentTexts);
     }
 
@@ -178,7 +178,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertTypeArguments(index: number, argumentTexts: string[]) {
+    insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>) {
         return this.getCallExpressionOrThrow().insertTypeArguments(index, argumentTexts);
     }
 
@@ -213,7 +213,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: string[]) {
+    addArguments(argumentTexts: ReadonlyArray<string>) {
         return this.insertArguments(this.getArguments().length, argumentTexts);
     }
 
@@ -231,7 +231,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: string[]) {
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string>) {
         this.setIsDecoratorFactory(true);
         return this.getCallExpressionOrThrow().insertArguments(index, argumentTexts);
     }

@@ -44,7 +44,7 @@ export interface DecoratableNode {
      * Adds decorators.
      * @param structures - Structures of the decorators.
      */
-    addDecorators(structures: DecoratorStructure[]): Decorator[];
+    addDecorators(structures: ReadonlyArray<DecoratorStructure>): Decorator[];
     /**
      * Inserts a decorator.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
@@ -56,7 +56,7 @@ export interface DecoratableNode {
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDecorators(index: number, structures: DecoratorStructure[]): Decorator[];
+    insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>): Decorator[];
 }
 
 export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionType>>(Base: T): Constructor<DecoratableNode> & T {
@@ -79,7 +79,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             return this.insertDecorator(getEndIndexFromArray(this.compilerNode.decorators), structure);
         }
 
-        addDecorators(structures: DecoratorStructure[]) {
+        addDecorators(structures: ReadonlyArray<DecoratorStructure>) {
             return this.insertDecorators(getEndIndexFromArray(this.compilerNode.decorators), structures);
         }
 
@@ -87,7 +87,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
             return this.insertDecorators(index, [structure])[0];
         }
 
-        insertDecorators(index: number, structures: DecoratorStructure[]) {
+        insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 
@@ -126,7 +126,7 @@ export function DecoratableNode<T extends Constructor<DecoratableNodeExtensionTy
     };
 }
 
-function getDecoratorLines(node: Node, structures: DecoratorStructure[]) {
+function getDecoratorLines(node: Node, structures: ReadonlyArray<DecoratorStructure>) {
     const lines: string[] = [];
     for (const structure of structures) {
         // todo: temporary code... refactor this later

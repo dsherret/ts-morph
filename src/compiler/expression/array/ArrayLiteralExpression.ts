@@ -28,7 +28,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param texts - Texts to add as elements.
      * @param options - Options.
      */
-    addElements(texts: string[], options?: { useNewLines?: boolean; }) {
+    addElements(texts: ReadonlyArray<string>, options?: { useNewLines?: boolean; }) {
         return this.insertElements(this.compilerNode.elements.length, texts, options);
     }
 
@@ -48,7 +48,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param texts - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, texts: string[], options?: { useNewLines?: boolean; }): Expression[];
+    insertElements(index: number, texts: ReadonlyArray<string>, options?: { useNewLines?: boolean; }): Expression[];
     /**
      * Insert elements into the array.
      * @param index - Child index to insert at.
@@ -56,7 +56,7 @@ export class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLiteralExp
      * @param options - Options.
      */
     insertElements(index: number, writerFunction: WriterFunction, options?: { useNewLines?: boolean; }): Expression[];
-    insertElements(index: number, textsOrWriterFunction: string[] | WriterFunction, options: { useNewLines?: boolean; } = {}) {
+    insertElements(index: number, textsOrWriterFunction: ReadonlyArray<string> | WriterFunction, options: { useNewLines?: boolean; } = {}) {
         const elements = this.getElements();
         index = verifyAndGetIndex(index, elements.length);
         const useNewLines = getUseNewLines(this);

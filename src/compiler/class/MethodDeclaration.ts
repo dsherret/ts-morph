@@ -37,7 +37,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      * Add method overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: MethodDeclarationOverloadStructure[]) {
+    addOverloads(structures: ReadonlyArray<MethodDeclarationOverloadStructure>) {
         return this.insertOverloads(this.getOverloads().length, structures);
     }
 
@@ -55,7 +55,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: MethodDeclarationOverloadStructure[]) {
+    insertOverloads(index: number, structures: ReadonlyArray<MethodDeclarationOverloadStructure>) {
         const thisName = this.getName();
         const childCodes = structures.map(structure => `${thisName}();`);
 

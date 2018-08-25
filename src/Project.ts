@@ -330,8 +330,8 @@ export class Project {
      * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
      * @param globPatterns - Glob patterns for filtering out the source files.
      */
-    getSourceFiles(globPatterns: string[]): SourceFile[];
-    getSourceFiles(globPatterns?: string | string[]): SourceFile[] {
+    getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
+    getSourceFiles(globPatterns?: string | ReadonlyArray<string>): SourceFile[] {
         const {compilerFactory, fileSystemWrapper} = this.context;
         const sourceFiles = this.context.compilerFactory.getSourceFilesByDirectoryDepth();
         if (typeof globPatterns === "string" || globPatterns instanceof Array)

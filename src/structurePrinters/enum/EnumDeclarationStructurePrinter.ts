@@ -6,7 +6,7 @@ import { BlankLineFormattingStructuresPrinter } from "../formatting";
 export class EnumDeclarationStructurePrinter extends FactoryStructurePrinter<EnumDeclarationStructure> {
     private readonly multipleWriter = new BlankLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: EnumDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<EnumDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

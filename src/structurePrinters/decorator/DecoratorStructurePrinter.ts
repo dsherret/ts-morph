@@ -4,11 +4,11 @@ import { printTextFromStringOrWriter } from "../../utils";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class DecoratorStructurePrinter extends FactoryStructurePrinter<DecoratorStructure> {
-    printTexts(writer: CodeBlockWriter, structures: DecoratorStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined) {
         this.printMultiple(writer, structures, () => writer.newLine());
     }
 
-    printTextsInline(writer: CodeBlockWriter, structures: DecoratorStructure[] | undefined) {
+    printTextsInline(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined) {
         this.printMultiple(writer, structures, () => writer.space());
     }
 
@@ -29,7 +29,7 @@ export class DecoratorStructurePrinter extends FactoryStructurePrinter<Decorator
         writer.write(")");
     }
 
-    private printMultiple(writer: CodeBlockWriter, structures: DecoratorStructure[] | undefined, separator: () => void) {
+    private printMultiple(writer: CodeBlockWriter, structures: ReadonlyArray<DecoratorStructure> | undefined, separator: () => void) {
         if (structures == null || structures.length === 0)
             return;
         for (const structure of structures) {

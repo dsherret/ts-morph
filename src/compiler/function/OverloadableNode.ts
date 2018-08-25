@@ -85,7 +85,7 @@ function getNameIfNamedNode(node: Node) {
 export interface InsertOverloadsOptions<TNode extends OverloadableNode & Node, TStructure> {
     node: TNode;
     index: number;
-    structures: TStructure[];
+    structures: ReadonlyArray<TStructure>;
     childCodes: string[];
     getThisStructure: (node: TNode) => TStructure;
     fillNodeFromStructure: (node: TNode, structure: TStructure) => void;
@@ -107,7 +107,7 @@ export function insertOverloads<TNode extends OverloadableNode & Node, TStructur
     const mainIndex = firstIndex + index;
 
     const thisStructure = opts.getThisStructure(opts.node.getImplementation() || opts.node);
-    const structures = opts.structures;
+    const structures = [...opts.structures];
 
     for (let i = 0; i < structures.length; i++) {
         structures[i] = objectAssign(objectAssign({}, thisStructure), structures[i]);

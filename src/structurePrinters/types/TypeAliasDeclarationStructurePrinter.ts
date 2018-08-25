@@ -6,7 +6,7 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 export class TypeAliasDeclarationStructurePrinter extends FactoryStructurePrinter<TypeAliasDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: TypeAliasDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TypeAliasDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

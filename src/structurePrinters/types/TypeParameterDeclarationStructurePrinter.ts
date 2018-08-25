@@ -6,7 +6,7 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePrinter<TypeParameterDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTextsWithBrackets(writer: CodeBlockWriter, structures: TypeParameterDeclarationStructure[] | undefined) {
+    printTextsWithBrackets(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure> | undefined) {
         if (structures == null || structures.length === 0)
             return;
         writer.write("<");
@@ -14,7 +14,7 @@ export class TypeParameterDeclarationStructurePrinter extends FactoryStructurePr
         writer.write(">");
     }
 
-    printTexts(writer: CodeBlockWriter, structures: TypeParameterDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TypeParameterDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

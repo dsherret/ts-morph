@@ -6,7 +6,7 @@ export class SpaceFormattingStructuresPrinter<T> extends StructurePrinter<T[]> {
         super();
     }
 
-    printText(writer: CodeBlockWriter, structures: T[]) {
+    printText(writer: CodeBlockWriter, structures: ReadonlyArray<T>) {
         for (let i = 0; i < structures.length; i++) {
             writer.conditionalWrite(i > 0, " ");
             this.structurePrinter.printText(writer, structures[i]);

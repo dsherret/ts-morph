@@ -56,7 +56,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: VariableDeclarationStructure[]) {
+    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>) {
         return this.getDeclarationList().addDeclarations(structures);
     }
 
@@ -74,7 +74,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: VariableDeclarationStructure[]) {
+    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>) {
         return this.getDeclarationList().insertDeclarations(index, structures);
     }
 

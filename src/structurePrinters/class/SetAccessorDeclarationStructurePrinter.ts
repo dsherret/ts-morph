@@ -11,7 +11,7 @@ export class SetAccessorDeclarationStructurePrinter extends FactoryStructurePrin
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: SetAccessorDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<SetAccessorDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

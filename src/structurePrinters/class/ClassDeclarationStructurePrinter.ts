@@ -12,7 +12,7 @@ export class ClassDeclarationStructurePrinter extends FactoryStructurePrinter<Cl
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ClassDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ClassDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

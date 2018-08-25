@@ -24,7 +24,7 @@ export class JSDocStructurePrinter extends FactoryStructurePrinter<JSDocStructur
         }
     }
 
-    printDocs(writer: CodeBlockWriter, structures: (JSDocStructure | string | WriterFunction)[] | undefined) {
+    printDocs(writer: CodeBlockWriter, structures: ReadonlyArray<JSDocStructure | string | WriterFunction> | undefined) {
         if (structures == null)
             return;
 

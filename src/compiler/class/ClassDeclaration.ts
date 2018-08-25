@@ -140,7 +140,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Adds constructors.
      * @param structures - Structures of the constructor.
      */
-    addConstructors(structures: ConstructorDeclarationStructure[]) {
+    addConstructors(structures: ReadonlyArray<ConstructorDeclarationStructure>) {
         return this.insertConstructors(getEndIndexFromArray(this.getMembers()), structures);
     }
 
@@ -158,7 +158,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
-    insertConstructors(index: number, structures: ConstructorDeclarationStructure[]) {
+    insertConstructors(index: number, structures: ReadonlyArray<ConstructorDeclarationStructure>) {
         const isAmbient = this.isAmbient();
 
         return insertIntoBracesOrSourceFileWithGetChildren<ConstructorDeclaration, ConstructorDeclarationStructure>({
@@ -200,7 +200,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addGetAccessors(structures: GetAccessorDeclarationStructure[]) {
+    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
         return this.insertGetAccessors(getEndIndexFromArray(this.getMembers()), structures);
     }
 
@@ -218,7 +218,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]) {
+    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>) {
         return insertIntoBracesOrSourceFileWithGetChildren<GetAccessorDeclaration, GetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
@@ -251,7 +251,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addSetAccessors(structures: SetAccessorDeclarationStructure[]) {
+    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
         return this.insertSetAccessors(getEndIndexFromArray(this.getMembers()), structures);
     }
 
@@ -269,7 +269,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]) {
+    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
         return insertIntoBracesOrSourceFileWithGetChildren<SetAccessorDeclaration, SetAccessorDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
@@ -302,7 +302,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: PropertyDeclarationStructure[]) {
+    addProperties(structures: ReadonlyArray<PropertyDeclarationStructure>) {
         return this.insertProperties(getEndIndexFromArray(this.getMembers()), structures);
     }
 
@@ -320,7 +320,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: PropertyDeclarationStructure[]) {
+    insertProperties(index: number, structures: ReadonlyArray<PropertyDeclarationStructure>) {
         return insertIntoBracesOrSourceFileWithGetChildren<PropertyDeclaration, PropertyDeclarationStructure>({
             getIndexedChildren: () => this.getMembers(),
             parent: this,
@@ -548,7 +548,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: MethodDeclarationStructure[]) {
+    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>) {
         return this.insertMethods(getEndIndexFromArray(this.getMembers()), structures);
     }
 
@@ -566,7 +566,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: MethodDeclarationStructure[]) {
+    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>) {
         const isAmbient = this.isAmbient();
         structures = structures.map(s => ({...s}));
 
