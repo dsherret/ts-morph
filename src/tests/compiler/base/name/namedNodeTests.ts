@@ -1,19 +1,46 @@
 ﻿import { expect } from "chai";
-import { EnumDeclaration, FunctionDeclaration, Identifier, NamedNode } from "../../../../compiler";
+import { EnumDeclaration, FunctionDeclaration, Identifier, NamedNode, RenameOptions } from "../../../../compiler";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NamedNode), () => {
     describe(nameof<NamedNode>(n => n.rename), () => {
-        function throwTest(text: any) {
-            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
-            expect(() => firstChild.rename(text)).to.throw();
-        }
-
         it("should set the name and rename any referenced nodes", () => {
             const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>("enum MyEnum {}\nlet myEnum: MyEnum;");
             firstChild.rename("MyNewEnum");
             expect(sourceFile.getFullText()).to.equal("enum MyNewEnum {}\nlet myEnum: MyNewEnum;");
         });
+
+        function optionsTest(startText: string, options: RenameOptions, expectedText: string) {
+            const {firstChild, sourceFile} = getInfoFromText<EnumDeclaration>(startText);
+            firstChild.rename("MyNewEnum", options);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should rename in strings when specified", () => {
+            optionsTest("enum MyEnum {}\nlet myEnum = 'MyEnum';", { renameInStrings: true }, "enum MyNewEnum {}\nlet myEnum = 'MyNewEnum';");
+        });
+
+        it("should not rename in strings when specified", () => {
+            optionsTest("enum MyEnum {}\nlet myEnum = 'MyEnum';", {}, "enum MyNewEnum {}\nlet myEnum = 'MyEnum';");
+        });
+
+        it("should rename in strings when specified", () => {
+            optionsTest("// MyEnum\nenum MyEnum {}\n", { renameInComments: true }, "// MyNewEnum\nenum MyNewEnum {}\n");
+        });
+
+        it("should not rename in comments when specified", () => {
+            optionsTest("// MyEnum\nenum MyEnum {}\n", { }, "// MyEnum\nenum MyNewEnum {}\n");
+        });
+
+        it("should rename in both comments and strings when specified", () => {
+            optionsTest("// MyEnum\nenum MyEnum {}\nlet myEnum = 'MyEnum';", { renameInComments: true, renameInStrings: true },
+                "// MyNewEnum\nenum MyNewEnum {}\nlet myEnum = 'MyNewEnum';");
+        });
+
+        function throwTest(text: any) {
+            const {firstChild} = getInfoFromText<EnumDeclaration>("enum MyEnum {}");
+            expect(() => firstChild.rename(text)).to.throw();
+        }
 
         it("should throw if null", () => {
             throwTest(null);

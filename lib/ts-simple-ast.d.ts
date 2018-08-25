@@ -2511,8 +2511,9 @@ export interface RenameableNode {
     /**
      * Renames the name of the node.
      * @param newName - New name.
+     * @param options - Options for renaming.
      */
-    rename(newName: string): this;
+    rename(newName: string, options?: RenameOptions): this;
 }
 
 export declare type RenameableNodeExtensionType = Node<ts.Node>;
@@ -4362,6 +4363,26 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
+    /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor(condition?: (node: Node) => boolean): Node | undefined;
     /**
      * Gets the descendants that match a specified syntax kind.
      * @param kind - Kind to check.
@@ -7955,6 +7976,21 @@ export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
     ensureNewLineAtEndOfFile?: boolean;
 }
+/**
+ * Options for renaming a node.
+ */
+export interface RenameOptions {
+    /**
+     * Whether comments referencing this node should be renamed.
+     * @remarks False by default.
+     */
+    renameInComments?: boolean;
+    /**
+     * Whether strings referencing this node should be renamed.
+     * @remarks False by default.
+     */
+    renameInStrings?: boolean;
+}
 
 /**
  * User preferences for refactoring.
@@ -7978,8 +8014,9 @@ export declare class LanguageService {
      * Rename the specified node.
      * @param node - Node to rename.
      * @param newName - New name for the node.
+     * @param options - Options for renaming the node.
      */
-    renameNode(node: Node, newName: string): void;
+    renameNode(node: Node, newName: string, options?: RenameOptions): void;
     /**
      * Rename the provided rename locations.
      * @param renameLocations - Rename locations.
@@ -8027,8 +8064,9 @@ export declare class LanguageService {
     /**
      * Find the rename locations for the specified node.
      * @param node - Node to get the rename locations for.
+     * @param options - Options for renaming.
      */
-    findRenameLocations(node: Node): RenameLocation[];
+    findRenameLocations(node: Node, options?: RenameOptions): RenameLocation[];
     /**
      * Gets the formatting edits for a range.
      * @param filePath - File path.

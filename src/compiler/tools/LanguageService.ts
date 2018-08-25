@@ -6,7 +6,7 @@ import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescr
 import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node } from "../common";
 import { SourceFile } from "../file";
-import { FormatCodeSettings, UserPreferences } from "./inputs";
+import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
 import { DocumentRegistry } from "../../factories/DocumentRegistry";
@@ -114,14 +114,15 @@ export class LanguageService {
      * Rename the specified node.
      * @param node - Node to rename.
      * @param newName - New name for the node.
+     * @param options - Options for renaming the node.
      */
-    renameNode(node: Node, newName: string) {
+    renameNode(node: Node, newName: string, options: RenameOptions = {}) {
         errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
 
         if (node.getText() === newName)
             return;
 
-        this.renameLocations(this.findRenameLocations(node), newName);
+        this.renameLocations(this.findRenameLocations(node, options), newName);
     }
 
     /**
@@ -221,9 +222,11 @@ export class LanguageService {
     /**
      * Find the rename locations for the specified node.
      * @param node - Node to get the rename locations for.
+     * @param options - Options for renaming.
      */
-    findRenameLocations(node: Node): RenameLocation[] {
-        const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(), false, false) || [];
+    findRenameLocations(node: Node, options: RenameOptions = {}): RenameLocation[] {
+        const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(),
+            options.renameInStrings || false, options.renameInComments || false) || [];
         return renameLocations.map(l => new RenameLocation(this.context, l));
     }
 
