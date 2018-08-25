@@ -22,7 +22,8 @@
     "ensure-declaration-file-not-changed": "ts-node --transpileOnly scripts/ensureDeclarationFileNotChanged",
     "overwrite-declaration-file": "npm run package && shx cp -rf dist/main.d.ts lib/ts-simple-ast.d.ts && shx cp -rf dist/typescript/typescript.d.ts lib/typescript/typescript.d.ts && shx cp -rf dist/codeBlockWriter/code-block-writer.d.ts lib/codeBlockWriter/code-block-writer.d.ts",
     "ensure-or-throw-exists": "ts-node --transpileOnly scripts/ensureOrThrowExists",
-    "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts"
+    "type-check-docs": "ts-node --transpileOnly scripts/typeCheckDocumentation.ts",
+    "maintain-barrels": "barrel-maintainer src"
   },
   "repository": "git+https://github.com/dsherret/ts-simple-ast.git",
   "keywords": [
@@ -78,6 +79,7 @@
     "@types/multimatch": "^2.1.2",
     "@types/node": "^6.0.110",
     "@types/object-assign": "^4.0.30",
+    "barrel-maintainer": "^1.3.1",
     "chai": "^4.1.2",
     "chalk": "^2.4.0",
     "conditional-type-checks": "^0.5.0",

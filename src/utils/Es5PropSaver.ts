@@ -1,3 +1,4 @@
+/* barrel:ignore */
 export class Es5PropSaver<TObject, TValue> {
     private readonly propName = `__key_${Es5PropSaver.instanceCount++}`;
 
