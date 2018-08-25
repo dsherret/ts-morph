@@ -6,7 +6,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Exist
 
-**Total:** 160
+**Total:** 161
 
 * [ArrayBindingPattern](src/compiler/binding/ArrayBindingPattern.ts)
     * :heavy_check_mark: elements
@@ -262,6 +262,8 @@ The disadvantage to a node not being wrapped is that it won't have helper method
     * :heavy_check_mark: initializer
 * [ParenthesizedExpression](src/compiler/expression/ParenthesizedExpression.ts)
     * :heavy_check_mark: expression
+* [ParenthesizedTypeNode](src/compiler/type/ParenthesizedTypeNode.ts)
+    * :heavy_check_mark: type
 * [PartiallyEmittedExpression](src/compiler/expression/PartiallyEmittedExpression.ts)
     * :heavy_check_mark: expression
 * [PostfixUnaryExpression](src/compiler/expression/PostfixUnaryExpression.ts)
@@ -406,7 +408,7 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 
 ## Not Exist
 
-**Total:** 61
+**Total:** 60
 
 * Bundle
 * ClassElement
@@ -455,7 +457,6 @@ The disadvantage to a node not being wrapped is that it won't have helper method
 * ObjectLiteralElement
 * ObjectLiteralExpressionBase
 * OptionalTypeNode
-* ParenthesizedTypeNode
 * PropertyAccessEntityNameExpression
 * PropertyLikeDeclaration
 * RestTypeNode

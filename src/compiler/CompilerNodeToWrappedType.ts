@@ -123,6 +123,7 @@ export type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBin
     T extends ts.ImportTypeNode ? compiler.ImportTypeNode :
     T extends ts.IntersectionTypeNode ? compiler.IntersectionTypeNode :
     T extends ts.LiteralTypeNode ? compiler.LiteralTypeNode :
+    T extends ts.ParenthesizedTypeNode ? compiler.ParenthesizedTypeNode :
     T extends ts.TupleTypeNode ? compiler.TupleTypeNode :
     T extends ts.TypeAliasDeclaration ? compiler.TypeAliasDeclaration :
     T extends ts.Statement ? compiler.Statement :

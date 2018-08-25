@@ -1661,6 +1661,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ParenthesizedTypeNode.
+     * @param node - Node to check.
+     */
+    static isParenthesizedTypeNode(node: compiler.Node): node is compiler.ParenthesizedTypeNode {
+        return node.getKind() === SyntaxKind.ParenthesizedType;
+    }
+
+    /**
      * Gets if the node is a PartiallyEmittedExpression.
      * @param node - Node to check.
      */
@@ -2351,6 +2359,7 @@ export class TypeGuards {
             case SyntaxKind.ImportType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
+            case SyntaxKind.ParenthesizedType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:

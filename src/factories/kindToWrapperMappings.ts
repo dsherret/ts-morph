@@ -98,6 +98,7 @@ export const kindToWrapperMappings: { [key: number]: any } = {
     [SyntaxKind.OmittedExpression]: compiler.OmittedExpression,
     [SyntaxKind.Parameter]: compiler.ParameterDeclaration,
     [SyntaxKind.ParenthesizedExpression]: compiler.ParenthesizedExpression,
+    [SyntaxKind.ParenthesizedType]: compiler.ParenthesizedTypeNode,
     [SyntaxKind.PartiallyEmittedExpression]: compiler.PartiallyEmittedExpression,
     [SyntaxKind.PostfixUnaryExpression]: compiler.PostfixUnaryExpression,
     [SyntaxKind.PrefixUnaryExpression]: compiler.PrefixUnaryExpression,
