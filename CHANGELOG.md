@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.3.0"></a>
+# [14.3.0](https://github.com/dsherret/ts-simple-ast/compare/14.2.1...14.3.0) (2018-08-25)
+
+
+### Bug Fixes
+
+* Use ReadonlyArray for array inputs. ([2a5ed73](https://github.com/dsherret/ts-simple-ast/commit/2a5ed73))
+
+
+### Features
+
+* [#380](https://github.com/dsherret/ts-simple-ast/issues/380) - Expose options to rename in comments and strings ([29592c7](https://github.com/dsherret/ts-simple-ast/commit/29592c7))
+* [#390](https://github.com/dsherret/ts-simple-ast/issues/390) - Add Node.getFirstAncestor and getFirstAncestorOrThrow methods. ([f83be80](https://github.com/dsherret/ts-simple-ast/commit/f83be80))
+* [#406](https://github.com/dsherret/ts-simple-ast/issues/406) - Wrap ParenthesizedTypeNode. ([9429704](https://github.com/dsherret/ts-simple-ast/commit/9429704))
+* [#74](https://github.com/dsherret/ts-simple-ast/issues/74) - Add more "OrThrow" methods. ([2d5c94d](https://github.com/dsherret/ts-simple-ast/commit/2d5c94d))
+* Use readonly arrays for file globs ([#401](https://github.com/dsherret/ts-simple-ast/issues/401)) ([c96d987](https://github.com/dsherret/ts-simple-ast/commit/c96d987))
+
+
+
 <a name="14.2.1"></a>
 ## [14.2.1](https://github.com/dsherret/ts-simple-ast/compare/14.2.0...14.2.1) (2018-08-25)
 
