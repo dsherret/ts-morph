@@ -584,8 +584,51 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getFirstAncestor), () => {
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
+        const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
+        const propDec = interfaceDec.getPropertyOrThrow("prop");
+
+        it("should get the first ancestor by a condition", () => {
+            const result = propDec.getFirstAncestor(n => n.getKind() === SyntaxKind.SourceFile);
+            expect(result).to.be.instanceOf(SourceFile);
+        });
+
+        it("should get by a type guard", () => {
+            const result = propDec.getFirstAncestor(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should return undefined when it can't find it", () => {
+            const privateKeyword = propDec.getFirstAncestor(n => n.getKind() === SyntaxKind.PrivateKeyword);
+            expect(privateKeyword).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstAncestorOrThrow), () => {
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
+        const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
+        const propDec = interfaceDec.getPropertyOrThrow("prop");
+
+        it("should get the first ancestor by a condition", () => {
+            const result = propDec.getFirstAncestorOrThrow(n => n.getKind() === SyntaxKind.SourceFile);
+            expect(result).to.be.instanceOf(SourceFile);
+        });
+
+        it("should get by a type guard", () => {
+            const result = propDec.getFirstAncestorOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should throw when it can't find it", () => {
+            expect(() => propDec.getFirstAncestorOrThrow(n => n.getKind() === SyntaxKind.PrivateKeyword)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstDescendant), () => {
-        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
             const prop = sourceFile.getFirstDescendant(n => n.getKind() === SyntaxKind.PropertySignature);
