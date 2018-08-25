@@ -17,5 +17,5 @@
     directoryExists(dirPath: string): Promise<boolean>;
     directoryExistsSync(dirPath: string): boolean;
     getCurrentDirectory(): string;
-    glob(patterns: string[]): string[];
+    glob(patterns: ReadonlyArray<string>): string[];
 }

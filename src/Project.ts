@@ -165,7 +165,7 @@ export class Project {
      * @param fileGlobs - File glob or globs to add files based on.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[]): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 

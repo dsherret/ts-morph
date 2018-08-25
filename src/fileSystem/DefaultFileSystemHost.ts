@@ -143,7 +143,7 @@ export class DefaultFileSystemHost implements FileSystemHost {
         return FileUtils.standardizeSlashes(nodePath.resolve());
     }
 
-    glob(patterns: string[]) {
+    glob(patterns: ReadonlyArray<string>) {
         return this.globby.sync(patterns, {
             cwd: this.getCurrentDirectory(),
             absolute: true

@@ -584,7 +584,7 @@ export class FileSystemWrapper {
         return this.fileSystem.readDirSync(dirPath).filter(path => !this.isPathQueuedForDeletion(path) && !this.isPathQueuedForDeletion(path));
     }
 
-    glob(patterns: string[]) {
+    glob(patterns: ReadonlyArray<string>) {
         return this.fileSystem.glob(patterns).filter(path => !this.isPathQueuedForDeletion(path));
     }
 
