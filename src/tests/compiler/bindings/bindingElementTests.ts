@@ -32,6 +32,24 @@ describe(nameof(BindingElement), () => {
         });
     });
 
+    describe(nameof<BindingElement>(n => n.getDotDotDotTokenOrThrow), () => {
+        function doTest(text: string, shouldExist: boolean) {
+            const { bindingElement } = getInfoFromTextWithBindingElement(text);
+            if (shouldExist)
+                expect(bindingElement.getDotDotDotTokenOrThrow().getText()).to.equal("...");
+            else
+                expect(() => bindingElement.getDotDotDotTokenOrThrow()).to.throw();
+        }
+
+        it("should get when it exists", () => {
+            doTest("const [...v] = [];", true);
+        });
+
+        it("should return undefined when it doesn't exit", () => {
+            doTest("const [v] = [];", false);
+        });
+    });
+
     describe(nameof<BindingElement>(n => n.getDotDotDotToken), () => {
         function doTest(text: string, shouldExist: boolean) {
             const { bindingElement } = getInfoFromTextWithBindingElement(text);
@@ -47,6 +65,24 @@ describe(nameof(BindingElement), () => {
 
         it("should return undefined when it doesn't exit", () => {
             doTest("const [v] = [];", false);
+        });
+    });
+
+    describe(nameof<BindingElement>(n => n.getPropertyNameNodeOrThrow), () => {
+        function doTest(text: string, expectedName: string | undefined) {
+            const { bindingElement } = getInfoFromTextWithBindingElement(text);
+            if (expectedName == null)
+                expect(() => bindingElement.getPropertyNameNodeOrThrow()).to.throw();
+            else
+                expect(bindingElement.getPropertyNameNodeOrThrow().getText()).to.equal(expectedName);
+        }
+
+        it("should get when it exists", () => {
+            doTest("const { a: b } = { a: 1 };", "a");
+        });
+
+        it("should return undefined when it doesn't exit", () => {
+            doTest("const { a } = { a: 1 };", undefined);
         });
     });
 

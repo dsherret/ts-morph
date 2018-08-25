@@ -3139,11 +3139,23 @@ declare const BindingElementBase: Constructor<InitializerExpressionableNode> & C
 
 export declare class BindingElement extends BindingElementBase<ts.BindingElement> {
     /**
-     * Gets the binding element's dot dot dot token (...) if it exists.
+     * Gets the binding element's dot dot dot token (...) if it exists or throws if not.
+     */
+    getDotDotDotTokenOrThrow(): Node<ts.Token<SyntaxKind.DotDotDotToken>>;
+    /**
+     * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
      */
     getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
     /**
-     * Gets binding element's property name node. For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+     * Gets binding element's property name node or throws if not found.
+     *
+     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+     */
+    getPropertyNameNodeOrThrow(): PropertyName;
+    /**
+     * Gets binding element's property name node or returns undefined if not found.
+     *
+     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
      */
     getPropertyNameNode(): ComputedPropertyName | Identifier | NumericLiteral | StringLiteral | undefined;
 }
@@ -7142,6 +7154,10 @@ export interface NamespaceChildableNode {
      * Gets the parent namespace or undefined if it doesn't exist.
      */
     getParentNamespace(): NamespaceDeclaration | undefined;
+    /**
+     * Gets the parent namespace or throws if it doesn't exist.
+     */
+    getParentNamespaceOrThrow(): NamespaceDeclaration;
 }
 
 export declare type NamespaceChildableNodeExtensionType = Node;
