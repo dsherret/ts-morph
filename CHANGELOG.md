@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.2.1"></a>
+## [14.2.1](https://github.com/dsherret/ts-simple-ast/compare/14.2.0...14.2.1) (2018-08-25)
+
+
+### Bug Fixes
+
+* [#405](https://github.com/dsherret/ts-simple-ast/issues/405) - "Error when renaming a file when [@types](https://github.com/types) exists" ([a63400c](https://github.com/dsherret/ts-simple-ast/commit/a63400c))
+
+
+
 <a name="14.2.0"></a>
 # [14.2.0](https://github.com/dsherret/ts-simple-ast/compare/14.1.0...14.2.0) (2018-08-22)
 
