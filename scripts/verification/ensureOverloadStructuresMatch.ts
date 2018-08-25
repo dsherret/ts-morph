@@ -7,8 +7,7 @@
  * This code verification ensures that an overload structure matches its "implementation" structure.
  * -----------------------------------------------------
  */
-import { ArrayUtils } from "../src/utils";
-import { InspectorFactory, Structure } from "./inspectors";
+import { InspectorFactory, Structure } from "../inspectors";
 
 // setup
 const factory = new InspectorFactory();
@@ -22,7 +21,7 @@ const overloadStructures = inspector.getOverloadStructures();
 const problems: string[] = [];
 for (const overloadStructure of overloadStructures) {
     const structureName = overloadStructure.getName().replace("Overload", "");
-    const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
+    const structure = structures.find(s => s.getName() === structureName);
 
     if (structure == null)
         throw new Error(`Could not find structure for overload: ${overloadStructure.getName()}`);

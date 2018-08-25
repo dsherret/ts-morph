@@ -7,9 +7,8 @@
  * This code verification ensures the equivalent class' mixins match the equivalent structure's base structures.
  * ----------------------------------------------------
  */
-import { ArrayUtils } from "../src/utils";
-import { isAllowedMixin, isAllowedMixinForStructure } from "./config";
-import { InspectorFactory } from "./inspectors";
+import { isAllowedMixin, isAllowedMixinForStructure } from "../config";
+import { InspectorFactory } from "../inspectors";
 
 // setup
 const factory = new InspectorFactory();
@@ -24,7 +23,7 @@ const problems: string[] = [];
 
 for (const node of nodes) {
     const structureName = getStructureName(node.getName());
-    const structure = ArrayUtils.find(structures, s => s.getName() === structureName);
+    const structure = structures.find(s => s.getName() === structureName);
     if (structure == null)
         continue;
 
@@ -37,7 +36,7 @@ for (const node of nodes) {
 
     for (const baseStructure of structure.getBaseStructures().filter(s => !isStructureToIgnore(s.getName()))) {
         const declarationName = baseStructure.getName().replace(/Structure$/, "");
-        const mixin = ArrayUtils.find(node.getMixins(), m => m.getName() === declarationName);
+        const mixin = node.getMixins().find(m => m.getName() === declarationName);
 
         if (mixin == null)
             problems.push(`${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`);
