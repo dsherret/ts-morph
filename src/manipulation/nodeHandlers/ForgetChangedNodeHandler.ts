@@ -21,9 +21,10 @@ export class ForgetChangedNodeHandler implements NodeHandler {
             return;
         }
 
-        const newNodeChildren = ArrayUtils.toIterator(newNode.getChildren(newSourceFile));
+        const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+        const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 
-        for (const currentNodeChild of currentNode.getCompilerChildren())
+        for (const currentNodeChild of currentNodeChildren)
             this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value, newSourceFile);
 
         this.compilerFactory.replaceCompilerNode(currentNode, newNode);
