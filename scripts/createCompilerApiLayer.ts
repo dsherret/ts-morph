@@ -9,6 +9,7 @@ import { rootFolder } from "./config";
 import { InspectorFactory } from "./inspectors";
 import { UnionTypeNode } from "ts-simple-ast";
 import { ArrayUtils } from "../src/utils";
+import { removeImportTypes } from "./common";
 import { cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces } from "./common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
@@ -86,6 +87,7 @@ export function createCompilerApiLayer(factory: InspectorFactory) {
         });
 
         sourceFile.replaceWithText(sourceFile.getFullText().replace(/ *\r?\n/g, "\r\n").replace(/(\r\n)+$/, "\r\n"));
+        removeImportTypes(sourceFile);
 
         function addSeparatedDeclarations() {
             for (const enumDec of allEnums.filter(e => enumsToSeparate.indexOf(e.getName()) >= 0))
