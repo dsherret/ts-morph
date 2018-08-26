@@ -19,6 +19,9 @@ All notable changes to this project will be documented in this file. See [standa
 * [#74](https://github.com/dsherret/ts-simple-ast/issues/74) - Add more "OrThrow" methods. ([2d5c94d](https://github.com/dsherret/ts-simple-ast/commit/2d5c94d))
 * Use readonly arrays for file globs ([#401](https://github.com/dsherret/ts-simple-ast/issues/401)) ([c96d987](https://github.com/dsherret/ts-simple-ast/commit/c96d987))
 
+### Performance Improvements
+
+* [#307](https://github.com/dsherret/ts-simple-ast/issues/307) - Reduce token parsing. ([a6c4ca4](https://github.com/dsherret/ts-simple-ast/commit/a6c4ca4))
 
 
 <a name="14.2.1"></a>
