@@ -9,36 +9,40 @@
  * --------------------------------------------
  */
 import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaration, MethodSignature, Directory } from "ts-simple-ast";
-import { InspectorFactory } from "../inspectors";
+import { TsSimpleAstInspector } from "../inspectors";
+import { Problem } from "./Problem";
 
-const inspector = new InspectorFactory().getTsSimpleAstInspector();
-const problems: string[] = [];
+export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: Problem[]) {
+    for (const c of inspector.getPublicClasses()) {
+        for (const method of c.getInstanceMethods()) {
+            if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
+                continue;
 
-for (const c of inspector.getPublicClasses()) {
-    for (const method of c.getInstanceMethods()) {
-        if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
-            continue;
+            const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
+            if (orThrowMethod == null && !isIgnoredMethod(c, method))
+                problems.push({
+                    filePath: c.sourceFile.getFilePath(),
+                    lineNumber: method.getStartLineNumber(),
+                    message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`
+                });
+        }
+    }
 
-        const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
-        if (orThrowMethod == null && !isIgnoredMethod(c, method))
-            problems.push(`Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
+    for (const i of inspector.getPublicInterfaces()) {
+        for (const method of i.getMethods()) {
+            if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
+                continue;
+
+            const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
+            if (orThrowMethod == null && !isIgnoredMethod(i, method))
+                problems.push({
+                    filePath: i.sourceFile.getFilePath(),
+                    lineNumber: method.getStartLineNumber(),
+                    message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`
+                });
+        }
     }
 }
-
-for (const i of inspector.getPublicInterfaces()) {
-    for (const method of i.getMethods()) {
-        if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
-            continue;
-
-        const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
-        if (orThrowMethod == null && !isIgnoredMethod(i, method))
-            problems.push(`Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`);
-    }
-}
-
-problems.forEach(p => console.error(p));
-
-console.log(`\nFound ${problems.length} issues.`);
 
 function doesReturnTypeRequireOrThrow(returnType: Type) {
     return returnType.isNullable();

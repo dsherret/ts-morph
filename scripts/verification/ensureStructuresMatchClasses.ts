@@ -8,46 +8,42 @@
  * ----------------------------------------------------
  */
 import { isAllowedMixin, isAllowedMixinForStructure } from "../config";
-import { InspectorFactory } from "../inspectors";
+import { TsSimpleAstInspector } from "../inspectors";
+import { Problem } from "./Problem";
 
-// setup
-const factory = new InspectorFactory();
-const inspector = factory.getTsSimpleAstInspector();
+export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, problems: Problem[]) {
+    const nodes = inspector.getWrappedNodes();
+    const structures = inspector.getStructures();
 
-// get info
-const nodes = inspector.getWrappedNodes();
-const structures = inspector.getStructures();
+    for (const node of nodes) {
+        const structureName = getStructureName(node.getName());
+        const structure = structures.find(s => s.getName() === structureName);
+        if (structure == null)
+            continue;
 
-// find problems
-const problems: string[] = [];
+        for (const mixin of node.getMixins().filter(m => isAllowedMixin(m.getName()) && isAllowedMixinForStructure(m.getName(), structure.getName()))) {
+            const mixinStructureName = getStructureName(mixin.getName());
+            const structureHasMixin = structure.getBaseStructures().some(s => s.getName() === mixinStructureName);
+            if (!structureHasMixin)
+                problems.push({
+                    filePath: structure.getFilePath(),
+                    lineNumber: structure.getStartLineNumber(),
+                    message: `${structure.getName()} does not have ${mixinStructureName}.`
+                });
+        }
 
-for (const node of nodes) {
-    const structureName = getStructureName(node.getName());
-    const structure = structures.find(s => s.getName() === structureName);
-    if (structure == null)
-        continue;
+        for (const baseStructure of structure.getBaseStructures().filter(s => !isStructureToIgnore(s.getName()))) {
+            const declarationName = baseStructure.getName().replace(/Structure$/, "");
+            const mixin = node.getMixins().find(m => m.getName() === declarationName);
 
-    for (const mixin of node.getMixins().filter(m => isAllowedMixin(m.getName()) && isAllowedMixinForStructure(m.getName(), structure.getName()))) {
-        const mixinStructureName = getStructureName(mixin.getName());
-        const structureHasMixin = structure.getBaseStructures().some(s => s.getName() === mixinStructureName);
-        if (!structureHasMixin)
-            problems.push(`${structure.getName()} does not have ${mixinStructureName}.`);
+            if (mixin == null)
+                problems.push({
+                    filePath: structure.getFilePath(),
+                    lineNumber: structure.getStartLineNumber(),
+                    message: `${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`
+                });
+        }
     }
-
-    for (const baseStructure of structure.getBaseStructures().filter(s => !isStructureToIgnore(s.getName()))) {
-        const declarationName = baseStructure.getName().replace(/Structure$/, "");
-        const mixin = node.getMixins().find(m => m.getName() === declarationName);
-
-        if (mixin == null)
-            problems.push(`${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`);
-    }
-}
-
-// output
-if (problems.length > 0) {
-    console.log(problems);
-    console.error("Classes and structures did not match!");
-    process.exit(1);
 }
 
 function getStructureName(name: string) {
