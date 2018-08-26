@@ -6,7 +6,7 @@ import { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, 
  NotImplementedError } from "./classes";
 
 /**
- * Thows if not a type../classes/NotImplementedError
+ * Thows if not a type.
  * @param value - Value to check the type of.
  * @param expectedType - Expected type.
  * @param argName - Argument name.
