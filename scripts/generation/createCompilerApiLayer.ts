@@ -5,12 +5,12 @@
  * ------------------------------------------
  */
 import * as path from "path";
-import { rootFolder } from "./config";
-import { InspectorFactory } from "./inspectors";
 import { UnionTypeNode } from "ts-simple-ast";
-import { ArrayUtils } from "../src/utils";
-import { removeImportTypes } from "./common";
-import { cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces } from "./common/cloning";
+import { rootFolder } from "../config";
+import { InspectorFactory } from "../inspectors";
+import { ArrayUtils } from "../../src/utils";
+import { removeImportTypes } from "../common";
+import { cloneEnums, cloneInterfaces, cloneTypeAliases, cloneClasses, cloneFunctions, cloneVariables, cloneNamespaces } from "../common/cloning";
 
 const enumsToSeparate = ["SyntaxKind", "ScriptTarget", "ScriptKind", "LanguageVariant", "EmitHint", "JsxEmit", "ModuleKind", "ModuleResolutionKind",
     "NewLineKind", "TypeFlags", "ObjectFlags", "SymbolFlags", "TypeFormatFlags", "DiagnosticCategory", "IndentStyle"];

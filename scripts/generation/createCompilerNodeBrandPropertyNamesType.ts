@@ -4,8 +4,8 @@
  * Creates a type that lists all the compiler nodes' brand property names.
  * ----------------------------------------------
  */
-import { ArrayUtils } from "../src/utils";
-import { TsInspector } from "./inspectors";
+import { ArrayUtils } from "../../src/utils";
+import { TsInspector } from "../inspectors";
 
 export function createCompilerNodeBrandPropertyNamesType(tsInspector: TsInspector) {
     const brandMatchRegex = /^_[A-Za-z]+Brand$/;

@@ -6,7 +6,7 @@ import { createKindToNodeMappings } from "./createKindToNodeMappings";
 import { createCompilerNodeBrandPropertyNamesType } from "./createCompilerNodeBrandPropertyNamesType";
 import { createCompilerNodeToWrappedType } from "./createCompilerNodeToWrappedType";
 import { createStructurePrinterFactory } from "./createStructurePrinterFactory";
-import { InspectorFactory } from "./inspectors";
+import { InspectorFactory } from "../inspectors";
 
 // setup
 const factory = new InspectorFactory();

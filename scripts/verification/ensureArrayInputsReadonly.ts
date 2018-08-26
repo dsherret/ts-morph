@@ -1,7 +1,8 @@
 ﻿/**
  * Code Verification - Ensure Array Inputs Readonly
  * ------------------------------------------------
- * This code verification ensures the
+ * This code verification ensures the inputs for the public API
+ * only accept readonly arrays.
  * ------------------------------------------------
  */
 import { TypeGuards, SyntaxKind } from "ts-simple-ast";

@@ -12,8 +12,8 @@
  * ------------------------------------------
  */
 import { CodeBlockWriter } from "ts-simple-ast";
-import { ArrayUtils, KeyValueCache, StringUtils } from "../src/utils";
-import { TsSimpleAstInspector, WrappedNode, Mixin } from "./inspectors";
+import { ArrayUtils, KeyValueCache, StringUtils } from "../../src/utils";
+import { TsSimpleAstInspector, WrappedNode, Mixin } from "../inspectors";
 
 interface MethodInfo {
     name: string;

@@ -5,7 +5,7 @@
  * --------------------------------------------------------
  */
 import { TypeGuards, SyntaxKind, MethodDeclarationStructure, ParameterDeclaration, Scope } from "ts-simple-ast";
-import { TsSimpleAstInspector } from "./inspectors";
+import { TsSimpleAstInspector } from "../inspectors";
 
 export function createStructurePrinterFactory(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();

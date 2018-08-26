@@ -6,9 +6,9 @@
  */
 import * as path from "path";
 import { ClassDeclaration } from "ts-simple-ast";
-import { rootFolder } from "./config";
-import { TsSimpleAstInspector } from "./inspectors";
-import { cloneClasses, cloneInterfaces } from "./common/cloning";
+import { rootFolder } from "../config";
+import { TsSimpleAstInspector } from "../inspectors";
+import { cloneClasses, cloneInterfaces } from "../common/cloning";
 
 export function createCodeBlockWriterFile(inspector: TsSimpleAstInspector) {
     const project = inspector.getProject();
