@@ -1,8 +1,9 @@
 ﻿import { BaseError } from "./BaseError";
 
 export class PathNotFoundError extends BaseError {
-    constructor(public readonly path: string) {
-        super(`Path not found: ${path}`, PathNotFoundError.prototype);
+    /** @internal */
+    constructor(public readonly path: string, prefix = "Path", prototype: any = PathNotFoundError.prototype) {
+        super(`${prefix} not found: ${path}`, prototype);
     }
 
     readonly code = "ENOENT";

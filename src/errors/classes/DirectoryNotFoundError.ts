@@ -1,9 +1,12 @@
-﻿import { BaseError } from "./BaseError";
+﻿import { PathNotFoundError } from "./PathNotFoundError";
 
-export class DirectoryNotFoundError extends BaseError {
-    constructor(public readonly dirPath: string) {
-        super(`Directory not found: ${dirPath}`, DirectoryNotFoundError.prototype);
+export class DirectoryNotFoundError extends PathNotFoundError {
+    /** @deprecated Use path. */
+    public readonly dirPath: string;
+
+    /** @internal */
+    constructor(dirPath: string) {
+        super(dirPath, "Directory", DirectoryNotFoundError.prototype);
+        this.dirPath = dirPath;
     }
-
-    readonly code = "ENOENT";
 }

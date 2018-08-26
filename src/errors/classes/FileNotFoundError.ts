@@ -1,9 +1,12 @@
-﻿import { BaseError } from "./BaseError";
+﻿import { PathNotFoundError } from "./PathNotFoundError";
 
-export class FileNotFoundError extends BaseError {
-    constructor(public readonly filePath: string) {
-        super(`File not found: ${filePath}`, FileNotFoundError.prototype);
+export class FileNotFoundError extends PathNotFoundError {
+    /** @deprecated Use path. */
+    public readonly filePath: string;
+
+    /** @internal */
+    constructor(filePath: string) {
+        super(filePath, "File", FileNotFoundError.prototype);
+        this.filePath = filePath;
     }
-
-    readonly code = "ENOENT";
 }
