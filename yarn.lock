@@ -2616,7 +2616,7 @@ ts-node@^6.0.2:
     source-map-support "^0.5.3"
     yn "^2.0.0"
 
-ts-simple-ast@14.2.1, ts-simple-ast@^14.2.1:
+ts-simple-ast@14.2.1:
   version "14.2.1"
   resolved "https://registry.yarnpkg.com/ts-simple-ast/-/ts-simple-ast-14.2.1.tgz#f50617e1920b32d01a8d6073b1f36c61e17e9b5b"
   dependencies:
