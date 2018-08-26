@@ -1,7 +1,8 @@
 ﻿import { BaseError } from "./BaseError";
 
 export class NotSupportedError extends BaseError {
-    constructor(public message: string) {
+    /** @internal */
+    constructor(message: string) {
         super(message, NotSupportedError.prototype);
     }
 }

@@ -2,13 +2,8 @@ import { Node } from "../compiler";
 import { FileSystemWrapper } from "../fileSystem";
 import { SyntaxKind } from "../typescript";
 import { getSyntaxKindName } from "../utils/compiler/getSyntaxKindName";
-import { ArgumentError } from "./ArgumentError";
-import { ArgumentNullOrWhitespaceError } from "./ArgumentNullOrWhitespaceError";
-import { ArgumentOutOfRangeError } from "./ArgumentOutOfRangeError";
-import { ArgumentTypeError } from "./ArgumentTypeError";
-import { FileNotFoundError } from "./FileNotFoundError";
-import { InvalidOperationError } from "./InvalidOperationError";
-import { NotImplementedError } from "./NotImplementedError";
+import { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, FileNotFoundError, InvalidOperationError,
+ NotImplementedError } from "./classes";
 
 /**
  * Thows if not a type.
