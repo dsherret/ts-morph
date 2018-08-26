@@ -8,7 +8,7 @@ import * as path from "path";
 import Project, { Node, SourceFile, ClassDeclaration, TypeGuards, ts, SyntaxKind, VariableStatement } from "ts-simple-ast";
 import { StringUtils } from "../../src/utils";
 import { getDefinitionProject, removeImportTypes } from "../common";
-import { flattenDeclarationFiles } from "../flattenDeclarationFiles";
+import { flattenDeclarationFiles } from "./flattenDeclarationFiles";
 
 const project = getDefinitionProject();
 const mainFile = project.getSourceFileOrThrow("main.d.ts");
