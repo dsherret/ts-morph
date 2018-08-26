@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.0"></a>
+# [14.4.0](https://github.com/dsherret/ts-simple-ast/compare/14.3.0...14.4.0) (2018-08-26)
+
+
+### Features
+
+* [#126](https://github.com/dsherret/ts-simple-ast/issues/126) - Ability to emit to memory. ([4f6fb5a](https://github.com/dsherret/ts-simple-ast/commit/4f6fb5a))
+* [#409](https://github.com/dsherret/ts-simple-ast/issues/409) - Add ability to specify custom transformers when emitting. ([644eba5](https://github.com/dsherret/ts-simple-ast/commit/644eba5))
+* Export errors. ([#402](https://github.com/dsherret/ts-simple-ast/issues/402)) ([b719ed8](https://github.com/dsherret/ts-simple-ast/commit/b719ed8))
+
+
+
 <a name="14.3.0"></a>
 # [14.3.0](https://github.com/dsherret/ts-simple-ast/compare/14.2.1...14.3.0) (2018-08-25)
 
