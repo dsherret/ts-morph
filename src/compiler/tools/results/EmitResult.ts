@@ -43,7 +43,7 @@ export class EmitResult {
 
     /*
     // this requires the listEmittedFiles compiler option to be true, but that's not public...
-    // todo: revaluate this in TS 2.5 (see if they made it public or not)
+    // todo: revaluate this to see if they've made it public yet
     getEmittedFilePaths() {
         return this.compilerEmitResult.emittedFiles;
     }

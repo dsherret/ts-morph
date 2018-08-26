@@ -613,6 +613,37 @@ describe(nameof(Project), () => {
             expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
         });
+
+        it("should emit with custom transformations", () => {
+            const { project, fileSystem } = setup({ noLib: true, outDir: "dist" });
+
+            function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
+                return visitNodeAndChildren(sourceFile) as ts.SourceFile;
+
+                function visitNodeAndChildren(node: ts.Node): ts.Node {
+                    return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
+                }
+            }
+
+            function numericLiteralToStringLiteral(node: ts.Node) {
+                if (ts.isNumericLiteral(node))
+                    return ts.createStringLiteral(node.text);
+                return node;
+            }
+
+            project.emit({
+                customTransformers: {
+                    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)]
+                }
+            });
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
+            expect(writeLog[0].fileText).to.equal(`var num1 = "1";\n`);
+            expect(writeLog[1].filePath).to.equal("/dist/file2.js");
+            expect(writeLog[1].fileText).to.equal(`var num2 = "2";\n`);
+            expect(writeLog.length).to.equal(2);
+        });
     });
 
     describe(nameof<Project>(project => project.getSourceFile), () => {

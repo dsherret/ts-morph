@@ -6,5 +6,5 @@ export class PathNotFoundError extends BaseError {
         super(`${prefix} not found: ${path}`, prototype);
     }
 
-    readonly code = "ENOENT";
+    readonly code: "ENOENT" = "ENOENT";
 }

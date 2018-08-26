@@ -20,6 +20,10 @@ export interface EmitOptionsBase {
      * Whether only .d.ts files should be emitted.
      */
     emitOnlyDtsFiles?: boolean;
+    /**
+     * Transformers to act on the files when emitting.
+     */
+    customTransformers?: ts.CustomTransformers;
 }
 
 /**
@@ -79,10 +83,9 @@ export class Program {
      * Emits the TypeScript files to the specified target.
      */
     emit(options: EmitOptions = {}) {
-        const targetSourceFile = options != null && options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
+        const targetSourceFile = options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
+        const { emitOnlyDtsFiles, customTransformers } = options;
         const cancellationToken = undefined; // todo: expose this
-        const emitOnlyDtsFiles = options != null && options.emitOnlyDtsFiles != null ? options.emitOnlyDtsFiles : undefined;
-        const customTransformers = undefined; // todo: expose this
         const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
         return new EmitResult(this.context, emitResult);
     }

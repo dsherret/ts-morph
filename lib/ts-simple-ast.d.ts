@@ -8164,6 +8164,10 @@ export interface EmitOptionsBase {
      * Whether only .d.ts files should be emitted.
      */
     emitOnlyDtsFiles?: boolean;
+    /**
+     * Transformers to act on the files when emitting.
+     */
+    customTransformers?: ts.CustomTransformers;
 }
 
 /**

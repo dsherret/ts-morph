@@ -62,3 +62,36 @@ for (const diagnostic of emitResult.getDiagnostics())
 ```
 
 These are good to always check when emitting to ensure everything went smoothly. They will explain why files aren't being emitted.
+
+### Emitting with custom transformations
+
+You can emit using the compiler API's custom transformations by specifying them on the `customTransformers` option.
+
+The following example will emit the code with all numeric literals change to string literals:
+
+```ts
+project.emit({
+    customTransformers: {
+        // optional transformers to evaluate before built in .js transformations
+        before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)],
+        // optional transformers to evaluate after built in .js transformations
+        after: [],
+        // optional transformers to evaluate after built in .d.ts transformations
+        afterDeclarations: []
+    }
+});
+
+function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
+    return visitNodeAndChildren(sourceFile) as ts.SourceFile;
+
+    function visitNodeAndChildren(node: ts.Node): ts.Node {
+        return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
+    }
+}
+
+function numericLiteralToStringLiteral(node: ts.Node) {
+    if (ts.isNumericLiteral(node))
+        return ts.createStringLiteral(node.text);
+    return node;
+}
+```
