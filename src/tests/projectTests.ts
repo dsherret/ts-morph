@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
+import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
@@ -570,17 +570,17 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.emit), () => {
-        function setup(compilerOptions: CompilerOptions) {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project({ compilerOptions }, fileSystem);
-            project.createSourceFile("file1.ts", "const num1 = 1;");
-            project.createSourceFile("file2.ts", "const num2 = 2;");
-            return {fileSystem, project};
-        }
+    function emitSetup(compilerOptions: CompilerOptions) {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const project = new Project({ compilerOptions }, fileSystem);
+        project.createSourceFile("file1.ts", "const num1 = 1;");
+        project.createSourceFile("file2.ts", "const num2 = 2;");
+        return {fileSystem, project};
+    }
 
+    describe(nameof<Project>(project => project.emit), () => {
         it("should emit multiple files when not specifying any options", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emit();
             expect(result).to.be.instanceof(EmitResult);
 
@@ -593,7 +593,7 @@ describe(nameof(Project), () => {
         });
 
         it("should emit the source file when specified", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
             project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
 
             const writeLog = fileSystem.getWriteLog();
@@ -603,7 +603,7 @@ describe(nameof(Project), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist", declaration: true });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist", declaration: true });
             project.emit({ emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
@@ -615,7 +615,7 @@ describe(nameof(Project), () => {
         });
 
         it("should emit with custom transformations", () => {
-            const { project, fileSystem } = setup({ noLib: true, outDir: "dist" });
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
 
             function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
                 return visitNodeAndChildren(sourceFile) as ts.SourceFile;
@@ -643,6 +643,24 @@ describe(nameof(Project), () => {
             expect(writeLog[1].filePath).to.equal("/dist/file2.js");
             expect(writeLog[1].fileText).to.equal(`var num2 = "2";\n`);
             expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Project>(project => project.emitToMemory), () => {
+        it("should emit multiple files to memory", () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
+            const result = project.emitToMemory();
+            expect(result).to.be.instanceof(MemoryEmitResult);
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog.length).to.equal(0);
+
+            const files = result.getFiles();
+            expect(files[0].filePath).to.equal("/dist/file1.js");
+            expect(files[0].text).to.equal("var num1 = 1;\n");
+            expect(files[1].filePath).to.equal("/dist/file2.js");
+            expect(files[1].text).to.equal("var num2 = 2;\n");
+            expect(files.length).to.equal(2);
         });
     });
 

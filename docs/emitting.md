@@ -95,3 +95,43 @@ function numericLiteralToStringLiteral(node: ts.Node) {
     return node;
 }
 ```
+
+## Emitting to Memory
+
+If you don't want to emit to the file system, you can call `emitToMemory()`:
+
+```ts
+const project = new Project({ compilerOptions: { outDir: "dist" } });
+project.createSourceFile("MyFile.ts", "const num = 1;");
+const result = project.emitToMemory();
+
+// output the emitted files to the console
+for (const file of result.getFiles()) {
+    console.log("----");
+    console.log(file.filePath);
+    console.log("----");
+    console.log(file.text);
+    console.log("\n");
+}
+```
+
+To manipulate after emitting, you may load the result into a new project and manipulate that:
+
+```ts
+const project = new Project({ compilerOptions: { outDir: "dist" } });
+project.createSourceFile("MyFile.ts", "const num = 1;");
+const result = project.emitToMemory();
+
+// load the javascript files into a new project
+const newProject = new Project();
+for (const file of result.getFiles()) {
+    newProject.createSourceFile(file.filePath, file.text, { overwrite: true });
+}
+
+// ...manipulate the javascript files here...
+
+// save the new files to the file system
+newProject.save();
+```
+
+...but consider using the custom transformers discussed above if you want it to be faster.

@@ -438,6 +438,14 @@ export class Project {
     }
 
     /**
+     * Emits all the source files to memory.
+     * @param emitOptions - Optional emit options.
+     */
+    emitToMemory(emitOptions: EmitOptions = {}) {
+        return this.context.program.emitToMemory(emitOptions);
+    }
+
+    /**
      * Gets the compiler options.
      */
     getCompilerOptions(): CompilerOptions {

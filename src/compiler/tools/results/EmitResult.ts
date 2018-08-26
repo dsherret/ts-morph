@@ -1,6 +1,7 @@
 import { ProjectContext } from "../../../ProjectContext";
 import { ts } from "../../../typescript";
 import { Memoize } from "../../../utils";
+import { OutputFile } from "./OutputFile";
 
 /**
  * Result of an emit.
@@ -48,4 +49,41 @@ export class EmitResult {
         return this.compilerEmitResult.emittedFiles;
     }
     */
+}
+
+/**
+ * The emitted file in memory.
+ */
+export interface MemoryEmitResultFile {
+    /**
+     * File path that was emitted to.
+     */
+    filePath: string;
+    /**
+     * The text that was emitted.
+     */
+    text: string;
+    /**
+     * Whether the byte order mark should be written.
+     */
+    writeByteOrderMark: boolean;
+}
+
+/**
+ * Result of an emit to memory.
+ */
+export class MemoryEmitResult extends EmitResult {
+    /**
+     * @internal
+     */
+    constructor(context: ProjectContext, compilerObject: ts.EmitResult, private readonly files: MemoryEmitResultFile[]) {
+        super(context, compilerObject);
+    }
+
+    /**
+     * Gets the files that were emitted to memory.
+     */
+    getFiles() {
+        return this.files;
+    }
 }

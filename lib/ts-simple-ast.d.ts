@@ -530,6 +530,11 @@ export declare class Project {
      */
     emit(emitOptions?: EmitOptions): EmitResult;
     /**
+     * Emits all the source files to memory.
+     * @param emitOptions - Optional emit options.
+     */
+    emitToMemory(emitOptions?: EmitOptions): MemoryEmitResult;
+    /**
      * Gets the compiler options.
      */
     getCompilerOptions(): CompilerOptions;
@@ -8150,6 +8155,13 @@ export declare class LanguageService {
 }
 
 /**
+ * Options for emitting from a Program.
+ */
+export interface ProgramEmitOptions extends EmitOptions {
+    writeFile?: ts.WriteFileCallback;
+}
+
+/**
  * Options for emitting.
  */
 export interface EmitOptions extends EmitOptionsBase {
@@ -8183,9 +8195,15 @@ export declare class Program {
      */
     getTypeChecker(): TypeChecker;
     /**
-     * Emits the TypeScript files to the specified target.
+     * Emits the TypeScript files to JavaScript files.
+     * @param options - Options for emitting.
      */
-    emit(options?: EmitOptions): EmitResult;
+    emit(options?: ProgramEmitOptions): EmitResult;
+    /**
+     * Emits the TypeScript files to JavaScript files to memory.
+     * @param options - Options for emitting.
+     */
+    emitToMemory(options?: EmitOptions): MemoryEmitResult;
     /**
      * Gets the syntactic diagnostics.
      * @param sourceFile - Optional source file to filter by.
@@ -8396,6 +8414,35 @@ export declare class EmitResult {
     getDiagnostics(): Diagnostic<ts.Diagnostic>[];
 }
 
+/**
+ * The emitted file in memory.
+ */
+export interface MemoryEmitResultFile {
+    /**
+     * File path that was emitted to.
+     */
+    filePath: string;
+    /**
+     * The text that was emitted.
+     */
+    text: string;
+    /**
+     * Whether the byte order mark should be written.
+     */
+    writeByteOrderMark: boolean;
+}
+
+/**
+ * Result of an emit to memory.
+ */
+export declare class MemoryEmitResult extends EmitResult {
+    private readonly files;
+    /**
+     * Gets the files that were emitted to memory.
+     */
+    getFiles(): MemoryEmitResultFile[];
+}
+
 export declare class FileTextChanges {
     /**
      * Gets the file path.
@@ -8423,7 +8470,7 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
  */
 export declare class OutputFile {
     /**
-     * TypeScript compiler emit result.
+     * TypeScript compiler output file.
      */
     readonly compilerObject: ts.OutputFile;
     /**

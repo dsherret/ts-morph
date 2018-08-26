@@ -2,8 +2,15 @@ import { ProjectContext } from "../../ProjectContext";
 import { ModuleResolutionKind, ts } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 import { SourceFile } from "../file";
-import { Diagnostic, DiagnosticWithLocation, EmitResult } from "./results";
+import { Diagnostic, DiagnosticWithLocation, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
 import { TypeChecker } from "./TypeChecker";
+
+/**
+ * Options for emitting from a Program.
+ */
+export interface ProgramEmitOptions extends EmitOptions {
+    writeFile?: ts.WriteFileCallback;
+}
 
 /**
  * Options for emitting.
@@ -80,14 +87,38 @@ export class Program {
     }
 
     /**
-     * Emits the TypeScript files to the specified target.
+     * Emits the TypeScript files to JavaScript files.
+     * @param options - Options for emitting.
      */
-    emit(options: EmitOptions = {}) {
+    emit(options: ProgramEmitOptions = {}) {
+        return new EmitResult(this.context, this._emit(options));
+    }
+
+    /**
+     * Emits the TypeScript files to JavaScript files to memory.
+     * @param options - Options for emitting.
+     */
+    emitToMemory(options: EmitOptions = {}) {
+        const sourceFiles: MemoryEmitResultFile[] = [];
+        const { fileSystemWrapper } = this.context;
+        const emitResult = this._emit({
+            writeFile: (filePath, text, writeByteOrderMark) => {
+                sourceFiles.push({
+                    filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+                    text,
+                    writeByteOrderMark: writeByteOrderMark || false
+                });
+            }, ...options
+        });
+        return new MemoryEmitResult(this.context, emitResult, sourceFiles);
+    }
+
+    /** @internal */
+    private _emit(options: ProgramEmitOptions = {}) {
         const targetSourceFile = options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
-        const { emitOnlyDtsFiles, customTransformers } = options;
+        const { emitOnlyDtsFiles, customTransformers, writeFile } = options;
         const cancellationToken = undefined; // todo: expose this
-        const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
-        return new EmitResult(this.context, emitResult);
+        return this.compilerObject.emit(targetSourceFile, writeFile, cancellationToken, emitOnlyDtsFiles, customTransformers);
     }
 
     /**
