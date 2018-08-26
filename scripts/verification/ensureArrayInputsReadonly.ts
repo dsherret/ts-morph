@@ -28,6 +28,11 @@ export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, probl
             if (parameter == null || functionType != null || (node.getParent() === parameter && parameter.isRestParameter())
                 || TypeGuards.isArrowFunction(parameter.getParent()))
                 return;
+            const parameterParent = parameter.getParent();
+            const isInternal = TypeGuards.isJSDocableNode(parameterParent)
+                && parameterParent.getJsDocs().some(d => d.getTags().some(t => t.getName() === "internal"));
+            if (isInternal)
+                return;
 
             problems.push({
                 filePath: node.getSourceFile().getFilePath(),
