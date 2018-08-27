@@ -6129,7 +6129,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getExportSymbols(): Symbol[];
     /**
-     * Gets all the declarations exported from the file.
+     * Gets all the declarations that are exported from the file.
+     *
+     * This will include declarations that are transitively exported from other files. If you mean to get the export
+     * declarations then use sourceFile.getExportDeclarations().
      */
     getExportedDeclarations(): Node[];
     /**
