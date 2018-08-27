@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.2"></a>
+## [14.4.2](https://github.com/dsherret/ts-simple-ast/compare/14.4.1...14.4.2) (2018-08-27)
+
+
+### Bug Fixes
+
+* [#413](https://github.com/dsherret/ts-simple-ast/issues/413) - .addExistingSourceFiles(...) will occasionally error for certain file globs. ([15a6027](https://github.com/dsherret/ts-simple-ast/commit/15a6027))
+
+
+
 <a name="14.4.1"></a>
 ## [14.4.1](https://github.com/dsherret/ts-simple-ast/compare/14.4.0...14.4.1) (2018-08-27)
 
