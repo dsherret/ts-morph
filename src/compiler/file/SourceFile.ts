@@ -639,7 +639,8 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the export symbols of the source file.
      */
     getExportSymbols(): Symbol[] {
-        return this.context.typeChecker.getExportsOfModule(this.getSymbolOrThrow());
+        const symbol = this.getSymbol();
+        return symbol == null ? [] : this.context.typeChecker.getExportsOfModule(symbol);
     }
 
     /**

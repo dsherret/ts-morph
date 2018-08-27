@@ -721,6 +721,12 @@ describe(nameof(SourceFile), () => {
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
                 .to.deep.equal(["MainFileClass"].sort());
         });
+
+        it("should not error for an empty file", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const mainSourceFile = project.createSourceFile("main.ts", "");
+            expect(mainSourceFile.getExportedDeclarations().length).to.equal(0);
+        });
     });
 
     describe(nameof<SourceFile>(n => n.insertExportAssignments), () => {
