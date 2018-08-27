@@ -29,7 +29,6 @@ export class LanguageService {
     constructor(context: ProjectContext) {
         this.context = context;
 
-        // I don't know what I'm doing for some of this...
         let version = 0;
         const fileExistsSync = (path: string) => this.context.compilerFactory.containsSourceFileAtPath(path) || context.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
