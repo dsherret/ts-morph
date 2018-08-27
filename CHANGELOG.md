@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.1"></a>
+## [14.4.1](https://github.com/dsherret/ts-simple-ast/compare/14.4.0...14.4.1) (2018-08-27)
+
+
+### Bug Fixes
+
+* [#410](https://github.com/dsherret/ts-simple-ast/issues/410) - `sourceFile.getExportedDeclarations()` throws exception if file is empty ([8d563ac](https://github.com/dsherret/ts-simple-ast/commit/8d563ac))
+
+
+
 <a name="14.4.0"></a>
 # [14.4.0](https://github.com/dsherret/ts-simple-ast/compare/14.3.0...14.4.0) (2018-08-26)
 
