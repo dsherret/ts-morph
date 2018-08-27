@@ -714,18 +714,20 @@ describe(nameof(SourceFile), () => {
                 .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
         });
 
-        it("should get the exported declaration when there's only a default export using an export assignment", () => {
+        function doTest(text: string, expectedDeclarationNames: string[]) {
             const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
+            const mainSourceFile = project.createSourceFile("main.ts", text);
 
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(["MainFileClass"].sort());
+                .to.deep.equal(expectedDeclarationNames.sort());
+        }
+
+        it("should get the exported declaration when there's only a default export using an export assignment", () => {
+            doTest("class MainFileClass {}\nexport default MainFileClass;", ["MainFileClass"]);
         });
 
         it("should not error for an empty file", () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", "");
-            expect(mainSourceFile.getExportedDeclarations().length).to.equal(0);
+            doTest("", []);
         });
     });
 
