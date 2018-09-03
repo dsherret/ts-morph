@@ -8,6 +8,7 @@ import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclaratio
 import { Constructor } from "../../types";
 import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
+import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node, Symbol } from "../common";
@@ -982,10 +983,9 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure() {
-        return callBaseGetStructure<SourceFileSpecificStructure>(SourceFileBase.prototype, this, {
-            exports: this.getExportDeclarations().map(declaration => declaration.getStructure()),
-            imports: this.getImportDeclarations().map(declaration => declaration.getStructure())
+    getStructure(): SourceFileStructure {
+        return callBaseGetStructure<{ bodyText: string | undefined; }>(SourceFileBase.prototype, this, {
+            bodyText: getBodyTextForStructure(this)
         });
     }
 

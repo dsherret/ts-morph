@@ -1491,66 +1491,23 @@ function myFunction(param: MyClass) {
             expect(sourceFile.getStructure()).to.deep.equal(expected);
         }
 
-        it("should not work for import and export declations", () => {
-            const startText = `
-            import {foo as bar} from './MyInterface';
-            import MyClass from "./MyClass";
-            import * as UnusedInterface from "absolute-path";
-            export * from "./export";
-            `;
+        it("should only get the body text", () => {
+            // order is important in a source file, so getting the structure will always
+            // return the body text
+            const startText = `import {I} from './I';
+export class A implements I {}
+class B extends A {}
+export interface J extends I {}
+interface K extends J {}
+export function f(){}
+function g(){}
+export type T = any;
+export enum U {}
+namespace ns{interface nsi{}}`;
+
             doTest(startText, {
-                exports: [{ moduleSpecifier: '"./export"', namedExports: [] }],
-                imports: [
-                    {
-                        defaultImport: undefined, moduleSpecifier: "'./MyInterface'",
-                        namedImports: [{ name: "foo", alias: "bar" }], namespaceImport: undefined
-                    },
-                    {
-                        defaultImport: "MyClass", moduleSpecifier: '"./MyClass"',
-                        namedImports: [], namespaceImport: undefined
-                    },
-                    {
-                        defaultImport: undefined, moduleSpecifier: '"absolute-path"',
-                        namedImports: [], namespaceImport: "UnusedInterface"
-                    }]
+                bodyText: startText
             });
-        });
-
-        it("should work for import and export declations", () => {
-            const startText = `
-                import {I} from './I';
-                export class A implements I {}
-                class B extends A {}
-                export interface J extends I {}
-                interface K extends J {}
-                export function f(){}
-                function g(){}
-                export type T = any;
-                export enum U {a='a'}
-                namespace ns{interface nsi{}}
-                `;
-            const structure = getInfoFromText(startText).sourceFile.getStructure();
-            expect(structure.functions).to.length(2);
-            expect(structure.classes).to.length(2);
-            expect(structure.interfaces).to.length(2);
-            expect(structure.typeAliases).to.length(1);
-            expect(structure.enums).to.length(1);
-            expect(structure.namespaces).to.length(1);
-
-            expect(structure.enums).to.deep.equals([{
-                name: "U", isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [],
-                isConst: false, members: [{ docs: [], initializer: "'a'", name: "a", value: "a" }]
-            }]);
-            expect(structure.namespaces).to.deep.equals([{
-                name: "ns", isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [],
-                classes: [], functions: [], enums: [],
-                interfaces: [{
-                    name: "nsi", isExported: false, isDefaultExport: false, hasDeclareKeyword: false,
-                    docs: [], typeParameters: [], extends: [], callSignatures: [], constructSignatures: [],
-                    indexSignatures: [], methods: [], properties: []
-                }],
-                namespaces: [], typeAliases: [], bodyText: "interface nsi{}", hasModuleKeyword: false
-            }]);
         });
     });
 });

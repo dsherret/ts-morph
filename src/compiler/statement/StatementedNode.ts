@@ -19,7 +19,6 @@ import { NamespaceDeclaration } from "../namespace";
 import { Statement, VariableStatement } from "../statement";
 import { VariableDeclaration } from "../variable";
 import { TypeAliasDeclaration } from "../type";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type StatementedNodeExtensionType = Node<ts.SourceFile | ts.FunctionDeclaration | ts.ModuleDeclaration | ts.FunctionLikeDeclaration | ts.CaseClause | ts.DefaultClause>;
 
@@ -866,20 +865,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 this.addTypeAliases(structure.typeAliases);
 
             return this;
-        }
-
-        /**
-         * Gets the structure equivalent to this node.
-         */
-        getStructure() {
-            return callBaseGetStructure<StatementedNodeStructure>(Base.prototype, this, {
-                classes: this.getClasses().map(c => c.getStructure()),
-                functions: this.getFunctions().map(f => f.getStructure()),
-                enums: this.getEnums().map(node => node.getStructure()),
-                interfaces: this.getInterfaces().map(node => node.getStructure()),
-                namespaces: this.getNamespaces().map(node => node.getStructure()),
-                typeAliases: this.getTypeAliases().map(node => node.getStructure())
-            });
         }
 
         /**
