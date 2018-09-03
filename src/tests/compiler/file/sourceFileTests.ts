@@ -1491,7 +1491,7 @@ function myFunction(param: MyClass) {
             expect(sourceFile.getStructure()).to.deep.equal(expected);
         }
 
-        it("should work for import and export declations", () => {
+        it("should not work for import and export declations", () => {
             const startText = `
             import {foo as bar} from './MyInterface';
             import MyClass from "./MyClass";
@@ -1499,7 +1499,6 @@ function myFunction(param: MyClass) {
             export * from "./export";
             `;
             doTest(startText, {
-                classes: [], functions: [], enums: [], interfaces: [], namespaces: [], typeAliases: [],
                 exports: [{ moduleSpecifier: '"./export"', namedExports: [] }],
                 imports: [
                     {

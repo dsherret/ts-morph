@@ -28,6 +28,25 @@ describe(nameof(BodiedNode), () => {
         });
     });
 
+    describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
+        function doTest(startCode: string, bodyText: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<NamespaceDeclaration>(startCode);
+            expect(firstChild.getStructure().bodyText).to.equal(bodyText);
+        }
+
+        it("should get the body text when there is none", () => {
+            doTest("namespace identifier {\n}", undefined);
+        });
+
+        it("should get the body text when there is a lot of whitespace", () => {
+            doTest("namespace identifier {\n   \t\n\r\n   \t}", undefined);
+        });
+
+        it("should get the body text without indentation", () => {
+            doTest("namespace identifier {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
+        });
+    });
+
     describe(nameof<NamespaceDeclaration>(n => n.fill), () => {
         function doTest(startCode: string, structure: BodiedNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<NamespaceDeclaration>(startCode);

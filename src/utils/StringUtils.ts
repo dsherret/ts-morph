@@ -1,6 +1,8 @@
 ﻿import { QuoteKind } from "../compiler";
 import * as errors from "../errors";
 
+const isSpaces = /^ +$/;
+
 export class StringUtils {
     private constructor() {
     }
@@ -73,6 +75,44 @@ export class StringUtils {
             result += str[i];
         }
         return result;
+    }
+
+    static indent(str: string, times: number, indentText: string, isInStringAtPos: (pos: number) => boolean) {
+        // todo: unit test this (right now it's somewhat tested indirectly)
+        const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
+        const newLines: string[] = [];
+        let pos = 0;
+
+        for (const line of str.split("\n")) {
+            if (isInStringAtPos(pos))
+                newLines.push(line);
+            else if (times > 0)
+                newLines.push(StringUtils.repeat(indentText, times) + line);
+            else // negative
+                newLines.push(line.replace(unindentRegex!, ""));
+
+            pos += line.length + 1; // +1 for \n char
+        }
+
+        return newLines.join("\n");
+
+        function getDeindentRegexText() {
+            let text = "^";
+            for (let i = 0; i < Math.abs(times); i++) {
+                text += "(";
+                if (isSpaces.test(indentText)) {
+                    // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
+                    for (let j = 0; j < indentText.length; j++)
+                        text += " ?";
+                }
+                else
+                    text += indentText;
+
+                text += "|\t)?";
+            }
+
+            return text;
+        }
     }
 }
 

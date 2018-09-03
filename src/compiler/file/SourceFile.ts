@@ -849,45 +849,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
         const indentText = this.context.manipulationSettings.getIndentationText();
-        const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
 
-        let pos = startLinePos;
-        const newLines: string[] = [];
-        for (const line of sourceFileText.substring(startLinePos, endLinePos).split("\n")) {
-            if (this.isInStringAtPos(pos))
-                newLines.push(line);
-            else if (times > 0)
-                newLines.push(StringUtils.repeat(indentText, times) + line);
-            else // negative
-                newLines.push(line.replace(unindentRegex!, ""));
-            pos += line.length;
-        }
+        const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos),
+            times, indentText, pos => this.isInStringAtPos(pos + startLinePos));
 
         replaceSourceFileTextForFormatting({
             sourceFile: this,
-            newText: sourceFileText.substring(0, startLinePos) + newLines.join("\n") + sourceFileText.substring(endLinePos)
+            newText: sourceFileText.substring(0, startLinePos) + correctedText + sourceFileText.substring(endLinePos)
         });
 
         return this;
-
-        function getDeindentRegexText() {
-            const isSpaces = /^ +$/;
-            let text = "^";
-            for (let i = 0; i < Math.abs(times); i++) {
-                text += "(";
-                if (isSpaces.test(indentText)) {
-                    // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
-                    for (let j = 0; j < indentText.length; j++)
-                        text += " ?";
-                }
-                else
-                    text += indentText;
-
-                text += "|\t)?";
-            }
-
-            return text;
-        }
     }
 
     /**

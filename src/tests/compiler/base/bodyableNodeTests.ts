@@ -160,6 +160,25 @@ describe(nameof(BodyableNode), () => {
         });
     });
 
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        function doTest(startCode: string, bodyText: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
+            expect(firstChild.getStructure().bodyText).to.equal(bodyText);
+        }
+
+        it("should get the body text when there is none", () => {
+            doTest("function test();", undefined);
+        });
+
+        it("should get the body text when there is a lot of whitespace", () => {
+            doTest("function test() {\n   \t\n\r\n   \t}", undefined);
+        });
+
+        it("should get the body text without indentation", () => {
+            doTest("function test() {\n    export class Test {\n        prop: string;\n    }\n}\n}", "export class Test {\n    prop: string;\n}");
+        });
+    });
+
     describe(nameof<FunctionDeclaration>(n => n.fill), () => {
         function doTest(startCode: string, structure: BodyableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);

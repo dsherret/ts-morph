@@ -6,7 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common/Node";
-import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
+import { getBodyTextForStructure, setBodyTextForNode } from "./helpers";
 
 export type BodyableNodeExtensionType = Node<ts.Node & { body?: ts.Node; }>;
 
@@ -108,29 +108,10 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
         }
 
         getStructure() {
-            // Extract body text without breaking current statement indentation:
-            // Get the statements within the body and then get the text within the source file from
-            // statements[0].getNonWhitespaceStart() to statements[statements.length - 1].getTrailingTriviaEnd().
-            // Then remove the leading spaces from every line (so remove statements[0].getIndentationText() from every line
             const body = this.getBody();
-            let bodyText: string | undefined = undefined;
-            if (body) {
-                const statements = body.getDescendantStatements();
-                if (!statements.length) {
-                    bodyText = "";
-                }
-                else {
-                    const leadingSpacesLength = statements[0].getIndentationText().length;
-                    bodyText = this.sourceFile.getFullText()
-                        .substring(statements[0].getNonWhitespaceStart(), statements[statements.length - 1].getTrailingTriviaEnd())
-                        .split(this.context.manipulationSettings.getNewLineKindAsString())
-                        .map((line, index) => index !== 0 ? line.substring(leadingSpacesLength - 1, line.length) : line)
-                        .join(this.context.manipulationSettings.getNewLineKindAsString());
-                }
-            }
-            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, {
-                bodyText
-            });
+            const bodyStructure = body == null ? undefined : { bodyText: getBodyTextForStructure(body) };
+
+            return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, bodyStructure);
         }
     };
 }
