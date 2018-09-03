@@ -2,53 +2,55 @@
 title: Structures
 ---
 
-## Structures: 
+## Structures
 
-**methods fill(), getStructure(), add*() and insert*()**
+Lightweight serializable node representations called **structures** can be retreived from and used to
+fill many `Node` objects.
 
-The library supports a lightweight - serializable node representation called **structure**. In general declaration-like nodes supports structures through the following operations: 
+### Getting structure
 
- * `node.getStructure()` will return the structure representing the node. Since is a plain-old JSON object you can save it in a string for later use. 
- * `node.fill(aStructure)` will "fill" an existing node with given structure that must correspond to the node's structure kind. 
- * `node.add*` methods starting with *add* like `sourceFile.addClass` will accept a structure.
- * `node.insert*` methods starting with *insert* like `sourceFile.insertClass` will accept a structure.
-
-TIP: When possible is recommended to use `fill()`, `add*()` or `insert*()` methods for insertions instead of string based methods like `insertText`, `replaceText`, or `removeText` because the AST will keep being valid (no forgotten nodes).
-
-IMPORTANT: when recreating an AST from a structure and then printing back, is probable that the resulting string won't be identical to the original one, if, for example, the target project has different formatting rules. Expect that indentation could be different.  
-
-In the following example we will be using structures to add a new variable. Then `fill()` to change an existing variable and finally serialize the structure to a string to then recreate the same nodes in a new source file: 
+To get the structure of a node, call `node.getStructure()`.
 
 ```ts
-const code = `const a = 1;`;
-const sourceFile = project.createSourceFile('one.ts', `const a = 1;`);
-const a = sourceFile.getDescendantsOfKind(SyntaxKind.VariableDeclaration)[0];
+// example with a class declaration, but this also works on interfaces, enums, and many other nodes.
+const classStructure = classDeclaration.getStructure(); // returns: ClassDeclarationStructure
+```
 
-// now let's get a's structure and use it for creating a new variable declaration.
-const structure = a.getStructure();
-structure.name = "b";
-structure.type = "string";
-structure.initializer = "'so artificial'";
+In the example above, a class declaration like the following...
 
-// we are ready to add it to the parent declaration list, just next to "a".
-const parent = a.getAncestors().find(TypeGuards.isVariableDeclarationList)!;
-const newDeclarations = parent.addDeclaration(structure);
+```ts
+export class MyClass {
+    myProp: string;
+}
+```
 
-expect(sourceFile.getText()).to.equals("const a = 1, b: string = 'so artificial';");
+...would return the following structure object:
 
-// and now demonstrate the use of fill() for changing existing "a" variable:
-structure.type = "Promise<Date>";
-structure.initializer = "Promise.resolve(new Date())";
-a.fill(structure);
+```js
+{
+    hasExportKeyword: true;
+    name: "MyClass",
+    properties: [{
+        name: "myProp",
+        type: "string"
+    }]
+}
+```
 
-expect(sourceFile.getText()).to.equals(
-    "const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';");
+### Filling with structure
 
-// and of course we can serialize structures to text and re-create the nodes after:
-const parentStatement = a.getAncestors().find(TypeGuards.isVariableStatement)!;
-const str = JSON.stringify(parentStatement.getStructure());
-const emptyFile = project.createSourceFile('other.ts', '');
-emptyFile.addVariableStatement(JSON.parse(str));
-expect(emptyFile.getText()).to.equals(
-    "const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';\n");
+It's also possible to set the structure of a node with an existing structure:
+
+```ts
+classDeclaration.fill(classStructure);
+// sets the name
+classDeclaration.fill({ name: "NewName" });
+// adds a property
+classDeclaration.fill({ properties: [{ name: "newProperty" }] });
+```
+
+Or you can use the `addX` or `insertX` methods with a structure:
+
+```ts
+sourceFile.addClass({ name: "NewClass", ...classDeclaration.getStructure() });
 ```

@@ -22,4 +22,4 @@ let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDe
     callSignature: CallSignatureDeclaration, indexSignature: IndexSignatureDeclaration, methodSignature: MethodSignature,
     propertySignature: PropertySignature, typeAliasDeclaration: TypeAliasDeclaration, numericLiteral: NumericLiteral,
     variableStatement: VariableStatement, propertyAccessExpression: PropertyAccessExpression, languageService: LanguageService,
-    program: Program, typeChecker: TypeChecker, typeParameter: TypeParameterDeclaration, expect: typeof Expect;
+    program: Program, typeChecker: TypeChecker, typeParameter: TypeParameterDeclaration;
