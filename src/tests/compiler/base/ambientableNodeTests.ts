@@ -103,6 +103,21 @@ describe(nameof(AmbientableNode), () => {
         });
     });
 
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, hasDeclareKeyword: boolean) {
+            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            expect(firstChild.getStructure().hasDeclareKeyword).to.equal(hasDeclareKeyword);
+        }
+
+        it("should get when has declare keyword", () => {
+            doTest("declare class MyClass {}", true);
+        });
+
+        it("should get when no declare keyword", () => {
+            doTest("class MyClass {}", false);
+        });
+    });
+
     describe(nameof<ClassDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: AmbientableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);

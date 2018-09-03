@@ -56,6 +56,21 @@ describe(nameof(AsyncableNode), () => {
         });
     });
 
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, isAsync: boolean) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            expect(firstChild.getStructure().isAsync).to.equal(isAsync);
+        }
+
+        it("should get when is async", () => {
+            doTest("async function test();", true);
+        });
+
+        it("should get when is not async", () => {
+            doTest("function test();", false);
+        });
+    });
+
     describe(nameof<FunctionDeclaration>(n => n.fill), () => {
         function doTest(startCode: string, structure: AsyncableNodeStructure, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
