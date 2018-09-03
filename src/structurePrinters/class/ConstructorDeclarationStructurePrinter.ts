@@ -9,7 +9,7 @@ export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrin
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: ConstructorDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ConstructorDeclarationStructure> | undefined) {
         // todo: move this code to a common printer similar to blank line formatting structure printer
         if (structures == null)
             return;
@@ -48,7 +48,7 @@ export class ConstructorDeclarationStructurePrinter extends FactoryStructurePrin
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, structures: ConstructorDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure> | undefined) {
         if (structures == null || structures.length === 0)
             return;
 

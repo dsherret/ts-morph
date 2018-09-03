@@ -2,6 +2,146 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.2"></a>
+## [14.4.2](https://github.com/dsherret/ts-simple-ast/compare/14.4.1...14.4.2) (2018-08-27)
+
+
+### Bug Fixes
+
+* [#413](https://github.com/dsherret/ts-simple-ast/issues/413) - .addExistingSourceFiles(...) will occasionally error for certain file globs. ([15a6027](https://github.com/dsherret/ts-simple-ast/commit/15a6027))
+
+
+
+<a name="14.4.1"></a>
+## [14.4.1](https://github.com/dsherret/ts-simple-ast/compare/14.4.0...14.4.1) (2018-08-27)
+
+
+### Bug Fixes
+
+* [#410](https://github.com/dsherret/ts-simple-ast/issues/410) - `sourceFile.getExportedDeclarations()` throws exception if file is empty ([8d563ac](https://github.com/dsherret/ts-simple-ast/commit/8d563ac))
+
+
+
+<a name="14.4.0"></a>
+# [14.4.0](https://github.com/dsherret/ts-simple-ast/compare/14.3.0...14.4.0) (2018-08-26)
+
+
+### Features
+
+* [#126](https://github.com/dsherret/ts-simple-ast/issues/126) - Ability to emit to memory. ([4f6fb5a](https://github.com/dsherret/ts-simple-ast/commit/4f6fb5a))
+* [#409](https://github.com/dsherret/ts-simple-ast/issues/409) - Add ability to specify custom transformers when emitting. ([644eba5](https://github.com/dsherret/ts-simple-ast/commit/644eba5))
+* Export errors. ([#402](https://github.com/dsherret/ts-simple-ast/issues/402)) ([b719ed8](https://github.com/dsherret/ts-simple-ast/commit/b719ed8))
+
+
+
+<a name="14.3.0"></a>
+# [14.3.0](https://github.com/dsherret/ts-simple-ast/compare/14.2.1...14.3.0) (2018-08-25)
+
+
+### Bug Fixes
+
+* Use ReadonlyArray for array inputs. ([2a5ed73](https://github.com/dsherret/ts-simple-ast/commit/2a5ed73))
+
+
+### Features
+
+* [#380](https://github.com/dsherret/ts-simple-ast/issues/380) - Expose options to rename in comments and strings ([29592c7](https://github.com/dsherret/ts-simple-ast/commit/29592c7))
+* [#390](https://github.com/dsherret/ts-simple-ast/issues/390) - Add Node.getFirstAncestor and getFirstAncestorOrThrow methods. ([f83be80](https://github.com/dsherret/ts-simple-ast/commit/f83be80))
+* [#406](https://github.com/dsherret/ts-simple-ast/issues/406) - Wrap ParenthesizedTypeNode. ([9429704](https://github.com/dsherret/ts-simple-ast/commit/9429704))
+* [#74](https://github.com/dsherret/ts-simple-ast/issues/74) - Add more "OrThrow" methods. ([2d5c94d](https://github.com/dsherret/ts-simple-ast/commit/2d5c94d))
+* Use readonly arrays for file globs ([#401](https://github.com/dsherret/ts-simple-ast/issues/401)) ([c96d987](https://github.com/dsherret/ts-simple-ast/commit/c96d987))
+
+### Performance Improvements
+
+* [#307](https://github.com/dsherret/ts-simple-ast/issues/307) - Reduce token parsing. ([a6c4ca4](https://github.com/dsherret/ts-simple-ast/commit/a6c4ca4))
+
+
+<a name="14.2.1"></a>
+## [14.2.1](https://github.com/dsherret/ts-simple-ast/compare/14.2.0...14.2.1) (2018-08-25)
+
+
+### Bug Fixes
+
+* [#405](https://github.com/dsherret/ts-simple-ast/issues/405) - "Error when renaming a file when [@types](https://github.com/types) exists" ([a63400c](https://github.com/dsherret/ts-simple-ast/commit/a63400c))
+
+
+
+<a name="14.2.0"></a>
+# [14.2.0](https://github.com/dsherret/ts-simple-ast/compare/14.1.0...14.2.0) (2018-08-22)
+
+### Features
+
+* Symbol - Add .getMembers(), .getMemberByName(name), and .getMemberByNameOrThrow(name). ([6fb28b4](https://github.com/dsherret/ts-simple-ast/commit/6fb28b4))
+
+
+
+<a name="14.1.1"></a>
+## [14.1.1](https://github.com/dsherret/ts-simple-ast/compare/14.1.0...14.1.1) (2018-08-22)
+
+
+### Bug Fixes
+
+* [#397](https://github.com/dsherret/ts-simple-ast/issues/397) - Fix type.getProperties() sometimes throwing an error. ([8078772](https://github.com/dsherret/ts-simple-ast/commit/8078772))
+
+### Docs
+
+* [#399](https://github.com/dsherret/ts-simple-ast/pull/399) - Thanks to [@Gerrit0](https://github.com/Gerrit0) for making the headers links!
+
+
+<a name="14.1.0"></a>
+# [14.1.0](https://github.com/dsherret/ts-simple-ast/compare/14.0.1...14.1.0) (2018-08-19)
+
+
+### Features
+
+* Ability to add js docs with a writer function directly from the method. ([4ad9614](https://github.com/dsherret/ts-simple-ast/commit/4ad9614))
+
+
+
+<a name="14.0.1"></a>
+## [14.0.1](https://github.com/dsherret/ts-simple-ast/compare/14.0.0...14.0.1) (2018-08-19)
+
+
+### Bug Fixes
+
+* DocumentRegistry - Ensure any file paths sent from the compiler api are normalized. ([1c06559](https://github.com/dsherret/ts-simple-ast/commit/1c06559))
+
+
+
+<a name="14.0.0"></a>
+# [14.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...14.0.0) (2018-08-18)
+
+
+### Bug Fixes
+
+* [#345](https://github.com/dsherret/ts-simple-ast/issues/345) - ArrowFunction should be a FunctionLikeDeclaration. ([b3ea86f](https://github.com/dsherret/ts-simple-ast/commit/b3ea86f))
+* BindingNamedNode should support BindingName. ([611ea99](https://github.com/dsherret/ts-simple-ast/commit/611ea99))
+
+
+### Code Refactoring
+
+* Deprecate `project/sourceFile.getDiagnostics()` and `program.getPreEmitDiagnostics()`. ([7e1a21b](https://github.com/dsherret/ts-simple-ast/commit/7e1a21b))
+
+
+### Features
+
+* [#381](https://github.com/dsherret/ts-simple-ast/issues/381) - getParent() and getParentOrThrow() return the correct type based on the type of the current node. ([efa7616](https://github.com/dsherret/ts-simple-ast/commit/efa7616))
+* Add `program.getGlobalDiagnostics()`. ([a03d257](https://github.com/dsherret/ts-simple-ast/commit/a03d257))
+
+
+### Performance Improvements
+
+* [#393](https://github.com/dsherret/ts-simple-ast/issues/393) - Use DocumentRegistry when creating language service. ([d879071](https://github.com/dsherret/ts-simple-ast/commit/d879071))
+
+
+### BREAKING CHANGES
+
+* `project/sourceFile.getDiagnostics()` and `program.getPreEmitDiagnostics()` no longer exist. Use `project/sourceFile.getPreEmitDiagnostics()`.
+* Removed ability to set a specific target for specific source files (all files are stored in a ts.DocumentRegistry now so that's not possible).
+* `BindingNamedNode` now correctly may also return a `BindingName`.
+
+
+
 <a name="13.0.0"></a>
 # [13.0.0](https://github.com/dsherret/ts-simple-ast/compare/12.7.2...13.0.0) (2018-08-06)
 

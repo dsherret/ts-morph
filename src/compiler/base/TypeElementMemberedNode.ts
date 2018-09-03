@@ -26,7 +26,7 @@ export interface TypeElementMemberedNode {
      * Add construct signatures.
      * @param structures - Structures representing the construct signatures.
      */
-    addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
+    addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
      * @param index - Child index to insert at.
@@ -38,7 +38,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
-    insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
+    insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
     /**
      * Gets the first construct signature by a find function.
      * @param findFunction - Function to find the construct signature by.
@@ -63,7 +63,7 @@ export interface TypeElementMemberedNode {
      * Add call signatures.
      * @param structures - Structures representing the call signatures.
      */
-    addCallSignatures(structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
+    addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
     /**
      * Insert call signature.
      * @param index - Child index to insert at.
@@ -75,7 +75,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
-    insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
+    insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
     /**
      * Gets the first call signature by a find function.
      * @param findFunction - Function to find the call signature by.
@@ -100,7 +100,7 @@ export interface TypeElementMemberedNode {
      * Add index signatures.
      * @param structures - Structures representing the index signatures.
      */
-    addIndexSignatures(structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
+    addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
      * @param index - Child index to insert at.
@@ -112,7 +112,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
-    insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
+    insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
     /**
      * Gets the first index signature by a find function.
      * @param findFunction - Function to find the index signature by.
@@ -137,7 +137,7 @@ export interface TypeElementMemberedNode {
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: MethodSignatureStructure[]): MethodSignature[];
+    addMethods(structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
@@ -149,7 +149,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[];
+    insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
     /**
      * Gets the first method by name.
      * @param name - Name.
@@ -186,7 +186,7 @@ export interface TypeElementMemberedNode {
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: PropertySignatureStructure[]): PropertySignature[];
+    addProperties(structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
@@ -198,7 +198,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[];
+    insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
     /**
      * Gets the first property by name.
      * @param name - Name.
@@ -237,7 +237,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addConstructSignatures([structure])[0];
         }
 
-        addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]) {
+        addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>) {
             return this.insertConstructSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
@@ -245,7 +245,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertConstructSignatures(index, [structure])[0];
         }
 
-        insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[] {
+        insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[] {
             return insertChildren<ConstructSignatureDeclaration, ConstructSignatureDeclarationStructure>({
                 thisNode: this,
                 index,
@@ -272,7 +272,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addCallSignatures([structure])[0];
         }
 
-        addCallSignatures(structures: CallSignatureDeclarationStructure[]) {
+        addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>) {
             return this.insertCallSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
@@ -280,7 +280,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertCallSignatures(index, [structure])[0];
         }
 
-        insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[] {
+        insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[] {
             return insertChildren<CallSignatureDeclaration, CallSignatureDeclarationStructure>({
                 thisNode: this,
                 index,
@@ -307,7 +307,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addIndexSignatures([structure])[0];
         }
 
-        addIndexSignatures(structures: IndexSignatureDeclarationStructure[]) {
+        addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>) {
             return this.insertIndexSignatures(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
@@ -315,7 +315,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertIndexSignatures(index, [structure])[0];
         }
 
-        insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[] {
+        insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[] {
             return insertChildren<IndexSignatureDeclaration, IndexSignatureDeclarationStructure>({
                 thisNode: this,
                 index,
@@ -342,7 +342,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addMethods([structure])[0];
         }
 
-        addMethods(structures: MethodSignatureStructure[]) {
+        addMethods(structures: ReadonlyArray<MethodSignatureStructure>) {
             return this.insertMethods(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
@@ -350,7 +350,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertMethods(index, [structure])[0];
         }
 
-        insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[] {
+        insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[] {
             return insertChildren<MethodSignature, MethodSignatureStructure>({
                 thisNode: this,
                 index,
@@ -378,7 +378,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.addProperties([structure])[0];
         }
 
-        addProperties(structures: PropertySignatureStructure[]) {
+        addProperties(structures: ReadonlyArray<PropertySignatureStructure>) {
             return this.insertProperties(getEndIndexFromArray(this.compilerNode.members), structures);
         }
 
@@ -386,7 +386,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
             return this.insertProperties(index, [structure])[0];
         }
 
-        insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[] {
+        insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[] {
             return insertChildren<PropertySignature, PropertySignatureStructure>({
                 thisNode: this,
                 index,
@@ -449,9 +449,9 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
 function insertChildren<TNode extends Node & { fill(structure: TStructure): void; }, TStructure>(opts: {
     thisNode: Node & TypeElementMemberedNode,
     index: number;
-    structures: TStructure[];
+    structures: ReadonlyArray<TStructure>;
     expectedKind: SyntaxKind;
-    createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: TStructure[]): void; });
+    createStructurePrinter: () => ({ printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<TStructure>): void; });
 }): TNode[] {
     return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
         getIndexedChildren: () => opts.thisNode.getMembers(),

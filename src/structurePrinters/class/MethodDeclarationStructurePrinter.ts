@@ -9,7 +9,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: MethodDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<MethodDeclarationStructure> | undefined) {
         if (structures == null)
             return;
 
@@ -51,7 +51,7 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         }
     }
 
-    private printOverloads(writer: CodeBlockWriter, name: string, structures: MethodDeclarationOverloadStructure[] | undefined) {
+    private printOverloads(writer: CodeBlockWriter, name: string, structures: ReadonlyArray<MethodDeclarationOverloadStructure> | undefined) {
         if (structures == null || structures.length === 0)
             return;
 

@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import * as path from "path";
-import { ClassDeclaration, EmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
+import { ClassDeclaration, EmitResult, MemoryEmitResult, InterfaceDeclaration, NamespaceDeclaration, Node, SourceFile } from "../compiler";
 import * as errors from "../errors";
 import { VirtualFileSystemHost } from "../fileSystem";
 import { IndentationText } from "../options";
@@ -289,7 +289,7 @@ describe(nameof(Project), () => {
             expect(() => project.addSourceFilesFromTsConfig("tsconfig.json")).to.throw(errors.FileNotFoundError);
         });
 
-        it("should add the files from tsconfig.json with the specified target", () => {
+        it("should add the files from tsconfig.json", () => {
             const fs = new VirtualFileSystemHost();
             // todo: why did I need a slash at the start of `/test/exclude`?
             fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" }, "exclude": ["/test/exclude"] }`);
@@ -307,16 +307,8 @@ describe(nameof(Project), () => {
             expect(project.getSourceFiles().map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
             expect(returnedFiles.map(s => s.getFilePath()).sort()).to.deep.equal(expectedFiles);
             expect(project.getDirectories().map(s => s.getPath()).sort()).to.deep.equal(expectedDirs);
-            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES5, ScriptTarget.ES5]);
-        });
-
-        it("should add the files from tsconfig.json but allow overwriting the target", () => {
-            const fs = new VirtualFileSystemHost();
-            fs.writeFileSync("tsconfig.json", `{ "compilerOptions": { "rootDir": "test", "target": "ES5" } }`);
-            fs.writeFileSync("/test/file.ts", "");
-            const project = new Project({}, fs);
-            const returnedFiles = project.addSourceFilesFromTsConfig("tsconfig.json", { languageVersion: ScriptTarget.ES2015 });
-            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.ES2015]);
+            // uses the compiler options of the project
+            expect(project.getSourceFiles().map(s => s.getLanguageVersion())).to.deep.equal([ScriptTarget.Latest, ScriptTarget.Latest]);
         });
     });
 
@@ -336,14 +328,6 @@ describe(nameof(Project), () => {
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
-
-        it("should add a source file that exists and with the specified target", () => {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
-            const project = new Project(undefined, fileSystem);
-            const sourceFile = project.addExistingSourceFile("file.ts", { languageVersion: ScriptTarget.ES5 });
-            expect(sourceFile).to.not.be.undefined;
-            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
-        });
     });
 
     describe(nameof<Project>(project => project.addExistingSourceFileIfExists), () => {
@@ -358,14 +342,6 @@ describe(nameof(Project), () => {
             const sourceFile = project.addExistingSourceFileIfExists("file.ts");
             expect(sourceFile).to.not.be.undefined;
             expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.Latest);
-        });
-
-        it("should add a source file that exists and with the specified target", () => {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([{ filePath: "file.ts", text: "" }]);
-            const project = new Project(undefined, fileSystem);
-            const sourceFile = project.addExistingSourceFileIfExists("file.ts", { languageVersion: ScriptTarget.ES5 });
-            expect(sourceFile).to.not.be.undefined;
-            expect(sourceFile!.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 
@@ -400,13 +376,6 @@ describe(nameof(Project), () => {
             expect(sourceFiles[0].getFilePath()).to.equal("/dir/file.ts");
             expect(sourceFiles[0].getLanguageVersion()).to.equal(ScriptTarget.Latest);
             expect(sourceFiles[1].getFilePath()).to.equal("/dir/subDir/file.ts");
-        });
-
-        it("should add with the specified target", () => {
-            const project = new Project({ useVirtualFileSystem: true });
-            project.getFileSystem().writeFileSync("file1.ts", "");
-            const result = project.addExistingSourceFiles("/**/*.ts", { languageVersion: ScriptTarget.ES5 });
-            expect(project.getSourceFiles()[0].getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
 
         it("should add the directory's descendant directories specified in the glob and ignore negated globs", () => {
@@ -464,9 +433,10 @@ describe(nameof(Project), () => {
             expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.Latest);
         });
 
-        it("should allow creating a source file with a specified target", () => {
+        it("should create a source file with the compiler options' target", () => {
             const project = new Project({ useVirtualFileSystem: true });
-            expect(project.createSourceFile("file.ts", "", { languageVersion: ScriptTarget.ES5 }).getLanguageVersion()).to.equal(ScriptTarget.ES5);
+            project.compilerOptions.set({ target: ScriptTarget.ES2015 });
+            expect(project.createSourceFile("file.ts", "").getLanguageVersion()).to.equal(ScriptTarget.ES2015);
         });
 
         it("should add a source file based on a structure", () => {
@@ -527,7 +497,7 @@ describe(nameof(Project), () => {
         project.addExistingSourceFiles(`${testFilesDirPath}/**/*.ts`);
         project.createSourceFile(
             path.join(testFilesDirPath, "variableTestFile.ts"),
-            `import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().name;\n`
+            `import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().name;\n`
         );
 
         it("should have 4 source files", () => {
@@ -538,7 +508,7 @@ describe(nameof(Project), () => {
             const interfaceFile = project.getSourceFileOrThrow("testInterfaces.ts");
             interfaceFile.getInterfaces()[0].getProperties()[0].rename("newName");
             const variableFile = project.getSourceFileOrThrow("variableTestFile.ts");
-            expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet var = new testClasses.TestClass().newName;\n`);
+            expect(variableFile.getFullText()).to.equal(`import * as testClasses from "./testClasses";\n\nlet myVar = new testClasses.TestClass().newName;\n`);
         });
     });
 
@@ -600,17 +570,17 @@ describe(nameof(Project), () => {
         });
     });
 
-    describe(nameof<Project>(project => project.emit), () => {
-        function setup(compilerOptions: CompilerOptions) {
-            const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
-            const project = new Project({ compilerOptions }, fileSystem);
-            project.createSourceFile("file1.ts", "const num1 = 1;");
-            project.createSourceFile("file2.ts", "const num2 = 2;");
-            return {fileSystem, project};
-        }
+    function emitSetup(compilerOptions: CompilerOptions) {
+        const fileSystem = testHelpers.getFileSystemHostWithFiles([]);
+        const project = new Project({ compilerOptions }, fileSystem);
+        project.createSourceFile("file1.ts", "const num1 = 1;");
+        project.createSourceFile("file2.ts", "const num2 = 2;");
+        return {fileSystem, project};
+    }
 
+    describe(nameof<Project>(project => project.emit), () => {
         it("should emit multiple files when not specifying any options", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
             const result = project.emit();
             expect(result).to.be.instanceof(EmitResult);
 
@@ -623,7 +593,7 @@ describe(nameof(Project), () => {
         });
 
         it("should emit the source file when specified", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist" });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist" });
             project.emit({ targetSourceFile: project.getSourceFile("file1.ts") });
 
             const writeLog = fileSystem.getWriteLog();
@@ -633,7 +603,7 @@ describe(nameof(Project), () => {
         });
 
         it("should only emit the declaration file when specified", () => {
-            const {project, fileSystem} = setup({ noLib: true, outDir: "dist", declaration: true });
+            const {project, fileSystem} = emitSetup({ noLib: true, outDir: "dist", declaration: true });
             project.emit({ emitOnlyDtsFiles: true });
 
             const writeLog = fileSystem.getWriteLog();
@@ -642,6 +612,55 @@ describe(nameof(Project), () => {
             expect(writeLog[1].filePath).to.equal("/dist/file2.d.ts");
             expect(writeLog[1].fileText).to.equal("declare const num2 = 2;\n");
             expect(writeLog.length).to.equal(2);
+        });
+
+        it("should emit with custom transformations", () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
+
+            function visitSourceFile(sourceFile: ts.SourceFile, context: ts.TransformationContext, visitNode: (node: ts.Node) => ts.Node) {
+                return visitNodeAndChildren(sourceFile) as ts.SourceFile;
+
+                function visitNodeAndChildren(node: ts.Node): ts.Node {
+                    return ts.visitEachChild(visitNode(node), visitNodeAndChildren, context);
+                }
+            }
+
+            function numericLiteralToStringLiteral(node: ts.Node) {
+                if (ts.isNumericLiteral(node))
+                    return ts.createStringLiteral(node.text);
+                return node;
+            }
+
+            project.emit({
+                customTransformers: {
+                    before: [context => sourceFile => visitSourceFile(sourceFile, context, numericLiteralToStringLiteral)]
+                }
+            });
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog[0].filePath).to.equal("/dist/file1.js");
+            expect(writeLog[0].fileText).to.equal(`var num1 = "1";\n`);
+            expect(writeLog[1].filePath).to.equal("/dist/file2.js");
+            expect(writeLog[1].fileText).to.equal(`var num2 = "2";\n`);
+            expect(writeLog.length).to.equal(2);
+        });
+    });
+
+    describe(nameof<Project>(project => project.emitToMemory), () => {
+        it("should emit multiple files to memory", () => {
+            const { project, fileSystem } = emitSetup({ noLib: true, outDir: "dist" });
+            const result = project.emitToMemory();
+            expect(result).to.be.instanceof(MemoryEmitResult);
+
+            const writeLog = fileSystem.getWriteLog();
+            expect(writeLog.length).to.equal(0);
+
+            const files = result.getFiles();
+            expect(files[0].filePath).to.equal("/dist/file1.js");
+            expect(files[0].text).to.equal("var num1 = 1;\n");
+            expect(files[1].filePath).to.equal("/dist/file2.js");
+            expect(files[1].text).to.equal("var num2 = 2;\n");
+            expect(files.length).to.equal(2);
         });
     });
 
@@ -887,6 +906,16 @@ describe(nameof(Project), () => {
             it("should have not forgotten the interface", () => {
                 expect(interfaceDec.wasForgotten()).to.be.false;
             });
+        });
+    });
+
+    describe(nameof<Project>(p => p.compilerOptions), () => {
+        it("should reparse after modifying the compiler options", () => {
+            const project = new Project({ useVirtualFileSystem: true });
+            const sourceFile = project.createSourceFile("myFile.ts", `function myFunction(param: string) {}`);
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.Latest);
+            project.compilerOptions.set({ target: ScriptTarget.ES5 });
+            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
         });
     });
 

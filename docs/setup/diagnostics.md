@@ -7,13 +7,13 @@ title: Diagnostics
 Diagnostics (compile errors) can be retrieved on the AST or on source files:
 
 ```ts
-const diagnostics = project.getDiagnostics();
-const preEmitDiagnostics = project.getPreEmitDiagnostics();
+const diagnostics = project.getPreEmitDiagnostics();
 
 // or on a source file
-const sourceFileDiagnostics = sourceFile.getDiagnostics();
-const sourceFilePreEmitDiagnostics = sourceFile.getPreEmitDiagnostics();
+const sourceFileDiagnostics = sourceFile.getPreEmitDiagnostics();
 ```
+
+The pre-emit diagnostics are the syntactic, semantic, global, options, config file parsing, and declaration diagnostics.
 
 ### Diagnostic
 

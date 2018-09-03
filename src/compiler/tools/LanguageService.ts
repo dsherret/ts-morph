@@ -6,9 +6,10 @@ import { CompilerOptions, EditorSettings, ScriptTarget, ts } from "../../typescr
 import { ArrayUtils, FileUtils, fillDefaultEditorSettings, fillDefaultFormatCodeSettings, KeyValueCache, ObjectUtils, StringUtils } from "../../utils";
 import { Node } from "../common";
 import { SourceFile } from "../file";
-import { FormatCodeSettings, UserPreferences } from "./inputs";
+import { FormatCodeSettings, UserPreferences, RenameOptions } from "./inputs";
 import { Program } from "./Program";
 import { DefinitionInfo, EmitOutput, FileTextChanges, ImplementationLocation, RenameLocation, TextChange } from "./results";
+import { DocumentRegistry } from "../../factories/DocumentRegistry";
 
 export class LanguageService {
     private readonly _compilerObject: ts.LanguageService;
@@ -28,7 +29,6 @@ export class LanguageService {
     constructor(context: ProjectContext) {
         this.context = context;
 
-        // I don't know what I'm doing for some of this...
         let version = 0;
         const fileExistsSync = (path: string) => this.context.compilerFactory.containsSourceFileAtPath(path) || context.fileSystemWrapper.fileExistsSync(path);
         const languageServiceHost: ts.LanguageServiceHost = {
@@ -37,14 +37,14 @@ export class LanguageService {
             getScriptFileNames: () => this.context.compilerFactory.getSourceFilePaths(),
             getScriptVersion: fileName => {
                 const sourceFile = this.context.compilerFactory.getSourceFileFromCacheFromFilePath(fileName);
-                if (sourceFile != null)
-                    return sourceFile._scriptVersion.toString();
-                return (version++).toString();
+                if (sourceFile == null)
+                    return (version++).toString();
+                return this.context.compilerFactory.documentRegistry.getSourceFileVersion(sourceFile.compilerNode);
             },
             getScriptSnapshot: fileName => {
                 if (!fileExistsSync(fileName))
                     return undefined;
-                return ts.ScriptSnapshot.fromString(this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, {})!.getFullText());
+                return ts.ScriptSnapshot.fromString(this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName)!.getFullText());
             },
             getCurrentDirectory: () => context.fileSystemWrapper.getCurrentDirectory(),
             getDefaultLibFileName: options => {
@@ -65,7 +65,7 @@ export class LanguageService {
 
         this.compilerHost = {
             getSourceFile: (fileName: string, languageVersion: ScriptTarget, onError?: (message: string) => void) => {
-                const sourceFile = this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName, { languageVersion });
+                const sourceFile = this.context.compilerFactory.addOrGetSourceFileFromFilePath(fileName);
                 return sourceFile == null ? undefined : sourceFile.compilerNode;
             },
             // getSourceFileByPath: (...) => {}, // not providing these will force it to use the file name as the file path
@@ -87,7 +87,7 @@ export class LanguageService {
             getEnvironmentVariable: (name: string) => process.env[name]
         };
 
-        this._compilerObject = ts.createLanguageService(languageServiceHost);
+        this._compilerObject = ts.createLanguageService(languageServiceHost, this.context.compilerFactory.documentRegistry);
         this.program = new Program(this.context, this.context.compilerFactory.getSourceFilePaths(), this.compilerHost);
 
         this.context.compilerFactory.onSourceFileAdded(() => this.resetProgram());
@@ -113,14 +113,15 @@ export class LanguageService {
      * Rename the specified node.
      * @param node - Node to rename.
      * @param newName - New name for the node.
+     * @param options - Options for renaming the node.
      */
-    renameNode(node: Node, newName: string) {
+    renameNode(node: Node, newName: string, options: RenameOptions = {}) {
         errors.throwIfNotStringOrWhitespace(newName, nameof(newName));
 
         if (node.getText() === newName)
             return;
 
-        this.renameLocations(this.findRenameLocations(node), newName);
+        this.renameLocations(this.findRenameLocations(node, options), newName);
     }
 
     /**
@@ -128,7 +129,7 @@ export class LanguageService {
      * @param renameLocations - Rename locations.
      * @param newName - New name for the node.
      */
-    renameLocations(renameLocations: RenameLocation[], newName: string) {
+    renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string) {
         const renameLocationsBySourceFile = new KeyValueCache<SourceFile, RenameLocation[]>();
         for (const renameLocation of renameLocations) {
             const locations = renameLocationsBySourceFile.getOrCreate<RenameLocation[]>(renameLocation.getSourceFile(), () => []);
@@ -220,9 +221,11 @@ export class LanguageService {
     /**
      * Find the rename locations for the specified node.
      * @param node - Node to get the rename locations for.
+     * @param options - Options for renaming.
      */
-    findRenameLocations(node: Node): RenameLocation[] {
-        const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(), false, false) || [];
+    findRenameLocations(node: Node, options: RenameOptions = {}): RenameLocation[] {
+        const renameLocations = this.compilerObject.findRenameLocations(node.sourceFile.getFilePath(), node.getStart(),
+            options.renameInStrings || false, options.renameInComments || false) || [];
         return renameLocations.map(l => new RenameLocation(this.context, l));
     }
 

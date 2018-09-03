@@ -6,7 +6,7 @@ import { CommaNewLineSeparatedStructuresPrinter } from "../formatting";
 export class EnumMemberStructurePrinter extends FactoryStructurePrinter<EnumMemberStructure> {
     private readonly multipleWriter = new CommaNewLineSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: EnumMemberStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<EnumMemberStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

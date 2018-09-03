@@ -1,11 +1,11 @@
 import * as errors from "../../../errors";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
-import { Identifier } from "../../common/Identifier";
-import { Node } from "../../common/Node";
-import { ReferenceFindableNode } from "./ReferenceFindableNode";
-import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { DeclarationNamedNodeStructure } from "../../../structures";
+import { Identifier, Node } from "../../common";
+import { callBaseFill } from "../../callBaseFill";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
+import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";
 
 // todo: support other types other than identifier
@@ -30,7 +30,7 @@ export interface DeclarationNamedNodeSpecific {
      */
     getName(): string | undefined;
     /**
-     * Gets the name or throws if it doesn't exist.
+     * Gets the name or throws if it doens't exist.
      */
     getNameOrThrow(): string;
 }
@@ -72,14 +72,12 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
             return nameNode == null ? undefined : nameNode.getText();
         }
 
-        rename(text: string) {
-            errors.throwIfNotStringOrWhitespace(text, nameof(text));
-            const nameNode = this.getNameNode();
+        fill(structure: Partial<DeclarationNamedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
 
-            if (nameNode == null)
-                throw errors.getNotImplementedForSyntaxKindError(this.getKind());
+            if (structure.name != null)
+                (this as any as RenameableNode).rename(structure.name);
 
-            nameNode.rename(text);
             return this;
         }
 
@@ -88,6 +86,5 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
                 name: this.getName()
             });
         }
-
     };
 }

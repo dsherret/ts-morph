@@ -50,8 +50,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     private readonly _modifiedEventContainer = new EventContainer<SourceFile>();
     /** @internal */
     readonly _referenceContainer = new SourceFileReferenceContainer(this);
-    /** @internal */
-    _scriptVersion: number = 0;
 
     /**
      * Initializes a new instance.
@@ -92,7 +90,6 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     replaceCompilerNodeFromFactory(compilerNode: ts.SourceFile) {
         super.replaceCompilerNodeFromFactory(compilerNode);
         this.context.resetProgram(); // make sure the program has the latest source file
-        this._scriptVersion++;
         this._isSaved = false;
         this._modifiedEventContainer.fire(this);
     }
@@ -197,10 +194,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
 
         function getCopiedSourceFile(currentFile: SourceFile) {
             try {
-                return currentFile.context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), {
-                    overwrite,
-                    languageVersion: currentFile.getLanguageVersion()
-                });
+                return currentFile.context.compilerFactory.createSourceFileFromText(filePath, currentFile.getFullText(), { overwrite });
             } catch (err) {
                 if (err instanceof errors.InvalidOperationError)
                     throw new errors.InvalidOperationError(`Did you mean to provide the overwrite option? ` + err.message);
@@ -216,7 +210,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /** @internal */
-    _updateReferencesForCopyInternal(literalReferences: [StringLiteral, SourceFile][]) {
+    _updateReferencesForCopyInternal(literalReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
         // update the nodes in this list to point to the nodes in this copied source file
         for (const reference of literalReferences)
             reference[0] = this.getChildSyntaxListOrThrow().getDescendantAtStartWithWidth(reference[0].getStart(), reference[0].getWidth())! as StringLiteral;
@@ -412,7 +406,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.referencedFiles || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
+            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -423,7 +417,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         // todo: add tests
         const dirPath = this.getDirectoryPath();
         return (this.compilerNode.typeReferenceDirectives || [])
-            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName), {}))
+            .map(f => this.context.compilerFactory.addOrGetSourceFileFromFilePath(FileUtils.pathJoin(dirPath, f.fileName)))
             .filter(f => f != null) as SourceFile[];
     }
 
@@ -512,7 +506,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Adds imports.
      * @param structures - Structures that represent the imports.
      */
-    addImportDeclarations(structures: ImportDeclarationStructure[]) {
+    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>) {
         const imports = this.getImportDeclarations();
         const insertIndex = imports.length === 0 ? 0 : imports[imports.length - 1].getChildIndex() + 1;
         return this.insertImportDeclarations(insertIndex, structures);
@@ -532,7 +526,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[] {
+    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[] {
         return this._insertChildren<ImportDeclaration, ImportDeclarationStructure>({
             expectedKind: SyntaxKind.ImportDeclaration,
             index,
@@ -584,7 +578,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExportDeclarations(structures: ExportDeclarationStructure[]) {
+    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>) {
         // always insert at end of file because of export {Identifier}; statements
         return this.insertExportDeclarations(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
@@ -603,7 +597,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[] {
+    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[] {
         return this._insertChildren<ExportDeclaration, ExportDeclarationStructure>({
             expectedKind: SyntaxKind.ExportDeclaration,
             index,
@@ -646,11 +640,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Gets the export symbols of the source file.
      */
     getExportSymbols(): Symbol[] {
-        return this.context.typeChecker.getExportsOfModule(this.getSymbolOrThrow());
+        const symbol = this.getSymbol();
+        return symbol == null ? [] : this.context.typeChecker.getExportsOfModule(symbol);
     }
 
     /**
-     * Gets all the declarations exported from the file.
+     * Gets all the declarations that are exported from the file.
+     *
+     * This will include declarations that are transitively exported from other files. If you mean to get the export
+     * declarations then use sourceFile.getExportDeclarations().
      */
     getExportedDeclarations(): Node[] {
         const exportSymbols = this.getExportSymbols();
@@ -700,7 +698,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export assignments.
      * @param structures - Structures that represent the exports.
      */
-    addExportAssignments(structures: ExportAssignmentStructure[]) {
+    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>) {
         // always insert at end of file because of export {Identifier}; statements
         return this.insertExportAssignments(this.getChildSyntaxListOrThrow().getChildCount(), structures);
     }
@@ -719,7 +717,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[] {
+    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[] {
         return this._insertChildren<ExportAssignment, ExportAssignmentStructure>({
             expectedKind: SyntaxKind.ExportAssignment,
             index,
@@ -779,21 +777,10 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 
     /**
-     * Gets the syntactic, semantic, and declaration diagnostics.
-     */
-    getDiagnostics(): Diagnostic[] {
-        return [
-            ...this.context.program.getSyntacticDiagnostics(this),
-            ...this.context.program.getSemanticDiagnostics(this),
-            ...this.context.program.getDeclarationDiagnostics(this)
-        ];
-    }
-
-    /**
-     * Gets the pre-emit diagnostics.
+     * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[] {
-        return this.context.program.getPreEmitDiagnostics(this);
+        return this.context.getPreEmitDiagnostics(this);
     }
 
     /**
@@ -1010,7 +997,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param textChanges - Text changes.
      */
-    applyTextChanges(textChanges: TextChange[]) {
+    applyTextChanges(textChanges: ReadonlyArray<TextChange>) {
         this.getChildSyntaxListOrThrow().forget();
         replaceNodeText({
             sourceFile: this.sourceFile,
@@ -1047,7 +1034,7 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
     }
 }
 
-function updateStringLiteralReferences(nodeReferences: [StringLiteral, SourceFile][]) {
+function updateStringLiteralReferences(nodeReferences: ReadonlyArray<[StringLiteral, SourceFile]>) {
     for (const [stringLiteral, sourceFile] of nodeReferences) {
         if (ModuleUtils.isModuleSpecifierRelative(stringLiteral.getLiteralText()))
             stringLiteral.setLiteralValue(stringLiteral.sourceFile.getRelativePathAsModuleSpecifierTo(sourceFile));

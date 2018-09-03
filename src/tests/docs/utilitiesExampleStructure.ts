@@ -23,20 +23,19 @@ describe("examples in docs/utilities.md", () => {
         expect(sourceFile.getText()).to.equals("const a = 1, b: string = 'so artificial';");
 
         // and now demonstrate the use of fill() for changing existing "a" variable:
+        delete structure.name;
         structure.type = "Promise<Date>";
         structure.initializer = "Promise.resolve(new Date())";
         a.fill(structure);
 
-        expect(sourceFile.getText()).to.equals(
-            "const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';");
+        expect(sourceFile.getText()).to.equals("const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';");
 
         // and of course we can serialize structures to text and re-create the nodes after:
         const parentStatement = a.getAncestors().find(TypeGuards.isVariableStatement)!;
         const str = JSON.stringify(parentStatement.getStructure());
         const emptyFile = project.createSourceFile("other.ts", "");
         emptyFile.addVariableStatement(JSON.parse(str));
-        expect(emptyFile.getText()).to.equals(
-            "const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';\n");
+        expect(emptyFile.getText()).to.equals("const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';\n");
 
     });
 

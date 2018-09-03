@@ -1,5 +1,4 @@
 import { Node, RenameLocation, SourceFile } from "../../compiler";
-import { createCompilerSourceFile } from "../../utils";
 import { NodeHandlerFactory } from "../nodeHandlers";
 import { FullReplacementTextManipulator, InsertionTextManipulator, RenameLocationTextManipulator } from "../textManipulators";
 import { doManipulation } from "./doManipulation";
@@ -82,8 +81,16 @@ export interface ReplaceSourceFileForFilePathMoveOptions {
  */
 export function replaceSourceFileForFilePathMove(opts: ReplaceSourceFileForFilePathMoveOptions) {
     const {sourceFile, newFilePath} = opts;
-    const replacementSourceFile = createCompilerSourceFile(newFilePath, sourceFile.getFullText(), sourceFile.getLanguageVersion());
+    const replacementSourceFile = sourceFile.context.compilerFactory.createCompilerSourceFileFromText(newFilePath, sourceFile.getFullText());
 
     new NodeHandlerFactory().getForStraightReplacement(sourceFile.context.compilerFactory)
         .handleNode(sourceFile, replacementSourceFile, replacementSourceFile);
+}
+
+/**
+ * Replaces the source file and all its descendant nodes in the cache.
+ * @param sourceFile - Source file.
+ */
+export function replaceSourceFileForCacheUpdate(sourceFile: SourceFile) {
+    replaceSourceFileForFilePathMove({ sourceFile, newFilePath: sourceFile.getFilePath() });
 }

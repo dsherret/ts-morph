@@ -41,7 +41,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * Adds function overloads.
      * @param structures - Structures of the overloads.
      */
-    addOverloads(structures: FunctionDeclarationOverloadStructure[]) {
+    addOverloads(structures: ReadonlyArray<FunctionDeclarationOverloadStructure>) {
         return this.insertOverloads(this.getOverloads().length, structures);
     }
 
@@ -59,7 +59,7 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
-    insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]) {
+    insertOverloads(index: number, structures: ReadonlyArray<FunctionDeclarationOverloadStructure>) {
         const thisName = this.getName();
         const childCodes = structures.map(structure => `function ${thisName}();`);
 

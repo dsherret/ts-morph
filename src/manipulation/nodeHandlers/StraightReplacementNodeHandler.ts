@@ -22,9 +22,10 @@ export class StraightReplacementNodeHandler implements NodeHandler {
             throw new errors.InvalidOperationError(`Error replacing tree! Perhaps a syntax error was inserted ` +
                 `(Current: ${currentNode.getKindName()} -- New: ${getSyntaxKindName(newNode.kind)}).`);
 
-        const newNodeChildren = ArrayUtils.toIterator(newNode.getChildren(newSourceFile));
+        const [currentNodeChildren, newNodeChildrenArray] = this.helper.getChildrenFast(currentNode, newNode, newSourceFile);
+        const newNodeChildren = ArrayUtils.toIterator(newNodeChildrenArray);
 
-        for (const currentNodeChild of currentNode.getCompilerChildren())
+        for (const currentNodeChild of currentNodeChildren)
             this.helper.handleForValues(this, currentNodeChild, newNodeChildren.next().value, newSourceFile);
 
         /* istanbul ignore if */

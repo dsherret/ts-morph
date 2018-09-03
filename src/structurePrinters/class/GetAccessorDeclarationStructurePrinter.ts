@@ -11,7 +11,7 @@ export class GetAccessorDeclarationStructurePrinter extends FactoryStructurePrin
         super(factory);
     }
 
-    printTexts(writer: CodeBlockWriter, structures: GetAccessorDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<GetAccessorDeclarationStructure> | undefined) {
         this.blankLineWriter.printText(writer, structures);
     }
 

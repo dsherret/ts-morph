@@ -2,7 +2,7 @@
 import { SourceFile } from "../compiler";
 import { CompilerFactory } from "../factories";
 import { FileUtils } from "../utils";
-import { DirectoryAddOptions, SourceFileAddOptions } from "./Directory";
+import { DirectoryAddOptions } from "./Directory";
 import { FileSystemWrapper } from "./FileSystemWrapper";
 
 /**
@@ -38,18 +38,18 @@ export class DirectoryCoordinator {
         return this.compilerFactory.createDirectoryOrAddIfExists(dirPath);
     }
 
-    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
-        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath, options || {});
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined {
+        return this.compilerFactory.addOrGetSourceFileFromFilePath(filePath);
     }
 
-    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile {
-        const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
+    addExistingSourceFile(filePath: string): SourceFile {
+        const sourceFile = this.addExistingSourceFileIfExists(filePath);
         if (sourceFile == null)
             throw new errors.FileNotFoundError(this.fileSystemWrapper.getStandardizedAbsolutePath(filePath));
         return sourceFile;
     }
 
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         if (typeof fileGlobs === "string")
             fileGlobs = [fileGlobs];
 
@@ -57,7 +57,7 @@ export class DirectoryCoordinator {
         const globbedDirectories = FileUtils.getParentMostPaths(fileGlobs.filter(g => !FileUtils.isNegatedGlob(g)).map(g => FileUtils.getGlobDir(g)));
 
         for (const filePath of this.fileSystemWrapper.glob(fileGlobs)) {
-            const sourceFile = this.addExistingSourceFileIfExists(filePath, options);
+            const sourceFile = this.addExistingSourceFileIfExists(filePath);
             if (sourceFile != null)
                 sourceFiles.push(sourceFile);
         }

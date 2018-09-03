@@ -188,7 +188,7 @@ export class VirtualFileSystemHost implements FileSystemHost {
         return "/";
     }
 
-    glob(patterns: string[]): string[] {
+    glob(patterns: ReadonlyArray<string>): string[] {
         const filePaths: string[] = [];
 
         const allFilePaths = ArrayUtils.from(getAllFilePaths(this.directories.getValues()));

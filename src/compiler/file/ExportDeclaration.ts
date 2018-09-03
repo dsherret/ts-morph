@@ -133,7 +133,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Adds named exports.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
-    addNamedExports(structuresOrNames: (ExportSpecifierStructure | string)[]) {
+    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>) {
         return this.insertNamedExports(this.getNamedExports().length, structuresOrNames);
     }
 
@@ -160,7 +160,7 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
-    insertNamedExports(index: number, structuresOrNames: (ExportSpecifierStructure | string)[]) {
+    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>) {
         if (ArrayUtils.isNullOrEmpty(structuresOrNames))
                 return [];
 

@@ -5160,7 +5160,7 @@ export namespace ts {
     }
 
     export declare class TextChange {
-        span: ts.TextSpan;
+        span: TextSpan;
         newText: string;
     }
 

@@ -4,7 +4,7 @@
             cwd?: string;
             absolute?: boolean;
         }
-        export function sync(patterns: string[], options?: GlobbyOptions): string[];
+        export function sync(patterns: ReadonlyArray<string>, options?: GlobbyOptions): string[];
     }
     export = Globby;
 }

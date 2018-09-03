@@ -107,6 +107,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is an ArrayBindingPattern.
+     * @param node - Node to check.
+     */
+    static isArrayBindingPattern(node: compiler.Node): node is compiler.ArrayBindingPattern {
+        return node.getKind() === SyntaxKind.ArrayBindingPattern;
+    }
+
+    /**
      * Gets if the node is an ArrayLiteralExpression.
      * @param node - Node to check.
      */
@@ -179,11 +187,25 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a BindingElement.
+     * @param node - Node to check.
+     */
+    static isBindingElement(node: compiler.Node): node is compiler.BindingElement {
+        return node.getKind() === SyntaxKind.BindingElement;
+    }
+
+    /**
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
      */
     static isBindingNamedNode(node: compiler.Node): node is compiler.BindingNamedNode & compiler.Node {
-        return node.getKind() === SyntaxKind.VariableDeclaration;
+        switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
+            case SyntaxKind.VariableDeclaration:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -888,6 +910,7 @@ export class TypeGuards {
      */
     static isInitializerExpressionableNode(node: compiler.Node): node is compiler.InitializerExpressionableNode & compiler.Node {
         switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
@@ -905,6 +928,7 @@ export class TypeGuards {
      */
     static isInitializerGetExpressionableNode(node: compiler.Node): node is compiler.InitializerGetExpressionableNode & compiler.Node {
         switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
@@ -924,6 +948,7 @@ export class TypeGuards {
      */
     static isInitializerSetExpressionableNode(node: compiler.Node): node is compiler.InitializerSetExpressionableNode & compiler.Node {
         switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.EnumMember:
             case SyntaxKind.Parameter:
@@ -1412,9 +1437,9 @@ export class TypeGuards {
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.PropertySignature:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableDeclarationList:
             case SyntaxKind.VariableStatement:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableDeclarationList:
                 return true;
             default:
                 return false;
@@ -1549,6 +1574,14 @@ export class TypeGuards {
     }
 
     /**
+     * Gets if the node is a ObjectBindingPattern.
+     * @param node - Node to check.
+     */
+    static isObjectBindingPattern(node: compiler.Node): node is compiler.ObjectBindingPattern {
+        return node.getKind() === SyntaxKind.ObjectBindingPattern;
+    }
+
+    /**
      * Gets if the node is a ObjectKeyword.
      * @param node - Node to check.
      */
@@ -1625,6 +1658,14 @@ export class TypeGuards {
      */
     static isParenthesizedExpression(node: compiler.Node): node is compiler.ParenthesizedExpression {
         return node.getKind() === SyntaxKind.ParenthesizedExpression;
+    }
+
+    /**
+     * Gets if the node is a ParenthesizedTypeNode.
+     * @param node - Node to check.
+     */
+    static isParenthesizedTypeNode(node: compiler.Node): node is compiler.ParenthesizedTypeNode {
+        return node.getKind() === SyntaxKind.ParenthesizedType;
     }
 
     /**
@@ -1783,6 +1824,7 @@ export class TypeGuards {
      */
     static isReferenceFindableNode(node: compiler.Node): node is compiler.ReferenceFindableNode & compiler.Node {
         switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -1802,9 +1844,9 @@ export class TypeGuards {
             case SyntaxKind.PropertySignature:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
+            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.PropertyAssignment:
             case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
@@ -1827,6 +1869,7 @@ export class TypeGuards {
      */
     static isRenameableNode(node: compiler.Node): node is compiler.RenameableNode & compiler.Node {
         switch (node.getKind()) {
+            case SyntaxKind.BindingElement:
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
@@ -1846,9 +1889,9 @@ export class TypeGuards {
             case SyntaxKind.PropertySignature:
             case SyntaxKind.JsxAttribute:
             case SyntaxKind.ModuleDeclaration:
-            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
             case SyntaxKind.TypeParameter:
+            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.PropertyAssignment:
             case SyntaxKind.ShorthandPropertyAssignment:
                 return true;
@@ -2316,6 +2359,7 @@ export class TypeGuards {
             case SyntaxKind.ImportType:
             case SyntaxKind.IntersectionType:
             case SyntaxKind.LiteralType:
+            case SyntaxKind.ParenthesizedType:
             case SyntaxKind.TupleType:
             case SyntaxKind.TypeLiteral:
             case SyntaxKind.TypeReference:
@@ -2387,8 +2431,8 @@ export class TypeGuards {
             case SyntaxKind.TypeAssertionExpression:
             case SyntaxKind.Parameter:
             case SyntaxKind.PropertySignature:
-            case SyntaxKind.VariableDeclaration:
             case SyntaxKind.TypeAliasDeclaration:
+            case SyntaxKind.VariableDeclaration:
                 return true;
             default:
                 return false;

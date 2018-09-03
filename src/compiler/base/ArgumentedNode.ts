@@ -21,7 +21,7 @@ export interface ArgumentedNode {
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -33,7 +33,7 @@ export interface ArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -60,7 +60,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             return this.addArguments([argumentText])[0];
         }
 
-        addArguments(argumentTexts: (string | WriterFunction)[]) {
+        addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>) {
             return this.insertArguments(this.getArguments().length, argumentTexts);
         }
 
@@ -68,7 +68,7 @@ export function ArgumentedNode<T extends Constructor<ArgumentedNodeExtensionType
             return this.insertArguments(index, [argumentText])[0];
         }
 
-        insertArguments(index: number, argumentTexts: (string | WriterFunction)[]) {
+        insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>) {
             if (ArrayUtils.isNullOrEmpty(argumentTexts))
                 return [];
 

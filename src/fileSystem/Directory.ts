@@ -26,10 +26,6 @@ export interface DirectoryCopyOptions extends SourceFileCopyOptions {
     includeUntrackedFiles?: boolean;
 }
 
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
-}
-
 export class Directory {
     private _context: ProjectContext | undefined;
     private _path!: string;
@@ -241,10 +237,9 @@ export class Directory {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[] {
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[] {
         fileGlobs = typeof fileGlobs === "string" ? [fileGlobs] : fileGlobs;
         fileGlobs = fileGlobs.map(g => {
             if (FileUtils.pathIsAbsolute(g))
@@ -253,7 +248,7 @@ export class Directory {
             return FileUtils.pathJoin(this.getPath(), g);
         });
 
-        return this.context.directoryCoordinator.addExistingSourceFiles(fileGlobs, options);
+        return this.context.directoryCoordinator.addExistingSourceFiles(fileGlobs);
     }
 
     /**
@@ -328,12 +323,11 @@ export class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      * @skipOrThrowCheck
      */
-    addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined {
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined {
         const filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath, options);
+        return this.context.directoryCoordinator.addExistingSourceFileIfExists(filePath);
     }
 
     /**
@@ -341,12 +335,11 @@ export class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile {
+    addExistingSourceFile(relativeFilePath: string): SourceFile {
         const filePath = this.context.fileSystemWrapper.getStandardizedAbsolutePath(relativeFilePath, this.getPath());
-        return this.context.directoryCoordinator.addExistingSourceFile(filePath, options);
+        return this.context.directoryCoordinator.addExistingSourceFile(filePath);
     }
 
     /**

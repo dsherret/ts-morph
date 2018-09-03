@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { VariableDeclarationKind } from "../../compiler/statement/VariableDeclarationKind";
+import { VariableDeclarationKind } from "../../compiler/variable/VariableDeclarationKind";
 import { VariableStatementStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 import { NewLineFormattingStructuresPrinter } from "../formatting";
@@ -7,7 +7,7 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 export class VariableStatementStructurePrinter extends FactoryStructurePrinter<VariableStatementStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: VariableStatementStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<VariableStatementStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

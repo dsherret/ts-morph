@@ -19,7 +19,7 @@ export class OutputFile {
     }
 
     /**
-     * TypeScript compiler emit result.
+     * TypeScript compiler output file.
      */
     get compilerObject() {
         return this._compilerObject;

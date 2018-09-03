@@ -6,6 +6,7 @@ export * from "./FunctionOrConstructorTypeNodeBase";
 export * from "./ImportTypeNode";
 export * from "./IntersectionTypeNode";
 export * from "./LiteralTypeNode";
+export * from "./ParenthesizedTypeNode";
 export * from "./TupleTypeNode";
 export * from "./Type";
 export * from "./TypeAliasDeclaration";

@@ -20,7 +20,7 @@ export class SourceFileStructurePrinter extends FactoryStructurePrinter<SourceFi
         writer.conditionalNewLine(!writer.isAtStartOfFirstLineOfBlock() && !writer.isLastNewLine());
     }
 
-    private conditionalBlankLine(writer: CodeBlockWriter, structures: any[] | undefined) {
+    private conditionalBlankLine(writer: CodeBlockWriter, structures: ReadonlyArray<any> | undefined) {
         if (!ArrayUtils.isNullOrEmpty(structures))
             writer.conditionalBlankLine(!writer.isAtStartOfFirstLineOfBlock());
     }

@@ -46,7 +46,7 @@ export interface TypeParameteredNode {
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
@@ -58,7 +58,7 @@ export interface TypeParameteredNode {
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
 }
 
 export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExtensionType>>(Base: T): Constructor<TypeParameteredNode> & T {
@@ -82,7 +82,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return this.addTypeParameters([structure])[0];
         }
 
-        addTypeParameters(structures: TypeParameterDeclarationStructure[]) {
+        addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>) {
             return this.insertTypeParameters(getEndIndexFromArray(this.compilerNode.typeParameters), structures);
         }
 
@@ -90,7 +90,7 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
             return this.insertTypeParameters(index, [structure])[0];
         }
 
-        insertTypeParameters(index: number, structures: TypeParameterDeclarationStructure[]) {
+        insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

@@ -22,7 +22,7 @@ export interface TypeArgumentedNode {
      * Adds type arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addTypeArguments(argumentTexts: string[]): TypeNode[];
+    addTypeArguments(argumentTexts: ReadonlyArray<string>): TypeNode[];
     /**
      * Inserts a type argument.
      * @param index - Child index to insert at.
@@ -34,7 +34,7 @@ export interface TypeArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertTypeArguments(index: number, argumentTexts: string[]): TypeNode[];
+    insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>): TypeNode[];
     /**
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
@@ -65,7 +65,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             return this.addTypeArguments([argumentText])[0];
         }
 
-        addTypeArguments(argumentTexts: string[]) {
+        addTypeArguments(argumentTexts: ReadonlyArray<string>) {
             return this.insertTypeArguments(this.getTypeArguments().length, argumentTexts);
         }
 
@@ -73,7 +73,7 @@ export function TypeArgumentedNode<T extends Constructor<TypeArgumentedNodeExten
             return this.insertTypeArguments(index, [argumentText])[0];
         }
 
-        insertTypeArguments(index: number, argumentTexts: string[]) {
+        insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>) {
             if (ArrayUtils.isNullOrEmpty(argumentTexts))
                 return [];
 

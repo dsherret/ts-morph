@@ -28,7 +28,7 @@ export class Symbol {
         this.context = context;
         this._compilerSymbol = symbol;
 
-        // wrap these immediately
+        // wrap these immediately, but do not memoize because the underlying symbol might be mutated
         this.getValueDeclaration();
         this.getDeclarations();
     }
@@ -104,11 +104,12 @@ export class Symbol {
      * Gets the symbol declarations.
      */
     getDeclarations(): Node[] {
-        return this.compilerSymbol.declarations.map(d => this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
+        return (this.compilerSymbol.declarations || []).map(d =>
+            this.context.compilerFactory.getNodeFromCompilerNode(d, this.context.compilerFactory.getSourceFileForNode(d)));
     }
 
     /**
-     * Get the export of the symbol by the specified name or throws if not exists.
+     * Gets the export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
     getExportByNameOrThrow(name: string): Symbol {
@@ -116,14 +117,14 @@ export class Symbol {
     }
 
     /**
-     * Get the export of the symbol by the specified name or returns undefined if not exists.
+     * Gets the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined {
         if (this.compilerSymbol.exports == null)
             return undefined;
 
-        const tsSymbol = this.compilerSymbol.exports!.get(name as ts.__String);
+        const tsSymbol = this.compilerSymbol.exports.get(name as ts.__String);
         return tsSymbol == null ? undefined : this.context.compilerFactory.getSymbol(tsSymbol);
     }
 
@@ -133,7 +134,36 @@ export class Symbol {
     getExports(): Symbol[] {
         if (this.compilerSymbol.exports == null)
             return [];
-        return ArrayUtils.from(this.compilerSymbol.exports!.values()).map(symbol => this.context.compilerFactory.getSymbol(symbol));
+        return ArrayUtils.from(this.compilerSymbol.exports.values()).map(symbol => this.context.compilerFactory.getSymbol(symbol));
+    }
+
+    /**
+     * Gets the member of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getMemberByNameOrThrow(name: string): Symbol {
+        return errors.throwIfNullOrUndefined(this.getMemberByName(name), `Expected to find member with name: ${name}`);
+    }
+
+    /**
+     * Gets the member of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the member.
+     */
+    getMemberByName(name: string): Symbol | undefined {
+        if (this.compilerSymbol.members == null)
+            return undefined;
+
+        const tsSymbol = this.compilerSymbol.members.get(name as ts.__String);
+        return tsSymbol == null ? undefined : this.context.compilerFactory.getSymbol(tsSymbol);
+    }
+
+    /**
+     * Gets the members of the symbol
+     */
+    getMembers(): Symbol[] {
+        if (this.compilerSymbol.members == null)
+            return [];
+        return ArrayUtils.from(this.compilerSymbol.members.values()).map(symbol => this.context.compilerFactory.getSymbol(symbol));
     }
 
     /**

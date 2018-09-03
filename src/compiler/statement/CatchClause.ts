@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { ts } from "../../typescript";
 import { Node } from "../common";
 import { Block } from "./Block";
-import { VariableDeclaration } from "./VariableDeclaration";
+import { VariableDeclaration } from "../variable";
 
 export const CatchClauseBase = Node;
 export class CatchClause extends CatchClauseBase<ts.CatchClause> {

@@ -40,7 +40,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * Add constructor overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: ConstructorDeclarationOverloadStructure[]) {
+    addOverloads(structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>) {
         return this.insertOverloads(this.getOverloads().length, structures);
     }
 
@@ -58,7 +58,7 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]) {
+    insertOverloads(index: number, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>) {
         const childCodes = structures.map(structure => `constructor();`);
 
         return insertOverloads<ConstructorDeclaration, ConstructorDeclarationOverloadStructure>({

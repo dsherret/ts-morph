@@ -2,13 +2,8 @@ import { Node } from "../compiler";
 import { FileSystemWrapper } from "../fileSystem";
 import { SyntaxKind } from "../typescript";
 import { getSyntaxKindName } from "../utils/compiler/getSyntaxKindName";
-import { ArgumentError } from "./ArgumentError";
-import { ArgumentNullOrWhitespaceError } from "./ArgumentNullOrWhitespaceError";
-import { ArgumentOutOfRangeError } from "./ArgumentOutOfRangeError";
-import { ArgumentTypeError } from "./ArgumentTypeError";
-import { FileNotFoundError } from "./FileNotFoundError";
-import { InvalidOperationError } from "./InvalidOperationError";
-import { NotImplementedError } from "./NotImplementedError";
+import { ArgumentError, ArgumentNullOrWhitespaceError, ArgumentOutOfRangeError, ArgumentTypeError, FileNotFoundError, InvalidOperationError,
+ NotImplementedError } from "./classes";
 
 /**
  * Thows if not a type.
@@ -22,13 +17,22 @@ export function throwIfNotType(value: any, expectedType: string, argName: string
 }
 
 /**
+ * Throws if the value is not a string.
+ * @param value - Value to check.
+ * @param argName - Arg name.
+ */
+export function throwIfNotString(value: string, argName: string) {
+    if (typeof value !== "string")
+        throw new ArgumentTypeError(argName, "string", typeof value);
+}
+
+/**
  * Throws if the value is not a string or is whitespace.
  * @param value - Value to check.
  * @param argName - Arg name.
  */
 export function throwIfNotStringOrWhitespace(value: string, argName: string) {
-    if (typeof value !== "string")
-        throw new ArgumentTypeError(argName, "string", typeof value);
+    throwIfNotString(value, argName);
     if (value.trim().length === 0)
         throw new ArgumentNullOrWhitespaceError(argName);
 }

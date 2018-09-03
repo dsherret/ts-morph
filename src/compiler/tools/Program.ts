@@ -2,8 +2,15 @@ import { ProjectContext } from "../../ProjectContext";
 import { ModuleResolutionKind, ts } from "../../typescript";
 import * as tsInternal from "../../typescript/tsInternal";
 import { SourceFile } from "../file";
-import { Diagnostic, DiagnosticWithLocation, EmitResult } from "./results";
+import { Diagnostic, DiagnosticWithLocation, EmitResult, MemoryEmitResult, MemoryEmitResultFile } from "./results";
 import { TypeChecker } from "./TypeChecker";
+
+/**
+ * Options for emitting from a Program.
+ */
+export interface ProgramEmitOptions extends EmitOptions {
+    writeFile?: ts.WriteFileCallback;
+}
 
 /**
  * Options for emitting.
@@ -20,6 +27,10 @@ export interface EmitOptionsBase {
      * Whether only .d.ts files should be emitted.
      */
     emitOnlyDtsFiles?: boolean;
+    /**
+     * Transformers to act on the files when emitting.
+     */
+    customTransformers?: ts.CustomTransformers;
 }
 
 /**
@@ -36,7 +47,7 @@ export class Program {
     private _getOrCreateCompilerObject!: () => ts.Program;
 
     /** @internal */
-    constructor(context: ProjectContext, rootNames: string[], host: ts.CompilerHost) {
+    constructor(context: ProjectContext, rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
         this.context = context;
         this.typeChecker = new TypeChecker(this.context);
         this.reset(rootNames, host);
@@ -53,9 +64,11 @@ export class Program {
      * Resets the program.
      * @internal
      */
-    reset(rootNames: string[], host: ts.CompilerHost) {
+    reset(rootNames: ReadonlyArray<string>, host: ts.CompilerHost) {
         const compilerOptions = this.context.compilerOptions.get();
         this._getOrCreateCompilerObject = () => {
+            // need to use ts.createProgram instead of languageService.getProgram() because the
+            // program created by the language service is not fully featured (ex. does not write to the file system)
             if (this._createdCompilerObject == null)
                 this._createdCompilerObject = ts.createProgram(rootNames, compilerOptions, host);
 
@@ -74,20 +87,43 @@ export class Program {
     }
 
     /**
-     * Emits the TypeScript files to the specified target.
+     * Emits the TypeScript files to JavaScript files.
+     * @param options - Options for emitting.
      */
-    emit(options: EmitOptions = {}) {
-        const targetSourceFile = options != null && options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
+    emit(options: ProgramEmitOptions = {}) {
+        return new EmitResult(this.context, this._emit(options));
+    }
+
+    /**
+     * Emits the TypeScript files to JavaScript files to memory.
+     * @param options - Options for emitting.
+     */
+    emitToMemory(options: EmitOptions = {}) {
+        const sourceFiles: MemoryEmitResultFile[] = [];
+        const { fileSystemWrapper } = this.context;
+        const emitResult = this._emit({
+            writeFile: (filePath, text, writeByteOrderMark) => {
+                sourceFiles.push({
+                    filePath: fileSystemWrapper.getStandardizedAbsolutePath(filePath),
+                    text,
+                    writeByteOrderMark: writeByteOrderMark || false
+                });
+            }, ...options
+        });
+        return new MemoryEmitResult(this.context, emitResult, sourceFiles);
+    }
+
+    /** @internal */
+    private _emit(options: ProgramEmitOptions = {}) {
+        const targetSourceFile = options.targetSourceFile != null ? options.targetSourceFile.compilerNode : undefined;
+        const { emitOnlyDtsFiles, customTransformers, writeFile } = options;
         const cancellationToken = undefined; // todo: expose this
-        const emitOnlyDtsFiles = options != null && options.emitOnlyDtsFiles != null ? options.emitOnlyDtsFiles : undefined;
-        const customTransformers = undefined; // todo: expose this
-        const emitResult = this.compilerObject.emit(targetSourceFile, undefined, cancellationToken, emitOnlyDtsFiles, customTransformers);
-        return new EmitResult(this.context, emitResult);
+        return this.compilerObject.emit(targetSourceFile, writeFile, cancellationToken, emitOnlyDtsFiles, customTransformers);
     }
 
     /**
      * Gets the syntactic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getSyntacticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
@@ -96,7 +132,7 @@ export class Program {
 
     /**
      * Gets the semantic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
         const compilerDiagnostics = this.compilerObject.getSemanticDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
@@ -105,7 +141,7 @@ export class Program {
 
     /**
      * Gets the declaration diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[] {
         const compilerDiagnostics = this.compilerObject.getDeclarationDiagnostics(sourceFile == null ? undefined : sourceFile.compilerNode);
@@ -113,11 +149,10 @@ export class Program {
     }
 
     /**
-     * Gets the pre-emit diagnostics.
-     * @param sourceFile - Source file.
+     * Gets the global diagnostics.
      */
-    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[] {
-        const compilerDiagnostics = ts.getPreEmitDiagnostics(this.compilerObject, sourceFile == null ? undefined : sourceFile.compilerNode);
+    getGlobalDiagnostics(): Diagnostic[] {
+        const compilerDiagnostics = this.compilerObject.getGlobalDiagnostics();
         return compilerDiagnostics.map(d => this.context.compilerFactory.getDiagnostic(d));
     }
 

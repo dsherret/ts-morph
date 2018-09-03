@@ -7,7 +7,7 @@ import { NewLineFormattingStructuresPrinter } from "../formatting";
 export class IndexSignatureDeclarationStructurePrinter extends FactoryStructurePrinter<IndexSignatureDeclarationStructure> {
     private readonly multipleWriter = new NewLineFormattingStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: IndexSignatureDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<IndexSignatureDeclarationStructure> | undefined) {
         this.multipleWriter.printText(writer, structures);
     }
 

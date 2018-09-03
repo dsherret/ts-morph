@@ -26,12 +26,12 @@ export interface ImplementsClauseableNode {
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
      */
-    addImplements(text: string[]): ExpressionWithTypeArguments[];
+    addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
      */
-    insertImplements(index: number, texts: string[]): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
@@ -56,15 +56,15 @@ export function ImplementsClauseableNode<T extends Constructor<ImplementsClausea
             return implementsClause == null ? [] : implementsClause.getTypeNodes();
         }
 
-        addImplements(text: string[]): ExpressionWithTypeArguments[];
+        addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
         addImplements(text: string): ExpressionWithTypeArguments;
-        addImplements(text: string | string[]): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        addImplements(text: string | ReadonlyArray<string>): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             return this.insertImplements(this.getImplements().length, text as any);
         }
 
-        insertImplements(index: number, text: string[]): ExpressionWithTypeArguments[];
+        insertImplements(index: number, text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
         insertImplements(index: number, text: string): ExpressionWithTypeArguments;
-        insertImplements(index: number, texts: string | string[]): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
+        insertImplements(index: number, texts: string | ReadonlyArray<string>): ExpressionWithTypeArguments | ExpressionWithTypeArguments[] {
             const length = texts instanceof Array ? texts.length : 0;
             if (typeof texts === "string") {
                 errors.throwIfNotStringOrWhitespace(texts, nameof(texts));

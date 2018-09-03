@@ -1,7 +1,8 @@
 /// <reference path="typings/index.d.ts" />
 export * from "./codeBlockWriter";
 export * from "./compiler";
-export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, SourceFileAddOptions, FileSystemHost } from "./fileSystem";
+export * from "./errors/classes";
+export { Directory, DirectoryAddOptions, DirectoryCopyOptions, DirectoryEmitResult, DirectoryMoveOptions, FileSystemHost } from "./fileSystem";
 export * from "./options";
 export { Options, Project as default, SourceFileCreateOptions } from "./Project";
 export * from "./structures";

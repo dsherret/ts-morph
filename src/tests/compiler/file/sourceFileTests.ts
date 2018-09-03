@@ -16,7 +16,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.copy), () => {
         describe("general", () => {
             const fileText = "    interface Identifier {}    ";
-            const { sourceFile, project } = getInfoFromText(fileText, { filePath: "Folder/File.ts", languageVersion: ScriptTarget.ES5 });
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath: "Folder/File.ts" });
             const relativeSourceFile = sourceFile.copy("../NewFolder/NewFile.ts");
             const absoluteSourceFile = sourceFile.copy("/NewFile.ts");
             const testFile = sourceFile.copy("/TestFile.ts");
@@ -33,10 +33,6 @@ describe(nameof(SourceFile), () => {
                 expect(copiedFile).to.equal(testFile);
                 expect(copiedFile.getFullText()).to.equal(newText);
                 expect(testFile.getFullText()).to.equal(newText);
-            });
-
-            it("should have the same language version after copying", () => {
-                expect(relativeSourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
             });
 
             describe(nameof(project), () => {
@@ -129,7 +125,7 @@ describe(nameof(SourceFile), () => {
     describe(nameof<SourceFile>(n => n.move), () => {
         function doTest(filePath: string, newFilePath: string, absoluteNewFilePath?: string, overwrite?: boolean) {
             const fileText = "    interface Identifier {}    ";
-            const { sourceFile, project } = getInfoFromText(fileText, { filePath, languageVersion: ScriptTarget.ES5 });
+            const {sourceFile, project} = getInfoFromText(fileText, { filePath });
             const fileSystem = project.getFileSystem();
             const existingFile = project.createSourceFile("/existingFile.ts");
             project.saveSync();
@@ -140,7 +136,6 @@ describe(nameof(SourceFile), () => {
                 expect(existingFile.wasForgotten()).to.be.true;
             expect(newFile).to.equal(sourceFile);
             expect(sourceFile.getFilePath()).to.equal(absoluteNewFilePath || newFilePath);
-            expect(sourceFile.getLanguageVersion()).to.equal(ScriptTarget.ES5);
             expect(sourceFile.getFullText()).to.equal(fileText);
             expect(project.getSourceFile(filePath)).to.be.undefined;
             expect(project.getSourceFile(absoluteNewFilePath || newFilePath)).to.not.be.undefined;
@@ -721,12 +716,20 @@ describe(nameof(SourceFile), () => {
                 .to.deep.equal(["MainFileClass", "OtherClass", "Class", "MyClass", "SubClass", "SubClass2", "SubClass3"].sort());
         });
 
-        it("should get the exported declaration when there's only a default export using an export assignment", () => {
+        function doTest(text: string, expectedDeclarationNames: string[]) {
             const project = new Project({ useVirtualFileSystem: true });
-            const mainSourceFile = project.createSourceFile("main.ts", "class MainFileClass {}\nexport default MainFileClass;");
+            const mainSourceFile = project.createSourceFile("main.ts", text);
 
             expect(mainSourceFile.getExportedDeclarations().map(d => (d as any).getName()).sort())
-                .to.deep.equal(["MainFileClass"].sort());
+                .to.deep.equal(expectedDeclarationNames.sort());
+        }
+
+        it("should get the exported declaration when there's only a default export using an export assignment", () => {
+            doTest("class MainFileClass {}\nexport default MainFileClass;", ["MainFileClass"]);
+        });
+
+        it("should not error for an empty file", () => {
+            doTest("", []);
         });
     });
 

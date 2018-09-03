@@ -4,7 +4,8 @@ title: Source Files
 
 ## Source Files
 
-Source files are the root nodes of the AST.
+Source files are the root nodes of the AST. They can be created or added to a `Project` instance
+by following the instructions at [Adding Source Files](../setup/adding-source-files).
 
 ### File path and name
 

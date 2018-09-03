@@ -28,7 +28,7 @@ export class StatementedNodeStructurePrinter extends FactoryStructurePrinter<Sta
         conditionalBlankLine(structure.namespaces);
         this.factory.forNamespaceDeclaration(this.options).printTexts(writer, structure.namespaces);
 
-        function conditionalBlankLine(structures: any[] | undefined) {
+        function conditionalBlankLine(structures: ReadonlyArray<any> | undefined) {
             if (!writer.isAtStartOfFirstLineOfBlock() && !ArrayUtils.isNullOrEmpty(structures))
                 writer.blankLine();
         }

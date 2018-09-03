@@ -15,6 +15,10 @@ export class Structure {
         return this.node.getSourceFile().getFilePath();
     }
 
+    getStartLineNumber() {
+        return this.node.getStartLineNumber();
+    }
+
     isOverloadStructure() {
         return isOverloadStructure(this.getName());
     }

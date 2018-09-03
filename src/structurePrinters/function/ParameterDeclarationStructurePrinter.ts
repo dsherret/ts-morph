@@ -6,7 +6,7 @@ import { CommaSeparatedStructuresPrinter } from "../formatting";
 export class ParameterDeclarationStructurePrinter extends FactoryStructurePrinter<ParameterDeclarationStructure> {
     private readonly multipleWriter = new CommaSeparatedStructuresPrinter(this);
 
-    printTexts(writer: CodeBlockWriter, structures: ParameterDeclarationStructure[] | undefined) {
+    printTexts(writer: CodeBlockWriter, structures: ReadonlyArray<ParameterDeclarationStructure> | undefined) {
         if (structures == null || structures.length === 0)
             return;
         this.multipleWriter.printText(writer, structures);

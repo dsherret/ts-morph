@@ -45,13 +45,13 @@ export interface ParameteredNode {
      * Adds parameters.
      * @param structures - Structures of the parameters.
      */
-    addParameters(structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
+    addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
-    insertParameters(index: number, structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
+    insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Child index to insert at.
@@ -78,7 +78,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this.addParameters([structure])[0];
         }
 
-        addParameters(structures: ParameterDeclarationStructure[]) {
+        addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>) {
             return this.insertParameters(getEndIndexFromArray(this.compilerNode.parameters), structures);
         }
 
@@ -86,7 +86,7 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
             return this.insertParameters(index, [structure])[0];
         }
 
-        insertParameters(index: number, structures: ParameterDeclarationStructure[]) {
+        insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>) {
             if (ArrayUtils.isNullOrEmpty(structures))
                 return [];
 

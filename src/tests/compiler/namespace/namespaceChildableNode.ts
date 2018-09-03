@@ -29,4 +29,16 @@ describe(nameof(NamespaceChildableNode), () => {
             expect(firstChild.getParentNamespace()).to.equal(undefined);
         });
     });
+
+    describe(nameof<NamespaceChildableNode>(d => d.getParentNamespaceOrThrow), () => {
+        it("should get the parent namespace when it exists", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace { class MyClass {} }");
+            expect(firstChild.getClasses()[0].getParentNamespaceOrThrow()).to.equal(firstChild);
+        });
+
+        it("should throw when not in a namespace", () => {
+            const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace MyNamespace.MyOtherNamespace { }");
+            expect(() => firstChild.getParentNamespaceOrThrow()).to.throw();
+        });
+    });
 });

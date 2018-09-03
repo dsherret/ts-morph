@@ -195,13 +195,13 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
-    forVariableDeclaration(): structurePrinters.VariableDeclarationStructurePrinter {
-        return new structurePrinters.VariableDeclarationStructurePrinter(this);
+    forVariableStatement(): structurePrinters.VariableStatementStructurePrinter {
+        return new structurePrinters.VariableStatementStructurePrinter(this);
     }
 
     @Memoize
-    forVariableStatement(): structurePrinters.VariableStatementStructurePrinter {
-        return new structurePrinters.VariableStatementStructurePrinter(this);
+    forVariableDeclaration(): structurePrinters.VariableDeclarationStructurePrinter {
+        return new structurePrinters.VariableDeclarationStructurePrinter(this);
     }
 
     @Memoize

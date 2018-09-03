@@ -42,6 +42,11 @@ export type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends 
     NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined :
     NodeType[KeyName];
 
+export type NodeParentType<NodeType extends ts.Node> =
+    NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
+    ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined :
+    CompilerNodeToWrappedType<NodeType["parent"]>;
+
 export class Node<NodeType extends ts.Node = ts.Node> {
     /** @internal */
     readonly context: ProjectContext;
@@ -141,7 +146,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         this._leadingCommentRanges = undefined;
         this._trailingCommentRanges = undefined;
 
-        function clearCommentRanges(commentRanges: CommentRange[] | undefined) {
+        function clearCommentRanges(commentRanges: ReadonlyArray<CommentRange> | undefined) {
             if (commentRanges == null)
                 return;
             commentRanges.forEach(r => r.forget());
@@ -860,10 +865,9 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param propertyName - Property name.
      */
     getNodeProperty<
-            KeyType extends keyof LocalNodeType,
-            LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
-        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType>
-    {
+        KeyType extends keyof LocalNodeType,
+        LocalNodeType extends ts.Node = NodeType // necessary to make the compiler less strict when assigning "this" to Node<NodeType>
+        >(propertyName: KeyType): NodePropertyToWrappedType<LocalNodeType, KeyType> {
         const property = (this.compilerNode as any)[propertyName] as any | any[];
 
         if (property == null)
@@ -910,15 +914,15 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent(): Node | undefined {
-        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent);
+    getParent<T extends Node | undefined = NodeParentType<NodeType>>() {
+        return this.getNodeFromCompilerNodeIfExists(this.compilerNode.parent) as T;
     }
 
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow() {
-        return errors.throwIfNullOrUndefined(this.getParent(), "Expected to find a parent.");
+    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>() {
+        return errors.throwIfNullOrUndefined(this.getParent<T>(), "Expected to find a parent.") as NonNullable<T>;
     }
 
     /**
@@ -951,7 +955,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     getParentWhile(condition: (node: Node) => boolean): Node | undefined;
     getParentWhile(condition: (node: Node) => boolean) {
         let node: Node | undefined = undefined;
-        let nextParent = this.getParent();
+        let nextParent: Node | undefined = this.getParent();
         while (nextParent != null && condition(nextParent)) {
             node = nextParent;
             nextParent = nextParent.getParent();
@@ -1194,7 +1198,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
     }
 
     /** @internal */
-    private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ts.CommentRange[] | undefined) {
+    private _getCommentsAtPos(pos: number, getComments: (text: string, pos: number) => ReadonlyArray<ts.CommentRange> | undefined) {
         if (this.getKind() === SyntaxKind.SourceFile)
             return [];
 
@@ -1358,9 +1362,41 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param kind - Syntax kind.
      */
     getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined {
-        for (const parent of this.getAncestors(kind === SyntaxKind.SyntaxList)) {
+        for (const parent of this.getAncestorsIterator(kind === SyntaxKind.SyntaxList)) {
             if (parent.getKind() === kind)
                 return parent;
+        }
+        return undefined;
+    }
+
+    /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow(condition?: (node: Node) => boolean): Node;
+    getFirstAncestorOrThrow(condition?: (node: Node) => boolean) {
+        return errors.throwIfNullOrUndefined(this.getFirstAncestor(condition), `Expected to find an ancestor that matched the provided condition.`);
+    }
+
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor(condition?: (node: Node) => boolean): Node | undefined;
+    getFirstAncestor(condition?: (node: Node) => boolean) {
+        for (const ancestor of this.getAncestorsIterator(false)) {
+            if (condition == null || condition(ancestor))
+                return ancestor;
         }
         return undefined;
     }

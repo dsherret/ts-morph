@@ -199,7 +199,7 @@ export class FileSystemWrapper {
 
     queueFileDelete(filePath: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        const parentDir = this.getParentDirectory(filePath);
+        const parentDir = this.getOrCreateParentDirectory(filePath);
         parentDir.operations.push({
             kind: "deleteFile",
             index: this.getNextOperationIndex(),
@@ -209,14 +209,14 @@ export class FileSystemWrapper {
 
     removeFileDelete(filePath: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        this.getParentDirectory(filePath).dequeueFileDelete(filePath);
+        this.getOrCreateParentDirectory(filePath).dequeueFileDelete(filePath);
     }
 
     queueMkdir(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
         dir.setIsDeleted(false);
-        const parentDir = this.getParentDirectory(dirPath);
+        const parentDir = this.getOrCreateParentDirectory(dirPath);
         parentDir.operations.push({
             kind: "mkdir",
             index: this.getNextOperationIndex(),
@@ -226,9 +226,9 @@ export class FileSystemWrapper {
 
     queueDirectoryDelete(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
         dir.setIsDeleted(true);
-        const parentDir = this.getParentDirectory(dirPath);
+        const parentDir = this.getOrCreateParentDirectory(dirPath);
         parentDir.operations.push({
             kind: "deleteDir",
             index: this.getNextOperationIndex(),
@@ -241,9 +241,9 @@ export class FileSystemWrapper {
         srcPath = this.getStandardizedAbsolutePath(srcPath);
         destPath = this.getStandardizedAbsolutePath(destPath);
 
-        const parentDir = this.getParentDirectory(srcPath);
-        const moveDir = this.getDirectory(srcPath);
-        const destinationDir = this.getDirectory(destPath);
+        const parentDir = this.getOrCreateParentDirectory(srcPath);
+        const moveDir = this.getOrCreateDirectory(srcPath);
+        const destinationDir = this.getOrCreateDirectory(destPath);
 
         const moveOperation: MoveDirectoryOperation = {
             kind: "move",
@@ -260,9 +260,9 @@ export class FileSystemWrapper {
         srcPath = this.getStandardizedAbsolutePath(srcPath);
         destPath = this.getStandardizedAbsolutePath(destPath);
 
-        const parentDir = this.getParentDirectory(srcPath);
-        const copyDir = this.getDirectory(srcPath);
-        const destinationDir = this.getDirectory(destPath);
+        const parentDir = this.getOrCreateParentDirectory(srcPath);
+        const copyDir = this.getOrCreateDirectory(srcPath);
+        const destinationDir = this.getOrCreateDirectory(destPath);
 
         const copyOperation: CopyDirectoryOperation = {
             kind: "copy",
@@ -287,7 +287,7 @@ export class FileSystemWrapper {
 
     async saveForDirectory(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "save directory");
         const operations = this.getAndClearOperationsForDir(dir);
 
@@ -299,7 +299,7 @@ export class FileSystemWrapper {
 
     saveForDirectorySync(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
         this.throwIfHasExternalOperations(dir, "save directory");
 
         this.ensureDirectoryExistsSync(dirPath);
@@ -382,8 +382,8 @@ export class FileSystemWrapper {
         oldFilePath = this.getStandardizedAbsolutePath(oldFilePath);
         newFilePath = this.getStandardizedAbsolutePath(newFilePath);
 
-        this.throwIfHasExternalOperations(this.getParentDirectory(oldFilePath), "move file");
-        this.throwIfHasExternalOperations(this.getParentDirectory(newFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
 
         await this.deleteFileImmediately(oldFilePath);
         await this.writeFile(newFilePath, fileText);
@@ -393,8 +393,8 @@ export class FileSystemWrapper {
         oldFilePath = this.getStandardizedAbsolutePath(oldFilePath);
         newFilePath = this.getStandardizedAbsolutePath(newFilePath);
 
-        this.throwIfHasExternalOperations(this.getParentDirectory(oldFilePath), "move file");
-        this.throwIfHasExternalOperations(this.getParentDirectory(newFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(oldFilePath), "move file");
+        this.throwIfHasExternalOperations(this.getOrCreateParentDirectory(newFilePath), "move file");
 
         this.deleteFileImmediatelySync(oldFilePath);
         this.writeFileSync(newFilePath, fileText);
@@ -402,7 +402,7 @@ export class FileSystemWrapper {
 
     async deleteFileImmediately(filePath: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        const dir = this.getParentDirectory(filePath);
+        const dir = this.getOrCreateParentDirectory(filePath);
 
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
@@ -417,7 +417,7 @@ export class FileSystemWrapper {
 
     deleteFileImmediatelySync(filePath: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        const dir = this.getParentDirectory(filePath);
+        const dir = this.getOrCreateParentDirectory(filePath);
 
         this.throwIfHasExternalOperations(dir, "delete file");
         dir.dequeueFileDelete(filePath);
@@ -433,8 +433,8 @@ export class FileSystemWrapper {
     async copyDirectoryImmediately(srcDirPath: string, destDirPath: string) {
         srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
         destDirPath = this.getStandardizedAbsolutePath(destDirPath);
-        const srcDir = this.getDirectory(srcDirPath);
-        const destDir = this.getDirectory(destDirPath);
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
 
         this.throwIfHasExternalOperations(srcDir, "copy directory");
         this.throwIfHasExternalOperations(destDir, "copy directory");
@@ -450,8 +450,8 @@ export class FileSystemWrapper {
     copyDirectoryImmediatelySync(srcDirPath: string, destDirPath: string) {
         srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
         destDirPath = this.getStandardizedAbsolutePath(destDirPath);
-        const srcDir = this.getDirectory(srcDirPath);
-        const destDir = this.getDirectory(destDirPath);
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
 
         this.throwIfHasExternalOperations(srcDir, "copy directory");
         this.throwIfHasExternalOperations(destDir, "copy directory");
@@ -466,8 +466,8 @@ export class FileSystemWrapper {
     async moveDirectoryImmediately(srcDirPath: string, destDirPath: string) {
         srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
         destDirPath = this.getStandardizedAbsolutePath(destDirPath);
-        const srcDir = this.getDirectory(srcDirPath);
-        const destDir = this.getDirectory(destDirPath);
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
 
         this.throwIfHasExternalOperations(srcDir, "move directory");
         this.throwIfHasExternalOperations(destDir, "move directory");
@@ -483,8 +483,8 @@ export class FileSystemWrapper {
     moveDirectoryImmediatelySync(srcDirPath: string, destDirPath: string) {
         srcDirPath = this.getStandardizedAbsolutePath(srcDirPath);
         destDirPath = this.getStandardizedAbsolutePath(destDirPath);
-        const srcDir = this.getDirectory(srcDirPath);
-        const destDir = this.getDirectory(destDirPath);
+        const srcDir = this.getOrCreateDirectory(srcDirPath);
+        const destDir = this.getOrCreateDirectory(destDirPath);
 
         this.throwIfHasExternalOperations(srcDir, "move directory");
         this.throwIfHasExternalOperations(destDir, "move directory");
@@ -498,7 +498,7 @@ export class FileSystemWrapper {
 
     async deleteDirectoryImmediately(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
 
         this.throwIfHasExternalOperations(dir, "delete");
         this.removeDirAndSubDirs(dir);
@@ -514,7 +514,7 @@ export class FileSystemWrapper {
 
     deleteDirectoryImmediatelySync(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
 
         this.throwIfHasExternalOperations(dir, "delete");
         this.removeDirAndSubDirs(dir);
@@ -549,7 +549,8 @@ export class FileSystemWrapper {
         filePath = this.getStandardizedAbsolutePath(filePath);
         if (this.isPathQueuedForDeletion(filePath))
             return false;
-        if (this.getParentDirectory(filePath).getWasEverDeleted())
+        const parentDir = this.getParentDirectoryIfExists(filePath);
+        if (parentDir != null && parentDir.getWasEverDeleted())
             return false;
         return this.fileSystem.fileExistsSync(filePath);
     }
@@ -560,7 +561,8 @@ export class FileSystemWrapper {
             return false;
         if (this.isPathDirectoryInQueueThatExists(dirPath))
             return true;
-        if (this.getDirectory(dirPath).getWasEverDeleted())
+        const dir = this.getDirectoryIfExists(dirPath);
+        if (dir != null && dir.getWasEverDeleted())
             return false;
         return this.fileSystem.directoryExistsSync(dirPath);
     }
@@ -569,14 +571,14 @@ export class FileSystemWrapper {
         filePath = this.getStandardizedAbsolutePath(filePath);
         if (this.isPathQueuedForDeletion(filePath))
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} when it is queued for deletion.`);
-        if (this.getParentDirectory(filePath).getWasEverDeleted())
+        if (this.getOrCreateParentDirectory(filePath).getWasEverDeleted())
             throw new errors.InvalidOperationError(`Cannot read file at ${filePath} because one of its ancestor directories was once deleted or moved.`);
         return this.fileSystem.readFileSync(filePath, encoding);
     }
 
     readDirSync(dirPath: string) {
         dirPath = this.getStandardizedAbsolutePath(dirPath);
-        const dir = this.getDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
         if (dir.getIsDeleted())
             throw new errors.InvalidOperationError(`Cannot read directory at ${dirPath} when it is queued for deletion.`);
         if (dir.getWasEverDeleted())
@@ -584,7 +586,7 @@ export class FileSystemWrapper {
         return this.fileSystem.readDirSync(dirPath).filter(path => !this.isPathQueuedForDeletion(path) && !this.isPathQueuedForDeletion(path));
     }
 
-    glob(patterns: string[]) {
+    glob(patterns: ReadonlyArray<string>) {
         return this.fileSystem.glob(patterns).filter(path => !this.isPathQueuedForDeletion(path));
     }
 
@@ -616,7 +618,7 @@ export class FileSystemWrapper {
 
     async writeFile(filePath: string, fileText: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        const parentDir = this.getParentDirectory(filePath);
+        const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
         await this.ensureDirectoryExists(parentDir.path);
@@ -625,7 +627,7 @@ export class FileSystemWrapper {
 
     writeFileSync(filePath: string, fileText: string) {
         filePath = this.getStandardizedAbsolutePath(filePath);
-        const parentDir = this.getParentDirectory(filePath);
+        const parentDir = this.getOrCreateParentDirectory(filePath);
         this.throwIfHasExternalOperations(parentDir, "write file");
         parentDir.dequeueFileDelete(filePath);
         this.ensureDirectoryExistsSync(parentDir.path);
@@ -644,7 +646,7 @@ export class FileSystemWrapper {
             return pathDir.getIsDeleted();
 
         // check if the provided path is a file or if it or its parent is deleted
-        const parentDir = this.getParentDirectory(path);
+        const parentDir = this.getOrCreateParentDirectory(path);
         return parentDir.isFileQueuedForDelete(path) || parentDir.getIsDeleted();
     }
 
@@ -661,7 +663,7 @@ export class FileSystemWrapper {
         for (const dirToAdd of [dir, ...dir.getDescendants()])
             this.directories.set(dirToAdd.path, dirToAdd);
         if (!dir.isRootDir())
-            dir.setParent(this.getParentDirectory(dir.path));
+            dir.setParent(this.getOrCreateParentDirectory(dir.path));
     }
 
     private operationIndex = 0;
@@ -670,15 +672,19 @@ export class FileSystemWrapper {
         return this.operationIndex++;
     }
 
-    private getParentDirectory(filePath: string) {
-        return this.getDirectory(FileUtils.getDirPath(filePath));
+    private getParentDirectoryIfExists(filePath: string) {
+        return this.getDirectoryIfExists(FileUtils.getDirPath(filePath));
+    }
+
+    private getOrCreateParentDirectory(filePath: string) {
+        return this.getOrCreateDirectory(FileUtils.getDirPath(filePath));
     }
 
     private getDirectoryIfExists(dirPath: string) {
         return this.directories.get(dirPath);
     }
 
-    private getDirectory(dirPath: string) {
+    private getOrCreateDirectory(dirPath: string) {
         let dir = this.directories.get(dirPath);
         if (dir != null)
             return dir;
@@ -766,8 +772,8 @@ export class FileSystemWrapper {
     }
 
     private removeMkDirOperationsForDir(dirPath: string) {
-        const dir = this.getDirectory(dirPath);
-        const parentDir = this.getParentDirectory(dirPath);
+        const dir = this.getOrCreateDirectory(dirPath);
+        const parentDir = this.getOrCreateParentDirectory(dirPath);
         ArrayUtils.removeAll(parentDir.operations, operation => operation.kind === "mkdir" && operation.dir === dir);
     }
 }

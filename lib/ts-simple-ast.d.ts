@@ -90,10 +90,9 @@ export declare class Directory {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
     /**
      * Adds an existing directory to the AST from the relative path or directory name, or returns undefined if it doesn't exist.
      *
@@ -148,18 +147,16 @@ export declare class Directory {
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(relativeFilePath: string): SourceFile | undefined;
     /**
      * Adds an existing source file to the AST, relative to this directory, or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param relativeFilePath - Relative file path to add.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file doesn't exist.
      */
-    addExistingSourceFile(relativeFilePath: string, options?: SourceFileAddOptions): SourceFile;
+    addExistingSourceFile(relativeFilePath: string): SourceFile;
     /**
      * Emits the files in the directory.
      * @param options - Options for emitting.
@@ -304,10 +301,6 @@ export declare class DirectoryEmitResult {
 
 export interface DirectoryMoveOptions extends SourceFileMoveOptions {
 }
-
-export interface SourceFileAddOptions {
-    languageVersion?: ScriptTarget;
-}
 export interface FileSystemHost {
     delete(path: string): Promise<void>;
     deleteSync(path: string): void;
@@ -327,7 +320,7 @@ export interface FileSystemHost {
     directoryExists(dirPath: string): Promise<boolean>;
     directoryExistsSync(dirPath: string): boolean;
     getCurrentDirectory(): string;
-    glob(patterns: string[]): string[];
+    glob(patterns: ReadonlyArray<string>): string[];
 }
 
 export interface Options {
@@ -400,36 +393,32 @@ export declare class Project {
     /**
      * Add source files based on file globs.
      * @param fileGlobs - File glob or globs to add files based on.
-     * @param options - Options for adding the source file.
      * @returns The matched source files.
      */
-    addExistingSourceFiles(fileGlobs: string | string[], options?: SourceFileAddOptions): SourceFile[];
+    addExistingSourceFiles(fileGlobs: string | ReadonlyArray<string>): SourceFile[];
     /**
      * Adds a source file from a file path if it exists or returns undefined.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      */
-    addExistingSourceFileIfExists(filePath: string, options?: SourceFileAddOptions): SourceFile | undefined;
+    addExistingSourceFileIfExists(filePath: string): SourceFile | undefined;
     /**
      * Adds an existing source file from a file path or throws if it doesn't exist.
      *
      * Will return the source file if it was already added.
      * @param filePath - File path to get the file from.
-     * @param options - Options for adding the source file.
      * @throws FileNotFoundError when the file is not found.
      */
-    addExistingSourceFile(filePath: string, options?: SourceFileAddOptions): SourceFile;
+    addExistingSourceFile(filePath: string): SourceFile;
     /**
      * Adds all the source files from the specified tsconfig.json.
      *
      * Note that this is done by default when specifying a tsconfig file in the constructor and not explicitly setting the
      * addFilesFromTsConfig option to false.
      * @param tsConfigFilePath - File path to the tsconfig.json file.
-     * @param options - Options for adding the source file.
      */
-    addSourceFilesFromTsConfig(tsConfigFilePath: string, options?: SourceFileAddOptions): SourceFile[];
+    addSourceFilesFromTsConfig(tsConfigFilePath: string): SourceFile[];
     /**
      * Creates a source file at the specified file path.
      *
@@ -498,7 +487,7 @@ export declare class Project {
      * Gets all the source files contained in the compiler wrapper that match the passed in patterns.
      * @param globPatterns - Glob patterns for filtering out the source files.
      */
-    getSourceFiles(globPatterns: string[]): SourceFile[];
+    getSourceFiles(globPatterns: ReadonlyArray<string>): SourceFile[];
     /**
      * Saves all the unsaved source files to the file system and deletes all deleted files.
      */
@@ -515,10 +504,6 @@ export declare class Project {
      */
     enableLogging(enabled?: boolean): void;
     private getUnsavedSourceFiles;
-    /**
-     * Gets the compiler diagnostics.
-     */
-    getDiagnostics(): Diagnostic[];
     /**
      * Gets the pre-emit diagnostics.
      */
@@ -545,6 +530,11 @@ export declare class Project {
      */
     emit(emitOptions?: EmitOptions): EmitResult;
     /**
+     * Emits all the source files to memory.
+     * @param emitOptions - Optional emit options.
+     */
+    emitToMemory(emitOptions?: EmitOptions): MemoryEmitResult;
+    /**
      * Gets the compiler options.
      */
     getCompilerOptions(): CompilerOptions;
@@ -570,7 +560,7 @@ export declare class Project {
 }
 export default Project;
 
-export interface SourceFileCreateOptions extends SourceFileAddOptions {
+export interface SourceFileCreateOptions {
     overwrite?: boolean;
 }
 
@@ -712,6 +702,11 @@ export declare class TypeGuards {
      */
     static isArgumentedNode(node: Node): node is ArgumentedNode & Node;
     /**
+     * Gets if the node is an ArrayBindingPattern.
+     * @param node - Node to check.
+     */
+    static isArrayBindingPattern(node: Node): node is ArrayBindingPattern;
+    /**
      * Gets if the node is an ArrayLiteralExpression.
      * @param node - Node to check.
      */
@@ -751,6 +746,11 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isBinaryExpression(node: Node): node is BinaryExpression;
+    /**
+     * Gets if the node is a BindingElement.
+     * @param node - Node to check.
+     */
+    static isBindingElement(node: Node): node is BindingElement;
     /**
      * Gets if the node is a BindingNamedNode.
      * @param node - Node to check.
@@ -1347,6 +1347,11 @@ export declare class TypeGuards {
      */
     static isNumericLiteral(node: Node): node is NumericLiteral;
     /**
+     * Gets if the node is a ObjectBindingPattern.
+     * @param node - Node to check.
+     */
+    static isObjectBindingPattern(node: Node): node is ObjectBindingPattern;
+    /**
      * Gets if the node is a ObjectKeyword.
      * @param node - Node to check.
      */
@@ -1381,6 +1386,11 @@ export declare class TypeGuards {
      * @param node - Node to check.
      */
     static isParenthesizedExpression(node: Node): node is ParenthesizedExpression;
+    /**
+     * Gets if the node is a ParenthesizedTypeNode.
+     * @param node - Node to check.
+     */
+    static isParenthesizedTypeNode(node: Node): node is ParenthesizedTypeNode;
     /**
      * Gets if the node is a PartiallyEmittedExpression.
      * @param node - Node to check.
@@ -1747,6 +1757,12 @@ export declare type PropertyName = Identifier | StringLiteral | NumericLiteral |
 
 export declare type AccessorDeclaration = GetAccessorDeclaration | SetAccessorDeclaration;
 
+export declare type ArrayBindingElement = BindingElement | OmittedExpression;
+
+export declare type BindingName = Identifier | BindingPattern;
+
+export declare type BindingPattern = ObjectBindingPattern | ArrayBindingPattern;
+
 export declare type EntityName = Identifier | QualifiedName;
 
 export declare type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
@@ -1813,7 +1829,7 @@ export interface ArgumentedNode {
      * Adds arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addArguments(argumentTexts: (string | WriterFunction)[]): Node[];
+    addArguments(argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -1825,7 +1841,7 @@ export interface ArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertArguments(index: number, argumentTexts: (string | WriterFunction)[]): Node[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string | WriterFunction>): Node[];
     /**
      * Removes an argument.
      * @param arg - Argument to remove.
@@ -1999,7 +2015,7 @@ export interface DecoratableNode {
      * Adds decorators.
      * @param structures - Structures of the decorators.
      */
-    addDecorators(structures: DecoratorStructure[]): Decorator[];
+    addDecorators(structures: ReadonlyArray<DecoratorStructure>): Decorator[];
     /**
      * Inserts a decorator.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
@@ -2011,7 +2027,7 @@ export interface DecoratableNode {
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertDecorators(index: number, structures: DecoratorStructure[]): Decorator[];
+    insertDecorators(index: number, structures: ReadonlyArray<DecoratorStructure>): Decorator[];
 }
 
 export declare type DecoratableNodeExtensionType = Node<ts.Node & {
@@ -2110,7 +2126,7 @@ export interface ExtendsClauseableNode {
      * Adds multiple extends clauses.
      * @param texts - Texts to add for the extends clause.
      */
-    addExtends(texts: string[]): ExpressionWithTypeArguments[];
+    addExtends(texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Adds an extends clause.
      * @param text - Text to add for the extends clause.
@@ -2120,7 +2136,7 @@ export interface ExtendsClauseableNode {
      * Inserts multiple extends clauses.
      * @param texts - Texts to insert for the extends clause.
      */
-    insertExtends(index: number, texts: string[]): ExpressionWithTypeArguments[];
+    insertExtends(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts an extends clause.
      * @param text - Text to insert for the extends clause.
@@ -2205,12 +2221,12 @@ export interface ImplementsClauseableNode {
      * Adds multiple implements clauses.
      * @param text - Texts to add for the implements clause.
      */
-    addImplements(text: string[]): ExpressionWithTypeArguments[];
+    addImplements(text: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts an implements clause.
      * @param text - Text to insert for the implements clause.
      */
-    insertImplements(index: number, texts: string[]): ExpressionWithTypeArguments[];
+    insertImplements(index: number, texts: ReadonlyArray<string>): ExpressionWithTypeArguments[];
     /**
      * Inserts multiple implements clauses.
      * @param text - Texts to insert for the implements clause.
@@ -2297,24 +2313,24 @@ export interface JSDocableNode {
      * Adds a JS doc.
      * @param structure - Structure to add.
      */
-    addJsDoc(structure: JSDocStructure | string): JSDoc;
+    addJsDoc(structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Adds JS docs.
      * @param structures - Structures to add.
      */
-    addJsDocs(structures: (JSDocStructure | string)[]): JSDoc[];
+    addJsDocs(structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
     /**
      * Inserts a JS doc.
      * @param index - Child index to insert at.
      * @param structure - Structure to insert.
      */
-    insertJsDoc(index: number, structure: JSDocStructure | string): JSDoc;
+    insertJsDoc(index: number, structure: JSDocStructure | string | WriterFunction): JSDoc;
     /**
      * Inserts JS docs.
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertJsDocs(index: number, structures: (JSDocStructure | string)[]): JSDoc[];
+    insertJsDocs(index: number, structures: ReadonlyArray<JSDocStructure | string | WriterFunction>): JSDoc[];
 }
 
 export declare type JSDocableNodeExtensionType = Node<ts.Node & {
@@ -2384,20 +2400,9 @@ export declare function BindingNamedNode<T extends Constructor<BindingNamedNodeE
 export interface BindingNamedNode extends BindingNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-export declare type BindingNamedNodeExtensionType = Node<ts.Declaration & {
-    name: ts.BindingName;
-}>;
+export declare type BindingNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.BindingName>;
 
-export interface BindingNamedNodeSpecific {
-    /**
-     * Gets the declaration's name node.
-     */
-    getNameNode(): Identifier;
-    /**
-     * Gets the declaration's name as a string.
-     */
-    getName(): string;
-}
+export declare type BindingNamedNodeSpecific = NamedNodeSpecificBase<BindingName>;
 
 export declare function DeclarationNamedNode<T extends Constructor<DeclarationNamedNodeExtensionType>>(Base: T): Constructor<DeclarationNamedNode> & T;
 
@@ -2453,47 +2458,40 @@ export interface NameableNodeSpecific {
     getNameOrThrow(): string;
 }
 
-export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+export declare function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U;
 
-export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
-}
-
-export declare function NamedNodeInternal<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNodeSpecific> & T;
-
-export declare type NamedNodeExtensionType = Node<ts.Node & {
-    name: ts.Identifier;
-}>;
-
-export interface NamedNodeSpecific {
+export interface NamedNodeSpecificBase<TNode extends Node> {
     /**
      * Gets the name node.
      */
-    getNameNode(): Identifier;
+    getNameNode(): TNode;
     /**
      * Gets the name.
      */
     getName(): string;
 }
 
+export declare type NamedNodeBaseExtensionType<TCompilerNode extends ts.Node> = Node<ts.Node & {
+    name: TCompilerNode;
+}>;
+
+export declare function NamedNode<T extends Constructor<NamedNodeExtensionType>>(Base: T): Constructor<NamedNode> & T;
+
+export interface NamedNode extends NamedNodeSpecific, ReferenceFindableNode, RenameableNode {
+}
+
+export declare type NamedNodeExtensionType = NamedNodeBaseExtensionType<ts.Identifier>;
+
+export declare type NamedNodeSpecific = NamedNodeSpecificBase<Identifier>;
+
 export declare function PropertyNamedNode<T extends Constructor<PropertyNamedNodeExtensionType>>(Base: T): Constructor<PropertyNamedNode> & T;
 
 export interface PropertyNamedNode extends PropertyNamedNodeSpecific, ReferenceFindableNode, RenameableNode {
 }
 
-export declare type PropertyNamedNodeExtensionType = Node<ts.Node & {
-    name: ts.PropertyName;
-}>;
+export declare type PropertyNamedNodeExtensionType = NamedNodeBaseExtensionType<ts.PropertyName>;
 
-export interface PropertyNamedNodeSpecific {
-    /**
-     * Gets the name node.
-     */
-    getNameNode(): PropertyName;
-    /**
-     * Gets the text of the name of the node.
-     */
-    getName(): string;
-}
+export declare type PropertyNamedNodeSpecific = NamedNodeSpecificBase<PropertyName>;
 
 export declare function ReferenceFindableNode<T extends Constructor<ReferenceFindableNodeExtensionType>>(Base: T): Constructor<ReferenceFindableNode> & T;
 
@@ -2518,8 +2516,9 @@ export interface RenameableNode {
     /**
      * Renames the name of the node.
      * @param newName - New name.
+     * @param options - Options for renaming.
      */
-    rename(newName: string): this;
+    rename(newName: string, options?: RenameOptions): this;
 }
 
 export declare type RenameableNodeExtensionType = Node<ts.Node>;
@@ -2560,13 +2559,13 @@ export interface ParameteredNode {
      * Adds parameters.
      * @param structures - Structures of the parameters.
      */
-    addParameters(structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
+    addParameters(structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
     /**
      * Inserts parameters.
      * @param index - Child index to insert at.
      * @param structures - Parameters to insert.
      */
-    insertParameters(index: number, structures: ParameterDeclarationStructure[]): ParameterDeclaration[];
+    insertParameters(index: number, structures: ReadonlyArray<ParameterDeclarationStructure>): ParameterDeclaration[];
     /**
      * Inserts a parameter.
      * @param index - Child index to insert at.
@@ -2800,7 +2799,7 @@ export interface TypeArgumentedNode {
      * Adds type arguments.
      * @param argumentTexts - Argument texts to add.
      */
-    addTypeArguments(argumentTexts: string[]): TypeNode[];
+    addTypeArguments(argumentTexts: ReadonlyArray<string>): TypeNode[];
     /**
      * Inserts a type argument.
      * @param index - Child index to insert at.
@@ -2812,7 +2811,7 @@ export interface TypeArgumentedNode {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts to insert.
      */
-    insertTypeArguments(index: number, argumentTexts: string[]): TypeNode[];
+    insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>): TypeNode[];
     /**
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
@@ -2867,7 +2866,7 @@ export interface TypeElementMemberedNode {
      * Add construct signatures.
      * @param structures - Structures representing the construct signatures.
      */
-    addConstructSignatures(structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
+    addConstructSignatures(structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
     /**
      * Insert construct signature.
      * @param index - Child index to insert at.
@@ -2879,7 +2878,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the construct signatures.
      */
-    insertConstructSignatures(index: number, structures: ConstructSignatureDeclarationStructure[]): ConstructSignatureDeclaration[];
+    insertConstructSignatures(index: number, structures: ReadonlyArray<ConstructSignatureDeclarationStructure>): ConstructSignatureDeclaration[];
     /**
      * Gets the first construct signature by a find function.
      * @param findFunction - Function to find the construct signature by.
@@ -2903,7 +2902,7 @@ export interface TypeElementMemberedNode {
      * Add call signatures.
      * @param structures - Structures representing the call signatures.
      */
-    addCallSignatures(structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
+    addCallSignatures(structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
     /**
      * Insert call signature.
      * @param index - Child index to insert at.
@@ -2915,7 +2914,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the call signatures.
      */
-    insertCallSignatures(index: number, structures: CallSignatureDeclarationStructure[]): CallSignatureDeclaration[];
+    insertCallSignatures(index: number, structures: ReadonlyArray<CallSignatureDeclarationStructure>): CallSignatureDeclaration[];
     /**
      * Gets the first call signature by a find function.
      * @param findFunction - Function to find the call signature by.
@@ -2939,7 +2938,7 @@ export interface TypeElementMemberedNode {
      * Add index signatures.
      * @param structures - Structures representing the index signatures.
      */
-    addIndexSignatures(structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
+    addIndexSignatures(structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
     /**
      * Insert index signature.
      * @param index - Child index to insert at.
@@ -2951,7 +2950,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the index signatures.
      */
-    insertIndexSignatures(index: number, structures: IndexSignatureDeclarationStructure[]): IndexSignatureDeclaration[];
+    insertIndexSignatures(index: number, structures: ReadonlyArray<IndexSignatureDeclarationStructure>): IndexSignatureDeclaration[];
     /**
      * Gets the first index signature by a find function.
      * @param findFunction - Function to find the index signature by.
@@ -2975,7 +2974,7 @@ export interface TypeElementMemberedNode {
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: MethodSignatureStructure[]): MethodSignature[];
+    addMethods(structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
@@ -2987,7 +2986,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: MethodSignatureStructure[]): MethodSignature[];
+    insertMethods(index: number, structures: ReadonlyArray<MethodSignatureStructure>): MethodSignature[];
     /**
      * Gets the first method by name.
      * @param name - Name.
@@ -3021,7 +3020,7 @@ export interface TypeElementMemberedNode {
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: PropertySignatureStructure[]): PropertySignature[];
+    addProperties(structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
@@ -3033,7 +3032,7 @@ export interface TypeElementMemberedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: PropertySignatureStructure[]): PropertySignature[];
+    insertProperties(index: number, structures: ReadonlyArray<PropertySignatureStructure>): PropertySignature[];
     /**
      * Gets the first property by name.
      * @param name - Name.
@@ -3104,7 +3103,7 @@ export interface TypeParameteredNode {
      * Adds type parameters.
      * @param structures - Structures of the type parameters.
      */
-    addTypeParameters(structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
+    addTypeParameters(structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
     /**
      * Inserts a type parameter.
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
@@ -3116,7 +3115,7 @@ export interface TypeParameteredNode {
      * @param index - Child index to insert at. Specify a negative index to insert from the reverse.
      * @param structures - Structures of the type parameters.
      */
-    insertTypeParameters(index: number, structures: TypeParameterDeclarationStructure[]): TypeParameterDeclaration[];
+    insertTypeParameters(index: number, structures: ReadonlyArray<TypeParameterDeclarationStructure>): TypeParameterDeclaration[];
 }
 
 export declare type TypeParameteredNodeExtensionType = Node<ts.Node & {
@@ -3133,6 +3132,45 @@ export interface UnwrappableNode {
 }
 
 export declare type UnwrappableNodeExtensionType = Node;
+
+export declare class ArrayBindingPattern extends Node<ts.ArrayBindingPattern> {
+    /**
+     * Gets the array binding pattern's elements.
+     */
+    getElements(): (BindingElement | OmittedExpression)[];
+}
+
+declare const BindingElementBase: Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+
+export declare class BindingElement extends BindingElementBase<ts.BindingElement> {
+    /**
+     * Gets the binding element's dot dot dot token (...) if it exists or throws if not.
+     */
+    getDotDotDotTokenOrThrow(): Node<ts.Token<SyntaxKind.DotDotDotToken>>;
+    /**
+     * Gets the binding element's dot dot dot token (...) if it exists or returns undefined.
+     */
+    getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
+    /**
+     * Gets binding element's property name node or throws if not found.
+     *
+     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+     */
+    getPropertyNameNodeOrThrow(): PropertyName;
+    /**
+     * Gets binding element's property name node or returns undefined if not found.
+     *
+     * For example in `const { a: b } = { a: 5 }`, `a` would be the property name.
+     */
+    getPropertyNameNode(): ComputedPropertyName | Identifier | NumericLiteral | StringLiteral | undefined;
+}
+
+export declare class ObjectBindingPattern extends Node<ts.ObjectBindingPattern> {
+    /**
+     * Gets the object binding pattern's elements.
+     */
+    getElements(): BindingElement[];
+}
 
 export declare function AbstractableNode<T extends Constructor<AbstractableNodeExtensionType>>(Base: T): Constructor<AbstractableNode> & T;
 
@@ -3204,7 +3242,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Adds constructors.
      * @param structures - Structures of the constructor.
      */
-    addConstructors(structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
+    addConstructors(structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
     /**
      * Inserts a constructor.
      * @param index - Child index to insert at.
@@ -3216,7 +3254,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * @param index - Child index to insert at.
      * @param structures - Structures of the constructor.
      */
-    insertConstructors(index: number, structures: ConstructorDeclarationStructure[]): ConstructorDeclaration[];
+    insertConstructors(index: number, structures: ReadonlyArray<ConstructorDeclarationStructure>): ConstructorDeclaration[];
     /**
      * Gets the constructor declarations.
      */
@@ -3230,7 +3268,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addGetAccessors(structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
+    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
     /**
      * Insert get accessor.
      * @param index - Child index to insert at.
@@ -3242,7 +3280,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
+    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
     /**
      * Add set accessor.
      * @param structure - Structure representing the set accessor.
@@ -3252,7 +3290,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addSetAccessors(structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
+    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
     /**
      * Insert set accessor.
      * @param index - Child index to insert at.
@@ -3264,7 +3302,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
+    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
     /**
      * Add property.
      * @param structure - Structure representing the property.
@@ -3274,7 +3312,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Add properties.
      * @param structures - Structures representing the properties.
      */
-    addProperties(structures: PropertyDeclarationStructure[]): PropertyDeclaration[];
+    addProperties(structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
     /**
      * Insert property.
      * @param index - Child index to insert at.
@@ -3286,7 +3324,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * @param index - Child index to insert at.
      * @param structures - Structures representing the properties.
      */
-    insertProperties(index: number, structures: PropertyDeclarationStructure[]): PropertyDeclaration[];
+    insertProperties(index: number, structures: ReadonlyArray<PropertyDeclarationStructure>): PropertyDeclaration[];
     /**
      * Gets the first instance property by name.
      * @param name - Name.
@@ -3416,7 +3454,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Add methods.
      * @param structures - Structures representing the methods.
      */
-    addMethods(structures: MethodDeclarationStructure[]): MethodDeclaration[];
+    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
     /**
      * Insert method.
      * @param index - Child index to insert at.
@@ -3428,7 +3466,7 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * @param index - Child index to insert at.
      * @param structures - Structures representing the methods.
      */
-    insertMethods(index: number, structures: MethodDeclarationStructure[]): MethodDeclaration[];
+    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
     /**
      * Gets the first method declaration by name.
      * @param name - Name.
@@ -3615,7 +3653,7 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
      * Add constructor overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: ConstructorDeclarationOverloadStructure[]): ConstructorDeclaration[];
+    addOverloads(structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration[];
     /**
      * Inserts a constructor overload.
      * @param index - Child index to insert at.
@@ -3627,7 +3665,7 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: ConstructorDeclarationOverloadStructure[]): ConstructorDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<ConstructorDeclarationOverloadStructure>): ConstructorDeclaration[];
     /**
      * Remove the constructor.
      */
@@ -3673,7 +3711,7 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
      * Add method overloads.
      * @param structures - Structures to add.
      */
-    addOverloads(structures: MethodDeclarationOverloadStructure[]): MethodDeclaration[];
+    addOverloads(structures: ReadonlyArray<MethodDeclarationOverloadStructure>): MethodDeclaration[];
     /**
      * Inserts a method overload.
      * @param index - Child index to insert at.
@@ -3685,7 +3723,7 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
      * @param index - Child index to insert at.
      * @param structures - Structures to insert.
      */
-    insertOverloads(index: number, structures: MethodDeclarationOverloadStructure[]): MethodDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<MethodDeclarationOverloadStructure>): MethodDeclaration[];
     /**
      * Removes the method.
      */
@@ -3817,6 +3855,8 @@ export interface ForEachDescendantTraversalControl extends ForEachChildTraversal
 }
 
 export declare type NodePropertyToWrappedType<NodeType extends ts.Node, KeyName extends keyof NodeType, NonNullableNodeType = NonNullable<NodeType[KeyName]>> = NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeTypeForNullable> | undefined ? CompilerNodeToWrappedType<ArrayNodeTypeForNullable>[] | undefined : NodeType[KeyName] extends ts.NodeArray<infer ArrayNodeType> ? CompilerNodeToWrappedType<ArrayNodeType>[] : NodeType[KeyName] extends ts.Node ? CompilerNodeToWrappedType<NodeType[KeyName]> : NonNullableNodeType extends ts.Node ? CompilerNodeToWrappedType<NonNullableNodeType> | undefined : NodeType[KeyName];
+
+export declare type NodeParentType<NodeType extends ts.Node> = NodeType extends ts.SourceFile ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : ts.Node extends NodeType ? CompilerNodeToWrappedType<NodeType["parent"]> | undefined : CompilerNodeToWrappedType<NodeType["parent"]>;
 
 export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
@@ -4117,11 +4157,11 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
     /**
      * Get the node's parent.
      */
-    getParent(): Node | undefined;
+    getParent<T extends Node | undefined = NodeParentType<NodeType>>(): T;
     /**
      * Gets the parent or throws an error if it doesn't exist.
      */
-    getParentOrThrow(): Node<ts.Node>;
+    getParentOrThrow<T extends Node | undefined = NodeParentType<NodeType>>(): NonNullable<T>;
     /**
      * Goes up the parents (ancestors) of the node while a condition is true.
      * Throws if the initial parent doesn't match the condition.
@@ -4341,6 +4381,26 @@ export declare class Node<NodeType extends ts.Node = ts.Node> {
      */
     getFirstAncestorByKind<TKind extends SyntaxKind>(kind: TKind): KindToNodeMappings[TKind] | undefined;
     /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow<T extends Node>(condition?: (node: Node) => node is T): T;
+    /**
+     * Gets the first ancestor that matches the provided condition or throws if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestorOrThrow(condition?: (node: Node) => boolean): Node;
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor<T extends Node>(condition?: (node: Node) => node is T): T | undefined;
+    /**
+     * Gets the first ancestor that matches the provided condition or returns undefined if not found.
+     * @param condition - Condition to match.
+     */
+    getFirstAncestor(condition?: (node: Node) => boolean): Node | undefined;
+    /**
      * Gets the descendants that match a specified syntax kind.
      * @param kind - Kind to check.
      */
@@ -4447,12 +4507,12 @@ export declare class Symbol {
      */
     getDeclarations(): Node[];
     /**
-     * Get the export of the symbol by the specified name or throws if not exists.
+     * Gets the export of the symbol by the specified name or throws if not exists.
      * @param name - Name of the export.
      */
     getExportByNameOrThrow(name: string): Symbol;
     /**
-     * Get the export of the symbol by the specified name or returns undefined if not exists.
+     * Gets the export of the symbol by the specified name or returns undefined if not exists.
      * @param name - Name of the export.
      */
     getExportByName(name: string): Symbol | undefined;
@@ -4460,6 +4520,20 @@ export declare class Symbol {
      * Gets the exports from the symbol.
      */
     getExports(): Symbol[];
+    /**
+     * Gets the member of the symbol by the specified name or throws if not exists.
+     * @param name - Name of the export.
+     */
+    getMemberByNameOrThrow(name: string): Symbol;
+    /**
+     * Gets the member of the symbol by the specified name or returns undefined if not exists.
+     * @param name - Name of the member.
+     */
+    getMemberByName(name: string): Symbol | undefined;
+    /**
+     * Gets the members of the symbol
+     */
+    getMembers(): Symbol[];
     /**
      * Gets the declared type of the symbol.
      */
@@ -4491,7 +4565,7 @@ export declare class SyntaxList extends Node<ts.SyntaxList> {
     insertChildText(index: number, textOrWriterFunction: string | WriterFunction): Node<ts.Node>[];
 }
 
-export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
+export declare type CompilerNodeToWrappedType<T extends ts.Node> = T extends ts.ArrayBindingPattern ? ArrayBindingPattern : T extends ts.BindingElement ? BindingElement : T extends ts.ObjectBindingPattern ? ObjectBindingPattern : T extends ts.ClassDeclaration ? ClassDeclaration : T extends ts.ConstructorDeclaration ? ConstructorDeclaration : T extends ts.GetAccessorDeclaration ? GetAccessorDeclaration : T extends ts.MethodDeclaration ? MethodDeclaration : T extends ts.PropertyDeclaration ? PropertyDeclaration : T extends ts.SetAccessorDeclaration ? SetAccessorDeclaration : T extends ts.ComputedPropertyName ? ComputedPropertyName : T extends ts.Identifier ? Identifier : T extends ts.QualifiedName ? QualifiedName : T extends ts.SyntaxList ? SyntaxList : T extends ts.Decorator ? Decorator : T extends ts.JSDoc ? JSDoc : T extends ts.JSDocAugmentsTag ? JSDocAugmentsTag : T extends ts.JSDocClassTag ? JSDocClassTag : T extends ts.JSDocParameterTag ? JSDocParameterTag : T extends ts.JSDocPropertyTag ? JSDocPropertyTag : T extends ts.JSDocReturnTag ? JSDocReturnTag : T extends ts.JSDocTypedefTag ? JSDocTypedefTag : T extends ts.JSDocTypeTag ? JSDocTypeTag : T extends ts.JSDocUnknownTag ? JSDocUnknownTag : T extends ts.JSDocTag ? JSDocTag : T extends ts.EnumDeclaration ? EnumDeclaration : T extends ts.EnumMember ? EnumMember : T extends ts.AsExpression ? AsExpression : T extends ts.AwaitExpression ? AwaitExpression : T extends ts.CallExpression ? CallExpression : T extends ts.CommaListExpression ? CommaListExpression : T extends ts.ConditionalExpression ? ConditionalExpression : T extends ts.DeleteExpression ? DeleteExpression : T extends ts.ImportExpression ? ImportExpression : T extends ts.MetaProperty ? MetaProperty : T extends ts.NewExpression ? NewExpression : T extends ts.NonNullExpression ? NonNullExpression : T extends ts.OmittedExpression ? OmittedExpression : T extends ts.ParenthesizedExpression ? ParenthesizedExpression : T extends ts.PartiallyEmittedExpression ? PartiallyEmittedExpression : T extends ts.PostfixUnaryExpression ? PostfixUnaryExpression : T extends ts.PrefixUnaryExpression ? PrefixUnaryExpression : T extends ts.SpreadElement ? SpreadElement : T extends ts.SuperElementAccessExpression ? SuperElementAccessExpression : T extends ts.ElementAccessExpression ? ElementAccessExpression : T extends ts.SuperExpression ? SuperExpression : T extends ts.SuperPropertyAccessExpression ? SuperPropertyAccessExpression : T extends ts.PropertyAccessExpression ? PropertyAccessExpression : T extends ts.ThisExpression ? ThisExpression : T extends ts.TypeAssertion ? TypeAssertion : T extends ts.TypeOfExpression ? TypeOfExpression : T extends ts.VoidExpression ? VoidExpression : T extends ts.YieldExpression ? YieldExpression : T extends ts.ExportAssignment ? ExportAssignment : T extends ts.ExportDeclaration ? ExportDeclaration : T extends ts.ExportSpecifier ? ExportSpecifier : T extends ts.ExternalModuleReference ? ExternalModuleReference : T extends ts.ImportDeclaration ? ImportDeclaration : T extends ts.ImportEqualsDeclaration ? ImportEqualsDeclaration : T extends ts.ImportSpecifier ? ImportSpecifier : T extends ts.SourceFile ? SourceFile : T extends ts.ArrowFunction ? ArrowFunction : T extends ts.FunctionDeclaration ? FunctionDeclaration : T extends ts.FunctionExpression ? FunctionExpression : T extends ts.ParameterDeclaration ? ParameterDeclaration : T extends ts.HeritageClause ? HeritageClause : T extends ts.CallSignatureDeclaration ? CallSignatureDeclaration : T extends ts.ConstructSignatureDeclaration ? ConstructSignatureDeclaration : T extends ts.IndexSignatureDeclaration ? IndexSignatureDeclaration : T extends ts.InterfaceDeclaration ? InterfaceDeclaration : T extends ts.MethodSignature ? MethodSignature : T extends ts.PropertySignature ? PropertySignature : T extends ts.TypeElement ? TypeElement : T extends ts.JsxAttribute ? JsxAttribute : T extends ts.JsxClosingElement ? JsxClosingElement : T extends ts.JsxClosingFragment ? JsxClosingFragment : T extends ts.JsxElement ? JsxElement : T extends ts.JsxExpression ? JsxExpression : T extends ts.JsxFragment ? JsxFragment : T extends ts.JsxOpeningElement ? JsxOpeningElement : T extends ts.JsxOpeningFragment ? JsxOpeningFragment : T extends ts.JsxSelfClosingElement ? JsxSelfClosingElement : T extends ts.JsxSpreadAttribute ? JsxSpreadAttribute : T extends ts.JsxText ? JsxText : T extends ts.BooleanLiteral ? BooleanLiteral : T extends ts.NullLiteral ? NullLiteral : T extends ts.NumericLiteral ? NumericLiteral : T extends ts.RegularExpressionLiteral ? RegularExpressionLiteral : T extends ts.StringLiteral ? StringLiteral : T extends ts.NamespaceDeclaration ? NamespaceDeclaration : T extends ts.Block ? Block : T extends ts.BreakStatement ? BreakStatement : T extends ts.CaseBlock ? CaseBlock : T extends ts.CaseClause ? CaseClause : T extends ts.CatchClause ? CatchClause : T extends ts.ContinueStatement ? ContinueStatement : T extends ts.DebuggerStatement ? DebuggerStatement : T extends ts.DefaultClause ? DefaultClause : T extends ts.DoStatement ? DoStatement : T extends ts.EmptyStatement ? EmptyStatement : T extends ts.ExpressionStatement ? ExpressionStatement : T extends ts.ForInStatement ? ForInStatement : T extends ts.ForOfStatement ? ForOfStatement : T extends ts.ForStatement ? ForStatement : T extends ts.IfStatement ? IfStatement : T extends ts.LabeledStatement ? LabeledStatement : T extends ts.NotEmittedStatement ? NotEmittedStatement : T extends ts.ReturnStatement ? ReturnStatement : T extends ts.SwitchStatement ? SwitchStatement : T extends ts.ThrowStatement ? ThrowStatement : T extends ts.TryStatement ? TryStatement : T extends ts.VariableStatement ? VariableStatement : T extends ts.WhileStatement ? WhileStatement : T extends ts.IterationStatement ? IterationStatement : T extends ts.WithStatement ? WithStatement : T extends ts.ArrayTypeNode ? ArrayTypeNode : T extends ts.ConstructorTypeNode ? ConstructorTypeNode : T extends ts.ExpressionWithTypeArguments ? ExpressionWithTypeArguments : T extends ts.FunctionTypeNode ? FunctionTypeNode : T extends ts.ImportTypeNode ? ImportTypeNode : T extends ts.IntersectionTypeNode ? IntersectionTypeNode : T extends ts.LiteralTypeNode ? LiteralTypeNode : T extends ts.ParenthesizedTypeNode ? ParenthesizedTypeNode : T extends ts.TupleTypeNode ? TupleTypeNode : T extends ts.TypeAliasDeclaration ? TypeAliasDeclaration : T extends ts.Statement ? Statement : T extends ts.TypeLiteralNode ? TypeLiteralNode : T extends ts.TypeParameterDeclaration ? TypeParameterDeclaration : T extends ts.TypeReferenceNode ? TypeReferenceNode : T extends ts.UnionTypeNode ? UnionTypeNode : T extends ts.TypeNode ? TypeNode : T extends ts.VariableDeclaration ? VariableDeclaration : T extends ts.VariableDeclarationList ? VariableDeclarationList : T extends ts.ArrayDestructuringAssignment ? ArrayDestructuringAssignment : T extends ts.ArrayLiteralExpression ? ArrayLiteralExpression : T extends ts.ObjectDestructuringAssignment ? ObjectDestructuringAssignment : T extends ts.AssignmentExpression<any> ? AssignmentExpression : T extends ts.BinaryExpression ? BinaryExpression : T extends ts.ObjectLiteralExpression ? ObjectLiteralExpression : T extends ts.PropertyAssignment ? PropertyAssignment : T extends ts.ShorthandPropertyAssignment ? ShorthandPropertyAssignment : T extends ts.SpreadAssignment ? SpreadAssignment : T extends ts.NoSubstitutionTemplateLiteral ? NoSubstitutionTemplateLiteral : T extends ts.LiteralExpression ? LiteralExpression : T extends ts.TaggedTemplateExpression ? TaggedTemplateExpression : T extends ts.TemplateExpression ? TemplateExpression : T extends ts.PrimaryExpression ? PrimaryExpression : T extends ts.MemberExpression ? MemberExpression : T extends ts.LeftHandSideExpression ? LeftHandSideExpression : T extends ts.UpdateExpression ? UpdateExpression : T extends ts.UnaryExpression ? UnaryExpression : T extends ts.Expression ? Expression : T extends ts.TemplateHead ? TemplateHead : T extends ts.TemplateMiddle ? TemplateMiddle : T extends ts.TemplateSpan ? TemplateSpan : T extends ts.TemplateTail ? TemplateTail : Node<T>;
 
 declare const DecoratorBase: typeof Node;
 
@@ -4546,7 +4620,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds type arguments.
      * @param argumentTexts - Argument texts.
      */
-    addTypeArguments(argumentTexts: string[]): TypeNode<ts.TypeNode>[];
+    addTypeArguments(argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNode>[];
     /**
      * Inserts a type argument.
      * @param index - Child index to insert at.
@@ -4558,7 +4632,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertTypeArguments(index: number, argumentTexts: string[]): TypeNode<ts.TypeNode>[];
+    insertTypeArguments(index: number, argumentTexts: ReadonlyArray<string>): TypeNode<ts.TypeNode>[];
     /**
      * Removes a type argument.
      * @param typeArg - Type argument to remove.
@@ -4578,7 +4652,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Adds arguments.
      * @param argumentTexts - Argument texts.
      */
-    addArguments(argumentTexts: string[]): Node<ts.Node>[];
+    addArguments(argumentTexts: ReadonlyArray<string>): Node<ts.Node>[];
     /**
      * Inserts an argument.
      * @param index - Child index to insert at.
@@ -4590,7 +4664,7 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * @param index - Child index to insert at.
      * @param argumentTexts - Argument texts.
      */
-    insertArguments(index: number, argumentTexts: string[]): Node<ts.Node>[];
+    insertArguments(index: number, argumentTexts: ReadonlyArray<string>): Node<ts.Node>[];
     /**
      * Removes an argument based on the node.
      * @param node - Argument's node to remove.
@@ -4753,7 +4827,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: EnumMemberStructure[]): EnumMember[];
+    addMembers(structures: ReadonlyArray<EnumMemberStructure>): EnumMember[];
     /**
      * Inserts a member to the enum.
      * @param index - Child index to insert at.
@@ -4765,7 +4839,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: EnumMemberStructure[]): EnumMember[];
+    insertMembers(index: number, structures: ReadonlyArray<EnumMemberStructure>): EnumMember[];
     /**
      * Gets an enum member.
      * @param name - Name of the member.
@@ -4854,7 +4928,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
      * @param texts - Texts to add as elements.
      * @param options - Options.
      */
-    addElements(texts: string[], options?: {
+    addElements(texts: ReadonlyArray<string>, options?: {
         useNewLines?: boolean;
     }): Expression<ts.Expression>[];
     /**
@@ -4872,7 +4946,7 @@ export declare class ArrayLiteralExpression extends PrimaryExpression<ts.ArrayLi
      * @param texts - Texts to insert as elements.
      * @param options - Options.
      */
-    insertElements(index: number, texts: string[], options?: {
+    insertElements(index: number, texts: ReadonlyArray<string>, options?: {
         useNewLines?: boolean;
     }): Expression[];
     /**
@@ -5145,7 +5219,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds property assignments.
      * @param structures - Structure that represents the property assignments to add.
      */
-    addPropertyAssignments(structures: PropertyAssignmentStructure[]): PropertyAssignment[];
+    addPropertyAssignments(structures: ReadonlyArray<PropertyAssignmentStructure>): PropertyAssignment[];
     /**
      * Inserts a property assignment at the specified index.
      * @param index - Child index to insert at.
@@ -5157,7 +5231,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the property assignments to insert.
      */
-    insertPropertyAssignments(index: number, structures: PropertyAssignmentStructure[]): PropertyAssignment[];
+    insertPropertyAssignments(index: number, structures: ReadonlyArray<PropertyAssignmentStructure>): PropertyAssignment[];
     /**
      * Adds a shorthand property assignment.
      * @param structure - Structure that represents the shorthand property assignment to add.
@@ -5167,7 +5241,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds shorthand property assignments.
      * @param structures - Structure that represents the shorthand property assignments to add.
      */
-    addShorthandPropertyAssignments(structures: ShorthandPropertyAssignmentStructure[]): ShorthandPropertyAssignment[];
+    addShorthandPropertyAssignments(structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment[];
     /**
      * Inserts a shorthand property assignment at the specified index.
      * @param index - Child index to insert at.
@@ -5179,7 +5253,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the shorthand property assignments to insert.
      */
-    insertShorthandPropertyAssignments(index: number, structures: ShorthandPropertyAssignmentStructure[]): ShorthandPropertyAssignment[];
+    insertShorthandPropertyAssignments(index: number, structures: ReadonlyArray<ShorthandPropertyAssignmentStructure>): ShorthandPropertyAssignment[];
     /**
      * Adds a spread assignment.
      * @param structure - Structure that represents the spread assignment to add.
@@ -5189,7 +5263,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds spread assignments.
      * @param structures - Structure that represents the spread assignments to add.
      */
-    addSpreadAssignments(structures: SpreadAssignmentStructure[]): SpreadAssignment[];
+    addSpreadAssignments(structures: ReadonlyArray<SpreadAssignmentStructure>): SpreadAssignment[];
     /**
      * Inserts a spread assignment at the specified index.
      * @param index - Child index to insert at.
@@ -5201,7 +5275,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the spread assignments to insert.
      */
-    insertSpreadAssignments(index: number, structures: SpreadAssignmentStructure[]): SpreadAssignment[];
+    insertSpreadAssignments(index: number, structures: ReadonlyArray<SpreadAssignmentStructure>): SpreadAssignment[];
     /**
      * Adds a method.
      * @param structure - Structure that represents the method to add.
@@ -5211,7 +5285,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds methods.
      * @param structures - Structure that represents the methods to add.
      */
-    addMethods(structures: MethodDeclarationStructure[]): MethodDeclaration[];
+    addMethods(structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
     /**
      * Inserts a method at the specified index.
      * @param index - Child index to insert at.
@@ -5223,7 +5297,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the methods to insert.
      */
-    insertMethods(index: number, structures: MethodDeclarationStructure[]): MethodDeclaration[];
+    insertMethods(index: number, structures: ReadonlyArray<MethodDeclarationStructure>): MethodDeclaration[];
     /**
      * Adds a get accessor.
      * @param structure - Structure that represents the property assignment to add.
@@ -5233,7 +5307,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds get accessors.
      * @param structures - Structure that represents the get accessors to add.
      */
-    addGetAccessors(structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
+    addGetAccessors(structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
     /**
      * Inserts a get accessor at the specified index.
      * @param index - Child index to insert at.
@@ -5245,7 +5319,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the get accessors to insert.
      */
-    insertGetAccessors(index: number, structures: GetAccessorDeclarationStructure[]): GetAccessorDeclaration[];
+    insertGetAccessors(index: number, structures: ReadonlyArray<GetAccessorDeclarationStructure>): GetAccessorDeclaration[];
     /**
      * Adds a set accessor.
      * @param structure - Structure that represents the property assignment to add.
@@ -5255,7 +5329,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * Adds set accessors.
      * @param structures - Structure that represents the set accessors to add.
      */
-    addSetAccessors(structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
+    addSetAccessors(structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
     /**
      * Inserts a set accessor at the specified index.
      * @param index - Child index to insert at.
@@ -5267,7 +5341,7 @@ export declare class ObjectLiteralExpression extends ObjectLiteralExpressionBase
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the set accessors to insert.
      */
-    insertSetAccessors(index: number, structures: SetAccessorDeclarationStructure[]): SetAccessorDeclaration[];
+    insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>): SetAccessorDeclaration[];
 }
 
 declare const PropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<PropertyNamedNode> & typeof Node;
@@ -5524,7 +5598,7 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Adds named exports.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
-    addNamedExports(structuresOrNames: (ExportSpecifierStructure | string)[]): ExportSpecifier[];
+    addNamedExports(structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
     /**
      * Inserts a named export.
      * @param index - Child index to insert at.
@@ -5542,7 +5616,7 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named exports.
      */
-    insertNamedExports(index: number, structuresOrNames: (ExportSpecifierStructure | string)[]): ExportSpecifier[];
+    insertNamedExports(index: number, structuresOrNames: ReadonlyArray<ExportSpecifierStructure | string>): ExportSpecifier[];
     /**
      * Gets the named exports.
      */
@@ -5703,7 +5777,7 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Adds named imports.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
-    addNamedImports(structuresOrNames: (ImportSpecifierStructure | string)[]): ImportSpecifier[];
+    addNamedImports(structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
     /**
      * Inserts a named import.
      * @param index - Child index to insert at.
@@ -5721,7 +5795,7 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @param index - Child index to insert at.
      * @param structuresOrNames - Structures or names that represent the named imports.
      */
-    insertNamedImports(index: number, structuresOrNames: (ImportSpecifierStructure | string)[]): ImportSpecifier[];
+    insertNamedImports(index: number, structuresOrNames: ReadonlyArray<ImportSpecifierStructure | string>): ImportSpecifier[];
     /**
      * Gets the named imports.
      */
@@ -5987,7 +6061,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Adds imports.
      * @param structures - Structures that represent the imports.
      */
-    addImportDeclarations(structures: ImportDeclarationStructure[]): ImportDeclaration[];
+    addImportDeclarations(structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
     /**
      * Insert an import.
      * @param index - Child index to insert at.
@@ -5999,7 +6073,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the imports to insert.
      */
-    insertImportDeclarations(index: number, structures: ImportDeclarationStructure[]): ImportDeclaration[];
+    insertImportDeclarations(index: number, structures: ReadonlyArray<ImportDeclarationStructure>): ImportDeclaration[];
     /**
      * Gets the first import declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the import by.
@@ -6023,7 +6097,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export declarations.
      * @param structures - Structures that represent the exports.
      */
-    addExportDeclarations(structures: ExportDeclarationStructure[]): ExportDeclaration[];
+    addExportDeclarations(structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
     /**
      * Insert an export declaration.
      * @param index - Child index to insert at.
@@ -6035,7 +6109,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportDeclarations(index: number, structures: ExportDeclarationStructure[]): ExportDeclaration[];
+    insertExportDeclarations(index: number, structures: ReadonlyArray<ExportDeclarationStructure>): ExportDeclaration[];
     /**
      * Gets the first export declaration that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export declaration by.
@@ -6055,7 +6129,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getExportSymbols(): Symbol[];
     /**
-     * Gets all the declarations exported from the file.
+     * Gets all the declarations that are exported from the file.
+     *
+     * This will include declarations that are transitively exported from other files. If you mean to get the export
+     * declarations then use sourceFile.getExportDeclarations().
      */
     getExportedDeclarations(): Node[];
     /**
@@ -6067,7 +6144,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * Add export assignments.
      * @param structures - Structures that represent the exports.
      */
-    addExportAssignments(structures: ExportAssignmentStructure[]): ExportAssignment[];
+    addExportAssignments(structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
     /**
      * Insert an export assignment.
      * @param index - Child index to insert at.
@@ -6079,7 +6156,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param index - Child index to insert at.
      * @param structures - Structures that represent the exports to insert.
      */
-    insertExportAssignments(index: number, structures: ExportAssignmentStructure[]): ExportAssignment[];
+    insertExportAssignments(index: number, structures: ReadonlyArray<ExportAssignmentStructure>): ExportAssignment[];
     /**
      * Gets the first export assignment that matches a condition, or undefined if it doesn't exist.
      * @param condition - Condition to get the export assignment by.
@@ -6103,11 +6180,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      */
     getDefaultExportSymbolOrThrow(): Symbol;
     /**
-     * Gets the syntactic, semantic, and declaration diagnostics.
-     */
-    getDiagnostics(): Diagnostic[];
-    /**
-     * Gets the pre-emit diagnostics.
+     * Gets the pre-emit diagnostics of the specified source file.
      */
     getPreEmitDiagnostics(): Diagnostic[];
     /**
@@ -6208,7 +6281,7 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * WARNING! This will forget all the nodes in the file! It's best to do this after you're all done with the file.
      * @param textChanges - Text changes.
      */
-    applyTextChanges(textChanges: TextChange[]): this;
+    applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
     private _refreshFromFileSystemInternal;
 }
 
@@ -6238,7 +6311,7 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
      * Adds function overloads.
      * @param structures - Structures of the overloads.
      */
-    addOverloads(structures: FunctionDeclarationOverloadStructure[]): FunctionDeclaration[];
+    addOverloads(structures: ReadonlyArray<FunctionDeclarationOverloadStructure>): FunctionDeclaration[];
     /**
      * Inserts a function overload.
      * @param index - Child index to insert at.
@@ -6250,7 +6323,7 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
      * @param index - Child index to insert at.
      * @param structure - Structures of the overloads.
      */
-    insertOverloads(index: number, structures: FunctionDeclarationOverloadStructure[]): FunctionDeclaration[];
+    insertOverloads(index: number, structures: ReadonlyArray<FunctionDeclarationOverloadStructure>): FunctionDeclaration[];
     /**
      * Removes this function declaration.
      */
@@ -6308,7 +6381,7 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      */
     fill(structure: Partial<ParameterDeclarationStructure>): this;
     /**
-     * Gets the dot dot dot token (...) for a rest parameter.
+     * Gets the dot dot dot token (...) if it exists, for a rest parameter.
      */
     getDotDotDotToken(): Node<ts.Token<SyntaxKind.DotDotDotToken>> | undefined;
     /**
@@ -6418,7 +6491,7 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
     /**
      * Gets the key name node.
      */
-    getKeyNameNode(): Identifier | Node<ts.ObjectBindingPattern> | Node<ts.ArrayBindingPattern>;
+    getKeyNameNode(): BindingName;
     /**
      * Gets the key type.
      */
@@ -6545,7 +6618,7 @@ export interface JsxAttributedNode {
     /**
      * Adds attributes into the element.
      */
-    addAttributes(attributes: JsxAttributeStructure[]): JsxAttributeLike[];
+    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
     /**
      * Inserts an attribute into the element.
      */
@@ -6553,7 +6626,7 @@ export interface JsxAttributedNode {
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: JsxAttributeStructure[]): JsxAttributeLike[];
+    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
 }
 
 export declare type JsxAttributedNodeExtensionType = Node<ts.Node & {
@@ -6579,7 +6652,7 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
     /**
      * Gets the JSX attribute's initializer or throws if it doesn't exist.
      */
-    getInitializerOrThrow(): StringLiteral | JsxExpression;
+    getInitializerOrThrow(): JsxExpression | StringLiteral;
     /**
      * Gets the JSX attribute's initializer or returns undefined if it doesn't exist.
      */
@@ -6701,11 +6774,13 @@ export declare class JsxText extends Node<ts.JsxText> {
 export interface KindToNodeMappings {
     [kind: number]: Node;
     [SyntaxKind.SourceFile]: SourceFile;
+    [SyntaxKind.ArrayBindingPattern]: ArrayBindingPattern;
     [SyntaxKind.ArrayLiteralExpression]: ArrayLiteralExpression;
     [SyntaxKind.ArrayType]: ArrayTypeNode;
     [SyntaxKind.ArrowFunction]: ArrowFunction;
     [SyntaxKind.AsExpression]: AsExpression;
     [SyntaxKind.AwaitExpression]: AwaitExpression;
+    [SyntaxKind.BindingElement]: BindingElement;
     [SyntaxKind.BinaryExpression]: BinaryExpression;
     [SyntaxKind.Block]: Block;
     [SyntaxKind.BreakStatement]: BreakStatement;
@@ -6793,10 +6868,12 @@ export interface KindToNodeMappings {
     [SyntaxKind.FirstTemplateToken]: NoSubstitutionTemplateLiteral;
     [SyntaxKind.NumericLiteral]: NumericLiteral;
     [SyntaxKind.FirstLiteralToken]: NumericLiteral;
+    [SyntaxKind.ObjectBindingPattern]: ObjectBindingPattern;
     [SyntaxKind.ObjectLiteralExpression]: ObjectLiteralExpression;
     [SyntaxKind.OmittedExpression]: OmittedExpression;
     [SyntaxKind.Parameter]: ParameterDeclaration;
     [SyntaxKind.ParenthesizedExpression]: ParenthesizedExpression;
+    [SyntaxKind.ParenthesizedType]: ParenthesizedTypeNode;
     [SyntaxKind.PartiallyEmittedExpression]: PartiallyEmittedExpression;
     [SyntaxKind.PostfixUnaryExpression]: PostfixUnaryExpression;
     [SyntaxKind.PrefixUnaryExpression]: PrefixUnaryExpression;
@@ -7085,6 +7162,10 @@ export interface NamespaceChildableNode {
      * Gets the parent namespace or undefined if it doesn't exist.
      */
     getParentNamespace(): NamespaceDeclaration | undefined;
+    /**
+     * Gets the parent namespace or throws if it doesn't exist.
+     */
+    getParentNamespaceOrThrow(): NamespaceDeclaration;
 }
 
 export declare type NamespaceChildableNodeExtensionType = Node;
@@ -7447,7 +7528,7 @@ export interface StatementedNode {
      * Adds class declarations as a child.
      * @param structures - Structures of the class declarations to add.
      */
-    addClasses(structures: ClassDeclarationStructure[]): ClassDeclaration[];
+    addClasses(structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
     /**
      * Inserts an class declaration as a child.
      * @param index - Child index to insert at.
@@ -7459,7 +7540,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the class declarations to insert.
      */
-    insertClasses(index: number, structures: ClassDeclarationStructure[]): ClassDeclaration[];
+    insertClasses(index: number, structures: ReadonlyArray<ClassDeclarationStructure>): ClassDeclaration[];
     /**
      * Gets the direct class declaration children.
      */
@@ -7493,7 +7574,7 @@ export interface StatementedNode {
      * Adds enum declarations as a child.
      * @param structures - Structures of the enum declarations to add.
      */
-    addEnums(structures: EnumDeclarationStructure[]): EnumDeclaration[];
+    addEnums(structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
     /**
      * Inserts an enum declaration as a child.
      * @param index - Child index to insert at.
@@ -7505,7 +7586,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the enum declarations to insert.
      */
-    insertEnums(index: number, structures: EnumDeclarationStructure[]): EnumDeclaration[];
+    insertEnums(index: number, structures: ReadonlyArray<EnumDeclarationStructure>): EnumDeclaration[];
     /**
      * Gets the direct enum declaration children.
      */
@@ -7539,7 +7620,7 @@ export interface StatementedNode {
      * Adds function declarations as a child.
      * @param structures - Structures of the function declarations to add.
      */
-    addFunctions(structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
+    addFunctions(structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
     /**
      * Inserts an function declaration as a child.
      * @param index - Child index to insert at.
@@ -7551,7 +7632,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the function declarations to insert.
      */
-    insertFunctions(index: number, structures: FunctionDeclarationStructure[]): FunctionDeclaration[];
+    insertFunctions(index: number, structures: ReadonlyArray<FunctionDeclarationStructure>): FunctionDeclaration[];
     /**
      * Gets the direct function declaration children.
      */
@@ -7585,7 +7666,7 @@ export interface StatementedNode {
      * Adds interface declarations as a child.
      * @param structures - Structures of the interface declarations to add.
      */
-    addInterfaces(structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
+    addInterfaces(structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
     /**
      * Inserts an interface declaration as a child.
      * @param index - Child index to insert at.
@@ -7597,7 +7678,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the interface declarations to insert.
      */
-    insertInterfaces(index: number, structures: InterfaceDeclarationStructure[]): InterfaceDeclaration[];
+    insertInterfaces(index: number, structures: ReadonlyArray<InterfaceDeclarationStructure>): InterfaceDeclaration[];
     /**
      * Gets the direct interface declaration children.
      */
@@ -7631,7 +7712,7 @@ export interface StatementedNode {
      * Adds namespace declarations as a child.
      * @param structures - Structures of the namespace declarations to add.
      */
-    addNamespaces(structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
+    addNamespaces(structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
     /**
      * Inserts an namespace declaration as a child.
      * @param index - Child index to insert at.
@@ -7643,7 +7724,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the namespace declarations to insert.
      */
-    insertNamespaces(index: number, structures: NamespaceDeclarationStructure[]): NamespaceDeclaration[];
+    insertNamespaces(index: number, structures: ReadonlyArray<NamespaceDeclarationStructure>): NamespaceDeclaration[];
     /**
      * Gets the direct namespace declaration children.
      */
@@ -7677,7 +7758,7 @@ export interface StatementedNode {
      * Adds type alias declarations as a child.
      * @param structures - Structures of the type alias declarations to add.
      */
-    addTypeAliases(structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
+    addTypeAliases(structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
     /**
      * Inserts an type alias declaration as a child.
      * @param index - Child index to insert at.
@@ -7689,7 +7770,7 @@ export interface StatementedNode {
      * @param index - Child index to insert at.
      * @param structures - Structures of the type alias declarations to insert.
      */
-    insertTypeAliases(index: number, structures: TypeAliasDeclarationStructure[]): TypeAliasDeclaration[];
+    insertTypeAliases(index: number, structures: ReadonlyArray<TypeAliasDeclarationStructure>): TypeAliasDeclaration[];
     /**
      * Gets the direct type alias declaration children.
      */
@@ -7723,7 +7804,7 @@ export interface StatementedNode {
      * Adds variable statements.
      * @param structures - Structures of the variable statements.
      */
-    addVariableStatements(structures: VariableStatementStructure[]): VariableStatement[];
+    addVariableStatements(structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
     /**
      * Inserts a variable statement.
      * @param structure - Structure of the variable statement.
@@ -7733,7 +7814,7 @@ export interface StatementedNode {
      * Inserts variable statements.
      * @param structures - Structures of the variable statements.
      */
-    insertVariableStatements(index: number, structures: VariableStatementStructure[]): VariableStatement[];
+    insertVariableStatements(index: number, structures: ReadonlyArray<VariableStatementStructure>): VariableStatement[];
     /**
      * Gets the direct variable statement children.
      */
@@ -7841,74 +7922,6 @@ export declare class TryStatement extends TryStatementBase<ts.TryStatement> {
     getFinallyBlockOrThrow(): Block;
 }
 
-declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
-
-export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
-    /**
-     * Fills this node with the specified structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationStructure>): this;
-    /**
-     * Removes this variable declaration.
-     */
-    remove(): void;
-}
-export declare enum VariableDeclarationKind {
-    Var = "var",
-    Let = "let",
-    Const = "const"
-}
-
-declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
-
-export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
-    /**
-     * Get the variable declarations.
-     */
-    getDeclarations(): VariableDeclaration[];
-    /**
-     * Gets the variable declaration kind.
-     */
-    getDeclarationKind(): VariableDeclarationKind;
-    /**
-     * Gets the variable declaration kind keyword.
-     */
-    getDeclarationKindKeyword(): Node;
-    /**
-     * Sets the variable declaration kind.
-     * @param type - Type to set.
-     */
-    setDeclarationKind(type: VariableDeclarationKind): this;
-    /**
-     * Add a variable declaration to the statement.
-     * @param structure - Structure representing the variable declaration to add.
-     */
-    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Adds variable declarations to the statement.
-     * @param structures - Structures representing the variable declarations to add.
-     */
-    addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
-    /**
-     * Inserts a variable declaration at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structure - Structure representing the variable declaration to insert.
-     */
-    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
-    /**
-     * Inserts variable declarations at the specified index within the statement.
-     * @param index - Child index to insert at.
-     * @param structures - Structures representing the variable declarations to insert.
-     */
-    insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<VariableDeclarationListStructure>): this;
-}
-
 declare const VariableStatementBase: Constructor<ChildOrderableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & typeof Statement;
 
 export declare class VariableStatement extends VariableStatementBase<ts.VariableStatement> {
@@ -7942,7 +7955,7 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
      * Adds variable declarations to the statement.
      * @param structures - Structures representing the variable declarations to add.
      */
-    addDeclarations(structures: VariableDeclarationStructure[]): VariableDeclaration[];
+    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
     /**
      * Inserts a variable declaration at the specified index within the statement.
      * @param index - Child index to insert at.
@@ -7954,7 +7967,7 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
      * @param index - Child index to insert at.
      * @param structures - Structures representing the variable declarations to insert.
      */
-    insertDeclarations(index: number, structures: VariableDeclarationStructure[]): VariableDeclaration[];
+    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
     /**
      * Fills the node from a structure.
      * @param structure - Structure to fill.
@@ -7987,6 +8000,21 @@ export declare class WithStatement extends WithStatementBase<ts.WithStatement> {
 export interface FormatCodeSettings extends ts.FormatCodeSettings {
     ensureNewLineAtEndOfFile?: boolean;
 }
+/**
+ * Options for renaming a node.
+ */
+export interface RenameOptions {
+    /**
+     * Whether comments referencing this node should be renamed.
+     * @remarks False by default.
+     */
+    renameInComments?: boolean;
+    /**
+     * Whether strings referencing this node should be renamed.
+     * @remarks False by default.
+     */
+    renameInStrings?: boolean;
+}
 
 /**
  * User preferences for refactoring.
@@ -8010,14 +8038,15 @@ export declare class LanguageService {
      * Rename the specified node.
      * @param node - Node to rename.
      * @param newName - New name for the node.
+     * @param options - Options for renaming the node.
      */
-    renameNode(node: Node, newName: string): void;
+    renameNode(node: Node, newName: string, options?: RenameOptions): void;
     /**
      * Rename the provided rename locations.
      * @param renameLocations - Rename locations.
      * @param newName - New name for the node.
      */
-    renameLocations(renameLocations: RenameLocation[], newName: string): void;
+    renameLocations(renameLocations: ReadonlyArray<RenameLocation>, newName: string): void;
     /**
      * Gets the definitions for the specified node.
      * @param node - Node.
@@ -8059,8 +8088,9 @@ export declare class LanguageService {
     /**
      * Find the rename locations for the specified node.
      * @param node - Node to get the rename locations for.
+     * @param options - Options for renaming.
      */
-    findRenameLocations(node: Node): RenameLocation[];
+    findRenameLocations(node: Node, options?: RenameOptions): RenameLocation[];
     /**
      * Gets the formatting edits for a range.
      * @param filePath - File path.
@@ -8128,6 +8158,13 @@ export declare class LanguageService {
 }
 
 /**
+ * Options for emitting from a Program.
+ */
+export interface ProgramEmitOptions extends EmitOptions {
+    writeFile?: ts.WriteFileCallback;
+}
+
+/**
  * Options for emitting.
  */
 export interface EmitOptions extends EmitOptionsBase {
@@ -8142,6 +8179,10 @@ export interface EmitOptionsBase {
      * Whether only .d.ts files should be emitted.
      */
     emitOnlyDtsFiles?: boolean;
+    /**
+     * Transformers to act on the files when emitting.
+     */
+    customTransformers?: ts.CustomTransformers;
 }
 
 /**
@@ -8157,29 +8198,34 @@ export declare class Program {
      */
     getTypeChecker(): TypeChecker;
     /**
-     * Emits the TypeScript files to the specified target.
+     * Emits the TypeScript files to JavaScript files.
+     * @param options - Options for emitting.
      */
-    emit(options?: EmitOptions): EmitResult;
+    emit(options?: ProgramEmitOptions): EmitResult;
+    /**
+     * Emits the TypeScript files to JavaScript files to memory.
+     * @param options - Options for emitting.
+     */
+    emitToMemory(options?: EmitOptions): MemoryEmitResult;
     /**
      * Gets the syntactic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSyntacticDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
      * Gets the semantic diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getSemanticDiagnostics(sourceFile?: SourceFile): Diagnostic[];
     /**
      * Gets the declaration diagnostics.
-     * @param sourceFile - Optional source file.
+     * @param sourceFile - Optional source file to filter by.
      */
     getDeclarationDiagnostics(sourceFile?: SourceFile): DiagnosticWithLocation[];
     /**
-     * Gets the pre-emit diagnostics.
-     * @param sourceFile - Source file.
+     * Gets the global diagnostics.
      */
-    getPreEmitDiagnostics(sourceFile?: SourceFile): Diagnostic[];
+    getGlobalDiagnostics(): Diagnostic[];
     /**
      * Gets the emit module resolution kind.
      */
@@ -8371,6 +8417,35 @@ export declare class EmitResult {
     getDiagnostics(): Diagnostic<ts.Diagnostic>[];
 }
 
+/**
+ * The emitted file in memory.
+ */
+export interface MemoryEmitResultFile {
+    /**
+     * File path that was emitted to.
+     */
+    filePath: string;
+    /**
+     * The text that was emitted.
+     */
+    text: string;
+    /**
+     * Whether the byte order mark should be written.
+     */
+    writeByteOrderMark: boolean;
+}
+
+/**
+ * Result of an emit to memory.
+ */
+export declare class MemoryEmitResult extends EmitResult {
+    private readonly files;
+    /**
+     * Gets the files that were emitted to memory.
+     */
+    getFiles(): MemoryEmitResultFile[];
+}
+
 export declare class FileTextChanges {
     /**
      * Gets the file path.
@@ -8398,7 +8473,7 @@ export declare class ImplementationLocation extends DocumentSpan<ts.Implementati
  */
 export declare class OutputFile {
     /**
-     * TypeScript compiler emit result.
+     * TypeScript compiler output file.
      */
     readonly compilerObject: ts.OutputFile;
     /**
@@ -8673,6 +8748,18 @@ export declare class LiteralTypeNode extends TypeNode<ts.LiteralTypeNode> {
      * Gets the literal type node's literal.
      */
     getLiteral(): BooleanLiteral | LiteralExpression | PrefixUnaryExpression;
+}
+
+export declare class ParenthesizedTypeNode extends TypeNode<ts.ParenthesizedTypeNode> {
+    /**
+     * Gets the node within the parentheses.
+     */
+    getTypeNode(): TypeNode;
+    /**
+     * Sets the type within the parentheses.
+     * @param textOrWriterFunction - Text or writer function to set the type with.
+     */
+    setType(textOrWriterFunction: string | WriterFunction): this;
 }
 
 export declare class TupleTypeNode extends TypeNode<ts.TupleTypeNode> {
@@ -9027,11 +9114,131 @@ export declare class UnionTypeNode extends TypeNode<ts.UnionTypeNode> {
     getTypeNodes(): TypeNode[];
 }
 
+declare const VariableDeclarationBase: Constructor<ExclamationTokenableNode> & Constructor<TypedNode> & Constructor<InitializerExpressionableNode> & Constructor<BindingNamedNode> & typeof Node;
+
+export declare class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
+    /**
+     * Fills this node with the specified structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<VariableDeclarationStructure>): this;
+    /**
+     * Removes this variable declaration.
+     */
+    remove(): void;
+}
+export declare enum VariableDeclarationKind {
+    Var = "var",
+    Let = "let",
+    Const = "const"
+}
+
+declare const VariableDeclarationListBase: Constructor<ModifierableNode> & typeof Node;
+
+export declare class VariableDeclarationList extends VariableDeclarationListBase<ts.VariableDeclarationList> {
+    /**
+     * Get the variable declarations.
+     */
+    getDeclarations(): VariableDeclaration[];
+    /**
+     * Gets the variable declaration kind.
+     */
+    getDeclarationKind(): VariableDeclarationKind;
+    /**
+     * Gets the variable declaration kind keyword.
+     */
+    getDeclarationKindKeyword(): Node;
+    /**
+     * Sets the variable declaration kind.
+     * @param type - Type to set.
+     */
+    setDeclarationKind(type: VariableDeclarationKind): this;
+    /**
+     * Add a variable declaration to the statement.
+     * @param structure - Structure representing the variable declaration to add.
+     */
+    addDeclaration(structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Adds variable declarations to the statement.
+     * @param structures - Structures representing the variable declarations to add.
+     */
+    addDeclarations(structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    /**
+     * Inserts a variable declaration at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structure - Structure representing the variable declaration to insert.
+     */
+    insertDeclaration(index: number, structure: VariableDeclarationStructure): VariableDeclaration;
+    /**
+     * Inserts variable declarations at the specified index within the statement.
+     * @param index - Child index to insert at.
+     * @param structures - Structures representing the variable declarations to insert.
+     */
+    insertDeclarations(index: number, structures: ReadonlyArray<VariableDeclarationStructure>): VariableDeclaration[];
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<VariableDeclarationListStructure>): this;
+}
+
+export declare class ArgumentError extends BaseError {
+    /** @deprecated Will be removed in next major. */
+    readonly argName: string;
+}
+
+export declare class ArgumentNullOrWhitespaceError extends ArgumentError {
+}
+
+export declare class ArgumentOutOfRangeError extends ArgumentError {
+}
+
+export declare class ArgumentTypeError extends ArgumentError {
+    /** @deprecated Will be removed in next major. */
+    readonly expectedType: string;
+    /** @deprecated Will be removed in next major. */
+    readonly actualType: string;
+}
+export declare abstract class BaseError extends Error {
+    readonly message: string;
+}
+
+export declare class DirectoryNotFoundError extends PathNotFoundError {
+    /** @deprecated Use path. */
+    readonly dirPath: string;
+}
+
+export declare class FileNotFoundError extends PathNotFoundError {
+    /** @deprecated Use path. */
+    readonly filePath: string;
+}
+
+export declare class InvalidOperationError extends BaseError {
+}
+
+export declare class NotImplementedError extends BaseError {
+}
+
+export declare class NotSupportedError extends BaseError {
+}
+
+export declare class PathNotFoundError extends BaseError {
+    readonly path: string;
+    readonly code: "ENOENT";
+}
+
 /**
  * Holds the compiler options.
  */
 export declare class CompilerOptionsContainer extends SettingsContainer<CompilerOptions> {
     constructor();
+    /**
+     * Sets one or all of the compiler options.
+     *
+     * WARNING: Setting the compiler options will cause a complete reparse of all the source files.
+     * @param settings - Compiler options to set.
+     */
+    set(settings: Partial<CompilerOptions>): void;
 }
 
 /** Kinds of indentation */
@@ -9107,7 +9314,7 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     /**
      * Gets the new line kind as a string.
      */
-    getNewLineKindAsString(): "\r\n" | "\n";
+    getNewLineKindAsString(): "\n" | "\r\n";
     /**
      * Gets the indentation text;
      */
@@ -9119,9 +9326,6 @@ export declare class ManipulationSettingsContainer extends SettingsContainer<Man
     set(settings: Partial<ManipulationSettings>): void;
 }
 export declare abstract class SettingsContainer<T extends object> {
-    private readonly defaultSettings;
-    protected settings: T;
-    constructor(defaultSettings: T);
     /**
      * Resets the settings to the default.
      */

@@ -1,6 +1,6 @@
 ﻿import { SourceFile, TextChange } from "../../compiler";
 
-export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: TextChange[]) {
+export function getTextFromFormattingEdits(sourceFile: SourceFile, formattingEdits: ReadonlyArray<TextChange>) {
     // reverse the order
     formattingEdits = [...formattingEdits].sort((a, b) => b.getSpan().getStart() - a.getSpan().getStart());
     let text = sourceFile.getFullText();

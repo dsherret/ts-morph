@@ -32,3 +32,14 @@ enum NewEnum {
 
 const myVar = NewEnum.myMember;
 ```
+
+### Renaming in comments and strings
+
+Set the `renameInComments` and `renameInStrings` options to `true` (they are `false` by default):
+
+```ts setup: let myEnum: EnumDeclaration;
+myEnum.rename("SomeOtherName", {
+    renameInComments: true,
+    renameInStrings: true
+});
+```

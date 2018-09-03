@@ -41,7 +41,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * Adds members to the enum.
      * @param structures - Structures of the enums.
      */
-    addMembers(structures: EnumMemberStructure[]) {
+    addMembers(structures: ReadonlyArray<EnumMemberStructure>) {
         return this.insertMembers(this.getMembers().length, structures);
     }
 
@@ -59,7 +59,7 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
      * @param index - Child index to insert at.
      * @param structures - Structures of the enums.
      */
-    insertMembers(index: number, structures: EnumMemberStructure[]) {
+    insertMembers(index: number, structures: ReadonlyArray<EnumMemberStructure>) {
         const members = this.getMembers();
         index = verifyAndGetIndex(index, members.length);
 

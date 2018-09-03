@@ -4,9 +4,9 @@ import { DiagnosticCategory } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Diagnostic), () => {
-    const {project, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true });
+    const {project, sourceFile} = getInfoFromText("const a: string;", { disableErrorCheck: true, includeLibDts: true });
     project.createSourceFile("file.ts", "interface MyInterface { declare prop: string; }");
-    const diagnostics = project.getDiagnostics();
+    const diagnostics = project.getPreEmitDiagnostics();
     const constError = diagnostics[1];
 
     it("should have two errors overall", () => {
@@ -14,7 +14,7 @@ describe(nameof(Diagnostic), () => {
     });
 
     describe("getting diagnostics from a source file", () => {
-        const sourceFileDiagnostics = sourceFile.getDiagnostics();
+        const sourceFileDiagnostics = sourceFile.getPreEmitDiagnostics();
         it("should have the correct error in the original source file", () => {
             expect(sourceFileDiagnostics.length).to.equal(1);
         });

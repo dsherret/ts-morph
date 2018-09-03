@@ -65,6 +65,59 @@ describe(nameof(Symbol), () => {
         });
     });
 
+    describe(nameof<Symbol>(s => s.getMembers), () => {
+        function doTest(code: string, expectedNames: string[]) {
+            const { sourceFile } = getInfoFromText(code);
+            const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
+            const symbol = typeAlias.getType().getSymbolOrThrow();
+            expect(symbol.getMembers().map(m => m.getName())).to.deep.equal(expectedNames);
+        }
+
+        it("should get the members", () => {
+            doTest("type myType = { a: string; b: string; }", ["a", "b"]);
+        });
+    });
+
+    describe(nameof<Symbol>(s => s.getMemberByName), () => {
+        function doTest(code: string, name: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(code);
+            const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
+            const symbol = typeAlias.getType().getSymbolOrThrow();
+            if (expectedName == null)
+                expect(symbol.getMemberByName(name)).to.be.undefined;
+            else
+                expect(symbol.getMemberByName(name)!.getName()).to.equal(expectedName);
+        }
+
+        it("should get the member when it exists", () => {
+            doTest("type myType = { a: string; }", "a", "a");
+        });
+
+        it("should not get the member when it doesn't exist", () => {
+            doTest("type myType = { a: string; }", "b", undefined);
+        });
+    });
+
+    describe(nameof<Symbol>(s => s.getMemberByNameOrThrow), () => {
+        function doTest(code: string, name: string, expectedName: string | undefined) {
+            const { sourceFile } = getInfoFromText(code);
+            const typeAlias = sourceFile.getTypeAliasOrThrow("myType");
+            const symbol = typeAlias.getType().getSymbolOrThrow();
+            if (expectedName == null)
+                expect(() => symbol.getMemberByNameOrThrow(name)).to.throw();
+            else
+                expect(symbol.getMemberByNameOrThrow(name).getName()).to.equal(expectedName);
+        }
+
+        it("should get the member when it exists", () => {
+            doTest("type myType = { a: string; }", "a", "a");
+        });
+
+        it("should not get the member when it doesn't exist", () => {
+            doTest("type myType = { a: string; }", "b", undefined);
+        });
+    });
+
     describe(nameof<Symbol>(s => s.getAliasedSymbol), () => {
         it("should get the aliased symbol when it exists", () => {
             const { sourceFile } = getInfoFromText("class MyTest {}\nexport default MyTest;");

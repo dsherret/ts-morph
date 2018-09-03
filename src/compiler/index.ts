@@ -1,5 +1,6 @@
 export * from "./aliases";
 export * from "./base";
+export * from "./binding";
 export * from "./class";
 export * from "./common";
 export * from "./CompilerNodeToWrappedType";
@@ -18,3 +19,4 @@ export * from "./namespace";
 export * from "./statement";
 export * from "./tools";
 export * from "./type";
+export * from "./variable";

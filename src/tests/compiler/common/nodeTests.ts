@@ -3,7 +3,7 @@ import { assert, IsExactType, IsNullableType } from "conditional-type-checks";
 import { CodeBlockWriter } from "../../../codeBlockWriter";
 import { CallExpression, ClassDeclaration, EnumDeclaration, FormatCodeSettings, FunctionDeclaration, Identifier, InterfaceDeclaration, Node,
     PropertyAccessExpression, PropertySignature, SourceFile, TypeParameterDeclaration, ForEachChildTraversalControl,
-    ForEachDescendantTraversalControl } from "../../../compiler";
+    ForEachDescendantTraversalControl, VariableStatement, ForStatement, ForOfStatement, ForInStatement } from "../../../compiler";
 import * as errors from "../../../errors";
 import { WriterFunction } from "../../../types";
 import { NewLineKind, SyntaxKind, ts } from "../../../typescript";
@@ -374,6 +374,34 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getParent), () => {
+        it("should have the correct type when it will have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = firstChild.getDeclarationList().getParent();
+            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+        });
+
+        it("should have the correct type when it might not have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = (firstChild as Node).getParent();
+            assert<IsExactType<typeof parent, Node | undefined>>(true);
+        });
+    });
+
+    describe(nameof<Node>(n => n.getParentOrThrow), () => {
+        it("should have the correct type when it will have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = firstChild.getDeclarationList().getParentOrThrow();
+            assert<IsExactType<typeof parent, VariableStatement | ForStatement | ForOfStatement | ForInStatement>>(true);
+        });
+
+        it("should have the correct type when it might not have a parent", () => {
+            const { firstChild } = getInfoFromText<VariableStatement>("const t = 5;");
+            const parent = (firstChild as Node).getParentOrThrow();
+            assert<IsExactType<typeof parent, Node>>(true);
+        });
+    });
+
     describe(nameof<Node>(n => n.getParentIfKind), () => {
         const {firstChild} = getInfoFromText<ClassDeclaration>("export class Identifier { prop: string; }");
         const child = firstChild.getInstanceProperty("prop")!;
@@ -556,8 +584,51 @@ class MyClass {
         });
     });
 
+    describe(nameof<Node>(n => n.getFirstAncestor), () => {
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
+        const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
+        const propDec = interfaceDec.getPropertyOrThrow("prop");
+
+        it("should get the first ancestor by a condition", () => {
+            const result = propDec.getFirstAncestor(n => n.getKind() === SyntaxKind.SourceFile);
+            expect(result).to.be.instanceOf(SourceFile);
+        });
+
+        it("should get by a type guard", () => {
+            const result = propDec.getFirstAncestor(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration | undefined>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should return undefined when it can't find it", () => {
+            const privateKeyword = propDec.getFirstAncestor(n => n.getKind() === SyntaxKind.PrivateKeyword);
+            expect(privateKeyword).to.be.undefined;
+        });
+    });
+
+    describe(nameof<Node>(n => n.getFirstAncestorOrThrow), () => {
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\n");
+        const interfaceDec = sourceFile.getInterfaceOrThrow("Identifier");
+        const propDec = interfaceDec.getPropertyOrThrow("prop");
+
+        it("should get the first ancestor by a condition", () => {
+            const result = propDec.getFirstAncestorOrThrow(n => n.getKind() === SyntaxKind.SourceFile);
+            expect(result).to.be.instanceOf(SourceFile);
+        });
+
+        it("should get by a type guard", () => {
+            const result = propDec.getFirstAncestorOrThrow(TypeGuards.isInterfaceDeclaration);
+            assert<IsExactType<typeof result, InterfaceDeclaration>>(true);
+            expect(result).to.be.instanceOf(InterfaceDeclaration);
+        });
+
+        it("should throw when it can't find it", () => {
+            expect(() => propDec.getFirstAncestorOrThrow(n => n.getKind() === SyntaxKind.PrivateKeyword)).to.throw();
+        });
+    });
+
     describe(nameof<Node>(n => n.getFirstDescendant), () => {
-        const {sourceFile} = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
+        const { sourceFile } = getInfoFromText<ClassDeclaration>("interface Identifier { prop: string; }\ninterface MyInterface { nextProp: string; }");
 
         it("should get the first descendant by a condition", () => {
             const prop = sourceFile.getFirstDescendant(n => n.getKind() === SyntaxKind.PropertySignature);
