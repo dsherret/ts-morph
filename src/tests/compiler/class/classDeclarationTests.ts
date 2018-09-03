@@ -1,13 +1,8 @@
 ﻿import { expect } from "chai";
-import {
-    ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
-    PropertyDeclaration, Scope, SetAccessorDeclaration
-} from "../../../compiler";
-import {
-    ClassDeclarationSpecificStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure,
-    ClassDeclarationStructure
-} from "../../../structures";
+import { ClassDeclaration, ConstructorDeclaration, ExpressionWithTypeArguments, GetAccessorDeclaration, MethodDeclaration, ParameterDeclaration,
+    PropertyDeclaration, Scope, SetAccessorDeclaration } from "../../../compiler";
+import { ClassDeclarationSpecificStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
+    SetAccessorDeclarationStructure, ClassDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";

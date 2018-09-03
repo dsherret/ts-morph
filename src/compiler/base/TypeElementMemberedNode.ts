@@ -1,10 +1,8 @@
 ﻿import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren } from "../../manipulation";
-import {
-    CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
-    PropertySignatureStructure, TypeElementMemberedNodeStructure
-} from "../../structures";
+import { CallSignatureDeclarationStructure, ConstructSignatureDeclarationStructure, IndexSignatureDeclarationStructure, MethodSignatureStructure,
+    PropertySignatureStructure, TypeElementMemberedNodeStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction } from "../../utils";

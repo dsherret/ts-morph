@@ -1,10 +1,8 @@
 import { removeInterfaceMember } from "../../manipulation";
 import { PropertySignatureStructure, PropertySignatureSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
-import {
-    ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
-    QuestionTokenableNode, ReadonlyableNode, TypedNode
-} from "../base";
+import { ChildOrderableNode, InitializerExpressionableNode, JSDocableNode, ModifierableNode, PropertyNamedNode,
+    QuestionTokenableNode, ReadonlyableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { TypeElement } from "./TypeElement";
 import { callBaseGetStructure } from "../callBaseGetStructure";

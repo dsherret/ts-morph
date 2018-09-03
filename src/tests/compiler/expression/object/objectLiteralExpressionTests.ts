@@ -1,12 +1,8 @@
 import { expect } from "chai";
-import {
-    GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
-    SpreadAssignment
-} from "../../../../compiler";
-import {
-    GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure
-} from "../../../../structures";
+import { GetAccessorDeclaration, MethodDeclaration, ObjectLiteralExpression, PropertyAssignment, SetAccessorDeclaration, ShorthandPropertyAssignment,
+    SpreadAssignment } from "../../../../compiler";
+import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText } from "../../testHelpers";
 

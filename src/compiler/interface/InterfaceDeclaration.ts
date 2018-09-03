@@ -1,10 +1,8 @@
 import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ArrayUtils } from "../../utils";
-import {
-    AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
-    TextInsertableNode, TypeElementMemberedNode, TypeParameteredNode
-} from "../base";
+import { AmbientableNode, ChildOrderableNode, ExportableNode, ExtendsClauseableNode, HeritageClauseableNode, JSDocableNode, ModifierableNode, NamedNode,
+    TextInsertableNode, TypeElementMemberedNode, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { ClassDeclaration } from "../class";
 import { NamespaceChildableNode } from "../namespace";

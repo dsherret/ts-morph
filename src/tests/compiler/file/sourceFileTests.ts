@@ -1,8 +1,6 @@
 ﻿import { expect } from "chai";
-import {
-    Node, EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings,
-    ImportDeclaration, QuoteKind, SourceFile
-} from "../../../compiler";
+import { Node, EmitResult, ExportAssignment, ExportDeclaration, FileSystemRefreshResult, FormatCodeSettings,
+    ImportDeclaration, QuoteKind, SourceFile } from "../../../compiler";
 import { Chars } from "../../../constants";
 import * as errors from "../../../errors";
 import { IndentationText, ManipulationSettings } from "../../../options";

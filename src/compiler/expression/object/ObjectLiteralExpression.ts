@@ -1,10 +1,8 @@
 import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../structurePrinters";
-import {
-    GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionStructure
-} from "../../../structures";
+import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";

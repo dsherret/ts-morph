@@ -2,10 +2,8 @@ import * as errors from "../../errors";
 import { replaceNodeText } from "../../manipulation";
 import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import {
-    AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
-    TextInsertableNode, UnwrappableNode
-} from "../base";
+import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
+    TextInsertableNode, UnwrappableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Identifier } from "../common";
 import { Statement, StatementedNode } from "../statement";

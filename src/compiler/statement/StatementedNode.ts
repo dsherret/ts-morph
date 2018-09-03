@@ -1,19 +1,13 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
-import {
-    InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
-    verifyAndGetIndex
-} from "../../manipulation";
-import {
-    ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
-    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure
-} from "../../structures";
+import { InsertIntoBracesOrSourceFileOptionsWriteInfo, insertIntoBracesOrSourceFileWithGetChildren, removeStatementedNodeChildren,
+    verifyAndGetIndex } from "../../manipulation";
+import { ClassDeclarationStructure, EnumDeclarationStructure, FunctionDeclarationStructure, InterfaceDeclarationStructure, NamespaceDeclarationStructure,
+    StatementedNodeStructure, TypeAliasDeclarationStructure, VariableStatementStructure } from "../../structures";
 import { Constructor, WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
-import {
-    ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
-    TypeGuards
-} from "../../utils";
+import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, getSyntaxKindName, isNodeAmbientOrInAmbientContext,
+    TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { ClassDeclaration } from "../class";
 import { Node } from "../common";
