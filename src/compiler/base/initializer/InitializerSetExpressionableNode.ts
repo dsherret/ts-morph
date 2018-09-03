@@ -64,7 +64,7 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
             return this;
         }
 
-        getStructure(): InitializerSetExpressionableNodeStructure {
+        getStructure() {
             const initializer = this.getInitializer();
             return callBaseGetStructure<InitializerSetExpressionableNodeStructure>(Base.prototype, this, {
                 initializer: initializer ? initializer.getText() : undefined

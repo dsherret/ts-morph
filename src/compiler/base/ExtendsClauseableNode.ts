@@ -132,7 +132,7 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
         /**
          * Gets the structure equivalent to this node.
          */
-        getStructure(): ExtendsClauseableNodeStructure {
+        getStructure() {
             return callBaseGetStructure<ExtendsClauseableNodeStructure>(Base.prototype, this, {
                 extends: this.getExtends().map(e => e.getText())
             });

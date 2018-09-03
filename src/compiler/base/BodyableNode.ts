@@ -107,7 +107,7 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
             return this;
         }
 
-        getStructure(): BodyableNodeStructure {
+        getStructure() {
             // Extract body text without breaking current statement indentation:
             // Get the statements within the body and then get the text within the source file from
             // statements[0].getNonWhitespaceStart() to statements[statements.length - 1].getTrailingTriviaEnd().

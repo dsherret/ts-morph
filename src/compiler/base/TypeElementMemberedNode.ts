@@ -434,7 +434,7 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
         /**
          * Gets the structure equivalent to this node.
          */
-        getStructure(): TypeElementMemberedNodeStructure {
+        getStructure() {
             return callBaseGetStructure<TypeElementMemberedNodeStructure>(Base.prototype, this, {
                 callSignatures: this.getCallSignatures().map(node => node.getStructure()),
                 constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),

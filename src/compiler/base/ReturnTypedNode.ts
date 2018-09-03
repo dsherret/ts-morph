@@ -98,7 +98,7 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             return this;
         }
 
-        getStructure(): ReturnTypedNodeStructure {
+        getStructure() {
             const returnTypeNode = this.getReturnTypeNode();
             return callBaseGetStructure<ReturnTypedNodeStructure>(Base.prototype, this, {
                 returnType: returnTypeNode ? returnTypeNode!.getText() : undefined
