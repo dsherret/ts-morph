@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.3"></a>
+# [14.4.3](https://github.com/dsherret/ts-simple-ast/compare/14.4.2...14.4.3) (2018-09-07)
+
+
+### Bug Fixes
+
+* [#414](https://github.com/dsherret/ts-simple-ast/issues/414) - insertText() not working for namespace declaration ([ee1fa55](https://github.com/dsherret/ts-simple-ast/commit/ee1fa55))
+* [#415](https://github.com/dsherret/ts-simple-ast/issues/415) - Fix "typeRoots" compiler option not working. ([5e4cd08](https://github.com/dsherret/ts-simple-ast/commit/5e4cd08))
+
+
+
 <a name="14.4.2"></a>
 ## [14.4.2](https://github.com/dsherret/ts-simple-ast/compare/14.4.1...14.4.2) (2018-08-27)
 
