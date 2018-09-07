@@ -598,6 +598,10 @@ export class FileSystemWrapper {
         return this.fileSystem.getCurrentDirectory();
     }
 
+    getDirectories(dirPath: string) {
+        return this.readDirSync(dirPath).filter(path => this.directoryExistsSync(path));
+    }
+
     getStandardizedAbsolutePath(fileOrDirPath: string, relativeBase?: string) {
         return FileUtils.getStandardizedAbsolutePath(this.fileSystem, fileOrDirPath, relativeBase);
     }

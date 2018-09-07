@@ -75,16 +75,14 @@ export class LanguageService {
                 this.context.fileSystemWrapper.writeFileSync(filePath, data);
             },
             getCurrentDirectory: () => languageServiceHost.getCurrentDirectory(),
-            getDirectories: (path: string) => {
-                // todo: not sure where this is used...
-                return [];
-            },
+            getDirectories: (path: string) => this.context.fileSystemWrapper.getDirectories(path),
             fileExists: (fileName: string) => languageServiceHost.fileExists!(fileName),
             readFile: (fileName: string) => languageServiceHost.readFile!(fileName),
             getCanonicalFileName: (fileName: string) => this.context.fileSystemWrapper.getStandardizedAbsolutePath(fileName),
             useCaseSensitiveFileNames: () => languageServiceHost.useCaseSensitiveFileNames!(),
             getNewLine: () => languageServiceHost.getNewLine!(),
-            getEnvironmentVariable: (name: string) => process.env[name]
+            getEnvironmentVariable: (name: string) => process.env[name],
+            directoryExists: dirName => languageServiceHost.directoryExists!(dirName)
         };
 
         this._compilerObject = ts.createLanguageService(languageServiceHost, this.context.compilerFactory.documentRegistry);
