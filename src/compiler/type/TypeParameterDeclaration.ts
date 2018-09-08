@@ -146,10 +146,13 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
     }
 
     getStructure() {
+        const constraintNode = this.getConstraint();
+        const defaultNode = this.getDefault();
+
         return callBaseGetStructure<TypeParameterDeclarationStructure>({}, this, {
-            constraint: this.getConstraintNode() ? this.getConstraintNode()!.getText() : undefined,
+            constraint: constraintNode != null ? constraintNode.getText() : undefined,
             name: this.getName(),
-            default: this.getDefault() ? this.getDefault()!.getText() : undefined
+            default: defaultNode ? defaultNode.getText() : undefined
         });
     }
 }

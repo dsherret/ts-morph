@@ -3,7 +3,8 @@ import { AmbientableNodeStructure, ExportableNodeStructure, JSDocableNodeStructu
 
 export interface TypeAliasDeclarationStructure
     extends TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure,
-    JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+        JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure
+{
         type: string | WriterFunction; // make required (from base)
 }
 

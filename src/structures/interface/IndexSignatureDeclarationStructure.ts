@@ -1,8 +1,7 @@
 import { WriterFunction } from "../../types";
 import { JSDocableNodeStructure, ReadonlyableNodeStructure } from "../base";
 
-export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure,
-    ReadonlyableNodeStructure {
+export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure {
 }
 
 export interface IndexSignatureDeclarationSpecificStructure {

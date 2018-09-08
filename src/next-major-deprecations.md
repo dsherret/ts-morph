@@ -1,3 +1,4 @@
 ﻿# Deprecations in the next major
 
-None.
+* Remove TypeParameterDeclaration.getDefaultNode()
+* Remove TypeParameterDeclaration.getConstraintNode()

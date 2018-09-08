@@ -85,7 +85,7 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
 
     /**
      * Gets the structure equivalent to this node.
-     **/
+     */
     getStructure(): ParameterDeclarationStructure {
         return callBaseGetStructure<ParameterDeclarationSpecificStructure>(ParameterDeclarationBase.prototype, this, {
             isRestParameter: this.isRestParameter()

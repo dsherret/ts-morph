@@ -15,7 +15,7 @@ export class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.TypeAliasD
      * Fills the node from a structure.
      * @param structure - Structure to fill.
      */
-    fill(structure: Partial<TypeAliasDeclarationStructure>): this {
+    fill(structure: Partial<TypeAliasDeclarationStructure>) {
         callBaseFill(TypeAliasDeclarationBase.prototype, this, structure);
 
         return this;
