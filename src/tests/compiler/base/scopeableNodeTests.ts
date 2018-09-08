@@ -87,5 +87,9 @@ describe(nameof(ScopeableNode), () => {
         it("should modify when setting", () => {
             doTest("class MyClass { constructor(param: string) {} }", { scope: Scope.Protected }, "class MyClass { constructor(protected param: string) {} }");
         });
+
+        it("should remove when undefined", () => {
+            doTest("class MyClass { constructor(public param: string) {} }", { scope: undefined }, "class MyClass { constructor(param: string) {} }");
+        });
     });
 });
