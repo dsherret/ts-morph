@@ -70,7 +70,6 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
         }
 
         replaceText(range: [number, number], textOrWriterFunction: string | WriterFunction) {
-            const thisNode = this;
             const childSyntaxList = this.getChildSyntaxListOrThrow();
             const validRange = getValidRange(this);
             const pos = range[0];
@@ -82,7 +81,7 @@ export function TextInsertableNode<T extends Constructor<TextInsertableNodeExten
             insertIntoParentTextRange({
                 insertPos: pos,
                 newText: getTextFromStringOrWriter(this.getWriter(), textOrWriterFunction),
-                parent: this,
+                parent: childSyntaxList.getParentOrThrow(),
                 replacing: {
                     textLength: end - pos,
                     nodes: [childSyntaxList]

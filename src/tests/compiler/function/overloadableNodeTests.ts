@@ -7,7 +7,7 @@ describe(nameof(OverloadableNode), () => {
     const {sourceFile: functionSourceFile} = getInfoFromText<FunctionDeclaration>(functionCode);
     const functions = functionSourceFile.getChildSyntaxListOrThrow().getChildren() as FunctionDeclaration[];
 
-    const constructorCode = `class MyClass { constructor();constructor();constructor() {} myMethod(): void;myMethod() {} }`;
+    const constructorCode = `class MyClass { constructor();constructor();constructor() {} myMethod(): void;myMethod() {} abstract test(); }`;
     const {firstChild: classChild} = getInfoFromText<ClassDeclaration>(constructorCode);
     const constructors = classChild.getChildSyntaxListOrThrow().getChildren().filter(c => c instanceof ConstructorDeclaration) as ConstructorDeclaration[];
 
@@ -22,12 +22,16 @@ describe(nameof(OverloadableNode), () => {
     });
 
     describe(nameof<OverloadableNode>(d => d.isOverload), () => {
-        it("should be an overload when is on", () => {
+        it("should be an overload when is one", () => {
             expect(functions[0].isOverload()).to.be.true;
         });
 
         it("should not be an overload when not one", () => {
             expect(functions[1].isOverload()).to.be.false;
+        });
+
+        it("should not be for abstract methods", () => {
+            expect(classChild.getMethodOrThrow(m => m.isAbstract()).isOverload()).to.be.false;
         });
     });
 
