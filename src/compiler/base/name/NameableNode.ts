@@ -32,6 +32,10 @@ export interface NameableNodeSpecific {
      * Gets the name if it exists, or throws.
      */
     getNameOrThrow(): string;
+    /**
+     * Removes the name from the node.
+     */
+    removeName(): this;
 }
 
 export function NameableNode<T extends Constructor<NameableNodeExtensionType>>(Base: T): Constructor<NameableNode> & T {
@@ -61,16 +65,12 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             if (newName === this.getName())
                 return this;
 
-            const nameNode = this.getNameNode();
-
             if (StringUtils.isNullOrWhitespace(newName)) {
-                if (nameNode == null)
-                    return this;
-
-                removeChildren({ children: [nameNode], removePrecedingSpaces: true });
+                this.removeName();
                 return this;
             }
 
+            const nameNode = this.getNameNode();
             if (nameNode == null) {
                 const openParenToken = this.getFirstChildByKindOrThrow(SyntaxKind.OpenParenToken);
                 insertIntoParentTextRange({
@@ -86,11 +86,23 @@ function NameableNodeInternal<T extends Constructor<NameableNodeExtensionType>>(
             return this;
         }
 
+        removeName() {
+            const nameNode = this.getNameNode();
+
+            if (nameNode == null)
+                return this;
+
+            removeChildren({ children: [nameNode], removePrecedingSpaces: true });
+            return this;
+        }
+
         fill(structure: Partial<NameableNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
             if (structure.name != null)
                 this.rename(structure.name);
+            else if (structure.hasOwnProperty(nameof(structure.name)))
+                this.removeName();
 
             return this;
         }

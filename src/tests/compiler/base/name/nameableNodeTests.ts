@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, FunctionExpression, NameableNode, VariableStatement } from "../../../../compiler";
+import { NameableNodeStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
 describe(nameof(NameableNode), () => {
@@ -30,6 +31,22 @@ describe(nameof(NameableNode), () => {
 
         it("should rename the name", () => {
             doTest("const v = function oldName() { return 2; };", "newName", "const v = function newName() { return 2; };");
+        });
+    });
+
+    describe(nameof<NameableNode>(n => n.removeName), () => {
+        function doTest(startCode: string, expectedCode: string) {
+            const {funcExpr, sourceFile} = getFunctionExpression(startCode);
+            funcExpr.removeName();
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should remove the name when exists", () => {
+            doTest("const v = function name() { return 2; };", "const v = function() { return 2; };");
+        });
+
+        it("should do nothing the name does not exist", () => {
+            doTest("const v = function() { return 2; };", "const v = function() { return 2; };");
         });
     });
 
@@ -122,6 +139,41 @@ describe(nameof(NameableNode), () => {
             expect(referencingNodes.length).to.equal(2);
             expect(referencingNodes[0].getParentOrThrow().getParentOrThrow().getText()).to.equal("import MyClass from './MyClass';");
             expect(referencingNodes[1].getParentOrThrow().getText()).to.equal("reference2 = MyClass");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+        function doTest(text: string, structure: NameableNodeStructure, expectedText: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            firstChild.fill(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedText);
+        }
+
+        it("should remove name when specifiying undefined", () => {
+            doTest("export default class Test {}", { name: undefined }, "export default class {}");
+        });
+
+        it("should do nothing when property not exists", () => {
+            doTest("export default class Test {}", { }, "export default class Test {}");
+        });
+
+        it("should rename when specifying name", () => {
+            doTest("class Test {} const t: Test;", { name: "NewName" }, "class NewName {} const t: NewName;");
+        });
+    });
+
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, name: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            expect(firstChild.getStructure().name).to.equal(name);
+        }
+
+        it("should be undefined when no name", () => {
+            doTest("export default class {}", undefined);
+        });
+
+        it("should get name when exists", () => {
+            doTest("export default class Test {}", "Test");
         });
     });
 });

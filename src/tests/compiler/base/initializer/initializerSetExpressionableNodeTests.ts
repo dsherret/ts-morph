@@ -174,4 +174,20 @@ describe(nameof(InitializerSetExpressionableNode), () => {
             doTest("class Identifier { prop = 4 }", { }, "class Identifier { prop = 4 }");
         });
     });
+
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, initializer: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            const firstProperty = firstChild.getInstanceProperties()[0] as PropertyDeclaration;
+            expect(firstProperty.getStructure().initializer).to.equal(initializer);
+        }
+
+        it("should be undefined when it doesn't exist", () => {
+            doTest("class test { prop }", undefined);
+        });
+
+        it("should be the text when it exists", () => {
+            doTest("class test { prop = 5 }", "5");
+        });
+    });
 });
