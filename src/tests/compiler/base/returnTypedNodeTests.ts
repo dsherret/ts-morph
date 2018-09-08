@@ -108,6 +108,10 @@ describe(nameof(ReturnTypedNode), () => {
             doTest("function Identifier() {}", { returnType: writer => writer.write("number") }, "function Identifier(): number {}");
         });
 
+        it("should remove when undefined", () => {
+            doTest("function Identifier(): number {}", { returnType: undefined }, "function Identifier() {}");
+        });
+
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("function Identifier() {}", { }, "function Identifier() {}");
         });
