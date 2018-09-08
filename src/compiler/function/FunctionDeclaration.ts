@@ -3,7 +3,7 @@ import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunct
 import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
-    TextInsertableNode, UnwrappableNode } from "../base";
+    TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../namespace";
@@ -15,6 +15,12 @@ import { callBaseGetStructure } from "../callBaseGetStructure";
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
 )))))));
+export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(
+    GeneratorableNode(ModifierableNode(SignaturedDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(
+        JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(NameableNode(Node)))))
+    ))))))
+))))));
+
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
      * Fills the node from a structure.
@@ -82,12 +88,15 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
-    getStructure(): FunctionDeclarationStructure {
-        return callBaseGetStructure<FunctionDeclarationSpecificStructure>(FunctionDeclarationBase.prototype, this, {
-            overloads: undefined // TODO: don't know how to implement this
-        }) as any as FunctionDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+    getStructure(): FunctionDeclarationStructure | FunctionDeclarationOverloadStructure {
+        const isOverload = this.isOverload();
+        const basePrototype = isOverload ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
+
+        return callBaseGetStructure<FunctionDeclarationSpecificStructure>(basePrototype, this, {
+            overloads: isOverload ? undefined : this.getOverloads().map(o => o.getStructure())
+        });
     }
 
 }
