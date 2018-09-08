@@ -43,7 +43,7 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
         fill(structure: Partial<ScopedNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
 
-            if (structure.scope != null)
+            if (structure.hasOwnProperty(nameof(structure.scope)))
                 this.setScope(structure.scope);
 
             return this;
@@ -51,11 +51,8 @@ export function ScopedNode<T extends Constructor<ScopedNodeExtensionType>>(Base:
 
         getStructure() {
             return callBaseGetStructure<ScopedNodeStructure>(Base.prototype, this, {
-                scope: this.hasModifier("public") ? Scope.Public : this.hasModifier("private") ?
-                    Scope.Private : this.hasModifier("protected") ?
-                        Scope.Protected : undefined
+                scope: this.hasScopeKeyword() ? this.getScope() : undefined
             });
         }
-
     };
 }
