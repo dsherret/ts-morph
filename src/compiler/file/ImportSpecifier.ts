@@ -97,6 +97,6 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
         return callBaseGetStructure<ImportSpecifierStructure>(Node.prototype, this, {
             name: this.getName(),
             alias: alias ? alias.getText() : undefined
-        });
+        }) as ImportSpecifierStructure;
     }
 }

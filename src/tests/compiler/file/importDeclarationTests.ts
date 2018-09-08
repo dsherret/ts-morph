@@ -515,7 +515,7 @@ describe(nameof(ImportDeclaration), () => {
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
         function doTest(text: string, expectedStructure: ImportDeclarationStructure) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
-            expect(firstChild.getStructure()).to.deep.eq(expectedStructure);
+            expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should work for named multiple import declarations", () => {

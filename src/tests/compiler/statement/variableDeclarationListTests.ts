@@ -170,7 +170,7 @@ describe(nameof(VariableDeclarationList), () => {
                     name: "t", initializer: "[1,2,3]", type: "number[]",
                     hasExclamationToken: false
                 }, {
-                    name: "d",initializer: "[new Date()]", type: undefined,
+                    name: "d", initializer: "[new Date()]", type: undefined,
                     hasExclamationToken: false
                 }, {
                     name: "g", initializer: "1", type: undefined, hasExclamationToken: false

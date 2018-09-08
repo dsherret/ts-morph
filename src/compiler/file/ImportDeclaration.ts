@@ -64,7 +64,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets if the module specifier starts with `./` or `../`.
      */
-    isModuleSpecifierRelative(): boolean {
+    isModuleSpecifierRelative() {
         return ModuleUtils.isModuleSpecifierRelative(this.getModuleSpecifierValue());
     }
 
@@ -72,7 +72,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Sets the default import.
      * @param text - Text to set as the default import.
      */
-    setDefaultImport(text: string): this {
+    setDefaultImport(text: string) {
         errors.throwIfNotStringOrWhitespace(text, nameof(text));
 
         const defaultImport = this.getDefaultImport();
@@ -104,14 +104,14 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets the default import or throws if it doesn't exit.
      */
-    getDefaultImportOrThrow(): Identifier {
+    getDefaultImportOrThrow() {
         return errors.throwIfNullOrUndefined(this.getDefaultImport(), "Expected to find a default import.");
     }
 
     /**
      * Gets the default import or returns undefined if it doesn't exist.
      */
-    getDefaultImport(): Identifier | undefined {
+    getDefaultImport() {
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
@@ -126,7 +126,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * @param text - Text to set as the namespace import.
      * @throws - InvalidOperationError if a named import exists.
      */
-    setNamespaceImport(text: string): this {
+    setNamespaceImport(text: string) {
         if (StringUtils.isNullOrWhitespace(text))
             return this.removeNamespaceImport();
 
@@ -161,7 +161,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Removes the namespace import.
      */
-    removeNamespaceImport(): this {
+    removeNamespaceImport() {
         const namespaceImport = this.getNamespaceImport();
         if (namespaceImport == null)
             return this;
@@ -187,14 +187,14 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets the namespace import if it exists or throws.
      */
-    getNamespaceImportOrThrow(): Identifier {
+    getNamespaceImportOrThrow() {
         return errors.throwIfNullOrUndefined(this.getNamespaceImport(), "Expected to find a namespace import.");
     }
 
     /**
      * Gets the namespace import, if it exists.
      */
-    getNamespaceImport(): Identifier | undefined {
+    getNamespaceImport() {
         const importClause = this.getImportClause();
         if (importClause == null)
             return undefined;
@@ -354,6 +354,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     getStructure() {
         const namespaceImport = this.getNamespaceImport();
         const defaultImport = this.getDefaultImport();
+
         return callBaseGetStructure<ImportDeclarationStructure>(Statement.prototype, this, {
             defaultImport: defaultImport ? defaultImport.getText() : undefined,
             moduleSpecifier: this.getModuleSpecifier().getText(),
