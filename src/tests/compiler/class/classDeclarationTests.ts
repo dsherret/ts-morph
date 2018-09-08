@@ -168,21 +168,6 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    prop1;\n}", {},
                 "class c {\n    prop1;\n\n    constructor() {\n    }\n}");
         });
-
-        it("should add constructor with parameters and body", () => {
-            const ctor: ConstructorDeclarationStructure = {
-                parameters: [
-                    {
-                        name: "a",
-                        type: "Date[][]",
-                        scope: Scope.Public
-                    }
-                ],
-                bodyText: "super();"
-            };
-            doTest("class c {\n    prop1;\n}", ctor,
-                "class c {\n    prop1;\n\n    constructor(public a: Date[][]) {\n        super();\n    }\n}");
-        });
     });
 
     describe(nameof<ClassDeclaration>(d => d.addConstructors), () => {
@@ -1368,63 +1353,70 @@ class Child extends Mixin(Base) {}
     });
 
     describe(nameof<ClassDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure?: MakeRequired<ClassDeclarationStructure>) {
+        function doTest(code: string, expectedStructure: MakeRequired<ClassDeclarationStructure>) {
             const { descendant, project } = getInfoFromTextWithDescendant<ClassDeclaration>(code, SyntaxKind.ClassDeclaration);
             const structure = descendant.getStructure();
-            if (expectedStructure) {
-                expect(Object.assign({}, structure, { methods: undefined, properties: undefined, ctors: undefined })).to.contain(
-                    Object.assign({}, expectedStructure, { methods: undefined, properties: undefined, ctors: undefined }));
-            }
-            const sourceFile2 = project.createSourceFile("__tmp_sourceFile1.ts", "", { overwrite: true });
-            const generatedClassDecl = sourceFile2.addClass(structure);
-            const actualText = generatedClassDecl.getText().replace(/\s+/gm, "");
-            const expectedText = descendant.getText().replace(/\s+/gm, "");
-            expect(actualText).equals(expectedText);
-            return;
+
+            // only bother comparing the basics
+            structure.ctors = structure.ctors!.map(s => ({}));
+            structure.decorators = structure.decorators!.map(s => ({ name: s.name }));
+            structure.getAccessors = structure.getAccessors!.map(s => ({ name: s.name }));
+            structure.methods = structure.methods!.map(s => ({ name: s.name }));
+            structure.properties = structure.properties!.map(s => ({ name: s.name }));
+            structure.setAccessors = structure.setAccessors!.map(s => ({ name: s.name }));
+            structure.typeParameters = structure.typeParameters!.map(s => ({ name: s.name }));
+
+            expect(structure).to.deep.equal(expectedStructure);
         }
 
-        it("should generate class structure with correct name, method and constructors declarations", () => {
-            doTest(`
-class FirstClass {
-    private method1(a: Date[] = new Date()): boolean {return false;}
-}`          );
+        it("should get the structure for an empty class", () => {
+            doTest("class Identifier {}", {
+                ctors: [],
+                decorators: [],
+                docs: [],
+                extends: undefined,
+                implements: [],
+                getAccessors: [],
+                hasDeclareKeyword: false,
+                isAbstract: false,
+                isDefaultExport: false,
+                isExported: false,
+                methods: [],
+                name: "Identifier",
+                properties: [],
+                setAccessors: [],
+                typeParameters: []
+            });
         });
 
-        it("should generate class structure with correct method and constructors overloads", () => {
-            doTest(`
-class FirstClass {
-    constructor(property1: string);
-    constructor(public property2: string, arg2: number = 2) {
-        this.overloadedMethod1(arg2);
-    }
-    overloadedMethod1(a: number): string;
-    overloadedMethod1(a: number, opts: {o: Date} = {o: new Date()}): string {
-        return "";
-    }
+        it("should get the structure of a class that has everything", () => {
+            const code = `
+/** Test */
+@dec export default abstract class Identifier<T> extends Base implements IBase {
+    constructor() {}
+    method() {}
+    prop: string;
+    get getAccessor() {}
+    set setAccessor(value: string) {}
 }
-`
-            );
-        });
-
-        it("should generate class structure with getters & setters property accessors and abstract members", () => {
-            doTest(`
-abstract class Person {
-    private _name: string;
-    public readonly createDate: Date = new Date();
-    static DEFAULT_NAME: string = "unnamed";
-    constructor(name: string= Person.DEFAULT_NAME) {
-        this._name = name;
-    }
-    public get name(): string {
-        return this._name;
-    }
-    public set name(value: string) {
-        this._name = value;
-    }
-    abstract eat(food: number[]): void;
-}
-`
-            );
+`;
+            doTest(code, {
+                ctors: [{}],
+                decorators: [{ name: "dec" }],
+                docs: [{ description: "Test" }],
+                extends: "Base",
+                implements: ["IBase"],
+                getAccessors: [{ name: "getAccessor" }],
+                hasDeclareKeyword: false,
+                isAbstract: true,
+                isDefaultExport: true,
+                isExported: true,
+                methods: [{ name: "method" }],
+                name: "Identifier",
+                properties: [{ name: "prop" }],
+                setAccessors: [{ name: "setAccessor" }],
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });
