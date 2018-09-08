@@ -32,5 +32,4 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
         return callBaseGetStructure<MethodSignatureSpecificStructure>(MethodSignatureBase.prototype, this, {
         });
     }
-
 }

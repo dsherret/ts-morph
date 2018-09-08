@@ -98,5 +98,4 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
             overloads: isOverload ? undefined : this.getOverloads().map(o => o.getStructure())
         });
     }
-
 }

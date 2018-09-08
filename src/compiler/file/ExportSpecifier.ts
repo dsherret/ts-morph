@@ -116,5 +116,4 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
             name: this.getNameNode().getText()
         });
     }
-
 }

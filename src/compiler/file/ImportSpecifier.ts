@@ -99,5 +99,4 @@ export class ImportSpecifier extends Node<ts.ImportSpecifier> {
             alias: alias ? alias.getText() : undefined
         });
     }
-
 }
