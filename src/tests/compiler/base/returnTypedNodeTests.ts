@@ -112,4 +112,19 @@ describe(nameof(ReturnTypedNode), () => {
             doTest("function Identifier() {}", { }, "function Identifier() {}");
         });
     });
+
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, returnType: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            expect(firstChild.getStructure().returnType).to.equal(returnType);
+        }
+
+        it("should be undefined when not exists", () => {
+            doTest("function test() {}", undefined);
+        });
+
+        it("should get when exists", () => {
+            doTest("function test(): string {}", "string");
+        });
+    });
 });

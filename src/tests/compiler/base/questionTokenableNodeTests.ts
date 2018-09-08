@@ -101,4 +101,19 @@ describe(nameof(QuestionTokenableNode), () => {
             doTest("class Identifier { prop: string; }", { hasQuestionToken: true }, "class Identifier { prop?: string; }");
         });
     });
+
+    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+        function doTest(startCode: string, hasToken: boolean) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            expect(firstProperty.getStructure().hasQuestionToken).to.equal(hasToken);
+        }
+
+        it("should be false when not has one", () => {
+            doTest("class Identifier { prop: string; }", false);
+        });
+
+        it("should be true when has one", () => {
+            doTest("class Identifier { prop?: string; }", true);
+        });
+    });
 });

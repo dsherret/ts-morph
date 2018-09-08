@@ -93,6 +93,5 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                hasQuestionToken: this.hasQuestionToken()
             });
         }
-
     };
 }

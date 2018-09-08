@@ -59,7 +59,7 @@ describe(nameof(ReadonlyableNode), () => {
         });
     });
 
-    describe(nameof<ClassDeclaration>(n => n.fill), () => {
+    describe(nameof<PropertyDeclaration>(n => n.fill), () => {
         function doTest(startCode: string, structure: ReadonlyableNodeStructure, expectedCode: string) {
             const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
             firstProperty.fill(structure);
@@ -76,6 +76,21 @@ describe(nameof(ReadonlyableNode), () => {
 
         it("should modify when setting true", () => {
             doTest("class MyClass { prop: string; }", { isReadonly: true }, "class MyClass { readonly prop: string; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+        function doTest(startCode: string, isReadonly: boolean) {
+            const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
+            expect(firstProperty.getStructure().isReadonly).to.equal(isReadonly);
+        }
+
+        it("should be false when not", () => {
+            doTest("class Identifier { prop: string; }", false);
+        });
+
+        it("should be true when has one", () => {
+            doTest("class Identifier { readonly prop: string; }", true);
         });
     });
 });

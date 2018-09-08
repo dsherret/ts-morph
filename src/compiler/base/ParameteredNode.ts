@@ -123,6 +123,5 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 parameters: this.getParameters().map(p => p.getStructure())
             });
         }
-
     };
 }
