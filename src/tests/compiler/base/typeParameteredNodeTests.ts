@@ -170,4 +170,19 @@ describe(nameof(TypeParameteredNode), () => {
             doTest("type myAlias = string;", {}, "type myAlias = string;");
         });
     });
+
+    describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, names: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            expect(firstChild.getStructure().typeParameters!.map(p => p.name)).to.deep.equal(names);
+        }
+
+        it("should be empty when there are none", () => {
+            doTest("type myAlias = string;", []);
+        });
+
+        it("should get when one exists", () => {
+            doTest("type myAlias<T> = string;", ["T"]);
+        });
+    });
 });

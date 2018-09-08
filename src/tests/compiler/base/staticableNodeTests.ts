@@ -54,13 +54,13 @@ describe(nameof(StaticableNode), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(n => n.fill), () => {
-        function getFirstMethod(code: string) {
-            const result = getInfoFromText<ClassDeclaration>(code);
-            const firstMethod = result.firstChild.getMembers().filter(m => TypeGuards.isMethodDeclaration(m))[0] as MethodDeclaration;
-            return {firstMethod, ...result};
-        }
+    function getFirstMethod(code: string) {
+        const result = getInfoFromText<ClassDeclaration>(code);
+        const firstMethod = result.firstChild.getMembers().filter(m => TypeGuards.isMethodDeclaration(m))[0] as MethodDeclaration;
+        return {firstMethod, ...result};
+    }
 
+    describe(nameof<MethodDeclaration>(n => n.fill), () => {
         function doTest(startCode: string, structure: StaticableNodeStructure, expectedCode: string) {
             const {firstMethod, sourceFile} = getFirstMethod(startCode);
             firstMethod.fill(structure);
@@ -77,6 +77,21 @@ describe(nameof(StaticableNode), () => {
 
         it("should modify when setting as has declare keyword", () => {
             doTest("class MyClass { method() {} }", { isStatic: true }, "class MyClass { static method() {} }");
+        });
+    });
+
+    describe(nameof<MethodDeclaration>(n => n.getStructure), () => {
+        function doTest(startCode: string, isStatic: boolean) {
+            const { firstMethod, sourceFile } = getFirstMethod(startCode);
+            expect(firstMethod.getStructure().isStatic).to.equal(isStatic);
+        }
+
+        it("should be false when not static", () => {
+            doTest("class MyClass { method() {} }", false);
+        });
+
+        it("should be true when static", () => {
+            doTest("class MyClass { static method() {} }", true);
         });
     });
 });
