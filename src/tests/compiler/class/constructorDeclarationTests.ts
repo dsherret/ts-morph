@@ -1,6 +1,7 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, ConstructorDeclaration } from "../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure, JSDocStructure } from "../../../structures";
+import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../compiler";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, JSDocStructure,
+    ClassDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
@@ -145,19 +146,75 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
-        it("should get structure", () => {
-            const { firstChild } = getInfoFromText<ClassDeclaration>(`
-            class A<T> {
-                /** something in the way she moves */
-                protected constructor(public a: T[]){}
-            }
-            `);
+        function doTest(code: string, expectedStructure: MakeRequired<ConstructorDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getConstructors()[0].getStructure();
-            expect(structure.scope).to.equals("protected");
-            expect(structure.parameters![0].name).to.equals("a");
-            expect(structure.parameters![0].type).to.equals("T[]");
-            expect(structure.parameters![0].scope).to.equals("public");
-            expect((structure.docs![0] as JSDocStructure).description).to.equals("something in the way she moves");
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+
+            // temp solution for MakeRequired making these necessary (use conditional types instead--diff)
+            delete expectedStructure.classes;
+            delete expectedStructure.functions;
+            delete expectedStructure.enums;
+            delete expectedStructure.interfaces;
+            delete expectedStructure.namespaces;
+            delete expectedStructure.typeAliases;
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get structure when empty", () => {
+            doTest("class T { constructor() {} }", {
+                bodyText: "",
+                docs: [],
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: [],
+                classes: undefined,
+                enums: undefined,
+                functions: undefined,
+                interfaces: undefined,
+                namespaces: undefined,
+                typeAliases: undefined
+            });
+        });
+
+        it("should get structure when has everything", () => {
+            const code = `
+class T {
+    /** overload */
+    public constructor<T>();
+    /** implementation */
+    public constructor<T>(p) {
+        test;
+    }
+}
+`;
+            doTest(code, {
+                bodyText: "test;",
+                docs: [{ description: "implementation" }],
+                overloads: [{
+                    scope: Scope.Public,
+                    docs: [{ description: "overload" }],
+                    parameters: [],
+                    returnType: undefined,
+                    typeParameters: [{
+                        name: "T", constraint: undefined, default: undefined
+                    }]
+                }],
+                parameters: [{ name: "p" }],
+                returnType: undefined,
+                scope: Scope.Public,
+                typeParameters: [{ name: "T" }],
+                classes: undefined,
+                enums: undefined,
+                functions: undefined,
+                interfaces: undefined,
+                namespaces: undefined,
+                typeAliases: undefined
+            });
         });
     });
 });
