@@ -615,11 +615,11 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.context.structurePrinterFactory.forFunctionDeclaration().printTexts(writer, structures);
                     }, {
-                            previousNewLine: previousMember =>
-                                structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
-                            nextNewLine: nextMember =>
-                                structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
-                        });
+                        previousNewLine: previousMember =>
+                            structures[0].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(previousMember) && previousMember.getBody() == null,
+                        nextNewLine: nextMember =>
+                            structures[structures.length - 1].hasDeclareKeyword && TypeGuards.isFunctionDeclaration(nextMember) && nextMember.getBody() == null
+                    });
                 }
             });
         }
@@ -755,9 +755,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.context.structurePrinterFactory.forTypeAliasDeclaration().printTexts(writer, structures);
                     }, {
-                            previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
-                            nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
-                        });
+                        previousNewLine: previousMember => TypeGuards.isTypeAliasDeclaration(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isTypeAliasDeclaration(nextMember)
+                    });
                 }
             });
         }
@@ -815,9 +815,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     this._standardWrite(writer, info, () => {
                         this.context.structurePrinterFactory.forVariableStatement().printTexts(writer, structures);
                     }, {
-                            previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
-                            nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
-                        });
+                        previousNewLine: previousMember => TypeGuards.isVariableStatement(previousMember),
+                        nextNewLine: nextMember => TypeGuards.isVariableStatement(nextMember)
+                    });
                 }
             });
         }
