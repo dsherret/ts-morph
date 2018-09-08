@@ -3,7 +3,7 @@ import * as errors from "../../errors";
 import { getRangeFromArray, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
 import { Constructor } from "../../types";
 import { SyntaxKind } from "../../typescript";
-import { ArrayUtils } from "../../utils";
+import { ArrayUtils, TypeGuards } from "../../utils";
 import { BodyableNode, NamedNode } from "../base";
 import { Node } from "../common";
 
@@ -52,6 +52,8 @@ export function OverloadableNode<T extends Constructor<OverloadableNodeExtension
         }
 
         isOverload() {
+            if (TypeGuards.isMethodDeclaration(this) && this.isAbstract())
+                return false;
             return !this.isImplementation();
         }
 
