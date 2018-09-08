@@ -146,30 +146,37 @@ describe(nameof(VariableDeclarationList), () => {
     });
 
     describe(nameof<VariableDeclarationList>(d => d.getStructure), () => {
-        function doTest(text: string, expected: any) {
+        function doTest(text: string, expected: VariableDeclarationListStructure) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getDeclarationList().getStructure();
             expect(structure).to.deep.equal(expected);
         }
 
         it("should get structure of list with one non initialized variable", () => {
             doTest("let t;", {
-                declarationKind: "let", declarations: [{
-                    name: "t", initializer: undefined,
-                    type: undefined, hasExclamationToken: false
+                declarationKind: VariableDeclarationKind.Let,
+                declarations: [{
+                    name: "t",
+                    initializer: undefined,
+                    type: undefined,
+                    hasExclamationToken: false
                 }]
             });
         });
 
         it("should get structure of list with many variables, some declaring types and others initialized", () => {
             doTest("const t:number[] = [1,2,3], d = [new Date()], g=1, p:Promise<string>=foo()", {
-                declarationKind: "const", declarations: [{
+                declarationKind: VariableDeclarationKind.Const,
+                declarations: [{
                     name: "t", initializer: "[1,2,3]", type: "number[]",
                     hasExclamationToken: false
                 }, {
-                    name: "d", initializer: "[new Date()]", type: undefined,
+                    name: "d",initializer: "[new Date()]", type: undefined,
                     hasExclamationToken: false
-                }, { name: "g", initializer: "1", type: undefined, hasExclamationToken: false },
-                { name: "p", initializer: "foo()", type: "Promise<string>", hasExclamationToken: false }]
+                }, {
+                    name: "g", initializer: "1", type: undefined, hasExclamationToken: false
+                }, {
+                    name: "p", initializer: "foo()", type: "Promise<string>", hasExclamationToken: false
+                }]
             });
         });
     });

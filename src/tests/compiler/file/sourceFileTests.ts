@@ -1486,7 +1486,7 @@ function myFunction(param: MyClass) {
     });
 
     describe(nameof<SourceFile>(s => s.getStructure), () => {
-        function doTest(fileText: string, expected: any) {
+        function doTest(fileText: string, expected: { bodyText: string; }) {
             const { sourceFile } = getInfoFromText(fileText);
             expect(sourceFile.getStructure()).to.deep.equal(expected);
         }

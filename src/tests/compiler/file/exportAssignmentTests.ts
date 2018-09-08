@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ExportAssignment } from "../../../compiler";
+import { ExportAssignmentStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportAssignment), () => {
@@ -34,7 +35,7 @@ describe(nameof(ExportAssignment), () => {
     });
 
     describe(nameof<ExportAssignment>(n => n.getStructure), () => {
-        function doTest(text: string, expected: any) {
+        function doTest(text: string, expected: ExportAssignmentStructure) {
             const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
             expect(structure).to.deep.equals(expected);
         }

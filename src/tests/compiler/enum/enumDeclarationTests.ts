@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { EnumDeclaration, EnumMember } from "../../../compiler";
-import { EnumDeclarationSpecificStructure, EnumMemberStructure } from "../../../structures";
+import { EnumDeclarationSpecificStructure, EnumMemberStructure, EnumDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(EnumDeclaration), () => {
@@ -213,7 +213,7 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expected: any) {
+        function doTest(code: string, expected: EnumDeclarationStructure) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(code);
             expect(firstChild.getStructure()).to.deep.equal(expected);
         }
