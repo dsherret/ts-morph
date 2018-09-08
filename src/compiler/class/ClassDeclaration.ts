@@ -28,8 +28,8 @@ export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyType
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
 export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(
-    TypeParameteredNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement)))))))
-))))));
+    TypeParameteredNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement))))))))
+)))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Fills the node from a structure.
@@ -185,7 +185,7 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     /**
      * Gets the constructor declarations.
      */
-    getConstructors(): ConstructorDeclaration[] {
+    getConstructors() {
         return this.getMembers().filter(m => TypeGuards.isConstructorDeclaration(m)) as ConstructorDeclaration[];
     }
 
@@ -913,10 +913,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     getStructure(): ClassDeclarationStructure {
         const getExtends = this.getExtends();
         return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
-            ctors: this.getConstructors().filter(ctor => !ctor.isOverload())
-                .map(ctor => ctor.getStructure()),
-            methods: this.getMethods().filter(method => !method.isOverload() || method.isAbstract())
-                .map(method => method.getStructure()),
+            ctors: this.getConstructors().filter(ctor => !ctor.isOverload()).map(ctor => ctor.getStructure()),
+            methods: this.getMethods().filter(method => !method.isOverload()).map(method => method.getStructure()),
             properties: this.getProperties().map(property => property.getStructure()),
             extends: getExtends ? getExtends.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),

@@ -52,11 +52,10 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): GetAccessorDeclarationStructure {
         return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
         }) as any as GetAccessorDeclarationStructure;
     }
-
 }

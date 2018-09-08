@@ -9,10 +9,7 @@ import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../f
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))))));
-
-const ConstructorDeclarationOverloadBase = ChildOrderableNode(TextInsertableNode(ScopedNode(
-    ModifierableNode(SignaturedDeclaration(Node))
-)));
+export const ConstructorDeclarationOverloadBase = ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(SignaturedDeclaration(Node)))));
 
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
@@ -84,9 +81,10 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      */
     getStructure(): ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure {
         const isOverload = this.isOverload();
-        return callBaseGetStructure<ConstructorDeclarationSpecificStructure>(isOverload ?
-            ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype, this, {
+        const basePrototype = isOverload ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
+
+        return callBaseGetStructure<ConstructorDeclarationSpecificStructure>(basePrototype, this, {
             overloads: isOverload ? undefined : this.getOverloads().map(o => o.getStructure())
-        }) as any as ConstructorDeclarationStructure;
+        }) as any as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
     }
 }

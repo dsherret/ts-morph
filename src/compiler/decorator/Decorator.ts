@@ -21,7 +21,7 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
     /**
      * Gets the name node of the decorator.
      */
-    getNameNode(): Identifier {
+    getNameNode() {
         const sourceFile = this.getSourceFile();
 
         if (this.isDecoratorFactory()) {
@@ -278,10 +278,13 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
             });
     }
 
+    /**
+     * Gets the structure equivalent to this node.
+     */
     getStructure(): DecoratorStructure {
-        return {
+        return callBaseGetStructure<DecoratorStructure>(DecoratorBase.prototype, this, {
             name: this.getName(),
-            arguments: this.getArguments().map(arg => arg.getText())
-        };
+            arguments: this.isDecoratorFactory() ? this.getArguments().map(arg => arg.getText()) : undefined
+        }) as DecoratorStructure;
     }
 }
