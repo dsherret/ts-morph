@@ -183,7 +183,6 @@ describe(nameof(ClassDeclaration), () => {
             doTest("class c {\n    prop1;\n}", ctor,
                 "class c {\n    prop1;\n\n    constructor(public a: Date[][]) {\n        super();\n    }\n}");
         });
-
     });
 
     describe(nameof<ClassDeclaration>(d => d.addConstructors), () => {

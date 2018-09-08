@@ -36,7 +36,5 @@ describe("examples in docs/utilities.md", () => {
         const emptyFile = project.createSourceFile("other.ts", "");
         emptyFile.addVariableStatement(JSON.parse(str));
         expect(emptyFile.getText()).to.equals("const a: Promise<Date> = Promise.resolve(new Date()), b: string = 'so artificial';\n");
-
     });
-
 });

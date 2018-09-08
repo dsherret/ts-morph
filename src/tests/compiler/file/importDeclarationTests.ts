@@ -548,7 +548,5 @@ describe(nameof(ImportDeclaration), () => {
                 namespaceImport: undefined
             });
         });
-
     });
-
 });

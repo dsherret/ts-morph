@@ -366,7 +366,5 @@ describe(nameof(ExportDeclaration), () => {
                 namedExports: []
             });
         });
-
     });
-
 });

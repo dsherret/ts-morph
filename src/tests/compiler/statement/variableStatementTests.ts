@@ -180,5 +180,4 @@ describe(nameof(VariableStatement), () => {
             });
         });
     });
-
 });

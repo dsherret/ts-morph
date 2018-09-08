@@ -172,6 +172,5 @@ describe(nameof(VariableDeclarationList), () => {
                 { name: "p", initializer: "foo()", type: "Promise<string>", hasExclamationToken: false }]
             });
         });
-
     });
 });
