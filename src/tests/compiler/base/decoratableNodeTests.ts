@@ -197,4 +197,19 @@ describe(nameof(DecoratableNode), () => {
             doTest("class Identifier {}", {}, "class Identifier {}");
         });
     });
+
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, names: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            expect(firstChild.getStructure().decorators!.map(d => d.name)).to.deep.equal(names);
+        }
+
+        it("should get when there are none", () => {
+            doTest("class Identifier {}", []);
+        });
+
+        it("should get when there are some", () => {
+            doTest("@dec @dec2 class Identifier {}", ["dec", "dec2"]);
+        });
+    });
 });

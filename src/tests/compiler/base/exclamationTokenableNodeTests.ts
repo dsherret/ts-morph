@@ -114,4 +114,19 @@ describe(nameof(ExclamationTokenableNode), () => {
             doTest("class Identifier { prop: string; }", { hasExclamationToken: true }, "class Identifier { prop!: string; }");
         });
     });
+
+    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+        function doTest(startCode: string, hasToken: boolean) {
+            const {firstProperty, sourceFile} = getInfoWithFirstPropertyFromText(startCode);
+            expect(firstProperty.getStructure().hasExclamationToken).to.equal(hasToken);
+        }
+
+        it("should be false when doesn't have", () => {
+            doTest("class Identifier { prop: string; }", false);
+        });
+
+        it("should be false when has", () => {
+            doTest("class Identifier { prop!: string; }", true);
+        });
+    });
 });
