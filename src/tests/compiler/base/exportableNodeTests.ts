@@ -315,4 +315,25 @@ describe(nameof(ExportableNode), () => {
             doTest("function myFunction() {}", { isDefaultExport: true, isExported: true }, "export default function myFunction() {}");
         });
     });
+
+    describe(nameof<FunctionDeclaration>(f => f.getStructure), () => {
+        function doTest(startingCode: string, expectedStructure: { isDefaultExport: boolean; isExported: boolean; }) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            const structure = firstChild.getStructure();
+            expect(structure.isDefaultExport).to.equal(expectedStructure.isDefaultExport);
+            expect(structure.isExported).to.equal(expectedStructure.isExported);
+        }
+
+        it("should be false when not has", () => {
+            doTest("function myFunction() {}", { isDefaultExport: false, isExported: false });
+        });
+
+        it("should be true when has export", () => {
+            doTest("export function myFunction() {}", { isDefaultExport: false, isExported: true });
+        });
+
+        it("should be true when has export and default", () => {
+            doTest("export default function myFunction() {}", { isDefaultExport: true, isExported: true });
+        });
+    });
 });

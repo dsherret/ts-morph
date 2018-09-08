@@ -177,7 +177,7 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
 
         getStructure() {
             return callBaseGetStructure<ExportableNodeStructure>(Base.prototype, this, {
-                isExported: this.isExported(),
+                isExported: this.hasExportKeyword(),
                 isDefaultExport: this.hasDefaultKeyword()
             });
         }
