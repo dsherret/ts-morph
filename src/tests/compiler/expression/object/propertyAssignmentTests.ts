@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression } from "../../../../compiler";
+import { PropertyAssignmentStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 import { TypeGuards } from "../../../../utils";
@@ -71,19 +72,13 @@ describe(nameof(PropertyAssignment), () => {
     });
 
     describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: any) {
-            const { sourceFile } = getInfoFromText(code);
-            const structure = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.PropertyAssignment).getStructure();
-            expect(structure).to.deep.equals(expectedStructure);
+        function test(code: string, expectedStructure: PropertyAssignmentStructure) {
+            const { descendant } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
+            expect(descendant.getStructure()).to.deep.equals(expectedStructure);
         }
 
-        it("should get structure of simple expression", () => {
-            test("const t = { prop1: 1};", { name: "prop1", hasQuestionToken: false, initializer: "1" });
-        });
-
-        it("should get structure of simple expression", () => {
-            test("const t = { 'long name': (()=>1)() };", { name: "'long name'", hasQuestionToken: false, initializer: "(()=>1)()" });
+        it("should get the structure", () => {
+            test("const t = { prop1: 1};", { name: "prop1", initializer: "1" });
         });
     });
-
 });

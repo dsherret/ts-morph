@@ -75,8 +75,13 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
      */
     getStructure() {
         const initializer = this.getInitializerOrThrow();
-        return callBaseGetStructure<PropertyAssignmentSpecificStructure>(PropertyAssignmentBase.prototype, this, {
+        const structure = callBaseGetStructure<PropertyAssignmentSpecificStructure>(PropertyAssignmentBase.prototype, this, {
             initializer: initializer.getText()
         }) as any as PropertyAssignmentStructure;
+
+        // only has a question token for bad code. Don't include it in the structure.
+        delete (structure as any).hasQuestionToken;
+
+        return structure;
     }
 }
