@@ -103,13 +103,15 @@ export function BodyableNode<T extends Constructor<BodyableNodeExtensionType>>(B
 
             if (structure.bodyText != null)
                 this.setBodyText(structure.bodyText);
+            else if (structure.hasOwnProperty(nameof(structure.bodyText)))
+                this.removeBody();
 
             return this;
         }
 
         getStructure() {
             const body = this.getBody();
-            const bodyStructure = body == null ? undefined : { bodyText: getBodyTextForStructure(body) };
+            const bodyStructure = { bodyText: body == null ? undefined : getBodyTextForStructure(body) };
 
             return callBaseGetStructure<BodyableNodeStructure>(Base.prototype, this, bodyStructure);
         }

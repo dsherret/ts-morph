@@ -193,5 +193,13 @@ describe(nameof(BodyableNode), () => {
         it("should set the text of a function when using a writer", () => {
             doTest("function myFunction() {\n}", { bodyText: writer => writer.writeLine("var myVar;") }, "function myFunction() {\n    var myVar;\n}");
         });
+
+        it("should remove the body when it's undefined", () => {
+            doTest("function myFunction() {\n}", { bodyText: undefined }, "function myFunction();");
+        });
+
+        it("should not remove the body when the property doesn't exist", () => {
+            doTest("function myFunction() {\n}", { }, "function myFunction() {\n}");
+        });
     });
 });
