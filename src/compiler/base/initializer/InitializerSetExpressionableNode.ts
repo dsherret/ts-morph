@@ -60,6 +60,8 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
 
             if (structure.initializer != null)
                 this.setInitializer(structure.initializer);
+            else if (structure.hasOwnProperty(nameof(structure.initializer)))
+                this.removeInitializer();
 
             return this;
         }
