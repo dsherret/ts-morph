@@ -433,34 +433,4 @@ describe(nameof(ObjectLiteralExpression), () => {
                 "const t = {\n    prop1: 5,\n    set prop2() {\n    }\n};");
         });
     });
-
-    describe(nameof<ObjectLiteralExpression>(e => e.getStructure), () => {
-        function doTest(text: string, expected: any) {
-            const structure = getObjectLiteralExpression(text).objectLiteralExpression.getStructure();
-            expect(structure).to.deep.equal(expected);
-        }
-
-        it("should get structure of literal expression with normal, spread and shorthand property assignments", () => {
-            doTest(`
-            import {foo, bar} from 'foo';
-            const obj = {
-                a: 1,
-                b: [['x']],
-                c: (function(a){return a+1})(1) as string,
-                foo,
-                ...bar
-            };`, {
-                    properties:
-                        [{ name: "a", hasQuestionToken: false, initializer: "1" },
-                        { name: "b", hasQuestionToken: false, initializer: "[['x']]" },
-                        {
-                            name: "c",
-                            hasQuestionToken: false,
-                            initializer: "(function(a){return a+1})(1) as string"
-                        },
-                        { name: "foo", hasQuestionToken: false },
-                        { expression: "bar" }]
-                });
-        });
-    });
 });

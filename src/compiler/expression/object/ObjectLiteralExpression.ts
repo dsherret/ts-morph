@@ -2,9 +2,9 @@ import * as errors from "../../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, verifyAndGetIndex } from "../../../manipulation";
 import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../../structurePrinters";
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
-    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionStructure } from "../../../structures";
+    ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ArrayUtils, TypeGuards } from "../../../utils";
+import { ArrayUtils } from "../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";
@@ -277,20 +277,6 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     insertSetAccessors(index: number, structures: ReadonlyArray<SetAccessorDeclarationStructure>) {
         return this._insertProperty(index, structures, () => this.context.structurePrinterFactory.forSetAccessorDeclaration({ isAmbient: false })) as SetAccessorDeclaration[];
-    }
-
-    /**
-     * Gets the structure equivalent to this node.
-     */
-    getStructure(): ObjectLiteralExpressionStructure {
-        return callBaseGetStructure<ObjectLiteralExpressionStructure>(ObjectLiteralExpressionBase.prototype, this, {
-            properties: this.getProperties().map(property => {
-                // this is only to make the compiler happy
-                if (TypeGuards.isMethodDeclaration(property))
-                    return property.getStructure() as MethodDeclarationStructure;
-                return property.getStructure();
-            })
-        }) as any as ObjectLiteralExpressionStructure;
     }
 
     /**
