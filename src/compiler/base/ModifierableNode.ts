@@ -3,11 +3,8 @@ import { insertIntoParentTextRange, removeChildren } from "../../manipulation";
 import { Constructor } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getSyntaxKindName } from "../../utils";
-import { Node } from "../common/Node";
-import { Scope } from "../common/Scope";
+import { Node } from "../common";
 import { KindToNodeMappings } from "../kindToNodeMappings";
-import { ModifierableNodeStructurePrinter, ModifierableNodeStructures } from "../../structurePrinters";
-import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ModiferableNodeExtensionType = Node;
 export type ModifierTexts = "export" | "default" | "declare" | "abstract" | "public" | "protected" | "private" | "readonly" | "static" | "async" | "const";

@@ -95,4 +95,19 @@ describe(nameof(GeneratorableNode), () => {
             doTest("function myFunction() {}", { isGenerator: true }, "function* myFunction() {}");
         });
     });
+
+    describe(nameof<FunctionDeclaration>(f => f.getStructure), () => {
+        function doTest(startCode: string, isGenerator: boolean) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
+            expect(firstChild.getStructure().isGenerator).to.equal(isGenerator);
+        }
+
+        it("should be false when not", () => {
+            doTest("function test() {}", false);
+        });
+
+        it("should be true when is", () => {
+            doTest("function* test() {}", true);
+        });
+    });
 });
