@@ -4,7 +4,7 @@ import { CommaNewLineSeparatedStructuresPrinter, StructurePrinter } from "../../
 import { GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyAssignmentStructure, SetAccessorDeclarationStructure,
     ShorthandPropertyAssignmentStructure, SpreadAssignmentStructure, ObjectLiteralExpressionStructure } from "../../../structures";
 import { SyntaxKind, ts } from "../../../typescript";
-import { ArrayUtils } from "../../../utils";
+import { ArrayUtils, TypeGuards } from "../../../utils";
 import { ObjectLiteralElementLike } from "../../aliases";
 import { GetAccessorDeclaration, MethodDeclaration, SetAccessorDeclaration } from "../../class";
 import { PrimaryExpression } from "../PrimaryExpression";
@@ -284,7 +284,12 @@ export class ObjectLiteralExpression extends ObjectLiteralExpressionBase<ts.Obje
      */
     getStructure(): ObjectLiteralExpressionStructure {
         return callBaseGetStructure<ObjectLiteralExpressionStructure>(ObjectLiteralExpressionBase.prototype, this, {
-            properties: this.getProperties().map(property => property.getStructure())
+            properties: this.getProperties().map(property => {
+                // this is only to make the compiler happy
+                if (TypeGuards.isMethodDeclaration(property))
+                    return property.getStructure() as MethodDeclarationStructure;
+                return property.getStructure();
+            })
         }) as any as ObjectLiteralExpressionStructure;
     }
 

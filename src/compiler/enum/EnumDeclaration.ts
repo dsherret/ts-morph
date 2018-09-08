@@ -151,6 +151,6 @@ export class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclaration> {
         return callBaseGetStructure<EnumDeclarationSpecificStructure>(EnumDeclarationBase.prototype, this, {
             isConst: this.isConstEnum(),
             members: this.getMembers().map(member => member.getStructure())
-        });
+        }) as EnumDeclarationStructure;
     }
 }

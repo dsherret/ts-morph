@@ -1,5 +1,5 @@
 import { FormattingKind, removeChildrenWithFormatting } from "../../manipulation";
-import { EnumMemberStructure, EnumMemberSpecificStructure } from "../../structures";
+import { EnumMemberStructure, EnumMemberSpecificStructure, EnumDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
@@ -67,7 +67,6 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
     getStructure() {
         return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
             value: this.getValue()
-        });
+        }) as EnumMemberStructure;
     }
-
 }
