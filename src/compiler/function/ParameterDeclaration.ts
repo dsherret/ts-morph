@@ -83,10 +83,13 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
         removeCommaSeparatedChild(this);
     }
 
+    /**
+     * Gets the structure equivalent to this node.
+     **/
     getStructure(): ParameterDeclarationStructure {
         return callBaseGetStructure<ParameterDeclarationSpecificStructure>(ParameterDeclarationBase.prototype, this, {
             isRestParameter: this.isRestParameter()
-        }) as any as ParameterDeclarationStructure; // TODO: might need to add this assertion... I'll make it better later
+        }) as any as ParameterDeclarationStructure;
     }
 
     // ------ Methods to override to add parens ------

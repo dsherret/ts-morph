@@ -15,7 +15,7 @@ export class PropertySignature extends PropertySignatureBase<ts.PropertySignatur
      * Fills the node from a structure.
      * @param structure - Structure to fill.
      */
-    fill(structure: Partial<PropertySignatureStructure>): this {
+    fill(structure: Partial<PropertySignatureStructure>) {
         callBaseFill(PropertySignatureBase.prototype, this, structure);
 
         return this;

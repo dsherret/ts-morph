@@ -12,7 +12,7 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
      * Fills the node from a structure.
      * @param structure - Structure to fill.
      */
-    fill(structure: Partial<MethodSignatureStructure>): this {
+    fill(structure: Partial<MethodSignatureStructure>) {
         callBaseFill(MethodSignatureBase.prototype, this, structure);
 
         return this;
