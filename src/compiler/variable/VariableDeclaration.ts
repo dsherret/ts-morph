@@ -57,7 +57,7 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): VariableDeclarationStructure {
         const initializer = this.getInitializer();

@@ -84,7 +84,7 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): MethodDeclarationStructure | MethodDeclarationOverloadStructure {
         const isOverload = this.isOverload();

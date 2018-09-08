@@ -133,7 +133,7 @@ export class VariableDeclarationList extends VariableDeclarationListBase<ts.Vari
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): VariableDeclarationListStructure {
         return callBaseGetStructure<VariableDeclarationListSpecificStructure>(VariableDeclarationListBase.prototype, this, {

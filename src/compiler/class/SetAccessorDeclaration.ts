@@ -52,7 +52,7 @@ export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAcc
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): SetAccessorDeclarationStructure {
         return callBaseGetStructure<SetAccessorDeclarationSpecificStructure>(SetAccessorDeclarationBase.prototype, this, {

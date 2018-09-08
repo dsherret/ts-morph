@@ -18,7 +18,7 @@ export class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): ArrowFunctionStructure {
         return callBaseGetStructure<ArrowFunctionSpecificStructure>(ArrowFunctionBase.prototype, this, {

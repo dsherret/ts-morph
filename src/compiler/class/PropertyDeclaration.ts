@@ -39,7 +39,7 @@ export class PropertyDeclaration extends PropertyDeclarationBase<ts.PropertyDecl
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): PropertyDeclarationStructure {
         return callBaseGetStructure<PropertyDeclarationSpecificStructure>(PropertyDeclarationBase.prototype, this, {

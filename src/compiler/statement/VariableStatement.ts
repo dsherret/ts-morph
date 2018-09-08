@@ -95,7 +95,7 @@ export class VariableStatement extends VariableStatementBase<ts.VariableStatemen
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure(): VariableStatementStructure {
         return callBaseGetStructure<VariableStatementSpecificStructure>(VariableStatementBase.prototype, this, {

@@ -71,7 +71,7 @@ export class PropertyAssignment extends PropertyAssignmentBase<ts.PropertyAssign
     }
 
     /**
-     * Gets the structure equivalent to this node
+     * Gets the structure equivalent to this node.
      */
     getStructure() {
         const initializer = this.getInitializerOrThrow();
