@@ -7,7 +7,6 @@
     CallSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature, TypeAliasDeclaration,
     NumericLiteral, VariableStatement, VariableDeclarationKind, IndentationText, QuoteKind, ts, createWrappedNode,
     PropertyAccessExpression, LanguageService, Program, TypeChecker, FileSystemHost, TypeParameterDeclaration } from "../../src/main";
-import { expect as Expect } from "chai";
 
 let project: Project, node: Node, classDeclaration: ClassDeclaration, functionDeclaration: FunctionDeclaration,
     sourceFile: SourceFile, method: MethodDeclaration, decorator: Decorator, enumDeclaration: EnumDeclaration,
