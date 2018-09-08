@@ -2,7 +2,7 @@
 import { ExportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
-import { ExportSpecifierStructure } from "../../../structures";
+import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
@@ -345,7 +345,7 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: any) {
+        function doTest(text: string, expectedStructure: ExportDeclarationStructure) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }

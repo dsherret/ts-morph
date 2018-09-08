@@ -2,7 +2,7 @@
 import { ImportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
-import { ImportSpecifierStructure } from "../../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../../structures";
 import { ModuleResolutionKind } from "../../../typescript";
 import { getInfoFromText } from "../testHelpers";
 
@@ -513,9 +513,8 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: any) {
+        function doTest(text: string, expectedStructure: ImportDeclarationStructure) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
-            // console.log(firstChild.getStructure());
             expect(firstChild.getStructure()).to.deep.eq(expectedStructure);
         }
 
