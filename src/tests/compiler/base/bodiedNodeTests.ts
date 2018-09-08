@@ -35,11 +35,11 @@ describe(nameof(BodiedNode), () => {
         }
 
         it("should get the body text when there is none", () => {
-            doTest("namespace identifier {\n}", undefined);
+            doTest("namespace identifier {\n}", "");
         });
 
         it("should get the body text when there is a lot of whitespace", () => {
-            doTest("namespace identifier {\n   \t\n\r\n   \t}", undefined);
+            doTest("namespace identifier {\n   \t\n\r\n   \t}", "");
         });
 
         it("should get the body text without indentation", () => {

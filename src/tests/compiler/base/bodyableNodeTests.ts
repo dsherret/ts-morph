@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { BodyableNode, ClassDeclaration, FunctionDeclaration } from "../../../compiler";
-import { BodyableNodeStructure } from "../../../structures";
+import { BodyableNodeStructure, FunctionDeclarationStructure } from "../../../structures";
 import { WriterFunction } from "../../../types";
 import { getInfoFromText } from "../testHelpers";
 
@@ -163,7 +163,7 @@ describe(nameof(BodyableNode), () => {
     describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
         function doTest(startCode: string, bodyText: string | undefined) {
             const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
-            expect(firstChild.getStructure().bodyText).to.equal(bodyText);
+            expect((firstChild.getStructure() as FunctionDeclarationStructure).bodyText).to.equal(bodyText);
         }
 
         it("should get the body text when there is none", () => {
@@ -171,7 +171,7 @@ describe(nameof(BodyableNode), () => {
         });
 
         it("should get the body text when there is a lot of whitespace", () => {
-            doTest("function test() {\n   \t\n\r\n   \t}", undefined);
+            doTest("function test() {\n   \t\n\r\n   \t}", "");
         });
 
         it("should get the body text without indentation", () => {

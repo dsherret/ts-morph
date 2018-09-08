@@ -12,7 +12,7 @@ export function getBodyTextForStructure(body: Node) {
     const width = endPos - startPos;
 
     if (width === 0)
-        return undefined;
+        return "";
 
     const fullText = sourceFile.getFullText().substring(startPos, endPos);
 
