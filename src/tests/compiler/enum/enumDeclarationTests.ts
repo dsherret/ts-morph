@@ -213,54 +213,41 @@ describe(nameof(EnumDeclaration), () => {
     });
 
     describe(nameof<EnumDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expected: EnumDeclarationStructure) {
+        function doTest(code: string, expected: MakeRequired<EnumDeclarationStructure>) {
             const { firstChild } = getInfoFromText<EnumDeclaration>(code);
-            expect(firstChild.getStructure()).to.deep.equal(expected);
+            const structure = firstChild.getStructure();
+            structure.members = structure.members!.map(m => ({ name: m.name }));
+            expect(structure).to.deep.equal(expected);
         }
 
-        it("should respect empty enum", () => {
-            doTest("enum Identifier {\n}", {
-                name: "Identifier", isExported: false, isDefaultExport: false,
-                hasDeclareKeyword: false, docs: [], isConst: false, members: []
+        it("should get structure of an empty enum", () => {
+            doTest("declare enum Identifier {}", {
+                name: "Identifier",
+                isExported: false,
+                isDefaultExport: false,
+                hasDeclareKeyword: true,
+                docs: [],
+                isConst: false,
+                members: []
             });
         });
 
-        it("should respect names with spaces initializers and docs", () => {
-            doTest(`
-            /** lorem ipsum */
-            export enum CONSTANTS {
-                /** Use when opinionated */
-                'a very peculiar name' = 3.14,
-                foo,
-                /** bar */
-                bar="bar"
-            };
-            `,
-                {
-                    name: "CONSTANTS",
-                    isExported: true,
-                    isDefaultExport: false,
-                    hasDeclareKeyword: false,
-                    docs: [{ description: "lorem ipsum" }],
-                    isConst: false,
-                    members:
-                        [{
-                            name: "\'a very peculiar name\'",
-                            initializer: "3.14",
-                            docs: [{
-                                description: "Use when opinionated"
-                            }],
-                            value: 3.14
-                        },
-                        {
-                            name: "foo",
-                            initializer: undefined,
-                            docs: [],
-                            value: 4.140000000000001
-                        },
-                        { name: "bar", initializer: "\"bar\"", docs: [{ description: "bar" }], value: "bar" }
-                        ]
-                });
+        it("should get structure when enum has everything", () => {
+            const code = `
+/** test */
+export const enum Enum {
+    member
+}
+`;
+            doTest(code, {
+                name: "Enum",
+                isExported: true,
+                isDefaultExport: false, // enums can't have a default keyword
+                hasDeclareKeyword: false,
+                docs: [{ description: "test" }],
+                isConst: true,
+                members: [{ name: "member" }]
+            });
         });
     });
 });

@@ -91,7 +91,11 @@ describe(nameof(EnumMember), () => {
         }
 
         it("should not change anything when nothing was specified", () => {
-            doTest("enum Identifier { member }", {}, "enum Identifier { member }");
+            doTest("enum Identifier { member = 5 }", {}, "enum Identifier { member = 5 }");
+        });
+
+        it("should remove the value when providing undefined for that property", () => {
+            doTest("enum Identifier { member = 5 }", { value: undefined }, "enum Identifier { member }");
         });
 
         it("should change when specifying", () => {
@@ -103,25 +107,31 @@ describe(nameof(EnumMember), () => {
     });
 
     describe(nameof<EnumMember>(d => d.getStructure), () => {
-        function doTest(code: string, expected: EnumMemberStructure) {
+        function doTest(code: string, expected: MakeRequired<EnumMemberStructure>) {
             const { firstEnumMember } = getInfoFromTextWithFirstMember(code);
             expect(firstEnumMember.getStructure()).to.deep.equal(expected);
         }
 
-        it("should respect defaults when nothing but name is declared", () => {
-            doTest("enum a { member }", { name: "member", initializer: undefined, docs: [], value: 0 });
+        it("should get structure from an empty enum member", () => {
+            doTest("enum a { member }", {
+                name: "member",
+                initializer: undefined,
+                docs: [],
+                value: undefined
+            });
         });
 
-        it("should respect names with spaces initializers and docs", () => {
-            doTest(`
-            enum b {
-                /** Use when opinionated */
-                'a very peculiar name' = 3.14
-            }`,
+        it("should get structure when everything is filled", () => {
+            const code = `
+enum b {
+    /** Test */
+    'str' = 3.14
+}`;
+            doTest(code,
                 {
-                    name: "\'a very peculiar name\'", // TODO: Should the quotes be part of the name ? (I don't think so)
+                    name: "\'str\'",
                     initializer: "3.14",
-                    docs: [{ description: "Use when opinionated" }],
+                    docs: [{ description: "Test" }],
                     value: 3.14
                 });
         });
