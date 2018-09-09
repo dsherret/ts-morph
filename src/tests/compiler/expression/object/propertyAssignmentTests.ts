@@ -72,7 +72,7 @@ describe(nameof(PropertyAssignment), () => {
     });
 
     describe(nameof<PropertyAssignment>(p => p.getStructure), () => {
-        function test(code: string, expectedStructure: PropertyAssignmentStructure) {
+        function test(code: string, expectedStructure: MakeRequired<PropertyAssignmentStructure>) {
             const { descendant } = getInfoFromTextWithDescendant<PropertyAssignment>(code, SyntaxKind.PropertyAssignment);
             expect(descendant.getStructure()).to.deep.equals(expectedStructure);
         }

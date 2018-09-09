@@ -5,7 +5,7 @@ import { InitializerGetExpressionableNode, NamedNode, QuestionTokenableNode } fr
 import { Node } from "../../common/Node";
 import { Expression } from "../Expression";
 import { PropertyAssignment } from "./PropertyAssignment";
-import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure } from "../../../structures";
+import { ShorthandPropertyAssignmentStructure, ShorthandPropertyAssignmentSpecificStructure, QuestionTokenableNodeStructure } from "../../../structures";
 import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 // This node only has an object assignment initializer, equals token, and question token, in order to tell the user about bad code
@@ -101,7 +101,12 @@ export class ShorthandPropertyAssignment extends ShorthandPropertyAssignmentBase
      * Gets the structure equivalent to this node.
      */
     getStructure(): ShorthandPropertyAssignmentStructure {
-        return callBaseGetStructure<ShorthandPropertyAssignmentSpecificStructure>(ShorthandPropertyAssignmentBase.prototype, this, {
+        const structure = callBaseGetStructure<ShorthandPropertyAssignmentSpecificStructure>(ShorthandPropertyAssignmentBase.prototype, this, {
         }) as any as ShorthandPropertyAssignmentStructure;
+
+        // remove since this is only used to tell the user about incorrect code
+        delete (structure as QuestionTokenableNodeStructure).hasQuestionToken;
+
+        return structure;
     }
 }

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { PropertyAssignment, ShorthandPropertyAssignment, ObjectLiteralExpression, Node } from "../../../../compiler";
+import { ShorthandPropertyAssignmentStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 
@@ -139,6 +140,17 @@ describe(nameof(ShorthandPropertyAssignment), () => {
         it("should remove the last when on separate lines", () => {
             doTest(`const t = {\n    prop1,\n    prop2,\n    prop3\n};`, "prop3",
                 `{\n    prop1,\n    prop2\n}`);
+        });
+    });
+
+    describe(nameof<ShorthandPropertyAssignment>(p => p.getStructure), () => {
+        function test(code: string, expectedStructure: MakeRequired<ShorthandPropertyAssignmentStructure>) {
+            const { descendant } = getInfoFromTextWithDescendant<ShorthandPropertyAssignment>(code, SyntaxKind.ShorthandPropertyAssignment);
+            expect(descendant.getStructure()).to.deep.equals(expectedStructure);
+        }
+
+        it("should get the structure", () => {
+            test("const t = { prop1 };", { name: "prop1" });
         });
     });
 });

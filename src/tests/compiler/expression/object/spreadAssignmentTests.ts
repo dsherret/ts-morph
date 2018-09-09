@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { SpreadAssignment, Node, ObjectLiteralExpression } from "../../../../compiler";
+import { SpreadAssignmentStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../../testHelpers";
 import { TypeGuards } from "../../../../utils/TypeGuards";
@@ -56,6 +57,17 @@ describe(nameof(SpreadAssignment), () => {
         it("should remove the last when on separate lines", () => {
             doTest(`const t = {\n    ...prop1,\n    ...prop2,\n    ...prop3\n};`, 2,
                 `{\n    ...prop1,\n    ...prop2\n}`);
+        });
+    });
+
+    describe(nameof<SpreadAssignment>(p => p.getStructure), () => {
+        function test(code: string, expectedStructure: MakeRequired<SpreadAssignmentStructure>) {
+            const { descendant } = getInfoFromTextWithDescendant<SpreadAssignment>(code, SyntaxKind.SpreadAssignment);
+            expect(descendant.getStructure()).to.deep.equals(expectedStructure);
+        }
+
+        it("should get the structure", () => {
+            test("const t = { ...assignment };", { expression: "assignment" });
         });
     });
 });
