@@ -151,43 +151,75 @@ describe(nameof(FunctionDeclaration), () => {
     });
 
     describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
-        // this is comparing original Node.getText() with a the getText() of a new Node filled with generated structure.
-        // Compared strings have no spaces so comparision doesn't fail.
-        function doTest(text: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(text);
-            const structure = firstChild.getStructure();
-            const aux = sourceFile.addStatements("function aux(){}");
-            const decl = aux[0];
-            if (!TypeGuards.isFunctionDeclaration(decl)) {
-                return assert.fail("!TypeGuards.isFunctionDeclaration(decl)");
-            }
-            decl.fill(structure);
-            expect( decl.getText().replace(/\s+/gm, "")).equals(firstChild.getText().replace(/\s+/gm, ""));
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(text: string, expectedStructure: Omit<MakeRequired<FunctionDeclarationStructure>, PropertyNamesToExclude>) {
+            const { sourceFile } = getInfoFromText<any>(text);
+            const functionDec = sourceFile.getFunctions()[0];
+            const structure = functionDec.getStructure() as FunctionDeclarationStructure;
+
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+
+            structure.overloads!.forEach(o => {
+                o.parameters = o.parameters!.map(p => ({ name: p.name }));
+                o.typeParameters = o.typeParameters!.map(p => ({ name: p.name }));
+            });
+
+            expect(structure).to.deep.equal(expectedStructure);
         }
 
-        it("should generate structure with correct return type and parameter names and types", () => {
-            const code = "export function f(param: string[]):string[][] {return null}";
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
-            const structure = firstChild.getStructure();
-            expect(structure.returnType!.toString()).equals("string[][]");
-            expect((structure as FunctionDeclarationStructure).bodyText!.toString()).equals("return null");
-            expect(structure.parameters!.length).equals(1);
-            expect(structure.parameters![0].name).equals("param");
-            expect(structure.parameters![0].type).equals("string[]");
+        it("should get the structure for an empty function", () => {
+            doTest("declare function test() {}", {
+                bodyText: "",
+                docs: [],
+                hasDeclareKeyword: true,
+                isAsync: false,
+                isDefaultExport: false,
+                isExported: false,
+                isGenerator: false,
+                name: "test",
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                typeParameters: []
+            });
         });
 
-        // test: jsdoc, typeParameters, body text,  inner class / interface, enums, typealias, etc declared in its body
+        it("should get the structure for a function that has everything", () => {
+            const code = `
+/** docs2 */
+export default async function *test<U>(p): number;
+/** docs */
+export default async function *test<T>(param): string {
+    return '';
+}
+`;
+            const overloadStructure: MakeRequired<FunctionDeclarationOverloadStructure> = {
+                docs: [{ description: "docs2" }],
+                hasDeclareKeyword: false,
+                isAsync: true,
+                isDefaultExport: true,
+                isExported: true,
+                isGenerator: true,
+                parameters: [{ name: "p" }],
+                returnType: "number",
+                typeParameters: [{ name: "U" }]
+            };
 
-        it("should generate structure with question token if appropriate", () => {
-            doTest("function g(matrix? : boolean[][]): number {return 3.14}");
-        });
-
-        it("should generate structure that don't mess up body's braces and typeparameters ", () => {
-            doTest("function customSum<T>(a:T):{result: T} {return {result: 3.14 + a}}");
-        });
-
-        it("should generate correct structure for unnamed function containing parameter declarations with  initializer and questionToken", () => {
-            doTest("function g(msg: string = 'hello world', param2? : boolean[][]) {}");
+            doTest(code, {
+                bodyText: "return '';",
+                docs: [{ description: "docs" }],
+                hasDeclareKeyword: false,
+                isAsync: true,
+                isDefaultExport: true,
+                isExported: true,
+                isGenerator: true,
+                name: "test",
+                overloads: [overloadStructure],
+                parameters: [{ name: "param" }],
+                returnType: "string",
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });
