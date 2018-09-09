@@ -146,19 +146,12 @@ describe(nameof(ConstructorDeclaration), () => {
     });
 
     describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
-        function doTest(code: string, expectedStructure: MakeRequired<ConstructorDeclarationStructure>) {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(code: string, expectedStructure: Omit<MakeRequired<ConstructorDeclarationStructure>, PropertyNamesToExclude>) {
             const { firstChild } = getInfoFromText<ClassDeclaration>(code);
             const structure = firstChild.getConstructors()[0].getStructure();
             structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
-
-            // temp solution for MakeRequired making these necessary (use conditional types instead--diff)
-            delete expectedStructure.classes;
-            delete expectedStructure.functions;
-            delete expectedStructure.enums;
-            delete expectedStructure.interfaces;
-            delete expectedStructure.namespaces;
-            delete expectedStructure.typeAliases;
 
             expect(structure).to.deep.equal(expectedStructure);
         }
@@ -171,13 +164,7 @@ describe(nameof(ConstructorDeclaration), () => {
                 parameters: [],
                 returnType: undefined,
                 scope: undefined,
-                typeParameters: [],
-                classes: undefined,
-                enums: undefined,
-                functions: undefined,
-                interfaces: undefined,
-                namespaces: undefined,
-                typeAliases: undefined
+                typeParameters: []
             });
         });
 
@@ -207,13 +194,7 @@ class T {
                 parameters: [{ name: "p" }],
                 returnType: undefined,
                 scope: Scope.Public,
-                typeParameters: [{ name: "T" }],
-                classes: undefined,
-                enums: undefined,
-                functions: undefined,
-                interfaces: undefined,
-                namespaces: undefined,
-                typeAliases: undefined
+                typeParameters: [{ name: "T" }]
             });
         });
     });

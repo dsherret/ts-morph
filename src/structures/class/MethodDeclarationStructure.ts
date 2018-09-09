@@ -14,7 +14,7 @@ export interface MethodDeclarationSpecificStructure {
 }
 
 export interface MethodDeclarationOverloadStructure
-    extends StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure,
+    extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure,
         GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure
 {
 }

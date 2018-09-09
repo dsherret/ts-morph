@@ -913,8 +913,8 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
     getStructure(): ClassDeclarationStructure {
         const getExtends = this.getExtends();
         return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
-            ctors: this.getConstructors().filter(ctor => !ctor.isOverload()).map(ctor => ctor.getStructure()),
-            methods: this.getMethods().filter(method => !method.isOverload()).map(method => method.getStructure()),
+            ctors: this.getConstructors().filter(ctor => !ctor.isOverload()).map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
+            methods: this.getMethods().filter(method => !method.isOverload()).map(method => method.getStructure() as MethodDeclarationStructure),
             properties: this.getProperties().map(property => property.getStructure()),
             extends: getExtends ? getExtends.getText() : undefined,
             getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),

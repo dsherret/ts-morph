@@ -66,9 +66,10 @@ export class MethodDeclarationStructurePrinter extends FactoryStructurePrinter<M
         writer.write(";");
     }
 
-    private printBase(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure) {
+    private printBase(writer: CodeBlockWriter, name: string, structure: MethodDeclarationOverloadStructure | MethodDeclarationStructure) {
         this.factory.forJSDoc().printDocs(writer, structure.docs);
-        this.factory.forDecorator().printTexts(writer, structure.decorators);
+        if ((structure as MethodDeclarationStructure).decorators != null)
+            this.factory.forDecorator().printTexts(writer, (structure as MethodDeclarationStructure).decorators);
         this.factory.forModifierableNode().printText(writer, structure);
         writer.write(name);
         this.factory.forTypeParameterDeclaration().printTextsWithBrackets(writer, structure.typeParameters);

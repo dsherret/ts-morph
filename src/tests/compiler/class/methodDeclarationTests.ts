@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
 import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
-import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { getInfoFromText } from "../testHelpers";
 import { SyntaxKind } from "../../../typescript";
 import { TypeGuards } from "../../../utils";
 
@@ -111,23 +111,6 @@ describe(nameof(MethodDeclaration), () => {
         });
     });
 
-    describe(nameof<MethodDeclaration>(m => m.isOverload), () => {
-        function doTest(startingCode: string, methodName: string, expected: boolean) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
-            const method = firstChild.getInstanceMethods().find(m => m.getName() === methodName);
-            expect(method).to.not.be.undefined;
-            expect(method!.isOverload()).to.be.equals(expected);
-        }
-
-        xit("should be false for a non overloaded abstract method ?", () => {
-            doTest(`
-abstract class Person {
-    abstract eat(food: number[]): void;
-}
-            `, "eat", false);
-        });
-    });
-
     describe(nameof<MethodDeclaration>(m => m.remove), () => {
         describe("no overload", () => {
             function doTest(code: string, nameToRemove: string, expectedCode: string) {
@@ -175,7 +158,7 @@ abstract class Person {
         describe("overloads", () => {
             function doTest(code: string, nameToRemove: string, index: number, expectedCode: string) {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-                const method = firstChild.getInstanceMethod(nameToRemove)!;
+                const method = firstChild.getInstanceMethodOrThrow(nameToRemove);
                 [...method.getOverloads(), method][index].remove();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -223,34 +206,76 @@ abstract class Person {
     });
 
     describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
-        function doTest(code: string, expectedStructure: MethodDeclarationStructure) {
-            const {descendant, sourceFile} = getInfoFromTextWithDescendant<MethodDeclaration>(code, SyntaxKind.MethodDeclaration);
-            const structure = descendant.getStructure();
-            expect(Object.assign({}, structure, {parameters: undefined})).to.contain(Object.assign({}, expectedStructure, {parameters: undefined}));
-            expect(expectedStructure.parameters && expectedStructure.parameters.length).to.equals(structure.parameters && structure.parameters.length);
-            (expectedStructure.parameters || []).forEach((expectedParameter, i) => {
-                expect(structure.parameters![i], `${i}th parameter of method ${structure.name}`).to.contain(expectedParameter);
-            });
-            // and also recreate the AST using structure and compare getText() of generated code with original node's
-            const aux = sourceFile.addStatements("class __AuxClass{}");
-            const decl = aux[0];
-            if (!TypeGuards.isClassDeclaration(decl)) {
-                return expect("!TypeGuards.isClassDeclaration(decl)").to.be.undefined;
-            }
-            expect(decl.getMethods().length).to.eq(0);
-            decl.addMethod(structure);
-            expect(decl.getMethods().length).to.eq(1);
-            const methodDecl = decl.getMethods()[0];
-            expect(methodDecl.getText().replace(/\s+/gm, "")).equals(descendant.getText().replace(/\s+/gm, ""));
-            return;
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(code: string, expectedStructure: Omit<MakeRequired<MethodDeclarationStructure>, PropertyNamesToExclude>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const method = firstChild.getInstanceMethod("method") || firstChild.getStaticMethodOrThrow("method");
+            const structure = method.getStructure() as MethodDeclarationStructure;
+
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.overloads = structure.overloads!.map(o => ({
+                ...o,
+                parameters: o.parameters!.map(p => ({ name: p.name })),
+                typeParameters: o.typeParameters!.map(p => ({ name: p.name }))
+            }));
+
+            expect(structure).to.deep.equal(expectedStructure);
         }
 
-        it("should generate method structure with correct name, return type and parameter declarations", () => {
-            doTest("class A { private method1(a: Date[] = new Date()): boolean {return false;} }", {
-                name: "method1", returnType: "boolean", scope: Scope.Private, bodyText: "return false;",
-                    parameters: [{name: "a", type: "Date[]", initializer: "new Date()"}]
+        it("should get structure when empty", () => {
+            doTest("class Test { abstract method() {} }", {
+                bodyText: "",
+                decorators: [],
+                docs: [],
+                isAbstract: true,
+                isAsync: false,
+                isGenerator: false,
+                isStatic: false,
+                name: "method",
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: []
             });
         });
-        // TODO: overloads, scope, iStatic, abstract, body, type params
+
+        it("should get structure when it has everything", () => {
+            const code = `
+class Test {
+    /** overload */
+    protected static async *method<T>(p): string;
+    /** implementation */
+    protected static async *method<T>(param): string {
+    }
+}
+`;
+            doTest(code, {
+                bodyText: "",
+                decorators: [],
+                docs: [{ description: "implementation" }],
+                isAbstract: false,
+                isAsync: true,
+                isGenerator: true,
+                isStatic: true,
+                name: "method",
+                overloads: [{
+                    docs: [{ description: "overload" }],
+                    isAsync: true,
+                    isGenerator: true,
+                    isStatic: true,
+                    returnType: "string",
+                    scope: Scope.Protected,
+                    parameters: [{ name: "p" }],
+                    typeParameters: [{ name: "T" }],
+                    isAbstract: false
+                }],
+                parameters: [{ name: "param" }],
+                returnType: "string",
+                scope: Scope.Protected,
+                typeParameters: [{ name: "T" }]
+            });
+        });
     });
 });

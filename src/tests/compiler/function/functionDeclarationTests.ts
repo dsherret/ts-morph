@@ -1,6 +1,6 @@
 ﻿import { expect, assert } from "chai";
 import { FunctionDeclaration } from "../../../compiler";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 import { TypeGuards } from "../../../utils/TypeGuards";
 
@@ -170,7 +170,7 @@ describe(nameof(FunctionDeclaration), () => {
             const {firstChild} = getInfoFromText<FunctionDeclaration>(code);
             const structure = firstChild.getStructure();
             expect(structure.returnType!.toString()).equals("string[][]");
-            expect(structure.bodyText!.toString()).equals("return null");
+            expect((structure as FunctionDeclarationStructure).bodyText!.toString()).equals("return null");
             expect(structure.parameters!.length).equals(1);
             expect(structure.parameters![0].name).equals("param");
             expect(structure.parameters![0].type).equals("string[]");
