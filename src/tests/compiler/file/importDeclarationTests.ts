@@ -513,24 +513,21 @@ describe(nameof(ImportDeclaration), () => {
     });
 
     describe(nameof<ImportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: ImportDeclarationStructure) {
+        function doTest(text: string, expectedStructure: MakeRequired<ImportDeclarationStructure>) {
             const { firstChild } = getInfoFromText<ImportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
-        it("should work for named multiple import declarations", () => {
-            doTest(`import {a as bar, b} from 'foo'`, {
+        it("should work when has named imports", () => {
+            doTest(`import { a } from 'foo'`, {
                 defaultImport: undefined,
                 moduleSpecifier: "'foo'",
-                namedImports: [
-                    { name: "a", alias: "bar" },
-                    { name: "b", alias: undefined }
-                ],
+                namedImports: [{ name: "a", alias: undefined }],
                 namespaceImport: undefined
             });
         });
 
-        it("should work for wildcard import declarations", () => {
+        it("should work when is a namespace import", () => {
             doTest(`import * as ts from 'typescript'`, {
                 defaultImport: undefined,
                 moduleSpecifier: "\'typescript\'",
@@ -539,11 +536,20 @@ describe(nameof(ImportDeclaration), () => {
             });
         });
 
-        it("should work for default import declarations", () => {
+        it("should work for default imports", () => {
             doTest(`import bar from 'foo'`, {
                 defaultImport: "bar",
                 moduleSpecifier: "\'foo\'",
                 namedImports: [],
+                namespaceImport: undefined
+            });
+        });
+
+        it("should work for default with named imports", () => {
+            doTest(`import bar, {test} from 'foo'`, {
+                defaultImport: "bar",
+                moduleSpecifier: "\'foo\'",
+                namedImports: [{ name: "test", alias: undefined }],
                 namespaceImport: undefined
             });
         });

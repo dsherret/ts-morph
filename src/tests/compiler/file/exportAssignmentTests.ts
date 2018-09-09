@@ -35,7 +35,7 @@ describe(nameof(ExportAssignment), () => {
     });
 
     describe(nameof<ExportAssignment>(n => n.getStructure), () => {
-        function doTest(text: string, expected: ExportAssignmentStructure) {
+        function doTest(text: string, expected: MakeRequired<ExportAssignmentStructure>) {
             const structure = getInfoFromText<ExportAssignment>(text).firstChild.getStructure();
             expect(structure).to.deep.equals(expected);
         }

@@ -345,22 +345,19 @@ describe(nameof(ExportDeclaration), () => {
     });
 
     describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
-        function doTest(text: string, expectedStructure: ExportDeclarationStructure) {
+        function doTest(text: string, expectedStructure: MakeRequired<ExportDeclarationStructure>) {
             const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
         }
 
         it("should work with named export declarations", () => {
-            doTest(`export {name, name2, name3 as name4} from "./test";`, {
+            doTest(`export { name } from "./test";`, {
                 moduleSpecifier: '"./test"',
-                namedExports:
-                    [{ alias: undefined, name: "name" },
-                    { alias: undefined, name: "name2" },
-                    { alias: "name4", name: "name3" }]
+                namedExports: [{ alias: undefined, name: "name" }]
             });
         });
 
-        it("should work with wildcard export declarations", () => {
+        it("should work with namespace export declarations", () => {
             doTest(`export * from "./test";`, {
                 moduleSpecifier: '"./test"',
                 namedExports: []

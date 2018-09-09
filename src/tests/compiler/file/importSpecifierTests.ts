@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ImportDeclaration, ImportSpecifier } from "../../../compiler";
+import { ImportSpecifierStructure } from "../../../structures";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
 
@@ -136,6 +137,21 @@ describe(nameof(ImportSpecifier), () => {
 
         it("should remove the named imports when only one exists and a default import exist", () => {
             doTest(`import defaultExport, {Name1} from "module-name";`, "Name1", `import defaultExport from "module-name";`);
+        });
+    });
+
+    describe(nameof<ImportSpecifier>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<ImportSpecifierStructure>) {
+            const { firstChild } = getInfoFromText<ImportDeclaration>(text);
+            expect(firstChild.getNamedImports()[0].getStructure()).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has no alias", () => {
+            doTest(`import { a } from 'foo'`, { name: "a", alias: undefined });
+        });
+
+        it("should get when has an alias", () => {
+            doTest(`import { a as alias } from 'foo'`, { name: "a", alias: "alias" });
         });
     });
 });
