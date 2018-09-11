@@ -58,18 +58,26 @@ describe(nameof(VariableDeclaration), () => {
     });
 
     describe(nameof<VariableDeclaration>(d => d.getStructure), () => {
-        function doTest(startCode: string, expectedStructure: VariableDeclarationStructure) {
+        function doTest(startCode: string, expectedStructure: MakeRequired<VariableDeclarationStructure>) {
             const structure = getInfoFromText(startCode).sourceFile.getVariableDeclarations()[0].getStructure();
             expect(structure).to.deep.equal(expectedStructure);
         }
 
-        it("should get structure variable declaration without assignament", () => {
-            doTest("var t;", { name: "t", initializer: undefined, type: undefined, hasExclamationToken: false });
+        it("should get from declaration with nothing", () => {
+            doTest("var t;", {
+                name: "t",
+                initializer: undefined,
+                type: undefined,
+                hasExclamationToken: false
+            });
         });
 
-        it("should get structure variable declaration with type and initializer", () => {
-            doTest("var t:Promise<string> = Promise.resolve('hi');", {
-                name: "t", initializer: "Promise.resolve('hi')", type: "Promise<string>", hasExclamationToken: false
+        it("should get from declaration with everything", () => {
+            doTest("var t!: number = 5;", {
+                name: "t",
+                initializer: "5",
+                type: "number",
+                hasExclamationToken: true
             });
         });
     });

@@ -160,23 +160,33 @@ describe(nameof(VariableStatement), () => {
     describe(nameof<VariableStatement>(d => d.getStructure), () => {
         function doTest(text: string, expected: VariableStatementStructure) {
             const structure = getInfoFromText(text).sourceFile.getVariableStatements()[0].getStructure();
+            structure.declarations = structure.declarations.map(d => ({ name: d.name }));
             expect(structure).to.deep.equal(expected);
         }
 
-        it("should get structure for exported single variable declaration with type", () => {
-            doTest("export var a:Date[]", {
-                isExported: true, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: VariableDeclarationKind.Var,
-                declarations: [{ name: "a", initializer: undefined, type: "Date[]", hasExclamationToken: false }]
+        it("should get for statement with nothing", () => {
+            doTest("declare const a;", {
+                isExported: false,
+                isDefaultExport: false,
+                hasDeclareKeyword: true,
+                docs: [],
+                declarationKind: VariableDeclarationKind.Const,
+                declarations: [{ name: "a" }]
             });
         });
 
-        it("should get structure for exported single variable declaration with type", () => {
-            doTest("const a:Date[]=[new Date()],b=1,c=a", {
-                isExported: false, isDefaultExport: false, hasDeclareKeyword: false, docs: [], declarationKind: VariableDeclarationKind.Const,
-                declarations: [{ name: "a", initializer: "[new Date()]", type: "Date[]", hasExclamationToken: false },
-                { name: "b", initializer: "1", type: undefined, hasExclamationToken: false }, {
-                    name: "c", initializer: "a", type: undefined, hasExclamationToken: false
-                }]
+        it("should get for statement with everything", () => {
+            const code = `
+/** Test */
+export var test;
+`;
+            doTest(code, {
+                isExported: true,
+                isDefaultExport: false,
+                hasDeclareKeyword: false,
+                docs: [{ description: "Test" }],
+                declarationKind: VariableDeclarationKind.Var,
+                declarations: [{ name: "test" }]
             });
         });
     });
