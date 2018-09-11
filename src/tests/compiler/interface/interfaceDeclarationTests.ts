@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
-import { InterfaceDeclarationSpecificStructure } from "../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 import { TypeGuards } from "../../../utils";
 
@@ -25,12 +25,6 @@ describe(nameof(InterfaceDeclaration), () => {
 
         it("should get the base when there are multiple", () => {
             doTest("interface Base1 {} interface Base2 {} interface Child extends Base1, Base2 {}", "Child", ["Base1", "Base2"]);
-        });
-
-        xit("should get the base when there are multiple with type parameters", () => { // TODO: issue !
-            const { sourceFile } = getInfoFromText(`interface Base1 {} interface A {} interface Child extends Base1<A>`);
-            const types = sourceFile.getInterfaceOrThrow("Child").getBaseTypes();
-            expect(types).not.to.be.empty;
         });
 
         it("should be empty when there is no base interface", () => {
@@ -101,95 +95,63 @@ describe(nameof(InterfaceDeclaration), () => {
     });
 
     describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
-        it("should get the structure of interface with constructor, properties and method signatures", () => {
-            const sourceFileText = `
-            /** interface description */
-            export interface I<T extends S> extends J<String>, K<Array<string>,Date> {
-                /** constructor description */
-                new (value: number | string | Date);
-                /** property description */
-                readonly a?:number|string
-                /** method description */
-                m(p?:Date[]):J<string>
-                /** method description 2 */
-                m(p?:Date[], q:string|number=9):string|Date
-            }
-            interface I2 {
-                [k:keyof O]: P
-            }
-            `;
-            const structure = getInfoFromText<InterfaceDeclaration>(sourceFileText).firstChild.getStructure();
-            expect(structure).to.deep.equals({
-                name: "I", isExported: true, isDefaultExport: false, hasDeclareKeyword: false,
-                docs: [{ description: "interface description" }], typeParameters: [{
-                    name: "T", constraint: "S", default: undefined
-                }], extends: ["J<String>", "K<Array<string>,Date>"], callSignatures: [],
-                constructSignatures: [{
-                    parameters: [{
-                        name: "value", type: "number | string | Date", initializer: undefined, scope: undefined, isReadonly: false,
-                        decorators: [], hasQuestionToken: false, isRestParameter: false
-                    }],
-                    returnType: undefined, docs: [{ description: "constructor description" }], typeParameters: []
-                }],
+        function doTest(code: string, expectedStructure: MakeRequired<InterfaceDeclarationStructure>) {
+            const { firstChild, project } = getInfoFromText<InterfaceDeclaration>(code);
+            const structure = firstChild.getStructure();
+
+            // only bother comparing the basics
+            structure.methods = structure.methods!.map(s => ({ name: s.name }));
+            structure.properties = structure.properties!.map(s => ({ name: s.name }));
+            structure.indexSignatures = structure.indexSignatures!.map(s => ({ keyName: s.keyName, returnType: s.returnType }));
+            structure.callSignatures = structure.callSignatures!.map(s => ({ }));
+            structure.constructSignatures = structure.constructSignatures!.map(s => ({ }));
+            structure.typeParameters = structure.typeParameters!.map(s => ({ name: s.name }));
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get for an empty interface", () => {
+            doTest(`interface Test {}`, {
+                callSignatures: [],
+                constructSignatures: [],
+                docs: [],
+                extends: [],
+                hasDeclareKeyword: false,
                 indexSignatures: [],
-                methods: [{
-                    name: "m", parameters: [{
-                        name: "p", type: "Date[]", initializer: undefined, scope: undefined, isReadonly: false, decorators: [],
-                        hasQuestionToken: true, isRestParameter: false
-                    }], returnType: "J<string>", typeParameters: [], hasQuestionToken: false, docs: [{ description: "method description" }]
-                },
-                {
-                    name: "m", parameters: [
-                        {
-                            name: "p", type: "Date[]", isReadonly: false, initializer: undefined, scope: undefined,
-                            decorators: [], hasQuestionToken: true, isRestParameter: false
-                        },
-                        {
-                            name: "q", initializer: "9", type: "string|number", isReadonly: false, scope: undefined,
-                            decorators: [], hasQuestionToken: false, isRestParameter: false
-                        }
-                    ], returnType: "string|Date", typeParameters: [], hasQuestionToken: false, docs: [{
-                        description: "method description 2"
-                    }]
-                }],
-                properties: [{
-                    name: "a", type: "number|string", hasQuestionToken: true, initializer: undefined,
-                    isReadonly: true, docs: [{ description: "property description" }]
-                }]
+                isDefaultExport: false,
+                isExported: false,
+                methods: [],
+                name: "Test",
+                properties: [],
+                typeParameters: []
             });
         });
 
-        it("should get the structure of interface with key member signatures", () => {
-            const structure = getInfoFromText<InterfaceDeclaration>(`
-            interface I2 {
-                [key: string]: number
-            }
-            `).firstChild.getStructure();
-            expect(structure.indexSignatures).to.deep.equals([
-                {
-                    isReadonly: false,
-                    docs: [],
-                    keyName: "key",
-                    keyType: "string",
-                    returnType: "number"
-                }
-            ]);
-        });
-
-        it("should get the structure of interface with call signatures", () => {
-            const structure = getInfoFromText<InterfaceDeclaration>(`
-            interface CallMe<T> {
-                (some?:string): Promise<T>
-            }
-            `).firstChild.getStructure();
-            expect(structure.callSignatures).to.deep.equals([
-                {
-                    parameters: [{
-                        name: "some", type: "string", isReadonly: false, decorators: [], hasQuestionToken: true,
-                        isRestParameter: false, initializer: undefined, scope: undefined
-                    }], returnType: "Promise<T>", docs: [], typeParameters: []
-                }
-            ]);
+        it("should get for an interface that has everything", () => {
+            const code = `
+/** Test */
+export default interface Test<T> extends Test2 {
+    (): void;
+    new(): Test;
+    [key: string]: string;
+    method(): void;
+    property: string;
+}
+`;
+            doTest(code, {
+                callSignatures: [{}],
+                constructSignatures: [{}],
+                docs: [{ description: "Test" }],
+                extends: ["Test2"],
+                hasDeclareKeyword: false,
+                indexSignatures: [{ keyName: "key", returnType: "string" }],
+                isDefaultExport: true,
+                isExported: true,
+                methods: [{ name: "method" }],
+                name: "Test",
+                properties: [{ name: "property" }],
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });

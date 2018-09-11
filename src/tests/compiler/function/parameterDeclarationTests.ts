@@ -145,16 +145,30 @@ describe(nameof(ParameterDeclaration), () => {
             expect(structure).to.deep.include(expectedStructure);
         }
 
-        it("should generate structure with correct name and type", () => {
-            doTest("function f(param: string[]) {}", {
-                name: "param", type: "string[]", hasQuestionToken: false, isRestParameter: false, scope: undefined, isReadonly: false, decorators: [], initializer: undefined
+        it("should get for parameter that doesn't have anything", () => {
+            doTest("function f(param) {}", {
+                name: "param",
+                type: undefined,
+                hasQuestionToken: false,
+                isRestParameter: false,
+                scope: undefined,
+                isReadonly: false,
+                decorators: [],
+                initializer: undefined
             });
         });
 
-        it("should generate structure with question token, and correct scope and initializer", () => {
-            doTest("function g(public matrix? : boolean[][] = [[true]]) {}", {
-                hasQuestionToken: true, name: "matrix", type: "boolean[][]", scope: Scope.Public, initializer: "[[true]]", isReadonly: false,
-                decorators: [], isRestParameter: false
+        it("should get for parameter that has everything", () => {
+            // not semantically correct, but good enough for testing
+            doTest("function g(@dec public readonly ...matrix?: boolean = true) {}", {
+                hasQuestionToken: true,
+                name: "matrix",
+                type: "boolean",
+                scope: Scope.Public,
+                initializer: "true",
+                isReadonly: true,
+                decorators: [{ name: "dec", arguments: undefined }],
+                isRestParameter: true
             });
         });
     });
