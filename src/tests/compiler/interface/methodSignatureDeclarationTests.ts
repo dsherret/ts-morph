@@ -56,4 +56,41 @@ describe(nameof(MethodSignature), () => {
                 "interface Identifier {\n    member(): string;\n    member(t: string): string;\n}");
         });
     });
+
+    describe(nameof<MethodSignature>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<MethodSignatureStructure>) {
+            const { firstMethod, sourceFile } = getFirstMethodWithInfo(code);
+            const structure = firstMethod.getStructure();
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when not has anything", () => {
+            doTest("interface Identifier { method(); }", {
+                docs: [],
+                hasQuestionToken: false,
+                name: "method",
+                parameters: [],
+                returnType: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+interface Identifier {
+    /** Test */
+    method?<T>(p): string;
+}`;
+            doTest(code, {
+                docs: [{ description: "Test" }],
+                hasQuestionToken: true,
+                name: "method",
+                parameters: [{ name: "p" }],
+                returnType: "string",
+                typeParameters: [{ name: "T" }]
+            });
+        });
+    });
 });
