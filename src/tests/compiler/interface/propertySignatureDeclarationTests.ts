@@ -51,4 +51,39 @@ describe(nameof(PropertySignature), () => {
                 "interface Identifier {\n    member: string;\n}");
         });
     });
+
+    describe(nameof<PropertySignature>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<PropertySignatureStructure>) {
+            const { firstProperty, sourceFile } = getFirstPropertyWithInfo(code);
+            const structure = firstProperty.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when not has anything", () => {
+            doTest("interface Identifier { prop; }", {
+                docs: [],
+                hasQuestionToken: false,
+                initializer: undefined,
+                isReadonly: false,
+                name: "prop",
+                type: undefined
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+interface Identifier {
+    /** Test */
+    readonly prop?: number = 5;
+}`;
+            doTest(code, {
+                docs: [{ description: "Test" }],
+                hasQuestionToken: true,
+                initializer: "5",
+                isReadonly: true,
+                name: "prop",
+                type: "number"
+            });
+        });
+    });
 });
