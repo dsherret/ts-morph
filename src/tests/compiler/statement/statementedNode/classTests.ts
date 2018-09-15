@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, StatementedNode } from "../../../../compiler";
+import { FunctionDeclaration, ClassDeclaration, StatementedNode } from "../../../../compiler";
 import { ClassDeclarationStructure } from "../../../../structures";
 import { getInfoFromText } from "../../testHelpers";
 
@@ -86,6 +86,20 @@ describe(nameof(StatementedNode), () => {
             }]);
 
             expect(sourceFile.getFullText()).to.equal("declare module Namespace {\n    class Identifier {\n        myMethod();\n    }\n}\n");
+        });
+
+        function doFunctionTest(startText: string, endText: string) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startText);
+            firstChild.insertClasses(0, [{ name: "C" }]);
+            expect(sourceFile.getFullText()).to.equal(endText);
+        }
+
+        it("should insert into a function with no body", () => {
+            doFunctionTest("function test();", "function test() {\n    class C {\n    }\n}");
+        });
+
+        it("should insert into a function with a body", () => {
+            doFunctionTest("function test() {\n}", "function test() {\n    class C {\n    }\n}");
         });
     });
 
