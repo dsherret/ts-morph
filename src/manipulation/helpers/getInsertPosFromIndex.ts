@@ -1,6 +1,6 @@
 import { Node, SyntaxList } from "../../compiler";
 import { Chars } from "../../constants";
-import { SyntaxKind } from "../../typescript";
+import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { getPosAtStartOfLineOrNonWhitespace } from "../textSeek";
 
@@ -56,7 +56,7 @@ export function getEndPosFromIndex(index: number, parent: Node, children: Node[]
 
 function getParentContainer(parent: Node) {
     if (TypeGuards.isBodiedNode(parent))
-        return parent.getBody();
+        return TypeGuards.isNamespaceDeclaration(parent) ? parent.getInnerBody() : parent.getBody();
     if (TypeGuards.isBodyableNode(parent))
         return parent.getBodyOrThrow();
     else

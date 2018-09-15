@@ -2,6 +2,7 @@ import * as errors from "../../errors";
 import { replaceNodeText } from "../../manipulation";
 import { NamespaceDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
+import { TypeGuards } from "../../utils";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Identifier } from "../common";
@@ -131,5 +132,13 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         if (keyword == null)
             throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
         return keyword;
+    }
+
+    /** @internal */
+    getInnerBody() {
+        let node = this.getBody();
+        while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null)
+            node = node.getBody();
+        return node;
     }
 }
