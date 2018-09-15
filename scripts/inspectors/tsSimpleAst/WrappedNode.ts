@@ -17,6 +17,14 @@ export class WrappedNode {
         return this.node.getSourceFile().getFilePath();
     }
 
+    getStartLineNumber() {
+        return this.node.getStartLineNumber();
+    }
+
+    hasMethod(name: string) {
+        return this.node.getMethod(name) != null;
+    }
+
     @Memoize
     hasParent() {
         return this.wrapperFactory.getWrappedNodes().some(n => n.getBase() === this);

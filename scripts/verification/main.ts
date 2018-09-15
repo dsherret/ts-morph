@@ -3,6 +3,7 @@ import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly";
 import { ensureOrThrowExists } from "./ensureOrThrowExists";
 import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
 import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
+import { ensureClassesImplementGetStructure } from "./ensureClassesImplementGetStructure";
 import { Problem } from "./Problem";
 
 const args = process.argv.slice(2);
@@ -17,6 +18,8 @@ if (checkHasArg("ensure-overload-structures-match"))
     ensureOverloadStructuresMatch(factory.getTsSimpleAstInspector(), problems);
 if (checkHasArg("ensure-structures-match-classes"))
     ensureStructuresMatchClasses(factory.getTsSimpleAstInspector(), problems);
+if (checkHasArg("ensure-classes-implement-get-structure"))
+    ensureClassesImplementGetStructure(factory.getTsSimpleAstInspector(), problems);
 
 if (args.length > 0)
     console.error(`Unknown args: ${args}`);
