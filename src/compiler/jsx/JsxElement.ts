@@ -1,14 +1,17 @@
 import { insertIntoParentTextRange } from "../../manipulation";
 import { WriterFunction } from "../../types";
+import { JsxElementStructure } from "../../structures";
 import { ts } from "../../typescript";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { printTextFromStringOrWriter } from "../../utils";
 import { JsxChild } from "../aliases";
-import { getBodyText } from "../base/helpers";
+import { getBodyText, getBodyTextForStructure } from "../base/helpers";
 import { PrimaryExpression } from "../expression";
 import { JsxClosingElement } from "./JsxClosingElement";
 import { JsxOpeningElement } from "./JsxOpeningElement";
 
-export class JsxElement extends PrimaryExpression<ts.JsxElement> {
+export const JsxElementBase = PrimaryExpression;
+export class JsxElement extends JsxElementBase<ts.JsxElement> {
     /**
      * Gets the children of the JSX element.
      */
@@ -65,6 +68,22 @@ export class JsxElement extends PrimaryExpression<ts.JsxElement> {
         }
         setText(this, writer.toString());
         return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxElementStructure {
+        const openingElement = this.getOpeningElement();
+        const structure = callBaseGetStructure<JsxElementStructure>(JsxElementBase.prototype, this, {
+            name: openingElement.getTagName().getText(),
+            attributes: openingElement.getAttributes().map(a => a.getStructure()),
+            children: undefined,
+            isSelfClosing: false,
+            bodyText: getBodyTextForStructure(this)
+        });
+        delete structure.children;
+        return structure;
     }
 }
 

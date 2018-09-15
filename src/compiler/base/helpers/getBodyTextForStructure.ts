@@ -8,7 +8,7 @@ export function getBodyTextForStructure(body: Node) {
     const sourceFile = body.sourceFile;
     const textArea = body.getChildSyntaxList() || body; // arrow functions don't have a syntax list
     const startPos = textArea.getNonWhitespaceStart();
-    const endPos = Math.max(startPos, textArea.getTrailingTriviaEnd());
+    const endPos = Math.max(startPos, textArea.getTrailingTriviaNonWhitespaceEnd());
     const width = endPos - startPos;
 
     if (width === 0)

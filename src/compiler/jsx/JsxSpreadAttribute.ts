@@ -1,8 +1,11 @@
 import { removeChildren } from "../../manipulation";
+import { JsxSpreadAttributeStructure } from "../../structures";
 import { ts } from "../../typescript";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 import { Node } from "../common";
 
-export class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {
+export const JsxSpreadAttributeBase = Node;
+export class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttribute> {
     /**
      * Gets the JSX spread attribute's expression.
      */
@@ -18,6 +21,16 @@ export class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {
             children: [this],
             removePrecedingNewLines: true,
             removePrecedingSpaces: true
+        });
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxSpreadAttributeStructure {
+        return callBaseGetStructure<JsxSpreadAttributeStructure>(JsxSpreadAttributeBase.prototype, this, {
+            isSpreadAttribute: true,
+            expression: this.getExpression().getText()
         });
     }
 }

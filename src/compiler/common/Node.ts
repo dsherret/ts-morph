@@ -1,8 +1,8 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
 import * as errors from "../../errors";
 import { ProjectContext } from "../../ProjectContext";
-import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits, insertIntoParentTextRange,
-    replaceSourceFileTextForFormatting } from "../../manipulation";
+import { getNextMatchingPos, getNextNonWhitespacePos, getPreviousNonWhitespacePos, getPreviousMatchingPos, getTextFromFormattingEdits,
+    insertIntoParentTextRange, replaceSourceFileTextForFormatting } from "../../manipulation";
 import { WriterFunction } from "../../types";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getParentSyntaxList, getSyntaxKindName, getTextFromStringOrWriter, isStringKind, printNode, PrintNodeOptions, StringUtils,
@@ -783,6 +783,14 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      */
     getNonWhitespaceStart() {
         return getNextNonWhitespacePos(this.sourceFile.getFullText(), this.getPos());
+    }
+
+    /**
+     * Gets the source file text position going forward the result of .getTrailingTriviaEnd() that is not whitespace.
+     * @internal
+     */
+    getTrailingTriviaNonWhitespaceEnd() {
+        return getPreviousNonWhitespacePos(this.sourceFile.getFullText(), this.getTrailingTriviaEnd());
     }
 
     /**

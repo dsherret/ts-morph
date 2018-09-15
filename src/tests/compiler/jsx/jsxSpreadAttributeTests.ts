@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { JsxSelfClosingElement, JsxSpreadAttribute } from "../../../compiler";
+import { JsxSpreadAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -20,6 +21,21 @@ describe(nameof(JsxSpreadAttribute), () => {
 
         it("should get the expression", () => {
             doTest(`var t = (<jsx {...test} />);`, "test");
+        });
+    });
+
+    describe(nameof<JsxSpreadAttribute>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<JsxSpreadAttributeStructure>) {
+            const { descendant } = getInfo(text);
+            const structure = descendant.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get the structure", () => {
+            doTest(`var t = (<jsx {...a1} />`, {
+                isSpreadAttribute: true,
+                expression: "a1"
+            });
         });
     });
 

@@ -175,6 +175,16 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
+        return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
+    }
+
+    @Memoize
+    forJsxSpreadAttribute(): structurePrinters.JsxSpreadAttributeStructurePrinter {
+        return new structurePrinters.JsxSpreadAttributeStructurePrinter(this);
+    }
+
+    @Memoize
     forJsxElement(): structurePrinters.JsxElementStructurePrinter {
         return new structurePrinters.JsxElementStructurePrinter(this);
     }

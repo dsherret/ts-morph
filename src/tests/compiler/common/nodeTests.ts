@@ -1469,4 +1469,20 @@ class MyClass {
             expect(typeParameters![0].getDescendants().length).to.equal(1); // try a wrapped node property
         });
     });
+
+    describe(nameof<Node>(n => n.getTrailingTriviaNonWhitespaceEnd), () => {
+        it("should get the non whitespace end for a jsx child syntax list", () => {
+            let code = "const v = (<div>\n    <div />";
+            const expectedNonWhitepsaceEnd = code.length;
+            code += "  \n";
+            const expectedTriviaEnd = code.length;
+            code += "</div>)";
+            const { sourceFile } = getInfoFromText<VariableStatement>(code, { isJsx: true });
+            const element = sourceFile.getFirstDescendantByKindOrThrow(SyntaxKind.JsxElement);
+            const syntaxList = element.getChildSyntaxListOrThrow();
+
+            expect(syntaxList.getTrailingTriviaNonWhitespaceEnd()).to.equal(expectedNonWhitepsaceEnd);
+            expect(syntaxList.getTrailingTriviaEnd()).to.equal(expectedTriviaEnd);
+        });
+    });
 });
