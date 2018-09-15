@@ -32,6 +32,10 @@ describe(nameof(StatementedNode), () => {
             doFirstChildTest<FunctionDeclaration>("function i() { var t; var m; }", ["var t;", "var m;"]);
         });
 
+        it("should get the statements of a function with no body", () => {
+            doFirstChildTest<FunctionDeclaration>("function i();", []);
+        });
+
         it("should get the statements of a namespace", () => {
             doFirstChildTest<NamespaceDeclaration>("namespace n { var t; var m; }", ["var t;", "var m;"]);
         });
@@ -157,6 +161,11 @@ describe(nameof(StatementedNode), () => {
             expect(nodes[0]).to.be.instanceOf(Node);
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
+
+        it("should insert statements into a function with no body", () => {
+            doFirstChildTest<FunctionDeclaration>("function i();\n", 0, "statement;", 1,
+                "function i() {\n    statement;\n}\n");
+        });
 
         it("should insert statements into an empty function", () => {
             doFirstChildTest<FunctionDeclaration>("function i() {\n}\n", 0, "statement;", 1,

@@ -472,6 +472,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         insertStatements(index: number, writerFunction: WriterFunction): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction): Statement[];
         insertStatements(index: number, textOrWriterFunction: string | WriterFunction) {
+            addBodyIfNotExists(this);
+
             return getChildSyntaxList.call(this).insertChildText(index, textOrWriterFunction);
 
             function getChildSyntaxList(this: Node) {
@@ -625,7 +627,6 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         getFunctions(): FunctionDeclaration[] {
-            // todo: remove type assertion
             return (this.getChildSyntaxListOrThrow().getChildrenOfKind(SyntaxKind.FunctionDeclaration))
                 .filter(f => f.isAmbient() || f.isImplementation());
         }
@@ -877,8 +878,12 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 // need to get the inner-most body for namespaces
                 return (this.getInnerBody().compilerNode as ts.Block).statements;
             }
-            else if (TypeGuards.isBodyableNode(this))
-                return (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            else if (TypeGuards.isBodyableNode(this)) {
+                const body = this.getBody();
+                if (body == null)
+                    return [] as any as ts.NodeArray<ts.Statement>;
+                return (body.compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            }
             else if (TypeGuards.isBodiedNode(this))
                 return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
             else if (TypeGuards.isBlock(this))
@@ -888,6 +893,8 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
         }
 
         _insertChildren<TNode extends Node, TStructure>(opts: InsertChildrenOptions<TStructure>) {
+            addBodyIfNotExists(this);
+
             return insertIntoBracesOrSourceFileWithGetChildren<TNode, TStructure>({
                 expectedKind: opts.expectedKind,
                 getIndexedChildren: () => this.getStatements(),
@@ -917,4 +924,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 writer.newLine();
         }
     };
+}
+
+function addBodyIfNotExists(node: Node) {
+    if (TypeGuards.isBodyableNode(node) && !node.hasBody())
+        node.addBody();
 }
