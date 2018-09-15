@@ -1,7 +1,7 @@
 ﻿import { expect } from "chai";
 import { NamespaceDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
-import { NamespaceDeclarationSpecificStructure } from "../../../structures";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(NamespaceDeclaration), () => {
@@ -157,6 +157,44 @@ describe(nameof(NamespaceDeclaration), () => {
                 hasModuleKeyword: true
             };
             doTest("namespace Identifier {\n}", structure, "module Identifier {\n}");
+        });
+    });
+
+    describe(nameof<NamespaceDeclaration>(n => n.getStructure), () => {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(startingCode: string, expectedStructure: Omit<MakeRequired<NamespaceDeclarationStructure>, PropertyNamesToExclude>) {
+            const { firstChild } = getInfoFromText<NamespaceDeclaration>(startingCode);
+            const structure = firstChild.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("namespace Identifier {\n}", {
+                hasModuleKeyword: false,
+                bodyText: "",
+                docs: [],
+                hasDeclareKeyword: false,
+                isDefaultExport: false,
+                isExported: false,
+                name: "Identifier"
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+/** Test */
+export declare module Identifier {
+    const t = 5;
+}`;
+            doTest(code, {
+                hasModuleKeyword: true,
+                bodyText: "const t = 5;",
+                docs: [{ description: "Test" }],
+                hasDeclareKeyword: true,
+                isDefaultExport: false,
+                isExported: true,
+                name: "Identifier"
+            });
         });
     });
 
