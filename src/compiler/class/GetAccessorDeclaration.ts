@@ -1,16 +1,17 @@
 import * as errors from "../../errors";
 import { removeClassMember } from "../../manipulation";
-import { GetAccessorDeclarationStructure } from "../../structures";
+import { GetAccessorDeclarationStructure, GetAccessorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { BodiedNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
+import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
 import { AbstractableNode } from "./base";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const GetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))
+    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node)))
 ))))));
 export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
@@ -48,5 +49,13 @@ export class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAcc
      */
     remove() {
         removeClassMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): GetAccessorDeclarationStructure {
+        return callBaseGetStructure<GetAccessorDeclarationSpecificStructure>(GetAccessorDeclarationBase.prototype, this, {
+        }) as any as GetAccessorDeclarationStructure;
     }
 }

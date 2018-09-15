@@ -8,6 +8,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ExpressionWithTypeArguments } from "../type/ExpressionWithTypeArguments";
 import { HeritageClauseableNode } from "./HeritageClauseableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ExtendsClauseableNodeExtensionType = Node & HeritageClauseableNode;
 
@@ -126,6 +127,12 @@ export function ExtendsClauseableNode<T extends Constructor<ExtendsClauseableNod
                 this.addExtends(structure.extends);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ExtendsClauseableNodeStructure>(Base.prototype, this, {
+                extends: this.getExtends().map(e => e.getText())
+            });
         }
     };
 }

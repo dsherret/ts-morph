@@ -1,5 +1,5 @@
 import { removeInterfaceMember } from "../../manipulation";
-import { IndexSignatureDeclarationStructure } from "../../structures";
+import { IndexSignatureDeclarationStructure, IndexSignatureDeclarationSpecificStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
@@ -7,6 +7,7 @@ import { ChildOrderableNode, JSDocableNode, ModifierableNode, ReadonlyableNode }
 import { callBaseFill } from "../callBaseFill";
 import { Type, TypeNode } from "../type";
 import { TypeElement } from "./TypeElement";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const IndexSignatureDeclarationBase = ChildOrderableNode(JSDocableNode(ReadonlyableNode(ModifierableNode(TypeElement))));
 export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.IndexSignatureDeclaration> {
@@ -119,5 +120,16 @@ export class IndexSignatureDeclaration extends IndexSignatureDeclarationBase<ts.
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): IndexSignatureDeclarationStructure {
+        return callBaseGetStructure<IndexSignatureDeclarationSpecificStructure>(IndexSignatureDeclarationBase.prototype, this, {
+            keyName: this.getKeyName(),
+            keyType: this.getKeyType().getText(),
+            returnType: this.getReturnType().getText()
+        });
     }
 }

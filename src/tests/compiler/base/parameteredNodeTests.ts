@@ -155,4 +155,19 @@ describe(nameof(ParameteredNode), () => {
             doTest("function identifier() {}", {}, "function identifier() {}");
         });
     });
+
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, names: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            expect(firstChild.getStructure().parameters!.map(s => s.name)).to.deep.equal(names);
+        }
+
+        it("should return an empty array when there are none", () => {
+            doTest("function identifier() {}", []);
+        });
+
+        it("should get the parameters when they exist", () => {
+            doTest("function identifier(param, param2) {}", ["param", "param2"]);
+        });
+    });
 });

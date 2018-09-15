@@ -1,9 +1,10 @@
 import { removeInterfaceMember } from "../../manipulation";
-import { MethodSignatureStructure } from "../../structures";
+import { MethodSignatureStructure, MethodSignatureSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ChildOrderableNode, JSDocableNode, PropertyNamedNode, QuestionTokenableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { TypeElement } from "./TypeElement";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const MethodSignatureBase = ChildOrderableNode(JSDocableNode(QuestionTokenableNode(TypeParameteredNode(SignaturedDeclaration(PropertyNamedNode(TypeElement))))));
 export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
@@ -22,5 +23,13 @@ export class MethodSignature extends MethodSignatureBase<ts.MethodSignature> {
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): MethodSignatureStructure {
+        return callBaseGetStructure<MethodSignatureSpecificStructure>(MethodSignatureBase.prototype, this, {
+        });
     }
 }

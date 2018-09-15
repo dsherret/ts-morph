@@ -6,6 +6,7 @@ import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type QuestionTokenableNodeExtensionType = Node<ts.Node & { questionToken?: ts.QuestionToken; }>;
 
@@ -85,6 +86,12 @@ export function QuestionTokenableNode<T extends Constructor<QuestionTokenableNod
                 this.setHasQuestionToken(structure.hasQuestionToken);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<QuestionTokenableNodeStructure>(Base.prototype, this, {
+               hasQuestionToken: this.hasQuestionToken()
+            });
         }
     };
 }

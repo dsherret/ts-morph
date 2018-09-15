@@ -1,11 +1,11 @@
 import * as errors from "../../errors";
 import { getEndIndexFromArray, insertIntoBracesOrSourceFileWithGetChildren, insertIntoParentTextRange } from "../../manipulation";
-import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure, PropertyDeclarationStructure,
-    SetAccessorDeclarationStructure } from "../../structures";
+import { ClassDeclarationStructure, ConstructorDeclarationStructure, GetAccessorDeclarationStructure, MethodDeclarationStructure,
+    PropertyDeclarationStructure, SetAccessorDeclarationStructure, ClassDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForNameOrFindFunction, StringUtils, TypeGuards } from "../../utils";
-import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode, JSDocableNode, ModifierableNode,
-    NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
+import { AmbientableNode, ChildOrderableNode, DecoratableNode, ExportableNode, HeritageClauseableNode, ImplementsClauseableNode,
+    JSDocableNode, ModifierableNode, NameableNode, TextInsertableNode, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function";
@@ -18,6 +18,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { MethodDeclaration } from "./MethodDeclaration";
 import { PropertyDeclaration } from "./PropertyDeclaration";
 import { SetAccessorDeclaration } from "./SetAccessorDeclaration";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ClassPropertyTypes = PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration;
 export type ClassInstancePropertyTypes = ClassPropertyTypes | ParameterDeclaration;
@@ -26,9 +27,9 @@ export type ClassStaticPropertyTypes = PropertyDeclaration | GetAccessorDeclarat
 export type ClassStaticMemberTypes = MethodDeclaration | ClassStaticPropertyTypes;
 export type ClassMemberTypes = MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ConstructorDeclaration;
 
-export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(TypeParameteredNode(
-    NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement)))))))
-))))));
+export const ClassDeclarationBase = ChildOrderableNode(TextInsertableNode(ImplementsClauseableNode(HeritageClauseableNode(DecoratableNode(
+    TypeParameteredNode(NamespaceChildableNode(JSDocableNode(AmbientableNode(AbstractableNode(ExportableNode(ModifierableNode(NameableNode(Statement))))))))
+)))));
 export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> {
     /**
      * Fills the node from a structure.
@@ -904,6 +905,21 @@ export class ClassDeclaration extends ClassDeclarationBase<ts.ClassDeclaration> 
         }
 
         return classes;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ClassDeclarationStructure {
+        const getExtends = this.getExtends();
+        return callBaseGetStructure<ClassDeclarationSpecificStructure>(ClassDeclarationBase.prototype, this, {
+            ctors: this.getConstructors().filter(ctor => !ctor.isOverload()).map(ctor => ctor.getStructure() as ConstructorDeclarationStructure),
+            methods: this.getMethods().filter(method => !method.isOverload()).map(method => method.getStructure() as MethodDeclarationStructure),
+            properties: this.getProperties().map(property => property.getStructure()),
+            extends: getExtends ? getExtends.getText() : undefined,
+            getAccessors: this.getGetAccessors().map(getAccessor => getAccessor.getStructure()),
+            setAccessors: this.getSetAccessors().map(accessor => accessor.getStructure())
+        }) as any as ClassDeclarationStructure;
     }
 
     private getImmediateDerivedClasses() {

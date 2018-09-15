@@ -87,5 +87,24 @@ describe(nameof(ScopeableNode), () => {
         it("should modify when setting", () => {
             doTest("class MyClass { constructor(param: string) {} }", { scope: Scope.Protected }, "class MyClass { constructor(protected param: string) {} }");
         });
+
+        it("should remove when undefined", () => {
+            doTest("class MyClass { constructor(public param: string) {} }", { scope: undefined }, "class MyClass { constructor(param: string) {} }");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(p => p.getStructure), () => {
+        function doTest(startCode: string, scope: Scope | undefined) {
+            const { firstParam, sourceFile } = getFirstParameter(startCode);
+            expect(firstParam.getStructure().scope).to.equal(scope);
+        }
+
+        it("should be undefined when not exists", () => {
+            doTest("class MyClass { constructor(param: string) {} }", undefined);
+        });
+
+        it("should get when exists", () => {
+            doTest("class MyClass { constructor(public param: string) {} }", Scope.Public);
+        });
     });
 });

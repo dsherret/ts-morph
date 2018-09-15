@@ -1,9 +1,10 @@
 import { removeInterfaceMember } from "../../manipulation";
-import { ConstructSignatureDeclarationStructure } from "../../structures";
+import { ConstructSignatureDeclarationStructure, ConstructSignatureDeclarationSpecificStructure } from "../../structures";
 import { ts } from "../../typescript";
 import { ChildOrderableNode, JSDocableNode, SignaturedDeclaration, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { TypeElement } from "./TypeElement";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructSignatureDeclarationBase = TypeParameteredNode(ChildOrderableNode(JSDocableNode(SignaturedDeclaration(TypeElement))));
 export class ConstructSignatureDeclaration extends ConstructSignatureDeclarationBase<ts.ConstructSignatureDeclaration> {
@@ -22,5 +23,13 @@ export class ConstructSignatureDeclaration extends ConstructSignatureDeclaration
      */
     remove() {
         removeInterfaceMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ConstructSignatureDeclarationStructure {
+        return callBaseGetStructure<ConstructSignatureDeclarationSpecificStructure>(ConstructSignatureDeclarationBase.prototype, this, {
+        }) as ConstructSignatureDeclarationStructure;
     }
 }

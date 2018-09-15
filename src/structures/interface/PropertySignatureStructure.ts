@@ -2,7 +2,10 @@
     TypedNodeStructure } from "../base";
 
 export interface PropertySignatureStructure
-    extends PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure,
-        InitializerExpressionableNodeStructure
+    extends PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure,
+        ReadonlyableNodeStructure, InitializerExpressionableNodeStructure
 {
+}
+
+export interface PropertySignatureSpecificStructure {
 }

@@ -108,8 +108,27 @@ describe(nameof(ReturnTypedNode), () => {
             doTest("function Identifier() {}", { returnType: writer => writer.write("number") }, "function Identifier(): number {}");
         });
 
+        it("should remove when undefined", () => {
+            doTest("function Identifier(): number {}", { returnType: undefined }, "function Identifier() {}");
+        });
+
         it("should not modify anything if the structure doesn't change anything", () => {
             doTest("function Identifier() {}", { }, "function Identifier() {}");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, returnType: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            expect(firstChild.getStructure().returnType).to.equal(returnType);
+        }
+
+        it("should be undefined when not exists", () => {
+            doTest("function test() {}", undefined);
+        });
+
+        it("should get when exists", () => {
+            doTest("function test(): string {}", "string");
         });
     });
 });

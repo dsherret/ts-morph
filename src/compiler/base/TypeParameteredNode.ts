@@ -8,6 +8,7 @@ import { NamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { TypeParameterDeclaration } from "../type/TypeParameterDeclaration";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypeParameteredNodeExtensionType = Node<ts.Node & { typeParameters?: ts.NodeArray<ts.TypeParameterDeclaration>; }>;
 
@@ -126,6 +127,12 @@ export function TypeParameteredNode<T extends Constructor<TypeParameteredNodeExt
                 this.addTypeParameters(structure.typeParameters);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<TypeParameteredNodeStructure>(Base.prototype, this, {
+                typeParameters: this.getTypeParameters().map(p => p.getStructure())
+            });
         }
     };
 }

@@ -56,4 +56,37 @@ describe(nameof(ConstructSignatureDeclaration), () => {
                 "interface Identifier {\n    new(): string;\n    new(t: string): string;\n}");
         });
     });
+
+    describe(nameof<ConstructSignatureDeclaration>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<ConstructSignatureDeclarationStructure>) {
+            const { firstConstructSignature, sourceFile } = getFirstConstructSignatureWithInfo(code);
+            const structure = firstConstructSignature.getStructure();
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when not has anything", () => {
+            doTest("interface Identifier { new(); }", {
+                docs: [],
+                parameters: [],
+                returnType: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+interface Identifier {
+    /** Test */
+    new<T>(p): Test;
+}`;
+            doTest(code, {
+                docs: [{ description: "Test" }],
+                parameters: [{ name: "p" }],
+                returnType: "Test",
+                typeParameters: [{ name: "T" }]
+            });
+        });
+    });
 });

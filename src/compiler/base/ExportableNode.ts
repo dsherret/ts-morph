@@ -6,6 +6,7 @@ import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ExportableNodeExtensionType = Node & ModifierableNode;
 
@@ -172,6 +173,13 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 this.setIsDefaultExport(structure.isDefaultExport);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ExportableNodeStructure>(Base.prototype, this, {
+                isExported: this.hasExportKeyword(),
+                isDefaultExport: this.hasDefaultKeyword()
+            });
         }
     };
 }

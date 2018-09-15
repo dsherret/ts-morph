@@ -7,6 +7,7 @@ import { ArrayUtils, getNodeByNameOrFindFunction, getNotFoundErrorMessageForName
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ParameterDeclaration } from "../function/ParameterDeclaration";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ParameteredNodeExtensionType = Node<ts.Node & { parameters: ts.NodeArray<ts.ParameterDeclaration>; }>;
 
@@ -115,6 +116,12 @@ export function ParameteredNode<T extends Constructor<ParameteredNodeExtensionTy
                 this.addParameters(structure.parameters);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ParameteredNodeStructure>(Base.prototype, this, {
+                parameters: this.getParameters().map(p => p.getStructure())
+            });
         }
     };
 }

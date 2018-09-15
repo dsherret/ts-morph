@@ -7,6 +7,7 @@ import { callBaseFill } from "../callBaseFill";
 import { WriterFunction } from "../../types";
 import { Node } from "../common";
 import { JSDoc } from "../doc/JSDoc";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type JSDocableNodeExtensionType = Node<ts.Node & { jsDoc?: ts.NodeArray<ts.JSDoc>; }>;
 
@@ -89,6 +90,12 @@ export function JSDocableNode<T extends Constructor<JSDocableNodeExtensionType>>
                 this.addJsDocs(structure.docs);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<JSDocableNodeStructure>(Base.prototype, this, {
+                docs: this.getJsDocs().map(jsdoc => jsdoc.getStructure())
+            });
         }
     };
 }

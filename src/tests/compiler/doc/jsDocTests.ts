@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { JSDoc } from "../../../compiler";
+import { JSDocStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(JSDoc), () => {
@@ -125,6 +126,26 @@ describe(nameof(JSDoc), () => {
 
         it("should return the correct inner text when using slash r slash n", () => {
             doTest("/**\r\n * Description\r\n * @param - Test\r\n */function identifier() {}", "Description\r\n@param - Test");
+        });
+    });
+
+    describe(nameof<JSDoc>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<JSDocStructure>) {
+            const { sourceFile } = getInfoFromText(text);
+            const structure = sourceFile.getFunctions()[0].getJsDocs()[0].getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("/** */function t() {}", {
+                description: ""
+            });
+        });
+
+        it("should get when has everything", () => {
+            doTest("/** Test @param p - Testing */function t() {}", {
+                description: "Test @param p - Testing" // for now...
+            });
         });
     });
 });

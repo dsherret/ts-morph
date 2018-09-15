@@ -192,4 +192,37 @@ describe(nameof(IndexSignatureDeclaration), () => {
                 "interface Identifier {\n    [key: string]: string;\n    [key3: number]: Date;\n}");
         });
     });
+
+    describe(nameof<IndexSignatureDeclaration>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<IndexSignatureDeclarationStructure>) {
+            const { firstIndexSignature, sourceFile } = getFirstIndexSignatureWithInfo(code);
+            const structure = firstIndexSignature.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when not has anything", () => {
+            doTest("interface Identifier { [key: string]: number; }", {
+                isReadonly: false,
+                keyName: "key",
+                keyType: "string",
+                docs: [],
+                returnType: "number"
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+interface Identifier {
+    /** Test */
+    readonly [key: string]: number;
+}`;
+            doTest(code, {
+                isReadonly: true,
+                keyName: "key",
+                keyType: "string",
+                docs: [{ description: "Test" }],
+                returnType: "number"
+            });
+        });
+    });
 });

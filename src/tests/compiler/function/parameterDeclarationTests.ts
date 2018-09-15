@@ -1,14 +1,14 @@
 ﻿import { expect } from "chai";
-import { FunctionDeclaration, ParameterDeclaration } from "../../../compiler";
-import { SyntaxKind } from "../../../typescript";
+import { FunctionDeclaration, ParameterDeclaration, Scope } from "../../../compiler";
 import { ParameterDeclarationSpecificStructure, ParameterDeclarationStructure } from "../../../structures";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText, getInfoFromTextWithDescendant } from "../testHelpers";
+import { SyntaxKind } from "../../../typescript";
 
 describe(nameof(ParameterDeclaration), () => {
     describe(nameof<ParameterDeclaration>(d => d.isRestParameter), () => {
         function doTest(startCode: string, isRestParameter: boolean) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
             expect(firstParam.isRestParameter()).to.be.equal(isRestParameter);
         }
@@ -52,7 +52,7 @@ describe(nameof(ParameterDeclaration), () => {
 
     describe(nameof<ParameterDeclaration>(d => d.isParameterProperty), () => {
         function doTest(startCode: string, isParameterProperty: boolean) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
             expect(firstParam.isParameterProperty()).to.be.equal(isParameterProperty);
         }
@@ -72,7 +72,7 @@ describe(nameof(ParameterDeclaration), () => {
 
     describe(nameof<ParameterDeclaration>(d => d.isOptional), () => {
         function doTest(startCode: string, isOptional: boolean) {
-            const {firstChild} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
             expect(firstParam.isOptional()).to.be.equal(isOptional);
         }
@@ -96,7 +96,7 @@ describe(nameof(ParameterDeclaration), () => {
 
     describe(nameof<ParameterDeclaration>(d => d.fill), () => {
         function doTest(startCode: string, structure: Partial<ParameterDeclarationStructure>, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startCode);
             const firstParam = firstChild.getParameters()[0];
             firstParam.fill(structure);
             expect(sourceFile.getFullText()).to.be.equal(expectedCode);
@@ -116,7 +116,7 @@ describe(nameof(ParameterDeclaration), () => {
 
     describe(nameof<ParameterDeclaration>(d => d.remove), () => {
         function doTest(code: string, nameToRemove: string, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<FunctionDeclaration>(code);
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(code);
             ArrayUtils.find(firstChild.getParameters(), p => p.getName() === nameToRemove)!.remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -135,6 +135,41 @@ describe(nameof(ParameterDeclaration), () => {
 
         it("should remove when it's the middle parameter", () => {
             doTest("function identifier(param, param2, param3) {}", "param2", "function identifier(param, param3) {}");
+        });
+    });
+
+    describe(nameof<ParameterDeclaration>(d => d.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<ParameterDeclarationStructure>) {
+            const { descendant } = getInfoFromTextWithDescendant<ParameterDeclaration>(code, SyntaxKind.Parameter);
+            const structure = descendant.getStructure();
+            expect(structure).to.deep.include(expectedStructure);
+        }
+
+        it("should get for parameter that doesn't have anything", () => {
+            doTest("function f(param) {}", {
+                name: "param",
+                type: undefined,
+                hasQuestionToken: false,
+                isRestParameter: false,
+                scope: undefined,
+                isReadonly: false,
+                decorators: [],
+                initializer: undefined
+            });
+        });
+
+        it("should get for parameter that has everything", () => {
+            // not semantically correct, but good enough for testing
+            doTest("function g(@dec public readonly ...matrix?: boolean = true) {}", {
+                hasQuestionToken: true,
+                name: "matrix",
+                type: "boolean",
+                scope: Scope.Public,
+                initializer: "true",
+                isReadonly: true,
+                decorators: [{ name: "dec", arguments: undefined }],
+                isRestParameter: true
+            });
         });
     });
 

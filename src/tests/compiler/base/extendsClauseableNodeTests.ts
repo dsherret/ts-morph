@@ -153,4 +153,19 @@ describe(nameof(ExtendsClauseableNode), () => {
             doTest("interface Identifier {}", { extends: [] }, "interface Identifier {}");
         });
     });
+
+    describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, extendsTexts: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
+            expect(firstChild.getStructure().extends).to.deep.equal(extendsTexts);
+        }
+
+        it("should return an empty array when not exists", () => {
+            doTest("interface Test {}", []);
+        });
+
+        it("should return extends when exists", () => {
+            doTest("interface Test extends Test1, Test2 {}", ["Test1", "Test2"]);
+        });
+    });
 });

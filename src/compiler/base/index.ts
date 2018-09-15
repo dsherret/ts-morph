@@ -10,7 +10,6 @@ export * from "./ExclamationTokenableNode";
 export * from "./ExportableNode";
 export * from "./ExtendsClauseableNode";
 export * from "./GeneratorableNode";
-export * from "./helpers";
 export * from "./HeritageClauseableNode";
 export * from "./ImplementsClauseableNode";
 export * from "./initializer";

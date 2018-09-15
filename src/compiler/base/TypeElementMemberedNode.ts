@@ -10,6 +10,7 @@ import { TypeElementTypes } from "../aliases";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { CallSignatureDeclaration, ConstructSignatureDeclaration, IndexSignatureDeclaration, MethodSignature, PropertySignature } from "../interface";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypeElementMemberedNodeExtensionType = Node<ts.Node & { members: ts.TypeElement[]; }>;
 
@@ -426,6 +427,16 @@ export function TypeElementMemberedNode<T extends Constructor<TypeElementMembere
                 this.addMethods(structure.methods);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<TypeElementMemberedNodeStructure>(Base.prototype, this, {
+                callSignatures: this.getCallSignatures().map(node => node.getStructure()),
+                constructSignatures: this.getConstructSignatures().map(node => node.getStructure()),
+                indexSignatures: this.getIndexSignatures().map(node => node.getStructure()),
+                methods: this.getMethods().map(node => node.getStructure()),
+                properties: this.getProperties().map(node => node.getStructure())
+            });
         }
     };
 }

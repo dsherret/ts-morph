@@ -1,13 +1,18 @@
 import { removeOverloadableClassMember } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure } from "../../structures";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode } from "../base";
+import { BodyableNode, ChildOrderableNode, ScopedNode, TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ConstructorDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(ScopedNode(FunctionLikeDeclaration(BodyableNode(Node))))));
+export const ConstructorDeclarationOverloadBase = TypeParameteredNode(JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(ModifierableNode(
+    SignaturedDeclaration(Node)
+))))));
+
 export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
      * Fills the node from a structure.
@@ -71,5 +76,16 @@ export class ConstructorDeclaration extends ConstructorDeclarationBase<ts.Constr
      */
     remove() {
         removeOverloadableClassMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure {
+        const isOverload = this.isOverload();
+        const basePrototype = isOverload ? ConstructorDeclarationOverloadBase.prototype : ConstructorDeclarationBase.prototype;
+        const structure: ConstructorDeclarationSpecificStructure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+
+        return callBaseGetStructure<any>(basePrototype, this, structure) as ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
     }
 }

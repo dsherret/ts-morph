@@ -1,6 +1,6 @@
 import * as errors from "../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, removeChildren, verifyAndGetIndex } from "../../manipulation";
-import { ImportSpecifierStructure } from "../../structures";
+import { ImportSpecifierStructure, ImportDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, ModuleUtils, StringUtils, TypeGuards } from "../../utils";
 import { Identifier, Node } from "../common";
@@ -8,6 +8,7 @@ import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ImportSpecifier } from "./ImportSpecifier";
 import { SourceFile } from "./SourceFile";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
@@ -345,5 +346,20 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      */
     getImportClause(): Node | undefined {
         return this.getNodeFromCompilerNodeIfExists(this.compilerNode.importClause);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ImportDeclarationStructure {
+        const namespaceImport = this.getNamespaceImport();
+        const defaultImport = this.getDefaultImport();
+
+        return callBaseGetStructure<ImportDeclarationStructure>(Statement.prototype, this, {
+            defaultImport: defaultImport ? defaultImport.getText() : undefined,
+            moduleSpecifier: this.getModuleSpecifier().getText(),
+            namedImports: this.getNamedImports().map(node => node.getStructure()),
+            namespaceImport: namespaceImport ? namespaceImport.getText() : undefined
+        });
     }
 }

@@ -3,6 +3,7 @@ import { Constructor } from "../../../types";
 import { ts } from "../../../typescript";
 import { CompilerNodeToWrappedType } from "../../CompilerNodeToWrappedType";
 import { callBaseFill } from "../../callBaseFill";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { Node } from "../../common";
 import { RenameableNode } from "./RenameableNode";
 
@@ -37,6 +38,12 @@ export function NamedNodeBase<TCompilerNode extends ts.Node, U extends Construct
                 (this as any as RenameableNode).rename(structure.name);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<NamedNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

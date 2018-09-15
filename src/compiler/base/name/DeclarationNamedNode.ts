@@ -1,7 +1,10 @@
 import * as errors from "../../../errors";
 import { Constructor } from "../../../types";
 import { SyntaxKind, ts } from "../../../typescript";
+import { DeclarationNamedNodeStructure } from "../../../structures";
 import { Identifier, Node } from "../../common";
+import { callBaseFill } from "../../callBaseFill";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 import { ReferenceFindableNode } from "./ReferenceFindableNode";
 import { RenameableNode } from "./RenameableNode";
 
@@ -67,6 +70,21 @@ function DeclarationNamedNodeInternal<T extends Constructor<DeclarationNamedNode
         getName() {
             const nameNode = this.getNameNode();
             return nameNode == null ? undefined : nameNode.getText();
+        }
+
+        fill(structure: Partial<DeclarationNamedNodeStructure>) {
+            callBaseFill(Base.prototype, this, structure);
+
+            if (structure.name != null)
+                (this as any as RenameableNode).rename(structure.name);
+
+            return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<DeclarationNamedNodeStructure>(Base.prototype, this, {
+                name: this.getName()
+            });
         }
     };
 }

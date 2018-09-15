@@ -150,4 +150,19 @@ describe(nameof(JSDocableNode), () => {
             doTest("class Identifier {}", {}, "class Identifier {}");
         });
     });
+
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, docTexts: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            expect((firstChild.getStructure().docs! as JSDocStructure[]).map(d => d.description)).to.deep.equal(docTexts);
+        }
+
+        it("should return empty array when doesn't have one", () => {
+            doTest("class Identifier {}", []);
+        });
+
+        it("should get the js docs when they exist", () => {
+            doTest("/** Test *//** Test2 */class Identifier {}", ["Test", "Test2"]);
+        });
+    });
 });

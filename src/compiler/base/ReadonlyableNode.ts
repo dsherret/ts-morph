@@ -5,6 +5,7 @@ import { SyntaxKind } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { ModifierableNode } from "./ModifierableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ReadonlyableNodeExtensionType = Node & ModifierableNode;
 
@@ -54,6 +55,12 @@ export function ReadonlyableNode<T extends Constructor<ReadonlyableNodeExtension
                 this.setIsReadonly(structure.isReadonly);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<ReadonlyableNodeStructure>(Base.prototype, this, {
+                isReadonly: this.isReadonly()
+            });
         }
     };
 }

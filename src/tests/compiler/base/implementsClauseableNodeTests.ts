@@ -161,4 +161,19 @@ describe(nameof(ImplementsClauseableNode), () => {
             doTest("class MyClass {}", { implements: [] }, "class MyClass {}");
         });
     });
+
+    describe(nameof<ClassDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, implementsTexts: string[]) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            expect(firstChild.getStructure().implements).to.deep.equal(implementsTexts);
+        }
+
+        it("should return an empty array when not exists", () => {
+            doTest("class Test {}", []);
+        });
+
+        it("should return extends when exists", () => {
+            doTest("class Test implements Test1, Test2 {}", ["Test1", "Test2"]);
+        });
+    });
 });

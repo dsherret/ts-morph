@@ -2,13 +2,13 @@
 import { ExportDeclaration } from "../../../compiler";
 import * as errors from "../../../errors";
 import { Project } from "../../../Project";
-import { ExportSpecifierStructure } from "../../../structures";
+import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ExportDeclaration), () => {
     describe(nameof<ExportDeclaration>(n => n.isNamespaceExport), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.isNamespaceExport()).to.equal(expected);
         }
 
@@ -23,7 +23,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.hasNamedExports), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.hasNamedExports()).to.equal(expected);
         }
 
@@ -38,7 +38,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.setModuleSpecifier), () => {
         function doTest(text: string, newModuleSpecifier: string, expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.setModuleSpecifier(newModuleSpecifier);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -65,7 +65,7 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should set the module specifier when it's provided a source file", () => {
             doTest(`export {test}`, "./new-test", `export {test} from "./new-test"`);
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(`export {test} from "./other";`);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(`export {test} from "./other";`);
             firstChild.setModuleSpecifier(sourceFile.copy("newFile.ts"));
             expect(sourceFile.getText()).to.equal(`export {test} from "./newFile";`);
         });
@@ -73,7 +73,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifier), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             if (expected == null)
                 expect(firstChild.getModuleSpecifier()).to.equal(undefined);
             else
@@ -91,7 +91,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.getModuleSpecifierValue), () => {
         function doTest(text: string, expected: string | undefined) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.getModuleSpecifierValue()).to.equal(expected);
         }
 
@@ -110,7 +110,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.hasModuleSpecifier), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.hasModuleSpecifier()).to.equal(expected);
         }
 
@@ -185,7 +185,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.isModuleSpecifierRelative), () => {
         function doTest(text: string, expected: boolean) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             expect(firstChild.isModuleSpecifierRelative()).to.equal(expected);
         }
 
@@ -212,7 +212,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.getNamedExports), () => {
         function doTest(text: string, expected: { name: string; alias?: string; }[]) {
-            const {firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
             const namedExports = firstChild.getNamedExports();
             expect(namedExports.length).to.equal(expected.length);
             for (let i = 0; i < namedExports.length; i++) {
@@ -235,7 +235,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExports), () => {
         function doTest(text: string, index: number, structures: (ExportSpecifierStructure | string)[], expected: string, surroundWithSpaces = true) {
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             if (!surroundWithSpaces)
                 firstChild.context.manipulationSettings.set({ insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: false });
             firstChild.insertNamedExports(index, structures);
@@ -269,7 +269,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.insertNamedExport), () => {
         function doTest(text: string, index: number, structureOrName: (ExportSpecifierStructure | string), expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.insertNamedExport(index, structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -285,7 +285,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExport), () => {
         function doTest(text: string, structureOrName: (ExportSpecifierStructure | string), expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.addNamedExport(structureOrName);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -301,7 +301,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.addNamedExports), () => {
         function doTest(text: string, structures: (ExportSpecifierStructure | string)[], expected: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ExportDeclaration>(text);
+            const { firstChild, sourceFile } = getInfoFromText<ExportDeclaration>(text);
             firstChild.addNamedExports(structures);
             expect(sourceFile.getText()).to.equal(expected);
         }
@@ -313,7 +313,7 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getExportDeclarations()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -325,13 +325,13 @@ describe(nameof(ExportDeclaration), () => {
 
     describe(nameof<ExportDeclaration>(n => n.toNamespaceExport), () => {
         function doTest(text: string, expectedText: string) {
-            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(text);
+            const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(text);
             firstChild.toNamespaceExport();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
 
         it("should throw when no module specifier exists", () => {
-            const {sourceFile, firstChild} = getInfoFromText<ExportDeclaration>(`export {name};`);
+            const { sourceFile, firstChild } = getInfoFromText<ExportDeclaration>(`export {name};`);
             expect(() => firstChild.toNamespaceExport()).to.throw(errors.InvalidOperationError);
         });
 
@@ -341,6 +341,27 @@ describe(nameof(ExportDeclaration), () => {
 
         it("should change to a namespace import when there's multiple to remove", () => {
             doTest(`export {name, name2, name3, name4} from "./test";`, `export * from "./test";`);
+        });
+    });
+
+    describe(nameof<ExportDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<ExportDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<ExportDeclaration>(text);
+            expect(firstChild.getStructure()).to.deep.equal(expectedStructure);
+        }
+
+        it("should work with named export declarations", () => {
+            doTest(`export { name } from "./test";`, {
+                moduleSpecifier: '"./test"',
+                namedExports: [{ alias: undefined, name: "name" }]
+            });
+        });
+
+        it("should work with namespace export declarations", () => {
+            doTest(`export * from "./test";`, {
+                moduleSpecifier: '"./test"',
+                namedExports: []
+            });
         });
     });
 });

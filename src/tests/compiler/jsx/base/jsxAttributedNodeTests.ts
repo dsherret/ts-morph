@@ -1,6 +1,6 @@
 ﻿import { expect } from "chai";
 import { JsxAttributedNode, JsxAttributeLike, Node } from "../../../../compiler";
-import { JsxAttributeStructure } from "../../../../structures";
+import { JsxAttributeStructure, JsxSpreadAttributeStructure } from "../../../../structures";
 import { SyntaxKind } from "../../../../typescript";
 import { getInfoFromTextWithDescendant } from "../../testHelpers";
 
@@ -80,7 +80,7 @@ describe(nameof(JsxAttributedNode), () => {
 
     describe(nameof<JsxAttributedNode>(n => n.insertAttributes), () => {
         describe("element", () => {
-            function doTest(text: string, index: number, structures: JsxAttributeStructure[], expected: string) {
+            function doTest(text: string, index: number, structures: (JsxAttributeStructure | JsxSpreadAttributeStructure)[], expected: string) {
                 const {descendant} = getInfo(text);
                 expect(descendant.insertAttributes(index, structures).length).to.equal(structures.length);
                 expect(descendant.getFullText()).to.equal(expected);
@@ -96,7 +96,7 @@ describe(nameof(JsxAttributedNode), () => {
 
             it("should insert the attributes in the middle", () => {
                 doTest(`var t = (<jsx attrib attrib5={2}></jsx>);`, 1,
-                    [{ name: "attrib2" }, { name: "attrib3", initializer: "{3}" }, { name: "attrib4", isSpreadAttribute: true }],
+                    [{ name: "attrib2" }, { name: "attrib3", initializer: "{3}" }, { expression: "attrib4", isSpreadAttribute: true }],
                     `<jsx attrib attrib2 attrib3={3} ...attrib4 attrib5={2}>`);
             });
 

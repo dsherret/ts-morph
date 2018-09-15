@@ -1,7 +1,9 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, MethodDeclaration } from "../../../compiler";
-import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure } from "../../../structures";
+import { ClassDeclaration, MethodDeclaration, Scope } from "../../../compiler";
+import { MethodDeclarationOverloadStructure, MethodDeclarationSpecificStructure, MethodDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
+import { SyntaxKind } from "../../../typescript";
+import { TypeGuards } from "../../../utils";
 
 describe(nameof(MethodDeclaration), () => {
     describe(nameof<MethodDeclaration>(f => f.insertOverloads), () => {
@@ -156,7 +158,7 @@ describe(nameof(MethodDeclaration), () => {
         describe("overloads", () => {
             function doTest(code: string, nameToRemove: string, index: number, expectedCode: string) {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(code);
-                const method = firstChild.getInstanceMethod(nameToRemove)!;
+                const method = firstChild.getInstanceMethodOrThrow(nameToRemove);
                 [...method.getOverloads(), method][index].remove();
                 expect(sourceFile.getFullText()).to.equal(expectedCode);
             }
@@ -199,6 +201,80 @@ describe(nameof(MethodDeclaration), () => {
             it("should remove only the specified signature when it's in an ambient class", () => {
                 doTest("declare class Identifier {\n    method(): void;\n    method(): void;\n}", "method", 1,
                     "declare class Identifier {\n    method(): void;\n}");
+            });
+        });
+    });
+
+    describe(nameof<MethodDeclaration>(d => d.getStructure), () => {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(code: string, expectedStructure: Omit<MakeRequired<MethodDeclarationStructure>, PropertyNamesToExclude>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const method = firstChild.getInstanceMethod("method") || firstChild.getStaticMethodOrThrow("method");
+            const structure = method.getStructure() as MethodDeclarationStructure;
+
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.overloads = structure.overloads!.map(o => ({
+                ...o,
+                parameters: o.parameters!.map(p => ({ name: p.name })),
+                typeParameters: o.typeParameters!.map(p => ({ name: p.name }))
+            }));
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get structure when empty", () => {
+            doTest("class Test { abstract method() {} }", {
+                bodyText: "",
+                decorators: [],
+                docs: [],
+                isAbstract: true,
+                isAsync: false,
+                isGenerator: false,
+                isStatic: false,
+                name: "method",
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get structure when it has everything", () => {
+            const code = `
+class Test {
+    /** overload */
+    protected static async *method<T>(p): string;
+    /** implementation */
+    protected static async *method<T>(param): string {
+    }
+}
+`;
+            doTest(code, {
+                bodyText: "",
+                decorators: [],
+                docs: [{ description: "implementation" }],
+                isAbstract: false,
+                isAsync: true,
+                isGenerator: true,
+                isStatic: true,
+                name: "method",
+                overloads: [{
+                    docs: [{ description: "overload" }],
+                    isAsync: true,
+                    isGenerator: true,
+                    isStatic: true,
+                    returnType: "string",
+                    scope: Scope.Protected,
+                    parameters: [{ name: "p" }],
+                    typeParameters: [{ name: "T" }],
+                    isAbstract: false
+                }],
+                parameters: [{ name: "param" }],
+                returnType: "string",
+                scope: Scope.Protected,
+                typeParameters: [{ name: "T" }]
             });
         });
     });

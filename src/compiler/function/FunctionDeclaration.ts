@@ -1,19 +1,24 @@
 import { removeOverloadableStatementedNodeChild } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure } from "../../structures";
+import { FunctionDeclarationOverloadStructure, FunctionDeclarationStructure, FunctionDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, AsyncableNode, BodyableNode, ChildOrderableNode, ExportableNode, GeneratorableNode, ModifierableNode, NameableNode,
-    TextInsertableNode, UnwrappableNode } from "../base";
+    TextInsertableNode, UnwrappableNode, SignaturedDeclaration, TypeParameteredNode, JSDocableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { NamespaceChildableNode } from "../namespace";
 import { StatementedNode } from "../statement";
 import { FunctionLikeDeclaration } from "./FunctionLikeDeclaration";
 import { insertOverloads, OverloadableNode } from "./OverloadableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const FunctionDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(OverloadableNode(BodyableNode(AsyncableNode(GeneratorableNode(
     FunctionLikeDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(ExportableNode(ModifierableNode(NameableNode(Node)))))))
 )))))));
+export const FunctionDeclarationOverloadBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(AsyncableNode(GeneratorableNode(ModifierableNode(
+    SignaturedDeclaration(StatementedNode(AmbientableNode(NamespaceChildableNode(JSDocableNode(TypeParameteredNode(ExportableNode(ModifierableNode(Node))))))))
+))))));
+
 export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
      * Fills the node from a structure.
@@ -78,5 +83,16 @@ export class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDecl
      */
     remove() {
         removeOverloadableStatementedNodeChild(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): FunctionDeclarationStructure | FunctionDeclarationOverloadStructure {
+        const isOverload = this.isOverload();
+        const basePrototype = isOverload ? FunctionDeclarationOverloadBase.prototype : FunctionDeclarationBase.prototype;
+        const structure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+
+        return callBaseGetStructure<any>(basePrototype, this, structure);
     }
 }

@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { JsxAttribute, JsxSelfClosingElement } from "../../../compiler";
+import { JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -103,6 +104,38 @@ describe(nameof(JsxAttribute), () => {
 
         it("should remove the attribute at the end when on a new line", () => {
             doTest(`var t = (<jsx a1\n    a2 />);`, 1, `var t = (<jsx a1 />);`);
+        });
+    });
+
+    describe(nameof<JsxAttribute>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<JsxAttributeStructure>) {
+            const { descendant } = getInfo(text);
+            const structure = descendant.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get the structure when has no initializer", () => {
+            doTest(`var t = (<jsx a1 />`, {
+                name: "a1",
+                initializer: undefined,
+                isSpreadAttribute: false
+            });
+        });
+
+        it("should get the structure when has a string initializer", () => {
+            doTest(`var t = (<jsx a1="1" />`, {
+                name: "a1",
+                initializer: `"1"`,
+                isSpreadAttribute: false
+            });
+        });
+
+        it("should get the structure when has an expression initializer", () => {
+            doTest(`var t = (<jsx a1={1} />`, {
+                name: "a1",
+                initializer: `{1}`,
+                isSpreadAttribute: false
+            });
         });
     });
 });

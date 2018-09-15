@@ -1,12 +1,13 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, ConstructorDeclaration } from "../../../compiler";
-import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationSpecificStructure } from "../../../structures";
+import { ClassDeclaration, ConstructorDeclaration, Scope } from "../../../compiler";
+import { ConstructorDeclarationOverloadStructure, ConstructorDeclarationStructure, ConstructorDeclarationSpecificStructure, JSDocStructure,
+    ClassDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(ConstructorDeclaration), () => {
     describe(nameof<ConstructorDeclaration>(f => f.insertOverloads), () => {
         function doTest(startCode: string, index: number, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getConstructors()[0];
             const result = methodDeclaration.insertOverloads(index, structures);
             expect(result.length).to.equal(structures.length);
@@ -41,7 +42,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.insertOverload), () => {
         function doTest(startCode: string, index: number, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.insertOverload(index, structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
@@ -56,7 +57,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverloads), () => {
         function doTest(startCode: string, structures: ConstructorDeclarationOverloadStructure[], expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverloads(structures);
             expect(result.length).to.equal(structures.length);
@@ -71,7 +72,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(f => f.addOverload), () => {
         function doTest(startCode: string, structure: ConstructorDeclarationOverloadStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startCode);
             const methodDeclaration = firstChild.getMembers()[0] as ConstructorDeclaration;
             const result = methodDeclaration.addOverload(structure);
             expect(result).to.be.instanceof(ConstructorDeclaration);
@@ -86,7 +87,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(d => d.remove), () => {
         function doTest(startCode: string, expectedCode: string) {
-            const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].remove();
             expect(sourceFile.getFullText()).to.equal(expectedCode);
         }
@@ -118,7 +119,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
         it("should only remove the overload when calling remove on the overload", () => {
             const startCode = "class MyClass {\n    constructor();\n    constructor() {\n    }\n}";
-            const {sourceFile, firstChild} = getInfoFromText<ClassDeclaration>(startCode);
+            const { sourceFile, firstChild } = getInfoFromText<ClassDeclaration>(startCode);
             firstChild.getConstructors()[0].getOverloads()[0].remove();
             expect(sourceFile.getFullText()).to.equal("class MyClass {\n    constructor() {\n    }\n}");
         });
@@ -126,7 +127,7 @@ describe(nameof(ConstructorDeclaration), () => {
 
     describe(nameof<ConstructorDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: ConstructorDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
             const ctor = firstChild.getConstructors()[0];
             ctor.fill(structure);
             expect(sourceFile.getText()).to.equal(expectedCode);
@@ -141,6 +142,60 @@ describe(nameof(ConstructorDeclaration), () => {
                 overloads: [{ parameters: [{ name: "param" }] }]
             };
             doTest("class identifier {\n    constructor() {}\n}", structure, "class identifier {\n    constructor(param);\n    constructor() {}\n}");
+        });
+    });
+
+    describe(nameof<ConstructorDeclaration>(n => n.getStructure), () => {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(code: string, expectedStructure: Omit<MakeRequired<ConstructorDeclarationStructure>, PropertyNamesToExclude>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const structure = firstChild.getConstructors()[0].getStructure();
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get structure when empty", () => {
+            doTest("class T { constructor() {} }", {
+                bodyText: "",
+                docs: [],
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get structure when has everything", () => {
+            const code = `
+class T {
+    /** overload */
+    public constructor<T>();
+    /** implementation */
+    public constructor<T>(p) {
+        test;
+    }
+}
+`;
+            doTest(code, {
+                bodyText: "test;",
+                docs: [{ description: "implementation" }],
+                overloads: [{
+                    scope: Scope.Public,
+                    docs: [{ description: "overload" }],
+                    parameters: [],
+                    returnType: undefined,
+                    typeParameters: [{
+                        name: "T", constraint: undefined, default: undefined
+                    }]
+                }],
+                parameters: [{ name: "p" }],
+                returnType: undefined,
+                scope: Scope.Public,
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });

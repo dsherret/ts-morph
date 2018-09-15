@@ -592,7 +592,7 @@ describe(nameof(TypeElementMemberedNode), () => {
         });
     });
 
-    describe("fill", () => {
+    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
         function doTest(startingCode: string, structure: TypeElementMemberedNodeStructure, expectedCode: string) {
             const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.fill(structure);
@@ -613,6 +613,44 @@ describe(nameof(TypeElementMemberedNode), () => {
             };
             doTest("interface Identifier {\n}", structure,
                 "interface Identifier {\n    (): string;\n    new(): string;\n    [key: string]: number;\n    p;\n    m();\n}");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(n => n.fill), () => {
+        function doTest(startingCode: string, expectedStructure: TypeElementMemberedNodeStructure) {
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
+            const structure = firstChild.getStructure();
+            expect(structure.callSignatures).to.deep.equal(expectedStructure.callSignatures);
+            expect(structure.constructSignatures).to.deep.equal(expectedStructure.constructSignatures);
+            expect(structure.indexSignatures).to.deep.equal(expectedStructure.indexSignatures);
+            expect(structure.methods!.map(m => m.name)).to.deep.equal(expectedStructure.methods!.map(m => m.name));
+            expect(structure.properties!.map(m => m.name)).to.deep.equal(expectedStructure.properties!.map(m => m.name));
+        }
+
+        it("should be empty arrays when empty", () => {
+            doTest("interface Identifier {\n}", {
+                callSignatures: [],
+                constructSignatures: [],
+                indexSignatures: [],
+                methods: [],
+                properties: []
+            });
+        });
+
+        it("should get when all exist", () => {
+            doTest(`interface Identifier {\n\n
+    (): void;
+    new(): string;
+    [test: string]: string;
+    method(): string;
+    prop: string;
+}`, {
+                callSignatures: [{ docs: [], parameters: [], returnType: "void", typeParameters: [] }],
+                constructSignatures: [{ docs: [], parameters: [], returnType: "string", typeParameters: [] }],
+                indexSignatures: [{ docs: [], isReadonly: false, keyName: "test", keyType: "string", returnType: "string" }],
+                methods: [{ name: "method" }],
+                properties: [{ name: "prop" }]
+            });
         });
     });
 });

@@ -1,7 +1,8 @@
-﻿import { expect } from "chai";
+﻿import { expect, assert } from "chai";
 import { FunctionDeclaration } from "../../../compiler";
-import { FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
+import { FunctionDeclarationStructure, FunctionDeclarationOverloadStructure, FunctionDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
+import { TypeGuards } from "../../../utils/TypeGuards";
 
 describe(nameof(FunctionDeclaration), () => {
     describe(nameof<FunctionDeclaration>(f => f.getName), () => {
@@ -146,6 +147,79 @@ describe(nameof(FunctionDeclaration), () => {
         it("should remove the function declaration overload when last", () => {
             doOverloadTest("function I() {}\n\nfunction J(first): void;\nfunction J(second): void;\nfunction J() {}\n\nfunction K() {}", 1, 1,
                 "function I() {}\n\nfunction J(first): void;\nfunction J() {}\n\nfunction K() {}");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(d => d.getStructure), () => {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(text: string, expectedStructure: Omit<MakeRequired<FunctionDeclarationStructure>, PropertyNamesToExclude>) {
+            const { sourceFile } = getInfoFromText<any>(text);
+            const functionDec = sourceFile.getFunctions()[0];
+            const structure = functionDec.getStructure() as FunctionDeclarationStructure;
+
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+
+            structure.overloads!.forEach(o => {
+                o.parameters = o.parameters!.map(p => ({ name: p.name }));
+                o.typeParameters = o.typeParameters!.map(p => ({ name: p.name }));
+            });
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get the structure for an empty function", () => {
+            doTest("declare function test() {}", {
+                bodyText: "",
+                docs: [],
+                hasDeclareKeyword: true,
+                isAsync: false,
+                isDefaultExport: false,
+                isExported: false,
+                isGenerator: false,
+                name: "test",
+                overloads: [],
+                parameters: [],
+                returnType: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get the structure for a function that has everything", () => {
+            const code = `
+/** docs2 */
+export default async function *test<U>(p): number;
+/** docs */
+export default async function *test<T>(param): string {
+    return '';
+}
+`;
+            const overloadStructure: MakeRequired<FunctionDeclarationOverloadStructure> = {
+                docs: [{ description: "docs2" }],
+                hasDeclareKeyword: false,
+                isAsync: true,
+                isDefaultExport: true,
+                isExported: true,
+                isGenerator: true,
+                parameters: [{ name: "p" }],
+                returnType: "number",
+                typeParameters: [{ name: "U" }]
+            };
+
+            doTest(code, {
+                bodyText: "return '';",
+                docs: [{ description: "docs" }],
+                hasDeclareKeyword: false,
+                isAsync: true,
+                isDefaultExport: true,
+                isExported: true,
+                isGenerator: true,
+                name: "test",
+                overloads: [overloadStructure],
+                parameters: [{ name: "param" }],
+                returnType: "string",
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });

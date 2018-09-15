@@ -1,12 +1,13 @@
 import * as errors from "../../errors";
 import { getNodesToReturn, insertIntoCommaSeparatedNodes, insertIntoParentTextRange, verifyAndGetIndex } from "../../manipulation";
-import { ExportSpecifierStructure } from "../../structures";
+import { ExportSpecifierStructure, ExportDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, ModuleUtils, TypeGuards } from "../../utils";
 import { StringLiteral } from "../literal";
 import { Statement } from "../statement";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { SourceFile } from "./SourceFile";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
     /**
@@ -225,5 +226,16 @@ export class ExportDeclaration extends Statement<ts.ExportDeclaration> {
             }
         });
         return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportDeclarationStructure {
+        const moduleSpecifier = this.getModuleSpecifier();
+        return callBaseGetStructure<ExportDeclarationStructure>(Statement.prototype, this, {
+            moduleSpecifier: moduleSpecifier ? moduleSpecifier.getText() : undefined,
+            namedExports: this.getNamedExports().map(node => node.getStructure())
+        });
     }
 }

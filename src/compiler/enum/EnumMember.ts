@@ -1,26 +1,14 @@
 import { FormattingKind, removeChildrenWithFormatting } from "../../manipulation";
-import { EnumMemberStructure } from "../../structures";
+import { EnumMemberStructure, EnumMemberSpecificStructure, EnumDeclarationStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { StringUtils } from "../../utils";
 import { InitializerExpressionableNode, JSDocableNode, PropertyNamedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const EnumMemberBase = JSDocableNode(InitializerExpressionableNode(PropertyNamedNode(Node)));
 export class EnumMember extends EnumMemberBase<ts.EnumMember> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<EnumMemberStructure>) {
-        callBaseFill(EnumMemberBase.prototype, this, structure);
-
-        if (structure.value != null)
-            this.setValue(structure.value);
-
-        return this;
-    }
-
     /**
      * Gets the constant value of the enum.
      */
@@ -58,5 +46,29 @@ export class EnumMember extends EnumMemberBase<ts.EnumMember> {
             children: childrenToRemove,
             getSiblingFormatting: () => FormattingKind.Newline
         });
+    }
+
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<EnumMemberStructure>) {
+        callBaseFill(EnumMemberBase.prototype, this, structure);
+
+        if (structure.value != null)
+            this.setValue(structure.value);
+        else if (structure.hasOwnProperty(nameof(structure.value)))
+            this.removeInitializer();
+
+        return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure() {
+        return callBaseGetStructure<EnumMemberSpecificStructure>(EnumMemberBase.prototype, this, {
+            value: this.hasInitializer() ? this.getValue() : undefined
+        }) as EnumMemberStructure;
     }
 }

@@ -8,6 +8,7 @@ import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { Type } from "../type/Type";
 import { TypeNode } from "../type/TypeNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type ReturnTypedNodeExtensionReturnType = Node<ts.SignatureDeclaration>;
 
@@ -83,6 +84,8 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
 
             if (structure.returnType != null)
                 this.setReturnType(structure.returnType);
+            else if (structure.hasOwnProperty(nameof(structure.returnType)))
+                this.removeReturnType();
 
             return this;
         }
@@ -95,6 +98,13 @@ export function ReturnTypedNode<T extends Constructor<ReturnTypedNodeExtensionRe
             const colonToken = returnTypeNode.getPreviousSiblingIfKindOrThrow(SyntaxKind.ColonToken);
             removeChildren({ children: [colonToken, returnTypeNode], removePrecedingSpaces: true });
             return this;
+        }
+
+        getStructure() {
+            const returnTypeNode = this.getReturnTypeNode();
+            return callBaseGetStructure<ReturnTypedNodeStructure>(Base.prototype, this, {
+                returnType: returnTypeNode ? returnTypeNode.getText() : undefined
+            });
         }
     };
 }

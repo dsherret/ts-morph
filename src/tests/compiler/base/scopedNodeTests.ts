@@ -97,5 +97,24 @@ describe(nameof(ScopedNode), () => {
         it("should modify when setting", () => {
             doTest("class MyClass { prop: string; }", { scope: Scope.Protected }, "class MyClass { protected prop: string; }");
         });
+
+        it("should remove when exists, but undefined", () => {
+            doTest("class MyClass { public prop: string; }", { scope: undefined }, "class MyClass { prop: string; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(p => p.getStructure), () => {
+        function doTest(startCode: string, scope: Scope | undefined) {
+            const { firstProperty, sourceFile } = getInfoWithFirstPropertyFromText(startCode);
+            expect(firstProperty.getStructure().scope).to.equal(scope);
+        }
+
+        it("should be undefined when not exists", () => {
+            doTest("class MyClass { prop: string; }", undefined);
+        });
+
+        it("should get when exists", () => {
+            doTest("class MyClass { public prop: string; }", Scope.Public);
+        });
     });
 });

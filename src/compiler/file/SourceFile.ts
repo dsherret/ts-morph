@@ -4,10 +4,11 @@ import { ProjectContext } from "../../ProjectContext";
 import { FormattingKind, getTextFromFormattingEdits, removeChildrenWithFormatting, replaceNodeText, replaceSourceFileForFilePathMove,
     replaceSourceFileTextForFormatting } from "../../manipulation";
 import { getNextMatchingPos, getPreviousMatchingPos } from "../../manipulation/textSeek";
-import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure } from "../../structures";
+import { ExportAssignmentStructure, ExportDeclarationStructure, ImportDeclarationStructure, SourceFileStructure, SourceFileSpecificStructure } from "../../structures";
 import { Constructor } from "../../types";
 import { LanguageVariant, ScriptTarget, SyntaxKind, ts } from "../../typescript";
 import { ArrayUtils, createHashSet, EventContainer, FileUtils, ModuleUtils, SourceFileReferenceContainer, StringUtils, TypeGuards } from "../../utils";
+import { getBodyTextForStructure } from "../base/helpers";
 import { TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node, Symbol } from "../common";
@@ -19,6 +20,7 @@ import { ExportDeclaration } from "./ExportDeclaration";
 import { ExportSpecifier } from "./ExportSpecifier";
 import { FileSystemRefreshResult } from "./FileSystemRefreshResult";
 import { ImportDeclaration } from "./ImportDeclaration";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export interface SourceFileCopyOptions {
     overwrite?: boolean;
@@ -848,45 +850,16 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
         const startLinePos = getPreviousMatchingPos(sourceFileText, positionRange[0], char => char === "\n");
         const endLinePos = getNextMatchingPos(sourceFileText, positionRange[1], char => char === "\r" || char === "\n");
         const indentText = this.context.manipulationSettings.getIndentationText();
-        const unindentRegex = times > 0 ? undefined : new RegExp(getDeindentRegexText());
 
-        let pos = startLinePos;
-        const newLines: string[] = [];
-        for (const line of sourceFileText.substring(startLinePos, endLinePos).split("\n")) {
-            if (this.isInStringAtPos(pos))
-                newLines.push(line);
-            else if (times > 0)
-                newLines.push(StringUtils.repeat(indentText, times) + line);
-            else // negative
-                newLines.push(line.replace(unindentRegex!, ""));
-            pos += line.length;
-        }
+        const correctedText = StringUtils.indent(sourceFileText.substring(startLinePos, endLinePos),
+            times, indentText, pos => this.isInStringAtPos(pos + startLinePos));
 
         replaceSourceFileTextForFormatting({
             sourceFile: this,
-            newText: sourceFileText.substring(0, startLinePos) + newLines.join("\n") + sourceFileText.substring(endLinePos)
+            newText: sourceFileText.substring(0, startLinePos) + correctedText + sourceFileText.substring(endLinePos)
         });
 
         return this;
-
-        function getDeindentRegexText() {
-            const isSpaces = /^ +$/;
-            let text = "^";
-            for (let i = 0; i < Math.abs(times); i++) {
-                text += "(";
-                if (isSpaces.test(indentText)) {
-                    // the optional string makes it possible to unindent when a line doesn't have the full number of spaces
-                    for (let j = 0; j < indentText.length; j++)
-                        text += " ?";
-                }
-                else
-                    text += indentText;
-
-                text += "|\t)?";
-            }
-
-            return text;
-        }
     }
 
     /**
@@ -1005,6 +978,15 @@ export class SourceFile extends SourceFileBase<ts.SourceFile> {
             newText: getTextFromFormattingEdits(this, textChanges)
         });
         return this;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): SourceFileStructure {
+        return callBaseGetStructure<{ bodyText: string | undefined; }>(SourceFileBase.prototype, this, {
+            bodyText: getBodyTextForStructure(this)
+        });
     }
 
     private _refreshFromFileSystemInternal(fileReadResult: string | false): FileSystemRefreshResult {

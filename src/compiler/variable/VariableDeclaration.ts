@@ -1,10 +1,11 @@
 import * as errors from "../../errors";
 import { removeChildren, removeCommaSeparatedChild } from "../../manipulation";
-import { VariableDeclarationStructure } from "../../structures";
+import { VariableDeclarationStructure, VariableDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
 import { BindingNamedNode, ExclamationTokenableNode, InitializerExpressionableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const VariableDeclarationBase = ExclamationTokenableNode(TypedNode(InitializerExpressionableNode(BindingNamedNode(Node))));
 export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDeclaration> {
@@ -53,5 +54,13 @@ export class VariableDeclaration extends VariableDeclarationBase<ts.VariableDecl
                 removePrecedingSpaces: true
             });
         }
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableDeclarationStructure {
+        return callBaseGetStructure<VariableDeclarationSpecificStructure>(VariableDeclarationBase.prototype, this, {
+        }) as any as VariableDeclarationStructure;
     }
 }

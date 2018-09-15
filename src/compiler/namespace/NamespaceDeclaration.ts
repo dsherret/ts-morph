@@ -1,13 +1,15 @@
 import * as errors from "../../errors";
 import { replaceNodeText } from "../../manipulation";
-import { NamespaceDeclarationStructure } from "../../structures";
+import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
+import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
+    TextInsertableNode, UnwrappableNode } from "../base";
 import { TypeGuards } from "../../utils";
-import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode, TextInsertableNode, UnwrappableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Identifier } from "../common";
 import { Statement, StatementedNode } from "../statement";
 import { NamespaceChildableNode } from "./NamespaceChildableNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const NamespaceDeclarationBase = ChildOrderableNode(UnwrappableNode(TextInsertableNode(BodiedNode(NamespaceChildableNode(StatementedNode(JSDocableNode(
     AmbientableNode(ExportableNode(ModifierableNode(NamedNode(Statement))))
@@ -114,7 +116,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     }
 
     /**
-     * Set if this namespace has a namepsace keyword.
+     * Set if this namespace has a namespace keyword.
      * @param value - Whether to set it or not.
      */
     setHasModuleKeyword(value = true) {
@@ -132,6 +134,15 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         if (keyword == null)
             throw new errors.NotImplementedError("Expected the declaration kind keyword to exist on a namespace.");
         return keyword;
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): NamespaceDeclarationStructure {
+        return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
+            hasModuleKeyword: this.hasModuleKeyword()
+        });
     }
 
     /** @internal */

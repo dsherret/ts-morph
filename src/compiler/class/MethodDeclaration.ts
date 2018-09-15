@@ -1,16 +1,22 @@
 import { removeOverloadableClassMember } from "../../manipulation";
 import * as getStructureFuncs from "../../manipulation/helpers/getStructureFunctions";
-import { MethodDeclarationOverloadStructure, MethodDeclarationStructure } from "../../structures";
+import { MethodDeclarationOverloadStructure, MethodDeclarationStructure, MethodDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
+import { AsyncableNode, BodyableNode, ChildOrderableNode, DecoratableNode, GeneratorableNode, PropertyNamedNode, ScopedNode, StaticableNode,
+    TextInsertableNode, SignaturedDeclaration, ModifierableNode, JSDocableNode, TypeParameteredNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
+import { Node, Signature } from "../common";
 import { FunctionLikeDeclaration, insertOverloads, OverloadableNode } from "../function";
 import { AbstractableNode } from "./base";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const MethodDeclarationBase = ChildOrderableNode(TextInsertableNode(OverloadableNode(BodyableNode(DecoratableNode(AbstractableNode(ScopedNode(
     StaticableNode(AsyncableNode(GeneratorableNode(FunctionLikeDeclaration(PropertyNamedNode(Node)))))
 )))))));
+export const MethodDeclarationOverloadBase = JSDocableNode(ChildOrderableNode(TextInsertableNode(ScopedNode(TypeParameteredNode(AbstractableNode(
+    StaticableNode(AsyncableNode(ModifierableNode(GeneratorableNode(SignaturedDeclaration(Node)
+))))))))));
+
 export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
      * Fills the node from a structure.
@@ -75,5 +81,17 @@ export class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaratio
      */
     remove() {
         removeOverloadableClassMember(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): MethodDeclarationStructure | MethodDeclarationOverloadStructure {
+        const isOverload = this.isOverload();
+        const basePrototype = isOverload ? MethodDeclarationOverloadBase.prototype : MethodDeclarationBase.prototype;
+        const structure = isOverload ? {} : { overloads: this.getOverloads().map(o => o.getStructure()) };
+
+        return callBaseGetStructure<any>(basePrototype, this,
+            structure) as any as MethodDeclarationStructure | MethodDeclarationOverloadStructure;
     }
 }

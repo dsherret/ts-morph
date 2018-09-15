@@ -7,6 +7,7 @@ import { getTextFromStringOrWriter } from "../../../utils";
 import { callBaseFill } from "../../callBaseFill";
 import { Node } from "../../common";
 import { InitializerGetExpressionableNode } from "./InitializerGetExpressionableNode";
+import { callBaseGetStructure } from "../../callBaseGetStructure";
 
 export type InitializerSetExpressionableExtensionType = Node<ts.Node & { initializer?: ts.Expression; }> & InitializerGetExpressionableNode;
 
@@ -59,8 +60,17 @@ export function InitializerSetExpressionableNode<T extends Constructor<Initializ
 
             if (structure.initializer != null)
                 this.setInitializer(structure.initializer);
+            else if (structure.hasOwnProperty(nameof(structure.initializer)))
+                this.removeInitializer();
 
             return this;
+        }
+
+        getStructure() {
+            const initializer = this.getInitializer();
+            return callBaseGetStructure<InitializerSetExpressionableNodeStructure>(Base.prototype, this, {
+                initializer: initializer ? initializer.getText() : undefined
+            });
         }
     };
 }

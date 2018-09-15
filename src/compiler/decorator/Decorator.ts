@@ -2,9 +2,12 @@ import * as errors from "../../errors";
 import { FormattingKind, insertIntoParentTextRange, removeChildren, removeChildrenWithFormattingFromCollapsibleSyntaxList } from "../../manipulation";
 import { SyntaxKind, ts } from "../../typescript";
 import { TypeGuards } from "../../utils";
-import { Node } from "../common";
+import { Node } from "../common/Node";
+import { Identifier } from "../common/Identifier";
 import { CallExpression, Expression } from "../expression";
 import { TypeNode } from "../type";
+import { DecoratorStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const DecoratorBase = Node;
 export class Decorator extends DecoratorBase<ts.Decorator> {
@@ -273,5 +276,15 @@ export class Decorator extends DecoratorBase<ts.Decorator> {
                 children: [this],
                 getSiblingFormatting: (parent, sibling) => sibling.getStartLinePos() === thisStartLinePos ? FormattingKind.Space : FormattingKind.Newline
             });
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): DecoratorStructure {
+        return callBaseGetStructure<DecoratorStructure>(DecoratorBase.prototype, this, {
+            name: this.getName(),
+            arguments: this.isDecoratorFactory() ? this.getArguments().map(arg => arg.getText()) : undefined
+        }) as DecoratorStructure;
     }
 }

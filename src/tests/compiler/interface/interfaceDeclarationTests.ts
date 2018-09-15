@@ -1,19 +1,20 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, InterfaceDeclaration } from "../../../compiler";
-import { InterfaceDeclarationSpecificStructure } from "../../../structures";
+import { InterfaceDeclarationStructure, InterfaceDeclarationSpecificStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
+import { TypeGuards } from "../../../utils";
 
 describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(d => d.getType), () => {
         it("should get the interface's type", () => {
-            const {sourceFile} = getInfoFromText("interface Identifier { prop: string; }");
+            const { sourceFile } = getInfoFromText("interface Identifier { prop: string; }");
             expect(sourceFile.getInterfaceOrThrow("Identifier").getType().getText()).to.deep.equal("Identifier");
         });
     });
 
     describe(nameof<InterfaceDeclaration>(d => d.getBaseTypes), () => {
         function doTest(text: string, interfaceName: string, expectedNames: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const types = sourceFile.getInterfaceOrThrow(interfaceName).getBaseTypes();
             expect(types.map(c => c.getText())).to.deep.equal(expectedNames);
         }
@@ -33,7 +34,7 @@ describe(nameof(InterfaceDeclaration), () => {
 
     describe(nameof<InterfaceDeclaration>(d => d.getBaseDeclarations), () => {
         function doTest(text: string, interfaceName: string, expectedNames: string[]) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             const declarations = sourceFile.getInterfaceOrThrow(interfaceName).getBaseDeclarations();
             expect(declarations.map(c => c.getName())).to.deep.equal(expectedNames);
         }
@@ -58,7 +59,7 @@ describe(nameof(InterfaceDeclaration), () => {
 
     describe(nameof<InterfaceDeclaration>(d => d.fill), () => {
         function doTest(startingCode: string, structure: InterfaceDeclarationSpecificStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(startingCode);
+            const { firstChild, sourceFile } = getInfoFromText<InterfaceDeclaration>(startingCode);
             firstChild.fill(structure);
             expect(firstChild.getText()).to.equal(expectedCode);
         }
@@ -72,7 +73,7 @@ describe(nameof(InterfaceDeclaration), () => {
 
     describe(nameof<InterfaceDeclaration>(d => d.remove), () => {
         function doTest(text: string, index: number, expectedText: string) {
-            const {sourceFile} = getInfoFromText(text);
+            const { sourceFile } = getInfoFromText(text);
             sourceFile.getInterfaces()[index].remove();
             expect(sourceFile.getFullText()).to.equal(expectedText);
         }
@@ -85,11 +86,72 @@ describe(nameof(InterfaceDeclaration), () => {
     describe(nameof<InterfaceDeclaration>(n => n.getImplementations), () => {
         it("should get the implementations", () => {
             const sourceFileText = "interface MyInterface {}\nexport class Class1 implements MyInterface {}\nclass Class2 implements MyInterface {}";
-            const {firstChild, sourceFile, project} = getInfoFromText<InterfaceDeclaration>(sourceFileText);
+            const { firstChild, sourceFile, project } = getInfoFromText<InterfaceDeclaration>(sourceFileText);
             const implementations = firstChild.getImplementations();
             expect(implementations.length).to.equal(2);
             expect(implementations[0].getNode().getText()).to.equal("Class1");
             expect(implementations[1].getNode().getText()).to.equal("Class2");
+        });
+    });
+
+    describe(nameof<InterfaceDeclaration>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<InterfaceDeclarationStructure>) {
+            const { firstChild, project } = getInfoFromText<InterfaceDeclaration>(code);
+            const structure = firstChild.getStructure();
+
+            // only bother comparing the basics
+            structure.methods = structure.methods!.map(s => ({ name: s.name }));
+            structure.properties = structure.properties!.map(s => ({ name: s.name }));
+            structure.indexSignatures = structure.indexSignatures!.map(s => ({ keyName: s.keyName, returnType: s.returnType }));
+            structure.callSignatures = structure.callSignatures!.map(s => ({ }));
+            structure.constructSignatures = structure.constructSignatures!.map(s => ({ }));
+            structure.typeParameters = structure.typeParameters!.map(s => ({ name: s.name }));
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get for an empty interface", () => {
+            doTest(`interface Test {}`, {
+                callSignatures: [],
+                constructSignatures: [],
+                docs: [],
+                extends: [],
+                hasDeclareKeyword: false,
+                indexSignatures: [],
+                isDefaultExport: false,
+                isExported: false,
+                methods: [],
+                name: "Test",
+                properties: [],
+                typeParameters: []
+            });
+        });
+
+        it("should get for an interface that has everything", () => {
+            const code = `
+/** Test */
+export default interface Test<T> extends Test2 {
+    (): void;
+    new(): Test;
+    [key: string]: string;
+    method(): void;
+    property: string;
+}
+`;
+            doTest(code, {
+                callSignatures: [{}],
+                constructSignatures: [{}],
+                docs: [{ description: "Test" }],
+                extends: ["Test2"],
+                hasDeclareKeyword: false,
+                indexSignatures: [{ keyName: "key", returnType: "string" }],
+                isDefaultExport: true,
+                isExported: true,
+                methods: [{ name: "method" }],
+                name: "Test",
+                properties: [{ name: "property" }],
+                typeParameters: [{ name: "T" }]
+            });
         });
     });
 });

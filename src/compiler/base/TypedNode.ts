@@ -7,6 +7,7 @@ import { getTextFromStringOrWriter, StringUtils } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { TypeNode } from "../type/TypeNode";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type TypedNodeExtensionType = Node<ts.Node & { type?: ts.TypeNode; }>;
 
@@ -113,6 +114,13 @@ export function TypedNode<T extends Constructor<TypedNodeExtensionType>>(Base: T
             const separatorToken = typeNode.getPreviousSiblingIfKindOrThrow(getSeparatorSyntaxKindForNode(this));
             removeChildren({ children: [separatorToken, typeNode], removePrecedingSpaces: true });
             return this;
+        }
+
+        getStructure() {
+            const typeNode = this.getTypeNode();
+            return callBaseGetStructure<TypedNodeStructure>(Base.prototype, this, {
+                type: typeNode ? typeNode.getText() : undefined
+            });
         }
     };
 }

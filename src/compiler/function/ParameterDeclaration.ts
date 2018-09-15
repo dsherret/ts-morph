@@ -1,11 +1,13 @@
 import { insertIntoParentTextRange, removeChildren, removeCommaSeparatedChild } from "../../manipulation";
-import { ParameterDeclarationStructure } from "../../structures";
+import { ParameterDeclarationStructure, AbstractableNodeStructure, ParameterDeclarationSpecificStructure } from "../../structures";
+// import { ParameterDeclarationStructure } from "../../structures";
 import { WriterFunction } from "../../types";
 import { ts, SyntaxKind } from "../../typescript";
 import { TypeGuards } from "../../utils";
 import { DeclarationNamedNode, DecoratableNode, InitializerExpressionableNode, ModifierableNode, QuestionTokenableNode, ReadonlyableNode, ScopeableNode, TypedNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
-import { Node } from "../common";
+import { Node } from "../common/Node";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const ParameterDeclarationBase = QuestionTokenableNode(DecoratableNode(ScopeableNode(ReadonlyableNode(ModifierableNode(
     TypedNode(InitializerExpressionableNode(DeclarationNamedNode(Node)))
@@ -79,6 +81,15 @@ export class ParameterDeclaration extends ParameterDeclarationBase<ts.ParameterD
      */
     remove() {
         removeCommaSeparatedChild(this);
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ParameterDeclarationStructure {
+        return callBaseGetStructure<ParameterDeclarationSpecificStructure>(ParameterDeclarationBase.prototype, this, {
+            isRestParameter: this.isRestParameter()
+        }) as any as ParameterDeclarationStructure;
     }
 
     // ------ Methods to override to add parens ------

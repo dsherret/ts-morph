@@ -4,7 +4,8 @@ import { Constructor, WriterFunction } from "../../types";
 import { ts } from "../../typescript";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
-import { setBodyTextForNode } from "./helpers/setBodyTextForNode";
+import { getBodyTextForStructure, setBodyTextForNode } from "./helpers";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export type BodiedNodeExtensionType = Node<ts.Node & { body: ts.Node; }>;
 
@@ -48,6 +49,12 @@ export function BodiedNode<T extends Constructor<BodiedNodeExtensionType>>(Base:
                 this.setBodyText(structure.bodyText);
 
             return this;
+        }
+
+        getStructure() {
+            return callBaseGetStructure<BodiedNodeStructure>(Base.prototype, this, {
+                bodyText: getBodyTextForStructure(this.getBody())
+            });
         }
     };
 }

@@ -222,8 +222,6 @@ export class TypeGuards {
      */
     static isBodiedNode(node: compiler.Node): node is compiler.BodiedNode & compiler.Node {
         switch (node.getKind()) {
-            case SyntaxKind.GetAccessor:
-            case SyntaxKind.SetAccessor:
             case SyntaxKind.ArrowFunction:
             case SyntaxKind.FunctionExpression:
             case SyntaxKind.ModuleDeclaration:
@@ -240,7 +238,9 @@ export class TypeGuards {
     static isBodyableNode(node: compiler.Node): node is compiler.BodyableNode & compiler.Node {
         switch (node.getKind()) {
             case SyntaxKind.Constructor:
+            case SyntaxKind.GetAccessor:
             case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.SetAccessor:
             case SyntaxKind.FunctionDeclaration:
                 return true;
             default:

@@ -169,26 +169,6 @@ describe(nameof(TypedNode), () => {
         });
     });
 
-    describe(nameof<TypeAliasDeclaration>(t => t.fill), () => {
-        function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
-            const {firstChild, sourceFile} = getInfoFromText<TypeAliasDeclaration>(startingCode);
-            firstChild.fill(structure);
-            expect(firstChild.getText()).to.equal(expectedCode);
-        }
-
-        it("should modify when setting", () => {
-            doTest("type myAlias = string;", { type: "number" }, "type myAlias = number;");
-        });
-
-        it("should modify when setting as a writer function", () => {
-            doTest("type myAlias = string;", { type: writer => writer.write("number") }, "type myAlias = number;");
-        });
-
-        it("should not modify anything if the structure doesn't change anything", () => {
-            doTest("type myAlias = string;", {}, "type myAlias = string;");
-        });
-    });
-
     describe(nameof<TypedNode>(n => n.removeType), () => {
         function doTest(startText: string, expectedText: string) {
             const {firstChild} = getInfoFromText<ClassDeclaration>(startText);
@@ -208,6 +188,41 @@ describe(nameof(TypedNode), () => {
         it("should throw an error when removing a type alias", () => {
             const {firstChild} = getInfoFromText<TypeAliasDeclaration>(`type Identifier = string;`);
             expect(() => firstChild.removeType()).to.throw();
+        });
+    });
+
+    describe(nameof<TypeAliasDeclaration>(t => t.fill), () => {
+        function doTest(startingCode: string, structure: TypedNodeStructure, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            firstChild.fill(structure);
+            expect(firstChild.getText()).to.equal(expectedCode);
+        }
+
+        it("should modify when setting", () => {
+            doTest("type myAlias = string;", { type: "number" }, "type myAlias = number;");
+        });
+
+        it("should modify when setting as a writer function", () => {
+            doTest("type myAlias = string;", { type: writer => writer.write("number") }, "type myAlias = number;");
+        });
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("type myAlias = string;", {}, "type myAlias = string;");
+        });
+    });
+
+    describe(nameof<FunctionDeclaration>(t => t.getStructure), () => {
+        function doTest(startingCode: string, typeText: string | undefined) {
+            const { firstChild, sourceFile } = getInfoFromText<FunctionDeclaration>(startingCode);
+            expect(firstChild.getParameters()[0].getStructure().type).to.deep.equal(typeText);
+        }
+
+        it("should return undefined when it doesn't exist", () => {
+            doTest("function test(param) {}", undefined);
+        });
+
+        it("should return the type text when it exists", () => {
+            doTest("function test(param: string) {}", "string");
         });
     });
 });

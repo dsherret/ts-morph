@@ -5,6 +5,8 @@ import { ts } from "../../typescript";
 import { getTextFromStringOrWriter } from "../../utils";
 import { Node } from "../common";
 import { JSDocTag } from "./JSDocTag";
+import { JSDocStructure } from "../../structures";
+import { callBaseGetStructure } from "../callBaseGetStructure";
 
 /**
  * JS doc node.
@@ -79,6 +81,15 @@ export class JSDoc extends Node<ts.JSDoc> {
             children: [this],
             removeFollowingSpaces: true,
             removeFollowingNewLines: true
+        });
+    }
+
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JSDocStructure {
+        return callBaseGetStructure<JSDocStructure>({}, this, {
+            description: this.getInnerText() // good enough for now
         });
     }
 }

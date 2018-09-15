@@ -1,5 +1,5 @@
 import { CodeBlockWriter } from "../../codeBlockWriter";
-import { JsxAttributeStructure, JsxElementStructure } from "../../structures";
+import { JsxAttributeStructure, JsxSpreadAttributeStructure, JsxElementStructure } from "../../structures";
 import { FactoryStructurePrinter } from "../FactoryStructurePrinter";
 
 export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxElementStructure> {
@@ -26,8 +26,8 @@ export class JsxElementStructurePrinter extends FactoryStructurePrinter<JsxEleme
         return structure.isSelfClosing == null && structure.children == null;
     }
 
-    private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<JsxAttributeStructure>) {
-        const attributePrinter = this.factory.forJsxAttribute();
+    private printAttributes(writer: CodeBlockWriter, attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>) {
+        const attributePrinter = this.factory.forJsxAttributeDecider();
         for (const attrib of attributes) {
             writer.space();
             attributePrinter.printText(writer, attrib);

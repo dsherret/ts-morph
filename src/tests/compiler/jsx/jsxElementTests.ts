@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { JsxElement } from "../../../compiler";
+import { JsxElementStructure, JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -86,6 +87,53 @@ describe(nameof(JsxElement), () => {
 
         it("should indent if ending with a new line", () => {
             doTest("var t = (<jsx></jsx>);", "<element>\n</element>\n", "var t = (<jsx><element>\n    </element>\n</jsx>);");
+        });
+    });
+
+    describe(nameof<JsxElement>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<JsxElementStructure>) {
+            const { descendant } = getInfo(text);
+            const structure = descendant.getStructure();
+
+            structure.attributes = structure.attributes!.map(a => ({ name: (a as JsxAttributeStructure).name }));
+
+            delete expectedStructure.children;
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("const v = <div></div>", {
+                attributes: [],
+                children: undefined,
+                bodyText: "",
+                isSelfClosing: false,
+                name: "div"
+            });
+        });
+
+        it("should get when has everything", () => {
+            doTest("const v = <div a><Inner /></div>", {
+                attributes: [{ name: "a" }],
+                children: undefined,
+                bodyText: "<Inner />",
+                isSelfClosing: false,
+                name: "div"
+            });
+        });
+
+        it("should get when has children on multiple lines", () => {
+            const code = `
+const v = <div>
+    <Inner />
+    <div></div>
+</div>`;
+            doTest(code, {
+                attributes: [],
+                children: undefined,
+                bodyText: "<Inner />\n<div></div>",
+                isSelfClosing: false,
+                name: "div"
+            });
         });
     });
 });

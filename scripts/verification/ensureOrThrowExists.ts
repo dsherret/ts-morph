@@ -21,7 +21,7 @@ export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: P
             const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null && !isIgnoredMethod(c, method))
                 problems.push({
-                    filePath: c.sourceFile.getFilePath(),
+                    filePath: c.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`
                 });
@@ -36,7 +36,7 @@ export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: P
             const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null && !isIgnoredMethod(i, method))
                 problems.push({
-                    filePath: i.sourceFile.getFilePath(),
+                    filePath: i.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`
                 });
