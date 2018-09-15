@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { JsxSelfClosingElement } from "../../../compiler";
-import { JsxElementStructure } from "../../../structures";
+import { JsxElementStructure, JsxAttributeStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { getInfoFromTextWithDescendant } from "../testHelpers";
 
@@ -35,7 +35,7 @@ describe(nameof(JsxSelfClosingElement), () => {
         function doTest(text: string, expectedStructure: MakeRequired<JsxElementStructure>) {
             const { descendant } = getInfo(text);
             const structure = descendant.getStructure();
-            structure.attributes = structure.attributes!.map(a => ({ name: a.name }));
+            structure.attributes = structure.attributes!.map(a => ({ name: (a as JsxAttributeStructure).name }));
 
             delete expectedStructure.bodyText;
             delete expectedStructure.children;

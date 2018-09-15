@@ -87,7 +87,7 @@ export class JSDoc extends Node<ts.JSDoc> {
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure() {
+    getStructure(): JSDocStructure {
         return callBaseGetStructure<JSDocStructure>({}, this, {
             description: this.getInnerText() // good enough for now
         });

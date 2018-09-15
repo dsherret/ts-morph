@@ -351,7 +351,7 @@ export class ImportDeclaration extends Statement<ts.ImportDeclaration> {
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure() {
+    getStructure(): ImportDeclarationStructure {
         const namespaceImport = this.getNamespaceImport();
         const defaultImport = this.getDefaultImport();
 

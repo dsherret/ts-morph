@@ -2456,6 +2456,10 @@ export interface NameableNodeSpecific {
      * Gets the name if it exists, or throws.
      */
     getNameOrThrow(): string;
+    /**
+     * Removes the name from the node.
+     */
+    removeName(): this;
 }
 
 export declare function NamedNodeBase<TCompilerNode extends ts.Node, U extends Constructor<NamedNodeBaseExtensionType<TCompilerNode>>>(Base: U): Constructor<NamedNodeSpecificBase<CompilerNodeToWrappedType<TCompilerNode>>> & U;
@@ -3633,10 +3637,16 @@ export declare class ClassDeclaration extends ClassDeclarationBase<ts.ClassDecla
      * Gets all the derived classes.
      */
     getDerivedClasses(): ClassDeclaration[];
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ClassDeclarationStructure;
     private getImmediateDerivedClasses;
 }
 
 declare const ConstructorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<ScopedNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & typeof Node;
+
+declare const ConstructorDeclarationOverloadBase: Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & typeof Node;
 
 export declare class ConstructorDeclaration extends ConstructorDeclarationBase<ts.ConstructorDeclaration> {
     /**
@@ -3670,9 +3680,13 @@ export declare class ConstructorDeclaration extends ConstructorDeclarationBase<t
      * Remove the constructor.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ConstructorDeclarationStructure | ConstructorDeclarationOverloadStructure;
 }
 
-declare const GetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<BodiedNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
+declare const GetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & Constructor<PropertyNamedNode> & typeof Node;
 
 export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<ts.GetAccessorDeclaration> {
     /**
@@ -3692,9 +3706,15 @@ export declare class GetAccessorDeclaration extends GetAccessorDeclarationBase<t
      * Removes the get accessor.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): GetAccessorDeclarationStructure;
 }
 
 declare const MethodDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
+
+declare const MethodDeclarationOverloadBase: Constructor<JSDocableNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ScopedNode> & Constructor<TypeParameteredNode> & Constructor<AbstractableNode> & Constructor<StaticableNode> & Constructor<AsyncableNode> & Constructor<ModifierableNode> & Constructor<GeneratorableNode> & Constructor<SignaturedDeclaration> & typeof Node;
 
 export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDeclaration> {
     /**
@@ -3728,6 +3748,10 @@ export declare class MethodDeclaration extends MethodDeclarationBase<ts.MethodDe
      * Removes the method.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): MethodDeclarationStructure | MethodDeclarationOverloadStructure;
 }
 
 declare const PropertyDeclarationBase: Constructor<ChildOrderableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ExclamationTokenableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof Node;
@@ -3742,9 +3766,13 @@ export declare class PropertyDeclaration extends PropertyDeclarationBase<ts.Prop
      * Removes the property.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): PropertyDeclarationStructure;
 }
 
-declare const SetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<BodiedNode> & Constructor<FunctionLikeDeclaration> & Constructor<PropertyNamedNode> & typeof Node;
+declare const SetAccessorDeclarationBase: Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<DecoratableNode> & Constructor<AbstractableNode> & Constructor<ScopedNode> & Constructor<StaticableNode> & Constructor<FunctionLikeDeclaration> & Constructor<BodyableNode> & Constructor<PropertyNamedNode> & typeof Node;
 
 export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**
@@ -3764,6 +3792,10 @@ export declare class SetAccessorDeclaration extends SetAccessorDeclarationBase<t
      * Removes the set accessor.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): SetAccessorDeclarationStructure;
 }
 
 export declare class CommentRange {
@@ -4679,6 +4711,10 @@ export declare class Decorator extends DecoratorBase<ts.Decorator> {
      * Removes this decorator.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): DecoratorStructure;
 }
 
 export declare function JSDocPropertyLikeTag<T extends Constructor<JSDocPropertyLikeTagExtensionType>>(Base: T): Constructor<JSDocPropertyLikeTag> & T;
@@ -4718,6 +4754,10 @@ export declare class JSDoc extends Node<ts.JSDoc> {
      * Removes this JSDoc.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JSDocStructure;
 }
 
 /**
@@ -4865,7 +4905,7 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      */
     getMembers(): EnumMember[];
     /**
-     * Toggle if it's a const enum
+     * Toggle if it's a const enum.
      */
     setIsConstEnum(value: boolean): this;
     /**
@@ -4876,16 +4916,15 @@ export declare class EnumDeclaration extends EnumDeclarationBase<ts.EnumDeclarat
      * Gets the const enum keyword or undefined if not exists.
      */
     getConstKeyword(): Node<ts.Node> | undefined;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): EnumDeclarationStructure;
 }
 
 declare const EnumMemberBase: Constructor<JSDocableNode> & Constructor<InitializerExpressionableNode> & Constructor<PropertyNamedNode> & typeof Node;
 
 export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
-    /**
-     * Fills the node from a structure.
-     * @param structure - Structure to fill.
-     */
-    fill(structure: Partial<EnumMemberStructure>): this;
     /**
      * Gets the constant value of the enum.
      */
@@ -4899,6 +4938,15 @@ export declare class EnumMember extends EnumMemberBase<ts.EnumMember> {
      * Removes this enum member.
      */
     remove(): void;
+    /**
+     * Fills the node from a structure.
+     * @param structure - Structure to fill.
+     */
+    fill(structure: Partial<EnumMemberStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): EnumMemberStructure;
 }
 
 declare const ArrayDestructuringAssignmentBase: typeof AssignmentExpression;
@@ -5367,6 +5415,10 @@ export declare class PropertyAssignment extends PropertyAssignmentBase<ts.Proper
      * Removes this property.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): PropertyAssignmentStructure;
 }
 
 declare const ShorthandPropertyAssignmentBase: Constructor<InitializerGetExpressionableNode> & Constructor<QuestionTokenableNode> & Constructor<NamedNode> & typeof Node;
@@ -5409,6 +5461,10 @@ export declare class ShorthandPropertyAssignment extends ShorthandPropertyAssign
      * Removes this property.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ShorthandPropertyAssignmentStructure;
 }
 
 declare const SpreadAssignmentBase: Constructor<ExpressionedNode> & typeof Node;
@@ -5418,6 +5474,10 @@ export declare class SpreadAssignment extends SpreadAssignmentBase<ts.SpreadAssi
      * Removes this property.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): SpreadAssignmentStructure;
 }
 
 declare const OmittedExpressionBase: typeof Expression;
@@ -5530,7 +5590,7 @@ export declare class YieldExpression extends YieldExpressionBase<ts.YieldExpress
 
 export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
     /**
-     * Gets if this is an export equals assignemnt.
+     * Gets if this is an export equals assignment.
      *
      * If this is false, then it's `export default`.
      */
@@ -5539,6 +5599,10 @@ export declare class ExportAssignment extends Statement<ts.ExportAssignment> {
      * Gets the export assignment expression.
      */
     getExpression(): Expression;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportAssignmentStructure;
 }
 
 export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
@@ -5625,6 +5689,10 @@ export declare class ExportDeclaration extends Statement<ts.ExportDeclaration> {
      * Changes the export declaration to namespace export. Removes all the named exports.
      */
     toNamespaceExport(): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportDeclarationStructure;
 }
 
 export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
@@ -5665,6 +5733,10 @@ export declare class ExportSpecifier extends Node<ts.ExportSpecifier> {
      * Removes the export specifier.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ExportSpecifierStructure;
 }
 
 export declare class ExternalModuleReference extends Node<ts.ExternalModuleReference> {
@@ -5812,6 +5884,10 @@ export declare class ImportDeclaration extends Statement<ts.ImportDeclaration> {
      * Gets the import clause or returns undefined if it doesn't exist.
      */
     getImportClause(): Node | undefined;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ImportDeclarationStructure;
 }
 
 declare const ImportEqualsDeclarationBase: Constructor<JSDocableNode> & Constructor<NamedNode> & typeof Statement;
@@ -5876,6 +5952,10 @@ export declare class ImportSpecifier extends Node<ts.ImportSpecifier> {
      * Remove the import specifier.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ImportSpecifierStructure;
 }
 
 export interface SourceFileCopyOptions {
@@ -6282,6 +6362,10 @@ export declare class SourceFile extends SourceFileBase<ts.SourceFile> {
      * @param textChanges - Text changes.
      */
     applyTextChanges(textChanges: ReadonlyArray<TextChange>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): SourceFileStructure;
     private _refreshFromFileSystemInternal;
 }
 
@@ -6295,6 +6379,8 @@ export declare class ArrowFunction extends ArrowFunctionBase<ts.ArrowFunction> {
 }
 
 declare const FunctionDeclarationBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<OverloadableNode> & Constructor<BodyableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<FunctionLikeDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof Node;
+
+declare const FunctionDeclarationOverloadBase: Constructor<ChildOrderableNode> & Constructor<UnwrappableNode> & Constructor<TextInsertableNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<ModifierableNode> & Constructor<SignaturedDeclaration> & Constructor<StatementedNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<JSDocableNode> & Constructor<TypeParameteredNode> & Constructor<ExportableNode> & typeof Node;
 
 export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.FunctionDeclaration> {
     /**
@@ -6328,6 +6414,10 @@ export declare class FunctionDeclaration extends FunctionDeclarationBase<ts.Func
      * Removes this function declaration.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): FunctionDeclarationStructure | FunctionDeclarationOverloadStructure;
 }
 
 declare const FunctionExpressionBase: Constructor<JSDocableNode> & Constructor<TextInsertableNode> & Constructor<BodiedNode> & Constructor<AsyncableNode> & Constructor<GeneratorableNode> & Constructor<StatementedNode> & Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & Constructor<ModifierableNode> & Constructor<NameableNode> & typeof PrimaryExpression;
@@ -6406,6 +6496,10 @@ export declare class ParameterDeclaration extends ParameterDeclarationBase<ts.Pa
      */
     remove(): void;
     /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ParameterDeclarationStructure;
+    /**
      * Sets if this node has a question token.
      * @param value - If it should have a question token or not.
      */
@@ -6455,6 +6549,10 @@ export declare class CallSignatureDeclaration extends CallSignatureDeclarationBa
      * Removes this call signature.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): CallSignatureDeclarationStructure;
 }
 
 declare const ConstructSignatureDeclarationBase: Constructor<TypeParameteredNode> & Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<SignaturedDeclaration> & typeof TypeElement;
@@ -6469,6 +6567,10 @@ export declare class ConstructSignatureDeclaration extends ConstructSignatureDec
      * Removes this construct signature.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): ConstructSignatureDeclarationStructure;
 }
 
 declare const IndexSignatureDeclarationBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<ModifierableNode> & typeof TypeElement;
@@ -6527,6 +6629,10 @@ export declare class IndexSignatureDeclaration extends IndexSignatureDeclaration
      * Removes this index signature.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): IndexSignatureDeclarationStructure;
 }
 
 declare const InterfaceDeclarationBase: Constructor<TypeElementMemberedNode> & Constructor<ChildOrderableNode> & Constructor<TextInsertableNode> & Constructor<ExtendsClauseableNode> & Constructor<HeritageClauseableNode> & Constructor<TypeParameteredNode> & Constructor<JSDocableNode> & Constructor<AmbientableNode> & Constructor<NamespaceChildableNode> & Constructor<ExportableNode> & Constructor<ModifierableNode> & Constructor<NamedNode> & typeof Statement;
@@ -6551,6 +6657,10 @@ export declare class InterfaceDeclaration extends InterfaceDeclarationBase<ts.In
      * This is similar to "go to implementation."
      */
     getImplementations(): ImplementationLocation[];
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): InterfaceDeclarationStructure;
 }
 
 declare const MethodSignatureBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<QuestionTokenableNode> & Constructor<TypeParameteredNode> & Constructor<SignaturedDeclaration> & Constructor<PropertyNamedNode> & typeof TypeElement;
@@ -6565,6 +6675,10 @@ export declare class MethodSignature extends MethodSignatureBase<ts.MethodSignat
      * Removes this method signature.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): MethodSignatureStructure;
 }
 
 declare const PropertySignatureBase: Constructor<ChildOrderableNode> & Constructor<JSDocableNode> & Constructor<ReadonlyableNode> & Constructor<QuestionTokenableNode> & Constructor<InitializerExpressionableNode> & Constructor<TypedNode> & Constructor<PropertyNamedNode> & Constructor<ModifierableNode> & typeof TypeElement;
@@ -6579,6 +6693,10 @@ export declare class PropertySignature extends PropertySignatureBase<ts.Property
      * Removes this property signature.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): PropertySignatureStructure;
 }
 
 export declare class TypeElement<TNode extends ts.TypeElement = ts.TypeElement> extends Node<TNode> {
@@ -6614,19 +6732,19 @@ export interface JsxAttributedNode {
     /**
      * Adds an attribute into the element.
      */
-    addAttribute(attribute: JsxAttributeStructure): JsxAttributeLike;
+    addAttribute(attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
     /**
      * Adds attributes into the element.
      */
-    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
+    addAttributes(attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
     /**
      * Inserts an attribute into the element.
      */
-    insertAttribute(index: number, attribute: JsxAttributeStructure): JsxAttributeLike;
+    insertAttribute(index: number, attribute: JsxAttributeStructure | JsxSpreadAttributeStructure): JsxAttributeLike;
     /**
      * Inserts attributes into the element.
      */
-    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure>): JsxAttributeLike[];
+    insertAttributes(index: number, attributes: ReadonlyArray<JsxAttributeStructure | JsxSpreadAttributeStructure>): JsxAttributeLike[];
 }
 
 export declare type JsxAttributedNodeExtensionType = Node<ts.Node & {
@@ -6661,6 +6779,10 @@ export declare class JsxAttribute extends JsxAttributeBase<ts.JsxAttribute> {
      * Removes the JSX attribute.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxAttributeStructure;
 }
 
 declare const JsxClosingElementBase: Constructor<JsxTagNamedNode> & typeof Node;
@@ -6671,7 +6793,9 @@ export declare class JsxClosingElement extends JsxClosingElementBase<ts.JsxClosi
 export declare class JsxClosingFragment extends Expression<ts.JsxClosingFragment> {
 }
 
-export declare class JsxElement extends PrimaryExpression<ts.JsxElement> {
+declare const JsxElementBase: typeof PrimaryExpression;
+
+export declare class JsxElement extends JsxElementBase<ts.JsxElement> {
     /**
      * Gets the children of the JSX element.
      */
@@ -6704,6 +6828,10 @@ export declare class JsxElement extends PrimaryExpression<ts.JsxElement> {
      * @param text - Text to set as the body.
      */
     setBodyTextInline(text: string): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxElementStructure;
 }
 
 export declare class JsxExpression extends Expression<ts.JsxExpression> {
@@ -6751,9 +6879,15 @@ export declare class JsxOpeningFragment extends Expression<ts.JsxOpeningFragment
 declare const JsxSelfClosingElementBase: Constructor<JsxAttributedNode> & Constructor<JsxTagNamedNode> & typeof PrimaryExpression;
 
 export declare class JsxSelfClosingElement extends JsxSelfClosingElementBase<ts.JsxSelfClosingElement> {
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxElementStructure;
 }
 
-export declare class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {
+declare const JsxSpreadAttributeBase: typeof Node;
+
+export declare class JsxSpreadAttribute extends JsxSpreadAttributeBase<ts.JsxSpreadAttribute> {
     /**
      * Gets the JSX spread attribute's expression.
      */
@@ -6762,6 +6896,10 @@ export declare class JsxSpreadAttribute extends Node<ts.JsxSpreadAttribute> {
      * Removes the JSX spread attribute.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): JsxSpreadAttributeStructure;
 }
 
 export declare class JsxText extends Node<ts.JsxText> {
@@ -7210,7 +7348,7 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
      */
     setHasNamespaceKeyword(value?: boolean): this;
     /**
-     * Set if this namespace has a namepsace keyword.
+     * Set if this namespace has a namespace keyword.
      * @param value - Whether to set it or not.
      */
     setHasModuleKeyword(value?: boolean): this;
@@ -7218,6 +7356,10 @@ export declare class NamespaceDeclaration extends NamespaceDeclarationBase<ts.Na
      * Gets the namespace or module keyword.
      */
     getDeclarationKindKeyword(): Node<ts.Node>;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): NamespaceDeclarationStructure;
 }
 
 declare const BlockBase: Constructor<TextInsertableNode> & Constructor<StatementedNode> & typeof Statement;
@@ -7973,6 +8115,10 @@ export declare class VariableStatement extends VariableStatementBase<ts.Variable
      * @param structure - Structure to fill.
      */
     fill(structure: Partial<VariableStatementStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableStatementStructure;
 }
 
 declare const WhileStatementBase: typeof IterationStatement;
@@ -9014,6 +9160,10 @@ export declare class TypeAliasDeclaration extends TypeAliasDeclarationBase<ts.Ty
      * @param structure - Structure to fill.
      */
     fill(structure: Partial<TypeAliasDeclarationStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): TypeAliasDeclarationStructure;
 }
 
 declare const TypeLiteralNodeBase: Constructor<TypeElementMemberedNode> & typeof TypeNode;
@@ -9094,6 +9244,7 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      * Removes this type parameter.
      */
     remove(): void;
+    getStructure(): TypeParameterDeclarationStructure;
 }
 
 export declare class TypeReferenceNode extends TypeNode<ts.TypeReferenceNode> {
@@ -9126,6 +9277,10 @@ export declare class VariableDeclaration extends VariableDeclarationBase<ts.Vari
      * Removes this variable declaration.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableDeclarationStructure;
 }
 export declare enum VariableDeclarationKind {
     Var = "var",
@@ -9180,6 +9335,10 @@ export declare class VariableDeclarationList extends VariableDeclarationListBase
      * @param structure - Structure to fill.
      */
     fill(structure: Partial<VariableDeclarationListStructure>): this;
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): VariableDeclarationListStructure;
 }
 
 export declare class ArgumentError extends BaseError {
@@ -9395,7 +9554,7 @@ export interface BindingNamedNodeStructure {
     name: string;
 }
 export interface DeclarationNamedNodeStructure {
-    name: string;
+    name?: string;
 }
 export interface NameableNodeStructure {
     name?: string;
@@ -9494,10 +9653,13 @@ export interface MethodDeclarationSpecificStructure {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
-export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
+export interface MethodDeclarationOverloadStructure extends StaticableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure, JSDocableNodeStructure {
 }
 
-export interface PropertyDeclarationStructure extends PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
+export interface PropertyDeclarationStructure extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
+}
+
+export interface PropertyDeclarationSpecificStructure {
 }
 
 export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodiedNodeStructure {
@@ -9506,17 +9668,17 @@ export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationS
 export interface SetAccessorDeclarationSpecificStructure {
 }
 
-export declare type ObjectLiteralElementLikeStructures = PropertyAssignmentStructure | ShorthandPropertyAssignmentStructure | SpreadAssignmentStructure | MethodDeclarationStructure | GetAccessorDeclarationStructure | SetAccessorDeclarationStructure;
-
-export interface ObjectLiteralExpressionStructure {
-    properties: ObjectLiteralElementLikeStructures[];
+export interface PropertyAssignmentStructure extends PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {
 }
 
-export interface PropertyAssignmentStructure extends PropertyNamedNodeStructure {
+export interface PropertyAssignmentSpecificStructure {
     initializer: string | WriterFunction;
 }
 
-export interface ShorthandPropertyAssignmentStructure extends NamedNodeStructure {
+export interface ShorthandPropertyAssignmentStructure extends ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure {
+}
+
+export interface ShorthandPropertyAssignmentSpecificStructure {
 }
 
 export interface SpreadAssignmentStructure {
@@ -9601,13 +9763,22 @@ export interface ParameterDeclarationSpecificStructure {
     isRestParameter?: boolean;
 }
 
-export interface CallSignatureDeclarationStructure extends JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface CallSignatureDeclarationStructure extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-export interface ConstructSignatureDeclarationStructure extends JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface CallSignatureDeclarationSpecificStructure {
 }
 
-export interface IndexSignatureDeclarationStructure extends JSDocableNodeStructure, ReadonlyableNodeStructure {
+export interface ConstructSignatureDeclarationStructure extends ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+}
+
+export interface ConstructSignatureDeclarationSpecificStructure {
+}
+
+export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure {
+}
+
+export interface IndexSignatureDeclarationSpecificStructure {
     keyName?: string;
     keyType?: string;
     returnType: string | WriterFunction;
@@ -9619,22 +9790,36 @@ export interface InterfaceDeclarationStructure extends NamedNodeStructure, Inter
 export interface InterfaceDeclarationSpecificStructure {
 }
 
-export interface MethodSignatureStructure extends PropertyNamedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
+export interface MethodSignatureStructure extends PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-export interface PropertySignatureStructure extends PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure {
+export interface MethodSignatureSpecificStructure {
 }
 
-export interface JsxAttributeStructure extends NamedNodeStructure {
-    isSpreadAttribute?: boolean;
+export interface PropertySignatureStructure extends PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure {
+}
+
+export interface PropertySignatureSpecificStructure {
+}
+
+export interface JsxAttributeStructure extends JsxAttributeStructureSpecific, NamedNodeStructure {
+}
+
+export interface JsxAttributeStructureSpecific {
+    isSpreadAttribute?: false;
     initializer?: string;
 }
 
 export interface JsxElementStructure {
     name: string;
-    attributes?: JsxAttributeStructure[];
+    attributes?: (JsxAttributeStructure | JsxSpreadAttributeStructure)[];
     isSelfClosing?: boolean;
     children?: JsxElementStructure[];
+    bodyText?: string;
+}
+export interface JsxSpreadAttributeStructure {
+    isSpreadAttribute: true;
+    expression: string;
 }
 
 export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure {
@@ -9664,7 +9849,10 @@ export interface VariableDeclarationListSpecificStructure {
     declarations: VariableDeclarationStructure[];
 }
 
-export interface VariableDeclarationStructure extends BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
+export interface VariableDeclarationStructure extends VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
+}
+
+export interface VariableDeclarationSpecificStructure {
 }
 
 export interface VariableStatementStructure extends VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
@@ -9675,7 +9863,11 @@ export interface VariableStatementSpecificStructure {
     declarations: VariableDeclarationStructure[];
 }
 
-export interface TypeAliasDeclarationStructure extends NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+export interface TypeAliasDeclarationStructure extends TypeAliasDeclarationSpecificStructure, NamedNodeStructure, TypedNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
+    type: string | WriterFunction;
+}
+
+export interface TypeAliasDeclarationSpecificStructure {
     type: string | WriterFunction;
 }
 

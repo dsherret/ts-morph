@@ -139,7 +139,7 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure() {
+    getStructure(): NamespaceDeclarationStructure {
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
             hasModuleKeyword: this.hasModuleKeyword()
         });

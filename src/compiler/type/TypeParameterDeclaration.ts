@@ -145,7 +145,10 @@ export class TypeParameterDeclaration extends TypeParameterDeclarationBase<ts.Ty
         }
     }
 
-    getStructure() {
+    /**
+     * Gets the structure equivalent to this node.
+     */
+    getStructure(): TypeParameterDeclarationStructure {
         const constraintNode = this.getConstraint();
         const defaultNode = this.getDefault();
 

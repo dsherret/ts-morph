@@ -109,7 +109,7 @@ export class ExportSpecifier extends Node<ts.ExportSpecifier> {
     /**
      * Gets the structure equivalent to this node.
      */
-    getStructure() {
+    getStructure(): ExportSpecifierStructure {
         const alias = this.getAliasNode();
         return callBaseGetStructure<ExportSpecifierStructure>(Node.prototype, this, {
             alias: alias ? alias.getText() : undefined,
