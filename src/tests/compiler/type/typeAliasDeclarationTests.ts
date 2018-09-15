@@ -35,4 +35,41 @@ describe(nameof(TypeAliasDeclaration), () => {
             doTest("type I = 1;\ntype J = 2;\ntype K = 3;", 1, "type I = 1;\ntype K = 3;");
         });
     });
+
+    describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
+        function doTest(startingCode: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+            const structure = firstChild.getStructure();
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("type Identifier = string;", {
+                docs: [],
+                hasDeclareKeyword: false,
+                isDefaultExport: false,
+                isExported: false,
+                name: "Identifier",
+                type: "string",
+                typeParameters: []
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+/** Test */
+export declare type Identifier<T> = string;
+`;
+            doTest(code, {
+                docs: [{ description: "Test" }],
+                hasDeclareKeyword: true,
+                isDefaultExport: false,
+                isExported: true,
+                name: "Identifier",
+                type: "string",
+                typeParameters: [{ name: "T" }]
+            });
+        });
+    });
 });
