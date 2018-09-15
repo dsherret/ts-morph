@@ -11,7 +11,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    BodyableNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
+    FunctionLikeDeclaration(BodyableNode(PropertyNamedNode(Node))
 )))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**

@@ -483,7 +483,10 @@ export class Node<NodeType extends ts.Node = ts.Node> {
         let node: Node = this;
         if (TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) {
             do {
-                node = TypeGuards.isBodyableNode(node) ? node.getBodyOrThrow() : node.getBody();
+                const bodyNode = TypeGuards.isBodyableNode(node) ? node.getBody() : node.getBody();
+                if (bodyNode == null)
+                    return undefined;
+                node = bodyNode;
             } while ((TypeGuards.isBodyableNode(node) || TypeGuards.isBodiedNode(node)) && (node.compilerNode as ts.Block).statements == null);
         }
 

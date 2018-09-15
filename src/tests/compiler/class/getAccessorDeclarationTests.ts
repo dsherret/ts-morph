@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../compiler";
+import { GetAccessorDeclarationStructure } from "../../../structures";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
-import { GetAccessorDeclarationStructure } from '../../../../dist/main';
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -69,6 +69,74 @@ describe(nameof(GetAccessorDeclaration), () => {
         it("should remove when it's the last member", () => {
             doTest("class Identifier {\n    prop: string;\n    get prop2(): string {}\n}", "prop2",
                 "class Identifier {\n    prop: string;\n}");
+        });
+    });
+
+    describe(nameof<GetAccessorDeclaration>(c => c.fill), () => {
+        function doTest(startingCode: string, structure: Partial<GetAccessorDeclarationStructure>, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.getGetAccessors()[0].fill(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier { get prop(); }", {}, "class Identifier { get prop(); }");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<GetAccessorDeclarationStructure> = {
+                bodyText: "console;",
+                classes: [{ name: "C" }],
+                decorators: [{ name: "dec" }],
+                docs: [{ description: "d" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                isAbstract: true,
+                isStatic: true,
+                name: "asdf",
+                namespaces: [{ name: "N" }],
+                parameters: [{ name: "p" }],
+                returnType: "string",
+                scope: Scope.Public,
+                typeParameters: [{ name: "T" }]
+            };
+
+            const expectedCode = `
+class Identifier {
+    /**
+     * d
+     */
+    @dec
+    public abstract static get asdf<T>(p): string {
+        class C {
+        }
+
+        enum E {
+        }
+
+        function F() {
+        }
+
+        interface I {
+        }
+
+        namespace N {
+        }
+
+        type T = string;
+
+        console;
+    }
+}
+`;
+
+            doTest("\nclass Identifier {\n    get prop();\n}\n", structure, expectedCode);
+        });
+
+        it("should remove the body when providing undefined", () => {
+            doTest("class Identifier {\n    get prop(){}\n}", { bodyText: undefined }, "class Identifier {\n    get prop();\n}");
         });
     });
 

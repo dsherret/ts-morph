@@ -851,21 +851,39 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
 
         fill(structure: Partial<StatementedNodeStructure>) {
             callBaseFill(Base.prototype, this, structure);
+            const childSyntaxList = this.getChildSyntaxList();
+            const insertIndex = getInsertIndex();
 
-            if (structure.classes != null && structure.classes.length > 0)
-                this.addClasses(structure.classes);
-            if (structure.enums != null && structure.enums.length > 0)
-                this.addEnums(structure.enums);
-            if (structure.functions != null && structure.functions.length > 0)
-                this.addFunctions(structure.functions);
-            if (structure.interfaces != null && structure.interfaces.length > 0)
-                this.addInterfaces(structure.interfaces);
-            if (structure.namespaces != null && structure.namespaces.length > 0)
-                this.addNamespaces(structure.namespaces);
             if (structure.typeAliases != null && structure.typeAliases.length > 0)
-                this.addTypeAliases(structure.typeAliases);
+                this.insertTypeAliases(insertIndex, structure.typeAliases);
+            if (structure.namespaces != null && structure.namespaces.length > 0)
+                this.insertNamespaces(insertIndex, structure.namespaces);
+            if (structure.interfaces != null && structure.interfaces.length > 0)
+                this.insertInterfaces(insertIndex, structure.interfaces);
+            if (structure.functions != null && structure.functions.length > 0)
+                this.insertFunctions(insertIndex, structure.functions);
+            if (structure.enums != null && structure.enums.length > 0)
+                this.insertEnums(insertIndex, structure.enums);
+            if (structure.classes != null && structure.classes.length > 0)
+                this.insertClasses(insertIndex, structure.classes);
 
             return this;
+
+            function getInsertIndex() {
+                if (childSyntaxList == null)
+                    return 0;
+
+                const children = childSyntaxList.getCompilerChildren();
+                for (let i = children.length - 1; i > 0; i--) {
+                    const kind = children[i].kind;
+                    if (kind === SyntaxKind.TypeAliasDeclaration || kind === SyntaxKind.ModuleDeclaration || kind === SyntaxKind.InterfaceDeclaration
+                        || kind === SyntaxKind.FunctionDeclaration || kind === SyntaxKind.EnumDeclaration || kind === SyntaxKind.ClassDeclaration)
+                    {
+                        return i;
+                    }
+                }
+                return 0;
+            }
         }
 
         /**
@@ -884,8 +902,9 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                     return [] as any as ts.NodeArray<ts.Statement>;
                 return (body.compilerNode as any).statements as ts.NodeArray<ts.Statement>;
             }
-            else if (TypeGuards.isBodiedNode(this))
+            else if (TypeGuards.isBodiedNode(this)) {
                 return (this.getBody().compilerNode as any).statements as ts.NodeArray<ts.Statement>;
+            }
             else if (TypeGuards.isBlock(this))
                 return this.compilerNode.statements;
             else

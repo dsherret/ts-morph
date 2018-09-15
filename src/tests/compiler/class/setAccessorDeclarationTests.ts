@@ -72,6 +72,74 @@ describe(nameof(SetAccessorDeclaration), () => {
         });
     });
 
+    describe(nameof<SetAccessorDeclaration>(c => c.fill), () => {
+        function doTest(startingCode: string, structure: Partial<SetAccessorDeclarationStructure>, expectedCode: string) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(startingCode);
+            firstChild.getSetAccessors()[0].fill(structure);
+            expect(sourceFile.getFullText()).to.equal(expectedCode);
+        }
+
+        it("should not modify anything if the structure doesn't change anything", () => {
+            doTest("class Identifier { set prop(); }", {}, "class Identifier { set prop(); }");
+        });
+
+        it("should modify when changed", () => {
+            const structure: MakeRequired<SetAccessorDeclarationStructure> = {
+                bodyText: "console;",
+                classes: [{ name: "C" }],
+                decorators: [{ name: "dec" }],
+                docs: [{ description: "d" }],
+                enums: [{ name: "E" }],
+                functions: [{ name: "F" }],
+                interfaces: [{ name: "I" }],
+                typeAliases: [{ name: "T", type: "string" }],
+                isAbstract: true,
+                isStatic: true,
+                name: "asdf",
+                namespaces: [{ name: "N" }],
+                parameters: [{ name: "p" }],
+                returnType: "string",
+                scope: Scope.Public,
+                typeParameters: [{ name: "T" }]
+            };
+
+            const expectedCode = `
+class Identifier {
+    /**
+     * d
+     */
+    @dec
+    public abstract static set asdf<T>(p): string {
+        class C {
+        }
+
+        enum E {
+        }
+
+        function F() {
+        }
+
+        interface I {
+        }
+
+        namespace N {
+        }
+
+        type T = string;
+
+        console;
+    }
+}
+`;
+
+            doTest("\nclass Identifier {\n    set prop();\n}\n", structure, expectedCode);
+        });
+
+        it("should remove the body when providing undefined", () => {
+            doTest("class Identifier {\n    set prop(){}\n}", { bodyText: undefined }, "class Identifier {\n    set prop();\n}");
+        });
+    });
+
     describe(nameof<SetAccessorDeclaration>(n => n.getStructure), () => {
         type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
         function doTest(code: string, expectedStructure: Omit<MakeRequired<SetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
