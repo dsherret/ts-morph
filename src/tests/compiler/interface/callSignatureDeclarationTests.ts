@@ -25,6 +25,40 @@ describe(nameof(CallSignatureDeclaration), () => {
         });
     });
 
+    describe(nameof<CallSignatureDeclaration>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<CallSignatureDeclarationStructure>) {
+            const { firstCallSignature } = getFirstCallSignatureWithInfo(text);
+            const structure = firstCallSignature.getStructure();
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("interface Identifier { (); }", {
+                docs: [],
+                parameters: [],
+                returnType: undefined,
+                typeParameters: []
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+interface Identifier {
+    /** Test */
+    <T>(p): string;
+}
+`;
+            doTest(code, {
+                docs: [{ description: "Test" }],
+                parameters: [{ name: "p" }],
+                returnType: "string",
+                typeParameters: [{ name: "T" }]
+            });
+        });
+    });
+
     describe(nameof<CallSignatureDeclaration>(n => n.remove), () => {
         function doTest(code: string, indexToRemove: number, expectedCode: string) {
             const {firstChild, sourceFile} = getInfoFromText<InterfaceDeclaration>(code);
