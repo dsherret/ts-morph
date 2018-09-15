@@ -70,4 +70,18 @@ describe(nameof(SpreadAssignment), () => {
             test("const t = { ...assignment };", { expression: "assignment" });
         });
     });
+
+    describe(nameof<SpreadAssignment>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<SpreadAssignmentStructure>) {
+            const { descendant } = getInfoFromTextWithDescendant<SpreadAssignment>(text, SyntaxKind.SpreadAssignment);
+            const structure = descendant.getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get", () => {
+            doTest("const t = { ...assignment };", {
+                expression: "assignment"
+            });
+        });
+    });
 });
