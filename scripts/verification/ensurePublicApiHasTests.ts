@@ -13,6 +13,14 @@ import { Problem } from "./Problem";
 export function ensurePublicApiHasTests(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
     const nodes: (Node & ReferenceFindableNode)[] = [];
 
+    function tryAddNode(node: Node & ReferenceFindableNode) {
+        if (TypeGuards.isScopedNode(node) && node.getScope() !== Scope.Public)
+            return;
+        if (hasInternalDocTag(node))
+            return;
+        nodes.push(node);
+    }
+
     for (const dec of [...inspector.getPublicClasses(), ...inspector.getPublicInterfaces()]) {
         const filePath = dec.getSourceFile().getFilePath();
         // ignore paths that don't need testing
@@ -22,12 +30,18 @@ export function ensurePublicApiHasTests(inspector: TsSimpleAstInspector, addProb
             || filePath.endsWith("src/codeBlockWriter/code-block-writer.ts"))
             continue;
 
-        for (const node of [...dec.getMethods(), ...dec.getProperties()]) {
-            if (TypeGuards.isScopedNode(node) && node.getScope() !== Scope.Public)
-                continue;
-            if (hasInternalDocTag(node))
-                continue;
-            nodes.push(node);
+        for (const node of dec.getProperties())
+            tryAddNode(node);
+        for (const node of dec.getMethods()) {
+            if (TypeGuards.isMethodDeclaration(node)) {
+                const overloads = node.getOverloads();
+                if (overloads.length > 0) {
+                    for (const overload of overloads)
+                        tryAddNode(overload);
+                    continue;
+                }
+            }
+            tryAddNode(node);
         }
     }
 
