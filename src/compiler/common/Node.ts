@@ -348,6 +348,7 @@ export class Node<NodeType extends ts.Node = ts.Node> {
      * @param offset - Offset.
      */
     offsetPositions(offset: number) {
+        // todo: remove? Not used internally anymore
         this.compilerNode.pos += offset;
         this.compilerNode.end += offset;
 
@@ -844,15 +845,22 @@ export class Node<NodeType extends ts.Node = ts.Node> {
 
     /**
      * Gets the text without leading trivia (comments and whitespace).
+     * @param includeJsDocComment
      */
-    getText() {
+    getText(includeJsDocComment?: boolean): string {
+        if (includeJsDocComment && TypeGuards.isJSDocableNode(this)) {
+            const docs = this.getJsDocs();
+            if (docs.length > 0)
+                return this.sourceFile.getFullText().substring(docs[0].getStart(), this.getEnd());
+        }
+
         return this.compilerNode.getText(this.sourceFile.compilerNode);
     }
 
     /**
      * Gets the full text with leading trivia (comments and whitespace).
      */
-    getFullText() {
+    getFullText(): string {
         return this.compilerNode.getFullText(this.sourceFile.compilerNode);
     }
 

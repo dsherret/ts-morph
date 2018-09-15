@@ -116,6 +116,19 @@ describe(nameof(Node), () => {
         });
     });
 
+    describe(nameof<Node>(n => n.getText), () => {
+        it("should get without jsdoc text when not specifying to", () => {
+            const { firstChild, sourceFile } = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
+            expect(firstChild.getText()).to.equal("class MyClass {}");
+        });
+
+        it("should get with jsdoc text when specifying to", () => {
+            const classCode = "/**\n * Testing\n */\nclass MyClass {}";
+            const { firstChild, sourceFile } = getInfoFromText(classCode);
+            expect(firstChild.getText(true)).to.equal(classCode);
+        });
+    });
+
     describe(nameof<Node>(n => n.offsetPositions), () => {
         const {sourceFile} = getInfoFromText("enum MyEnum {}");
         const allNodes = [sourceFile, ...sourceFile.getDescendants()];
@@ -896,7 +909,7 @@ class MyClass {
             expect(result).to.equal(sourceFile);
         });
 
-        it("should replace the jsdoc text", () => {
+        it("should not replace the jsdoc text", () => {
             const {firstChild, sourceFile} = getInfoFromText("/**\n * Testing\n */\nclass MyClass {}");
             const result = firstChild.replaceWithText("var t;");
             expect(sourceFile.getFullText()).to.equal("var t;");
