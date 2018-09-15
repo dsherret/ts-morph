@@ -1,5 +1,6 @@
 ﻿import { expect } from "chai";
 import { ClassDeclaration, Decorator } from "../../../compiler";
+import { DecoratorStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
 describe(nameof(Decorator), () => {
@@ -409,6 +410,28 @@ describe(nameof(Decorator), () => {
 
         it("should remove a decorator argument", () => {
             doTest("@test(1, 2, 3)\nclass T {}", 2, "@test(1, 2)\nclass T {}");
+        });
+    });
+
+    describe(nameof<Decorator>(n => n.getStructure), () => {
+        function doTest(text: string, expectedStructure: MakeRequired<DecoratorStructure>) {
+            const { firstChild, sourceFile } = getInfoFromText<ClassDeclaration>(text);
+            const structure = firstChild.getDecorators()[0].getStructure();
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when has nothing", () => {
+            doTest("@dec class T {}", {
+                name: "dec",
+                arguments: undefined
+            });
+        });
+
+        it("should get when has everything", () => {
+            doTest("@dec(test) class T {}", {
+                name: "dec",
+                arguments: ["test"]
+            });
         });
     });
 });

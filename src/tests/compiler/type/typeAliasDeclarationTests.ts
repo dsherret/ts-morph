@@ -37,8 +37,8 @@ describe(nameof(TypeAliasDeclaration), () => {
     });
 
     describe(nameof<TypeAliasDeclaration>(n => n.getStructure), () => {
-        function doTest(startingCode: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
-            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(startingCode);
+        function doTest(text: string, expectedStructure: MakeRequired<TypeAliasDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<TypeAliasDeclaration>(text);
             const structure = firstChild.getStructure();
             structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
             expect(structure).to.deep.equal(expectedStructure);
