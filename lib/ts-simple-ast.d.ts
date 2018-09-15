@@ -9244,6 +9244,9 @@ export declare class TypeParameterDeclaration extends TypeParameterDeclarationBa
      * Removes this type parameter.
      */
     remove(): void;
+    /**
+     * Gets the structure equivalent to this node.
+     */
     getStructure(): TypeParameterDeclarationStructure;
 }
 
@@ -9621,7 +9624,7 @@ export interface ClassDeclarationStructure extends NameableNodeStructure, ClassD
     name?: string;
 }
 
-export interface ClassDeclarationSpecificStructure {
+interface ClassDeclarationSpecificStructure {
     extends?: string;
     ctors?: ConstructorDeclarationStructure[];
     properties?: PropertyDeclarationStructure[];
@@ -9633,7 +9636,7 @@ export interface ClassDeclarationSpecificStructure {
 export interface ConstructorDeclarationStructure extends ConstructorDeclarationSpecificStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-export interface ConstructorDeclarationSpecificStructure {
+interface ConstructorDeclarationSpecificStructure {
     overloads?: ConstructorDeclarationOverloadStructure[];
 }
 
@@ -9643,13 +9646,13 @@ export interface ConstructorDeclarationOverloadStructure extends ScopedNodeStruc
 export interface GetAccessorDeclarationStructure extends GetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodiedNodeStructure {
 }
 
-export interface GetAccessorDeclarationSpecificStructure {
+interface GetAccessorDeclarationSpecificStructure {
 }
 
 export interface MethodDeclarationStructure extends MethodDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, FunctionLikeDeclarationStructure, BodyableNodeStructure {
 }
 
-export interface MethodDeclarationSpecificStructure {
+interface MethodDeclarationSpecificStructure {
     overloads?: MethodDeclarationOverloadStructure[];
 }
 
@@ -9659,26 +9662,26 @@ export interface MethodDeclarationOverloadStructure extends StaticableNodeStruct
 export interface PropertyDeclarationStructure extends PropertyDeclarationSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, ExclamationTokenableNodeStructure, StaticableNodeStructure, ScopedNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure {
 }
 
-export interface PropertyDeclarationSpecificStructure {
+interface PropertyDeclarationSpecificStructure {
 }
 
 export interface SetAccessorDeclarationStructure extends SetAccessorDeclarationSpecificStructure, PropertyNamedNodeStructure, StaticableNodeStructure, DecoratableNodeStructure, AbstractableNodeStructure, ScopedNodeStructure, FunctionLikeDeclarationStructure, BodiedNodeStructure {
 }
 
-export interface SetAccessorDeclarationSpecificStructure {
+interface SetAccessorDeclarationSpecificStructure {
 }
 
 export interface PropertyAssignmentStructure extends PropertyAssignmentSpecificStructure, PropertyNamedNodeStructure {
 }
 
-export interface PropertyAssignmentSpecificStructure {
+interface PropertyAssignmentSpecificStructure {
     initializer: string | WriterFunction;
 }
 
 export interface ShorthandPropertyAssignmentStructure extends ShorthandPropertyAssignmentSpecificStructure, NamedNodeStructure {
 }
 
-export interface ShorthandPropertyAssignmentSpecificStructure {
+interface ShorthandPropertyAssignmentSpecificStructure {
 }
 
 export interface SpreadAssignmentStructure {
@@ -9697,7 +9700,7 @@ export interface JSDocStructure {
 export interface EnumDeclarationStructure extends NamedNodeStructure, EnumDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
-export interface EnumDeclarationSpecificStructure {
+interface EnumDeclarationSpecificStructure {
     isConst?: boolean;
     members?: EnumMemberStructure[];
 }
@@ -9705,7 +9708,7 @@ export interface EnumDeclarationSpecificStructure {
 export interface EnumMemberStructure extends EnumMemberSpecificStructure, PropertyNamedNodeStructure, JSDocableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
-export interface EnumMemberSpecificStructure {
+interface EnumMemberSpecificStructure {
     value?: number | string;
 }
 
@@ -9738,7 +9741,7 @@ export interface SourceFileStructure extends SourceFileSpecificStructure, Statem
     bodyText?: string | WriterFunction;
 }
 
-export interface SourceFileSpecificStructure {
+interface SourceFileSpecificStructure {
     imports?: ImportDeclarationStructure[];
     exports?: ExportDeclarationStructure[];
 }
@@ -9746,7 +9749,7 @@ export interface SourceFileSpecificStructure {
 export interface FunctionDeclarationStructure extends FunctionDeclarationSpecificStructure, NameableNodeStructure, FunctionLikeDeclarationStructure, StatementedNodeStructure, AsyncableNodeStructure, GeneratorableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, BodyableNodeStructure {
 }
 
-export interface FunctionDeclarationSpecificStructure {
+interface FunctionDeclarationSpecificStructure {
     overloads?: FunctionDeclarationOverloadStructure[];
 }
 
@@ -9759,26 +9762,26 @@ export interface FunctionLikeDeclarationStructure extends SignaturedDeclarationS
 export interface ParameterDeclarationStructure extends DeclarationNamedNodeStructure, TypedNodeStructure, ReadonlyableNodeStructure, DecoratableNodeStructure, QuestionTokenableNodeStructure, ScopeableNodeStructure, InitializerExpressionableNodeStructure, ParameterDeclarationSpecificStructure {
 }
 
-export interface ParameterDeclarationSpecificStructure {
+interface ParameterDeclarationSpecificStructure {
     isRestParameter?: boolean;
 }
 
 export interface CallSignatureDeclarationStructure extends CallSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-export interface CallSignatureDeclarationSpecificStructure {
+interface CallSignatureDeclarationSpecificStructure {
 }
 
 export interface ConstructSignatureDeclarationStructure extends ConstructSignatureDeclarationSpecificStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-export interface ConstructSignatureDeclarationSpecificStructure {
+interface ConstructSignatureDeclarationSpecificStructure {
 }
 
 export interface IndexSignatureDeclarationStructure extends IndexSignatureDeclarationSpecificStructure, JSDocableNodeStructure, ReadonlyableNodeStructure {
 }
 
-export interface IndexSignatureDeclarationSpecificStructure {
+interface IndexSignatureDeclarationSpecificStructure {
     keyName?: string;
     keyType?: string;
     returnType: string | WriterFunction;
@@ -9787,19 +9790,19 @@ export interface IndexSignatureDeclarationSpecificStructure {
 export interface InterfaceDeclarationStructure extends NamedNodeStructure, InterfaceDeclarationSpecificStructure, ExtendsClauseableNodeStructure, TypeParameteredNodeStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, TypeElementMemberedNodeStructure {
 }
 
-export interface InterfaceDeclarationSpecificStructure {
+interface InterfaceDeclarationSpecificStructure {
 }
 
 export interface MethodSignatureStructure extends PropertyNamedNodeStructure, MethodSignatureSpecificStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, SignaturedDeclarationStructure, TypeParameteredNodeStructure {
 }
 
-export interface MethodSignatureSpecificStructure {
+interface MethodSignatureSpecificStructure {
 }
 
 export interface PropertySignatureStructure extends PropertySignatureSpecificStructure, PropertyNamedNodeStructure, TypedNodeStructure, QuestionTokenableNodeStructure, JSDocableNodeStructure, ReadonlyableNodeStructure, InitializerExpressionableNodeStructure {
 }
 
-export interface PropertySignatureSpecificStructure {
+interface PropertySignatureSpecificStructure {
 }
 
 export interface JsxAttributeStructure extends JsxAttributeStructureSpecific, NamedNodeStructure {
@@ -9825,7 +9828,7 @@ export interface JsxSpreadAttributeStructure {
 export interface NamespaceDeclarationStructure extends NamedNodeStructure, NamespaceDeclarationSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure, StatementedNodeStructure, BodiedNodeStructure {
 }
 
-export interface NamespaceDeclarationSpecificStructure {
+interface NamespaceDeclarationSpecificStructure {
     /**
      * If the namespace has the module keyword.
      */
@@ -9844,7 +9847,7 @@ export interface StatementedNodeStructure {
 export interface VariableDeclarationListStructure extends VariableDeclarationListSpecificStructure {
 }
 
-export interface VariableDeclarationListSpecificStructure {
+interface VariableDeclarationListSpecificStructure {
     declarationKind?: VariableDeclarationKind;
     declarations: VariableDeclarationStructure[];
 }
@@ -9852,13 +9855,13 @@ export interface VariableDeclarationListSpecificStructure {
 export interface VariableDeclarationStructure extends VariableDeclarationSpecificStructure, BindingNamedNodeStructure, InitializerExpressionableNodeStructure, TypedNodeStructure, ExclamationTokenableNodeStructure {
 }
 
-export interface VariableDeclarationSpecificStructure {
+interface VariableDeclarationSpecificStructure {
 }
 
 export interface VariableStatementStructure extends VariableStatementSpecificStructure, JSDocableNodeStructure, AmbientableNodeStructure, ExportableNodeStructure {
 }
 
-export interface VariableStatementSpecificStructure {
+interface VariableStatementSpecificStructure {
     declarationKind?: VariableDeclarationKind;
     declarations: VariableDeclarationStructure[];
 }
@@ -9867,7 +9870,7 @@ export interface TypeAliasDeclarationStructure extends TypeAliasDeclarationSpeci
     type: string | WriterFunction;
 }
 
-export interface TypeAliasDeclarationSpecificStructure {
+interface TypeAliasDeclarationSpecificStructure {
     type: string | WriterFunction;
 }
 

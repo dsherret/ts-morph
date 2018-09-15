@@ -16,6 +16,7 @@ const mainFile = project.getSourceFileOrThrow("main.d.ts");
 flattenDeclarationFiles(project, mainFile);
 removeImportTypes(mainFile);
 hideBaseDeclarations();
+hideSpecificStructures();
 removeSkipOrThrowCheck();
 
 project.save();
@@ -31,6 +32,12 @@ function hideBaseDeclarations() {
         // the trick is to mark these as not exported in the declaration file
         variableStatement.setIsExported(false);
     }
+}
+
+function hideSpecificStructures() {
+    const specificStructures = mainFile.getInterfaces().filter(s => StringUtils.endsWith(s.getName(), "SpecificStructure"));
+    for (const structure of specificStructures)
+        structure.setIsExported(false);
 }
 
 function removeSkipOrThrowCheck() {
