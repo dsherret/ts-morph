@@ -875,11 +875,7 @@ export function StatementedNode<T extends Constructor<StatementedNodeExtensionTy
                 return this.compilerNode.statements;
             else if (TypeGuards.isNamespaceDeclaration(this)) {
                 // need to get the inner-most body for namespaces
-                let node = this as Node;
-                while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null) {
-                    node = node.getBody();
-                }
-                return (node.compilerNode as ts.Block).statements;
+                return (this.getInnerBody().compilerNode as ts.Block).statements;
             }
             else if (TypeGuards.isBodyableNode(this))
                 return (this.getBodyOrThrow().compilerNode as any).statements as ts.NodeArray<ts.Statement>;

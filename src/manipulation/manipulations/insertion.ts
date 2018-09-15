@@ -133,7 +133,7 @@ export interface InsertIntoBracesOrSourceFileOptions<TStructure> {
  * Used to insert non-comma separated nodes into braces or a source file.
  */
 export function insertIntoBracesOrSourceFile<TStructure = {}>(opts: InsertIntoBracesOrSourceFileOptions<TStructure>) {
-    const {parent, index, children} = opts;
+    const { parent, index, children } = opts;
     const fullText = parent.sourceFile.getFullText();
     const insertPos = getInsertPosFromIndex(index, parent.getChildSyntaxListOrThrow(), children);
     const endPos = getEndPosFromIndex(index, parent, children, fullText);

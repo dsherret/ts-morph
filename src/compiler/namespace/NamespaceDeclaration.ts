@@ -4,6 +4,7 @@ import { NamespaceDeclarationStructure, NamespaceDeclarationSpecificStructure } 
 import { SyntaxKind, ts } from "../../typescript";
 import { AmbientableNode, BodiedNode, ChildOrderableNode, ExportableNode, JSDocableNode, ModifierableNode, NamedNode,
     TextInsertableNode, UnwrappableNode } from "../base";
+import { TypeGuards } from "../../utils";
 import { callBaseFill } from "../callBaseFill";
 import { Identifier } from "../common";
 import { Statement, StatementedNode } from "../statement";
@@ -142,5 +143,13 @@ export class NamespaceDeclaration extends NamespaceDeclarationBase<ts.NamespaceD
         return callBaseGetStructure<NamespaceDeclarationSpecificStructure>(NamespaceDeclarationBase.prototype, this, {
             hasModuleKeyword: this.hasModuleKeyword()
         });
+    }
+
+    /** @internal */
+    getInnerBody() {
+        let node = this.getBody();
+        while (TypeGuards.isBodiedNode(node) && (node.compilerNode as ts.Block).statements == null)
+            node = node.getBody();
+        return node;
     }
 }
