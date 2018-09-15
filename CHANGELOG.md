@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="14.4.4"></a>
+## [14.4.4](https://github.com/dsherret/ts-simple-ast/compare/14.4.3...14.4.4) (2018-09-15)
+
+
+### Bug Fixes
+
+* [#421](https://github.com/dsherret/ts-simple-ast/issues/421) - "Adding a child to an empty namespace with dot notation in the name causes brace to be lost" ([0b73d4f](https://github.com/dsherret/ts-simple-ast/commit/0b73d4f))
+* Abstract methods were incorrectly returning true for .isOverload() ([ef29ee1](https://github.com/dsherret/ts-simple-ast/commit/ef29ee1))
+
+
+
 <a name="14.4.3"></a>
 # [14.4.3](https://github.com/dsherret/ts-simple-ast/compare/14.4.2...14.4.3) (2018-09-07)
 
