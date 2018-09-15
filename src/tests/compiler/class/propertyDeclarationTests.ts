@@ -1,5 +1,5 @@
 ﻿import { expect } from "chai";
-import { ClassDeclaration, PropertyDeclaration } from "../../../compiler";
+import { Scope, ClassDeclaration, PropertyDeclaration } from "../../../compiler";
 import { PropertyDeclarationStructure } from "../../../structures";
 import { getInfoFromText } from "../testHelpers";
 
@@ -22,6 +22,69 @@ describe(nameof(PropertyDeclaration), () => {
 
         it("should change the property when setting", () => {
             doTest("class Identifier { prop: string; }", { type: "number" }, "class Identifier { prop: number; }");
+        });
+    });
+
+    describe(nameof<PropertyDeclaration>(n => n.getStructure), () => {
+        function doTest(code: string, expectedStructure: MakeRequired<PropertyDeclarationStructure>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const structure = firstChild.getProperties()[0].getStructure();
+            structure.decorators = structure.decorators!.map(d => ({ name: d.name }));
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get when empty", () => {
+            doTest("class T { prop; }", {
+                decorators: [],
+                docs: [],
+                hasExclamationToken: false,
+                hasQuestionToken: false,
+                initializer: undefined,
+                isAbstract: false,
+                isReadonly: false,
+                isStatic: false,
+                name: "prop",
+                scope: undefined,
+                type: undefined
+            });
+        });
+
+        it("should get when has everything", () => {
+            const code = `
+class T {
+    /** test */
+    @dec public static readonly abstract prop?: number = 5;
+}
+`;
+            doTest(code, {
+                decorators: [{ name: "dec" }],
+                docs: [{ description: "test" }],
+                hasExclamationToken: false,
+                hasQuestionToken: true,
+                initializer: "5",
+                isAbstract: true,
+                isReadonly: true,
+                isStatic: true,
+                name: "prop",
+                scope: Scope.Public,
+                type: "number"
+            });
+        });
+
+        it("should get when has exclamation token", () => {
+            doTest("class T { prop!; }", {
+                decorators: [],
+                docs: [],
+                hasExclamationToken: true,
+                hasQuestionToken: false,
+                initializer: undefined,
+                isAbstract: false,
+                isReadonly: false,
+                isStatic: false,
+                name: "prop",
+                scope: undefined,
+                type: undefined
+            });
         });
     });
 
