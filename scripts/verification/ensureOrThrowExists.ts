@@ -12,7 +12,7 @@ import Project, { Type, ClassDeclaration, InterfaceDeclaration, MethodDeclaratio
 import { TsSimpleAstInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: Problem[]) {
+export function ensureOrThrowExists(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
     for (const c of inspector.getPublicClasses()) {
         for (const method of c.getInstanceMethods()) {
             if (!doesReturnTypeRequireOrThrow(method.getReturnType()))
@@ -20,7 +20,7 @@ export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: P
 
             const orThrowMethod = c.getInstanceMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null && !isIgnoredMethod(c, method))
-                problems.push({
+                addProblem({
                     filePath: c.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${c.getName()}.${method.getName()} to have a corresponding OrThrow method.`
@@ -35,7 +35,7 @@ export function ensureOrThrowExists(inspector: TsSimpleAstInspector, problems: P
 
             const orThrowMethod = i.getMethod(method.getName() + "OrThrow");
             if (orThrowMethod == null && !isIgnoredMethod(i, method))
-                problems.push({
+                addProblem({
                     filePath: i.getSourceFile().getFilePath(),
                     lineNumber: method.getStartLineNumber(),
                     message: `Expected method ${i.getName()}.${method.getName()} to have a corresponding OrThrow method.`

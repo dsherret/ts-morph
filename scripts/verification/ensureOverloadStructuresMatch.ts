@@ -10,7 +10,7 @@
 import { Structure, TsSimpleAstInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureOverloadStructuresMatch(inspector: TsSimpleAstInspector, problems: Problem[]) {
+export function ensureOverloadStructuresMatch(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
     // get structures
     const structures = inspector.getStructures();
     const overloadStructures = inspector.getOverloadStructures();
@@ -35,14 +35,14 @@ export function ensureOverloadStructuresMatch(inspector: TsSimpleAstInspector, p
         }
 
         for (const remainingOverload of overloadBaseStructures)
-            problems.push({
+            addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
                 message: `${overloadStructure.getName()} does not have overload extension of ${remainingOverload.getName()}.`
             });
 
         for (const remainingStructure of structureBaseStructures)
-            problems.push({
+            addProblem({
                 filePath: overloadStructure.getFilePath(),
                 lineNumber: overloadStructure.getStartLineNumber(),
                 message: `${overloadStructure.getName()} does not have structure extension of ${remainingStructure.getName()}`

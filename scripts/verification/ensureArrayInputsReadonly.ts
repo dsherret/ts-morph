@@ -7,9 +7,10 @@
  */
 import { TypeGuards, SyntaxKind } from "ts-simple-ast";
 import { TsSimpleAstInspector } from "../inspectors";
+import { hasInternalDocTag } from "../common";
 import { Problem } from "./Problem";
 
-export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, problems: Problem[]) {
+export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
     const declarations = inspector.getPublicDeclarations();
 
     for (const declaration of declarations) {
@@ -29,12 +30,10 @@ export function ensureArrayInputsReadonly(inspector: TsSimpleAstInspector, probl
                 || TypeGuards.isArrowFunction(parameter.getParent()))
                 return;
             const parameterParent = parameter.getParent();
-            const isInternal = TypeGuards.isJSDocableNode(parameterParent)
-                && parameterParent.getJsDocs().some(d => d.getTags().some(t => t.getName() === "internal"));
-            if (isInternal)
+            if (hasInternalDocTag(parameterParent))
                 return;
 
-            problems.push({
+            addProblem({
                 filePath: node.getSourceFile().getFilePath(),
                 lineNumber: node.getStartLineNumber(),
                 message: `Found input array type (${node.getText()}).`

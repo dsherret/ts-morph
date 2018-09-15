@@ -11,7 +11,7 @@ import { isAllowedMixin, isAllowedMixinForStructure } from "../config";
 import { TsSimpleAstInspector } from "../inspectors";
 import { Problem } from "./Problem";
 
-export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, problems: Problem[]) {
+export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, addProblem: (problem: Problem) => void) {
     const nodes = inspector.getWrappedNodes();
     const structures = inspector.getStructures();
 
@@ -25,7 +25,7 @@ export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, pr
             const mixinStructureName = getStructureName(mixin.getName());
             const structureHasMixin = structure.getBaseStructures().some(s => s.getName() === mixinStructureName);
             if (!structureHasMixin)
-                problems.push({
+                addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
                     message: `${structure.getName()} does not have ${mixinStructureName}.`
@@ -37,7 +37,7 @@ export function ensureStructuresMatchClasses(inspector: TsSimpleAstInspector, pr
             const mixin = node.getMixins().find(m => m.getName() === declarationName);
 
             if (mixin == null)
-                problems.push({
+                addProblem({
                     filePath: structure.getFilePath(),
                     lineNumber: structure.getStartLineNumber(),
                     message: `${structure.getName()} has ${baseStructure.getName()}, but it shouldn't.`

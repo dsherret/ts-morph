@@ -4,29 +4,36 @@ import { ensureOrThrowExists } from "./ensureOrThrowExists";
 import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
 import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
 import { ensureClassesImplementGetStructure } from "./ensureClassesImplementGetStructure";
+import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
 import { Problem } from "./Problem";
 
 const args = process.argv.slice(2);
 const factory = new InspectorFactory();
-const problems: Problem[] = [];
+let problemsCount = 0;
+
+function addProblem(problem: Problem) {
+    console.error(`[${problem.filePath}:${problem.lineNumber}]: ${problem.message}`);
+    problemsCount++;
+}
 
 if (checkHasArg("ensure-array-inputs-readonly"))
-    ensureArrayInputsReadonly(factory.getTsSimpleAstInspector(), problems);
+    ensureArrayInputsReadonly(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-or-throw-exists"))
-    ensureOrThrowExists(factory.getTsSimpleAstInspector(), problems);
+    ensureOrThrowExists(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-overload-structures-match"))
-    ensureOverloadStructuresMatch(factory.getTsSimpleAstInspector(), problems);
+    ensureOverloadStructuresMatch(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-structures-match-classes"))
-    ensureStructuresMatchClasses(factory.getTsSimpleAstInspector(), problems);
+    ensureStructuresMatchClasses(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-classes-implement-get-structure"))
-    ensureClassesImplementGetStructure(factory.getTsSimpleAstInspector(), problems);
+    ensureClassesImplementGetStructure(factory.getTsSimpleAstInspector(), addProblem);
+if (checkHasArg("ensure-public-api-has-tests"))
+    ensurePublicApiHasTests(factory.getTsSimpleAstInspector(), addProblem);
 
 if (args.length > 0)
     console.error(`Unknown args: ${args}`);
 
-if (problems.length > 0) {
-    problems.forEach(p => console.error(`[${p.filePath}:${p.lineNumber}]: ${p.message}`));
-    console.error(`\nFound ${problems.length} code verification issues.`);
+if (problemsCount > 0) {
+    console.error(`\nFound ${problemsCount} code verification issues.`);
     process.exit(1);
 }
 
