@@ -2,7 +2,7 @@ import * as errors from "../../errors";
 import { removeClassMember } from "../../manipulation";
 import { SetAccessorDeclarationStructure, SetAccessorDeclarationSpecificStructure } from "../../structures";
 import { SyntaxKind, ts } from "../../typescript";
-import { BodiedNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
+import { BodyableNode, ChildOrderableNode, DecoratableNode, PropertyNamedNode, ScopedNode, StaticableNode, TextInsertableNode } from "../base";
 import { callBaseFill } from "../callBaseFill";
 import { Node } from "../common";
 import { FunctionLikeDeclaration } from "../function";
@@ -11,7 +11,7 @@ import { GetAccessorDeclaration } from "./GetAccessorDeclaration";
 import { callBaseGetStructure } from "../callBaseGetStructure";
 
 export const SetAccessorDeclarationBase = ChildOrderableNode(TextInsertableNode(DecoratableNode(AbstractableNode(ScopedNode(StaticableNode(
-    BodiedNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
+    BodyableNode(FunctionLikeDeclaration(PropertyNamedNode(Node))
 )))))));
 export class SetAccessorDeclaration extends SetAccessorDeclarationBase<ts.SetAccessorDeclaration> {
     /**

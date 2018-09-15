@@ -1,8 +1,9 @@
 import { expect } from "chai";
-import { ClassDeclaration, GetAccessorDeclaration } from "../../../compiler";
+import { ClassDeclaration, GetAccessorDeclaration, Scope } from "../../../compiler";
 import { SyntaxKind } from "../../../typescript";
 import { ArrayUtils } from "../../../utils";
 import { getInfoFromText } from "../testHelpers";
+import { GetAccessorDeclarationStructure } from '../../../../dist/main';
 
 function getGetAccessorInfo(text: string) {
     const result = getInfoFromText<ClassDeclaration>(text);
@@ -68,6 +69,57 @@ describe(nameof(GetAccessorDeclaration), () => {
         it("should remove when it's the last member", () => {
             doTest("class Identifier {\n    prop: string;\n    get prop2(): string {}\n}", "prop2",
                 "class Identifier {\n    prop: string;\n}");
+        });
+    });
+
+    describe(nameof<GetAccessorDeclaration>(n => n.getStructure), () => {
+        type PropertyNamesToExclude = "classes" | "functions" | "enums" | "interfaces" | "namespaces" | "typeAliases";
+        function doTest(code: string, expectedStructure: Omit<MakeRequired<GetAccessorDeclarationStructure>, PropertyNamesToExclude>) {
+            const { firstChild } = getInfoFromText<ClassDeclaration>(code);
+            const structure = firstChild.getGetAccessors()[0].getStructure();
+            structure.parameters = structure.parameters!.map(p => ({ name: p.name }));
+            structure.typeParameters = structure.typeParameters!.map(p => ({ name: p.name }));
+            structure.decorators = structure.decorators!.map(p => ({ name: p.name }));
+
+            expect(structure).to.deep.equal(expectedStructure);
+        }
+
+        it("should get structure when empty", () => {
+            doTest("abstract class T { abstract get test(); }", {
+                bodyText: undefined,
+                docs: [],
+                parameters: [],
+                returnType: undefined,
+                scope: undefined,
+                typeParameters: [],
+                decorators: [],
+                isAbstract: true,
+                isStatic: false,
+                name: "test"
+            });
+        });
+
+        it("should get structure when has everything", () => {
+            const code = `
+class T {
+    /** test */
+    @dec public static get test<T>(p): number {
+        return 5;
+    }
+}
+`;
+            doTest(code, {
+                bodyText: "return 5;",
+                docs: [{ description: "test" }],
+                parameters: [{ name: "p" }],
+                returnType: "number",
+                scope: Scope.Public,
+                typeParameters: [{ name: "T" }],
+                decorators: [{ name: "dec" }],
+                isAbstract: false,
+                isStatic: true,
+                name: "test"
+            });
         });
     });
 });
