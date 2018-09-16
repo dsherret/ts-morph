@@ -3,7 +3,7 @@ import { ensureArrayInputsReadonly } from "./ensureArrayInputsReadonly";
 import { ensureOrThrowExists } from "./ensureOrThrowExists";
 import { ensureOverloadStructuresMatch } from "./ensureOverloadStructuresMatch";
 import { ensureStructuresMatchClasses } from "./ensureStructuresMatchClasses";
-import { ensureClassesImplementGetStructure } from "./ensureClassesImplementGetStructure";
+import { ensureClassesImplementStructureMethods } from "./ensureClassesImplementStructureMethods";
 import { ensurePublicApiHasTests } from "./ensurePublicApiHasTests";
 import { Problem } from "./Problem";
 
@@ -24,8 +24,8 @@ if (checkHasArg("ensure-overload-structures-match"))
     ensureOverloadStructuresMatch(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-structures-match-classes"))
     ensureStructuresMatchClasses(factory.getTsSimpleAstInspector(), addProblem);
-if (checkHasArg("ensure-classes-implement-get-structure"))
-    ensureClassesImplementGetStructure(factory.getTsSimpleAstInspector(), addProblem);
+if (checkHasArg("ensure-classes-implement-structure-methods"))
+    ensureClassesImplementStructureMethods(factory.getTsSimpleAstInspector(), addProblem);
 if (checkHasArg("ensure-public-api-has-tests"))
     ensurePublicApiHasTests(factory.getTsSimpleAstInspector(), addProblem);
 
