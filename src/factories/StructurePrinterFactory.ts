@@ -175,6 +175,11 @@ export class StructurePrinterFactory {
     }
 
     @Memoize
+    forJsxElement(): structurePrinters.JsxElementStructurePrinter {
+        return new structurePrinters.JsxElementStructurePrinter(this);
+    }
+
+    @Memoize
     forJsxAttributeDecider(): structurePrinters.JsxAttributeDeciderStructurePrinter {
         return new structurePrinters.JsxAttributeDeciderStructurePrinter(this);
     }
@@ -182,11 +187,6 @@ export class StructurePrinterFactory {
     @Memoize
     forJsxSpreadAttribute(): structurePrinters.JsxSpreadAttributeStructurePrinter {
         return new structurePrinters.JsxSpreadAttributeStructurePrinter(this);
-    }
-
-    @Memoize
-    forJsxElement(): structurePrinters.JsxElementStructurePrinter {
-        return new structurePrinters.JsxElementStructurePrinter(this);
     }
 
     @Memoize

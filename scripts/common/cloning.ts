@@ -2,7 +2,7 @@
     PropertyDeclaration, FunctionDeclaration, VariableStatement, NamespaceDeclaration, TypeGuards, ParameterDeclaration,
     ParameterDeclarationStructure } from "ts-simple-ast";
 
-// todo: in the future this should be done in the library (ex. node.addInterface(cloningInterface.getStructure()))
+// todo: once v15 is released use the getStructure() methods (ex. node.addInterface(cloningInterface.getStructure()))
 // What's done here is not so great...
 
 export function cloneNamespaces(node: StatementedNode, cloningNamespaces: NamespaceDeclaration[]) {
