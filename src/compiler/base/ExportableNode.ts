@@ -142,9 +142,13 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
                 return this;
 
             // set this node as the one to default export
-            if (TypeGuards.isAmbientableNode(this) && TypeGuards.hasName(this) && this.isAmbient()) {
+            if (TypeGuards.hasName(this) && shouldWriteAsSeparateStatement.call(this)) {
                 const parentSyntaxList = this.getFirstAncestorByKindOrThrow(SyntaxKind.SyntaxList);
-                parentSyntaxList.insertChildText(this.getChildIndex() + 1, `export default ${this.getName()};`);
+                const name = this.getName();
+
+                parentSyntaxList.insertChildText(this.getChildIndex() + 1, writer => {
+                    writer.newLine().write(`export default ${name};`);
+                });
             }
             else {
                 this.addModifier("export");
@@ -152,6 +156,14 @@ export function ExportableNode<T extends Constructor<ExportableNodeExtensionType
             }
 
             return this;
+
+            function shouldWriteAsSeparateStatement(this: Node) {
+                if (TypeGuards.isEnumDeclaration(this) || TypeGuards.isNamespaceDeclaration(this) || TypeGuards.isTypeAliasDeclaration(this))
+                    return true;
+                if (TypeGuards.isAmbientableNode(this) && this.isAmbient())
+                    return true;
+                return false;
+            }
         }
 
         setIsExported(value: boolean) {

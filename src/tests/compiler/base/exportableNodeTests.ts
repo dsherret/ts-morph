@@ -185,6 +185,18 @@ describe(nameof(ExportableNode), () => {
                 doTest("export class Identifier {}", true, "export default class Identifier {}");
             });
 
+            it("should set enums on a new line", () => {
+                doTest("enum Identifier {}", true, "enum Identifier {}\n\nexport default Identifier;");
+            });
+
+            it("should set namespaces on a new line", () => {
+                doTest("namespace Identifier {}", true, "namespace Identifier {}\n\nexport default Identifier;");
+            });
+
+            it("should set type aliases on a new line", () => {
+                doTest("type Identifier = string;", true, "type Identifier = string;\n\nexport default Identifier;");
+            });
+
             it("should throw an error if setting as a default export within a namespace", () => {
                 const {firstChild} = getInfoFromText<NamespaceDeclaration>("namespace Identifier { class Identifier {} }");
                 const innerChild = firstChild.getClasses()[0];
@@ -194,7 +206,7 @@ describe(nameof(ExportableNode), () => {
             it("should add the default export on a new line when ambientable", () => {
                 const {firstChild, sourceFile} = getInfoFromText<ClassDeclaration>("/** Test */ export declare class Identifier {}");
                 firstChild.setIsDefaultExport(true);
-                expect(sourceFile.getFullText()).to.equal("/** Test */ export declare class Identifier {}\nexport default Identifier;");
+                expect(sourceFile.getFullText()).to.equal("/** Test */ export declare class Identifier {}\n\nexport default Identifier;");
             });
         });
 
